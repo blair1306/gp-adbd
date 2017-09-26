@@ -1,0 +1,15 @@
+<dec f='codebrowser/external/libselinux/src/avc_internal.h' l='159' type='int avc_ss_try_revoke(security_id_t ssid, security_id_t tsid, security_class_t tclass, access_vector_t perms, uint32_t seqno, access_vector_t * out_retained)'/>
+<def f='codebrowser/external/libselinux/src/avc.c' l='1035' ll='1042' type='int avc_ss_try_revoke(security_id_t ssid, security_id_t tsid, security_class_t tclass, access_vector_t perms, uint32_t seqno, access_vector_t * out_retained)'/>
+<doc f='codebrowser/external/libselinux/src/avc.c' l='1022'>/**
+ * avc_ss_try_revoke - Try to revoke previously granted permissions.
+ * @ssid: source security identifier or %SECSID_WILD
+ * @tsid: target security identifier or %SECSID_WILD
+ * @tclass: target security class
+ * @perms: permissions to grant
+ * @seqno: policy sequence number
+ * @out_retained: subset of @perms that are retained
+ *
+ * Try to revoke previously granted permissions, but
+ * only if they are not retained as migrated permissions.
+ * Return the subset of permissions that are retained via @out_retained.
+ */</doc>

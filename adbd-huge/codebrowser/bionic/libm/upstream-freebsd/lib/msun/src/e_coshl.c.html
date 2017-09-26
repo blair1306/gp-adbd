@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>e_coshl.c source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/e_coshl.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/e_coshl.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>src</a>/<a href='e_coshl.c.html'>e_coshl.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* from: FreeBSD: head/lib/msun/src/e_coshl.c XXX */</i></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><i>/*</i></td></tr>
+<tr><th id="4">4</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="5">5</th><td><i> * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * Developed at SunPro, a Sun Microsystems, Inc. business.</i></td></tr>
+<tr><th id="8">8</th><td><i> * Permission to use, copy, modify, and distribute this</i></td></tr>
+<tr><th id="9">9</th><td><i> * software is freely granted, provided that this notice</i></td></tr>
+<tr><th id="10">10</th><td><i> * is preserved.</i></td></tr>
+<tr><th id="11">11</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="12">12</th><td><i> */</i></td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="15">15</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD$"</q>);</td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><i>/*</i></td></tr>
+<tr><th id="18">18</th><td><i> * See e_cosh.c for complete comments.</i></td></tr>
+<tr><th id="19">19</th><td><i> *</i></td></tr>
+<tr><th id="20">20</th><td><i> * Converted to long double by Bruce D. Evans.</i></td></tr>
+<tr><th id="21">21</th><td><i> */</i></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#include &lt;float.h&gt;</u></td></tr>
+<tr><th id="24">24</th><td><u>#<span data-ppcond="24">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="25">25</th><td><u>#include &lt;ieeefp.h&gt;</u></td></tr>
+<tr><th id="26">26</th><td><u>#<span data-ppcond="24">endif</span></u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../../../../fpmath.h.html">"fpmath.h"</a></u></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../../../../../libc/include/math.h.html">"math.h"</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="math_private.h.html">"math_private.h"</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../ld128/k_expl.h.html">"k_expl.h"</a></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#<span data-ppcond="33">if</span> <span class="macro" title="16384" data-ref="_M/LDBL_MAX_EXP">LDBL_MAX_EXP</span> != 0x4000</u></td></tr>
+<tr><th id="34">34</th><td><i>/* We also require the usual expsign encoding. */</i></td></tr>
+<tr><th id="35">35</th><td><u>#error "Unsupported long double format"</u></td></tr>
+<tr><th id="36">36</th><td><u>#<span data-ppcond="33">endif</span></u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#define	<dfn class="macro" id="_M/BIAS" data-ref="_M/BIAS">BIAS</dfn>	(LDBL_MAX_EXP - 1)</u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><em>static</em> <em>const</em> <em>volatile</em> <em>long</em> <em>double</em> <dfn class="tu decl def" id="huge" title='huge' data-type='const volatile long double' data-ref="huge">huge</dfn> = <var>0x1p10000L</var>, <dfn class="tu decl def" id="tiny" title='tiny' data-type='const volatile long double' data-ref="tiny">tiny</dfn> = <var>0x1p-10000L</var>;</td></tr>
+<tr><th id="41">41</th><td><u>#<span data-ppcond="41">if</span> <span class="macro" title="113" data-ref="_M/LDBL_MANT_DIG">LDBL_MANT_DIG</span> == 64</u></td></tr>
+<tr><th id="42">42</th><td><i>/*</i></td></tr>
+<tr><th id="43">43</th><td><i> * Domain [-1, 1], range ~[-1.8211e-21, 1.8211e-21]:</i></td></tr>
+<tr><th id="44">44</th><td><i> * |cosh(x) - c(x)| &lt; 2**-68.8</i></td></tr>
+<tr><th id="45">45</th><td><i> */</i></td></tr>
+<tr><th id="46">46</th><td><em>static</em> <em>const</em> <b>union</b> IEEEl2bits</td></tr>
+<tr><th id="47">47</th><td>C4u = LD80C(<var>0xaaaaaaaaaaaaac78</var>, -<var>5</var>,  <var>4.16666666666666682297e-2L</var>);</td></tr>
+<tr><th id="48">48</th><td><u>#define	C4	C4u.e</u></td></tr>
+<tr><th id="49">49</th><td><em>static</em> <em>const</em> <em>double</em></td></tr>
+<tr><th id="50">50</th><td>C2  =  <var>0.5</var>,</td></tr>
+<tr><th id="51">51</th><td>C6  =  <var>1.3888888888888616e-3</var>,		<i>/*  0x16c16c16c16b99.0p-62 */</i></td></tr>
+<tr><th id="52">52</th><td>C8  =  <var>2.4801587301767953e-5</var>,		<i>/*  0x1a01a01a027061.0p-68 */</i></td></tr>
+<tr><th id="53">53</th><td>C10 =  <var>2.7557319163300398e-7</var>,		<i>/*  0x127e4fb6c9b55f.0p-74 */</i></td></tr>
+<tr><th id="54">54</th><td>C12 =  <var>2.0876768371393075e-9</var>,		<i>/*  0x11eed99406a3f4.0p-81 */</i></td></tr>
+<tr><th id="55">55</th><td>C14 =  <var>1.1469537039374480e-11</var>,		<i>/*  0x1938c67cd18c48.0p-89 */</i></td></tr>
+<tr><th id="56">56</th><td>C16 =  <var>4.8473490896852041e-14</var>;		<i>/*  0x1b49c429701e45.0p-97 */</i></td></tr>
+<tr><th id="57">57</th><td><u>#<span data-ppcond="41">elif</span> <span class="macro" title="113" data-ref="_M/LDBL_MANT_DIG">LDBL_MANT_DIG</span> == 113</u></td></tr>
+<tr><th id="58">58</th><td><i>/*</i></td></tr>
+<tr><th id="59">59</th><td><i> * Domain [-1, 1], range ~[-2.3194e-37, 2.3194e-37]:</i></td></tr>
+<tr><th id="60">60</th><td><i> * |cosh(x) - c(x)| &lt; 2**-121.69</i></td></tr>
+<tr><th id="61">61</th><td><i> */</i></td></tr>
+<tr><th id="62">62</th><td><em>static</em> <em>const</em> <em>long</em> <em>double</em></td></tr>
+<tr><th id="63">63</th><td><dfn class="tu decl def" id="C4" title='C4' data-type='const long double' data-ref="C4">C4</dfn>  =  <var>4.16666666666666666666666666666666225e-2L</var>,	<i>/*  0x1555555555555555555555555554e.0p-117L */</i></td></tr>
+<tr><th id="64">64</th><td><dfn class="tu decl def" id="C6" title='C6' data-type='const long double' data-ref="C6">C6</dfn>  =  <var>1.38888888888888888888888888889434831e-3L</var>,	<i>/*  0x16c16c16c16c16c16c16c16c1dd7a.0p-122L */</i></td></tr>
+<tr><th id="65">65</th><td><dfn class="tu decl def" id="C8" title='C8' data-type='const long double' data-ref="C8">C8</dfn>  =  <var>2.48015873015873015873015871870962089e-5L</var>,	<i>/*  0x1a01a01a01a01a01a01a017af2756.0p-128L */</i></td></tr>
+<tr><th id="66">66</th><td><dfn class="tu decl def" id="C10" title='C10' data-type='const long double' data-ref="C10">C10</dfn> =  <var>2.75573192239858906525574318600800201e-7L</var>,	<i>/*  0x127e4fb7789f5c72ef01c8a040640.0p-134L */</i></td></tr>
+<tr><th id="67">67</th><td><dfn class="tu decl def" id="C12" title='C12' data-type='const long double' data-ref="C12">C12</dfn> =  <var>2.08767569878680989791444691755468269e-9L</var>,	<i>/*  0x11eed8eff8d897b543d0679607399.0p-141L */</i></td></tr>
+<tr><th id="68">68</th><td><dfn class="tu decl def" id="C14" title='C14' data-type='const long double' data-ref="C14">C14</dfn>=  <var>1.14707455977297247387801189650495351e-11L</var>,	<i>/*  0x193974a8c07c9d24ae169a7fa9b54.0p-149L */</i></td></tr>
+<tr><th id="69">69</th><td><dfn class="tu decl def" id="C16" title='C16' data-type='const long double' data-ref="C16">C16</dfn> =  <var>4.77947733238737883626416876486279985e-14L</var>;	<i>/*  0x1ae7f3e733b814d4e1b90f5727fe4.0p-157L */</i></td></tr>
+<tr><th id="70">70</th><td><em>static</em> <em>const</em> <em>double</em></td></tr>
+<tr><th id="71">71</th><td><dfn class="tu decl def" id="C2" title='C2' data-type='const double' data-ref="C2">C2</dfn>  =  <var>0.5</var>,</td></tr>
+<tr><th id="72">72</th><td><dfn class="tu decl def" id="C18" title='C18' data-type='const double' data-ref="C18">C18</dfn> =  <var>1.5619206968597871e-16</var>,		<i>/*  0x16827863b9900b.0p-105 */</i></td></tr>
+<tr><th id="73">73</th><td><dfn class="tu decl def" id="C20" title='C20' data-type='const double' data-ref="C20">C20</dfn> =  <var>4.1103176218528049e-19</var>,		<i>/*  0x1e542ba3d3c269.0p-114 */</i></td></tr>
+<tr><th id="74">74</th><td><dfn class="tu decl def" id="C22" title='C22' data-type='const double' data-ref="C22">C22</dfn> =  <var>8.8967926401641701e-22</var>,		<i>/*  0x10ce399542a014.0p-122 */</i></td></tr>
+<tr><th id="75">75</th><td><dfn class="tu decl def" id="C24" title='C24' data-type='const double' data-ref="C24">C24</dfn> =  <var>1.6116681626523904e-24</var>,		<i>/*  0x1f2c981d1f0cb7.0p-132 */</i></td></tr>
+<tr><th id="76">76</th><td><dfn class="tu decl def" id="C26" title='C26' data-type='const double' data-ref="C26">C26</dfn> =  <var>2.5022374732804632e-27</var>;		<i>/*  0x18c7ecf8b2c4a0.0p-141 */</i></td></tr>
+<tr><th id="77">77</th><td><u>#<span data-ppcond="41">else</span></u></td></tr>
+<tr><th id="78">78</th><td><u>#error "Unsupported long double format"</u></td></tr>
+<tr><th id="79">79</th><td><u>#<span data-ppcond="41">endif</span> /* LDBL_MANT_DIG == 64 */</u></td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><i  data-doc="o_threshold">/* log(2**16385 - 0.5) rounded up: */</i></td></tr>
+<tr><th id="82">82</th><td><em>static</em> <em>const</em> <em>float</em></td></tr>
+<tr><th id="83">83</th><td><dfn class="tu decl def" id="o_threshold" title='o_threshold' data-type='const float' data-ref="o_threshold">o_threshold</dfn> =  <var>1.13572168e4</var>;		<i>/*  0xb174de.0p-10 */</i></td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><em>long</em> <em>double</em></td></tr>
+<tr><th id="86">86</th><td><dfn class="decl def" id="coshl" title='coshl' data-ref="coshl">coshl</dfn>(<em>long</em> <em>double</em> <dfn class="local col1 decl" id="1x" title='x' data-type='long double' data-ref="1x">x</dfn>)</td></tr>
+<tr><th id="87">87</th><td>{</td></tr>
+<tr><th id="88">88</th><td>	<em>long</em> <em>double</em> <dfn class="local col2 decl" id="2hi" title='hi' data-type='long double' data-ref="2hi">hi</dfn>,<dfn class="local col3 decl" id="3lo" title='lo' data-type='long double' data-ref="3lo">lo</dfn>,<dfn class="local col4 decl" id="4x2" title='x2' data-type='long double' data-ref="4x2">x2</dfn>,<dfn class="local col5 decl" id="5x4" title='x4' data-type='long double' data-ref="5x4">x4</dfn>;</td></tr>
+<tr><th id="89">89</th><td>	<em>double</em> <dfn class="local col6 decl" id="6dx2" title='dx2' data-type='double' data-ref="6dx2">dx2</dfn>;</td></tr>
+<tr><th id="90">90</th><td>	<a class="typedef" href="../../../../../libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a> <dfn class="local col7 decl" id="7ix" title='ix' data-type='uint16_t' data-ref="7ix">ix</dfn>;</td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td>	<a class="macro" href="math_private.h.html#220" title="do { union IEEEl2bits ge_u; ge_u.e = (x); (ix) = ge_u.xbits.expsign; } while (0)" data-ref="_M/GET_LDBL_EXPSIGN">GET_LDBL_EXPSIGN</a>(<a class="local col7 ref" href="#7ix" title='ix' data-ref="7ix">ix</a>,<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>);</td></tr>
+<tr><th id="93">93</th><td>	<a class="local col7 ref" href="#7ix" title='ix' data-ref="7ix">ix</a> &amp;= <var>0x7fff</var>;</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td>    <i>/* x is INF or NaN */</i></td></tr>
+<tr><th id="96">96</th><td>	<b>if</b>(<a class="local col7 ref" href="#7ix" title='ix' data-ref="7ix">ix</a>&gt;=<var>0x7fff</var>) <b>return</b> <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>*<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td>	<a class="macro" href="math_private.h.html#310" title="" data-ref="_M/ENTERI">ENTERI</a>();</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td>    <i>/* |x| &lt; 1, return 1 or c(x) */</i></td></tr>
+<tr><th id="101">101</th><td>	<b>if</b>(<a class="local col7 ref" href="#7ix" title='ix' data-ref="7ix">ix</a>&lt;<var>0x3fff</var>) {</td></tr>
+<tr><th id="102">102</th><td>	    <b>if</b> (<a class="local col7 ref" href="#7ix" title='ix' data-ref="7ix">ix</a>&lt;<a class="macro" href="#38" title="(16384 - 1)" data-ref="_M/BIAS">BIAS</a>-(<span class="macro" title="113" data-ref="_M/LDBL_MANT_DIG">LDBL_MANT_DIG</span>+<var>1</var>)/<var>2</var>) 	<i>/* |x| &lt; TINY */</i></td></tr>
+<tr><th id="103">103</th><td>		<a class="macro" href="math_private.h.html#311" title="return (1+tiny)" data-ref="_M/RETURNI">RETURNI</a>(<var>1</var>+<a class="tu ref" href="#tiny" title='tiny' data-use='r' data-ref="tiny">tiny</a>);	<i>/* cosh(tiny) = 1(+) with inexact */</i></td></tr>
+<tr><th id="104">104</th><td>	    <a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> = <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>*<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="105">105</th><td><u>#<span data-ppcond="105">if</span> <span class="macro" title="113" data-ref="_M/LDBL_MANT_DIG">LDBL_MANT_DIG</span> == 64</u></td></tr>
+<tr><th id="106">106</th><td>	    x4 = x2*x2;</td></tr>
+<tr><th id="107">107</th><td>	    RETURNI(((C16*x2 + C14)*x4 + (C12*x2 + C10))*(x4*x4*x2) +</td></tr>
+<tr><th id="108">108</th><td>		((C8*x2 + C6)*x2 + C4)*x4 + C2*x2 + <var>1</var>);</td></tr>
+<tr><th id="109">109</th><td><u>#<span data-ppcond="105">elif</span> <span class="macro" title="113" data-ref="_M/LDBL_MANT_DIG">LDBL_MANT_DIG</span> == 113</u></td></tr>
+<tr><th id="110">110</th><td>	    <a class="local col6 ref" href="#6dx2" title='dx2' data-ref="6dx2">dx2</a> = <a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a>;</td></tr>
+<tr><th id="111">111</th><td>	    <a class="macro" href="math_private.h.html#311" title="return ((((((((((((C26*dx2 + C24)*dx2 + C22)*dx2 + C20)*x2 + C18)*x2 + C16)*x2 + C14)*x2 + C12)*x2 + C10)*x2 + C8)*x2 + C6)*x2 + C4)*(x2*x2) + C2*x2 + 1)" data-ref="_M/RETURNI">RETURNI</a>((((((((((((<a class="tu ref" href="#C26" title='C26' data-use='r' data-ref="C26">C26</a>*<a class="local col6 ref" href="#6dx2" title='dx2' data-ref="6dx2">dx2</a> + <a class="tu ref" href="#C24" title='C24' data-use='r' data-ref="C24">C24</a>)*<a class="local col6 ref" href="#6dx2" title='dx2' data-ref="6dx2">dx2</a> + <a class="tu ref" href="#C22" title='C22' data-use='r' data-ref="C22">C22</a>)*<a class="local col6 ref" href="#6dx2" title='dx2' data-ref="6dx2">dx2</a> +</td></tr>
+<tr><th id="112">112</th><td>		<a class="tu ref" href="#C20" title='C20' data-use='r' data-ref="C20">C20</a>)*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> + <a class="tu ref" href="#C18" title='C18' data-use='r' data-ref="C18">C18</a>)*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> +</td></tr>
+<tr><th id="113">113</th><td>		<a class="tu ref" href="#C16" title='C16' data-use='r' data-ref="C16">C16</a>)*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> + <a class="tu ref" href="#C14" title='C14' data-use='r' data-ref="C14">C14</a>)*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> + <a class="tu ref" href="#C12" title='C12' data-use='r' data-ref="C12">C12</a>)*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> + <a class="tu ref" href="#C10" title='C10' data-use='r' data-ref="C10">C10</a>)*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> + <a class="tu ref" href="#C8" title='C8' data-use='r' data-ref="C8">C8</a>)*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> + <a class="tu ref" href="#C6" title='C6' data-use='r' data-ref="C6">C6</a>)*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> +</td></tr>
+<tr><th id="114">114</th><td>		<a class="tu ref" href="#C4" title='C4' data-use='r' data-ref="C4">C4</a>)*(<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a>*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a>) + <a class="tu ref" href="#C2" title='C2' data-use='r' data-ref="C2">C2</a>*<a class="local col4 ref" href="#4x2" title='x2' data-ref="4x2">x2</a> + <var>1</var>);</td></tr>
+<tr><th id="115">115</th><td><u>#<span data-ppcond="105">endif</span></u></td></tr>
+<tr><th id="116">116</th><td>	}</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td>    <i>/* |x| in [1, 64), return accurate exp(|x|)/2+1/exp(|x|)/2 */</i></td></tr>
+<tr><th id="119">119</th><td>	<b>if</b> (<a class="local col7 ref" href="#7ix" title='ix' data-ref="7ix">ix</a> &lt; <var>0x4005</var>) {</td></tr>
+<tr><th id="120">120</th><td>	    <a class="ref" href="../ld128/k_expl.h.html#k_hexpl" title='k_hexpl' data-ref="k_hexpl">k_hexpl</a>(<a class="ref" href="../../../../../libc/include/math.h.html#fabsl" title='fabsl' data-ref="fabsl">fabsl</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>), &amp;<a class="local col2 ref" href="#2hi" title='hi' data-ref="2hi">hi</a>, &amp;<a class="local col3 ref" href="#3lo" title='lo' data-ref="3lo">lo</a>);</td></tr>
+<tr><th id="121">121</th><td>	    <a class="macro" href="math_private.h.html#311" title="return (lo + 0.25/(hi + lo) + hi)" data-ref="_M/RETURNI">RETURNI</a>(<a class="local col3 ref" href="#3lo" title='lo' data-ref="3lo">lo</a> + <var>0.25</var>/(<a class="local col2 ref" href="#2hi" title='hi' data-ref="2hi">hi</a> + <a class="local col3 ref" href="#3lo" title='lo' data-ref="3lo">lo</a>) + <a class="local col2 ref" href="#2hi" title='hi' data-ref="2hi">hi</a>);</td></tr>
+<tr><th id="122">122</th><td>	}</td></tr>
+<tr><th id="123">123</th><td></td></tr>
+<tr><th id="124">124</th><td>    <i>/* |x| in [64, o_threshold], return correctly-overflowing exp(|x|)/2 */</i></td></tr>
+<tr><th id="125">125</th><td>	<b>if</b> (<a class="ref" href="../../../../../libc/include/math.h.html#fabsl" title='fabsl' data-ref="fabsl">fabsl</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>) &lt;= <a class="tu ref" href="#o_threshold" title='o_threshold' data-use='r' data-ref="o_threshold">o_threshold</a>)</td></tr>
+<tr><th id="126">126</th><td>	    <a class="macro" href="math_private.h.html#311" title="return (hexpl(fabsl(x)))" data-ref="_M/RETURNI">RETURNI</a>(<a class="ref" href="../ld128/k_expl.h.html#hexpl" title='hexpl' data-ref="hexpl">hexpl</a>(<a class="ref" href="../../../../../libc/include/math.h.html#fabsl" title='fabsl' data-ref="fabsl">fabsl</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>)));</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td>    <i>/* |x| &gt; o_threshold, cosh(x) overflow */</i></td></tr>
+<tr><th id="129">129</th><td>	<a class="macro" href="math_private.h.html#311" title="return (huge*huge)" data-ref="_M/RETURNI">RETURNI</a>(<a class="tu ref" href="#huge" title='huge' data-use='r' data-ref="huge">huge</a>*<a class="tu ref" href="#huge" title='huge' data-use='r' data-ref="huge">huge</a>);</td></tr>
+<tr><th id="130">130</th><td>}</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

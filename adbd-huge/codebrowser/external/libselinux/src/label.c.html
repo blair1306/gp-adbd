@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>label.c source code [codebrowser/external/libselinux/src/label.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/label.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='label.c.html'>label.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Generalized labeling frontend for userspace object managers.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Author : Eamon Walsh &lt;ewalsh@epoch.ncsc.mil&gt;</i></td></tr>
+<tr><th id="5">5</th><td><i> */</i></td></tr>
+<tr><th id="6">6</th><td></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="../../../bionic/libc/include/ctype.h.html">&lt;ctype.h&gt;</a></u></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="10">10</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="11">11</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="12">12</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="../include/selinux/selinux.h.html">&lt;selinux/selinux.h&gt;</a></u></td></tr>
+<tr><th id="14">14</th><td><u>#include <a href="callbacks.h.html">"callbacks.h"</a></u></td></tr>
+<tr><th id="15">15</th><td><u>#include <a href="label_internal.h.html">"label_internal.h"</a></u></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#define <dfn class="macro" id="_M/ARRAY_SIZE" data-ref="_M/ARRAY_SIZE">ARRAY_SIZE</dfn>(x) (sizeof(x) / sizeof((x)[0]))</u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><b>typedef</b> <em>int</em> (*<dfn class="typedef" id="selabel_initfunc" title='selabel_initfunc' data-type='int (*)(struct selabel_handle *, const struct selinux_opt *, unsigned int)' data-ref="selabel_initfunc">selabel_initfunc</dfn>)(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col1 decl" id="1rec" title='rec' data-type='struct selabel_handle *' data-ref="1rec">rec</dfn>,</td></tr>
+<tr><th id="20">20</th><td>				<em>const</em> <b>struct</b> <a class="type" href="../include/selinux/selinux.h.html#selinux_opt" title='selinux_opt' data-ref="selinux_opt">selinux_opt</a> *<dfn class="local col2 decl" id="2opts" title='opts' data-type='const struct selinux_opt *' data-ref="2opts">opts</dfn>,</td></tr>
+<tr><th id="21">21</th><td>				<em>unsigned</em> <dfn class="local col3 decl" id="3nopts" title='nopts' data-type='unsigned int' data-ref="3nopts">nopts</dfn>);</td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><em>static</em> <a class="typedef" href="#selabel_initfunc" title='selabel_initfunc' data-type='int (*)(struct selabel_handle *, const struct selinux_opt *, unsigned int)' data-ref="selabel_initfunc">selabel_initfunc</a> <dfn class="tu decl def" id="initfuncs" title='initfuncs' data-type='selabel_initfunc [5]' data-ref="initfuncs">initfuncs</dfn>[] = {</td></tr>
+<tr><th id="24">24</th><td>	&amp;<a class="ref" href="label_internal.h.html#selabel_file_init" title='selabel_file_init' data-ref="selabel_file_init">selabel_file_init</a>,</td></tr>
+<tr><th id="25">25</th><td>	<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,</td></tr>
+<tr><th id="26">26</th><td>	<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,</td></tr>
+<tr><th id="27">27</th><td>	<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,</td></tr>
+<tr><th id="28">28</th><td>	&amp;<a class="ref" href="label_internal.h.html#selabel_property_init" title='selabel_property_init' data-ref="selabel_property_init">selabel_property_init</a>,</td></tr>
+<tr><th id="29">29</th><td>};</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><i  data-doc="selabel_is_validate_set">/*</i></td></tr>
+<tr><th id="32">32</th><td><i  data-doc="selabel_is_validate_set"> * Validation functions</i></td></tr>
+<tr><th id="33">33</th><td><i  data-doc="selabel_is_validate_set"> */</i></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="tu decl def" id="selabel_is_validate_set" title='selabel_is_validate_set' data-type='int selabel_is_validate_set(const struct selinux_opt * opts, unsigned int n)' data-ref="selabel_is_validate_set">selabel_is_validate_set</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../include/selinux/selinux.h.html#selinux_opt" title='selinux_opt' data-ref="selinux_opt">selinux_opt</a> *<dfn class="local col4 decl" id="4opts" title='opts' data-type='const struct selinux_opt *' data-ref="4opts">opts</dfn>,</td></tr>
+<tr><th id="36">36</th><td>					  <em>unsigned</em> <dfn class="local col5 decl" id="5n" title='n' data-type='unsigned int' data-ref="5n">n</dfn>)</td></tr>
+<tr><th id="37">37</th><td>{</td></tr>
+<tr><th id="38">38</th><td>	<b>while</b> (<a class="local col5 ref" href="#5n" title='n' data-ref="5n">n</a>--)</td></tr>
+<tr><th id="39">39</th><td>		<b>if</b> (<a class="local col4 ref" href="#4opts" title='opts' data-ref="4opts">opts</a>[<a class="local col5 ref" href="#5n" title='n' data-ref="5n">n</a>].<a class="ref" href="../include/selinux/selinux.h.html#selinux_opt::type" title='selinux_opt::type' data-ref="selinux_opt::type">type</a> == <a class="macro" href="../include/selinux/label.h.html#45" title="1" data-ref="_M/SELABEL_OPT_VALIDATE">SELABEL_OPT_VALIDATE</a>)</td></tr>
+<tr><th id="40">40</th><td>			<b>return</b> !!<a class="local col4 ref" href="#4opts" title='opts' data-ref="4opts">opts</a>[<a class="local col5 ref" href="#5n" title='n' data-ref="5n">n</a>].<a class="ref" href="../include/selinux/selinux.h.html#selinux_opt::value" title='selinux_opt::value' data-ref="selinux_opt::value">value</a>;</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="43">43</th><td>}</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><em>int</em> <dfn class="decl def" id="selabel_validate" title='selabel_validate' data-ref="selabel_validate">selabel_validate</dfn>(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col6 decl" id="6rec" title='rec' data-type='struct selabel_handle *' data-ref="6rec">rec</dfn>,</td></tr>
+<tr><th id="46">46</th><td>		     <b>struct</b> <a class="type" href="label_internal.h.html#selabel_lookup_rec" title='selabel_lookup_rec' data-ref="selabel_lookup_rec">selabel_lookup_rec</a> *<dfn class="local col7 decl" id="7contexts" title='contexts' data-type='struct selabel_lookup_rec *' data-ref="7contexts">contexts</dfn>)</td></tr>
+<tr><th id="47">47</th><td>{</td></tr>
+<tr><th id="48">48</th><td>	<em>int</em> <dfn class="local col8 decl" id="8rc" title='rc' data-type='int' data-ref="8rc">rc</dfn> = <var>0</var>;</td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td>	<b>if</b> (!<a class="local col6 ref" href="#6rec" title='rec' data-ref="6rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::validating" title='selabel_handle::validating' data-ref="selabel_handle::validating">validating</a> || <a class="local col7 ref" href="#7contexts" title='contexts' data-ref="7contexts">contexts</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_lookup_rec::validated" title='selabel_lookup_rec::validated' data-ref="selabel_lookup_rec::validated">validated</a>)</td></tr>
+<tr><th id="51">51</th><td>		<b>goto</b> <a class="lbl" href="#9out" data-ref="9out">out</a>;</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td>	<a class="local col8 ref" href="#8rc" title='rc' data-ref="8rc">rc</a> = <a class="ref" href="callbacks.h.html#selinux_validate" title='selinux_validate' data-ref="selinux_validate">selinux_validate</a>(&amp;<a class="local col7 ref" href="#7contexts" title='contexts' data-ref="7contexts">contexts</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_lookup_rec::ctx_raw" title='selabel_lookup_rec::ctx_raw' data-ref="selabel_lookup_rec::ctx_raw">ctx_raw</a>);</td></tr>
+<tr><th id="54">54</th><td>	<b>if</b> (<a class="local col8 ref" href="#8rc" title='rc' data-ref="8rc">rc</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="55">55</th><td>		<b>goto</b> <a class="lbl" href="#9out" data-ref="9out">out</a>;</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td>	<a class="local col7 ref" href="#7contexts" title='contexts' data-ref="7contexts">contexts</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_lookup_rec::validated" title='selabel_lookup_rec::validated' data-ref="selabel_lookup_rec::validated">validated</a> = <var>1</var>;</td></tr>
+<tr><th id="58">58</th><td><dfn class="lbl" id="9out" data-ref="9out">out</dfn>:</td></tr>
+<tr><th id="59">59</th><td>	<b>return</b> <a class="local col8 ref" href="#8rc" title='rc' data-ref="8rc">rc</a>;</td></tr>
+<tr><th id="60">60</th><td>}</td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><i>/*</i></td></tr>
+<tr><th id="63">63</th><td><i> * Public API</i></td></tr>
+<tr><th id="64">64</th><td><i> */</i></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="decl def" id="selabel_open" title='selabel_open' data-ref="selabel_open">selabel_open</dfn>(<em>unsigned</em> <em>int</em> <dfn class="local col0 decl" id="10backend" title='backend' data-type='unsigned int' data-ref="10backend">backend</dfn>,</td></tr>
+<tr><th id="67">67</th><td>				    <em>const</em> <b>struct</b> <a class="type" href="../include/selinux/selinux.h.html#selinux_opt" title='selinux_opt' data-ref="selinux_opt">selinux_opt</a> *<dfn class="local col1 decl" id="11opts" title='opts' data-type='const struct selinux_opt *' data-ref="11opts">opts</dfn>,</td></tr>
+<tr><th id="68">68</th><td>				    <em>unsigned</em> <dfn class="local col2 decl" id="12nopts" title='nopts' data-type='unsigned int' data-ref="12nopts">nopts</dfn>)</td></tr>
+<tr><th id="69">69</th><td>{</td></tr>
+<tr><th id="70">70</th><td>	<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col3 decl" id="13rec" title='rec' data-type='struct selabel_handle *' data-ref="13rec">rec</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td>	<b>if</b> (<a class="local col0 ref" href="#10backend" title='backend' data-ref="10backend">backend</a> &gt;= <a class="macro" href="#17" title="(sizeof(initfuncs) / sizeof((initfuncs)[0]))" data-ref="_M/ARRAY_SIZE">ARRAY_SIZE</a>(<a class="tu ref" href="#initfuncs" title='initfuncs' data-use='r' data-ref="initfuncs">initfuncs</a>)) {</td></tr>
+<tr><th id="73">73</th><td>		<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="74">74</th><td>		<b>goto</b> <a class="lbl" href="#14out" data-ref="14out">out</a>;</td></tr>
+<tr><th id="75">75</th><td>	}</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td>	<b>if</b> (<a class="tu ref" href="#initfuncs" title='initfuncs' data-use='r' data-ref="initfuncs">initfuncs</a>[<a class="local col0 ref" href="#10backend" title='backend' data-ref="10backend">backend</a>] == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="78">78</th><td>		<b>goto</b> <a class="lbl" href="#14out" data-ref="14out">out</a>;</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td>	<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a> = (<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *)<a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<b>sizeof</b>(*<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>));</td></tr>
+<tr><th id="81">81</th><td>	<b>if</b> (!<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>)</td></tr>
+<tr><th id="82">82</th><td>		<b>goto</b> <a class="lbl" href="#14out" data-ref="14out">out</a>;</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td>	<a class="ref" href="../../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>, <var>0</var>, <b>sizeof</b>(*<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>));</td></tr>
+<tr><th id="85">85</th><td>	<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::backend" title='selabel_handle::backend' data-ref="selabel_handle::backend">backend</a> = <a class="local col0 ref" href="#10backend" title='backend' data-ref="10backend">backend</a>;</td></tr>
+<tr><th id="86">86</th><td>	<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::validating" title='selabel_handle::validating' data-ref="selabel_handle::validating">validating</a> = <a class="tu ref" href="#selabel_is_validate_set" title='selabel_is_validate_set' data-use='c' data-ref="selabel_is_validate_set">selabel_is_validate_set</a>(<a class="local col1 ref" href="#11opts" title='opts' data-ref="11opts">opts</a>, <a class="local col2 ref" href="#12nopts" title='nopts' data-ref="12nopts">nopts</a>);</td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td>	<b>if</b> ((*<a class="tu ref" href="#initfuncs" title='initfuncs' data-use='r' data-ref="initfuncs">initfuncs</a>[<a class="local col0 ref" href="#10backend" title='backend' data-ref="10backend">backend</a>])(<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>, <a class="local col1 ref" href="#11opts" title='opts' data-ref="11opts">opts</a>, <a class="local col2 ref" href="#12nopts" title='nopts' data-ref="12nopts">nopts</a>)) {</td></tr>
+<tr><th id="89">89</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::spec_file" title='selabel_handle::spec_file' data-ref="selabel_handle::spec_file">spec_file</a>);</td></tr>
+<tr><th id="90">90</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>);</td></tr>
+<tr><th id="91">91</th><td>		<a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="92">92</th><td>	}</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><dfn class="lbl" id="14out" data-ref="14out">out</dfn>:</td></tr>
+<tr><th id="95">95</th><td>	<b>return</b> <a class="local col3 ref" href="#13rec" title='rec' data-ref="13rec">rec</a>;</td></tr>
+<tr><th id="96">96</th><td>}</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><em>static</em> <b>struct</b> <a class="type" href="label_internal.h.html#selabel_lookup_rec" title='selabel_lookup_rec' data-ref="selabel_lookup_rec">selabel_lookup_rec</a> *</td></tr>
+<tr><th id="99">99</th><td><dfn class="tu decl def" id="selabel_lookup_common" title='selabel_lookup_common' data-type='struct selabel_lookup_rec * selabel_lookup_common(struct selabel_handle * rec, const char * key, int type)' data-ref="selabel_lookup_common">selabel_lookup_common</dfn>(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col5 decl" id="15rec" title='rec' data-type='struct selabel_handle *' data-ref="15rec">rec</dfn>,</td></tr>
+<tr><th id="100">100</th><td>		      <em>const</em> <em>char</em> *<dfn class="local col6 decl" id="16key" title='key' data-type='const char *' data-ref="16key">key</dfn>, <em>int</em> <dfn class="local col7 decl" id="17type" title='type' data-type='int' data-ref="17type">type</dfn>)</td></tr>
+<tr><th id="101">101</th><td>{</td></tr>
+<tr><th id="102">102</th><td>	<b>struct</b> <a class="type" href="label_internal.h.html#selabel_lookup_rec" title='selabel_lookup_rec' data-ref="selabel_lookup_rec">selabel_lookup_rec</a> *<dfn class="local col8 decl" id="18lr" title='lr' data-type='struct selabel_lookup_rec *' data-ref="18lr">lr</dfn>;</td></tr>
+<tr><th id="103">103</th><td>	<a class="local col8 ref" href="#18lr" title='lr' data-ref="18lr">lr</a> = <a class="local col5 ref" href="#15rec" title='rec' data-ref="15rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_lookup" title='selabel_handle::func_lookup' data-ref="selabel_handle::func_lookup">func_lookup</a>(<a class="local col5 ref" href="#15rec" title='rec' data-ref="15rec">rec</a>, <a class="local col6 ref" href="#16key" title='key' data-ref="16key">key</a>, <a class="local col7 ref" href="#17type" title='type' data-ref="17type">type</a>); </td></tr>
+<tr><th id="104">104</th><td>	<b>if</b> (!<a class="local col8 ref" href="#18lr" title='lr' data-ref="18lr">lr</a>)</td></tr>
+<tr><th id="105">105</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td>	<b>return</b> <a class="local col8 ref" href="#18lr" title='lr' data-ref="18lr">lr</a>;</td></tr>
+<tr><th id="108">108</th><td>}</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><em>int</em> <dfn class="decl def" id="selabel_lookup" title='selabel_lookup' data-ref="selabel_lookup">selabel_lookup</dfn>(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col9 decl" id="19rec" title='rec' data-type='struct selabel_handle *' data-ref="19rec">rec</dfn>, <em>char</em> **<dfn class="local col0 decl" id="20con" title='con' data-type='char **' data-ref="20con">con</dfn>,</td></tr>
+<tr><th id="111">111</th><td>		   <em>const</em> <em>char</em> *<dfn class="local col1 decl" id="21key" title='key' data-type='const char *' data-ref="21key">key</dfn>, <em>int</em> <dfn class="local col2 decl" id="22type" title='type' data-type='int' data-ref="22type">type</dfn>)</td></tr>
+<tr><th id="112">112</th><td>{</td></tr>
+<tr><th id="113">113</th><td>	<b>struct</b> <a class="type" href="label_internal.h.html#selabel_lookup_rec" title='selabel_lookup_rec' data-ref="selabel_lookup_rec">selabel_lookup_rec</a> *<dfn class="local col3 decl" id="23lr" title='lr' data-type='struct selabel_lookup_rec *' data-ref="23lr">lr</dfn>;</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td>	<a class="local col3 ref" href="#23lr" title='lr' data-ref="23lr">lr</a> = <a class="tu ref" href="#selabel_lookup_common" title='selabel_lookup_common' data-use='c' data-ref="selabel_lookup_common">selabel_lookup_common</a>(<a class="local col9 ref" href="#19rec" title='rec' data-ref="19rec">rec</a>, <a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col2 ref" href="#22type" title='type' data-ref="22type">type</a>);</td></tr>
+<tr><th id="116">116</th><td>	<b>if</b> (!<a class="local col3 ref" href="#23lr" title='lr' data-ref="23lr">lr</a>)</td></tr>
+<tr><th id="117">117</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td>	*<a class="local col0 ref" href="#20con" title='con' data-ref="20con">con</a> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strdup" title='strdup' data-ref="strdup">strdup</a>(<a class="local col3 ref" href="#23lr" title='lr' data-ref="23lr">lr</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_lookup_rec::ctx_raw" title='selabel_lookup_rec::ctx_raw' data-ref="selabel_lookup_rec::ctx_raw">ctx_raw</a>);</td></tr>
+<tr><th id="120">120</th><td>	<b>return</b> *<a class="local col0 ref" href="#20con" title='con' data-ref="20con">con</a> ? <var>0</var> : -<var>1</var>;</td></tr>
+<tr><th id="121">121</th><td>}</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <dfn class="decl def" id="selabel_partial_match" title='selabel_partial_match' data-ref="selabel_partial_match">selabel_partial_match</dfn>(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col4 decl" id="24rec" title='rec' data-type='struct selabel_handle *' data-ref="24rec">rec</dfn>, <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="25key" title='key' data-type='const char *' data-ref="25key">key</dfn>)</td></tr>
+<tr><th id="124">124</th><td>{</td></tr>
+<tr><th id="125">125</th><td>	<b>if</b> (!<a class="local col4 ref" href="#24rec" title='rec' data-ref="24rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_partial_match" title='selabel_handle::func_partial_match' data-ref="selabel_handle::func_partial_match">func_partial_match</a>) {</td></tr>
+<tr><th id="126">126</th><td>		<i>/*</i></td></tr>
+<tr><th id="127">127</th><td><i>		 * If the label backend does not support partial matching,</i></td></tr>
+<tr><th id="128">128</th><td><i>		 * then assume a match is possible.</i></td></tr>
+<tr><th id="129">129</th><td><i>		 */</i></td></tr>
+<tr><th id="130">130</th><td>		<b>return</b> <span class="macro" title="1" data-ref="_M/true">true</span>;</td></tr>
+<tr><th id="131">131</th><td>	}</td></tr>
+<tr><th id="132">132</th><td>	<b>return</b> <a class="local col4 ref" href="#24rec" title='rec' data-ref="24rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_partial_match" title='selabel_handle::func_partial_match' data-ref="selabel_handle::func_partial_match">func_partial_match</a>(<a class="local col4 ref" href="#24rec" title='rec' data-ref="24rec">rec</a>, <a class="local col5 ref" href="#25key" title='key' data-ref="25key">key</a>);</td></tr>
+<tr><th id="133">133</th><td>}</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td><em>int</em> <dfn class="decl def" id="selabel_lookup_best_match" title='selabel_lookup_best_match' data-ref="selabel_lookup_best_match">selabel_lookup_best_match</dfn>(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col6 decl" id="26rec" title='rec' data-type='struct selabel_handle *' data-ref="26rec">rec</dfn>, <em>char</em> **<dfn class="local col7 decl" id="27con" title='con' data-type='char **' data-ref="27con">con</dfn>,</td></tr>
+<tr><th id="136">136</th><td>			      <em>const</em> <em>char</em> *<dfn class="local col8 decl" id="28key" title='key' data-type='const char *' data-ref="28key">key</dfn>, <em>const</em> <em>char</em> **<dfn class="local col9 decl" id="29aliases" title='aliases' data-type='const char **' data-ref="29aliases">aliases</dfn>, <em>int</em> <dfn class="local col0 decl" id="30type" title='type' data-type='int' data-ref="30type">type</dfn>)</td></tr>
+<tr><th id="137">137</th><td>{</td></tr>
+<tr><th id="138">138</th><td>	<b>struct</b> <a class="type" href="label_internal.h.html#selabel_lookup_rec" title='selabel_lookup_rec' data-ref="selabel_lookup_rec">selabel_lookup_rec</a> *<dfn class="local col1 decl" id="31lr" title='lr' data-type='struct selabel_lookup_rec *' data-ref="31lr">lr</dfn>;</td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td>	<b>if</b> (!<a class="local col6 ref" href="#26rec" title='rec' data-ref="26rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_lookup_best_match" title='selabel_handle::func_lookup_best_match' data-ref="selabel_handle::func_lookup_best_match">func_lookup_best_match</a>) {</td></tr>
+<tr><th id="141">141</th><td>		<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/include/errno.h.html#40" title="95" data-ref="_M/ENOTSUP">ENOTSUP</a>;</td></tr>
+<tr><th id="142">142</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="143">143</th><td>	}</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td>	<a class="local col1 ref" href="#31lr" title='lr' data-ref="31lr">lr</a> = <a class="local col6 ref" href="#26rec" title='rec' data-ref="26rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_lookup_best_match" title='selabel_handle::func_lookup_best_match' data-ref="selabel_handle::func_lookup_best_match">func_lookup_best_match</a>(<a class="local col6 ref" href="#26rec" title='rec' data-ref="26rec">rec</a>, <a class="local col8 ref" href="#28key" title='key' data-ref="28key">key</a>, <a class="local col9 ref" href="#29aliases" title='aliases' data-ref="29aliases">aliases</a>, <a class="local col0 ref" href="#30type" title='type' data-ref="30type">type</a>);</td></tr>
+<tr><th id="146">146</th><td>	<b>if</b> (!<a class="local col1 ref" href="#31lr" title='lr' data-ref="31lr">lr</a>)</td></tr>
+<tr><th id="147">147</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td>	*<a class="local col7 ref" href="#27con" title='con' data-ref="27con">con</a> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strdup" title='strdup' data-ref="strdup">strdup</a>(<a class="local col1 ref" href="#31lr" title='lr' data-ref="31lr">lr</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_lookup_rec::ctx_raw" title='selabel_lookup_rec::ctx_raw' data-ref="selabel_lookup_rec::ctx_raw">ctx_raw</a>);</td></tr>
+<tr><th id="150">150</th><td>	<b>return</b> *<a class="local col7 ref" href="#27con" title='con' data-ref="27con">con</a> ? <var>0</var> : -<var>1</var>;</td></tr>
+<tr><th id="151">151</th><td>}</td></tr>
+<tr><th id="152">152</th><td></td></tr>
+<tr><th id="153">153</th><td><b>enum</b> <a class="type" href="../include/selinux/label.h.html#selabel_cmp_result" title='selabel_cmp_result' data-ref="selabel_cmp_result">selabel_cmp_result</a> <dfn class="decl def" id="selabel_cmp" title='selabel_cmp' data-ref="selabel_cmp">selabel_cmp</dfn>(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col2 decl" id="32h1" title='h1' data-type='struct selabel_handle *' data-ref="32h1">h1</dfn>,</td></tr>
+<tr><th id="154">154</th><td>				    <b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col3 decl" id="33h2" title='h2' data-type='struct selabel_handle *' data-ref="33h2">h2</dfn>)</td></tr>
+<tr><th id="155">155</th><td>{</td></tr>
+<tr><th id="156">156</th><td>	<b>if</b> (!<a class="local col2 ref" href="#32h1" title='h1' data-ref="32h1">h1</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_cmp" title='selabel_handle::func_cmp' data-ref="selabel_handle::func_cmp">func_cmp</a> || <a class="local col2 ref" href="#32h1" title='h1' data-ref="32h1">h1</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_cmp" title='selabel_handle::func_cmp' data-ref="selabel_handle::func_cmp">func_cmp</a> != <a class="local col3 ref" href="#33h2" title='h2' data-ref="33h2">h2</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_cmp" title='selabel_handle::func_cmp' data-ref="selabel_handle::func_cmp">func_cmp</a>)</td></tr>
+<tr><th id="157">157</th><td>		<b>return</b> <a class="enum" href="../include/selinux/label.h.html#selabel_cmp_result::SELABEL_INCOMPARABLE" title='selabel_cmp_result::SELABEL_INCOMPARABLE' data-ref="selabel_cmp_result::SELABEL_INCOMPARABLE">SELABEL_INCOMPARABLE</a>;</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td>	<b>return</b> <a class="local col2 ref" href="#32h1" title='h1' data-ref="32h1">h1</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_cmp" title='selabel_handle::func_cmp' data-ref="selabel_handle::func_cmp">func_cmp</a>(<a class="local col2 ref" href="#32h1" title='h1' data-ref="32h1">h1</a>, <a class="local col3 ref" href="#33h2" title='h2' data-ref="33h2">h2</a>);</td></tr>
+<tr><th id="160">160</th><td>}</td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td><em>void</em> <dfn class="decl def" id="selabel_close" title='selabel_close' data-ref="selabel_close">selabel_close</dfn>(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col4 decl" id="34rec" title='rec' data-type='struct selabel_handle *' data-ref="34rec">rec</dfn>)</td></tr>
+<tr><th id="163">163</th><td>{</td></tr>
+<tr><th id="164">164</th><td>	<a class="local col4 ref" href="#34rec" title='rec' data-ref="34rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_close" title='selabel_handle::func_close' data-ref="selabel_handle::func_close">func_close</a>(<a class="local col4 ref" href="#34rec" title='rec' data-ref="34rec">rec</a>);</td></tr>
+<tr><th id="165">165</th><td>	<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col4 ref" href="#34rec" title='rec' data-ref="34rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::spec_file" title='selabel_handle::spec_file' data-ref="selabel_handle::spec_file">spec_file</a>);</td></tr>
+<tr><th id="166">166</th><td>	<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col4 ref" href="#34rec" title='rec' data-ref="34rec">rec</a>);</td></tr>
+<tr><th id="167">167</th><td>}</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td><em>void</em> <dfn class="decl def" id="selabel_stats" title='selabel_stats' data-ref="selabel_stats">selabel_stats</dfn>(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col5 decl" id="35rec" title='rec' data-type='struct selabel_handle *' data-ref="35rec">rec</dfn>)</td></tr>
+<tr><th id="170">170</th><td>{</td></tr>
+<tr><th id="171">171</th><td>	<a class="local col5 ref" href="#35rec" title='rec' data-ref="35rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::func_stats" title='selabel_handle::func_stats' data-ref="selabel_handle::func_stats">func_stats</a>(<a class="local col5 ref" href="#35rec" title='rec' data-ref="35rec">rec</a>);</td></tr>
+<tr><th id="172">172</th><td>}</td></tr>
+<tr><th id="173">173</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

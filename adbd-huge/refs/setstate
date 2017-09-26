@@ -1,0 +1,22 @@
+<dec f='codebrowser/bionic/libc/include/stdlib.h' l='128' type='char * setstate(char * )'/>
+<def f='codebrowser/bionic/libc/upstream-netbsd/common/lib/libc/stdlib/random.c' l='408' ll='449' type='char * setstate(char * arg_state)'/>
+<doc f='codebrowser/bionic/libc/upstream-netbsd/common/lib/libc/stdlib/random.c' l='389'>/*
+ * setstate:
+ *
+ * Restore the state from the given state array.
+ *
+ * Note: it is important that we also remember the locations of the pointers
+ * in the current state information, and restore the locations of the pointers
+ * from the old state information.  This is done by multiplexing the pointer
+ * location into the zeroeth word of the state information.
+ *
+ * Note that due to the order in which things are done, it is OK to call
+ * setstate() with the same state as the current state.
+ *
+ * Returns a pointer to the old state information.
+ *
+ * Note: The Sparc platform requires that arg_state begin on a long
+ * word boundary; otherwise a bus error will occur. Even so, lint will
+ * complain about mis-alignment, but you should disregard these messages.
+ */</doc>
+<dec f='codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdlib.h' l='120' type='char * setstate(char * )'/>

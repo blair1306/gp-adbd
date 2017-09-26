@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>fgetln.c source code [codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/fgetln.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/fgetln.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libc</a>/<a href='../../..'>upstream-openbsd</a>/<a href='../..'>lib</a>/<a href='..'>libc</a>/<a href='./'>stdio</a>/<a href='fgetln.c.html'>fgetln.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$OpenBSD: fgetln.c,v 1.13 2015/01/05 21:58:52 millert Exp $ */</i></td></tr>
+<tr><th id="2">2</th><td><i>/*-</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright (c) 1990, 1993</i></td></tr>
+<tr><th id="4">4</th><td><i> *	The Regents of the University of California.  All rights reserved.</i></td></tr>
+<tr><th id="5">5</th><td><i> *</i></td></tr>
+<tr><th id="6">6</th><td><i> * This code is derived from software contributed to Berkeley by</i></td></tr>
+<tr><th id="7">7</th><td><i> * Chris Torek.</i></td></tr>
+<tr><th id="8">8</th><td><i> *</i></td></tr>
+<tr><th id="9">9</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="10">10</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="11">11</th><td><i> * are met:</i></td></tr>
+<tr><th id="12">12</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="13">13</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="14">14</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="15">15</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="16">16</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="17">17</th><td><i> * 3. Neither the name of the University nor the names of its contributors</i></td></tr>
+<tr><th id="18">18</th><td><i> *    may be used to endorse or promote products derived from this software</i></td></tr>
+<tr><th id="19">19</th><td><i> *    without specific prior written permission.</i></td></tr>
+<tr><th id="20">20</th><td><i> *</i></td></tr>
+<tr><th id="21">21</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND</i></td></tr>
+<tr><th id="22">22</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="23">23</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="24">24</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="25">25</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="26">26</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="27">27</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="28">28</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="29">29</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="30">30</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="31">31</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="32">32</th><td><i> */</i></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../../../../include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="../../../../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="../../../../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td><u>#include <a href="../../../../stdio/local.h.html">"local.h"</a></u></td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><i  data-doc="__slbexpand">/*</i></td></tr>
+<tr><th id="40">40</th><td><i  data-doc="__slbexpand"> * Expand the line buffer.  Return -1 on error.</i></td></tr>
+<tr><th id="41">41</th><td><i  data-doc="__slbexpand"> */</i></td></tr>
+<tr><th id="42">42</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="43">43</th><td><dfn class="tu decl def" id="__slbexpand" title='__slbexpand' data-type='int __slbexpand(FILE * fp, size_t newsize)' data-ref="__slbexpand">__slbexpand</dfn>(<a class="typedef" href="../../../../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col1 decl" id="1fp" title='fp' data-type='FILE *' data-ref="1fp">fp</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="2newsize" title='newsize' data-type='size_t' data-ref="2newsize">newsize</dfn>)</td></tr>
+<tr><th id="44">44</th><td>{</td></tr>
+<tr><th id="45">45</th><td>	<em>void</em> *<dfn class="local col3 decl" id="3p" title='p' data-type='void *' data-ref="3p">p</dfn>;</td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td>	<b>if</b> (<a class="local col1 ref" href="#1fp" title='fp' data-ref="1fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_lb" title='__sFILE::_lb' data-ref="__sFILE::_lb">_lb</a>.<a class="ref" href="../../../../stdio/local.h.html#__sbuf::_size" title='__sbuf::_size' data-ref="__sbuf::_size">_size</a> &gt;= <a class="local col2 ref" href="#2newsize" title='newsize' data-ref="2newsize">newsize</a>)</td></tr>
+<tr><th id="48">48</th><td>		<b>return</b> (<var>0</var>);</td></tr>
+<tr><th id="49">49</th><td>	<b>if</b> ((<a class="local col3 ref" href="#3p" title='p' data-ref="3p">p</a> = <a class="ref" href="../../../../include/malloc.h.html#realloc" title='realloc' data-ref="realloc">realloc</a>(<a class="local col1 ref" href="#1fp" title='fp' data-ref="1fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_lb" title='__sFILE::_lb' data-ref="__sFILE::_lb">_lb</a>.<a class="ref" href="../../../../stdio/local.h.html#__sbuf::_base" title='__sbuf::_base' data-ref="__sbuf::_base">_base</a>, <a class="local col2 ref" href="#2newsize" title='newsize' data-ref="2newsize">newsize</a>)) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="50">50</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="51">51</th><td>	<a class="local col1 ref" href="#1fp" title='fp' data-ref="1fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_lb" title='__sFILE::_lb' data-ref="__sFILE::_lb">_lb</a>.<a class="ref" href="../../../../stdio/local.h.html#__sbuf::_base" title='__sbuf::_base' data-ref="__sbuf::_base">_base</a> = <a class="local col3 ref" href="#3p" title='p' data-ref="3p">p</a>;</td></tr>
+<tr><th id="52">52</th><td>	<a class="local col1 ref" href="#1fp" title='fp' data-ref="1fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_lb" title='__sFILE::_lb' data-ref="__sFILE::_lb">_lb</a>.<a class="ref" href="../../../../stdio/local.h.html#__sbuf::_size" title='__sbuf::_size' data-ref="__sbuf::_size">_size</a> = <a class="local col2 ref" href="#2newsize" title='newsize' data-ref="2newsize">newsize</a>;</td></tr>
+<tr><th id="53">53</th><td>	<b>return</b> (<var>0</var>);</td></tr>
+<tr><th id="54">54</th><td>}</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><i>/*</i></td></tr>
+<tr><th id="57">57</th><td><i> * Get an input line.  The returned pointer often (but not always)</i></td></tr>
+<tr><th id="58">58</th><td><i> * points into a stdio buffer.  Fgetline does not alter the text of</i></td></tr>
+<tr><th id="59">59</th><td><i> * the returned line (which is thus not a C string because it will</i></td></tr>
+<tr><th id="60">60</th><td><i> * not necessarily end with '\0'), but does allow callers to modify</i></td></tr>
+<tr><th id="61">61</th><td><i> * it if they wish.  Thus, we set __SMOD in case the caller does.</i></td></tr>
+<tr><th id="62">62</th><td><i> */</i></td></tr>
+<tr><th id="63">63</th><td><em>char</em> *</td></tr>
+<tr><th id="64">64</th><td><dfn class="decl def" id="fgetln" title='fgetln' data-ref="fgetln">fgetln</dfn>(<a class="typedef" href="../../../../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col4 decl" id="4fp" title='fp' data-type='FILE *' data-ref="4fp">fp</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col5 decl" id="5lenp" title='lenp' data-type='size_t *' data-ref="5lenp">lenp</dfn>)</td></tr>
+<tr><th id="65">65</th><td>{</td></tr>
+<tr><th id="66">66</th><td>	<em>unsigned</em> <em>char</em> *<dfn class="local col6 decl" id="6p" title='p' data-type='unsigned char *' data-ref="6p">p</dfn>;</td></tr>
+<tr><th id="67">67</th><td>	<em>char</em> *<dfn class="local col7 decl" id="7ret" title='ret' data-type='char *' data-ref="7ret">ret</dfn>;</td></tr>
+<tr><th id="68">68</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="8len" title='len' data-type='size_t' data-ref="8len">len</dfn>;</td></tr>
+<tr><th id="69">69</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="9off" title='off' data-type='size_t' data-ref="9off">off</dfn>;</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td>	<a class="macro" href="../../../../stdio/local.h.html#242" title="if (!((struct __sfileext *)((fp)-&gt;_ext._base))-&gt;_caller_handles_locking) flockfile(fp)" data-ref="_M/FLOCKFILE">FLOCKFILE</a>(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>);</td></tr>
+<tr><th id="72">72</th><td>	<a class="macro" href="../../../../stdio/wcio.h.html#55" title="do { struct wchar_io_data *_wcio = (((struct __sfileext *)((fp)-&gt;_ext._base)) ? &amp;(((struct __sfileext *)((fp)-&gt;_ext._base))-&gt;_wcio) : (struct wchar_io_data *)0); if (_wcio &amp;&amp; _wcio-&gt;wcio_mode == 0) _wcio-&gt;wcio_mode = (-1);} while (0)" data-ref="_M/_SET_ORIENTATION">_SET_ORIENTATION</a>(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>, -<var>1</var>);</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>	<i>/* make sure there is input */</i></td></tr>
+<tr><th id="75">75</th><td>	<b>if</b> (<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_r" title='__sFILE::_r' data-ref="__sFILE::_r">_r</a> &lt;= <var>0</var> &amp;&amp; <a class="ref" href="../../../../stdio/local.h.html#__srefill" title='__srefill' data-ref="__srefill">__srefill</a>(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>))</td></tr>
+<tr><th id="76">76</th><td>		<b>goto</b> <a class="lbl" href="#10error" data-ref="10error">error</a>;</td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td>	<i>/* look for a newline in the input */</i></td></tr>
+<tr><th id="79">79</th><td>	<b>if</b> ((<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> = <a class="ref" href="../../../../include/string.h.html#memchr" title='memchr' data-ref="memchr">memchr</a>((<em>void</em> *)<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</a>, <kbd>'\n'</kbd>, <a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_r" title='__sFILE::_r' data-ref="__sFILE::_r">_r</a>)) != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="80">80</th><td>		<i>/*</i></td></tr>
+<tr><th id="81">81</th><td><i>		 * Found one.  Flag buffer as modified to keep fseek from</i></td></tr>
+<tr><th id="82">82</th><td><i>		 * `optimising' a backward seek, in case the user stomps on</i></td></tr>
+<tr><th id="83">83</th><td><i>		 * the text.</i></td></tr>
+<tr><th id="84">84</th><td><i>		 */</i></td></tr>
+<tr><th id="85">85</th><td>		<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>++;		<i>/* advance over it */</i></td></tr>
+<tr><th id="86">86</th><td>		<a class="local col7 ref" href="#7ret" title='ret' data-ref="7ret">ret</a> = (<em>char</em> *)<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</a>;</td></tr>
+<tr><th id="87">87</th><td>		*<a class="local col5 ref" href="#5lenp" title='lenp' data-ref="5lenp">lenp</a> = <a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a> = <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> - <a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</a>;</td></tr>
+<tr><th id="88">88</th><td>		<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_flags" title='__sFILE::_flags' data-ref="__sFILE::_flags">_flags</a> |= <a class="macro" href="../../../../stdio/local.h.html#142" title="0x2000" data-ref="_M/__SMOD">__SMOD</a>;</td></tr>
+<tr><th id="89">89</th><td>		<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_r" title='__sFILE::_r' data-ref="__sFILE::_r">_r</a> -= <a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a>;</td></tr>
+<tr><th id="90">90</th><td>		<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</a> = <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>;</td></tr>
+<tr><th id="91">91</th><td>		<a class="macro" href="../../../../stdio/local.h.html#243" title="if (!((struct __sfileext *)((fp)-&gt;_ext._base))-&gt;_caller_handles_locking) funlockfile(fp)" data-ref="_M/FUNLOCKFILE">FUNLOCKFILE</a>(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>);</td></tr>
+<tr><th id="92">92</th><td>		<b>return</b> (<a class="local col7 ref" href="#7ret" title='ret' data-ref="7ret">ret</a>);</td></tr>
+<tr><th id="93">93</th><td>	}</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td>	<i>/*</i></td></tr>
+<tr><th id="96">96</th><td><i>	 * We have to copy the current buffered data to the line buffer.</i></td></tr>
+<tr><th id="97">97</th><td><i>	 * As a bonus, though, we can leave off the __SMOD.</i></td></tr>
+<tr><th id="98">98</th><td><i>	 *</i></td></tr>
+<tr><th id="99">99</th><td><i>	 * OPTIMISTIC is length that we (optimistically) expect will</i></td></tr>
+<tr><th id="100">100</th><td><i>	 * accommodate the `rest' of the string, on each trip through the</i></td></tr>
+<tr><th id="101">101</th><td><i>	 * loop below.</i></td></tr>
+<tr><th id="102">102</th><td><i>	 */</i></td></tr>
+<tr><th id="103">103</th><td><u>#define <dfn class="macro" id="_M/OPTIMISTIC" data-ref="_M/OPTIMISTIC">OPTIMISTIC</dfn> 80</u></td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td>	<b>for</b> (<a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a> = <a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_r" title='__sFILE::_r' data-ref="__sFILE::_r">_r</a>, <a class="local col9 ref" href="#9off" title='off' data-ref="9off">off</a> = <var>0</var>;; <a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a> += <a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_r" title='__sFILE::_r' data-ref="__sFILE::_r">_r</a>) {</td></tr>
+<tr><th id="106">106</th><td>		<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="11diff" title='diff' data-type='size_t' data-ref="11diff">diff</dfn>;</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td>		<i>/*</i></td></tr>
+<tr><th id="109">109</th><td><i>		 * Make sure there is room for more bytes.  Copy data from</i></td></tr>
+<tr><th id="110">110</th><td><i>		 * file buffer to line buffer, refill file and look for</i></td></tr>
+<tr><th id="111">111</th><td><i>		 * newline.  The loop stops only when we find a newline.</i></td></tr>
+<tr><th id="112">112</th><td><i>		 */</i></td></tr>
+<tr><th id="113">113</th><td>		<b>if</b> (<a class="tu ref" href="#__slbexpand" title='__slbexpand' data-use='c' data-ref="__slbexpand">__slbexpand</a>(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>, <a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a> + <a class="macro" href="#103" title="80" data-ref="_M/OPTIMISTIC">OPTIMISTIC</a>))</td></tr>
+<tr><th id="114">114</th><td>			<b>goto</b> <a class="lbl" href="#10error" data-ref="10error">error</a>;</td></tr>
+<tr><th id="115">115</th><td>		(<em>void</em>)<a class="ref" href="../../../../include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>((<em>void</em> *)(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_lb" title='__sFILE::_lb' data-ref="__sFILE::_lb">_lb</a>.<a class="ref" href="../../../../stdio/local.h.html#__sbuf::_base" title='__sbuf::_base' data-ref="__sbuf::_base">_base</a> + <a class="local col9 ref" href="#9off" title='off' data-ref="9off">off</a>), (<em>void</em> *)<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</a>,</td></tr>
+<tr><th id="116">116</th><td>		    <a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a> - <a class="local col9 ref" href="#9off" title='off' data-ref="9off">off</a>);</td></tr>
+<tr><th id="117">117</th><td>		<a class="local col9 ref" href="#9off" title='off' data-ref="9off">off</a> = <a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a>;</td></tr>
+<tr><th id="118">118</th><td>		<b>if</b> (<a class="ref" href="../../../../stdio/local.h.html#__srefill" title='__srefill' data-ref="__srefill">__srefill</a>(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>))</td></tr>
+<tr><th id="119">119</th><td>			<b>break</b>;	<i>/* EOF or error: return partial line */</i></td></tr>
+<tr><th id="120">120</th><td>		<b>if</b> ((<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> = <a class="ref" href="../../../../include/string.h.html#memchr" title='memchr' data-ref="memchr">memchr</a>((<em>void</em> *)<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</a>, <kbd>'\n'</kbd>, <a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_r" title='__sFILE::_r' data-ref="__sFILE::_r">_r</a>)) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="121">121</th><td>			<b>continue</b>;</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td>		<i>/* got it: finish up the line (like code above) */</i></td></tr>
+<tr><th id="124">124</th><td>		<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>++;</td></tr>
+<tr><th id="125">125</th><td>		<a class="local col1 ref" href="#11diff" title='diff' data-ref="11diff">diff</a> = <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> - <a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</a>;</td></tr>
+<tr><th id="126">126</th><td>		<a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a> += <a class="local col1 ref" href="#11diff" title='diff' data-ref="11diff">diff</a>;</td></tr>
+<tr><th id="127">127</th><td>		<b>if</b> (<a class="tu ref" href="#__slbexpand" title='__slbexpand' data-use='c' data-ref="__slbexpand">__slbexpand</a>(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>, <a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a>))</td></tr>
+<tr><th id="128">128</th><td>			<b>goto</b> <a class="lbl" href="#10error" data-ref="10error">error</a>;</td></tr>
+<tr><th id="129">129</th><td>		(<em>void</em>)<a class="ref" href="../../../../include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>((<em>void</em> *)(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_lb" title='__sFILE::_lb' data-ref="__sFILE::_lb">_lb</a>.<a class="ref" href="../../../../stdio/local.h.html#__sbuf::_base" title='__sbuf::_base' data-ref="__sbuf::_base">_base</a> + <a class="local col9 ref" href="#9off" title='off' data-ref="9off">off</a>), (<em>void</em> *)<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</a>,</td></tr>
+<tr><th id="130">130</th><td>		    <a class="local col1 ref" href="#11diff" title='diff' data-ref="11diff">diff</a>);</td></tr>
+<tr><th id="131">131</th><td>		<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_r" title='__sFILE::_r' data-ref="__sFILE::_r">_r</a> -= <a class="local col1 ref" href="#11diff" title='diff' data-ref="11diff">diff</a>;</td></tr>
+<tr><th id="132">132</th><td>		<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</a> = <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>;</td></tr>
+<tr><th id="133">133</th><td>		<b>break</b>;</td></tr>
+<tr><th id="134">134</th><td>	}</td></tr>
+<tr><th id="135">135</th><td>	*<a class="local col5 ref" href="#5lenp" title='lenp' data-ref="5lenp">lenp</a> = <a class="local col8 ref" href="#8len" title='len' data-ref="8len">len</a>;</td></tr>
+<tr><th id="136">136</th><td>	<a class="local col7 ref" href="#7ret" title='ret' data-ref="7ret">ret</a> = (<em>char</em> *)<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>-&gt;<a class="ref" href="../../../../stdio/local.h.html#__sFILE::_lb" title='__sFILE::_lb' data-ref="__sFILE::_lb">_lb</a>.<a class="ref" href="../../../../stdio/local.h.html#__sbuf::_base" title='__sbuf::_base' data-ref="__sbuf::_base">_base</a>;</td></tr>
+<tr><th id="137">137</th><td>	<a class="macro" href="../../../../stdio/local.h.html#243" title="if (!((struct __sfileext *)((fp)-&gt;_ext._base))-&gt;_caller_handles_locking) funlockfile(fp)" data-ref="_M/FUNLOCKFILE">FUNLOCKFILE</a>(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>);</td></tr>
+<tr><th id="138">138</th><td>	<b>return</b> (<a class="local col7 ref" href="#7ret" title='ret' data-ref="7ret">ret</a>);</td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td><dfn class="lbl" id="10error" data-ref="10error">error</dfn>:</td></tr>
+<tr><th id="141">141</th><td>	<a class="macro" href="../../../../stdio/local.h.html#243" title="if (!((struct __sfileext *)((fp)-&gt;_ext._base))-&gt;_caller_handles_locking) funlockfile(fp)" data-ref="_M/FUNLOCKFILE">FUNLOCKFILE</a>(<a class="local col4 ref" href="#4fp" title='fp' data-ref="4fp">fp</a>);</td></tr>
+<tr><th id="142">142</th><td>	*<a class="local col5 ref" href="#5lenp" title='lenp' data-ref="5lenp">lenp</a> = <var>0</var>;</td></tr>
+<tr><th id="143">143</th><td>	<b>return</b> (<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="144">144</th><td>}</td></tr>
+<tr><th id="145">145</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>clone.cpp source code [codebrowser/bionic/libc/bionic/clone.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/clone.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='clone.cpp.html'>clone.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2010 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#define <dfn class="macro" id="_M/_GNU_SOURCE" data-ref="_M/_GNU_SOURCE">_GNU_SOURCE</dfn> 1</u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../include/sched.h.html">&lt;sched.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include &lt;stdarg.h&gt;</u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="pthread_internal.h.html">"pthread_internal.h"</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><b>extern</b> <q>"C"</q> <a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="decl" id="__bionic_clone" title='__bionic_clone' data-ref="__bionic_clone">__bionic_clone</dfn>(<a class="typedef" href="../include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col1 decl" id="1flags" title='flags' data-type='uint32_t' data-ref="1flags">flags</dfn>, <em>void</em>* <dfn class="local col2 decl" id="2child_stack" title='child_stack' data-type='void *' data-ref="2child_stack">child_stack</dfn>, <em>int</em>* <dfn class="local col3 decl" id="3parent_tid" title='parent_tid' data-type='int *' data-ref="3parent_tid">parent_tid</dfn>, <em>void</em>* <dfn class="local col4 decl" id="4tls" title='tls' data-type='void *' data-ref="4tls">tls</dfn>, <em>int</em>* <dfn class="local col5 decl" id="5child_tid" title='child_tid' data-type='int *' data-ref="5child_tid">child_tid</dfn>, <em>int</em> (*<dfn class="local col6 decl" id="6fn" title='fn' data-type='int (*)(void *)' data-ref="6fn">fn</dfn>)(<em>void</em>*), <em>void</em>* <dfn class="local col7 decl" id="7arg" title='arg' data-type='void *' data-ref="7arg">arg</dfn>);</td></tr>
+<tr><th id="37">37</th><td><b>extern</b> <q>"C"</q> <a class="macro" href="../include/sys/cdefs.h.html#210" title="__attribute__((__noreturn__))" data-ref="_M/__noreturn">__noreturn</a> <em>void</em> <dfn class="decl" id="__exit" title='__exit' data-ref="__exit">__exit</dfn>(<em>int</em> <dfn class="local col8 decl" id="8status" title='status' data-type='int' data-ref="8status">status</dfn>);</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><i>// Called from the __bionic_clone assembler to call the thread function then exit.</i></td></tr>
+<tr><th id="40">40</th><td><b>extern</b> <q>"C"</q> <a class="macro" href="../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a> <em>void</em> <dfn class="decl def" id="__start_thread" title='__start_thread' data-ref="__start_thread">__start_thread</dfn>(<em>int</em> (*<dfn class="local col9 decl" id="9fn" title='fn' data-type='int (*)(void *)' data-ref="9fn">fn</dfn>)(<em>void</em>*), <em>void</em>* <dfn class="local col0 decl" id="10arg" title='arg' data-type='void *' data-ref="10arg">arg</dfn>) {</td></tr>
+<tr><th id="41">41</th><td>  <em>int</em> <dfn class="local col1 decl" id="11status" title='status' data-type='int' data-ref="11status">status</dfn> = (*<a class="local col9 ref" href="#9fn" title='fn' data-ref="9fn">fn</a>)(<a class="local col0 ref" href="#10arg" title='arg' data-ref="10arg">arg</a>);</td></tr>
+<tr><th id="42">42</th><td>  <a class="ref" href="#__exit" title='__exit' data-ref="__exit">__exit</a>(<a class="local col1 ref" href="#11status" title='status' data-ref="11status">status</a>);</td></tr>
+<tr><th id="43">43</th><td>}</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><em>int</em> <dfn class="decl def" id="clone" title='clone' data-ref="clone">clone</dfn>(<em>int</em> (*<dfn class="local col2 decl" id="12fn" title='fn' data-type='int (*)(void *)' data-ref="12fn">fn</dfn>)(<em>void</em>*), <em>void</em>* <dfn class="local col3 decl" id="13child_stack" title='child_stack' data-type='void *' data-ref="13child_stack">child_stack</dfn>, <em>int</em> <dfn class="local col4 decl" id="14flags" title='flags' data-type='int' data-ref="14flags">flags</dfn>, <em>void</em>* <dfn class="local col5 decl" id="15arg" title='arg' data-type='void *' data-ref="15arg">arg</dfn>, ...) {</td></tr>
+<tr><th id="46">46</th><td>  <em>int</em>* <dfn class="local col6 decl" id="16parent_tid" title='parent_tid' data-type='int *' data-ref="16parent_tid">parent_tid</dfn> = <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="47">47</th><td>  <em>void</em>* <dfn class="local col7 decl" id="17new_tls" title='new_tls' data-type='void *' data-ref="17new_tls">new_tls</dfn> = <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="48">48</th><td>  <em>int</em>* <dfn class="local col8 decl" id="18child_tid" title='child_tid' data-type='int *' data-ref="18child_tid">child_tid</dfn> = <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td>  <b>if</b> (!<a class="local col3 ref" href="#13child_stack" title='child_stack' data-ref="13child_stack">child_stack</a>) {</td></tr>
+<tr><th id="51">51</th><td>    <a class="macro" href="../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="52">52</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="53">53</th><td>  }</td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td>  <i>// Extract any optional parameters required by the flags.</i></td></tr>
+<tr><th id="56">56</th><td>  <span class='typedef' title='va_list' data-type='__builtin_va_list' data-ref="va_list">va_list</span> <span class='ref fake' title='__va_list_tag::__va_list_tag' data-ref="__va_list_tag::__va_list_tag"></span><dfn class="local col9 decl" id="19args" title='args' data-type='va_list' data-ref="19args">args</dfn>;</td></tr>
+<tr><th id="57">57</th><td>  <span class="macro" title="__builtin_va_start(args, arg)" data-ref="_M/va_start">va_start</span>(<a class="local col9 ref" href="#19args" title='args' data-ref="19args">args</a>, <a class="local col5 ref" href="#15arg" title='arg' data-ref="15arg">arg</a>);</td></tr>
+<tr><th id="58">58</th><td>  <b>if</b> ((<a class="local col4 ref" href="#14flags" title='flags' data-ref="14flags">flags</a> &amp; (<a class="macro" href="../kernel/uapi/linux/sched.h.html#36" title="0x00100000" data-ref="_M/CLONE_PARENT_SETTID">CLONE_PARENT_SETTID</a>|<a class="macro" href="../kernel/uapi/linux/sched.h.html#35" title="0x00080000" data-ref="_M/CLONE_SETTLS">CLONE_SETTLS</a>|<a class="macro" href="../kernel/uapi/linux/sched.h.html#41" title="0x01000000" data-ref="_M/CLONE_CHILD_SETTID">CLONE_CHILD_SETTID</a>|<a class="macro" href="../kernel/uapi/linux/sched.h.html#37" title="0x00200000" data-ref="_M/CLONE_CHILD_CLEARTID">CLONE_CHILD_CLEARTID</a>)) != <var>0</var>) {</td></tr>
+<tr><th id="59">59</th><td>    <a class="local col6 ref" href="#16parent_tid" title='parent_tid' data-ref="16parent_tid">parent_tid</a> = <span class="macro" title="__builtin_va_arg(args, int*)" data-ref="_M/va_arg">va_arg</span>(<a class="local col9 ref" href="#19args" title='args' data-ref="19args">args</a>, <em>int</em>*);</td></tr>
+<tr><th id="60">60</th><td>  }</td></tr>
+<tr><th id="61">61</th><td>  <b>if</b> ((<a class="local col4 ref" href="#14flags" title='flags' data-ref="14flags">flags</a> &amp; (<a class="macro" href="../kernel/uapi/linux/sched.h.html#35" title="0x00080000" data-ref="_M/CLONE_SETTLS">CLONE_SETTLS</a>|<a class="macro" href="../kernel/uapi/linux/sched.h.html#41" title="0x01000000" data-ref="_M/CLONE_CHILD_SETTID">CLONE_CHILD_SETTID</a>|<a class="macro" href="../kernel/uapi/linux/sched.h.html#37" title="0x00200000" data-ref="_M/CLONE_CHILD_CLEARTID">CLONE_CHILD_CLEARTID</a>)) != <var>0</var>) {</td></tr>
+<tr><th id="62">62</th><td>    <a class="local col7 ref" href="#17new_tls" title='new_tls' data-ref="17new_tls">new_tls</a> = <span class="macro" title="__builtin_va_arg(args, void*)" data-ref="_M/va_arg">va_arg</span>(<a class="local col9 ref" href="#19args" title='args' data-ref="19args">args</a>, <em>void</em>*);</td></tr>
+<tr><th id="63">63</th><td>  }</td></tr>
+<tr><th id="64">64</th><td>  <b>if</b> ((<a class="local col4 ref" href="#14flags" title='flags' data-ref="14flags">flags</a> &amp; (<a class="macro" href="../kernel/uapi/linux/sched.h.html#41" title="0x01000000" data-ref="_M/CLONE_CHILD_SETTID">CLONE_CHILD_SETTID</a>|<a class="macro" href="../kernel/uapi/linux/sched.h.html#37" title="0x00200000" data-ref="_M/CLONE_CHILD_CLEARTID">CLONE_CHILD_CLEARTID</a>)) != <var>0</var>) {</td></tr>
+<tr><th id="65">65</th><td>    <a class="local col8 ref" href="#18child_tid" title='child_tid' data-ref="18child_tid">child_tid</a> = <span class="macro" title="__builtin_va_arg(args, int*)" data-ref="_M/va_arg">va_arg</span>(<a class="local col9 ref" href="#19args" title='args' data-ref="19args">args</a>, <em>int</em>*);</td></tr>
+<tr><th id="66">66</th><td>  }</td></tr>
+<tr><th id="67">67</th><td>  <span class="macro" title="__builtin_va_end(args)" data-ref="_M/va_end">va_end</span>(<a class="local col9 ref" href="#19args" title='args' data-ref="19args">args</a>);</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td>  <i>// Align 'child_stack' to 16 bytes.</i></td></tr>
+<tr><th id="70">70</th><td>  <a class="typedef" href="../include/stdint.h.html#uintptr_t" title='uintptr_t' data-type='__uintptr_t' data-ref="uintptr_t">uintptr_t</a> <dfn class="local col0 decl" id="20child_stack_addr" title='child_stack_addr' data-type='uintptr_t' data-ref="20child_stack_addr">child_stack_addr</dfn> = <b>reinterpret_cast</b>&lt;<a class="typedef" href="../include/stdint.h.html#uintptr_t" title='uintptr_t' data-type='__uintptr_t' data-ref="uintptr_t">uintptr_t</a>&gt;(<a class="local col3 ref" href="#13child_stack" title='child_stack' data-ref="13child_stack">child_stack</a>);</td></tr>
+<tr><th id="71">71</th><td>  <a class="local col0 ref" href="#20child_stack_addr" title='child_stack_addr' data-ref="20child_stack_addr">child_stack_addr</a> &amp;= ~<var>0xf</var>;</td></tr>
+<tr><th id="72">72</th><td>  <a class="local col3 ref" href="#13child_stack" title='child_stack' data-ref="13child_stack">child_stack</a> = <b>reinterpret_cast</b>&lt;<em>void</em>*&gt;(<a class="local col0 ref" href="#20child_stack_addr" title='child_stack_addr' data-ref="20child_stack_addr">child_stack_addr</a>);</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>  <i>// Remember the parent pid and invalidate the cached value while we clone.</i></td></tr>
+<tr><th id="75">75</th><td>  <a class="type" href="pthread_internal.h.html#pthread_internal_t" title='pthread_internal_t' data-ref="pthread_internal_t">pthread_internal_t</a>* <dfn class="local col1 decl" id="21self" title='self' data-type='pthread_internal_t *' data-ref="21self">self</dfn> = <a class="ref" href="pthread_internal.h.html#__get_thread" title='__get_thread' data-ref="__get_thread">__get_thread</a>();</td></tr>
+<tr><th id="76">76</th><td>  <a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col2 decl" id="22parent_pid" title='parent_pid' data-type='pid_t' data-ref="22parent_pid">parent_pid</dfn> = <a class="local col1 ref" href="#21self" title='self' data-ref="21self">self</a>-&gt;<a class="ref" href="pthread_internal.h.html#_ZN18pthread_internal_t21invalidate_cached_pidEv" title='pthread_internal_t::invalidate_cached_pid' data-ref="_ZN18pthread_internal_t21invalidate_cached_pidEv">invalidate_cached_pid</a>();</td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td>  <i>// Actually do the clone.</i></td></tr>
+<tr><th id="79">79</th><td>  <em>int</em> <dfn class="local col3 decl" id="23clone_result" title='clone_result' data-type='int' data-ref="23clone_result">clone_result</dfn> = <a class="ref" href="#__bionic_clone" title='__bionic_clone' data-ref="__bionic_clone">__bionic_clone</a>(<a class="local col4 ref" href="#14flags" title='flags' data-ref="14flags">flags</a>, <a class="local col3 ref" href="#13child_stack" title='child_stack' data-ref="13child_stack">child_stack</a>, <a class="local col6 ref" href="#16parent_tid" title='parent_tid' data-ref="16parent_tid">parent_tid</a>, <a class="local col7 ref" href="#17new_tls" title='new_tls' data-ref="17new_tls">new_tls</a>, <a class="local col8 ref" href="#18child_tid" title='child_tid' data-ref="18child_tid">child_tid</a>, <a class="local col2 ref" href="#12fn" title='fn' data-ref="12fn">fn</a>, <a class="local col5 ref" href="#15arg" title='arg' data-ref="15arg">arg</a>);</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td>  <i>// We're the parent, so put our known pid back in place.</i></td></tr>
+<tr><th id="82">82</th><td><i>  // We leave the child without a cached pid, but:</i></td></tr>
+<tr><th id="83">83</th><td><i>  // 1. pthread_create gives its children their own pthread_internal_t with the correct pid.</i></td></tr>
+<tr><th id="84">84</th><td><i>  // 2. fork makes a clone system call directly.</i></td></tr>
+<tr><th id="85">85</th><td><i>  // If any other cases become important, we could use a double trampoline like __pthread_start.</i></td></tr>
+<tr><th id="86">86</th><td>  <a class="local col1 ref" href="#21self" title='self' data-ref="21self">self</a>-&gt;<a class="ref" href="pthread_internal.h.html#_ZN18pthread_internal_t14set_cached_pidEi" title='pthread_internal_t::set_cached_pid' data-ref="_ZN18pthread_internal_t14set_cached_pidEi">set_cached_pid</a>(<a class="local col2 ref" href="#22parent_pid" title='parent_pid' data-ref="22parent_pid">parent_pid</a>);</td></tr>
+<tr><th id="87">87</th><td>  <b>return</b> <a class="local col3 ref" href="#23clone_result" title='clone_result' data-ref="23clone_result">clone_result</a>;</td></tr>
+<tr><th id="88">88</th><td>}</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

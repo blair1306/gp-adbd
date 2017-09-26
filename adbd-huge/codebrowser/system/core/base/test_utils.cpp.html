@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>test_utils.cpp source code [codebrowser/system/core/base/test_utils.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/base/test_utils.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>base</a>/<a href='test_utils.cpp.html'>test_utils.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2015 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="include/android-base/logging.h.html">"android-base/logging.h"</a></u></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="include/android-base/test_utils.h.html">"android-base/test_utils.h"</a></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../bionic/libc/include/sys/stat.h.html">&lt;sys/stat.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><u>#<span data-ppcond="26">if</span> defined(<span class="macro" data-ref="_M/_WIN32">_WIN32</span>)</u></td></tr>
+<tr><th id="27">27</th><td><u>#include &lt;windows.h&gt;</u></td></tr>
+<tr><th id="28">28</th><td><u>#include &lt;direct.h&gt;</u></td></tr>
+<tr><th id="29">29</th><td><u>#define OS_PATH_SEPARATOR '\\'</u></td></tr>
+<tr><th id="30">30</th><td><u>#<span data-ppcond="26">else</span></u></td></tr>
+<tr><th id="31">31</th><td><u>#define <dfn class="macro" id="_M/OS_PATH_SEPARATOR" data-ref="_M/OS_PATH_SEPARATOR">OS_PATH_SEPARATOR</dfn> '/'</u></td></tr>
+<tr><th id="32">32</th><td><u>#<span data-ppcond="26">endif</span></u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../../../external/libcxx/include/string.html">&lt;string&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><u>#<span data-ppcond="36">ifdef</span> <span class="macro" data-ref="_M/_WIN32">_WIN32</span></u></td></tr>
+<tr><th id="37">37</th><td><em>int</em> mkstemp(<em>char</em>* template_name) {</td></tr>
+<tr><th id="38">38</th><td>  <b>if</b> (_mktemp(template_name) == <b>nullptr</b>) {</td></tr>
+<tr><th id="39">39</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="40">40</th><td>  }</td></tr>
+<tr><th id="41">41</th><td>  <i>// Use open() to match the close() that TemporaryFile's destructor does.</i></td></tr>
+<tr><th id="42">42</th><td><i>  // Use O_BINARY to match base file APIs.</i></td></tr>
+<tr><th id="43">43</th><td>  <b>return</b> open(template_name, O_CREAT | O_EXCL | O_RDWR | O_BINARY,</td></tr>
+<tr><th id="44">44</th><td>              S_IRUSR | S_IWUSR);</td></tr>
+<tr><th id="45">45</th><td>}</td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td><em>char</em>* mkdtemp(<em>char</em>* template_name) {</td></tr>
+<tr><th id="48">48</th><td>  <b>if</b> (_mktemp(template_name) == <b>nullptr</b>) {</td></tr>
+<tr><th id="49">49</th><td>    <b>return</b> <b>nullptr</b>;</td></tr>
+<tr><th id="50">50</th><td>  }</td></tr>
+<tr><th id="51">51</th><td>  <b>if</b> (_mkdir(template_name) == -<var>1</var>) {</td></tr>
+<tr><th id="52">52</th><td>    <b>return</b> <b>nullptr</b>;</td></tr>
+<tr><th id="53">53</th><td>  }</td></tr>
+<tr><th id="54">54</th><td>  <b>return</b> template_name;</td></tr>
+<tr><th id="55">55</th><td>}</td></tr>
+<tr><th id="56">56</th><td><u>#<span data-ppcond="36">endif</span></u></td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td><em>static</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="tu decl def" id="_ZL16GetSystemTempDirv" title='GetSystemTempDir' data-type='std::string GetSystemTempDir()' data-ref="_ZL16GetSystemTempDirv">GetSystemTempDir</dfn>() {</td></tr>
+<tr><th id="59">59</th><td><u>#<span data-ppcond="59">if</span> defined(<span class="macro" data-ref="_M/__ANDROID__">__ANDROID__</span>)</u></td></tr>
+<tr><th id="60">60</th><td>  <b>return</b> <a class="ref fake" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringC1EPKNT0_9char_typeE" title='std::__1::basic_string::basic_string&lt;_CharT, _Traits, _Allocator&gt;' data-ref="_ZNSt3__112basic_stringC1EPKNT0_9char_typeE"></a><q>"/data/local/tmp"</q>;</td></tr>
+<tr><th id="61">61</th><td><u>#<span data-ppcond="59">elif</span> defined(_WIN32)</u></td></tr>
+<tr><th id="62">62</th><td>  <em>char</em> tmp_dir[MAX_PATH];</td></tr>
+<tr><th id="63">63</th><td>  DWORD result = GetTempPathA(<b>sizeof</b>(tmp_dir), tmp_dir);</td></tr>
+<tr><th id="64">64</th><td>  CHECK_NE(result, <var>0ul</var>) &lt;&lt; <q>"GetTempPathA failed, error: "</q> &lt;&lt; GetLastError();</td></tr>
+<tr><th id="65">65</th><td>  CHECK_LT(result, <b>sizeof</b>(tmp_dir)) &lt;&lt; <q>"path truncated to: "</q> &lt;&lt; result;</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td>  <i>// GetTempPath() returns a path with a trailing slash, but init()</i></td></tr>
+<tr><th id="68">68</th><td><i>  // does not expect that, so remove it.</i></td></tr>
+<tr><th id="69">69</th><td>  CHECK_EQ(tmp_dir[result - <var>1</var>], <kbd>'\\'</kbd>);</td></tr>
+<tr><th id="70">70</th><td>  tmp_dir[result - <var>1</var>] = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="71">71</th><td>  <b>return</b> tmp_dir;</td></tr>
+<tr><th id="72">72</th><td><u>#else</u></td></tr>
+<tr><th id="73">73</th><td>  <b>return</b> <q>"/tmp"</q>;</td></tr>
+<tr><th id="74">74</th><td><u>#<span data-ppcond="59">endif</span></u></td></tr>
+<tr><th id="75">75</th><td>}</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><a class="type" href="include/android-base/test_utils.h.html#TemporaryFile" title='TemporaryFile' data-ref="TemporaryFile">TemporaryFile</a>::<dfn class="decl def" id="_ZN13TemporaryFileC1Ev" title='TemporaryFile::TemporaryFile' data-ref="_ZN13TemporaryFileC1Ev">TemporaryFile</dfn>() {</td></tr>
+<tr><th id="78">78</th><td>  <a class="member" href="#_ZN13TemporaryFile4initERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE" title='TemporaryFile::init' data-ref="_ZN13TemporaryFile4initERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE">init</a>(<a class="tu ref" href="#_ZL16GetSystemTempDirv" title='GetSystemTempDir' data-use='c' data-ref="_ZL16GetSystemTempDirv">GetSystemTempDir</a>());</td></tr>
+<tr><th id="79">79</th><td>}</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><a class="type" href="include/android-base/test_utils.h.html#TemporaryFile" title='TemporaryFile' data-ref="TemporaryFile">TemporaryFile</a>::<dfn class="decl def" id="_ZN13TemporaryFileD1Ev" title='TemporaryFile::~TemporaryFile' data-ref="_ZN13TemporaryFileD1Ev">~TemporaryFile</dfn>() {</td></tr>
+<tr><th id="82">82</th><td>  <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="member" href="include/android-base/test_utils.h.html#TemporaryFile::fd" title='TemporaryFile::fd' data-ref="TemporaryFile::fd">fd</a>);</td></tr>
+<tr><th id="83">83</th><td>  <a class="ref" href="../../../bionic/libc/include/unistd.h.html#unlink" title='unlink' data-ref="unlink">unlink</a>(<a class="member" href="include/android-base/test_utils.h.html#TemporaryFile::path" title='TemporaryFile::path' data-ref="TemporaryFile::path">path</a>);</td></tr>
+<tr><th id="84">84</th><td>}</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><em>void</em> <a class="type" href="include/android-base/test_utils.h.html#TemporaryFile" title='TemporaryFile' data-ref="TemporaryFile">TemporaryFile</a>::<dfn class="decl def" id="_ZN13TemporaryFile4initERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE" title='TemporaryFile::init' data-ref="_ZN13TemporaryFile4initERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE">init</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col3 decl" id="3tmp_dir" title='tmp_dir' data-type='const std::string &amp;' data-ref="3tmp_dir">tmp_dir</dfn>) {</td></tr>
+<tr><th id="87">87</th><td>  <a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(path, sizeof(path), 0, __builtin_object_size((path), 1), &quot;%s%cTemporaryFile-XXXXXX&quot;, tmp_dir.c_str(), &apos;/&apos;)" data-ref="_M/snprintf">snprintf</a>(<a class="member" href="include/android-base/test_utils.h.html#TemporaryFile::path" title='TemporaryFile::path' data-ref="TemporaryFile::path">path</a>, <b>sizeof</b>(<a class="member" href="include/android-base/test_utils.h.html#TemporaryFile::path" title='TemporaryFile::path' data-ref="TemporaryFile::path">path</a>), <q>"%s%cTemporaryFile-XXXXXX"</q>, <a class="local col3 ref" href="#3tmp_dir" title='tmp_dir' data-ref="3tmp_dir">tmp_dir</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5c_strEv" title='std::__1::basic_string::c_str' data-ref="_ZNKSt3__112basic_string5c_strEv">c_str</a>(),</td></tr>
+<tr><th id="88">88</th><td>           <a class="macro" href="#31" title="&apos;/&apos;" data-ref="_M/OS_PATH_SEPARATOR">OS_PATH_SEPARATOR</a>);</td></tr>
+<tr><th id="89">89</th><td>  <a class="member" href="include/android-base/test_utils.h.html#TemporaryFile::fd" title='TemporaryFile::fd' data-ref="TemporaryFile::fd">fd</a> = <a class="ref" href="../../../bionic/libc/include/stdlib.h.html#mkstemp" title='mkstemp' data-ref="mkstemp">mkstemp</a>(<a class="member" href="include/android-base/test_utils.h.html#TemporaryFile::path" title='TemporaryFile::path' data-ref="TemporaryFile::path">path</a>);</td></tr>
+<tr><th id="90">90</th><td>}</td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td><a class="type" href="include/android-base/test_utils.h.html#TemporaryDir" title='TemporaryDir' data-ref="TemporaryDir">TemporaryDir</a>::<dfn class="decl def" id="_ZN12TemporaryDirC1Ev" title='TemporaryDir::TemporaryDir' data-ref="_ZN12TemporaryDirC1Ev">TemporaryDir</dfn>() {</td></tr>
+<tr><th id="93">93</th><td>  <a class="member" href="#_ZN12TemporaryDir4initERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE" title='TemporaryDir::init' data-ref="_ZN12TemporaryDir4initERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE">init</a>(<a class="tu ref" href="#_ZL16GetSystemTempDirv" title='GetSystemTempDir' data-use='c' data-ref="_ZL16GetSystemTempDirv">GetSystemTempDir</a>());</td></tr>
+<tr><th id="94">94</th><td>}</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><a class="type" href="include/android-base/test_utils.h.html#TemporaryDir" title='TemporaryDir' data-ref="TemporaryDir">TemporaryDir</a>::<dfn class="decl def" id="_ZN12TemporaryDirD1Ev" title='TemporaryDir::~TemporaryDir' data-ref="_ZN12TemporaryDirD1Ev">~TemporaryDir</dfn>() {</td></tr>
+<tr><th id="97">97</th><td>  <a class="ref" href="../../../bionic/libc/include/unistd.h.html#rmdir" title='rmdir' data-ref="rmdir">rmdir</a>(<a class="member" href="include/android-base/test_utils.h.html#TemporaryDir::path" title='TemporaryDir::path' data-ref="TemporaryDir::path">path</a>);</td></tr>
+<tr><th id="98">98</th><td>}</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><em>bool</em> <a class="type" href="include/android-base/test_utils.h.html#TemporaryDir" title='TemporaryDir' data-ref="TemporaryDir">TemporaryDir</a>::<dfn class="decl def" id="_ZN12TemporaryDir4initERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE" title='TemporaryDir::init' data-ref="_ZN12TemporaryDir4initERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE">init</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col4 decl" id="4tmp_dir" title='tmp_dir' data-type='const std::string &amp;' data-ref="4tmp_dir">tmp_dir</dfn>) {</td></tr>
+<tr><th id="101">101</th><td>  <a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(path, sizeof(path), 0, __builtin_object_size((path), 1), &quot;%s%cTemporaryDir-XXXXXX&quot;, tmp_dir.c_str(), &apos;/&apos;)" data-ref="_M/snprintf">snprintf</a>(<a class="member" href="include/android-base/test_utils.h.html#TemporaryDir::path" title='TemporaryDir::path' data-ref="TemporaryDir::path">path</a>, <b>sizeof</b>(<a class="member" href="include/android-base/test_utils.h.html#TemporaryDir::path" title='TemporaryDir::path' data-ref="TemporaryDir::path">path</a>), <q>"%s%cTemporaryDir-XXXXXX"</q>, <a class="local col4 ref" href="#4tmp_dir" title='tmp_dir' data-ref="4tmp_dir">tmp_dir</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5c_strEv" title='std::__1::basic_string::c_str' data-ref="_ZNKSt3__112basic_string5c_strEv">c_str</a>(),</td></tr>
+<tr><th id="102">102</th><td>           <a class="macro" href="#31" title="&apos;/&apos;" data-ref="_M/OS_PATH_SEPARATOR">OS_PATH_SEPARATOR</a>);</td></tr>
+<tr><th id="103">103</th><td>  <b>return</b> (<a class="ref" href="../../../bionic/libc/include/stdlib.h.html#mkdtemp" title='mkdtemp' data-ref="mkdtemp">mkdtemp</a>(<a class="member" href="include/android-base/test_utils.h.html#TemporaryDir::path" title='TemporaryDir::path' data-ref="TemporaryDir::path">path</a>) != <b>nullptr</b>);</td></tr>
+<tr><th id="104">104</th><td>}</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

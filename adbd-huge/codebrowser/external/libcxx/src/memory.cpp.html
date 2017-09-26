@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>memory.cpp source code [codebrowser/external/libcxx/src/memory.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libcxx/src/memory.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libcxx</a>/<a href='./'>src</a>/<a href='memory.cpp.html'>memory.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>//===------------------------ memory.cpp ----------------------------------===//</i></td></tr>
+<tr><th id="2">2</th><td><i>//</i></td></tr>
+<tr><th id="3">3</th><td><i>//                     The LLVM Compiler Infrastructure</i></td></tr>
+<tr><th id="4">4</th><td><i>//</i></td></tr>
+<tr><th id="5">5</th><td><i>// This file is dual licensed under the MIT and the University of Illinois Open</i></td></tr>
+<tr><th id="6">6</th><td><i>// Source Licenses. See LICENSE.TXT for details.</i></td></tr>
+<tr><th id="7">7</th><td><i>//</i></td></tr>
+<tr><th id="8">8</th><td><i>//===----------------------------------------------------------------------===//</i></td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><u>#define <dfn class="macro" id="_M/_LIBCPP_BUILDING_MEMORY" data-ref="_M/_LIBCPP_BUILDING_MEMORY">_LIBCPP_BUILDING_MEMORY</dfn></u></td></tr>
+<tr><th id="11">11</th><td><u>#include <a href="../include/memory.html">"memory"</a></u></td></tr>
+<tr><th id="12">12</th><td><u>#<span data-ppcond="12">ifndef</span> <span class="macro" data-ref="_M/_LIBCPP_HAS_NO_THREADS">_LIBCPP_HAS_NO_THREADS</span></u></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="../include/mutex.html">"mutex"</a></u></td></tr>
+<tr><th id="14">14</th><td><u>#include <a href="../include/thread.html">"thread"</a></u></td></tr>
+<tr><th id="15">15</th><td><u>#<span data-ppcond="12">endif</span></u></td></tr>
+<tr><th id="16">16</th><td><u>#include <a href="support/atomic_support.h.html">"support/atomic_support.h"</a></u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><a class="macro" href="../include/__config.html#386" title="namespace std {inline namespace __1 {" data-ref="_M/_LIBCPP_BEGIN_NAMESPACE_STD">_LIBCPP_BEGIN_NAMESPACE_STD</a></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><b>namespace</b></td></tr>
+<tr><th id="21">21</th><td>{</td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><i>// NOTE: Relaxed and acq/rel atomics (for increment and decrement respectively)</i></td></tr>
+<tr><th id="24">24</th><td><i>// should be sufficient for thread safety.</i></td></tr>
+<tr><th id="25">25</th><td><i>// See <a href="https://llvm.org/bugs/show_bug.cgi?id=22803">https://llvm.org/bugs/show_bug.cgi?id=22803</a></i></td></tr>
+<tr><th id="26">26</th><td><b>template</b> &lt;<b>class</b> T&gt;</td></tr>
+<tr><th id="27">27</th><td><b>inline</b> T</td></tr>
+<tr><th id="28">28</th><td><dfn class="tu decl def" id="_ZNSt3__112_GLOBAL__N_19incrementERT_" title='std::__1::(anonymous namespace)::increment' data-type='T std::__1::(anonymous namespace)::increment(T &amp; t)' data-ref="_ZNSt3__112_GLOBAL__N_19incrementERT_">increment</dfn>(T&amp; <dfn class="local col6 decl" id="16t" title='t' data-type='T &amp;' data-ref="16t">t</dfn>) <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="29">29</th><td>{</td></tr>
+<tr><th id="30">30</th><td>    <b>return</b> __libcpp_atomic_add(&amp;<a class="local col6 ref" href="#16t" title='t' data-ref="16t">t</a>, <var>1</var>, <a class="tu enum" href="support/atomic_support.h.html#std::__1::(anonymousnamespace)::__libcpp_atomic_order::_AO_Relaxed" title='std::__1::(anonymous namespace)::__libcpp_atomic_order::_AO_Relaxed' data-ref="std::__1::(anonymousnamespace)::__libcpp_atomic_order::_AO_Relaxed">_AO_Relaxed</a>);</td></tr>
+<tr><th id="31">31</th><td>}</td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><b>template</b> &lt;<b>class</b> T&gt;</td></tr>
+<tr><th id="34">34</th><td><b>inline</b> T</td></tr>
+<tr><th id="35">35</th><td><dfn class="tu decl def" id="_ZNSt3__112_GLOBAL__N_19decrementERT_" title='std::__1::(anonymous namespace)::decrement' data-type='T std::__1::(anonymous namespace)::decrement(T &amp; t)' data-ref="_ZNSt3__112_GLOBAL__N_19decrementERT_">decrement</dfn>(T&amp; <dfn class="local col7 decl" id="17t" title='t' data-type='T &amp;' data-ref="17t">t</dfn>) <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="36">36</th><td>{</td></tr>
+<tr><th id="37">37</th><td>    <b>return</b> __libcpp_atomic_add(&amp;<a class="local col7 ref" href="#17t" title='t' data-ref="17t">t</a>, -<var>1</var>, <a class="tu enum" href="support/atomic_support.h.html#std::__1::(anonymousnamespace)::__libcpp_atomic_order::_AO_Acq_Rel" title='std::__1::(anonymous namespace)::__libcpp_atomic_order::_AO_Acq_Rel' data-ref="std::__1::(anonymousnamespace)::__libcpp_atomic_order::_AO_Acq_Rel">_AO_Acq_Rel</a>);</td></tr>
+<tr><th id="38">38</th><td>}</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td>}  <i>// namespace</i></td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><em>const</em> <a class="type" href="../include/__functional_base.html#std::__1::allocator_arg_t" title='std::__1::allocator_arg_t' data-ref="std::__1::allocator_arg_t">allocator_arg_t</a> <dfn class="decl def" id="std::__1::allocator_arg" title='std::__1::allocator_arg' data-ref="std::__1::allocator_arg">allocator_arg</dfn> = <a class="type" href="../include/__functional_base.html#std::__1::allocator_arg_t" title='std::__1::allocator_arg_t' data-ref="std::__1::allocator_arg_t">allocator_arg_t</a><a class="ref" href="../include/__functional_base.html#629" title='std::__1::allocator_arg_t::allocator_arg_t' data-ref="_ZNSt3__115allocator_arg_tC1Ev">(</a>);</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><a class="type" href="../include/memory.html#std::__1::bad_weak_ptr" title='std::__1::bad_weak_ptr' data-ref="std::__1::bad_weak_ptr">bad_weak_ptr</a>::<dfn class="virtual decl def" id="_ZNSt3__112bad_weak_ptrD1Ev" title='std::__1::bad_weak_ptr::~bad_weak_ptr' data-ref="_ZNSt3__112bad_weak_ptrD1Ev">~bad_weak_ptr</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a> {}</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><em>const</em> <em>char</em>*</td></tr>
+<tr><th id="47">47</th><td><a class="type" href="../include/memory.html#std::__1::bad_weak_ptr" title='std::__1::bad_weak_ptr' data-ref="std::__1::bad_weak_ptr">bad_weak_ptr</a>::<dfn class="virtual decl def" id="_ZNKSt3__112bad_weak_ptr4whatEv" title='std::__1::bad_weak_ptr::what' data-ref="_ZNKSt3__112bad_weak_ptr4whatEv">what</dfn>() <em>const</em> <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="48">48</th><td>{</td></tr>
+<tr><th id="49">49</th><td>    <b>return</b> <q>"bad_weak_ptr"</q>;</td></tr>
+<tr><th id="50">50</th><td>}</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><a class="type" href="../include/memory.html#std::__1::__shared_count" title='std::__1::__shared_count' data-ref="std::__1::__shared_count">__shared_count</a>::<dfn class="virtual decl def" id="_ZNSt3__114__shared_countD1Ev" title='std::__1::__shared_count::~__shared_count' data-ref="_ZNSt3__114__shared_countD1Ev">~__shared_count</dfn>()</td></tr>
+<tr><th id="53">53</th><td>{</td></tr>
+<tr><th id="54">54</th><td>}</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><em>void</em></td></tr>
+<tr><th id="57">57</th><td><a class="type" href="../include/memory.html#std::__1::__shared_count" title='std::__1::__shared_count' data-ref="std::__1::__shared_count">__shared_count</a>::<dfn class="decl def" id="_ZNSt3__114__shared_count12__add_sharedEv" title='std::__1::__shared_count::__add_shared' data-ref="_ZNSt3__114__shared_count12__add_sharedEv">__add_shared</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="58">58</th><td>{</td></tr>
+<tr><th id="59">59</th><td>    <a class="tu ref" href="#_ZNSt3__112_GLOBAL__N_19incrementERT_" title='std::__1::(anonymous namespace)::increment' data-use='c' data-ref="_ZNSt3__112_GLOBAL__N_19incrementERT_">increment</a>(<span class='refarg'><a class="member" href="../include/memory.html#std::__1::__shared_count::__shared_owners_" title='std::__1::__shared_count::__shared_owners_' data-ref="std::__1::__shared_count::__shared_owners_">__shared_owners_</a></span>);</td></tr>
+<tr><th id="60">60</th><td>}</td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><em>bool</em></td></tr>
+<tr><th id="63">63</th><td><a class="type" href="../include/memory.html#std::__1::__shared_count" title='std::__1::__shared_count' data-ref="std::__1::__shared_count">__shared_count</a>::<dfn class="decl def" id="_ZNSt3__114__shared_count16__release_sharedEv" title='std::__1::__shared_count::__release_shared' data-ref="_ZNSt3__114__shared_count16__release_sharedEv">__release_shared</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="64">64</th><td>{</td></tr>
+<tr><th id="65">65</th><td>    <b>if</b> (<a class="tu ref" href="#_ZNSt3__112_GLOBAL__N_19decrementERT_" title='std::__1::(anonymous namespace)::decrement' data-use='c' data-ref="_ZNSt3__112_GLOBAL__N_19decrementERT_">decrement</a>(<span class='refarg'><a class="member" href="../include/memory.html#std::__1::__shared_count::__shared_owners_" title='std::__1::__shared_count::__shared_owners_' data-ref="std::__1::__shared_count::__shared_owners_">__shared_owners_</a></span>) == -<var>1</var>)</td></tr>
+<tr><th id="66">66</th><td>    {</td></tr>
+<tr><th id="67">67</th><td>        <a class="virtual member" href="../include/memory.html#_ZNSt3__114__shared_count16__on_zero_sharedEv" title='std::__1::__shared_count::__on_zero_shared' data-ref="_ZNSt3__114__shared_count16__on_zero_sharedEv">__on_zero_shared</a>();</td></tr>
+<tr><th id="68">68</th><td>        <b>return</b> <b>true</b>;</td></tr>
+<tr><th id="69">69</th><td>    }</td></tr>
+<tr><th id="70">70</th><td>    <b>return</b> <b>false</b>;</td></tr>
+<tr><th id="71">71</th><td>}</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><a class="type" href="../include/memory.html#std::__1::__shared_weak_count" title='std::__1::__shared_weak_count' data-ref="std::__1::__shared_weak_count">__shared_weak_count</a>::<dfn class="virtual decl def" id="_ZNSt3__119__shared_weak_countD1Ev" title='std::__1::__shared_weak_count::~__shared_weak_count' data-ref="_ZNSt3__119__shared_weak_countD1Ev">~__shared_weak_count</dfn>()</td></tr>
+<tr><th id="74">74</th><td>{</td></tr>
+<tr><th id="75">75</th><td>}</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><em>void</em></td></tr>
+<tr><th id="78">78</th><td><a class="type" href="../include/memory.html#std::__1::__shared_weak_count" title='std::__1::__shared_weak_count' data-ref="std::__1::__shared_weak_count">__shared_weak_count</a>::<dfn class="decl def" id="_ZNSt3__119__shared_weak_count12__add_sharedEv" title='std::__1::__shared_weak_count::__add_shared' data-ref="_ZNSt3__119__shared_weak_count12__add_sharedEv">__add_shared</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="79">79</th><td>{</td></tr>
+<tr><th id="80">80</th><td>    <a class="type" href="../include/memory.html#std::__1::__shared_count" title='std::__1::__shared_count' data-ref="std::__1::__shared_count">__shared_count</a>::<a class="member" href="#_ZNSt3__114__shared_count12__add_sharedEv" title='std::__1::__shared_count::__add_shared' data-ref="_ZNSt3__114__shared_count12__add_sharedEv">__add_shared</a>();</td></tr>
+<tr><th id="81">81</th><td>}</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><em>void</em></td></tr>
+<tr><th id="84">84</th><td><a class="type" href="../include/memory.html#std::__1::__shared_weak_count" title='std::__1::__shared_weak_count' data-ref="std::__1::__shared_weak_count">__shared_weak_count</a>::<dfn class="decl def" id="_ZNSt3__119__shared_weak_count10__add_weakEv" title='std::__1::__shared_weak_count::__add_weak' data-ref="_ZNSt3__119__shared_weak_count10__add_weakEv">__add_weak</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="85">85</th><td>{</td></tr>
+<tr><th id="86">86</th><td>    <a class="tu ref" href="#_ZNSt3__112_GLOBAL__N_19incrementERT_" title='std::__1::(anonymous namespace)::increment' data-use='c' data-ref="_ZNSt3__112_GLOBAL__N_19incrementERT_">increment</a>(<span class='refarg'><a class="member" href="../include/memory.html#std::__1::__shared_weak_count::__shared_weak_owners_" title='std::__1::__shared_weak_count::__shared_weak_owners_' data-ref="std::__1::__shared_weak_count::__shared_weak_owners_">__shared_weak_owners_</a></span>);</td></tr>
+<tr><th id="87">87</th><td>}</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><em>void</em></td></tr>
+<tr><th id="90">90</th><td><a class="type" href="../include/memory.html#std::__1::__shared_weak_count" title='std::__1::__shared_weak_count' data-ref="std::__1::__shared_weak_count">__shared_weak_count</a>::<dfn class="decl def" id="_ZNSt3__119__shared_weak_count16__release_sharedEv" title='std::__1::__shared_weak_count::__release_shared' data-ref="_ZNSt3__119__shared_weak_count16__release_sharedEv">__release_shared</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="91">91</th><td>{</td></tr>
+<tr><th id="92">92</th><td>    <b>if</b> (<a class="type" href="../include/memory.html#std::__1::__shared_count" title='std::__1::__shared_count' data-ref="std::__1::__shared_count">__shared_count</a>::<a class="member" href="#_ZNSt3__114__shared_count16__release_sharedEv" title='std::__1::__shared_count::__release_shared' data-ref="_ZNSt3__114__shared_count16__release_sharedEv">__release_shared</a>())</td></tr>
+<tr><th id="93">93</th><td>        <a class="member" href="#_ZNSt3__119__shared_weak_count14__release_weakEv" title='std::__1::__shared_weak_count::__release_weak' data-ref="_ZNSt3__119__shared_weak_count14__release_weakEv">__release_weak</a>();</td></tr>
+<tr><th id="94">94</th><td>}</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><em>void</em></td></tr>
+<tr><th id="97">97</th><td><a class="type" href="../include/memory.html#std::__1::__shared_weak_count" title='std::__1::__shared_weak_count' data-ref="std::__1::__shared_weak_count">__shared_weak_count</a>::<dfn class="decl def" id="_ZNSt3__119__shared_weak_count14__release_weakEv" title='std::__1::__shared_weak_count::__release_weak' data-ref="_ZNSt3__119__shared_weak_count14__release_weakEv">__release_weak</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="98">98</th><td>{</td></tr>
+<tr><th id="99">99</th><td>    <b>if</b> (<a class="tu ref" href="#_ZNSt3__112_GLOBAL__N_19decrementERT_" title='std::__1::(anonymous namespace)::decrement' data-use='c' data-ref="_ZNSt3__112_GLOBAL__N_19decrementERT_">decrement</a>(<span class='refarg'><a class="member" href="../include/memory.html#std::__1::__shared_weak_count::__shared_weak_owners_" title='std::__1::__shared_weak_count::__shared_weak_owners_' data-ref="std::__1::__shared_weak_count::__shared_weak_owners_">__shared_weak_owners_</a></span>) == -<var>1</var>)</td></tr>
+<tr><th id="100">100</th><td>        <a class="virtual member" href="../include/memory.html#_ZNSt3__119__shared_weak_count21__on_zero_shared_weakEv" title='std::__1::__shared_weak_count::__on_zero_shared_weak' data-ref="_ZNSt3__119__shared_weak_count21__on_zero_shared_weakEv">__on_zero_shared_weak</a>();</td></tr>
+<tr><th id="101">101</th><td>}</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><a class="type" href="../include/memory.html#std::__1::__shared_weak_count" title='std::__1::__shared_weak_count' data-ref="std::__1::__shared_weak_count">__shared_weak_count</a>*</td></tr>
+<tr><th id="104">104</th><td><a class="type" href="../include/memory.html#std::__1::__shared_weak_count" title='std::__1::__shared_weak_count' data-ref="std::__1::__shared_weak_count">__shared_weak_count</a>::<dfn class="decl def" id="_ZNSt3__119__shared_weak_count4lockEv" title='std::__1::__shared_weak_count::lock' data-ref="_ZNSt3__119__shared_weak_count4lockEv">lock</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="105">105</th><td>{</td></tr>
+<tr><th id="106">106</th><td>    <em>long</em> <dfn class="local col8 decl" id="18object_owners" title='object_owners' data-type='long' data-ref="18object_owners">object_owners</dfn> = <a class="tu ref" href="support/atomic_support.h.html#_ZNSt3__112_GLOBAL__N_120__libcpp_atomic_loadEPKT_i" title='std::__1::(anonymous namespace)::__libcpp_atomic_load' data-use='c' data-ref="_ZNSt3__112_GLOBAL__N_120__libcpp_atomic_loadEPKT_i">__libcpp_atomic_load</a>(&amp;<a class="member" href="../include/memory.html#std::__1::__shared_count::__shared_owners_" title='std::__1::__shared_count::__shared_owners_' data-ref="std::__1::__shared_count::__shared_owners_">__shared_owners_</a>);</td></tr>
+<tr><th id="107">107</th><td>    <b>while</b> (<a class="local col8 ref" href="#18object_owners" title='object_owners' data-ref="18object_owners">object_owners</a> != -<var>1</var>)</td></tr>
+<tr><th id="108">108</th><td>    {</td></tr>
+<tr><th id="109">109</th><td>        <b>if</b> (<a class="tu ref" href="support/atomic_support.h.html#_ZNSt3__112_GLOBAL__N_132__libcpp_atomic_compare_exchangeEPT_S2_S1_ii" title='std::__1::(anonymous namespace)::__libcpp_atomic_compare_exchange' data-use='c' data-ref="_ZNSt3__112_GLOBAL__N_132__libcpp_atomic_compare_exchangeEPT_S2_S1_ii">__libcpp_atomic_compare_exchange</a>(&amp;<a class="member" href="../include/memory.html#std::__1::__shared_count::__shared_owners_" title='std::__1::__shared_count::__shared_owners_' data-ref="std::__1::__shared_count::__shared_owners_">__shared_owners_</a>,</td></tr>
+<tr><th id="110">110</th><td>                                             &amp;<a class="local col8 ref" href="#18object_owners" title='object_owners' data-ref="18object_owners">object_owners</a>,</td></tr>
+<tr><th id="111">111</th><td>                                             <a class="local col8 ref" href="#18object_owners" title='object_owners' data-ref="18object_owners">object_owners</a>+<var>1</var>))</td></tr>
+<tr><th id="112">112</th><td>            <b>return</b> <b>this</b>;</td></tr>
+<tr><th id="113">113</th><td>    }</td></tr>
+<tr><th id="114">114</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="115">115</th><td>}</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><u>#<span data-ppcond="117">if</span> !defined(<span class="macro" data-ref="_M/_LIBCPP_NO_RTTI">_LIBCPP_NO_RTTI</span>) || !defined(<span class="macro" data-ref="_M/_LIBCPP_BUILD_STATIC">_LIBCPP_BUILD_STATIC</span>)</u></td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td><em>const</em> <em>void</em>*</td></tr>
+<tr><th id="120">120</th><td><a class="type" href="../include/memory.html#std::__1::__shared_weak_count" title='std::__1::__shared_weak_count' data-ref="std::__1::__shared_weak_count">__shared_weak_count</a>::<dfn class="virtual decl def" id="_ZNKSt3__119__shared_weak_count13__get_deleterERKSt9type_info" title='std::__1::__shared_weak_count::__get_deleter' data-ref="_ZNKSt3__119__shared_weak_count13__get_deleterERKSt9type_info">__get_deleter</dfn>(<em>const</em> <a class="type" href="../include/typeinfo.html#std::type_info" title='std::type_info' data-ref="std::type_info">type_info</a>&amp;) <em>const</em> <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="121">121</th><td>{</td></tr>
+<tr><th id="122">122</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="123">123</th><td>}</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td><u>#<span data-ppcond="117">endif</span>  // _LIBCPP_NO_RTTI</u></td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><u>#<span data-ppcond="127">if</span> <span class="macro" title="" data-ref="_M/__has_feature">__has_feature</span>(cxx_atomic) &amp;&amp; !defined(<span class="macro" data-ref="_M/_LIBCPP_HAS_NO_THREADS">_LIBCPP_HAS_NO_THREADS</span>)</u></td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td><em>static</em> <em>const</em> <span class="namespace">std::</span><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="tu decl def" id="std::__1::__sp_mut_count" title='std::__1::__sp_mut_count' data-type='const std::size_t' data-ref="std::__1::__sp_mut_count">__sp_mut_count</dfn> = <var>16</var>;</td></tr>
+<tr><th id="130">130</th><td><em>static</em> <a class="typedef" href="../../../bionic/libc/include/pthread.h.html#pthread_mutex_t" title='pthread_mutex_t' data-type='struct pthread_mutex_t' data-ref="pthread_mutex_t">pthread_mutex_t</a> <dfn class="tu decl def" id="std::__1::mut_back_imp" title='std::__1::mut_back_imp' data-type='pthread_mutex_t [16]' data-ref="std::__1::mut_back_imp">mut_back_imp</dfn>[<a class="tu ref" href="#std::__1::__sp_mut_count" title='std::__1::__sp_mut_count' data-ref="std::__1::__sp_mut_count">__sp_mut_count</a>] =</td></tr>
+<tr><th id="131">131</th><td>{</td></tr>
+<tr><th id="132">132</th><td>    <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>,</td></tr>
+<tr><th id="133">133</th><td>    <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>,</td></tr>
+<tr><th id="134">134</th><td>    <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>,</td></tr>
+<tr><th id="135">135</th><td>    <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a>, <a class="macro" href="../../../bionic/libc/include/pthread.h.html#60" title="{ { ((PTHREAD_MUTEX_NORMAL &amp; 3) &lt;&lt; 14) } }" data-ref="_M/PTHREAD_MUTEX_INITIALIZER">PTHREAD_MUTEX_INITIALIZER</a></td></tr>
+<tr><th id="136">136</th><td>};</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td><em>static</em> <a class="type" href="../include/__mutex_base.html#std::__1::mutex" title='std::__1::mutex' data-ref="std::__1::mutex">mutex</a>* <dfn class="tu decl def" id="std::__1::mut_back" title='std::__1::mut_back' data-type='std::__1::mutex *' data-ref="std::__1::mut_back">mut_back</dfn> = <b>reinterpret_cast</b>&lt;<span class="namespace">std::</span><a class="type" href="../include/__mutex_base.html#std::__1::mutex" title='std::__1::mutex' data-ref="std::__1::mutex">mutex</a>*&gt;(<a class="tu ref" href="#std::__1::mut_back_imp" title='std::__1::mut_back_imp' data-ref="std::__1::mut_back_imp">mut_back_imp</a>);</td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td><a class="macro" href="../include/__config.html#602" title="constexpr" data-ref="_M/_LIBCPP_CONSTEXPR">_LIBCPP_CONSTEXPR</a> <a class="type" href="../include/memory.html#std::__1::__sp_mut" title='std::__1::__sp_mut' data-ref="std::__1::__sp_mut">__sp_mut</a>::<dfn class="decl def" id="_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv">__sp_mut</dfn>(<em>void</em>* <dfn class="local col9 decl" id="19p" title='p' data-type='void *' data-ref="19p">p</dfn>) <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="141">141</th><td>   : <a class="member" href="../include/memory.html#std::__1::__sp_mut::__lx" title='std::__1::__sp_mut::__lx' data-ref="std::__1::__sp_mut::__lx">__lx</a>(<a class="local col9 ref" href="#19p" title='p' data-ref="19p">p</a>)</td></tr>
+<tr><th id="142">142</th><td>{</td></tr>
+<tr><th id="143">143</th><td>}</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><em>void</em></td></tr>
+<tr><th id="146">146</th><td><a class="type" href="../include/memory.html#std::__1::__sp_mut" title='std::__1::__sp_mut' data-ref="std::__1::__sp_mut">__sp_mut</a>::<dfn class="decl def" id="_ZNSt3__18__sp_mut4lockEv" title='std::__1::__sp_mut::lock' data-ref="_ZNSt3__18__sp_mut4lockEv">lock</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="147">147</th><td>{</td></tr>
+<tr><th id="148">148</th><td>    <a class="type" href="../include/__mutex_base.html#std::__1::mutex" title='std::__1::mutex' data-ref="std::__1::mutex">mutex</a>&amp; <dfn class="local col0 decl" id="20m" title='m' data-type='std::__1::mutex &amp;' data-ref="20m">m</dfn> = *<b>static_cast</b>&lt;<a class="type" href="../include/__mutex_base.html#std::__1::mutex" title='std::__1::mutex' data-ref="std::__1::mutex">mutex</a>*&gt;(<a class="member" href="../include/memory.html#std::__1::__sp_mut::__lx" title='std::__1::__sp_mut::__lx' data-ref="std::__1::__sp_mut::__lx">__lx</a>);</td></tr>
+<tr><th id="149">149</th><td>    <em>unsigned</em> <dfn class="local col1 decl" id="21count" title='count' data-type='unsigned int' data-ref="21count">count</dfn> = <var>0</var>;</td></tr>
+<tr><th id="150">150</th><td>    <b>while</b> (!<a class="local col0 ref" href="#20m" title='m' data-ref="20m">m</a>.<a class="ref" href="../include/__mutex_base.html#_ZNSt3__15mutex8try_lockEv" title='std::__1::mutex::try_lock' data-ref="_ZNSt3__15mutex8try_lockEv">try_lock</a>())</td></tr>
+<tr><th id="151">151</th><td>    {</td></tr>
+<tr><th id="152">152</th><td>        <b>if</b> (++<a class="local col1 ref" href="#21count" title='count' data-ref="21count">count</a> &gt; <var>16</var>)</td></tr>
+<tr><th id="153">153</th><td>        {</td></tr>
+<tr><th id="154">154</th><td>            <a class="local col0 ref" href="#20m" title='m' data-ref="20m">m</a>.<a class="ref" href="../include/__mutex_base.html#_ZNSt3__15mutex4lockEv" title='std::__1::mutex::lock' data-ref="_ZNSt3__15mutex4lockEv">lock</a>();</td></tr>
+<tr><th id="155">155</th><td>            <b>break</b>;</td></tr>
+<tr><th id="156">156</th><td>        }</td></tr>
+<tr><th id="157">157</th><td>        <span class="namespace">this_thread::</span><a class="ref" href="../include/thread.html#_ZNSt3__111this_thread5yieldEv" title='std::__1::this_thread::yield' data-ref="_ZNSt3__111this_thread5yieldEv">yield</a>();</td></tr>
+<tr><th id="158">158</th><td>    }</td></tr>
+<tr><th id="159">159</th><td>}</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td><em>void</em></td></tr>
+<tr><th id="162">162</th><td><a class="type" href="../include/memory.html#std::__1::__sp_mut" title='std::__1::__sp_mut' data-ref="std::__1::__sp_mut">__sp_mut</a>::<dfn class="decl def" id="_ZNSt3__18__sp_mut6unlockEv" title='std::__1::__sp_mut::unlock' data-ref="_ZNSt3__18__sp_mut6unlockEv">unlock</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="163">163</th><td>{</td></tr>
+<tr><th id="164">164</th><td>    <b>static_cast</b>&lt;<a class="type" href="../include/__mutex_base.html#std::__1::mutex" title='std::__1::mutex' data-ref="std::__1::mutex">mutex</a>*&gt;(<a class="member" href="../include/memory.html#std::__1::__sp_mut::__lx" title='std::__1::__sp_mut::__lx' data-ref="std::__1::__sp_mut::__lx">__lx</a>)-&gt;<a class="ref" href="../include/__mutex_base.html#_ZNSt3__15mutex6unlockEv" title='std::__1::mutex::unlock' data-ref="_ZNSt3__15mutex6unlockEv">unlock</a>();</td></tr>
+<tr><th id="165">165</th><td>}</td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><a class="type" href="../include/memory.html#std::__1::__sp_mut" title='std::__1::__sp_mut' data-ref="std::__1::__sp_mut">__sp_mut</a>&amp;</td></tr>
+<tr><th id="168">168</th><td><dfn class="decl def" id="_ZNSt3__112__get_sp_mutEPKv" title='std::__1::__get_sp_mut' data-ref="_ZNSt3__112__get_sp_mutEPKv">__get_sp_mut</dfn>(<em>const</em> <em>void</em>* <dfn class="local col2 decl" id="22p" title='p' data-type='const void *' data-ref="22p">p</dfn>)</td></tr>
+<tr><th id="169">169</th><td>{</td></tr>
+<tr><th id="170">170</th><td>    <em>static</em> <a class="type" href="../include/memory.html#std::__1::__sp_mut" title='std::__1::__sp_mut' data-ref="std::__1::__sp_mut">__sp_mut</a> <dfn class="local col3 decl" id="23muts" title='muts' data-type='std::__1::__sp_mut [16]' data-ref="23muts">muts</dfn>[<a class="tu ref" href="#std::__1::__sp_mut_count" title='std::__1::__sp_mut_count' data-ref="std::__1::__sp_mut_count">__sp_mut_count</a>] </td></tr>
+<tr><th id="171">171</th><td>    {</td></tr>
+<tr><th id="172">172</th><td>        <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>0</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>1</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>2</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>3</var>],</td></tr>
+<tr><th id="173">173</th><td>        <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>4</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>5</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>6</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>7</var>],</td></tr>
+<tr><th id="174">174</th><td>        <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>8</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[ <var>9</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[<var>10</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[<var>11</var>],</td></tr>
+<tr><th id="175">175</th><td>        <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[<var>12</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[<var>13</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[<var>14</var>], <a class="ref fake" href="#_ZNSt3__18__sp_mutC1EPv" title='std::__1::__sp_mut::__sp_mut' data-ref="_ZNSt3__18__sp_mutC1EPv"></a>&amp;<a class="tu ref" href="#std::__1::mut_back" title='std::__1::mut_back' data-use='r' data-ref="std::__1::mut_back">mut_back</a>[<var>15</var>]</td></tr>
+<tr><th id="176">176</th><td>    };</td></tr>
+<tr><th id="177">177</th><td>    <b>return</b> <a class="local col3 ref" href="#23muts" title='muts' data-ref="23muts">muts</a>[<a class="type" href="../include/__functional_base.html#std::__1::hash" title='std::__1::hash' data-ref="std::__1::hash">hash</a>&lt;<em>const</em> <em>void</em>*&gt;<a class="ref" href="../include/memory.html#3476" title='std::__1::hash&lt;const void *&gt;::hash' data-ref="_ZNSt3__14hashIPKvEC1Ev">(</a>)<a class="ref" href="../include/memory.html#_ZNKSt3__14hashIPT_EclES2_" title='std::__1::hash&lt;type-parameter-0-0 *&gt;::operator()' data-ref="_ZNKSt3__14hashIPT_EclES2_">(<a class="local col2 ref" href="#22p" title='p' data-ref="22p">p</a>)</a> &amp; (<a class="tu ref" href="#std::__1::__sp_mut_count" title='std::__1::__sp_mut_count' data-use='r' data-ref="std::__1::__sp_mut_count">__sp_mut_count</a>-<var>1</var>)];</td></tr>
+<tr><th id="178">178</th><td>}</td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td><u>#<span data-ppcond="127">endif</span> // __has_feature(cxx_atomic) &amp;&amp; !_LIBCPP_HAS_NO_THREADS</u></td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td><em>void</em></td></tr>
+<tr><th id="183">183</th><td><dfn class="decl def" id="_ZNSt3__117declare_reachableEPv" title='std::__1::declare_reachable' data-ref="_ZNSt3__117declare_reachableEPv">declare_reachable</dfn>(<em>void</em>*)</td></tr>
+<tr><th id="184">184</th><td>{</td></tr>
+<tr><th id="185">185</th><td>}</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td><em>void</em></td></tr>
+<tr><th id="188">188</th><td><dfn class="decl def" id="_ZNSt3__119declare_no_pointersEPcm" title='std::__1::declare_no_pointers' data-ref="_ZNSt3__119declare_no_pointersEPcm">declare_no_pointers</dfn>(<em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)</td></tr>
+<tr><th id="189">189</th><td>{</td></tr>
+<tr><th id="190">190</th><td>}</td></tr>
+<tr><th id="191">191</th><td></td></tr>
+<tr><th id="192">192</th><td><em>void</em></td></tr>
+<tr><th id="193">193</th><td><dfn class="decl def" id="_ZNSt3__121undeclare_no_pointersEPcm" title='std::__1::undeclare_no_pointers' data-ref="_ZNSt3__121undeclare_no_pointersEPcm">undeclare_no_pointers</dfn>(<em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)</td></tr>
+<tr><th id="194">194</th><td>{</td></tr>
+<tr><th id="195">195</th><td>}</td></tr>
+<tr><th id="196">196</th><td></td></tr>
+<tr><th id="197">197</th><td><a class="type" href="../include/memory.html#std::__1::pointer_safety" title='std::__1::pointer_safety' data-ref="std::__1::pointer_safety">pointer_safety</a></td></tr>
+<tr><th id="198">198</th><td><dfn class="decl def" id="_ZNSt3__118get_pointer_safetyEv" title='std::__1::get_pointer_safety' data-ref="_ZNSt3__118get_pointer_safetyEv">get_pointer_safety</dfn>() <a class="macro" href="../include/__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a></td></tr>
+<tr><th id="199">199</th><td>{</td></tr>
+<tr><th id="200">200</th><td>    <b>return</b> <a class="ref fake" href="../include/memory.html#_ZNSt3__114pointer_safetyC1ENS0_4__lxE" title='std::__1::pointer_safety::pointer_safety' data-ref="_ZNSt3__114pointer_safetyC1ENS0_4__lxE"></a><a class="type" href="../include/memory.html#std::__1::pointer_safety" title='std::__1::pointer_safety' data-ref="std::__1::pointer_safety">pointer_safety</a>::<a class="enum" href="../include/memory.html#std::__1::pointer_safety::__lx::relaxed" title='std::__1::pointer_safety::__lx::relaxed' data-ref="std::__1::pointer_safety::__lx::relaxed">relaxed</a>;</td></tr>
+<tr><th id="201">201</th><td>}</td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td><em>void</em>*</td></tr>
+<tr><th id="204">204</th><td><dfn class="decl def" id="_ZNSt3__121__undeclare_reachableEPv" title='std::__1::__undeclare_reachable' data-ref="_ZNSt3__121__undeclare_reachableEPv">__undeclare_reachable</dfn>(<em>void</em>* <dfn class="local col4 decl" id="24p" title='p' data-type='void *' data-ref="24p">p</dfn>)</td></tr>
+<tr><th id="205">205</th><td>{</td></tr>
+<tr><th id="206">206</th><td>    <b>return</b> <a class="local col4 ref" href="#24p" title='p' data-ref="24p">p</a>;</td></tr>
+<tr><th id="207">207</th><td>}</td></tr>
+<tr><th id="208">208</th><td></td></tr>
+<tr><th id="209">209</th><td><em>void</em>*</td></tr>
+<tr><th id="210">210</th><td><dfn class="decl def" id="_ZNSt3__15alignEmmRPvRm" title='std::__1::align' data-ref="_ZNSt3__15alignEmmRPvRm">align</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="25alignment" title='alignment' data-type='size_t' data-ref="25alignment">alignment</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="26size" title='size' data-type='size_t' data-ref="26size">size</dfn>, <em>void</em>*&amp; <dfn class="local col7 decl" id="27ptr" title='ptr' data-type='void *&amp;' data-ref="27ptr">ptr</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>&amp; <dfn class="local col8 decl" id="28space" title='space' data-type='size_t &amp;' data-ref="28space">space</dfn>)</td></tr>
+<tr><th id="211">211</th><td>{</td></tr>
+<tr><th id="212">212</th><td>    <em>void</em>* <dfn class="local col9 decl" id="29r" title='r' data-type='void *' data-ref="29r">r</dfn> = <b>nullptr</b>;</td></tr>
+<tr><th id="213">213</th><td>    <b>if</b> (<a class="local col6 ref" href="#26size" title='size' data-ref="26size">size</a> &lt;= <a class="local col8 ref" href="#28space" title='space' data-ref="28space">space</a>)</td></tr>
+<tr><th id="214">214</th><td>    {</td></tr>
+<tr><th id="215">215</th><td>        <em>char</em>* <dfn class="local col0 decl" id="30p1" title='p1' data-type='char *' data-ref="30p1">p1</dfn> = <b>static_cast</b>&lt;<em>char</em>*&gt;(<a class="local col7 ref" href="#27ptr" title='ptr' data-ref="27ptr">ptr</a>);</td></tr>
+<tr><th id="216">216</th><td>        <em>char</em>* <dfn class="local col1 decl" id="31p2" title='p2' data-type='char *' data-ref="31p2">p2</dfn> = <b>reinterpret_cast</b>&lt;<em>char</em>*&gt;(<b>reinterpret_cast</b>&lt;<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>&gt;(<a class="local col0 ref" href="#30p1" title='p1' data-ref="30p1">p1</a> + (<a class="local col5 ref" href="#25alignment" title='alignment' data-ref="25alignment">alignment</a> - <var>1</var>)) &amp; -<a class="local col5 ref" href="#25alignment" title='alignment' data-ref="25alignment">alignment</a>);</td></tr>
+<tr><th id="217">217</th><td>        <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="32d" title='d' data-type='size_t' data-ref="32d">d</dfn> = <b>static_cast</b>&lt;<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>&gt;(<a class="local col1 ref" href="#31p2" title='p2' data-ref="31p2">p2</a> - <a class="local col0 ref" href="#30p1" title='p1' data-ref="30p1">p1</a>);</td></tr>
+<tr><th id="218">218</th><td>        <b>if</b> (<a class="local col2 ref" href="#32d" title='d' data-ref="32d">d</a> &lt;= <a class="local col8 ref" href="#28space" title='space' data-ref="28space">space</a> - <a class="local col6 ref" href="#26size" title='size' data-ref="26size">size</a>)</td></tr>
+<tr><th id="219">219</th><td>        {</td></tr>
+<tr><th id="220">220</th><td>            <a class="local col9 ref" href="#29r" title='r' data-ref="29r">r</a> = <a class="local col1 ref" href="#31p2" title='p2' data-ref="31p2">p2</a>;</td></tr>
+<tr><th id="221">221</th><td>            <a class="local col7 ref" href="#27ptr" title='ptr' data-ref="27ptr">ptr</a> = <a class="local col9 ref" href="#29r" title='r' data-ref="29r">r</a>;</td></tr>
+<tr><th id="222">222</th><td>            <a class="local col8 ref" href="#28space" title='space' data-ref="28space">space</a> -= <a class="local col2 ref" href="#32d" title='d' data-ref="32d">d</a>;</td></tr>
+<tr><th id="223">223</th><td>        }</td></tr>
+<tr><th id="224">224</th><td>    }</td></tr>
+<tr><th id="225">225</th><td>    <b>return</b> <a class="local col9 ref" href="#29r" title='r' data-ref="29r">r</a>;</td></tr>
+<tr><th id="226">226</th><td>}</td></tr>
+<tr><th id="227">227</th><td></td></tr>
+<tr><th id="228">228</th><td><a class="macro" href="../include/__config.html#387" title="} }" data-ref="_M/_LIBCPP_END_NAMESPACE_STD">_LIBCPP_END_NAMESPACE_STD</a></td></tr>
+<tr><th id="229">229</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

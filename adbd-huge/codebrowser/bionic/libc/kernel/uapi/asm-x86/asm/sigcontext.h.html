@@ -1,0 +1,292 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>sigcontext.h source code [codebrowser/bionic/libc/kernel/uapi/asm-x86/asm/sigcontext.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="_fpreg,_fpstate_32,_fpstate_64,_fpx_sw_bytes,_fpxreg,_header,_xmmreg,_xstate,_ymmh_state,sigcontext,sigcontext_32,sigcontext_64 "/>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/kernel/uapi/asm-x86/asm/sigcontext.h'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libc</a>/<a href='../../..'>kernel</a>/<a href='../..'>uapi</a>/<a href='..'>asm-x86</a>/<a href='./'>asm</a>/<a href='sigcontext.h.html'>sigcontext.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/****************************************************************************</i></td></tr>
+<tr><th id="2">2</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="3">3</th><td><i> ***</i></td></tr>
+<tr><th id="4">4</th><td><i> ***   This header was automatically generated from a Linux kernel header</i></td></tr>
+<tr><th id="5">5</th><td><i> ***   of the same name, to make information necessary for userspace to</i></td></tr>
+<tr><th id="6">6</th><td><i> ***   call into the kernel available to libc.  It contains only constants,</i></td></tr>
+<tr><th id="7">7</th><td><i> ***   structures, and macros generated from the original header, and thus,</i></td></tr>
+<tr><th id="8">8</th><td><i> ***   contains no copyrightable information.</i></td></tr>
+<tr><th id="9">9</th><td><i> ***</i></td></tr>
+<tr><th id="10">10</th><td><i> ***   To edit the content of this header, modify the corresponding</i></td></tr>
+<tr><th id="11">11</th><td><i> ***   source file (e.g. under external/kernel-headers/original/) then</i></td></tr>
+<tr><th id="12">12</th><td><i> ***   run bionic/libc/kernel/tools/update_all.py</i></td></tr>
+<tr><th id="13">13</th><td><i> ***</i></td></tr>
+<tr><th id="14">14</th><td><i> ***   Any manual change here will be lost the next time this script will</i></td></tr>
+<tr><th id="15">15</th><td><i> ***   be run. You've been warned!</i></td></tr>
+<tr><th id="16">16</th><td><i> ***</i></td></tr>
+<tr><th id="17">17</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="18">18</th><td><i> ****************************************************************************/</i></td></tr>
+<tr><th id="19">19</th><td><u>#<span data-ppcond="19">ifndef</span> <span class="macro" data-ref="_M/_UAPI_ASM_X86_SIGCONTEXT_H">_UAPI_ASM_X86_SIGCONTEXT_H</span></u></td></tr>
+<tr><th id="20">20</th><td><u>#define <dfn class="macro" id="_M/_UAPI_ASM_X86_SIGCONTEXT_H" data-ref="_M/_UAPI_ASM_X86_SIGCONTEXT_H">_UAPI_ASM_X86_SIGCONTEXT_H</dfn></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../linux/compiler.h.html">&lt;linux/compiler.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../linux/types.h.html">&lt;linux/types.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="24">24</th><td><u>#define <dfn class="macro" id="_M/FP_XSTATE_MAGIC1" data-ref="_M/FP_XSTATE_MAGIC1">FP_XSTATE_MAGIC1</dfn> 0x46505853U</u></td></tr>
+<tr><th id="25">25</th><td><u>#define <dfn class="macro" id="_M/FP_XSTATE_MAGIC2" data-ref="_M/FP_XSTATE_MAGIC2">FP_XSTATE_MAGIC2</dfn> 0x46505845U</u></td></tr>
+<tr><th id="26">26</th><td><u>#define <dfn class="macro" id="_M/FP_XSTATE_MAGIC2_SIZE" data-ref="_M/FP_XSTATE_MAGIC2_SIZE">FP_XSTATE_MAGIC2_SIZE</dfn> sizeof(FP_XSTATE_MAGIC2)</u></td></tr>
+<tr><th id="27">27</th><td><b>struct</b> <dfn class="type def" id="_fpx_sw_bytes" title='_fpx_sw_bytes' data-ref="_fpx_sw_bytes">_fpx_sw_bytes</dfn> {</td></tr>
+<tr><th id="28">28</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="29">29</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpx_sw_bytes::magic1" title='_fpx_sw_bytes::magic1' data-ref="_fpx_sw_bytes::magic1">magic1</dfn>;</td></tr>
+<tr><th id="30">30</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpx_sw_bytes::extended_size" title='_fpx_sw_bytes::extended_size' data-ref="_fpx_sw_bytes::extended_size">extended_size</dfn>;</td></tr>
+<tr><th id="31">31</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="_fpx_sw_bytes::xfeatures" title='_fpx_sw_bytes::xfeatures' data-ref="_fpx_sw_bytes::xfeatures">xfeatures</dfn>;</td></tr>
+<tr><th id="32">32</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpx_sw_bytes::xstate_size" title='_fpx_sw_bytes::xstate_size' data-ref="_fpx_sw_bytes::xstate_size">xstate_size</dfn>;</td></tr>
+<tr><th id="33">33</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="34">34</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpx_sw_bytes::padding" title='_fpx_sw_bytes::padding' data-ref="_fpx_sw_bytes::padding">padding</dfn>[<var>7</var>];</td></tr>
+<tr><th id="35">35</th><td>};</td></tr>
+<tr><th id="36">36</th><td><b>struct</b> <dfn class="type def" id="_fpreg" title='_fpreg' data-ref="_fpreg">_fpreg</dfn> {</td></tr>
+<tr><th id="37">37</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpreg::significand" title='_fpreg::significand' data-ref="_fpreg::significand">significand</dfn>[<var>4</var>];</td></tr>
+<tr><th id="38">38</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="39">39</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpreg::exponent" title='_fpreg::exponent' data-ref="_fpreg::exponent">exponent</dfn>;</td></tr>
+<tr><th id="40">40</th><td>};</td></tr>
+<tr><th id="41">41</th><td><b>struct</b> <dfn class="type def" id="_fpxreg" title='_fpxreg' data-ref="_fpxreg">_fpxreg</dfn> {</td></tr>
+<tr><th id="42">42</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpxreg::significand" title='_fpxreg::significand' data-ref="_fpxreg::significand">significand</dfn>[<var>4</var>];</td></tr>
+<tr><th id="43">43</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="44">44</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpxreg::exponent" title='_fpxreg::exponent' data-ref="_fpxreg::exponent">exponent</dfn>;</td></tr>
+<tr><th id="45">45</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpxreg::padding" title='_fpxreg::padding' data-ref="_fpxreg::padding">padding</dfn>[<var>3</var>];</td></tr>
+<tr><th id="46">46</th><td>};</td></tr>
+<tr><th id="47">47</th><td><b>struct</b> <dfn class="type def" id="_xmmreg" title='_xmmreg' data-ref="_xmmreg">_xmmreg</dfn> {</td></tr>
+<tr><th id="48">48</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="49">49</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_xmmreg::element" title='_xmmreg::element' data-ref="_xmmreg::element">element</dfn>[<var>4</var>];</td></tr>
+<tr><th id="50">50</th><td>};</td></tr>
+<tr><th id="51">51</th><td><u>#define <dfn class="macro" id="_M/X86_FXSR_MAGIC" data-ref="_M/X86_FXSR_MAGIC">X86_FXSR_MAGIC</dfn> 0x0000</u></td></tr>
+<tr><th id="52">52</th><td><b>struct</b> <dfn class="type def" id="_fpstate_32" title='_fpstate_32' data-ref="_fpstate_32">_fpstate_32</dfn> {</td></tr>
+<tr><th id="53">53</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="54">54</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::cw" title='_fpstate_32::cw' data-ref="_fpstate_32::cw">cw</dfn>;</td></tr>
+<tr><th id="55">55</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::sw" title='_fpstate_32::sw' data-ref="_fpstate_32::sw">sw</dfn>;</td></tr>
+<tr><th id="56">56</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::tag" title='_fpstate_32::tag' data-ref="_fpstate_32::tag">tag</dfn>;</td></tr>
+<tr><th id="57">57</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::ipoff" title='_fpstate_32::ipoff' data-ref="_fpstate_32::ipoff">ipoff</dfn>;</td></tr>
+<tr><th id="58">58</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="59">59</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::cssel" title='_fpstate_32::cssel' data-ref="_fpstate_32::cssel">cssel</dfn>;</td></tr>
+<tr><th id="60">60</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::dataoff" title='_fpstate_32::dataoff' data-ref="_fpstate_32::dataoff">dataoff</dfn>;</td></tr>
+<tr><th id="61">61</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::datasel" title='_fpstate_32::datasel' data-ref="_fpstate_32::datasel">datasel</dfn>;</td></tr>
+<tr><th id="62">62</th><td>  <b>struct</b> <a class="type" href="#_fpreg" title='_fpreg' data-ref="_fpreg">_fpreg</a> <dfn class="decl" id="_fpstate_32::_st" title='_fpstate_32::_st' data-ref="_fpstate_32::_st">_st</dfn>[<var>8</var>];</td></tr>
+<tr><th id="63">63</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="64">64</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpstate_32::status" title='_fpstate_32::status' data-ref="_fpstate_32::status">status</dfn>;</td></tr>
+<tr><th id="65">65</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpstate_32::magic" title='_fpstate_32::magic' data-ref="_fpstate_32::magic">magic</dfn>;</td></tr>
+<tr><th id="66">66</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::_fxsr_env" title='_fpstate_32::_fxsr_env' data-ref="_fpstate_32::_fxsr_env">_fxsr_env</dfn>[<var>6</var>];</td></tr>
+<tr><th id="67">67</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::mxcsr" title='_fpstate_32::mxcsr' data-ref="_fpstate_32::mxcsr">mxcsr</dfn>;</td></tr>
+<tr><th id="68">68</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="69">69</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::reserved" title='_fpstate_32::reserved' data-ref="_fpstate_32::reserved">reserved</dfn>;</td></tr>
+<tr><th id="70">70</th><td>  <b>struct</b> <a class="type" href="#_fpxreg" title='_fpxreg' data-ref="_fpxreg">_fpxreg</a> <dfn class="decl" id="_fpstate_32::_fxsr_st" title='_fpstate_32::_fxsr_st' data-ref="_fpstate_32::_fxsr_st">_fxsr_st</dfn>[<var>8</var>];</td></tr>
+<tr><th id="71">71</th><td>  <b>struct</b> <a class="type" href="#_xmmreg" title='_xmmreg' data-ref="_xmmreg">_xmmreg</a> <dfn class="decl" id="_fpstate_32::_xmm" title='_fpstate_32::_xmm' data-ref="_fpstate_32::_xmm">_xmm</dfn>[<var>8</var>];</td></tr>
+<tr><th id="72">72</th><td>  <b>union</b> {</td></tr>
+<tr><th id="73">73</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="74">74</th><td>    <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::(anonymous)::padding1" title='_fpstate_32::(anonymous union)::padding1' data-ref="_fpstate_32::(anonymous)::padding1">padding1</dfn>[<var>44</var>];</td></tr>
+<tr><th id="75">75</th><td>    <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::(anonymous)::padding" title='_fpstate_32::(anonymous union)::padding' data-ref="_fpstate_32::(anonymous)::padding">padding</dfn>[<var>44</var>];</td></tr>
+<tr><th id="76">76</th><td>  };</td></tr>
+<tr><th id="77">77</th><td>  <b>union</b> {</td></tr>
+<tr><th id="78">78</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="79">79</th><td>    <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_32::(anonymous)::padding2" title='_fpstate_32::(anonymous union)::padding2' data-ref="_fpstate_32::(anonymous)::padding2">padding2</dfn>[<var>12</var>];</td></tr>
+<tr><th id="80">80</th><td>    <b>struct</b> <a class="type" href="#_fpx_sw_bytes" title='_fpx_sw_bytes' data-ref="_fpx_sw_bytes">_fpx_sw_bytes</a> <dfn class="decl" id="_fpstate_32::(anonymous)::sw_reserved" title='_fpstate_32::(anonymous union)::sw_reserved' data-ref="_fpstate_32::(anonymous)::sw_reserved">sw_reserved</dfn>;</td></tr>
+<tr><th id="81">81</th><td>  };</td></tr>
+<tr><th id="82">82</th><td>};</td></tr>
+<tr><th id="83">83</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="84">84</th><td><b>struct</b> <dfn class="type def" id="_fpstate_64" title='_fpstate_64' data-ref="_fpstate_64">_fpstate_64</dfn> {</td></tr>
+<tr><th id="85">85</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpstate_64::cwd" title='_fpstate_64::cwd' data-ref="_fpstate_64::cwd">cwd</dfn>;</td></tr>
+<tr><th id="86">86</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpstate_64::swd" title='_fpstate_64::swd' data-ref="_fpstate_64::swd">swd</dfn>;</td></tr>
+<tr><th id="87">87</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpstate_64::twd" title='_fpstate_64::twd' data-ref="_fpstate_64::twd">twd</dfn>;</td></tr>
+<tr><th id="88">88</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="89">89</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="_fpstate_64::fop" title='_fpstate_64::fop' data-ref="_fpstate_64::fop">fop</dfn>;</td></tr>
+<tr><th id="90">90</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="_fpstate_64::rip" title='_fpstate_64::rip' data-ref="_fpstate_64::rip">rip</dfn>;</td></tr>
+<tr><th id="91">91</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="_fpstate_64::rdp" title='_fpstate_64::rdp' data-ref="_fpstate_64::rdp">rdp</dfn>;</td></tr>
+<tr><th id="92">92</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_64::mxcsr" title='_fpstate_64::mxcsr' data-ref="_fpstate_64::mxcsr">mxcsr</dfn>;</td></tr>
+<tr><th id="93">93</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="94">94</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_64::mxcsr_mask" title='_fpstate_64::mxcsr_mask' data-ref="_fpstate_64::mxcsr_mask">mxcsr_mask</dfn>;</td></tr>
+<tr><th id="95">95</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_64::st_space" title='_fpstate_64::st_space' data-ref="_fpstate_64::st_space">st_space</dfn>[<var>32</var>];</td></tr>
+<tr><th id="96">96</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_64::xmm_space" title='_fpstate_64::xmm_space' data-ref="_fpstate_64::xmm_space">xmm_space</dfn>[<var>64</var>];</td></tr>
+<tr><th id="97">97</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_64::reserved2" title='_fpstate_64::reserved2' data-ref="_fpstate_64::reserved2">reserved2</dfn>[<var>12</var>];</td></tr>
+<tr><th id="98">98</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="99">99</th><td>  <b>union</b> {</td></tr>
+<tr><th id="100">100</th><td>    <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_fpstate_64::(anonymous)::reserved3" title='_fpstate_64::(anonymous union)::reserved3' data-ref="_fpstate_64::(anonymous)::reserved3">reserved3</dfn>[<var>12</var>];</td></tr>
+<tr><th id="101">101</th><td>    <b>struct</b> <a class="type" href="#_fpx_sw_bytes" title='_fpx_sw_bytes' data-ref="_fpx_sw_bytes">_fpx_sw_bytes</a> <dfn class="decl" id="_fpstate_64::(anonymous)::sw_reserved" title='_fpstate_64::(anonymous union)::sw_reserved' data-ref="_fpstate_64::(anonymous)::sw_reserved">sw_reserved</dfn>;</td></tr>
+<tr><th id="102">102</th><td>  };</td></tr>
+<tr><th id="103">103</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="104">104</th><td>};</td></tr>
+<tr><th id="105">105</th><td><u>#<span data-ppcond="105">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="106">106</th><td><u>#define _fpstate _fpstate_32</u></td></tr>
+<tr><th id="107">107</th><td><u>#<span data-ppcond="105">else</span></u></td></tr>
+<tr><th id="108">108</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="109">109</th><td><u>#define <dfn class="macro" id="_M/_fpstate" data-ref="_M/_fpstate">_fpstate</dfn> <a class="type" href="#_fpstate_64" title='_fpstate_64' data-ref="_fpstate_64">_fpstate_64</a></u></td></tr>
+<tr><th id="110">110</th><td><u>#<span data-ppcond="105">endif</span></u></td></tr>
+<tr><th id="111">111</th><td><b>struct</b> <dfn class="type def" id="_header" title='_header' data-ref="_header">_header</dfn> {</td></tr>
+<tr><th id="112">112</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="_header::xfeatures" title='_header::xfeatures' data-ref="_header::xfeatures">xfeatures</dfn>;</td></tr>
+<tr><th id="113">113</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="114">114</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="_header::reserved1" title='_header::reserved1' data-ref="_header::reserved1">reserved1</dfn>[<var>2</var>];</td></tr>
+<tr><th id="115">115</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="_header::reserved2" title='_header::reserved2' data-ref="_header::reserved2">reserved2</dfn>[<var>5</var>];</td></tr>
+<tr><th id="116">116</th><td>};</td></tr>
+<tr><th id="117">117</th><td><b>struct</b> <dfn class="type def" id="_ymmh_state" title='_ymmh_state' data-ref="_ymmh_state">_ymmh_state</dfn> {</td></tr>
+<tr><th id="118">118</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="119">119</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="_ymmh_state::ymmh_space" title='_ymmh_state::ymmh_space' data-ref="_ymmh_state::ymmh_space">ymmh_space</dfn>[<var>64</var>];</td></tr>
+<tr><th id="120">120</th><td>};</td></tr>
+<tr><th id="121">121</th><td><b>struct</b> <dfn class="type def" id="_xstate" title='_xstate' data-ref="_xstate">_xstate</dfn> {</td></tr>
+<tr><th id="122">122</th><td>  <b>struct</b> <a class="macro" href="#109" title="_fpstate_64" data-ref="_M/_fpstate">_fpstate</a> <dfn class="decl" id="_xstate::fpstate" title='_xstate::fpstate' data-ref="_xstate::fpstate">fpstate</dfn>;</td></tr>
+<tr><th id="123">123</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="124">124</th><td>  <b>struct</b> <a class="type" href="#_header" title='_header' data-ref="_header">_header</a> <dfn class="decl" id="_xstate::xstate_hdr" title='_xstate::xstate_hdr' data-ref="_xstate::xstate_hdr">xstate_hdr</dfn>;</td></tr>
+<tr><th id="125">125</th><td>  <b>struct</b> <a class="type" href="#_ymmh_state" title='_ymmh_state' data-ref="_ymmh_state">_ymmh_state</a> <dfn class="decl" id="_xstate::ymmh" title='_xstate::ymmh' data-ref="_xstate::ymmh">ymmh</dfn>;</td></tr>
+<tr><th id="126">126</th><td>};</td></tr>
+<tr><th id="127">127</th><td><b>struct</b> <dfn class="type def" id="sigcontext_32" title='sigcontext_32' data-ref="sigcontext_32">sigcontext_32</dfn> {</td></tr>
+<tr><th id="128">128</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="129">129</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_32::gs" title='sigcontext_32::gs' data-ref="sigcontext_32::gs">gs</dfn>, <dfn class="decl" id="sigcontext_32::__gsh" title='sigcontext_32::__gsh' data-ref="sigcontext_32::__gsh">__gsh</dfn>;</td></tr>
+<tr><th id="130">130</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_32::fs" title='sigcontext_32::fs' data-ref="sigcontext_32::fs">fs</dfn>, <dfn class="decl" id="sigcontext_32::__fsh" title='sigcontext_32::__fsh' data-ref="sigcontext_32::__fsh">__fsh</dfn>;</td></tr>
+<tr><th id="131">131</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_32::es" title='sigcontext_32::es' data-ref="sigcontext_32::es">es</dfn>, <dfn class="decl" id="sigcontext_32::__esh" title='sigcontext_32::__esh' data-ref="sigcontext_32::__esh">__esh</dfn>;</td></tr>
+<tr><th id="132">132</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_32::ds" title='sigcontext_32::ds' data-ref="sigcontext_32::ds">ds</dfn>, <dfn class="decl" id="sigcontext_32::__dsh" title='sigcontext_32::__dsh' data-ref="sigcontext_32::__dsh">__dsh</dfn>;</td></tr>
+<tr><th id="133">133</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="134">134</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::di" title='sigcontext_32::di' data-ref="sigcontext_32::di">di</dfn>;</td></tr>
+<tr><th id="135">135</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::si" title='sigcontext_32::si' data-ref="sigcontext_32::si">si</dfn>;</td></tr>
+<tr><th id="136">136</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::bp" title='sigcontext_32::bp' data-ref="sigcontext_32::bp">bp</dfn>;</td></tr>
+<tr><th id="137">137</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::sp" title='sigcontext_32::sp' data-ref="sigcontext_32::sp">sp</dfn>;</td></tr>
+<tr><th id="138">138</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="139">139</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::bx" title='sigcontext_32::bx' data-ref="sigcontext_32::bx">bx</dfn>;</td></tr>
+<tr><th id="140">140</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::dx" title='sigcontext_32::dx' data-ref="sigcontext_32::dx">dx</dfn>;</td></tr>
+<tr><th id="141">141</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::cx" title='sigcontext_32::cx' data-ref="sigcontext_32::cx">cx</dfn>;</td></tr>
+<tr><th id="142">142</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::ax" title='sigcontext_32::ax' data-ref="sigcontext_32::ax">ax</dfn>;</td></tr>
+<tr><th id="143">143</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="144">144</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::trapno" title='sigcontext_32::trapno' data-ref="sigcontext_32::trapno">trapno</dfn>;</td></tr>
+<tr><th id="145">145</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::err" title='sigcontext_32::err' data-ref="sigcontext_32::err">err</dfn>;</td></tr>
+<tr><th id="146">146</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::ip" title='sigcontext_32::ip' data-ref="sigcontext_32::ip">ip</dfn>;</td></tr>
+<tr><th id="147">147</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_32::cs" title='sigcontext_32::cs' data-ref="sigcontext_32::cs">cs</dfn>, <dfn class="decl" id="sigcontext_32::__csh" title='sigcontext_32::__csh' data-ref="sigcontext_32::__csh">__csh</dfn>;</td></tr>
+<tr><th id="148">148</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="149">149</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::flags" title='sigcontext_32::flags' data-ref="sigcontext_32::flags">flags</dfn>;</td></tr>
+<tr><th id="150">150</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::sp_at_signal" title='sigcontext_32::sp_at_signal' data-ref="sigcontext_32::sp_at_signal">sp_at_signal</dfn>;</td></tr>
+<tr><th id="151">151</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_32::ss" title='sigcontext_32::ss' data-ref="sigcontext_32::ss">ss</dfn>, <dfn class="decl" id="sigcontext_32::__ssh" title='sigcontext_32::__ssh' data-ref="sigcontext_32::__ssh">__ssh</dfn>;</td></tr>
+<tr><th id="152">152</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::fpstate" title='sigcontext_32::fpstate' data-ref="sigcontext_32::fpstate">fpstate</dfn>;</td></tr>
+<tr><th id="153">153</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="154">154</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::oldmask" title='sigcontext_32::oldmask' data-ref="sigcontext_32::oldmask">oldmask</dfn>;</td></tr>
+<tr><th id="155">155</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="sigcontext_32::cr2" title='sigcontext_32::cr2' data-ref="sigcontext_32::cr2">cr2</dfn>;</td></tr>
+<tr><th id="156">156</th><td>};</td></tr>
+<tr><th id="157">157</th><td><b>struct</b> <dfn class="type def" id="sigcontext_64" title='sigcontext_64' data-ref="sigcontext_64">sigcontext_64</dfn> {</td></tr>
+<tr><th id="158">158</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="159">159</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::r8" title='sigcontext_64::r8' data-ref="sigcontext_64::r8">r8</dfn>;</td></tr>
+<tr><th id="160">160</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::r9" title='sigcontext_64::r9' data-ref="sigcontext_64::r9">r9</dfn>;</td></tr>
+<tr><th id="161">161</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::r10" title='sigcontext_64::r10' data-ref="sigcontext_64::r10">r10</dfn>;</td></tr>
+<tr><th id="162">162</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::r11" title='sigcontext_64::r11' data-ref="sigcontext_64::r11">r11</dfn>;</td></tr>
+<tr><th id="163">163</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="164">164</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::r12" title='sigcontext_64::r12' data-ref="sigcontext_64::r12">r12</dfn>;</td></tr>
+<tr><th id="165">165</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::r13" title='sigcontext_64::r13' data-ref="sigcontext_64::r13">r13</dfn>;</td></tr>
+<tr><th id="166">166</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::r14" title='sigcontext_64::r14' data-ref="sigcontext_64::r14">r14</dfn>;</td></tr>
+<tr><th id="167">167</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::r15" title='sigcontext_64::r15' data-ref="sigcontext_64::r15">r15</dfn>;</td></tr>
+<tr><th id="168">168</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="169">169</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::di" title='sigcontext_64::di' data-ref="sigcontext_64::di">di</dfn>;</td></tr>
+<tr><th id="170">170</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::si" title='sigcontext_64::si' data-ref="sigcontext_64::si">si</dfn>;</td></tr>
+<tr><th id="171">171</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::bp" title='sigcontext_64::bp' data-ref="sigcontext_64::bp">bp</dfn>;</td></tr>
+<tr><th id="172">172</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::bx" title='sigcontext_64::bx' data-ref="sigcontext_64::bx">bx</dfn>;</td></tr>
+<tr><th id="173">173</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="174">174</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::dx" title='sigcontext_64::dx' data-ref="sigcontext_64::dx">dx</dfn>;</td></tr>
+<tr><th id="175">175</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::ax" title='sigcontext_64::ax' data-ref="sigcontext_64::ax">ax</dfn>;</td></tr>
+<tr><th id="176">176</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::cx" title='sigcontext_64::cx' data-ref="sigcontext_64::cx">cx</dfn>;</td></tr>
+<tr><th id="177">177</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::sp" title='sigcontext_64::sp' data-ref="sigcontext_64::sp">sp</dfn>;</td></tr>
+<tr><th id="178">178</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="179">179</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::ip" title='sigcontext_64::ip' data-ref="sigcontext_64::ip">ip</dfn>;</td></tr>
+<tr><th id="180">180</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::flags" title='sigcontext_64::flags' data-ref="sigcontext_64::flags">flags</dfn>;</td></tr>
+<tr><th id="181">181</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_64::cs" title='sigcontext_64::cs' data-ref="sigcontext_64::cs">cs</dfn>;</td></tr>
+<tr><th id="182">182</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_64::gs" title='sigcontext_64::gs' data-ref="sigcontext_64::gs">gs</dfn>;</td></tr>
+<tr><th id="183">183</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="184">184</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_64::fs" title='sigcontext_64::fs' data-ref="sigcontext_64::fs">fs</dfn>;</td></tr>
+<tr><th id="185">185</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext_64::__pad0" title='sigcontext_64::__pad0' data-ref="sigcontext_64::__pad0">__pad0</dfn>;</td></tr>
+<tr><th id="186">186</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::err" title='sigcontext_64::err' data-ref="sigcontext_64::err">err</dfn>;</td></tr>
+<tr><th id="187">187</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::trapno" title='sigcontext_64::trapno' data-ref="sigcontext_64::trapno">trapno</dfn>;</td></tr>
+<tr><th id="188">188</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="189">189</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::oldmask" title='sigcontext_64::oldmask' data-ref="sigcontext_64::oldmask">oldmask</dfn>;</td></tr>
+<tr><th id="190">190</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::cr2" title='sigcontext_64::cr2' data-ref="sigcontext_64::cr2">cr2</dfn>;</td></tr>
+<tr><th id="191">191</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::fpstate" title='sigcontext_64::fpstate' data-ref="sigcontext_64::fpstate">fpstate</dfn>;</td></tr>
+<tr><th id="192">192</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext_64::reserved1" title='sigcontext_64::reserved1' data-ref="sigcontext_64::reserved1">reserved1</dfn>[<var>8</var>];</td></tr>
+<tr><th id="193">193</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="194">194</th><td>};</td></tr>
+<tr><th id="195">195</th><td><u>#define <dfn class="macro" id="_M/_fpstate_ia32" data-ref="_M/_fpstate_ia32">_fpstate_ia32</dfn> _fpstate_32</u></td></tr>
+<tr><th id="196">196</th><td><u>#define <dfn class="macro" id="_M/sigcontext_ia32" data-ref="_M/sigcontext_ia32">sigcontext_ia32</dfn> sigcontext_32</u></td></tr>
+<tr><th id="197">197</th><td><u>#<span data-ppcond="197">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="198">198</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="199">199</th><td><b>struct</b> sigcontext {</td></tr>
+<tr><th id="200">200</th><td>  __u16 gs, __gsh;</td></tr>
+<tr><th id="201">201</th><td>  __u16 fs, __fsh;</td></tr>
+<tr><th id="202">202</th><td>  __u16 es, __esh;</td></tr>
+<tr><th id="203">203</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="204">204</th><td>  __u16 ds, __dsh;</td></tr>
+<tr><th id="205">205</th><td>  __u32 edi;</td></tr>
+<tr><th id="206">206</th><td>  __u32 esi;</td></tr>
+<tr><th id="207">207</th><td>  __u32 ebp;</td></tr>
+<tr><th id="208">208</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="209">209</th><td>  __u32 esp;</td></tr>
+<tr><th id="210">210</th><td>  __u32 ebx;</td></tr>
+<tr><th id="211">211</th><td>  __u32 edx;</td></tr>
+<tr><th id="212">212</th><td>  __u32 ecx;</td></tr>
+<tr><th id="213">213</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="214">214</th><td>  __u32 eax;</td></tr>
+<tr><th id="215">215</th><td>  __u32 trapno;</td></tr>
+<tr><th id="216">216</th><td>  __u32 err;</td></tr>
+<tr><th id="217">217</th><td>  __u32 eip;</td></tr>
+<tr><th id="218">218</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="219">219</th><td>  __u16 cs, __csh;</td></tr>
+<tr><th id="220">220</th><td>  __u32 eflags;</td></tr>
+<tr><th id="221">221</th><td>  __u32 esp_at_signal;</td></tr>
+<tr><th id="222">222</th><td>  __u16 ss, __ssh;</td></tr>
+<tr><th id="223">223</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="224">224</th><td>  <b>struct</b> _fpstate __user * fpstate;</td></tr>
+<tr><th id="225">225</th><td>  __u32 oldmask;</td></tr>
+<tr><th id="226">226</th><td>  __u32 cr2;</td></tr>
+<tr><th id="227">227</th><td>};</td></tr>
+<tr><th id="228">228</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="229">229</th><td><u>#<span data-ppcond="197">else</span></u></td></tr>
+<tr><th id="230">230</th><td><b>struct</b> <dfn class="type def" id="sigcontext" title='sigcontext' data-ref="sigcontext">sigcontext</dfn> {</td></tr>
+<tr><th id="231">231</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::r8" title='sigcontext::r8' data-ref="sigcontext::r8">r8</dfn>;</td></tr>
+<tr><th id="232">232</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::r9" title='sigcontext::r9' data-ref="sigcontext::r9">r9</dfn>;</td></tr>
+<tr><th id="233">233</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="234">234</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::r10" title='sigcontext::r10' data-ref="sigcontext::r10">r10</dfn>;</td></tr>
+<tr><th id="235">235</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::r11" title='sigcontext::r11' data-ref="sigcontext::r11">r11</dfn>;</td></tr>
+<tr><th id="236">236</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::r12" title='sigcontext::r12' data-ref="sigcontext::r12">r12</dfn>;</td></tr>
+<tr><th id="237">237</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::r13" title='sigcontext::r13' data-ref="sigcontext::r13">r13</dfn>;</td></tr>
+<tr><th id="238">238</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="239">239</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::r14" title='sigcontext::r14' data-ref="sigcontext::r14">r14</dfn>;</td></tr>
+<tr><th id="240">240</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::r15" title='sigcontext::r15' data-ref="sigcontext::r15">r15</dfn>;</td></tr>
+<tr><th id="241">241</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::rdi" title='sigcontext::rdi' data-ref="sigcontext::rdi">rdi</dfn>;</td></tr>
+<tr><th id="242">242</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::rsi" title='sigcontext::rsi' data-ref="sigcontext::rsi">rsi</dfn>;</td></tr>
+<tr><th id="243">243</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="244">244</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::rbp" title='sigcontext::rbp' data-ref="sigcontext::rbp">rbp</dfn>;</td></tr>
+<tr><th id="245">245</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::rbx" title='sigcontext::rbx' data-ref="sigcontext::rbx">rbx</dfn>;</td></tr>
+<tr><th id="246">246</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::rdx" title='sigcontext::rdx' data-ref="sigcontext::rdx">rdx</dfn>;</td></tr>
+<tr><th id="247">247</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::rax" title='sigcontext::rax' data-ref="sigcontext::rax">rax</dfn>;</td></tr>
+<tr><th id="248">248</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="249">249</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::rcx" title='sigcontext::rcx' data-ref="sigcontext::rcx">rcx</dfn>;</td></tr>
+<tr><th id="250">250</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::rsp" title='sigcontext::rsp' data-ref="sigcontext::rsp">rsp</dfn>;</td></tr>
+<tr><th id="251">251</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::rip" title='sigcontext::rip' data-ref="sigcontext::rip">rip</dfn>;</td></tr>
+<tr><th id="252">252</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::eflags" title='sigcontext::eflags' data-ref="sigcontext::eflags">eflags</dfn>;</td></tr>
+<tr><th id="253">253</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="254">254</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext::cs" title='sigcontext::cs' data-ref="sigcontext::cs">cs</dfn>;</td></tr>
+<tr><th id="255">255</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext::gs" title='sigcontext::gs' data-ref="sigcontext::gs">gs</dfn>;</td></tr>
+<tr><th id="256">256</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext::fs" title='sigcontext::fs' data-ref="sigcontext::fs">fs</dfn>;</td></tr>
+<tr><th id="257">257</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="sigcontext::__pad0" title='sigcontext::__pad0' data-ref="sigcontext::__pad0">__pad0</dfn>;</td></tr>
+<tr><th id="258">258</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="259">259</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::err" title='sigcontext::err' data-ref="sigcontext::err">err</dfn>;</td></tr>
+<tr><th id="260">260</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::trapno" title='sigcontext::trapno' data-ref="sigcontext::trapno">trapno</dfn>;</td></tr>
+<tr><th id="261">261</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::oldmask" title='sigcontext::oldmask' data-ref="sigcontext::oldmask">oldmask</dfn>;</td></tr>
+<tr><th id="262">262</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::cr2" title='sigcontext::cr2' data-ref="sigcontext::cr2">cr2</dfn>;</td></tr>
+<tr><th id="263">263</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="264">264</th><td>  <b>struct</b> <a class="macro" href="#109" title="_fpstate_64" data-ref="_M/_fpstate">_fpstate</a> <a class="macro" href="../../linux/compiler.h.html#15" title="" data-ref="_M/__user">__user</a> * <dfn class="decl" id="sigcontext::fpstate" title='sigcontext::fpstate' data-ref="sigcontext::fpstate">fpstate</dfn>;</td></tr>
+<tr><th id="265">265</th><td><u>#<span data-ppcond="265">ifdef</span> <span class="macro" data-ref="_M/__ILP32__">__ILP32__</span></u></td></tr>
+<tr><th id="266">266</th><td>  __u32 __fpstate_pad;</td></tr>
+<tr><th id="267">267</th><td><u>#<span data-ppcond="265">endif</span></u></td></tr>
+<tr><th id="268">268</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="269">269</th><td>  <a class="typedef" href="../../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="sigcontext::reserved1" title='sigcontext::reserved1' data-ref="sigcontext::reserved1">reserved1</dfn>[<var>8</var>];</td></tr>
+<tr><th id="270">270</th><td>};</td></tr>
+<tr><th id="271">271</th><td><u>#<span data-ppcond="197">endif</span></u></td></tr>
+<tr><th id="272">272</th><td><u>#<span data-ppcond="19">endif</span></u></td></tr>
+<tr><th id="273">273</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="274">274</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../../bionic/NetdClient.cpp.html'>codebrowser/bionic/libc/bionic/NetdClient.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

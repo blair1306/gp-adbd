@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ntohs.c source code [codebrowser/bionic/libc/upstream-openbsd/lib/libc/net/ntohs.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/upstream-openbsd/lib/libc/net/ntohs.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libc</a>/<a href='../../..'>upstream-openbsd</a>/<a href='../..'>lib</a>/<a href='..'>libc</a>/<a href='./'>net</a>/<a href='ntohs.c.html'>ntohs.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$OpenBSD: ntohs.c,v 1.9 2014/07/21 01:51:10 guenther Exp $ */</i></td></tr>
+<tr><th id="2">2</th><td><i>/*</i></td></tr>
+<tr><th id="3">3</th><td><i> * Written by J.T. Conklin &lt;jtc@netbsd.org&gt;.</i></td></tr>
+<tr><th id="4">4</th><td><i> * Public domain.</i></td></tr>
+<tr><th id="5">5</th><td><i> */</i></td></tr>
+<tr><th id="6">6</th><td></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../../../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="../../../../include/endian.h.html">&lt;endian.h&gt;</a></u></td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><u>#undef <a class="macro" href="../../../../include/sys/endian.h.html#61" data-ref="_M/ntohs">ntohs</a></u></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><a class="typedef" href="../../../../include/sys/types.h.html#u_int16_t" title='u_int16_t' data-type='uint16_t' data-ref="u_int16_t">u_int16_t</a></td></tr>
+<tr><th id="13">13</th><td><dfn class="decl def" id="ntohs" title='ntohs' data-ref="ntohs">ntohs</dfn>(<a class="typedef" href="../../../../include/sys/types.h.html#u_int16_t" title='u_int16_t' data-type='uint16_t' data-ref="u_int16_t">u_int16_t</a> <dfn class="local col1 decl" id="1x" title='x' data-type='u_int16_t' data-ref="1x">x</dfn>)</td></tr>
+<tr><th id="14">14</th><td>{</td></tr>
+<tr><th id="15">15</th><td><u>#<span data-ppcond="15">if</span> <a class="macro" href="../../../../include/sys/endian.h.html#71" title="1234" data-ref="_M/BYTE_ORDER">BYTE_ORDER</a> == <a class="macro" href="../../../../include/sys/endian.h.html#68" title="1234" data-ref="_M/LITTLE_ENDIAN">LITTLE_ENDIAN</a></u></td></tr>
+<tr><th id="16">16</th><td>	<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col2 decl" id="2s" title='s' data-type='u_char *' data-ref="2s">s</dfn> = (<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *) &amp;<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="17">17</th><td>	<b>return</b> (<a class="typedef" href="../../../../include/sys/types.h.html#u_int16_t" title='u_int16_t' data-type='uint16_t' data-ref="u_int16_t">u_int16_t</a>)(<a class="local col2 ref" href="#2s" title='s' data-ref="2s">s</a>[<var>0</var>] &lt;&lt; <var>8</var> | <a class="local col2 ref" href="#2s" title='s' data-ref="2s">s</a>[<var>1</var>]);</td></tr>
+<tr><th id="18">18</th><td><u>#<span data-ppcond="15">else</span></u></td></tr>
+<tr><th id="19">19</th><td>	<b>return</b> x;</td></tr>
+<tr><th id="20">20</th><td><u>#<span data-ppcond="15">endif</span></u></td></tr>
+<tr><th id="21">21</th><td>}</td></tr>
+<tr><th id="22">22</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

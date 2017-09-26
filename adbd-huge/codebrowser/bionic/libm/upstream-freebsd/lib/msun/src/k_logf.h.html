@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>k_logf.h source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_logf.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_logf.h'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>src</a>/<a href='k_logf.h.html'>k_logf.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Developed at SunPro, a Sun Microsystems, Inc. business.</i></td></tr>
+<tr><th id="6">6</th><td><i> * Permission to use, copy, modify, and distribute this</i></td></tr>
+<tr><th id="7">7</th><td><i> * software is freely granted, provided that this notice</i></td></tr>
+<tr><th id="8">8</th><td><i> * is preserved.</i></td></tr>
+<tr><th id="9">9</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="10">10</th><td><i> */</i></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="13">13</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD$"</q>);</td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><i>/*</i></td></tr>
+<tr><th id="16">16</th><td><i> * Float version of k_log.h.  See the latter for most comments.</i></td></tr>
+<tr><th id="17">17</th><td><i> */</i></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><em>static</em> <em>const</em> <em>float</em></td></tr>
+<tr><th id="20">20</th><td><i>/* |(log(1+s)-log(1-s))/s - Lg(s)| &lt; 2**-34.24 (~[-4.95e-11, 4.97e-11]). */</i></td></tr>
+<tr><th id="21">21</th><td><dfn class="decl def" id="Lg1" title='Lg1' data-ref="Lg1">Lg1</dfn> =      <var>0xaaaaaa.0p-24</var>,	<i>/* 0.66666662693 */</i></td></tr>
+<tr><th id="22">22</th><td><dfn class="decl def" id="Lg2" title='Lg2' data-ref="Lg2">Lg2</dfn> =      <var>0xccce13.0p-25</var>,	<i>/* 0.40000972152 */</i></td></tr>
+<tr><th id="23">23</th><td><dfn class="decl def" id="Lg3" title='Lg3' data-ref="Lg3">Lg3</dfn> =      <var>0x91e9ee.0p-25</var>,	<i>/* 0.28498786688 */</i></td></tr>
+<tr><th id="24">24</th><td><dfn class="decl def" id="Lg4" title='Lg4' data-ref="Lg4">Lg4</dfn> =      <var>0xf89e26.0p-26</var>;	<i>/* 0.24279078841 */</i></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><em>static</em> <b>inline</b> <em>float</em></td></tr>
+<tr><th id="27">27</th><td><dfn class="decl def" id="k_log1pf" title='k_log1pf' data-ref="k_log1pf">k_log1pf</dfn>(<em>float</em> <dfn class="local col1 decl" id="1f" title='f' data-type='float' data-ref="1f">f</dfn>)</td></tr>
+<tr><th id="28">28</th><td>{</td></tr>
+<tr><th id="29">29</th><td>	<em>float</em> <dfn class="local col2 decl" id="2hfsq" title='hfsq' data-type='float' data-ref="2hfsq">hfsq</dfn>,<dfn class="local col3 decl" id="3s" title='s' data-type='float' data-ref="3s">s</dfn>,<dfn class="local col4 decl" id="4z" title='z' data-type='float' data-ref="4z">z</dfn>,<dfn class="local col5 decl" id="5R" title='R' data-type='float' data-ref="5R">R</dfn>,<dfn class="local col6 decl" id="6w" title='w' data-type='float' data-ref="6w">w</dfn>,<dfn class="local col7 decl" id="7t1" title='t1' data-type='float' data-ref="7t1">t1</dfn>,<dfn class="local col8 decl" id="8t2" title='t2' data-type='float' data-ref="8t2">t2</dfn>;</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td> 	<a class="local col3 ref" href="#3s" title='s' data-ref="3s">s</a> = <a class="local col1 ref" href="#1f" title='f' data-ref="1f">f</a>/((<em>float</em>)<var>2.0</var>+<a class="local col1 ref" href="#1f" title='f' data-ref="1f">f</a>);</td></tr>
+<tr><th id="32">32</th><td>	<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> = <a class="local col3 ref" href="#3s" title='s' data-ref="3s">s</a>*<a class="local col3 ref" href="#3s" title='s' data-ref="3s">s</a>;</td></tr>
+<tr><th id="33">33</th><td>	<a class="local col6 ref" href="#6w" title='w' data-ref="6w">w</a> = <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>*<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>;</td></tr>
+<tr><th id="34">34</th><td>	<a class="local col7 ref" href="#7t1" title='t1' data-ref="7t1">t1</a>= <a class="local col6 ref" href="#6w" title='w' data-ref="6w">w</a>*(<a class="ref" href="#Lg2" title='Lg2' data-ref="Lg2">Lg2</a>+<a class="local col6 ref" href="#6w" title='w' data-ref="6w">w</a>*<a class="ref" href="#Lg4" title='Lg4' data-ref="Lg4">Lg4</a>);</td></tr>
+<tr><th id="35">35</th><td>	<a class="local col8 ref" href="#8t2" title='t2' data-ref="8t2">t2</a>= <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>*(<a class="ref" href="#Lg1" title='Lg1' data-ref="Lg1">Lg1</a>+<a class="local col6 ref" href="#6w" title='w' data-ref="6w">w</a>*<a class="ref" href="#Lg3" title='Lg3' data-ref="Lg3">Lg3</a>);</td></tr>
+<tr><th id="36">36</th><td>	<a class="local col5 ref" href="#5R" title='R' data-ref="5R">R</a> = <a class="local col8 ref" href="#8t2" title='t2' data-ref="8t2">t2</a>+<a class="local col7 ref" href="#7t1" title='t1' data-ref="7t1">t1</a>;</td></tr>
+<tr><th id="37">37</th><td>	<a class="local col2 ref" href="#2hfsq" title='hfsq' data-ref="2hfsq">hfsq</a>=(<em>float</em>)<var>0.5</var>*<a class="local col1 ref" href="#1f" title='f' data-ref="1f">f</a>*<a class="local col1 ref" href="#1f" title='f' data-ref="1f">f</a>;</td></tr>
+<tr><th id="38">38</th><td>	<b>return</b> <a class="local col3 ref" href="#3s" title='s' data-ref="3s">s</a>*(<a class="local col2 ref" href="#2hfsq" title='hfsq' data-ref="2hfsq">hfsq</a>+<a class="local col5 ref" href="#5R" title='R' data-ref="5R">R</a>);</td></tr>
+<tr><th id="39">39</th><td>}</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='e_log10f.c.html'>codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/e_log10f.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

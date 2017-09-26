@@ -1,0 +1,19 @@
+<dec f='codebrowser/external/libcxxabi/include/cxxabi.h' l='91' type='void * __cxa_vec_new2(size_t element_count, size_t element_size, size_t padding_size, void (*)(void *) constructor, void (*)(void *) destructor, void *(*)(size_t) alloc, void (*)(void *) dealloc)'/>
+<use f='codebrowser/external/libcxxabi/src/cxa_vector.cpp' l='121' u='c' c='__cxa_vec_new'/>
+<def f='codebrowser/external/libcxxabi/src/cxa_vector.cpp' l='143' ll='167' type='void * __cxa_vec_new2(size_t element_count, size_t element_size, size_t padding_size, void (*)(void *) constructor, void (*)(void *) destructor, void *(*)(size_t) alloc, void (*)(void *) dealloc)'/>
+<doc f='codebrowser/external/libcxxabi/src/cxa_vector.cpp' l='127'>// Given the number and size of elements for an array and the non-negative
+// size of prefix padding for a cookie, allocate space (using alloc) for
+// the array preceded by the specified padding, initialize the cookie if
+// the padding is non-zero, and call the given constructor on each element.
+// Return the address of the array proper, after the padding.
+// 
+// If alloc throws an exception, rethrow the exception. If alloc returns
+// NULL, return NULL. If the constructor throws an exception, call
+// destructor for any already constructed elements, and rethrow the
+// exception. If the destructor throws an exception, call std::terminate.
+// 
+// The constructor may be NULL, in which case it must not be called. If the
+// padding_size is zero, the destructor may be NULL; in that case it must
+// not be called.
+// 
+// Neither alloc nor dealloc may be NULL.</doc>

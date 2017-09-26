@@ -1,0 +1,8 @@
+<dec f='codebrowser/bionic/libc/include/pthread.h' l='238' type='int pthread_barrier_wait(pthread_barrier_t * )'/>
+<def f='codebrowser/bionic/libc/bionic/pthread_barrier.cpp' l='113' ll='166' type='int pthread_barrier_wait(pthread_barrier_t * barrier_interface)'/>
+<doc f='codebrowser/bionic/libc/bionic/pthread_barrier.cpp' l='107'>// According to POSIX standard, pthread_barrier_wait() synchronizes memory between participating
+// threads. It means all memory operations made by participating threads before calling
+// pthread_barrier_wait() can be seen by all participating threads after the function call.
+// We establish this by making a happens-before relation between all threads entering the barrier
+// with the last thread entering the barrier, and a happens-before relation between the last
+// thread entering the barrier with all threads leaving the barrier.</doc>

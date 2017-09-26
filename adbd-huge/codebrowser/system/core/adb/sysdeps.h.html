@@ -1,0 +1,867 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>sysdeps.h source code [codebrowser/system/core/adb/sysdeps.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="adb_pthread_args "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/adb/sysdeps.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>adb</a>/<a href='sysdeps.h.html'>sysdeps.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2007 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><i>/* this file contains system-dependent definitions used by ADB</i></td></tr>
+<tr><th id="18">18</th><td><i> * they're related to threads, sockets and file descriptors</i></td></tr>
+<tr><th id="19">19</th><td><i> */</i></td></tr>
+<tr><th id="20">20</th><td><u>#<span data-ppcond="20">ifndef</span> <span class="macro" data-ref="_M/_ADB_SYSDEPS_H">_ADB_SYSDEPS_H</span></u></td></tr>
+<tr><th id="21">21</th><td><u>#define <dfn class="macro" id="_M/_ADB_SYSDEPS_H" data-ref="_M/_ADB_SYSDEPS_H">_ADB_SYSDEPS_H</dfn></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="23">ifdef</span> <span class="macro" data-ref="_M/__CYGWIN__">__CYGWIN__</span></u></td></tr>
+<tr><th id="24">24</th><td><u>#  undef _WIN32</u></td></tr>
+<tr><th id="25">25</th><td><u>#<span data-ppcond="23">endif</span></u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../../../external/libcxx/include/string.html">&lt;string&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../../../external/libcxx/include/vector.html">&lt;vector&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><i>// Include this before open/unlink are defined as macros below.</i></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../base/include/android-base/errors.h.html">&lt;android-base/errors.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../base/include/android-base/utf8.h.html">&lt;android-base/utf8.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><i>/*</i></td></tr>
+<tr><th id="37">37</th><td><i> * TEMP_FAILURE_RETRY is defined by some, but not all, versions of</i></td></tr>
+<tr><th id="38">38</th><td><i> * &lt;unistd.h&gt;. (Alas, it is not as standard as we'd hoped!) So, if it's</i></td></tr>
+<tr><th id="39">39</th><td><i> * not already defined, then define it here.</i></td></tr>
+<tr><th id="40">40</th><td><i> */</i></td></tr>
+<tr><th id="41">41</th><td><u>#<span data-ppcond="41">ifndef</span> <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a></u></td></tr>
+<tr><th id="42">42</th><td><i>/* Used to retry syscalls that can return EINTR. */</i></td></tr>
+<tr><th id="43">43</th><td><u>#define TEMP_FAILURE_RETRY(exp) ({         \</u></td></tr>
+<tr><th id="44">44</th><td><u>    typeof (exp) _rc;                      \</u></td></tr>
+<tr><th id="45">45</th><td><u>    do {                                   \</u></td></tr>
+<tr><th id="46">46</th><td><u>        _rc = (exp);                       \</u></td></tr>
+<tr><th id="47">47</th><td><u>    } while (_rc == -1 &amp;&amp; errno == EINTR); \</u></td></tr>
+<tr><th id="48">48</th><td><u>    _rc; })</u></td></tr>
+<tr><th id="49">49</th><td><u>#<span data-ppcond="41">endif</span></u></td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td><i>// Some printf-like functions are implemented in terms of</i></td></tr>
+<tr><th id="52">52</th><td><i>// android::base::StringAppendV, so they should use the same attribute for</i></td></tr>
+<tr><th id="53">53</th><td><i>// compile-time format string checking. On Windows, if the mingw version of</i></td></tr>
+<tr><th id="54">54</th><td><i>// vsnprintf is used in StringAppendV, use `gnu_printf' which allows z in %zd</i></td></tr>
+<tr><th id="55">55</th><td><i>// and PRIu64 (and related) to be recognized by the compile-time checking.</i></td></tr>
+<tr><th id="56">56</th><td><u>#define <dfn class="macro" id="_M/ADB_FORMAT_ARCHETYPE" data-ref="_M/ADB_FORMAT_ARCHETYPE">ADB_FORMAT_ARCHETYPE</dfn> __printf__</u></td></tr>
+<tr><th id="57">57</th><td><u>#<span data-ppcond="57">ifdef</span> <span class="macro" data-ref="_M/__USE_MINGW_ANSI_STDIO">__USE_MINGW_ANSI_STDIO</span></u></td></tr>
+<tr><th id="58">58</th><td><u>#if __USE_MINGW_ANSI_STDIO</u></td></tr>
+<tr><th id="59">59</th><td><u>#undef ADB_FORMAT_ARCHETYPE</u></td></tr>
+<tr><th id="60">60</th><td><u>#define ADB_FORMAT_ARCHETYPE gnu_printf</u></td></tr>
+<tr><th id="61">61</th><td><u>#endif</u></td></tr>
+<tr><th id="62">62</th><td><u>#<span data-ppcond="57">endif</span></u></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="64">ifdef</span> <span class="macro" data-ref="_M/_WIN32">_WIN32</span></u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><i>// Clang-only nullability specifiers</i></td></tr>
+<tr><th id="67">67</th><td><u>#define _Nonnull</u></td></tr>
+<tr><th id="68">68</th><td><u>#define _Nullable</u></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><u>#include &lt;ctype.h&gt;</u></td></tr>
+<tr><th id="71">71</th><td><u>#include &lt;direct.h&gt;</u></td></tr>
+<tr><th id="72">72</th><td><u>#include &lt;dirent.h&gt;</u></td></tr>
+<tr><th id="73">73</th><td><u>#include &lt;errno.h&gt;</u></td></tr>
+<tr><th id="74">74</th><td><u>#include &lt;fcntl.h&gt;</u></td></tr>
+<tr><th id="75">75</th><td><u>#include &lt;io.h&gt;</u></td></tr>
+<tr><th id="76">76</th><td><u>#include &lt;process.h&gt;</u></td></tr>
+<tr><th id="77">77</th><td><u>#include &lt;sys/stat.h&gt;</u></td></tr>
+<tr><th id="78">78</th><td><u>#include &lt;utime.h&gt;</u></td></tr>
+<tr><th id="79">79</th><td><u>#include &lt;winsock2.h&gt;</u></td></tr>
+<tr><th id="80">80</th><td><u>#include &lt;windows.h&gt;</u></td></tr>
+<tr><th id="81">81</th><td><u>#include &lt;ws2tcpip.h&gt;</u></td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><u>#include &lt;memory&gt;   // unique_ptr</u></td></tr>
+<tr><th id="84">84</th><td><u>#include &lt;string&gt;</u></td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><u>#include "fdevent.h"</u></td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><u>#define OS_PATH_SEPARATORS "\\/"</u></td></tr>
+<tr><th id="89">89</th><td><u>#define OS_PATH_SEPARATOR '\\'</u></td></tr>
+<tr><th id="90">90</th><td><u>#define OS_PATH_SEPARATOR_STR "\\"</u></td></tr>
+<tr><th id="91">91</th><td><u>#define ENV_PATH_SEPARATOR_STR ";"</u></td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><em>static</em> <b>__inline__</b> <em>bool</em> adb_is_separator(<em>char</em> c) {</td></tr>
+<tr><th id="94">94</th><td>    <b>return</b> c == <kbd>'\\'</kbd> || c == <kbd>'/'</kbd>;</td></tr>
+<tr><th id="95">95</th><td>}</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><b>typedef</b> CRITICAL_SECTION          adb_mutex_t;</td></tr>
+<tr><th id="98">98</th><td></td></tr>
+<tr><th id="99">99</th><td><u>#define  ADB_MUTEX_DEFINE(x)     adb_mutex_t   x</u></td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td><i>/* declare all mutexes */</i></td></tr>
+<tr><th id="102">102</th><td><i>/* For win32, adb_sysdeps_init() will do the mutex runtime initialization. */</i></td></tr>
+<tr><th id="103">103</th><td><u>#define  ADB_MUTEX(x)   extern adb_mutex_t  x;</u></td></tr>
+<tr><th id="104">104</th><td><u>#include "mutex_list.h"</u></td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><b>extern</b> <em>void</em>  adb_sysdeps_init(<em>void</em>);</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td><em>static</em> <b>__inline__</b> <em>void</em> adb_mutex_lock( adb_mutex_t*  lock )</td></tr>
+<tr><th id="109">109</th><td>{</td></tr>
+<tr><th id="110">110</th><td>    EnterCriticalSection( lock );</td></tr>
+<tr><th id="111">111</th><td>}</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><em>static</em> <b>__inline__</b> <em>void</em>  adb_mutex_unlock( adb_mutex_t*  lock )</td></tr>
+<tr><th id="114">114</th><td>{</td></tr>
+<tr><th id="115">115</th><td>    LeaveCriticalSection( lock );</td></tr>
+<tr><th id="116">116</th><td>}</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><b>typedef</b> <em>void</em> (*adb_thread_func_t)(<em>void</em>* arg);</td></tr>
+<tr><th id="119">119</th><td><b>typedef</b> HANDLE adb_thread_t;</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><b>struct</b> adb_winthread_args {</td></tr>
+<tr><th id="122">122</th><td>    adb_thread_func_t func;</td></tr>
+<tr><th id="123">123</th><td>    <em>void</em>* arg;</td></tr>
+<tr><th id="124">124</th><td>};</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td><em>static</em> <em>unsigned</em> <b>__stdcall</b> adb_winthread_wrapper(<em>void</em>* heap_args) {</td></tr>
+<tr><th id="127">127</th><td>    <i>// Move the arguments from the heap onto the thread's stack.</i></td></tr>
+<tr><th id="128">128</th><td>    adb_winthread_args thread_args = *<b>static_cast</b>&lt;adb_winthread_args*&gt;(heap_args);</td></tr>
+<tr><th id="129">129</th><td>    <b>delete</b> <b>static_cast</b>&lt;adb_winthread_args*&gt;(heap_args);</td></tr>
+<tr><th id="130">130</th><td>    thread_args.func(thread_args.arg);</td></tr>
+<tr><th id="131">131</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="132">132</th><td>}</td></tr>
+<tr><th id="133">133</th><td></td></tr>
+<tr><th id="134">134</th><td><em>static</em> <b>__inline__</b> <em>bool</em> adb_thread_create(adb_thread_func_t func, <em>void</em>* arg,</td></tr>
+<tr><th id="135">135</th><td>                                         adb_thread_t* thread = <b>nullptr</b>) {</td></tr>
+<tr><th id="136">136</th><td>    adb_winthread_args* args = <b>new</b> adb_winthread_args{.func = func, .arg = arg};</td></tr>
+<tr><th id="137">137</th><td>    uintptr_t handle = _beginthreadex(<b>nullptr</b>, <var>0</var>, adb_winthread_wrapper, args, <var>0</var>, <b>nullptr</b>);</td></tr>
+<tr><th id="138">138</th><td>    <b>if</b> (handle != <b>static_cast</b>&lt;uintptr_t&gt;(<var>0</var>)) {</td></tr>
+<tr><th id="139">139</th><td>        <b>if</b> (thread) {</td></tr>
+<tr><th id="140">140</th><td>            *thread = <b>reinterpret_cast</b>&lt;HANDLE&gt;(handle);</td></tr>
+<tr><th id="141">141</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="142">142</th><td>            CloseHandle(thread);</td></tr>
+<tr><th id="143">143</th><td>        }</td></tr>
+<tr><th id="144">144</th><td>        <b>return</b> <b>true</b>;</td></tr>
+<tr><th id="145">145</th><td>    }</td></tr>
+<tr><th id="146">146</th><td>    <b>return</b> <b>false</b>;</td></tr>
+<tr><th id="147">147</th><td>}</td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td><em>static</em> <b>__inline__</b> <em>bool</em> adb_thread_join(adb_thread_t thread) {</td></tr>
+<tr><th id="150">150</th><td>    <b>switch</b> (WaitForSingleObject(thread, INFINITE)) {</td></tr>
+<tr><th id="151">151</th><td>        <b>case</b> WAIT_OBJECT_0:</td></tr>
+<tr><th id="152">152</th><td>            CloseHandle(thread);</td></tr>
+<tr><th id="153">153</th><td>            <b>return</b> <b>true</b>;</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td>        <b>case</b> WAIT_FAILED:</td></tr>
+<tr><th id="156">156</th><td>            fprintf(stderr, <q>"adb_thread_join failed: %s\n"</q>,</td></tr>
+<tr><th id="157">157</th><td>                    android::base::SystemErrorCodeToString(GetLastError()).c_str());</td></tr>
+<tr><th id="158">158</th><td>            <b>break</b>;</td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td>        <b>default</b>:</td></tr>
+<tr><th id="161">161</th><td>            abort();</td></tr>
+<tr><th id="162">162</th><td>    }</td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td>    <b>return</b> <b>false</b>;</td></tr>
+<tr><th id="165">165</th><td>}</td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><em>static</em> <b>__inline__</b> <em>bool</em> adb_thread_detach(adb_thread_t thread) {</td></tr>
+<tr><th id="168">168</th><td>    CloseHandle(thread);</td></tr>
+<tr><th id="169">169</th><td>    <b>return</b> <b>true</b>;</td></tr>
+<tr><th id="170">170</th><td>}</td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><em>static</em> <b>__inline__</b> <em>void</em> <b>__attribute__</b>((noreturn)) adb_thread_exit() {</td></tr>
+<tr><th id="173">173</th><td>    _endthreadex(<var>0</var>);</td></tr>
+<tr><th id="174">174</th><td>}</td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td><em>static</em> <b>__inline__</b> <em>int</em> adb_thread_setname(<em>const</em> std::string&amp; name) {</td></tr>
+<tr><th id="177">177</th><td>    <i>// TODO: See <a href="https://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx">https://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx</a> for how to set</i></td></tr>
+<tr><th id="178">178</th><td><i>    // the thread name in Windows. Unfortunately, it only works during debugging, but</i></td></tr>
+<tr><th id="179">179</th><td><i>    // our build process doesn't generate PDB files needed for debugging.</i></td></tr>
+<tr><th id="180">180</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="181">181</th><td>}</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td><em>static</em> <b>__inline__</b> adb_thread_t adb_thread_self() {</td></tr>
+<tr><th id="184">184</th><td>    <b>return</b> GetCurrentThread();</td></tr>
+<tr><th id="185">185</th><td>}</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td><em>static</em> <b>__inline__</b> <em>bool</em> adb_thread_equal(adb_thread_t lhs, adb_thread_t rhs) {</td></tr>
+<tr><th id="188">188</th><td>    <b>return</b> GetThreadId(lhs) == GetThreadId(rhs);</td></tr>
+<tr><th id="189">189</th><td>}</td></tr>
+<tr><th id="190">190</th><td></td></tr>
+<tr><th id="191">191</th><td><em>static</em> <b>__inline__</b>  <em>unsigned</em> <em>long</em> adb_thread_id()</td></tr>
+<tr><th id="192">192</th><td>{</td></tr>
+<tr><th id="193">193</th><td>    <b>return</b> GetCurrentThreadId();</td></tr>
+<tr><th id="194">194</th><td>}</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td><em>static</em> <b>__inline__</b> <em>void</em>  close_on_exec(<em>int</em>  fd)</td></tr>
+<tr><th id="197">197</th><td>{</td></tr>
+<tr><th id="198">198</th><td>    <i>/* nothing really */</i></td></tr>
+<tr><th id="199">199</th><td>}</td></tr>
+<tr><th id="200">200</th><td></td></tr>
+<tr><th id="201">201</th><td><u>#define  lstat    stat   /* no symlinks on Win32 */</u></td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td><u>#define  S_ISLNK(m)   0   /* no symlinks on Win32 */</u></td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><b>extern</b> <em>int</em>  adb_unlink(<em>const</em> <em>char</em>*  path);</td></tr>
+<tr><th id="206">206</th><td><u>#undef  unlink</u></td></tr>
+<tr><th id="207">207</th><td><u>#define unlink  ___xxx_unlink</u></td></tr>
+<tr><th id="208">208</th><td></td></tr>
+<tr><th id="209">209</th><td><b>extern</b> <em>int</em> adb_mkdir(<em>const</em> std::string&amp; path, <em>int</em> mode);</td></tr>
+<tr><th id="210">210</th><td><u>#undef   mkdir</u></td></tr>
+<tr><th id="211">211</th><td><u>#define  mkdir  ___xxx_mkdir</u></td></tr>
+<tr><th id="212">212</th><td></td></tr>
+<tr><th id="213">213</th><td><i>// See the comments for the !defined(_WIN32) versions of adb_*().</i></td></tr>
+<tr><th id="214">214</th><td><b>extern</b> <em>int</em>  adb_open(<em>const</em> <em>char</em>*  path, <em>int</em>  options);</td></tr>
+<tr><th id="215">215</th><td><b>extern</b> <em>int</em>  adb_creat(<em>const</em> <em>char</em>*  path, <em>int</em>  mode);</td></tr>
+<tr><th id="216">216</th><td><b>extern</b> <em>int</em>  adb_read(<em>int</em>  fd, <em>void</em>* buf, <em>int</em> len);</td></tr>
+<tr><th id="217">217</th><td><b>extern</b> <em>int</em>  adb_write(<em>int</em>  fd, <em>const</em> <em>void</em>*  buf, <em>int</em>  len);</td></tr>
+<tr><th id="218">218</th><td><b>extern</b> <em>int</em>  adb_lseek(<em>int</em>  fd, <em>int</em>  pos, <em>int</em>  where);</td></tr>
+<tr><th id="219">219</th><td><b>extern</b> <em>int</em>  adb_shutdown(<em>int</em>  fd);</td></tr>
+<tr><th id="220">220</th><td><b>extern</b> <em>int</em>  adb_close(<em>int</em>  fd);</td></tr>
+<tr><th id="221">221</th><td></td></tr>
+<tr><th id="222">222</th><td><i>// See the comments for the !defined(_WIN32) version of unix_close().</i></td></tr>
+<tr><th id="223">223</th><td><em>static</em> <b>__inline__</b> <em>int</em>  unix_close(<em>int</em> fd)</td></tr>
+<tr><th id="224">224</th><td>{</td></tr>
+<tr><th id="225">225</th><td>    <b>return</b> close(fd);</td></tr>
+<tr><th id="226">226</th><td>}</td></tr>
+<tr><th id="227">227</th><td><u>#undef   close</u></td></tr>
+<tr><th id="228">228</th><td><u>#define  close   ____xxx_close</u></td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td><i>// Like unix_read(), but may return EINTR.</i></td></tr>
+<tr><th id="231">231</th><td><b>extern</b> <em>int</em>  unix_read_interruptible(<em>int</em>  fd, <em>void</em>*  buf, size_t  len);</td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td><i>// See the comments for the !defined(_WIN32) version of unix_read().</i></td></tr>
+<tr><th id="234">234</th><td><em>static</em> <b>__inline__</b> <em>int</em> unix_read(<em>int</em> fd, <em>void</em>* buf, size_t len) {</td></tr>
+<tr><th id="235">235</th><td>    <b>return</b> TEMP_FAILURE_RETRY(unix_read_interruptible(fd, buf, len));</td></tr>
+<tr><th id="236">236</th><td>}</td></tr>
+<tr><th id="237">237</th><td></td></tr>
+<tr><th id="238">238</th><td><u>#undef   read</u></td></tr>
+<tr><th id="239">239</th><td><u>#define  read  ___xxx_read</u></td></tr>
+<tr><th id="240">240</th><td></td></tr>
+<tr><th id="241">241</th><td><i>// See the comments for the !defined(_WIN32) version of unix_write().</i></td></tr>
+<tr><th id="242">242</th><td><em>static</em> <b>__inline__</b>  <em>int</em>  unix_write(<em>int</em>  fd, <em>const</em> <em>void</em>*  buf, size_t  len)</td></tr>
+<tr><th id="243">243</th><td>{</td></tr>
+<tr><th id="244">244</th><td>    <b>return</b> write(fd, buf, len);</td></tr>
+<tr><th id="245">245</th><td>}</td></tr>
+<tr><th id="246">246</th><td><u>#undef   write</u></td></tr>
+<tr><th id="247">247</th><td><u>#define  write  ___xxx_write</u></td></tr>
+<tr><th id="248">248</th><td></td></tr>
+<tr><th id="249">249</th><td><i>// See the comments for the !defined(_WIN32) version of adb_open_mode().</i></td></tr>
+<tr><th id="250">250</th><td><em>static</em> <b>__inline__</b> <em>int</em>  adb_open_mode(<em>const</em> <em>char</em>* path, <em>int</em> options, <em>int</em> mode)</td></tr>
+<tr><th id="251">251</th><td>{</td></tr>
+<tr><th id="252">252</th><td>    <b>return</b> adb_open(path, options);</td></tr>
+<tr><th id="253">253</th><td>}</td></tr>
+<tr><th id="254">254</th><td></td></tr>
+<tr><th id="255">255</th><td><i>// See the comments for the !defined(_WIN32) version of unix_open().</i></td></tr>
+<tr><th id="256">256</th><td><b>extern</b> <em>int</em> unix_open(<em>const</em> <em>char</em>* path, <em>int</em> options, ...);</td></tr>
+<tr><th id="257">257</th><td><u>#define  open    ___xxx_unix_open</u></td></tr>
+<tr><th id="258">258</th><td></td></tr>
+<tr><th id="259">259</th><td><i>// Checks if |fd| corresponds to a console.</i></td></tr>
+<tr><th id="260">260</th><td><i>// Standard Windows isatty() returns 1 for both console FDs and character</i></td></tr>
+<tr><th id="261">261</th><td><i>// devices like NUL. unix_isatty() performs some extra checking to only match</i></td></tr>
+<tr><th id="262">262</th><td><i>// console FDs.</i></td></tr>
+<tr><th id="263">263</th><td><i>// |fd| must be a real file descriptor, meaning STDxx_FILENO or unix_open() FDs</i></td></tr>
+<tr><th id="264">264</th><td><i>// will work but adb_open() FDs will not. Additionally the OS handle associated</i></td></tr>
+<tr><th id="265">265</th><td><i>// with |fd| must have GENERIC_READ access (which console FDs have by default).</i></td></tr>
+<tr><th id="266">266</th><td><i>// Returns 1 if |fd| is a console FD, 0 otherwise. The value of errno after</i></td></tr>
+<tr><th id="267">267</th><td><i>// calling this function is unreliable and should not be used.</i></td></tr>
+<tr><th id="268">268</th><td><em>int</em> unix_isatty(<em>int</em> fd);</td></tr>
+<tr><th id="269">269</th><td><u>#define  isatty  ___xxx_isatty</u></td></tr>
+<tr><th id="270">270</th><td></td></tr>
+<tr><th id="271">271</th><td><i>/* normally provided by &lt;cutils/misc.h&gt; */</i></td></tr>
+<tr><th id="272">272</th><td><b>extern</b> <em>void</em>*  load_file(<em>const</em> <em>char</em>*  pathname, <em>unsigned</em>*  psize);</td></tr>
+<tr><th id="273">273</th><td></td></tr>
+<tr><th id="274">274</th><td><em>static</em> <b>__inline__</b> <em>void</em>  adb_sleep_ms( <em>int</em>  mseconds )</td></tr>
+<tr><th id="275">275</th><td>{</td></tr>
+<tr><th id="276">276</th><td>    Sleep( mseconds );</td></tr>
+<tr><th id="277">277</th><td>}</td></tr>
+<tr><th id="278">278</th><td></td></tr>
+<tr><th id="279">279</th><td><em>int</em> network_loopback_client(<em>int</em> port, <em>int</em> type, std::string* error);</td></tr>
+<tr><th id="280">280</th><td><em>int</em> network_loopback_server(<em>int</em> port, <em>int</em> type, std::string* error);</td></tr>
+<tr><th id="281">281</th><td><em>int</em> network_inaddr_any_server(<em>int</em> port, <em>int</em> type, std::string* error);</td></tr>
+<tr><th id="282">282</th><td><em>int</em> network_connect(<em>const</em> std::string&amp; host, <em>int</em> port, <em>int</em> type, <em>int</em> timeout,</td></tr>
+<tr><th id="283">283</th><td>                    std::string* error);</td></tr>
+<tr><th id="284">284</th><td></td></tr>
+<tr><th id="285">285</th><td><b>extern</b> <em>int</em>  adb_socket_accept(<em>int</em>  serverfd, <b>struct</b> sockaddr*  addr, socklen_t  *addrlen);</td></tr>
+<tr><th id="286">286</th><td></td></tr>
+<tr><th id="287">287</th><td><u>#undef   accept</u></td></tr>
+<tr><th id="288">288</th><td><u>#define  accept  ___xxx_accept</u></td></tr>
+<tr><th id="289">289</th><td></td></tr>
+<tr><th id="290">290</th><td><b>extern</b> <em>int</em>  adb_setsockopt(<em>int</em>  fd, <em>int</em>  level, <em>int</em>  optname, <em>const</em> <em>void</em>*  optval, socklen_t  optlen);</td></tr>
+<tr><th id="291">291</th><td></td></tr>
+<tr><th id="292">292</th><td><u>#undef   setsockopt</u></td></tr>
+<tr><th id="293">293</th><td><u>#define  setsockopt  ___xxx_setsockopt</u></td></tr>
+<tr><th id="294">294</th><td></td></tr>
+<tr><th id="295">295</th><td><b>extern</b> <em>int</em>  adb_socketpair( <em>int</em>  sv[<var>2</var>] );</td></tr>
+<tr><th id="296">296</th><td></td></tr>
+<tr><th id="297">297</th><td><b>struct</b> adb_pollfd {</td></tr>
+<tr><th id="298">298</th><td>    <em>int</em> fd;</td></tr>
+<tr><th id="299">299</th><td>    <em>short</em> events;</td></tr>
+<tr><th id="300">300</th><td>    <em>short</em> revents;</td></tr>
+<tr><th id="301">301</th><td>};</td></tr>
+<tr><th id="302">302</th><td><b>extern</b> <em>int</em> adb_poll(adb_pollfd* fds, size_t nfds, <em>int</em> timeout);</td></tr>
+<tr><th id="303">303</th><td><u>#define poll ___xxx_poll</u></td></tr>
+<tr><th id="304">304</th><td></td></tr>
+<tr><th id="305">305</th><td><em>static</em> <b>__inline__</b> <em>int</em> adb_is_absolute_host_path(<em>const</em> <em>char</em>* path) {</td></tr>
+<tr><th id="306">306</th><td>    <b>return</b> isalpha(path[<var>0</var>]) &amp;&amp; path[<var>1</var>] == <kbd>':'</kbd> &amp;&amp; path[<var>2</var>] == <kbd>'\\'</kbd>;</td></tr>
+<tr><th id="307">307</th><td>}</td></tr>
+<tr><th id="308">308</th><td></td></tr>
+<tr><th id="309">309</th><td><i>// We later define a macro mapping 'stat' to 'adb_stat'. This causes:</i></td></tr>
+<tr><th id="310">310</th><td><i>//   struct stat s;</i></td></tr>
+<tr><th id="311">311</th><td><i>//   stat(filename, &amp;s);</i></td></tr>
+<tr><th id="312">312</th><td><i>// To turn into the following:</i></td></tr>
+<tr><th id="313">313</th><td><i>//   struct adb_stat s;</i></td></tr>
+<tr><th id="314">314</th><td><i>//   adb_stat(filename, &amp;s);</i></td></tr>
+<tr><th id="315">315</th><td><i>// To get this to work, we need to make 'struct adb_stat' the same as</i></td></tr>
+<tr><th id="316">316</th><td><i>// 'struct stat'. Note that this definition of 'struct adb_stat' uses the</i></td></tr>
+<tr><th id="317">317</th><td><i>// *current* macro definition of stat, so it may actually be inheriting from</i></td></tr>
+<tr><th id="318">318</th><td><i>// struct _stat32i64 (or some other remapping).</i></td></tr>
+<tr><th id="319">319</th><td><b>struct</b> adb_stat : <b>public</b> stat {};</td></tr>
+<tr><th id="320">320</th><td></td></tr>
+<tr><th id="321">321</th><td><b>static_assert</b>(<b>sizeof</b>(<b>struct</b> adb_stat) == <b>sizeof</b>(<b>struct</b> stat),</td></tr>
+<tr><th id="322">322</th><td>    <q>"structures should be the same"</q>);</td></tr>
+<tr><th id="323">323</th><td></td></tr>
+<tr><th id="324">324</th><td><b>extern</b> <em>int</em> adb_stat(<em>const</em> <em>char</em>* f, <b>struct</b> adb_stat* s);</td></tr>
+<tr><th id="325">325</th><td></td></tr>
+<tr><th id="326">326</th><td><i>// stat is already a macro, undefine it so we can redefine it.</i></td></tr>
+<tr><th id="327">327</th><td><u>#undef stat</u></td></tr>
+<tr><th id="328">328</th><td><u>#define stat adb_stat</u></td></tr>
+<tr><th id="329">329</th><td></td></tr>
+<tr><th id="330">330</th><td><i>// UTF-8 versions of POSIX APIs.</i></td></tr>
+<tr><th id="331">331</th><td><b>extern</b> DIR* adb_opendir(<em>const</em> <em>char</em>* dirname);</td></tr>
+<tr><th id="332">332</th><td><b>extern</b> <b>struct</b> dirent* adb_readdir(DIR* dir);</td></tr>
+<tr><th id="333">333</th><td><b>extern</b> <em>int</em> adb_closedir(DIR* dir);</td></tr>
+<tr><th id="334">334</th><td></td></tr>
+<tr><th id="335">335</th><td><b>extern</b> <em>int</em> adb_utime(<em>const</em> <em>char</em> *, <b>struct</b> utimbuf *);</td></tr>
+<tr><th id="336">336</th><td><b>extern</b> <em>int</em> adb_chmod(<em>const</em> <em>char</em> *, <em>int</em>);</td></tr>
+<tr><th id="337">337</th><td></td></tr>
+<tr><th id="338">338</th><td><b>extern</b> <em>int</em> adb_vfprintf(FILE *stream, <em>const</em> <em>char</em> *format, va_list ap)</td></tr>
+<tr><th id="339">339</th><td>    <b>__attribute__</b>((__format__(ADB_FORMAT_ARCHETYPE, <var>2</var>, <var>0</var>)));</td></tr>
+<tr><th id="340">340</th><td><b>extern</b> <em>int</em> adb_vprintf(<em>const</em> <em>char</em> *format, va_list ap)</td></tr>
+<tr><th id="341">341</th><td>    <b>__attribute__</b>((__format__(ADB_FORMAT_ARCHETYPE, <var>1</var>, <var>0</var>)));</td></tr>
+<tr><th id="342">342</th><td><b>extern</b> <em>int</em> adb_fprintf(FILE *stream, <em>const</em> <em>char</em> *format, ...)</td></tr>
+<tr><th id="343">343</th><td>    <b>__attribute__</b>((__format__(ADB_FORMAT_ARCHETYPE, <var>2</var>, <var>3</var>)));</td></tr>
+<tr><th id="344">344</th><td><b>extern</b> <em>int</em> adb_printf(<em>const</em> <em>char</em> *format, ...)</td></tr>
+<tr><th id="345">345</th><td>    <b>__attribute__</b>((__format__(ADB_FORMAT_ARCHETYPE, <var>1</var>, <var>2</var>)));</td></tr>
+<tr><th id="346">346</th><td></td></tr>
+<tr><th id="347">347</th><td><b>extern</b> <em>int</em> adb_fputs(<em>const</em> <em>char</em>* buf, FILE* stream);</td></tr>
+<tr><th id="348">348</th><td><b>extern</b> <em>int</em> adb_fputc(<em>int</em> ch, FILE* stream);</td></tr>
+<tr><th id="349">349</th><td><b>extern</b> <em>int</em> adb_putchar(<em>int</em> ch);</td></tr>
+<tr><th id="350">350</th><td><b>extern</b> <em>int</em> adb_puts(<em>const</em> <em>char</em>* buf);</td></tr>
+<tr><th id="351">351</th><td><b>extern</b> size_t adb_fwrite(<em>const</em> <em>void</em>* ptr, size_t size, size_t nmemb,</td></tr>
+<tr><th id="352">352</th><td>                         FILE* stream);</td></tr>
+<tr><th id="353">353</th><td></td></tr>
+<tr><th id="354">354</th><td><b>extern</b> FILE* adb_fopen(<em>const</em> <em>char</em>* f, <em>const</em> <em>char</em>* m);</td></tr>
+<tr><th id="355">355</th><td></td></tr>
+<tr><th id="356">356</th><td><b>extern</b> <em>char</em>* adb_getenv(<em>const</em> <em>char</em>* name);</td></tr>
+<tr><th id="357">357</th><td></td></tr>
+<tr><th id="358">358</th><td><b>extern</b> <em>char</em>* adb_getcwd(<em>char</em>* buf, <em>int</em> size);</td></tr>
+<tr><th id="359">359</th><td></td></tr>
+<tr><th id="360">360</th><td><i>// Remap calls to POSIX APIs to our UTF-8 versions.</i></td></tr>
+<tr><th id="361">361</th><td><u>#define opendir adb_opendir</u></td></tr>
+<tr><th id="362">362</th><td><u>#define readdir adb_readdir</u></td></tr>
+<tr><th id="363">363</th><td><u>#define closedir adb_closedir</u></td></tr>
+<tr><th id="364">364</th><td><u>#define rewinddir rewinddir_utf8_not_yet_implemented</u></td></tr>
+<tr><th id="365">365</th><td><u>#define telldir telldir_utf8_not_yet_implemented</u></td></tr>
+<tr><th id="366">366</th><td><i>// Some compiler's C++ headers have members named seekdir, so we can't do the</i></td></tr>
+<tr><th id="367">367</th><td><i>// macro technique and instead cause a link error if seekdir is called.</i></td></tr>
+<tr><th id="368">368</th><td><b>inline</b> <em>void</em> seekdir(DIR*, <em>long</em>) {</td></tr>
+<tr><th id="369">369</th><td>    <b>extern</b> <em>int</em> seekdir_utf8_not_yet_implemented;</td></tr>
+<tr><th id="370">370</th><td>    seekdir_utf8_not_yet_implemented = <var>1</var>;</td></tr>
+<tr><th id="371">371</th><td>}</td></tr>
+<tr><th id="372">372</th><td></td></tr>
+<tr><th id="373">373</th><td><u>#define utime adb_utime</u></td></tr>
+<tr><th id="374">374</th><td><u>#define chmod adb_chmod</u></td></tr>
+<tr><th id="375">375</th><td></td></tr>
+<tr><th id="376">376</th><td><u>#define vfprintf adb_vfprintf</u></td></tr>
+<tr><th id="377">377</th><td><u>#define vprintf adb_vprintf</u></td></tr>
+<tr><th id="378">378</th><td><u>#define fprintf adb_fprintf</u></td></tr>
+<tr><th id="379">379</th><td><u>#define printf adb_printf</u></td></tr>
+<tr><th id="380">380</th><td><u>#define fputs adb_fputs</u></td></tr>
+<tr><th id="381">381</th><td><u>#define fputc adb_fputc</u></td></tr>
+<tr><th id="382">382</th><td><i>// putc may be a macro, so if so, undefine it, so that we can redefine it.</i></td></tr>
+<tr><th id="383">383</th><td><u>#undef putc</u></td></tr>
+<tr><th id="384">384</th><td><u>#define putc(c, s) adb_fputc(c, s)</u></td></tr>
+<tr><th id="385">385</th><td><u>#define putchar adb_putchar</u></td></tr>
+<tr><th id="386">386</th><td><u>#define puts adb_puts</u></td></tr>
+<tr><th id="387">387</th><td><u>#define fwrite adb_fwrite</u></td></tr>
+<tr><th id="388">388</th><td></td></tr>
+<tr><th id="389">389</th><td><u>#define fopen adb_fopen</u></td></tr>
+<tr><th id="390">390</th><td><u>#define freopen freopen_utf8_not_yet_implemented</u></td></tr>
+<tr><th id="391">391</th><td></td></tr>
+<tr><th id="392">392</th><td><u>#define getenv adb_getenv</u></td></tr>
+<tr><th id="393">393</th><td><u>#define putenv putenv_utf8_not_yet_implemented</u></td></tr>
+<tr><th id="394">394</th><td><u>#define setenv setenv_utf8_not_yet_implemented</u></td></tr>
+<tr><th id="395">395</th><td><u>#define unsetenv unsetenv_utf8_not_yet_implemented</u></td></tr>
+<tr><th id="396">396</th><td></td></tr>
+<tr><th id="397">397</th><td><u>#define getcwd adb_getcwd</u></td></tr>
+<tr><th id="398">398</th><td></td></tr>
+<tr><th id="399">399</th><td><em>char</em>* adb_strerror(<em>int</em> err);</td></tr>
+<tr><th id="400">400</th><td><u>#define strerror adb_strerror</u></td></tr>
+<tr><th id="401">401</th><td></td></tr>
+<tr><th id="402">402</th><td><i>// Helper class to convert UTF-16 argv from wmain() to UTF-8 args that can be</i></td></tr>
+<tr><th id="403">403</th><td><i>// passed to main().</i></td></tr>
+<tr><th id="404">404</th><td><b>class</b> NarrowArgs {</td></tr>
+<tr><th id="405">405</th><td><b>public</b>:</td></tr>
+<tr><th id="406">406</th><td>    NarrowArgs(<em>int</em> argc, <em>wchar_t</em>** argv);</td></tr>
+<tr><th id="407">407</th><td>    ~NarrowArgs();</td></tr>
+<tr><th id="408">408</th><td></td></tr>
+<tr><th id="409">409</th><td>    <b>inline</b> <em>char</em>** data() {</td></tr>
+<tr><th id="410">410</th><td>        <b>return</b> narrow_args;</td></tr>
+<tr><th id="411">411</th><td>    }</td></tr>
+<tr><th id="412">412</th><td></td></tr>
+<tr><th id="413">413</th><td><b>private</b>:</td></tr>
+<tr><th id="414">414</th><td>    <em>char</em>** narrow_args;</td></tr>
+<tr><th id="415">415</th><td>};</td></tr>
+<tr><th id="416">416</th><td></td></tr>
+<tr><th id="417">417</th><td><i>// Windows HANDLE values only use 32-bits of the type, even on 64-bit machines,</i></td></tr>
+<tr><th id="418">418</th><td><i>// so they can fit in an int. To convert back, we just need to sign-extend.</i></td></tr>
+<tr><th id="419">419</th><td><i>// <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa384203%28v=vs.85%29.aspx">https://msdn.microsoft.com/en-us/library/windows/desktop/aa384203%28v=vs.85%29.aspx</a></i></td></tr>
+<tr><th id="420">420</th><td><i>// Note that this does not make a HANDLE value work with APIs like open(), nor</i></td></tr>
+<tr><th id="421">421</th><td><i>// does this make a value from open() passable to APIs taking a HANDLE. This</i></td></tr>
+<tr><th id="422">422</th><td><i>// just lets you take a HANDLE, pass it around as an int, and then use it again</i></td></tr>
+<tr><th id="423">423</th><td><i>// as a HANDLE.</i></td></tr>
+<tr><th id="424">424</th><td><b>inline</b> <em>int</em> cast_handle_to_int(<em>const</em> HANDLE h) {</td></tr>
+<tr><th id="425">425</th><td>    <i>// truncate</i></td></tr>
+<tr><th id="426">426</th><td>    <b>return</b> <b>static_cast</b>&lt;<em>int</em>&gt;(<b>reinterpret_cast</b>&lt;INT_PTR&gt;(h));</td></tr>
+<tr><th id="427">427</th><td>}</td></tr>
+<tr><th id="428">428</th><td></td></tr>
+<tr><th id="429">429</th><td><b>inline</b> HANDLE cast_int_to_handle(<em>const</em> <em>int</em> fd) {</td></tr>
+<tr><th id="430">430</th><td>    <i>// sign-extend</i></td></tr>
+<tr><th id="431">431</th><td>    <b>return</b> <b>reinterpret_cast</b>&lt;HANDLE&gt;(<b>static_cast</b>&lt;INT_PTR&gt;(fd));</td></tr>
+<tr><th id="432">432</th><td>}</td></tr>
+<tr><th id="433">433</th><td></td></tr>
+<tr><th id="434">434</th><td><i>// Deleter for unique_handle. Adapted from many sources, including:</i></td></tr>
+<tr><th id="435">435</th><td><i>// <a href="http://stackoverflow.com/questions/14841396/stdunique-ptr-deleters-and-the-win32-api">http://stackoverflow.com/questions/14841396/stdunique-ptr-deleters-and-the-win32-api</a></i></td></tr>
+<tr><th id="436">436</th><td><i>// <a href="https://visualstudiomagazine.com/articles/2013/09/01/get-a-handle-on-the-windows-api.aspx">https://visualstudiomagazine.com/articles/2013/09/01/get-a-handle-on-the-windows-api.aspx</a></i></td></tr>
+<tr><th id="437">437</th><td><b>class</b> handle_deleter {</td></tr>
+<tr><th id="438">438</th><td><b>public</b>:</td></tr>
+<tr><th id="439">439</th><td>    <b>typedef</b> HANDLE pointer;</td></tr>
+<tr><th id="440">440</th><td></td></tr>
+<tr><th id="441">441</th><td>    <em>void</em> <b>operator</b>()(HANDLE h);</td></tr>
+<tr><th id="442">442</th><td>};</td></tr>
+<tr><th id="443">443</th><td></td></tr>
+<tr><th id="444">444</th><td><i>// Like std::unique_ptr, but for Windows HANDLE objects that should be</i></td></tr>
+<tr><th id="445">445</th><td><i>// CloseHandle()'d. Operator bool() only checks if the handle != nullptr,</i></td></tr>
+<tr><th id="446">446</th><td><i>// but does not check if the handle != INVALID_HANDLE_VALUE.</i></td></tr>
+<tr><th id="447">447</th><td><b>typedef</b> std::unique_ptr&lt;HANDLE, handle_deleter&gt; unique_handle;</td></tr>
+<tr><th id="448">448</th><td></td></tr>
+<tr><th id="449">449</th><td><b>namespace</b> internal {</td></tr>
+<tr><th id="450">450</th><td></td></tr>
+<tr><th id="451">451</th><td>size_t ParseCompleteUTF8(<em>const</em> <em>char</em>* first, <em>const</em> <em>char</em>* last, std::vector&lt;<em>char</em>&gt;* remaining_bytes);</td></tr>
+<tr><th id="452">452</th><td></td></tr>
+<tr><th id="453">453</th><td>}</td></tr>
+<tr><th id="454">454</th><td></td></tr>
+<tr><th id="455">455</th><td><u>#<span data-ppcond="64">else</span> /* !_WIN32 a.k.a. Unix */</u></td></tr>
+<tr><th id="456">456</th><td></td></tr>
+<tr><th id="457">457</th><td><u>#include <a href="../include/cutils/misc.h.html">&lt;cutils/misc.h&gt;</a></u></td></tr>
+<tr><th id="458">458</th><td><u>#include <a href="../include/cutils/sockets.h.html">&lt;cutils/sockets.h&gt;</a></u></td></tr>
+<tr><th id="459">459</th><td><u>#include <a href="../include/cutils/threads.h.html">&lt;cutils/threads.h&gt;</a></u></td></tr>
+<tr><th id="460">460</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="461">461</th><td><u>#include <a href="../../../bionic/libc/include/poll.h.html">&lt;poll.h&gt;</a></u></td></tr>
+<tr><th id="462">462</th><td><u>#include <a href="../../../bionic/libc/include/signal.h.html">&lt;signal.h&gt;</a></u></td></tr>
+<tr><th id="463">463</th><td><u>#include <a href="../../../bionic/libc/include/sys/stat.h.html">&lt;sys/stat.h&gt;</a></u></td></tr>
+<tr><th id="464">464</th><td><u>#include <a href="../../../bionic/libc/include/sys/wait.h.html">&lt;sys/wait.h&gt;</a></u></td></tr>
+<tr><th id="465">465</th><td></td></tr>
+<tr><th id="466">466</th><td><u>#include <a href="../../../bionic/libc/include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="467">467</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="468">468</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="469">469</th><td><u>#include &lt;stdarg.h&gt;</u></td></tr>
+<tr><th id="470">470</th><td><u>#include <a href="../../../bionic/libc/include/netdb.h.html">&lt;netdb.h&gt;</a></u></td></tr>
+<tr><th id="471">471</th><td><u>#include <a href="../../../bionic/libc/include/netinet/in.h.html">&lt;netinet/in.h&gt;</a></u></td></tr>
+<tr><th id="472">472</th><td><u>#include <a href="../../../bionic/libc/include/netinet/tcp.h.html">&lt;netinet/tcp.h&gt;</a></u></td></tr>
+<tr><th id="473">473</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="474">474</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="475">475</th><td></td></tr>
+<tr><th id="476">476</th><td><u>#include <a href="../../../external/libcxx/include/string.html">&lt;string&gt;</a></u></td></tr>
+<tr><th id="477">477</th><td></td></tr>
+<tr><th id="478">478</th><td><u>#define <dfn class="macro" id="_M/OS_PATH_SEPARATORS" data-ref="_M/OS_PATH_SEPARATORS">OS_PATH_SEPARATORS</dfn> "/"</u></td></tr>
+<tr><th id="479">479</th><td><u>#define <dfn class="macro" id="_M/OS_PATH_SEPARATOR" data-ref="_M/OS_PATH_SEPARATOR">OS_PATH_SEPARATOR</dfn> '/'</u></td></tr>
+<tr><th id="480">480</th><td><u>#define <dfn class="macro" id="_M/OS_PATH_SEPARATOR_STR" data-ref="_M/OS_PATH_SEPARATOR_STR">OS_PATH_SEPARATOR_STR</dfn> "/"</u></td></tr>
+<tr><th id="481">481</th><td><u>#define <dfn class="macro" id="_M/ENV_PATH_SEPARATOR_STR" data-ref="_M/ENV_PATH_SEPARATOR_STR">ENV_PATH_SEPARATOR_STR</dfn> ":"</u></td></tr>
+<tr><th id="482">482</th><td></td></tr>
+<tr><th id="483">483</th><td><em>static</em> <b>__inline__</b> <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl def" id="_ZL16adb_is_separatorc" title='adb_is_separator' data-ref="_ZL16adb_is_separatorc">adb_is_separator</dfn>(<em>char</em> <dfn class="local col2 decl" id="52c" title='c' data-type='char' data-ref="52c">c</dfn>) {</td></tr>
+<tr><th id="484">484</th><td>    <b>return</b> <a class="local col2 ref" href="#52c" title='c' data-ref="52c">c</a> == <kbd>'/'</kbd>;</td></tr>
+<tr><th id="485">485</th><td>}</td></tr>
+<tr><th id="486">486</th><td></td></tr>
+<tr><th id="487">487</th><td><b>typedef</b>  <a class="typedef" href="../../../bionic/libc/include/pthread.h.html#pthread_mutex_t" title='pthread_mutex_t' data-type='struct pthread_mutex_t' data-ref="pthread_mutex_t">pthread_mutex_t</a>          <dfn class="typedef" id="adb_mutex_t" title='adb_mutex_t' data-type='pthread_mutex_t' data-ref="adb_mutex_t">adb_mutex_t</dfn>;</td></tr>
+<tr><th id="488">488</th><td></td></tr>
+<tr><th id="489">489</th><td><u>#define  <dfn class="macro" id="_M/ADB_MUTEX_INITIALIZER" data-ref="_M/ADB_MUTEX_INITIALIZER">ADB_MUTEX_INITIALIZER</dfn>    PTHREAD_MUTEX_INITIALIZER</u></td></tr>
+<tr><th id="490">490</th><td><u>#define  <dfn class="macro" id="_M/adb_mutex_init" data-ref="_M/adb_mutex_init">adb_mutex_init</dfn>           pthread_mutex_init</u></td></tr>
+<tr><th id="491">491</th><td><u>#define  <dfn class="macro" id="_M/adb_mutex_lock" data-ref="_M/adb_mutex_lock">adb_mutex_lock</dfn>           pthread_mutex_lock</u></td></tr>
+<tr><th id="492">492</th><td><u>#define  <dfn class="macro" id="_M/adb_mutex_unlock" data-ref="_M/adb_mutex_unlock">adb_mutex_unlock</dfn>         pthread_mutex_unlock</u></td></tr>
+<tr><th id="493">493</th><td><u>#define  <dfn class="macro" id="_M/adb_mutex_destroy" data-ref="_M/adb_mutex_destroy">adb_mutex_destroy</dfn>        pthread_mutex_destroy</u></td></tr>
+<tr><th id="494">494</th><td></td></tr>
+<tr><th id="495">495</th><td><u>#define  <dfn class="macro" id="_M/ADB_MUTEX_DEFINE" data-ref="_M/ADB_MUTEX_DEFINE">ADB_MUTEX_DEFINE</dfn>(m)      adb_mutex_t   m = PTHREAD_MUTEX_INITIALIZER</u></td></tr>
+<tr><th id="496">496</th><td></td></tr>
+<tr><th id="497">497</th><td><u>#define  <dfn class="macro" id="_M/adb_cond_t" data-ref="_M/adb_cond_t">adb_cond_t</dfn>               pthread_cond_t</u></td></tr>
+<tr><th id="498">498</th><td><u>#define  <dfn class="macro" id="_M/adb_cond_init" data-ref="_M/adb_cond_init">adb_cond_init</dfn>            pthread_cond_init</u></td></tr>
+<tr><th id="499">499</th><td><u>#define  <dfn class="macro" id="_M/adb_cond_wait" data-ref="_M/adb_cond_wait">adb_cond_wait</dfn>            pthread_cond_wait</u></td></tr>
+<tr><th id="500">500</th><td><u>#define  <dfn class="macro" id="_M/adb_cond_broadcast" data-ref="_M/adb_cond_broadcast">adb_cond_broadcast</dfn>       pthread_cond_broadcast</u></td></tr>
+<tr><th id="501">501</th><td><u>#define  <dfn class="macro" id="_M/adb_cond_signal" data-ref="_M/adb_cond_signal">adb_cond_signal</dfn>          pthread_cond_signal</u></td></tr>
+<tr><th id="502">502</th><td><u>#define  <dfn class="macro" id="_M/adb_cond_destroy" data-ref="_M/adb_cond_destroy">adb_cond_destroy</dfn>         pthread_cond_destroy</u></td></tr>
+<tr><th id="503">503</th><td></td></tr>
+<tr><th id="504">504</th><td><i>/* declare all mutexes */</i></td></tr>
+<tr><th id="505">505</th><td><u>#define  <dfn class="macro" id="_M/ADB_MUTEX" data-ref="_M/ADB_MUTEX">ADB_MUTEX</dfn>(x)   extern adb_mutex_t  x;</u></td></tr>
+<tr><th id="506">506</th><td><u>#include <a href="mutex_list.h.html">"mutex_list.h"</a></u></td></tr>
+<tr><th id="507">507</th><td></td></tr>
+<tr><th id="508">508</th><td><em>static</em> <b>__inline__</b> <em>void</em>  <dfn class="decl def" id="_ZL13close_on_execi" title='close_on_exec' data-ref="_ZL13close_on_execi">close_on_exec</dfn>(<em>int</em>  <dfn class="local col3 decl" id="53fd" title='fd' data-type='int' data-ref="53fd">fd</dfn>)</td></tr>
+<tr><th id="509">509</th><td>{</td></tr>
+<tr><th id="510">510</th><td>    <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#fcntl" title='fcntl' data-ref="fcntl">fcntl</a>( <a class="local col3 ref" href="#53fd" title='fd' data-ref="53fd">fd</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#101" title="2" data-ref="_M/F_SETFD">F_SETFD</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#151" title="1" data-ref="_M/FD_CLOEXEC">FD_CLOEXEC</a> );</td></tr>
+<tr><th id="511">511</th><td>}</td></tr>
+<tr><th id="512">512</th><td></td></tr>
+<tr><th id="513">513</th><td><i>// Open a file and return a file descriptor that may be used with unix_read(),</i></td></tr>
+<tr><th id="514">514</th><td><i>// unix_write(), unix_close(), but not adb_read(), adb_write(), adb_close().</i></td></tr>
+<tr><th id="515">515</th><td><i>//</i></td></tr>
+<tr><th id="516">516</th><td><i>// On Unix, this is based on open(), so the file descriptor is a real OS file</i></td></tr>
+<tr><th id="517">517</th><td><i>// descriptor, but the Windows implementation (in sysdeps_win32.cpp) returns a</i></td></tr>
+<tr><th id="518">518</th><td><i>// file descriptor that can only be used with C Runtime APIs (which are wrapped</i></td></tr>
+<tr><th id="519">519</th><td><i>// by unix_read(), unix_write(), unix_close()). Also, the C Runtime has</i></td></tr>
+<tr><th id="520">520</th><td><i>// configurable CR/LF translation which defaults to text mode, but is settable</i></td></tr>
+<tr><th id="521">521</th><td><i>// with _setmode().</i></td></tr>
+<tr><th id="522">522</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL9unix_openPKciz" title='unix_open' data-ref="_ZL9unix_openPKciz">unix_open</dfn>(<em>const</em> <em>char</em>*  <dfn class="local col4 decl" id="54path" title='path' data-type='const char *' data-ref="54path">path</dfn>, <em>int</em> <dfn class="local col5 decl" id="55options" title='options' data-type='int' data-ref="55options">options</dfn>,...)</td></tr>
+<tr><th id="523">523</th><td>{</td></tr>
+<tr><th id="524">524</th><td>    <b>if</b> ((<a class="local col5 ref" href="#55options" title='options' data-ref="55options">options</a> &amp; <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#29" title="00000100" data-ref="_M/O_CREAT">O_CREAT</a>) == <var>0</var>)</td></tr>
+<tr><th id="525">525</th><td>    {</td></tr>
+<tr><th id="526">526</th><td>        <b>return</b>  <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(open(path, options)) _rc; do { _rc = (open(path, options)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>( <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<a class="local col4 ref" href="#54path" title='path' data-ref="54path">path</a>, <a class="local col5 ref" href="#55options" title='options' data-ref="55options">options</a>) );</td></tr>
+<tr><th id="527">527</th><td>    }</td></tr>
+<tr><th id="528">528</th><td>    <b>else</b></td></tr>
+<tr><th id="529">529</th><td>    {</td></tr>
+<tr><th id="530">530</th><td>        <em>int</em>      <dfn class="local col6 decl" id="56mode" title='mode' data-type='int' data-ref="56mode">mode</dfn>;</td></tr>
+<tr><th id="531">531</th><td>        <span class='typedef' title='va_list' data-type='__builtin_va_list' data-ref="va_list">va_list</span>  <span class='ref fake' title='__va_list_tag::__va_list_tag' data-ref="__va_list_tag::__va_list_tag"></span><dfn class="local col7 decl" id="57args" title='args' data-type='va_list' data-ref="57args">args</dfn>;</td></tr>
+<tr><th id="532">532</th><td>        <span class="macro" title="__builtin_va_start(args, options)" data-ref="_M/va_start">va_start</span>( <a class="local col7 ref" href="#57args" title='args' data-ref="57args">args</a>, <a class="local col5 ref" href="#55options" title='options' data-ref="55options">options</a> );</td></tr>
+<tr><th id="533">533</th><td>        <a class="local col6 ref" href="#56mode" title='mode' data-ref="56mode">mode</a> = <span class="macro" title="__builtin_va_arg(args, int)" data-ref="_M/va_arg">va_arg</span>( <a class="local col7 ref" href="#57args" title='args' data-ref="57args">args</a>, <em>int</em> );</td></tr>
+<tr><th id="534">534</th><td>        <span class="macro" title="__builtin_va_end(args)" data-ref="_M/va_end">va_end</span>( <a class="local col7 ref" href="#57args" title='args' data-ref="57args">args</a> );</td></tr>
+<tr><th id="535">535</th><td>        <b>return</b> <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(open( path, options, mode )) _rc; do { _rc = (open( path, options, mode )); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>( <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>( <a class="local col4 ref" href="#54path" title='path' data-ref="54path">path</a>, <a class="local col5 ref" href="#55options" title='options' data-ref="55options">options</a>, <a class="local col6 ref" href="#56mode" title='mode' data-ref="56mode">mode</a> ) );</td></tr>
+<tr><th id="536">536</th><td>    }</td></tr>
+<tr><th id="537">537</th><td>}</td></tr>
+<tr><th id="538">538</th><td></td></tr>
+<tr><th id="539">539</th><td><i>// Similar to the two-argument adb_open(), but takes a mode parameter for file</i></td></tr>
+<tr><th id="540">540</th><td><i>// creation. See adb_open() for more info.</i></td></tr>
+<tr><th id="541">541</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL13adb_open_modePKcii" title='adb_open_mode' data-ref="_ZL13adb_open_modePKcii">adb_open_mode</dfn>( <em>const</em> <em>char</em>*  <dfn class="local col8 decl" id="58pathname" title='pathname' data-type='const char *' data-ref="58pathname">pathname</dfn>, <em>int</em>  <dfn class="local col9 decl" id="59options" title='options' data-type='int' data-ref="59options">options</dfn>, <em>int</em>  <dfn class="local col0 decl" id="60mode" title='mode' data-type='int' data-ref="60mode">mode</dfn> )</td></tr>
+<tr><th id="542">542</th><td>{</td></tr>
+<tr><th id="543">543</th><td>    <b>return</b> <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(open( pathname, options, mode )) _rc; do { _rc = (open( pathname, options, mode )); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>( <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>( <a class="local col8 ref" href="#58pathname" title='pathname' data-ref="58pathname">pathname</a>, <a class="local col9 ref" href="#59options" title='options' data-ref="59options">options</a>, <a class="local col0 ref" href="#60mode" title='mode' data-ref="60mode">mode</a> ) );</td></tr>
+<tr><th id="544">544</th><td>}</td></tr>
+<tr><th id="545">545</th><td></td></tr>
+<tr><th id="546">546</th><td></td></tr>
+<tr><th id="547">547</th><td><i>// Open a file and return a file descriptor that may be used with adb_read(),</i></td></tr>
+<tr><th id="548">548</th><td><i>// adb_write(), adb_close(), but not unix_read(), unix_write(), unix_close().</i></td></tr>
+<tr><th id="549">549</th><td><i>//</i></td></tr>
+<tr><th id="550">550</th><td><i>// On Unix, this is based on open(), but the Windows implementation (in</i></td></tr>
+<tr><th id="551">551</th><td><i>// sysdeps_win32.cpp) uses Windows native file I/O and bypasses the C Runtime</i></td></tr>
+<tr><th id="552">552</th><td><i>// and its CR/LF translation. The returned file descriptor should be used with</i></td></tr>
+<tr><th id="553">553</th><td><i>// adb_read(), adb_write(), adb_close(), etc.</i></td></tr>
+<tr><th id="554">554</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL8adb_openPKci" title='adb_open' data-ref="_ZL8adb_openPKci">adb_open</dfn>( <em>const</em> <em>char</em>*  <dfn class="local col1 decl" id="61pathname" title='pathname' data-type='const char *' data-ref="61pathname">pathname</dfn>, <em>int</em>  <dfn class="local col2 decl" id="62options" title='options' data-type='int' data-ref="62options">options</dfn> )</td></tr>
+<tr><th id="555">555</th><td>{</td></tr>
+<tr><th id="556">556</th><td>    <em>int</em>  <dfn class="local col3 decl" id="63fd" title='fd' data-type='int' data-ref="63fd">fd</dfn> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(open( pathname, options )) _rc; do { _rc = (open( pathname, options )); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>( <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>( <a class="local col1 ref" href="#61pathname" title='pathname' data-ref="61pathname">pathname</a>, <a class="local col2 ref" href="#62options" title='options' data-ref="62options">options</a> ) );</td></tr>
+<tr><th id="557">557</th><td>    <b>if</b> (<a class="local col3 ref" href="#63fd" title='fd' data-ref="63fd">fd</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="558">558</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="559">559</th><td>    <a class="ref" href="#_ZL13close_on_execi" title='close_on_exec' data-ref="_ZL13close_on_execi">close_on_exec</a>( <a class="local col3 ref" href="#63fd" title='fd' data-ref="63fd">fd</a> );</td></tr>
+<tr><th id="560">560</th><td>    <b>return</b> <a class="local col3 ref" href="#63fd" title='fd' data-ref="63fd">fd</a>;</td></tr>
+<tr><th id="561">561</th><td>}</td></tr>
+<tr><th id="562">562</th><td><u>#undef   <span class="macro" data-ref="_M/open">open</span></u></td></tr>
+<tr><th id="563">563</th><td><u>#define  <dfn class="macro" id="_M/open" data-ref="_M/open">open</dfn>    ___xxx_open</u></td></tr>
+<tr><th id="564">564</th><td></td></tr>
+<tr><th id="565">565</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL12adb_shutdowni" title='adb_shutdown' data-ref="_ZL12adb_shutdowni">adb_shutdown</dfn>(<em>int</em> <dfn class="local col4 decl" id="64fd" title='fd' data-type='int' data-ref="64fd">fd</dfn>)</td></tr>
+<tr><th id="566">566</th><td>{</td></tr>
+<tr><th id="567">567</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/sys/socket.h.html#shutdown" title='shutdown' data-ref="shutdown">shutdown</a>(<a class="local col4 ref" href="#64fd" title='fd' data-ref="64fd">fd</a>, <a class="macro" href="../../../bionic/libc/include/sys/socket.h.html#72" title="SHUT_RDWR" data-ref="_M/SHUT_RDWR">SHUT_RDWR</a>);</td></tr>
+<tr><th id="568">568</th><td>}</td></tr>
+<tr><th id="569">569</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL12adb_shutdownii" title='adb_shutdown' data-ref="_ZL12adb_shutdownii">adb_shutdown</dfn>(<em>int</em> <dfn class="local col5 decl" id="65fd" title='fd' data-type='int' data-ref="65fd">fd</dfn>, <em>int</em> <dfn class="local col6 decl" id="66direction" title='direction' data-type='int' data-ref="66direction">direction</dfn>)</td></tr>
+<tr><th id="570">570</th><td>{</td></tr>
+<tr><th id="571">571</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/sys/socket.h.html#shutdown" title='shutdown' data-ref="shutdown">shutdown</a>(<a class="local col5 ref" href="#65fd" title='fd' data-ref="65fd">fd</a>, <a class="local col6 ref" href="#66direction" title='direction' data-ref="66direction">direction</a>);</td></tr>
+<tr><th id="572">572</th><td>}</td></tr>
+<tr><th id="573">573</th><td><u>#undef   <span class="macro" data-ref="_M/shutdown">shutdown</span></u></td></tr>
+<tr><th id="574">574</th><td><u>#define  <dfn class="macro" id="_M/shutdown" data-ref="_M/shutdown">shutdown</dfn>   ____xxx_shutdown</u></td></tr>
+<tr><th id="575">575</th><td></td></tr>
+<tr><th id="576">576</th><td><i>// Closes a file descriptor that came from adb_open() or adb_open_mode(), but</i></td></tr>
+<tr><th id="577">577</th><td><i>// not designed to take a file descriptor from unix_open(). See the comments</i></td></tr>
+<tr><th id="578">578</th><td><i>// for adb_open() for more info.</i></td></tr>
+<tr><th id="579">579</th><td><b>__inline__</b> <em>int</em> <dfn class="decl def" id="_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</dfn>(<em>int</em> <dfn class="local col7 decl" id="67fd" title='fd' data-type='int' data-ref="67fd">fd</dfn>) {</td></tr>
+<tr><th id="580">580</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col7 ref" href="#67fd" title='fd' data-ref="67fd">fd</a>);</td></tr>
+<tr><th id="581">581</th><td>}</td></tr>
+<tr><th id="582">582</th><td><u>#undef   <span class="macro" data-ref="_M/close">close</span></u></td></tr>
+<tr><th id="583">583</th><td><u>#define  <dfn class="macro" id="_M/close" data-ref="_M/close">close</dfn>   ____xxx_close</u></td></tr>
+<tr><th id="584">584</th><td></td></tr>
+<tr><th id="585">585</th><td></td></tr>
+<tr><th id="586">586</th><td><em>static</em> <b>__inline__</b>  <em>int</em>  <dfn class="decl def" id="_ZL8adb_readiPvm" title='adb_read' data-ref="_ZL8adb_readiPvm">adb_read</dfn>(<em>int</em>  <dfn class="local col8 decl" id="68fd" title='fd' data-type='int' data-ref="68fd">fd</dfn>, <em>void</em>*  <dfn class="local col9 decl" id="69buf" title='buf' data-type='void *' data-ref="69buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>  <dfn class="local col0 decl" id="70len" title='len' data-type='size_t' data-ref="70len">len</dfn>)</td></tr>
+<tr><th id="587">587</th><td>{</td></tr>
+<tr><th id="588">588</th><td>    <b>return</b> <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(read( fd, buf, len )) _rc; do { _rc = (read( fd, buf, len )); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>( <a class="ref" href="../../../bionic/libc/include/unistd.h.html#read" title='read' data-ref="read">read</a>( <a class="local col8 ref" href="#68fd" title='fd' data-ref="68fd">fd</a>, <a class="local col9 ref" href="#69buf" title='buf' data-ref="69buf">buf</a>, <a class="local col0 ref" href="#70len" title='len' data-ref="70len">len</a> ) );</td></tr>
+<tr><th id="589">589</th><td>}</td></tr>
+<tr><th id="590">590</th><td></td></tr>
+<tr><th id="591">591</th><td><i>// Like unix_read(), but does not handle EINTR.</i></td></tr>
+<tr><th id="592">592</th><td><em>static</em> <b>__inline__</b> <em>int</em> <dfn class="decl def" id="_ZL23unix_read_interruptibleiPvm" title='unix_read_interruptible' data-ref="_ZL23unix_read_interruptibleiPvm">unix_read_interruptible</dfn>(<em>int</em> <dfn class="local col1 decl" id="71fd" title='fd' data-type='int' data-ref="71fd">fd</dfn>, <em>void</em>* <dfn class="local col2 decl" id="72buf" title='buf' data-type='void *' data-ref="72buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="73len" title='len' data-type='size_t' data-ref="73len">len</dfn>) {</td></tr>
+<tr><th id="593">593</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/unistd.h.html#read" title='read' data-ref="read">read</a>(<a class="local col1 ref" href="#71fd" title='fd' data-ref="71fd">fd</a>, <a class="local col2 ref" href="#72buf" title='buf' data-ref="72buf">buf</a>, <a class="local col3 ref" href="#73len" title='len' data-ref="73len">len</a>);</td></tr>
+<tr><th id="594">594</th><td>}</td></tr>
+<tr><th id="595">595</th><td></td></tr>
+<tr><th id="596">596</th><td><u>#undef   <span class="macro" data-ref="_M/read">read</span></u></td></tr>
+<tr><th id="597">597</th><td><u>#define  <dfn class="macro" id="_M/read" data-ref="_M/read">read</dfn>  ___xxx_read</u></td></tr>
+<tr><th id="598">598</th><td></td></tr>
+<tr><th id="599">599</th><td><em>static</em> <b>__inline__</b>  <em>int</em>  <dfn class="decl def" id="_ZL9adb_writeiPKvm" title='adb_write' data-ref="_ZL9adb_writeiPKvm">adb_write</dfn>(<em>int</em>  <dfn class="local col4 decl" id="74fd" title='fd' data-type='int' data-ref="74fd">fd</dfn>, <em>const</em> <em>void</em>*  <dfn class="local col5 decl" id="75buf" title='buf' data-type='const void *' data-ref="75buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>  <dfn class="local col6 decl" id="76len" title='len' data-type='size_t' data-ref="76len">len</dfn>)</td></tr>
+<tr><th id="600">600</th><td>{</td></tr>
+<tr><th id="601">601</th><td>    <b>return</b> <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(write( fd, buf, len )) _rc; do { _rc = (write( fd, buf, len )); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>( <a class="ref" href="../../../bionic/libc/include/unistd.h.html#write" title='write' data-ref="write">write</a>( <a class="local col4 ref" href="#74fd" title='fd' data-ref="74fd">fd</a>, <a class="local col5 ref" href="#75buf" title='buf' data-ref="75buf">buf</a>, <a class="local col6 ref" href="#76len" title='len' data-ref="76len">len</a> ) );</td></tr>
+<tr><th id="602">602</th><td>}</td></tr>
+<tr><th id="603">603</th><td><u>#undef   <span class="macro" data-ref="_M/write">write</span></u></td></tr>
+<tr><th id="604">604</th><td><u>#define  <dfn class="macro" id="_M/write" data-ref="_M/write">write</dfn>  ___xxx_write</u></td></tr>
+<tr><th id="605">605</th><td></td></tr>
+<tr><th id="606">606</th><td><em>static</em> <b>__inline__</b> <em>int</em>   <dfn class="decl def" id="_ZL9adb_lseekiii" title='adb_lseek' data-ref="_ZL9adb_lseekiii">adb_lseek</dfn>(<em>int</em>  <dfn class="local col7 decl" id="77fd" title='fd' data-type='int' data-ref="77fd">fd</dfn>, <em>int</em>  <dfn class="local col8 decl" id="78pos" title='pos' data-type='int' data-ref="78pos">pos</dfn>, <em>int</em>  <dfn class="local col9 decl" id="79where" title='where' data-type='int' data-ref="79where">where</dfn>)</td></tr>
+<tr><th id="607">607</th><td>{</td></tr>
+<tr><th id="608">608</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/unistd.h.html#lseek" title='lseek' data-ref="lseek">lseek</a>(<a class="local col7 ref" href="#77fd" title='fd' data-ref="77fd">fd</a>, <a class="local col8 ref" href="#78pos" title='pos' data-ref="78pos">pos</a>, <a class="local col9 ref" href="#79where" title='where' data-ref="79where">where</a>);</td></tr>
+<tr><th id="609">609</th><td>}</td></tr>
+<tr><th id="610">610</th><td><u>#undef   <span class="macro" data-ref="_M/lseek">lseek</span></u></td></tr>
+<tr><th id="611">611</th><td><u>#define  <dfn class="macro" id="_M/lseek" data-ref="_M/lseek">lseek</dfn>   ___xxx_lseek</u></td></tr>
+<tr><th id="612">612</th><td></td></tr>
+<tr><th id="613">613</th><td><em>static</em> <b>__inline__</b>  <em>int</em>    <dfn class="decl def" id="_ZL10adb_unlinkPKc" title='adb_unlink' data-ref="_ZL10adb_unlinkPKc">adb_unlink</dfn>(<em>const</em> <em>char</em>*  <dfn class="local col0 decl" id="80path" title='path' data-type='const char *' data-ref="80path">path</dfn>)</td></tr>
+<tr><th id="614">614</th><td>{</td></tr>
+<tr><th id="615">615</th><td>    <b>return</b>  <a class="ref" href="../../../bionic/libc/include/unistd.h.html#unlink" title='unlink' data-ref="unlink">unlink</a>(<a class="local col0 ref" href="#80path" title='path' data-ref="80path">path</a>);</td></tr>
+<tr><th id="616">616</th><td>}</td></tr>
+<tr><th id="617">617</th><td><u>#undef  <span class="macro" data-ref="_M/unlink">unlink</span></u></td></tr>
+<tr><th id="618">618</th><td><u>#define <dfn class="macro" id="_M/unlink" data-ref="_M/unlink">unlink</dfn>  ___xxx_unlink</u></td></tr>
+<tr><th id="619">619</th><td></td></tr>
+<tr><th id="620">620</th><td><em>static</em> <b>__inline__</b>  <em>int</em>  <dfn class="decl def" id="_ZL9adb_creatPKci" title='adb_creat' data-ref="_ZL9adb_creatPKci">adb_creat</dfn>(<em>const</em> <em>char</em>*  <dfn class="local col1 decl" id="81path" title='path' data-type='const char *' data-ref="81path">path</dfn>, <em>int</em>  <dfn class="local col2 decl" id="82mode" title='mode' data-type='int' data-ref="82mode">mode</dfn>)</td></tr>
+<tr><th id="621">621</th><td>{</td></tr>
+<tr><th id="622">622</th><td>    <em>int</em>  <dfn class="local col3 decl" id="83fd" title='fd' data-type='int' data-ref="83fd">fd</dfn> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(creat( path, mode )) _rc; do { _rc = (creat( path, mode )); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>( <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#creat" title='creat' data-ref="creat">creat</a>( <a class="local col1 ref" href="#81path" title='path' data-ref="81path">path</a>, <a class="local col2 ref" href="#82mode" title='mode' data-ref="82mode">mode</a> ) );</td></tr>
+<tr><th id="623">623</th><td></td></tr>
+<tr><th id="624">624</th><td>    <b>if</b> ( <a class="local col3 ref" href="#83fd" title='fd' data-ref="83fd">fd</a> &lt; <var>0</var> )</td></tr>
+<tr><th id="625">625</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="626">626</th><td></td></tr>
+<tr><th id="627">627</th><td>    <a class="ref" href="#_ZL13close_on_execi" title='close_on_exec' data-ref="_ZL13close_on_execi">close_on_exec</a>(<a class="local col3 ref" href="#83fd" title='fd' data-ref="83fd">fd</a>);</td></tr>
+<tr><th id="628">628</th><td>    <b>return</b> <a class="local col3 ref" href="#83fd" title='fd' data-ref="83fd">fd</a>;</td></tr>
+<tr><th id="629">629</th><td>}</td></tr>
+<tr><th id="630">630</th><td><u>#undef   <span class="macro" data-ref="_M/creat">creat</span></u></td></tr>
+<tr><th id="631">631</th><td><u>#define  <dfn class="macro" id="_M/creat" data-ref="_M/creat">creat</dfn>  ___xxx_creat</u></td></tr>
+<tr><th id="632">632</th><td></td></tr>
+<tr><th id="633">633</th><td><em>static</em> <b>__inline__</b> <em>int</em> <dfn class="decl def" id="_ZL11unix_isattyi" title='unix_isatty' data-ref="_ZL11unix_isattyi">unix_isatty</dfn>(<em>int</em> <dfn class="local col4 decl" id="84fd" title='fd' data-type='int' data-ref="84fd">fd</dfn>) {</td></tr>
+<tr><th id="634">634</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/unistd.h.html#isatty" title='isatty' data-ref="isatty">isatty</a>(<a class="local col4 ref" href="#84fd" title='fd' data-ref="84fd">fd</a>);</td></tr>
+<tr><th id="635">635</th><td>}</td></tr>
+<tr><th id="636">636</th><td><u>#define  <dfn class="macro" id="_M/isatty" data-ref="_M/isatty">isatty</dfn>  ___xxx_isatty</u></td></tr>
+<tr><th id="637">637</th><td></td></tr>
+<tr><th id="638">638</th><td><i>// Helper for network_* functions.</i></td></tr>
+<tr><th id="639">639</th><td><b>inline</b> <em>int</em> <dfn class="decl def" id="_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='_fd_set_error_str' data-ref="_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">_fd_set_error_str</dfn>(<em>int</em> <dfn class="local col5 decl" id="85fd" title='fd' data-type='int' data-ref="85fd">fd</dfn>, <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>* <dfn class="local col6 decl" id="86error" title='error' data-type='std::string *' data-ref="86error">error</dfn>) {</td></tr>
+<tr><th id="640">640</th><td>  <b>if</b> (<a class="local col5 ref" href="#85fd" title='fd' data-ref="85fd">fd</a> == -<var>1</var>) {</td></tr>
+<tr><th id="641">641</th><td>    *<a class="local col6 ref" href="#86error" title='error' data-ref="86error">error</a> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringaSEPKNT0_9char_typeE" title='std::__1::basic_string::operator=' data-ref="_ZNSt3__112basic_stringaSEPKNT0_9char_typeE">=</a> <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>);</td></tr>
+<tr><th id="642">642</th><td>  }</td></tr>
+<tr><th id="643">643</th><td>  <b>return</b> <a class="local col5 ref" href="#85fd" title='fd' data-ref="85fd">fd</a>;</td></tr>
+<tr><th id="644">644</th><td>}</td></tr>
+<tr><th id="645">645</th><td></td></tr>
+<tr><th id="646">646</th><td><b>inline</b> <em>int</em> <dfn class="decl def" id="_Z23network_loopback_clientiiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='network_loopback_client' data-ref="_Z23network_loopback_clientiiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">network_loopback_client</dfn>(<em>int</em> <dfn class="local col7 decl" id="87port" title='port' data-type='int' data-ref="87port">port</dfn>, <em>int</em> <dfn class="local col8 decl" id="88type" title='type' data-type='int' data-ref="88type">type</dfn>, <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>* <dfn class="local col9 decl" id="89error" title='error' data-type='std::string *' data-ref="89error">error</dfn>) {</td></tr>
+<tr><th id="647">647</th><td>  <b>return</b> <a class="ref" href="#_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='_fd_set_error_str' data-ref="_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">_fd_set_error_str</a>(<a class="ref" href="../include/cutils/sockets.h.html#socket_loopback_client" title='socket_loopback_client' data-ref="socket_loopback_client">socket_loopback_client</a>(<a class="local col7 ref" href="#87port" title='port' data-ref="87port">port</a>, <a class="local col8 ref" href="#88type" title='type' data-ref="88type">type</a>), <a class="local col9 ref" href="#89error" title='error' data-ref="89error">error</a>);</td></tr>
+<tr><th id="648">648</th><td>}</td></tr>
+<tr><th id="649">649</th><td></td></tr>
+<tr><th id="650">650</th><td><b>inline</b> <em>int</em> <dfn class="decl def" id="_Z23network_loopback_serveriiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='network_loopback_server' data-ref="_Z23network_loopback_serveriiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">network_loopback_server</dfn>(<em>int</em> <dfn class="local col0 decl" id="90port" title='port' data-type='int' data-ref="90port">port</dfn>, <em>int</em> <dfn class="local col1 decl" id="91type" title='type' data-type='int' data-ref="91type">type</dfn>, <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>* <dfn class="local col2 decl" id="92error" title='error' data-type='std::string *' data-ref="92error">error</dfn>) {</td></tr>
+<tr><th id="651">651</th><td>  <b>return</b> <a class="ref" href="#_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='_fd_set_error_str' data-ref="_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">_fd_set_error_str</a>(<a class="ref" href="../include/cutils/sockets.h.html#socket_loopback_server" title='socket_loopback_server' data-ref="socket_loopback_server">socket_loopback_server</a>(<a class="local col0 ref" href="#90port" title='port' data-ref="90port">port</a>, <a class="local col1 ref" href="#91type" title='type' data-ref="91type">type</a>), <a class="local col2 ref" href="#92error" title='error' data-ref="92error">error</a>);</td></tr>
+<tr><th id="652">652</th><td>}</td></tr>
+<tr><th id="653">653</th><td></td></tr>
+<tr><th id="654">654</th><td><b>inline</b> <em>int</em> <dfn class="decl def" id="_Z25network_inaddr_any_serveriiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='network_inaddr_any_server' data-ref="_Z25network_inaddr_any_serveriiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">network_inaddr_any_server</dfn>(<em>int</em> <dfn class="local col3 decl" id="93port" title='port' data-type='int' data-ref="93port">port</dfn>, <em>int</em> <dfn class="local col4 decl" id="94type" title='type' data-type='int' data-ref="94type">type</dfn>, <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>* <dfn class="local col5 decl" id="95error" title='error' data-type='std::string *' data-ref="95error">error</dfn>) {</td></tr>
+<tr><th id="655">655</th><td>  <b>return</b> <a class="ref" href="#_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='_fd_set_error_str' data-ref="_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">_fd_set_error_str</a>(<a class="ref" href="../include/cutils/sockets.h.html#socket_inaddr_any_server" title='socket_inaddr_any_server' data-ref="socket_inaddr_any_server">socket_inaddr_any_server</a>(<a class="local col3 ref" href="#93port" title='port' data-ref="93port">port</a>, <a class="local col4 ref" href="#94type" title='type' data-ref="94type">type</a>), <a class="local col5 ref" href="#95error" title='error' data-ref="95error">error</a>);</td></tr>
+<tr><th id="656">656</th><td>}</td></tr>
+<tr><th id="657">657</th><td></td></tr>
+<tr><th id="658">658</th><td><b>inline</b> <em>int</em> <dfn class="decl def" id="_Z20network_local_serverPKciiPNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE" title='network_local_server' data-ref="_Z20network_local_serverPKciiPNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE">network_local_server</dfn>(<em>const</em> <em>char</em> *<dfn class="local col6 decl" id="96name" title='name' data-type='const char *' data-ref="96name">name</dfn>, <em>int</em> <dfn class="local col7 decl" id="97namespace_id" title='namespace_id' data-type='int' data-ref="97namespace_id">namespace_id</dfn>, <em>int</em> <dfn class="local col8 decl" id="98type" title='type' data-type='int' data-ref="98type">type</dfn>,</td></tr>
+<tr><th id="659">659</th><td>                                <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>* <dfn class="local col9 decl" id="99error" title='error' data-type='std::string *' data-ref="99error">error</dfn>) {</td></tr>
+<tr><th id="660">660</th><td>  <b>return</b> <a class="ref" href="#_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='_fd_set_error_str' data-ref="_Z17_fd_set_error_striPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">_fd_set_error_str</a>(<a class="ref" href="../include/cutils/sockets.h.html#socket_local_server" title='socket_local_server' data-ref="socket_local_server">socket_local_server</a>(<a class="local col6 ref" href="#96name" title='name' data-ref="96name">name</a>, <a class="local col7 ref" href="#97namespace_id" title='namespace_id' data-ref="97namespace_id">namespace_id</a>, <a class="local col8 ref" href="#98type" title='type' data-ref="98type">type</a>),</td></tr>
+<tr><th id="661">661</th><td>                           <a class="local col9 ref" href="#99error" title='error' data-ref="99error">error</a>);</td></tr>
+<tr><th id="662">662</th><td>}</td></tr>
+<tr><th id="663">663</th><td></td></tr>
+<tr><th id="664">664</th><td><b>inline</b> <em>int</em> <dfn class="decl def" id="_Z15network_connectRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEiiiPS5_" title='network_connect' data-ref="_Z15network_connectRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEiiiPS5_">network_connect</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col0 decl" id="100host" title='host' data-type='const std::string &amp;' data-ref="100host">host</dfn>, <em>int</em> <dfn class="local col1 decl" id="101port" title='port' data-type='int' data-ref="101port">port</dfn>, <em>int</em> <dfn class="local col2 decl" id="102type" title='type' data-type='int' data-ref="102type">type</dfn>,</td></tr>
+<tr><th id="665">665</th><td>                           <em>int</em> <dfn class="local col3 decl" id="103timeout" title='timeout' data-type='int' data-ref="103timeout">timeout</dfn>, <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>* <dfn class="local col4 decl" id="104error" title='error' data-type='std::string *' data-ref="104error">error</dfn>) {</td></tr>
+<tr><th id="666">666</th><td>  <em>int</em> <dfn class="local col5 decl" id="105getaddrinfo_error" title='getaddrinfo_error' data-type='int' data-ref="105getaddrinfo_error">getaddrinfo_error</dfn> = <var>0</var>;</td></tr>
+<tr><th id="667">667</th><td>  <em>int</em> <dfn class="local col6 decl" id="106fd" title='fd' data-type='int' data-ref="106fd">fd</dfn> = <a class="ref" href="../include/cutils/sockets.h.html#socket_network_client_timeout" title='socket_network_client_timeout' data-ref="socket_network_client_timeout">socket_network_client_timeout</a>(<a class="local col0 ref" href="#100host" title='host' data-ref="100host">host</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5c_strEv" title='std::__1::basic_string::c_str' data-ref="_ZNKSt3__112basic_string5c_strEv">c_str</a>(), <a class="local col1 ref" href="#101port" title='port' data-ref="101port">port</a>, <a class="local col2 ref" href="#102type" title='type' data-ref="102type">type</a>, <a class="local col3 ref" href="#103timeout" title='timeout' data-ref="103timeout">timeout</a>,</td></tr>
+<tr><th id="668">668</th><td>                                         &amp;<a class="local col5 ref" href="#105getaddrinfo_error" title='getaddrinfo_error' data-ref="105getaddrinfo_error">getaddrinfo_error</a>);</td></tr>
+<tr><th id="669">669</th><td>  <b>if</b> (<a class="local col6 ref" href="#106fd" title='fd' data-ref="106fd">fd</a> != -<var>1</var>) {</td></tr>
+<tr><th id="670">670</th><td>    <b>return</b> <a class="local col6 ref" href="#106fd" title='fd' data-ref="106fd">fd</a>;</td></tr>
+<tr><th id="671">671</th><td>  }</td></tr>
+<tr><th id="672">672</th><td>  <b>if</b> (<a class="local col5 ref" href="#105getaddrinfo_error" title='getaddrinfo_error' data-ref="105getaddrinfo_error">getaddrinfo_error</a> != <var>0</var>) {</td></tr>
+<tr><th id="673">673</th><td>    *<a class="local col4 ref" href="#104error" title='error' data-ref="104error">error</a> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringaSEPKNT0_9char_typeE" title='std::__1::basic_string::operator=' data-ref="_ZNSt3__112basic_stringaSEPKNT0_9char_typeE">=</a> <a class="ref" href="../../../bionic/libc/include/netdb.h.html#gai_strerror" title='gai_strerror' data-ref="gai_strerror">gai_strerror</a>(<a class="local col5 ref" href="#105getaddrinfo_error" title='getaddrinfo_error' data-ref="105getaddrinfo_error">getaddrinfo_error</a>);</td></tr>
+<tr><th id="674">674</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="675">675</th><td>    *<a class="local col4 ref" href="#104error" title='error' data-ref="104error">error</a> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringaSEPKNT0_9char_typeE" title='std::__1::basic_string::operator=' data-ref="_ZNSt3__112basic_stringaSEPKNT0_9char_typeE">=</a> <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>);</td></tr>
+<tr><th id="676">676</th><td>  }</td></tr>
+<tr><th id="677">677</th><td>  <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="678">678</th><td>}</td></tr>
+<tr><th id="679">679</th><td></td></tr>
+<tr><th id="680">680</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL17adb_socket_acceptiP8sockaddrPj" title='adb_socket_accept' data-ref="_ZL17adb_socket_acceptiP8sockaddrPj">adb_socket_accept</dfn>(<em>int</em>  <dfn class="local col7 decl" id="107serverfd" title='serverfd' data-type='int' data-ref="107serverfd">serverfd</dfn>, <b>struct</b> <a class="type" href="../../../bionic/libc/include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a>*  <dfn class="local col8 decl" id="108addr" title='addr' data-type='struct sockaddr *' data-ref="108addr">addr</dfn>, <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>  *<dfn class="local col9 decl" id="109addrlen" title='addrlen' data-type='socklen_t *' data-ref="109addrlen">addrlen</dfn>)</td></tr>
+<tr><th id="681">681</th><td>{</td></tr>
+<tr><th id="682">682</th><td>    <em>int</em> <dfn class="local col0 decl" id="110fd" title='fd' data-type='int' data-ref="110fd">fd</dfn>;</td></tr>
+<tr><th id="683">683</th><td></td></tr>
+<tr><th id="684">684</th><td>    <a class="local col0 ref" href="#110fd" title='fd' data-ref="110fd">fd</a> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(accept( serverfd, addr, addrlen )) _rc; do { _rc = (accept( serverfd, addr, addrlen )); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>( <a class="ref" href="../../../bionic/libc/include/sys/socket.h.html#accept" title='accept' data-ref="accept">accept</a>( <a class="local col7 ref" href="#107serverfd" title='serverfd' data-ref="107serverfd">serverfd</a>, <a class="local col8 ref" href="#108addr" title='addr' data-ref="108addr">addr</a>, <a class="local col9 ref" href="#109addrlen" title='addrlen' data-ref="109addrlen">addrlen</a> ) );</td></tr>
+<tr><th id="685">685</th><td>    <b>if</b> (<a class="local col0 ref" href="#110fd" title='fd' data-ref="110fd">fd</a> &gt;= <var>0</var>)</td></tr>
+<tr><th id="686">686</th><td>        <a class="ref" href="#_ZL13close_on_execi" title='close_on_exec' data-ref="_ZL13close_on_execi">close_on_exec</a>(<a class="local col0 ref" href="#110fd" title='fd' data-ref="110fd">fd</a>);</td></tr>
+<tr><th id="687">687</th><td></td></tr>
+<tr><th id="688">688</th><td>    <b>return</b> <a class="local col0 ref" href="#110fd" title='fd' data-ref="110fd">fd</a>;</td></tr>
+<tr><th id="689">689</th><td>}</td></tr>
+<tr><th id="690">690</th><td></td></tr>
+<tr><th id="691">691</th><td><u>#undef   <span class="macro" data-ref="_M/accept">accept</span></u></td></tr>
+<tr><th id="692">692</th><td><u>#define  <dfn class="macro" id="_M/accept" data-ref="_M/accept">accept</dfn>  ___xxx_accept</u></td></tr>
+<tr><th id="693">693</th><td></td></tr>
+<tr><th id="694">694</th><td><i>// Operate on a file descriptor returned from unix_open() or a well-known file</i></td></tr>
+<tr><th id="695">695</th><td><i>// descriptor such as STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO.</i></td></tr>
+<tr><th id="696">696</th><td><i>//</i></td></tr>
+<tr><th id="697">697</th><td><i>// On Unix, unix_read(), unix_write(), unix_close() map to adb_read(),</i></td></tr>
+<tr><th id="698">698</th><td><i>// adb_write(), adb_close() (which all map to Unix system calls), but the</i></td></tr>
+<tr><th id="699">699</th><td><i>// Windows implementations (in the ifdef above and in sysdeps_win32.cpp) call</i></td></tr>
+<tr><th id="700">700</th><td><i>// into the C Runtime and its configurable CR/LF translation (which is settable</i></td></tr>
+<tr><th id="701">701</th><td><i>// via _setmode()).</i></td></tr>
+<tr><th id="702">702</th><td><u>#define  <dfn class="macro" id="_M/unix_read" data-ref="_M/unix_read">unix_read</dfn>   adb_read</u></td></tr>
+<tr><th id="703">703</th><td><u>#define  <dfn class="macro" id="_M/unix_write" data-ref="_M/unix_write">unix_write</dfn>  adb_write</u></td></tr>
+<tr><th id="704">704</th><td><u>#define  <dfn class="macro" id="_M/unix_close" data-ref="_M/unix_close">unix_close</dfn>  adb_close</u></td></tr>
+<tr><th id="705">705</th><td></td></tr>
+<tr><th id="706">706</th><td><i>// Win32 is limited to DWORDs for thread return values; limit the POSIX systems to this as well to</i></td></tr>
+<tr><th id="707">707</th><td><i>// ensure compatibility.</i></td></tr>
+<tr><th id="708">708</th><td><b>typedef</b> <em>void</em> (*<dfn class="typedef" id="adb_thread_func_t" title='adb_thread_func_t' data-type='void (*)(void *)' data-ref="adb_thread_func_t">adb_thread_func_t</dfn>)(<em>void</em>* <dfn class="local col1 decl" id="111arg" title='arg' data-type='void *' data-ref="111arg">arg</dfn>);</td></tr>
+<tr><th id="709">709</th><td><b>typedef</b> <a class="typedef" href="../../../bionic/libc/include/bits/pthread_types.h.html#pthread_t" title='pthread_t' data-type='long' data-ref="pthread_t">pthread_t</a> <dfn class="typedef" id="adb_thread_t" title='adb_thread_t' data-type='pthread_t' data-ref="adb_thread_t">adb_thread_t</dfn>;</td></tr>
+<tr><th id="710">710</th><td></td></tr>
+<tr><th id="711">711</th><td><b>struct</b> <dfn class="type def" id="adb_pthread_args" title='adb_pthread_args' data-ref="adb_pthread_args">adb_pthread_args</dfn> {</td></tr>
+<tr><th id="712">712</th><td>    <a class="typedef" href="#adb_thread_func_t" title='adb_thread_func_t' data-type='void (*)(void *)' data-ref="adb_thread_func_t">adb_thread_func_t</a> <dfn class="decl" id="adb_pthread_args::func" title='adb_pthread_args::func' data-ref="adb_pthread_args::func">func</dfn>;</td></tr>
+<tr><th id="713">713</th><td>    <em>void</em>* <dfn class="decl" id="adb_pthread_args::arg" title='adb_pthread_args::arg' data-ref="adb_pthread_args::arg">arg</dfn>;</td></tr>
+<tr><th id="714">714</th><td>};</td></tr>
+<tr><th id="715">715</th><td></td></tr>
+<tr><th id="716">716</th><td><em>static</em> <em>void</em>* <dfn class="decl def" id="_ZL19adb_pthread_wrapperPv" title='adb_pthread_wrapper' data-ref="_ZL19adb_pthread_wrapperPv">adb_pthread_wrapper</dfn>(<em>void</em>* <dfn class="local col2 decl" id="112heap_args" title='heap_args' data-type='void *' data-ref="112heap_args">heap_args</dfn>) {</td></tr>
+<tr><th id="717">717</th><td>    <i>// Move the arguments from the heap onto the thread's stack.</i></td></tr>
+<tr><th id="718">718</th><td>    <a class="type" href="#adb_pthread_args" title='adb_pthread_args' data-ref="adb_pthread_args">adb_pthread_args</a> <dfn class="local col3 decl" id="113thread_args" title='thread_args' data-type='adb_pthread_args' data-ref="113thread_args">thread_args</dfn> = <a class="ref fake" href="#711" title='adb_pthread_args::adb_pthread_args' data-ref="_ZN16adb_pthread_argsC1ERKS_"></a>*<b>reinterpret_cast</b>&lt;<a class="type" href="#adb_pthread_args" title='adb_pthread_args' data-ref="adb_pthread_args">adb_pthread_args</a>*&gt;(<a class="local col2 ref" href="#112heap_args" title='heap_args' data-ref="112heap_args">heap_args</a>);</td></tr>
+<tr><th id="719">719</th><td>    <b>delete</b> <b>static_cast</b>&lt;<a class="type" href="#adb_pthread_args" title='adb_pthread_args' data-ref="adb_pthread_args">adb_pthread_args</a>*&gt;(<a class="local col2 ref" href="#112heap_args" title='heap_args' data-ref="112heap_args">heap_args</a>);</td></tr>
+<tr><th id="720">720</th><td>    <a class="local col3 ref" href="#113thread_args" title='thread_args' data-ref="113thread_args">thread_args</a>.<a class="ref" href="#adb_pthread_args::func" title='adb_pthread_args::func' data-ref="adb_pthread_args::func">func</a>(<a class="local col3 ref" href="#113thread_args" title='thread_args' data-ref="113thread_args">thread_args</a>.<a class="ref" href="#adb_pthread_args::arg" title='adb_pthread_args::arg' data-ref="adb_pthread_args::arg">arg</a>);</td></tr>
+<tr><th id="721">721</th><td>    <b>return</b> <b>nullptr</b>;</td></tr>
+<tr><th id="722">722</th><td>}</td></tr>
+<tr><th id="723">723</th><td></td></tr>
+<tr><th id="724">724</th><td><em>static</em> <b>__inline__</b> <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl def" id="_ZL17adb_thread_createPFvPvES_Pl" title='adb_thread_create' data-ref="_ZL17adb_thread_createPFvPvES_Pl">adb_thread_create</dfn>(<a class="typedef" href="#adb_thread_func_t" title='adb_thread_func_t' data-type='void (*)(void *)' data-ref="adb_thread_func_t">adb_thread_func_t</a> <dfn class="local col4 decl" id="114start" title='start' data-type='adb_thread_func_t' data-ref="114start">start</dfn>, <em>void</em>* <dfn class="local col5 decl" id="115arg" title='arg' data-type='void *' data-ref="115arg">arg</dfn>,</td></tr>
+<tr><th id="725">725</th><td>                                         <a class="typedef" href="#adb_thread_t" title='adb_thread_t' data-type='pthread_t' data-ref="adb_thread_t">adb_thread_t</a>* <dfn class="local col6 decl" id="116thread" title='thread' data-type='adb_thread_t *' data-ref="116thread">thread</dfn> = <b>nullptr</b>) {</td></tr>
+<tr><th id="726">726</th><td>    <a class="typedef" href="../../../bionic/libc/include/bits/pthread_types.h.html#pthread_t" title='pthread_t' data-type='long' data-ref="pthread_t">pthread_t</a> <dfn class="local col7 decl" id="117temp" title='temp' data-type='pthread_t' data-ref="117temp">temp</dfn>;</td></tr>
+<tr><th id="727">727</th><td>    <a class="typedef" href="../../../bionic/libc/include/bits/pthread_types.h.html#pthread_attr_t" title='pthread_attr_t' data-type='struct pthread_attr_t' data-ref="pthread_attr_t">pthread_attr_t</a> <a class="ref fake" href="../../../bionic/libc/include/bits/pthread_types.h.html#36" title='(anonymous struct)::' data-ref="_ZN14pthread_attr_tC1Ev"></a><dfn class="local col8 decl" id="118attr" title='attr' data-type='pthread_attr_t' data-ref="118attr">attr</dfn>;</td></tr>
+<tr><th id="728">728</th><td>    <a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_attr_init" title='pthread_attr_init' data-ref="pthread_attr_init">pthread_attr_init</a>(&amp;<a class="local col8 ref" href="#118attr" title='attr' data-ref="118attr">attr</a>);</td></tr>
+<tr><th id="729">729</th><td>    <a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_attr_setdetachstate" title='pthread_attr_setdetachstate' data-ref="pthread_attr_setdetachstate">pthread_attr_setdetachstate</a>(&amp;<a class="local col8 ref" href="#118attr" title='attr' data-ref="118attr">attr</a>, <a class="local col6 ref" href="#116thread" title='thread' data-ref="116thread">thread</a> ? <a class="macro" href="../../../bionic/libc/include/pthread.h.html#126" title="0x00000000" data-ref="_M/PTHREAD_CREATE_JOINABLE">PTHREAD_CREATE_JOINABLE</a> : <a class="macro" href="../../../bionic/libc/include/pthread.h.html#125" title="0x00000001" data-ref="_M/PTHREAD_CREATE_DETACHED">PTHREAD_CREATE_DETACHED</a>);</td></tr>
+<tr><th id="730">730</th><td>    <em>auto</em>* <dfn class="local col9 decl" id="119pthread_args" title='pthread_args' data-type='adb_pthread_args *' data-ref="119pthread_args">pthread_args</dfn> = <b>new</b> <a class="type" href="#adb_pthread_args" title='adb_pthread_args' data-ref="adb_pthread_args">adb_pthread_args</a>{.<a class="ref" href="#adb_pthread_args::func" title='adb_pthread_args::func' data-ref="adb_pthread_args::func">func</a> = <a class="local col4 ref" href="#114start" title='start' data-ref="114start">start</a>, .<a class="ref" href="#adb_pthread_args::arg" title='adb_pthread_args::arg' data-ref="adb_pthread_args::arg">arg</a> = <a class="local col5 ref" href="#115arg" title='arg' data-ref="115arg">arg</a>};</td></tr>
+<tr><th id="731">731</th><td>    <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_create" title='pthread_create' data-ref="pthread_create">pthread_create</a>(&amp;<a class="local col7 ref" href="#117temp" title='temp' data-ref="117temp">temp</a>, &amp;<a class="local col8 ref" href="#118attr" title='attr' data-ref="118attr">attr</a>, <a class="ref" href="#_ZL19adb_pthread_wrapperPv" title='adb_pthread_wrapper' data-ref="_ZL19adb_pthread_wrapperPv">adb_pthread_wrapper</a>, <a class="local col9 ref" href="#119pthread_args" title='pthread_args' data-ref="119pthread_args">pthread_args</a>);</td></tr>
+<tr><th id="732">732</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <var>0</var>) {</td></tr>
+<tr><th id="733">733</th><td>        <b>if</b> (<a class="local col6 ref" href="#116thread" title='thread' data-ref="116thread">thread</a>) {</td></tr>
+<tr><th id="734">734</th><td>            *<a class="local col6 ref" href="#116thread" title='thread' data-ref="116thread">thread</a> = <a class="local col7 ref" href="#117temp" title='temp' data-ref="117temp">temp</a>;</td></tr>
+<tr><th id="735">735</th><td>        }</td></tr>
+<tr><th id="736">736</th><td>        <b>return</b> <span class="macro" title="true" data-ref="_M/true"><b>true</b></span>;</td></tr>
+<tr><th id="737">737</th><td>    }</td></tr>
+<tr><th id="738">738</th><td>    <b>return</b> <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="739">739</th><td>}</td></tr>
+<tr><th id="740">740</th><td></td></tr>
+<tr><th id="741">741</th><td><em>static</em> <b>__inline__</b> <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl def" id="_ZL15adb_thread_joinl" title='adb_thread_join' data-ref="_ZL15adb_thread_joinl">adb_thread_join</dfn>(<a class="typedef" href="#adb_thread_t" title='adb_thread_t' data-type='pthread_t' data-ref="adb_thread_t">adb_thread_t</a> <dfn class="local col0 decl" id="120thread" title='thread' data-type='adb_thread_t' data-ref="120thread">thread</dfn>) {</td></tr>
+<tr><th id="742">742</th><td>    <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_join" title='pthread_join' data-ref="pthread_join">pthread_join</a>(<a class="local col0 ref" href="#120thread" title='thread' data-ref="120thread">thread</a>, <b>nullptr</b>);</td></tr>
+<tr><th id="743">743</th><td>    <b>return</b> <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <var>0</var>;</td></tr>
+<tr><th id="744">744</th><td>}</td></tr>
+<tr><th id="745">745</th><td></td></tr>
+<tr><th id="746">746</th><td><em>static</em> <b>__inline__</b> <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl def" id="_ZL17adb_thread_detachl" title='adb_thread_detach' data-ref="_ZL17adb_thread_detachl">adb_thread_detach</dfn>(<a class="typedef" href="#adb_thread_t" title='adb_thread_t' data-type='pthread_t' data-ref="adb_thread_t">adb_thread_t</a> <dfn class="local col1 decl" id="121thread" title='thread' data-type='adb_thread_t' data-ref="121thread">thread</dfn>) {</td></tr>
+<tr><th id="747">747</th><td>    <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_detach" title='pthread_detach' data-ref="pthread_detach">pthread_detach</a>(<a class="local col1 ref" href="#121thread" title='thread' data-ref="121thread">thread</a>);</td></tr>
+<tr><th id="748">748</th><td>    <b>return</b> <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <var>0</var>;</td></tr>
+<tr><th id="749">749</th><td>}</td></tr>
+<tr><th id="750">750</th><td></td></tr>
+<tr><th id="751">751</th><td><em>static</em> <b>__inline__</b> <em>void</em> <b>__attribute__</b>((noreturn)) <dfn class="decl def" id="_ZL15adb_thread_exitv" title='adb_thread_exit' data-ref="_ZL15adb_thread_exitv">adb_thread_exit</dfn>() {</td></tr>
+<tr><th id="752">752</th><td>    <a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_exit" title='pthread_exit' data-ref="pthread_exit">pthread_exit</a>(<b>nullptr</b>);</td></tr>
+<tr><th id="753">753</th><td>}</td></tr>
+<tr><th id="754">754</th><td></td></tr>
+<tr><th id="755">755</th><td><em>static</em> <b>__inline__</b> <em>int</em> <dfn class="decl def" id="_ZL18adb_thread_setnameRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='adb_thread_setname' data-ref="_ZL18adb_thread_setnameRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">adb_thread_setname</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col2 decl" id="122name" title='name' data-type='const std::string &amp;' data-ref="122name">name</dfn>) {</td></tr>
+<tr><th id="756">756</th><td><u>#<span data-ppcond="756">ifdef</span> <span class="macro" data-ref="_M/__APPLE__">__APPLE__</span></u></td></tr>
+<tr><th id="757">757</th><td>    <b>return</b> pthread_setname_np(name.c_str());</td></tr>
+<tr><th id="758">758</th><td><u>#<span data-ppcond="756">else</span></u></td></tr>
+<tr><th id="759">759</th><td>    <em>const</em> <em>char</em> *<dfn class="local col3 decl" id="123s" title='s' data-type='const char *' data-ref="123s">s</dfn> = <a class="local col2 ref" href="#122name" title='name' data-ref="122name">name</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5c_strEv" title='std::__1::basic_string::c_str' data-ref="_ZNKSt3__112basic_string5c_strEv">c_str</a>();</td></tr>
+<tr><th id="760">760</th><td></td></tr>
+<tr><th id="761">761</th><td>    <i>// pthread_setname_np fails rather than truncating long strings.</i></td></tr>
+<tr><th id="762">762</th><td>    <em>const</em> <em>int</em> <dfn class="local col4 decl" id="124max_task_comm_len" title='max_task_comm_len' data-type='const int' data-ref="124max_task_comm_len">max_task_comm_len</dfn> = <var>16</var>; <i>// including the null terminator</i></td></tr>
+<tr><th id="763">763</th><td>    <b>if</b> (<a class="local col2 ref" href="#122name" title='name' data-ref="122name">name</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string6lengthEv" title='std::__1::basic_string::length' data-ref="_ZNKSt3__112basic_string6lengthEv">length</a>() &gt; (<a class="local col4 ref" href="#124max_task_comm_len" title='max_task_comm_len' data-ref="124max_task_comm_len">max_task_comm_len</a> - <var>1</var>)) {</td></tr>
+<tr><th id="764">764</th><td>        <em>char</em> <dfn class="local col5 decl" id="125buf" title='buf' data-type='char [16]' data-ref="125buf">buf</dfn>[<a class="local col4 ref" href="#124max_task_comm_len" title='max_task_comm_len' data-ref="124max_task_comm_len">max_task_comm_len</a>];</td></tr>
+<tr><th id="765">765</th><td>        <a class="ref" href="../../../bionic/libc/include/string.h.html#strncpy" title='strncpy' data-ref="strncpy">strncpy</a>(<a class="local col5 ref" href="#125buf" title='buf' data-ref="125buf">buf</a>, <a class="local col2 ref" href="#122name" title='name' data-ref="122name">name</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5c_strEv" title='std::__1::basic_string::c_str' data-ref="_ZNKSt3__112basic_string5c_strEv">c_str</a>(), <b>sizeof</b>(<a class="local col5 ref" href="#125buf" title='buf' data-ref="125buf">buf</a>) - <var>1</var>);</td></tr>
+<tr><th id="766">766</th><td>        <a class="local col5 ref" href="#125buf" title='buf' data-ref="125buf">buf</a>[<b>sizeof</b>(<a class="local col5 ref" href="#125buf" title='buf' data-ref="125buf">buf</a>) - <var>1</var>] = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="767">767</th><td>        <a class="local col3 ref" href="#123s" title='s' data-ref="123s">s</a> = <a class="local col5 ref" href="#125buf" title='buf' data-ref="125buf">buf</a>;</td></tr>
+<tr><th id="768">768</th><td>    }</td></tr>
+<tr><th id="769">769</th><td></td></tr>
+<tr><th id="770">770</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_setname_np" title='pthread_setname_np' data-ref="pthread_setname_np">pthread_setname_np</a>(<a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_self" title='pthread_self' data-ref="pthread_self">pthread_self</a>(), <a class="local col3 ref" href="#123s" title='s' data-ref="123s">s</a>) ;</td></tr>
+<tr><th id="771">771</th><td><u>#<span data-ppcond="756">endif</span></u></td></tr>
+<tr><th id="772">772</th><td>}</td></tr>
+<tr><th id="773">773</th><td></td></tr>
+<tr><th id="774">774</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL14adb_setsockoptiiiPKvj" title='adb_setsockopt' data-ref="_ZL14adb_setsockoptiiiPKvj">adb_setsockopt</dfn>( <em>int</em>  <dfn class="local col6 decl" id="126fd" title='fd' data-type='int' data-ref="126fd">fd</dfn>, <em>int</em>  <dfn class="local col7 decl" id="127level" title='level' data-type='int' data-ref="127level">level</dfn>, <em>int</em>  <dfn class="local col8 decl" id="128optname" title='optname' data-type='int' data-ref="128optname">optname</dfn>, <em>const</em> <em>void</em>*  <dfn class="local col9 decl" id="129optval" title='optval' data-type='const void *' data-ref="129optval">optval</dfn>, <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>  <dfn class="local col0 decl" id="130optlen" title='optlen' data-type='socklen_t' data-ref="130optlen">optlen</dfn> )</td></tr>
+<tr><th id="775">775</th><td>{</td></tr>
+<tr><th id="776">776</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/sys/socket.h.html#setsockopt" title='setsockopt' data-ref="setsockopt">setsockopt</a>( <a class="local col6 ref" href="#126fd" title='fd' data-ref="126fd">fd</a>, <a class="local col7 ref" href="#127level" title='level' data-ref="127level">level</a>, <a class="local col8 ref" href="#128optname" title='optname' data-ref="128optname">optname</a>, <a class="local col9 ref" href="#129optval" title='optval' data-ref="129optval">optval</a>, <a class="local col0 ref" href="#130optlen" title='optlen' data-ref="130optlen">optlen</a> );</td></tr>
+<tr><th id="777">777</th><td>}</td></tr>
+<tr><th id="778">778</th><td></td></tr>
+<tr><th id="779">779</th><td><u>#undef   <span class="macro" data-ref="_M/setsockopt">setsockopt</span></u></td></tr>
+<tr><th id="780">780</th><td><u>#define  <dfn class="macro" id="_M/setsockopt" data-ref="_M/setsockopt">setsockopt</dfn>  ___xxx_setsockopt</u></td></tr>
+<tr><th id="781">781</th><td></td></tr>
+<tr><th id="782">782</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL15unix_socketpairiiiPi" title='unix_socketpair' data-ref="_ZL15unix_socketpairiiiPi">unix_socketpair</dfn>( <em>int</em>  <dfn class="local col1 decl" id="131d" title='d' data-type='int' data-ref="131d">d</dfn>, <em>int</em>  <dfn class="local col2 decl" id="132type" title='type' data-type='int' data-ref="132type">type</dfn>, <em>int</em>  <dfn class="local col3 decl" id="133protocol" title='protocol' data-type='int' data-ref="133protocol">protocol</dfn>, <em>int</em> <dfn class="local col4 decl" id="134sv" title='sv' data-type='int *' data-ref="134sv">sv</dfn>[<var>2</var>] )</td></tr>
+<tr><th id="783">783</th><td>{</td></tr>
+<tr><th id="784">784</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/sys/socket.h.html#socketpair" title='socketpair' data-ref="socketpair">socketpair</a>( <a class="local col1 ref" href="#131d" title='d' data-ref="131d">d</a>, <a class="local col2 ref" href="#132type" title='type' data-ref="132type">type</a>, <a class="local col3 ref" href="#133protocol" title='protocol' data-ref="133protocol">protocol</a>, <a class="local col4 ref" href="#134sv" title='sv' data-ref="134sv">sv</a> );</td></tr>
+<tr><th id="785">785</th><td>}</td></tr>
+<tr><th id="786">786</th><td></td></tr>
+<tr><th id="787">787</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL14adb_socketpairPi" title='adb_socketpair' data-ref="_ZL14adb_socketpairPi">adb_socketpair</dfn>( <em>int</em>  <dfn class="local col5 decl" id="135sv" title='sv' data-type='int *' data-ref="135sv">sv</dfn>[<var>2</var>] )</td></tr>
+<tr><th id="788">788</th><td>{</td></tr>
+<tr><th id="789">789</th><td>    <em>int</em>  <dfn class="local col6 decl" id="136rc" title='rc' data-type='int' data-ref="136rc">rc</dfn>;</td></tr>
+<tr><th id="790">790</th><td></td></tr>
+<tr><th id="791">791</th><td>    <a class="local col6 ref" href="#136rc" title='rc' data-ref="136rc">rc</a> = <a class="ref" href="#_ZL15unix_socketpairiiiPi" title='unix_socketpair' data-ref="_ZL15unix_socketpairiiiPi">unix_socketpair</a>( <a class="macro" href="../../../bionic/libc/include/sys/socket.h.html#129" title="1" data-ref="_M/AF_UNIX">AF_UNIX</a>, <a class="macro" href="../../../bionic/libc/include/sys/socket.h.html#54" title="1" data-ref="_M/SOCK_STREAM">SOCK_STREAM</a>, <var>0</var>, <a class="local col5 ref" href="#135sv" title='sv' data-ref="135sv">sv</a> );</td></tr>
+<tr><th id="792">792</th><td>    <b>if</b> (<a class="local col6 ref" href="#136rc" title='rc' data-ref="136rc">rc</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="793">793</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="794">794</th><td></td></tr>
+<tr><th id="795">795</th><td>    <a class="ref" href="#_ZL13close_on_execi" title='close_on_exec' data-ref="_ZL13close_on_execi">close_on_exec</a>( <a class="local col5 ref" href="#135sv" title='sv' data-ref="135sv">sv</a>[<var>0</var>] );</td></tr>
+<tr><th id="796">796</th><td>    <a class="ref" href="#_ZL13close_on_execi" title='close_on_exec' data-ref="_ZL13close_on_execi">close_on_exec</a>( <a class="local col5 ref" href="#135sv" title='sv' data-ref="135sv">sv</a>[<var>1</var>] );</td></tr>
+<tr><th id="797">797</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="798">798</th><td>}</td></tr>
+<tr><th id="799">799</th><td></td></tr>
+<tr><th id="800">800</th><td><u>#undef   <span class="macro" data-ref="_M/socketpair">socketpair</span></u></td></tr>
+<tr><th id="801">801</th><td><u>#define  <dfn class="macro" id="_M/socketpair" data-ref="_M/socketpair">socketpair</dfn>   ___xxx_socketpair</u></td></tr>
+<tr><th id="802">802</th><td></td></tr>
+<tr><th id="803">803</th><td><b>typedef</b> <b>struct</b> <a class="type" href="../../../bionic/libc/kernel/uapi/asm-generic/poll.h.html#pollfd" title='pollfd' data-ref="pollfd">pollfd</a> <dfn class="typedef" id="adb_pollfd" title='adb_pollfd' data-type='struct pollfd' data-ref="adb_pollfd">adb_pollfd</dfn>;</td></tr>
+<tr><th id="804">804</th><td><em>static</em> <b>__inline__</b> <em>int</em> <dfn class="decl def" id="_ZL8adb_pollP6pollfdmi" title='adb_poll' data-ref="_ZL8adb_pollP6pollfdmi">adb_poll</dfn>(<a class="typedef" href="#adb_pollfd" title='adb_pollfd' data-type='struct pollfd' data-ref="adb_pollfd">adb_pollfd</a>* <dfn class="local col7 decl" id="137fds" title='fds' data-type='adb_pollfd *' data-ref="137fds">fds</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="138nfds" title='nfds' data-type='size_t' data-ref="138nfds">nfds</dfn>, <em>int</em> <dfn class="local col9 decl" id="139timeout" title='timeout' data-type='int' data-ref="139timeout">timeout</dfn>) {</td></tr>
+<tr><th id="805">805</th><td>    <b>return</b> <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(poll(fds, nfds, timeout)) _rc; do { _rc = (poll(fds, nfds, timeout)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/poll.h.html#poll" title='poll' data-ref="poll">poll</a>(<a class="local col7 ref" href="#137fds" title='fds' data-ref="137fds">fds</a>, <a class="local col8 ref" href="#138nfds" title='nfds' data-ref="138nfds">nfds</a>, <a class="local col9 ref" href="#139timeout" title='timeout' data-ref="139timeout">timeout</a>));</td></tr>
+<tr><th id="806">806</th><td>}</td></tr>
+<tr><th id="807">807</th><td></td></tr>
+<tr><th id="808">808</th><td><u>#define <dfn class="macro" id="_M/poll" data-ref="_M/poll">poll</dfn> ___xxx_poll</u></td></tr>
+<tr><th id="809">809</th><td></td></tr>
+<tr><th id="810">810</th><td><em>static</em> <b>__inline__</b> <em>void</em>  <dfn class="decl def" id="_ZL12adb_sleep_msi" title='adb_sleep_ms' data-ref="_ZL12adb_sleep_msi">adb_sleep_ms</dfn>( <em>int</em>  <dfn class="local col0 decl" id="140mseconds" title='mseconds' data-type='int' data-ref="140mseconds">mseconds</dfn> )</td></tr>
+<tr><th id="811">811</th><td>{</td></tr>
+<tr><th id="812">812</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#usleep" title='usleep' data-ref="usleep">usleep</a>( <a class="local col0 ref" href="#140mseconds" title='mseconds' data-ref="140mseconds">mseconds</a>*<var>1000</var> );</td></tr>
+<tr><th id="813">813</th><td>}</td></tr>
+<tr><th id="814">814</th><td></td></tr>
+<tr><th id="815">815</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_ZL9adb_mkdirRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEi" title='adb_mkdir' data-ref="_ZL9adb_mkdirRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEi">adb_mkdir</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col1 decl" id="141path" title='path' data-type='const std::string &amp;' data-ref="141path">path</dfn>, <em>int</em> <dfn class="local col2 decl" id="142mode" title='mode' data-type='int' data-ref="142mode">mode</dfn>)</td></tr>
+<tr><th id="816">816</th><td>{</td></tr>
+<tr><th id="817">817</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#mkdir" title='mkdir' data-ref="mkdir">mkdir</a>(<a class="local col1 ref" href="#141path" title='path' data-ref="141path">path</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5c_strEv" title='std::__1::basic_string::c_str' data-ref="_ZNKSt3__112basic_string5c_strEv">c_str</a>(), <a class="local col2 ref" href="#142mode" title='mode' data-ref="142mode">mode</a>);</td></tr>
+<tr><th id="818">818</th><td>}</td></tr>
+<tr><th id="819">819</th><td></td></tr>
+<tr><th id="820">820</th><td><u>#undef   <span class="macro" data-ref="_M/mkdir">mkdir</span></u></td></tr>
+<tr><th id="821">821</th><td><u>#define  <dfn class="macro" id="_M/mkdir" data-ref="_M/mkdir">mkdir</dfn>  ___xxx_mkdir</u></td></tr>
+<tr><th id="822">822</th><td></td></tr>
+<tr><th id="823">823</th><td><em>static</em> <b>__inline__</b> <em>void</em>  <dfn class="decl def" id="_ZL16adb_sysdeps_initv" title='adb_sysdeps_init' data-ref="_ZL16adb_sysdeps_initv">adb_sysdeps_init</dfn>(<em>void</em>)</td></tr>
+<tr><th id="824">824</th><td>{</td></tr>
+<tr><th id="825">825</th><td>}</td></tr>
+<tr><th id="826">826</th><td></td></tr>
+<tr><th id="827">827</th><td><em>static</em> <b>__inline__</b> <em>int</em> <dfn class="decl def" id="_ZL25adb_is_absolute_host_pathPKc" title='adb_is_absolute_host_path' data-ref="_ZL25adb_is_absolute_host_pathPKc">adb_is_absolute_host_path</dfn>(<em>const</em> <em>char</em>* <dfn class="local col3 decl" id="143path" title='path' data-type='const char *' data-ref="143path">path</dfn>) {</td></tr>
+<tr><th id="828">828</th><td>    <b>return</b> <a class="local col3 ref" href="#143path" title='path' data-ref="143path">path</a>[<var>0</var>] == <kbd>'/'</kbd>;</td></tr>
+<tr><th id="829">829</th><td>}</td></tr>
+<tr><th id="830">830</th><td></td></tr>
+<tr><th id="831">831</th><td><em>static</em> <b>__inline__</b> <em>unsigned</em> <em>long</em> <dfn class="decl def" id="_ZL13adb_thread_idv" title='adb_thread_id' data-ref="_ZL13adb_thread_idv">adb_thread_id</dfn>()</td></tr>
+<tr><th id="832">832</th><td>{</td></tr>
+<tr><th id="833">833</th><td>    <b>return</b> (<em>unsigned</em> <em>long</em>)<a class="ref" href="../../../bionic/libc/include/unistd.h.html#gettid" title='gettid' data-ref="gettid">gettid</a>();</td></tr>
+<tr><th id="834">834</th><td>}</td></tr>
+<tr><th id="835">835</th><td></td></tr>
+<tr><th id="836">836</th><td><u>#<span data-ppcond="64">endif</span> /* !_WIN32 */</u></td></tr>
+<tr><th id="837">837</th><td></td></tr>
+<tr><th id="838">838</th><td><em>static</em> <b>inline</b> <em>void</em> <dfn class="decl def" id="_ZL17disable_tcp_naglei" title='disable_tcp_nagle' data-ref="_ZL17disable_tcp_naglei">disable_tcp_nagle</dfn>(<em>int</em> <dfn class="local col4 decl" id="144fd" title='fd' data-type='int' data-ref="144fd">fd</dfn>) {</td></tr>
+<tr><th id="839">839</th><td>    <em>int</em> <dfn class="local col5 decl" id="145off" title='off' data-type='int' data-ref="145off">off</dfn> = <var>1</var>;</td></tr>
+<tr><th id="840">840</th><td>    <a class="ref" href="#_ZL14adb_setsockoptiiiPKvj" title='adb_setsockopt' data-ref="_ZL14adb_setsockoptiiiPKvj">adb_setsockopt</a>(<a class="local col4 ref" href="#144fd" title='fd' data-ref="144fd">fd</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/in.h.html#39" title="IPPROTO_TCP" data-ref="_M/IPPROTO_TCP">IPPROTO_TCP</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/tcp.h.html#69" title="1" data-ref="_M/TCP_NODELAY">TCP_NODELAY</a>, &amp;<a class="local col5 ref" href="#145off" title='off' data-ref="145off">off</a>, <b>sizeof</b>(<a class="local col5 ref" href="#145off" title='off' data-ref="145off">off</a>));</td></tr>
+<tr><th id="841">841</th><td>}</td></tr>
+<tr><th id="842">842</th><td></td></tr>
+<tr><th id="843">843</th><td><i>// Sets TCP socket |fd| to send a keepalive TCP message every |interval_sec| seconds. Set</i></td></tr>
+<tr><th id="844">844</th><td><i>// |interval_sec| to 0 to disable keepalives. If keepalives are enabled, the connection will be</i></td></tr>
+<tr><th id="845">845</th><td><i>// configured to drop after 10 missed keepalives. Returns true on success.</i></td></tr>
+<tr><th id="846">846</th><td><span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="_Z17set_tcp_keepaliveii" title='set_tcp_keepalive' data-ref="_Z17set_tcp_keepaliveii">set_tcp_keepalive</dfn>(<em>int</em> <dfn class="local col6 decl" id="146fd" title='fd' data-type='int' data-ref="146fd">fd</dfn>, <em>int</em> <dfn class="local col7 decl" id="147interval_sec" title='interval_sec' data-type='int' data-ref="147interval_sec">interval_sec</dfn>);</td></tr>
+<tr><th id="847">847</th><td></td></tr>
+<tr><th id="848">848</th><td><u>#<span data-ppcond="20">endif</span> /* _ADB_SYSDEPS_H */</u></td></tr>
+<tr><th id="849">849</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='adb.cpp.html'>codebrowser/system/core/adb/adb.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

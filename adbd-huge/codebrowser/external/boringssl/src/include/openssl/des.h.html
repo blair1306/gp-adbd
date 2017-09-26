@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>des.h source code [codebrowser/external/boringssl/src/include/openssl/des.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="DES_cblock_st,DES_ks "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/des.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='des.h.html'>des.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#<span data-ppcond="57">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_DES_H">OPENSSL_HEADER_DES_H</span></u></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_DES_H" data-ref="_M/OPENSSL_HEADER_DES_H">OPENSSL_HEADER_DES_H</dfn></u></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><u>#<span data-ppcond="62">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="63">63</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="62">endif</span></u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><i>/* DES. */</i></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><b>typedef</b> <b>struct</b> <dfn class="type def" id="DES_cblock_st" title='DES_cblock_st' data-ref="DES_cblock_st"><a class="type" href="#DES_cblock_st" title='DES_cblock_st' data-ref="DES_cblock_st">DES_cblock_st</a></dfn> {</td></tr>
+<tr><th id="71">71</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="DES_cblock_st::bytes" title='DES_cblock_st::bytes' data-ref="DES_cblock_st::bytes">bytes</dfn>[<var>8</var>];</td></tr>
+<tr><th id="72">72</th><td>} <dfn class="typedef" id="DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</dfn>;</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><b>typedef</b> <b>struct</b> <dfn class="type def" id="DES_ks" title='DES_ks' data-ref="DES_ks"><a class="type" href="#DES_ks" title='DES_ks' data-ref="DES_ks">DES_ks</a></dfn> {</td></tr>
+<tr><th id="75">75</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="DES_ks::subkeys" title='DES_ks::subkeys' data-ref="DES_ks::subkeys">subkeys</dfn>[<var>16</var>][<var>2</var>];</td></tr>
+<tr><th id="76">76</th><td>} <dfn class="typedef" id="DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</dfn>;</td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><u>#define <dfn class="macro" id="_M/DES_KEY_SZ" data-ref="_M/DES_KEY_SZ">DES_KEY_SZ</dfn> (sizeof(DES_cblock))</u></td></tr>
+<tr><th id="80">80</th><td><u>#define <dfn class="macro" id="_M/DES_SCHEDULE_SZ" data-ref="_M/DES_SCHEDULE_SZ">DES_SCHEDULE_SZ</dfn> (sizeof(DES_key_schedule))</u></td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/DES_ENCRYPT" data-ref="_M/DES_ENCRYPT">DES_ENCRYPT</dfn> 1</u></td></tr>
+<tr><th id="83">83</th><td><u>#define <dfn class="macro" id="_M/DES_DECRYPT" data-ref="_M/DES_DECRYPT">DES_DECRYPT</dfn> 0</u></td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><u>#define <dfn class="macro" id="_M/DES_CBC_MODE" data-ref="_M/DES_CBC_MODE">DES_CBC_MODE</dfn> 0</u></td></tr>
+<tr><th id="86">86</th><td><u>#define <dfn class="macro" id="_M/DES_PCBC_MODE" data-ref="_M/DES_PCBC_MODE">DES_PCBC_MODE</dfn> 1</u></td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><i>/* DES_set_key performs a key schedule and initialises |schedule| with |key|. */</i></td></tr>
+<tr><th id="89">89</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_set_key" title='DES_set_key' data-ref="DES_set_key">DES_set_key</dfn>(<em>const</em> <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col1 decl" id="1key" title='key' data-type='const DES_cblock *' data-ref="1key">key</dfn>,</td></tr>
+<tr><th id="90">90</th><td>                                <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col2 decl" id="2schedule" title='schedule' data-type='DES_key_schedule *' data-ref="2schedule">schedule</dfn>);</td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td><i>/* DES_set_odd_parity sets the parity bits (the least-significant bits in each</i></td></tr>
+<tr><th id="93">93</th><td><i> * byte) of |key| given the other bits in each byte. */</i></td></tr>
+<tr><th id="94">94</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_set_odd_parity" title='DES_set_odd_parity' data-ref="DES_set_odd_parity">DES_set_odd_parity</dfn>(<a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col3 decl" id="3key" title='key' data-type='DES_cblock *' data-ref="3key">key</dfn>);</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><i>/* DES_ecb_encrypt encrypts (or decrypts, if |is_encrypt| is |DES_DECRYPT|) a</i></td></tr>
+<tr><th id="97">97</th><td><i> * single DES block (8 bytes) from in to out, using the key configured in</i></td></tr>
+<tr><th id="98">98</th><td><i> * |schedule|. */</i></td></tr>
+<tr><th id="99">99</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_ecb_encrypt" title='DES_ecb_encrypt' data-ref="DES_ecb_encrypt">DES_ecb_encrypt</dfn>(<em>const</em> <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col4 decl" id="4in" title='in' data-type='const DES_cblock *' data-ref="4in">in</dfn>, <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col5 decl" id="5out" title='out' data-type='DES_cblock *' data-ref="5out">out</dfn>,</td></tr>
+<tr><th id="100">100</th><td>                                    <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col6 decl" id="6schedule" title='schedule' data-type='const DES_key_schedule *' data-ref="6schedule">schedule</dfn>,</td></tr>
+<tr><th id="101">101</th><td>                                    <em>int</em> <dfn class="local col7 decl" id="7is_encrypt" title='is_encrypt' data-type='int' data-ref="7is_encrypt">is_encrypt</dfn>);</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><i>/* DES_ncbc_encrypt encrypts (or decrypts, if |enc| is |DES_DECRYPT|) |len|</i></td></tr>
+<tr><th id="104">104</th><td><i> * bytes from |in| to |out| with DES in CBC mode. */</i></td></tr>
+<tr><th id="105">105</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_ncbc_encrypt" title='DES_ncbc_encrypt' data-ref="DES_ncbc_encrypt">DES_ncbc_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="8in" title='in' data-type='const uint8_t *' data-ref="8in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="9out" title='out' data-type='uint8_t *' data-ref="9out">out</dfn>,</td></tr>
+<tr><th id="106">106</th><td>                                     <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="10len" title='len' data-type='size_t' data-ref="10len">len</dfn>,</td></tr>
+<tr><th id="107">107</th><td>                                     <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col1 decl" id="11schedule" title='schedule' data-type='const DES_key_schedule *' data-ref="11schedule">schedule</dfn>,</td></tr>
+<tr><th id="108">108</th><td>                                     <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col2 decl" id="12ivec" title='ivec' data-type='DES_cblock *' data-ref="12ivec">ivec</dfn>, <em>int</em> <dfn class="local col3 decl" id="13enc" title='enc' data-type='int' data-ref="13enc">enc</dfn>);</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><i>/* DES_ecb3_encrypt encrypts (or decrypts, if |enc| is |DES_DECRYPT|) a single</i></td></tr>
+<tr><th id="111">111</th><td><i> * block (8 bytes) of data from |input| to |output| using 3DES. */</i></td></tr>
+<tr><th id="112">112</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_ecb3_encrypt" title='DES_ecb3_encrypt' data-ref="DES_ecb3_encrypt">DES_ecb3_encrypt</dfn>(<em>const</em> <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col4 decl" id="14input" title='input' data-type='const DES_cblock *' data-ref="14input">input</dfn>,</td></tr>
+<tr><th id="113">113</th><td>                                     <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col5 decl" id="15output" title='output' data-type='DES_cblock *' data-ref="15output">output</dfn>,</td></tr>
+<tr><th id="114">114</th><td>                                     <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col6 decl" id="16ks1" title='ks1' data-type='const DES_key_schedule *' data-ref="16ks1">ks1</dfn>,</td></tr>
+<tr><th id="115">115</th><td>                                     <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col7 decl" id="17ks2" title='ks2' data-type='const DES_key_schedule *' data-ref="17ks2">ks2</dfn>,</td></tr>
+<tr><th id="116">116</th><td>                                     <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col8 decl" id="18ks3" title='ks3' data-type='const DES_key_schedule *' data-ref="18ks3">ks3</dfn>,</td></tr>
+<tr><th id="117">117</th><td>                                     <em>int</em> <dfn class="local col9 decl" id="19enc" title='enc' data-type='int' data-ref="19enc">enc</dfn>);</td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td><i>/* DES_ede3_cbc_encrypt encrypts (or decrypts, if |enc| is |DES_DECRYPT|) |len|</i></td></tr>
+<tr><th id="120">120</th><td><i> * bytes from |in| to |out| with 3DES in CBC mode. 3DES uses three keys, thus</i></td></tr>
+<tr><th id="121">121</th><td><i> * the function takes three different |DES_key_schedule|s. */</i></td></tr>
+<tr><th id="122">122</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_ede3_cbc_encrypt" title='DES_ede3_cbc_encrypt' data-ref="DES_ede3_cbc_encrypt">DES_ede3_cbc_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col0 decl" id="20in" title='in' data-type='const uint8_t *' data-ref="20in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="21out" title='out' data-type='uint8_t *' data-ref="21out">out</dfn>,</td></tr>
+<tr><th id="123">123</th><td>                                         <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="22len" title='len' data-type='size_t' data-ref="22len">len</dfn>,</td></tr>
+<tr><th id="124">124</th><td>                                         <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col3 decl" id="23ks1" title='ks1' data-type='const DES_key_schedule *' data-ref="23ks1">ks1</dfn>,</td></tr>
+<tr><th id="125">125</th><td>                                         <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col4 decl" id="24ks2" title='ks2' data-type='const DES_key_schedule *' data-ref="24ks2">ks2</dfn>,</td></tr>
+<tr><th id="126">126</th><td>                                         <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col5 decl" id="25ks3" title='ks3' data-type='const DES_key_schedule *' data-ref="25ks3">ks3</dfn>,</td></tr>
+<tr><th id="127">127</th><td>                                         <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col6 decl" id="26ivec" title='ivec' data-type='DES_cblock *' data-ref="26ivec">ivec</dfn>, <em>int</em> <dfn class="local col7 decl" id="27enc" title='enc' data-type='int' data-ref="27enc">enc</dfn>);</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td><i>/* DES_ede2_cbc_encrypt encrypts (or decrypts, if |enc| is |DES_DECRYPT|) |len|</i></td></tr>
+<tr><th id="130">130</th><td><i> * bytes from |in| to |out| with 3DES in CBC mode. With this keying option, the</i></td></tr>
+<tr><th id="131">131</th><td><i> * first and third 3DES keys are identical. Thus, this function takes only two</i></td></tr>
+<tr><th id="132">132</th><td><i> * different |DES_key_schedule|s. */</i></td></tr>
+<tr><th id="133">133</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_ede2_cbc_encrypt" title='DES_ede2_cbc_encrypt' data-ref="DES_ede2_cbc_encrypt">DES_ede2_cbc_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="28in" title='in' data-type='const uint8_t *' data-ref="28in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="29out" title='out' data-type='uint8_t *' data-ref="29out">out</dfn>,</td></tr>
+<tr><th id="134">134</th><td>                                         <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="30len" title='len' data-type='size_t' data-ref="30len">len</dfn>,</td></tr>
+<tr><th id="135">135</th><td>                                         <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col1 decl" id="31ks1" title='ks1' data-type='const DES_key_schedule *' data-ref="31ks1">ks1</dfn>,</td></tr>
+<tr><th id="136">136</th><td>                                         <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col2 decl" id="32ks2" title='ks2' data-type='const DES_key_schedule *' data-ref="32ks2">ks2</dfn>,</td></tr>
+<tr><th id="137">137</th><td>                                         <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col3 decl" id="33ivec" title='ivec' data-type='DES_cblock *' data-ref="33ivec">ivec</dfn>, <em>int</em> <dfn class="local col4 decl" id="34enc" title='enc' data-type='int' data-ref="34enc">enc</dfn>);</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td><i>/* Deprecated functions. */</i></td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td><i>/* DES_set_key_unchecked calls |DES_set_key|. */</i></td></tr>
+<tr><th id="143">143</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_set_key_unchecked" title='DES_set_key_unchecked' data-ref="DES_set_key_unchecked">DES_set_key_unchecked</dfn>(<em>const</em> <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col5 decl" id="35key" title='key' data-type='const DES_cblock *' data-ref="35key">key</dfn>,</td></tr>
+<tr><th id="144">144</th><td>                                          <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col6 decl" id="36schedule" title='schedule' data-type='DES_key_schedule *' data-ref="36schedule">schedule</dfn>);</td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_ede3_cfb64_encrypt" title='DES_ede3_cfb64_encrypt' data-ref="DES_ede3_cfb64_encrypt">DES_ede3_cfb64_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="37in" title='in' data-type='const uint8_t *' data-ref="37in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="38out" title='out' data-type='uint8_t *' data-ref="38out">out</dfn>,</td></tr>
+<tr><th id="147">147</th><td>                                           <em>long</em> <dfn class="local col9 decl" id="39length" title='length' data-type='long' data-ref="39length">length</dfn>, <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col0 decl" id="40ks1" title='ks1' data-type='DES_key_schedule *' data-ref="40ks1">ks1</dfn>,</td></tr>
+<tr><th id="148">148</th><td>                                           <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col1 decl" id="41ks2" title='ks2' data-type='DES_key_schedule *' data-ref="41ks2">ks2</dfn>,</td></tr>
+<tr><th id="149">149</th><td>                                           <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col2 decl" id="42ks3" title='ks3' data-type='DES_key_schedule *' data-ref="42ks3">ks3</dfn>,</td></tr>
+<tr><th id="150">150</th><td>                                           <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col3 decl" id="43ivec" title='ivec' data-type='DES_cblock *' data-ref="43ivec">ivec</dfn>, <em>int</em> *<dfn class="local col4 decl" id="44num" title='num' data-type='int *' data-ref="44num">num</dfn>, <em>int</em> <dfn class="local col5 decl" id="45enc" title='enc' data-type='int' data-ref="45enc">enc</dfn>);</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_ede3_cfb_encrypt" title='DES_ede3_cfb_encrypt' data-ref="DES_ede3_cfb_encrypt">DES_ede3_cfb_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="46in" title='in' data-type='const uint8_t *' data-ref="46in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="47out" title='out' data-type='uint8_t *' data-ref="47out">out</dfn>,</td></tr>
+<tr><th id="153">153</th><td>                                         <em>int</em> <dfn class="local col8 decl" id="48numbits" title='numbits' data-type='int' data-ref="48numbits">numbits</dfn>, <em>long</em> <dfn class="local col9 decl" id="49length" title='length' data-type='long' data-ref="49length">length</dfn>,</td></tr>
+<tr><th id="154">154</th><td>                                         <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col0 decl" id="50ks1" title='ks1' data-type='DES_key_schedule *' data-ref="50ks1">ks1</dfn>,</td></tr>
+<tr><th id="155">155</th><td>                                         <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col1 decl" id="51ks2" title='ks2' data-type='DES_key_schedule *' data-ref="51ks2">ks2</dfn>,</td></tr>
+<tr><th id="156">156</th><td>                                         <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col2 decl" id="52ks3" title='ks3' data-type='DES_key_schedule *' data-ref="52ks3">ks3</dfn>,</td></tr>
+<tr><th id="157">157</th><td>                                         <a class="typedef" href="#DES_cblock" title='DES_cblock' data-type='struct DES_cblock_st' data-ref="DES_cblock">DES_cblock</a> *<dfn class="local col3 decl" id="53ivec" title='ivec' data-type='DES_cblock *' data-ref="53ivec">ivec</dfn>, <em>int</em> <dfn class="local col4 decl" id="54enc" title='enc' data-type='int' data-ref="54enc">enc</dfn>);</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td><i>/* Private functions.</i></td></tr>
+<tr><th id="161">161</th><td><i> *</i></td></tr>
+<tr><th id="162">162</th><td><i> * These functions are only exported for use in |decrepit|. */</i></td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_decrypt3" title='DES_decrypt3' data-ref="DES_decrypt3">DES_decrypt3</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> *<dfn class="local col5 decl" id="55data" title='data' data-type='uint32_t *' data-ref="55data">data</dfn>, <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col6 decl" id="56ks1" title='ks1' data-type='const DES_key_schedule *' data-ref="56ks1">ks1</dfn>,</td></tr>
+<tr><th id="165">165</th><td>                                 <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col7 decl" id="57ks2" title='ks2' data-type='const DES_key_schedule *' data-ref="57ks2">ks2</dfn>,</td></tr>
+<tr><th id="166">166</th><td>                                 <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col8 decl" id="58ks3" title='ks3' data-type='const DES_key_schedule *' data-ref="58ks3">ks3</dfn>);</td></tr>
+<tr><th id="167">167</th><td></td></tr>
+<tr><th id="168">168</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="DES_encrypt3" title='DES_encrypt3' data-ref="DES_encrypt3">DES_encrypt3</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> *<dfn class="local col9 decl" id="59data" title='data' data-type='uint32_t *' data-ref="59data">data</dfn>, <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col0 decl" id="60ks1" title='ks1' data-type='const DES_key_schedule *' data-ref="60ks1">ks1</dfn>,</td></tr>
+<tr><th id="169">169</th><td>                                 <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col1 decl" id="61ks2" title='ks2' data-type='const DES_key_schedule *' data-ref="61ks2">ks2</dfn>,</td></tr>
+<tr><th id="170">170</th><td>                                 <em>const</em> <a class="typedef" href="#DES_key_schedule" title='DES_key_schedule' data-type='struct DES_ks' data-ref="DES_key_schedule">DES_key_schedule</a> *<dfn class="local col2 decl" id="62ks3" title='ks3' data-type='const DES_key_schedule *' data-ref="62ks3">ks3</dfn>);</td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td><u>#<span data-ppcond="173">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="174">174</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="175">175</th><td><u>#<span data-ppcond="173">endif</span></u></td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td><u>#<span data-ppcond="57">endif</span>  /* OPENSSL_HEADER_DES_H */</u></td></tr>
+<tr><th id="178">178</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../crypto/cipher/e_des.c.html'>codebrowser/external/boringssl/src/crypto/cipher/e_des.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

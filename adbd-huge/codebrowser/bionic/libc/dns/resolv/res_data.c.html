@@ -1,0 +1,345 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>res_data.c source code [codebrowser/bionic/libc/dns/resolv/res_data.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/dns/resolv/res_data.c'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>bionic</a>/<a href='../..'>libc</a>/<a href='..'>dns</a>/<a href='./'>resolv</a>/<a href='res_data.c.html'>res_data.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$NetBSD: res_data.c,v 1.8 2004/06/09 18:07:03 christos Exp $	*/</i></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><i>/*</i></td></tr>
+<tr><th id="4">4</th><td><i> * Copyright (c) 2004 by Internet Systems Consortium, Inc. ("ISC")</i></td></tr>
+<tr><th id="5">5</th><td><i> * Copyright (c) 1995-1999 by Internet Software Consortium.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * Permission to use, copy, modify, and distribute this software for any</i></td></tr>
+<tr><th id="8">8</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="9">9</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="10">10</th><td><i> *</i></td></tr>
+<tr><th id="11">11</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="13">13</th><td><i> * MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL ISC BE LIABLE FOR</i></td></tr>
+<tr><th id="14">14</th><td><i> * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="15">15</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</i></td></tr>
+<tr><th id="16">16</th><td><i> * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT</i></td></tr>
+<tr><th id="17">17</th><td><i> * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</i></td></tr>
+<tr><th id="18">18</th><td><i> */</i></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#<span data-ppcond="21">if</span> defined(<span class="macro" data-ref="_M/LIBC_SCCS">LIBC_SCCS</span>) &amp;&amp; !defined(<span class="macro" data-ref="_M/lint">lint</span>)</u></td></tr>
+<tr><th id="22">22</th><td><u>#ifdef notdef</u></td></tr>
+<tr><th id="23">23</th><td><em>static</em> <em>const</em> <em>char</em> rcsid[] = <q>"Id: res_data.c,v 1.1.206.2 2004/03/16 12:34:18 marka Exp"</q>;</td></tr>
+<tr><th id="24">24</th><td><u>#else</u></td></tr>
+<tr><th id="25">25</th><td>__RCSID(<q>"$NetBSD: res_data.c,v 1.8 2004/06/09 18:07:03 christos Exp $"</q>);</td></tr>
+<tr><th id="26">26</th><td><u>#endif</u></td></tr>
+<tr><th id="27">27</th><td><u>#<span data-ppcond="21">endif</span> /* LIBC_SCCS and not lint */</u></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../../include/sys/param.h.html">&lt;sys/param.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../../include/sys/socket.h.html">&lt;sys/socket.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../../include/sys/time.h.html">&lt;sys/time.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="../../include/netinet/in.h.html">&lt;netinet/in.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td><u>#include <a href="../../include/arpa/inet.h.html">&lt;arpa/inet.h&gt;</a></u></td></tr>
+<tr><th id="38">38</th><td><u>#include <a href="../../include/arpa/nameser.h.html">&lt;arpa/nameser.h&gt;</a></u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><u>#include <a href="../../include/ctype.h.html">&lt;ctype.h&gt;</a></u></td></tr>
+<tr><th id="41">41</th><td><u>#include <a href="../../include/netdb.h.html">&lt;netdb.h&gt;</a></u></td></tr>
+<tr><th id="42">42</th><td><u>#include <a href="../include/resolv_private.h.html">"resolv_private.h"</a></u></td></tr>
+<tr><th id="43">43</th><td><u>#include <a href="../../include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="44">44</th><td><u>#include <a href="../../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="45">45</th><td><u>#include <a href="../../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="46">46</th><td><u>#include <a href="../../include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><a class="macro" href="../../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a></td></tr>
+<tr><th id="50">50</th><td><em>const</em> <em>char</em> * <em>const</em> <dfn class="decl def" id="_res_opcodes" title='_res_opcodes' data-ref="_res_opcodes">_res_opcodes</dfn>[] = {</td></tr>
+<tr><th id="51">51</th><td>	<q>"QUERY"</q>,</td></tr>
+<tr><th id="52">52</th><td>	<q>"IQUERY"</q>,</td></tr>
+<tr><th id="53">53</th><td>	<q>"CQUERYM"</q>,</td></tr>
+<tr><th id="54">54</th><td>	<q>"CQUERYU"</q>,	<i>/* experimental */</i></td></tr>
+<tr><th id="55">55</th><td>	<q>"NOTIFY"</q>,	<i>/* experimental */</i></td></tr>
+<tr><th id="56">56</th><td>	<q>"UPDATE"</q>,</td></tr>
+<tr><th id="57">57</th><td>	<q>"6"</q>,</td></tr>
+<tr><th id="58">58</th><td>	<q>"7"</q>,</td></tr>
+<tr><th id="59">59</th><td>	<q>"8"</q>,</td></tr>
+<tr><th id="60">60</th><td>	<q>"9"</q>,</td></tr>
+<tr><th id="61">61</th><td>	<q>"10"</q>,</td></tr>
+<tr><th id="62">62</th><td>	<q>"11"</q>,</td></tr>
+<tr><th id="63">63</th><td>	<q>"12"</q>,</td></tr>
+<tr><th id="64">64</th><td>	<q>"13"</q>,</td></tr>
+<tr><th id="65">65</th><td>	<q>"ZONEINIT"</q>,</td></tr>
+<tr><th id="66">66</th><td>	<q>"ZONEREF"</q>,</td></tr>
+<tr><th id="67">67</th><td>};</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><u>#<span data-ppcond="69">ifdef</span> <span class="macro" data-ref="_M/BIND_UPDATE">BIND_UPDATE</span></u></td></tr>
+<tr><th id="70">70</th><td><em>const</em> <em>char</em> * <em>const</em> _res_sectioncodes[] = {</td></tr>
+<tr><th id="71">71</th><td>	<q>"ZONE"</q>,</td></tr>
+<tr><th id="72">72</th><td>	<q>"PREREQUISITES"</q>,</td></tr>
+<tr><th id="73">73</th><td>	<q>"UPDATE"</q>,</td></tr>
+<tr><th id="74">74</th><td>	<q>"ADDITIONAL"</q>,</td></tr>
+<tr><th id="75">75</th><td>};</td></tr>
+<tr><th id="76">76</th><td><u>#<span data-ppcond="69">endif</span></u></td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td><u>#<span data-ppcond="78">ifndef</span> <span class="macro" data-ref="_M/__BIND_NOSTATIC">__BIND_NOSTATIC</span></u></td></tr>
+<tr><th id="79">79</th><td><b>extern</b> <b>struct</b> <a class="type" href="../include/resolv_private.h.html#__res_state" title='__res_state' data-ref="__res_state">__res_state</a> <dfn class="decl" id="_nres" title='_nres' data-ref="_nres">_nres</dfn>;</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><i>/* Proto. */</i></td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><em>int</em>  <a class="macro" href="../include/resolv_private.h.html#435" title="__res_ourserver_p" data-ref="_M/res_ourserver_p">res_ourserver_p</a>(<em>const</em> <a class="typedef" href="../include/resolv_private.h.html#res_state" title='res_state' data-type='struct __res_state *' data-ref="res_state">res_state</a>, <em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a> *);</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><u>#define <dfn class="macro" id="_M/res_need_init" data-ref="_M/res_need_init">res_need_init</dfn>()   ((<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::options" title='__res_state::options' data-ref="__res_state::options">options</a> &amp; RES_INIT) == 0U)</u></td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td><em>int</em></td></tr>
+<tr><th id="88">88</th><td><dfn class="decl def" id="res_init" title='res_init' data-ref="res_init">res_init</dfn>(<em>void</em>) {</td></tr>
+<tr><th id="89">89</th><td>	<em>int</em> <dfn class="local col1 decl" id="1rv" title='rv' data-type='int' data-ref="1rv">rv</dfn>;</td></tr>
+<tr><th id="90">90</th><td>	<b>extern</b> <em>int</em> <a class="decl" href="../include/resolv_private.h.html#__res_vinit" title='__res_vinit' data-ref="__res_vinit" id="__res_vinit">__res_vinit</a>(<a class="typedef" href="../include/resolv_private.h.html#res_state" title='res_state' data-type='struct __res_state *' data-ref="res_state">res_state</a>, <em>int</em>);</td></tr>
+<tr><th id="91">91</th><td><u>#<span data-ppcond="91">ifdef</span> <span class="macro" data-ref="_M/COMPAT__RES">COMPAT__RES</span></u></td></tr>
+<tr><th id="92">92</th><td>	<i>/*</i></td></tr>
+<tr><th id="93">93</th><td><i>	 * Compatibility with program that were accessing _res directly</i></td></tr>
+<tr><th id="94">94</th><td><i>	 * to set options. We keep another struct res that is the same</i></td></tr>
+<tr><th id="95">95</th><td><i>	 * size as the original res structure, and then copy fields to</i></td></tr>
+<tr><th id="96">96</th><td><i>	 * it so that we achieve the same initialization</i></td></tr>
+<tr><th id="97">97</th><td><i>	 */</i></td></tr>
+<tr><th id="98">98</th><td>	<b>extern</b> <em>void</em> *__res_get_old_state(<em>void</em>);</td></tr>
+<tr><th id="99">99</th><td>	<b>extern</b> <em>void</em> __res_put_old_state(<em>void</em> *);</td></tr>
+<tr><th id="100">100</th><td>	res_state ores = __res_get_old_state();</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td>	<b>if</b> (ores-&gt;options != <var>0</var>)</td></tr>
+<tr><th id="103">103</th><td>		_nres.options = ores-&gt;options;</td></tr>
+<tr><th id="104">104</th><td>	<b>if</b> (ores-&gt;retrans != <var>0</var>)</td></tr>
+<tr><th id="105">105</th><td>		_nres.retrans = ores-&gt;retrans;</td></tr>
+<tr><th id="106">106</th><td>	<b>if</b> (ores-&gt;retry != <var>0</var>)</td></tr>
+<tr><th id="107">107</th><td>		_nres.retry = ores-&gt;retry;</td></tr>
+<tr><th id="108">108</th><td><u>#<span data-ppcond="91">endif</span></u></td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td>	<i>/*</i></td></tr>
+<tr><th id="111">111</th><td><i>	 * These three fields used to be statically initialized.  This made</i></td></tr>
+<tr><th id="112">112</th><td><i>	 * it hard to use this code in a shared library.  It is necessary,</i></td></tr>
+<tr><th id="113">113</th><td><i>	 * now that we're doing dynamic initialization here, that we preserve</i></td></tr>
+<tr><th id="114">114</th><td><i>	 * the old semantics: if an application modifies one of these three</i></td></tr>
+<tr><th id="115">115</th><td><i>	 * fields of _res before res_init() is called, res_init() will not</i></td></tr>
+<tr><th id="116">116</th><td><i>	 * alter them.  Of course, if an application is setting them to</i></td></tr>
+<tr><th id="117">117</th><td><i>	 * _zero_ before calling res_init(), hoping to override what used</i></td></tr>
+<tr><th id="118">118</th><td><i>	 * to be the static default, we can't detect it and unexpected results</i></td></tr>
+<tr><th id="119">119</th><td><i>	 * will follow.  Zero for any of these fields would make no sense,</i></td></tr>
+<tr><th id="120">120</th><td><i>	 * so one can safely assume that the applications were already getting</i></td></tr>
+<tr><th id="121">121</th><td><i>	 * unexpected results.</i></td></tr>
+<tr><th id="122">122</th><td><i>	 *</i></td></tr>
+<tr><th id="123">123</th><td><i>	 * _nres.options is tricky since some apps were known to diddle the bits</i></td></tr>
+<tr><th id="124">124</th><td><i>	 * before res_init() was first called. We can't replicate that semantic</i></td></tr>
+<tr><th id="125">125</th><td><i>	 * with dynamic initialization (they may have turned bits off that are</i></td></tr>
+<tr><th id="126">126</th><td><i>	 * set in RES_DEFAULT).  Our solution is to declare such applications</i></td></tr>
+<tr><th id="127">127</th><td><i>	 * "broken".  They could fool us by setting RES_INIT but none do (yet).</i></td></tr>
+<tr><th id="128">128</th><td><i>	 */</i></td></tr>
+<tr><th id="129">129</th><td>	<b>if</b> (!<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::retrans" title='__res_state::retrans' data-ref="__res_state::retrans">retrans</a>)</td></tr>
+<tr><th id="130">130</th><td>		<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::retrans" title='__res_state::retrans' data-ref="__res_state::retrans">retrans</a> = <a class="macro" href="../include/resolv_private.h.html#146" title="5" data-ref="_M/RES_TIMEOUT">RES_TIMEOUT</a>;</td></tr>
+<tr><th id="131">131</th><td>	<b>if</b> (!<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::retry" title='__res_state::retry' data-ref="__res_state::retry">retry</a>)</td></tr>
+<tr><th id="132">132</th><td>		<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::retry" title='__res_state::retry' data-ref="__res_state::retry">retry</a> = <var>4</var>;</td></tr>
+<tr><th id="133">133</th><td>	<b>if</b> (!(<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::options" title='__res_state::options' data-ref="__res_state::options">options</a> &amp; <a class="macro" href="../include/resolv_private.h.html#260" title="0x00000001" data-ref="_M/RES_INIT">RES_INIT</a>))</td></tr>
+<tr><th id="134">134</th><td>		<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::options" title='__res_state::options' data-ref="__res_state::options">options</a> = <a class="macro" href="../include/resolv_private.h.html#286" title="(0x00000040 | 0x00000080 | 0x00000200 | 0x80000000)" data-ref="_M/RES_DEFAULT">RES_DEFAULT</a>;</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td>	<i>/*</i></td></tr>
+<tr><th id="137">137</th><td><i>	 * This one used to initialize implicitly to zero, so unless the app</i></td></tr>
+<tr><th id="138">138</th><td><i>	 * has set it to something in particular, we can randomize it now.</i></td></tr>
+<tr><th id="139">139</th><td><i>	 */</i></td></tr>
+<tr><th id="140">140</th><td>	<b>if</b> (!<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::id" title='__res_state::id' data-ref="__res_state::id">id</a>)</td></tr>
+<tr><th id="141">141</th><td>		<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::id" title='__res_state::id' data-ref="__res_state::id">id</a> = <a class="macro" href="../include/resolv_private.h.html#528" title="__res_randomid" data-ref="_M/res_randomid">res_randomid</a>();</td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td>	<a class="local col1 ref" href="#1rv" title='rv' data-ref="1rv">rv</a> = <a class="ref" href="../include/resolv_private.h.html#__res_vinit" title='__res_vinit' data-ref="__res_vinit">__res_vinit</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <var>1</var>);</td></tr>
+<tr><th id="144">144</th><td><u>#<span data-ppcond="144">ifdef</span> <span class="macro" data-ref="_M/COMPAT__RES">COMPAT__RES</span></u></td></tr>
+<tr><th id="145">145</th><td>	__res_put_old_state(&amp;_nres);</td></tr>
+<tr><th id="146">146</th><td><u>#<span data-ppcond="144">endif</span></u></td></tr>
+<tr><th id="147">147</th><td>	<b>return</b> <a class="local col1 ref" href="#1rv" title='rv' data-ref="1rv">rv</a>;</td></tr>
+<tr><th id="148">148</th><td>}</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><em>void</em></td></tr>
+<tr><th id="151">151</th><td><a class="macro" href="../include/resolv_private.h.html#331" title="__p_query" data-ref="_M/p_query">p_query</a>(<em>const</em> <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col2 decl" id="2msg" title='msg' data-type='const u_char *' data-ref="2msg">msg</dfn>) {</td></tr>
+<tr><th id="152">152</th><td>	<a class="macro" href="../include/resolv_private.h.html#329" title="__fp_query" data-ref="_M/fp_query">fp_query</a>(<a class="local col2 ref" href="#2msg" title='msg' data-ref="2msg">msg</a>, <a class="macro" href="../../include/stdio.h.html#63" title="stdout" data-ref="_M/stdout">stdout</a>);</td></tr>
+<tr><th id="153">153</th><td>}</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td><em>void</em></td></tr>
+<tr><th id="156">156</th><td><a class="macro" href="../include/resolv_private.h.html#329" title="__fp_query" data-ref="_M/fp_query">fp_query</a>(<em>const</em> <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col3 decl" id="3msg" title='msg' data-type='const u_char *' data-ref="3msg">msg</dfn>, <a class="typedef" href="../../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col4 decl" id="4file" title='file' data-type='FILE *' data-ref="4file">file</dfn>) {</td></tr>
+<tr><th id="157">157</th><td>	<a class="macro" href="../include/resolv_private.h.html#328" title="__fp_nquery" data-ref="_M/fp_nquery">fp_nquery</a>(<a class="local col3 ref" href="#3msg" title='msg' data-ref="3msg">msg</a>, <a class="macro" href="../../include/arpa/nameser_compat.h.html#91" title="512" data-ref="_M/PACKETSZ">PACKETSZ</a>, <a class="local col4 ref" href="#4file" title='file' data-ref="4file">file</a>);</td></tr>
+<tr><th id="158">158</th><td>}</td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td><em>void</em></td></tr>
+<tr><th id="161">161</th><td><a class="macro" href="../include/resolv_private.h.html#328" title="__fp_nquery" data-ref="_M/fp_nquery">fp_nquery</a>(<em>const</em> <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col5 decl" id="5msg" title='msg' data-type='const u_char *' data-ref="5msg">msg</dfn>, <em>int</em> <dfn class="local col6 decl" id="6len" title='len' data-type='int' data-ref="6len">len</dfn>, <a class="typedef" href="../../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col7 decl" id="7file" title='file' data-type='FILE *' data-ref="7file">file</dfn>) {</td></tr>
+<tr><th id="162">162</th><td>	<b>if</b> (<a class="macro" href="#85" title="((_nres.options &amp; 0x00000001) == 0U)" data-ref="_M/res_need_init">res_need_init</a>() &amp;&amp; <a class="ref" href="#res_init" title='res_init' data-ref="res_init">res_init</a>() == -<var>1</var>)</td></tr>
+<tr><th id="163">163</th><td>		<b>return</b>;</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td>	<a class="macro" href="../include/resolv_private.h.html#412" title="__res_pquery" data-ref="_M/res_pquery">res_pquery</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="local col5 ref" href="#5msg" title='msg' data-ref="5msg">msg</a>, <a class="local col6 ref" href="#6len" title='len' data-ref="6len">len</a>, <a class="local col7 ref" href="#7file" title='file' data-ref="7file">file</a>);</td></tr>
+<tr><th id="166">166</th><td>}</td></tr>
+<tr><th id="167">167</th><td></td></tr>
+<tr><th id="168">168</th><td><em>int</em></td></tr>
+<tr><th id="169">169</th><td><dfn class="decl def" id="res_mkquery" title='res_mkquery' data-ref="res_mkquery">res_mkquery</dfn>(<em>int</em> <dfn class="local col8 decl" id="8op" title='op' data-type='int' data-ref="8op">op</dfn>,			<i>/* opcode of query */</i></td></tr>
+<tr><th id="170">170</th><td>	    <em>const</em> <em>char</em> *<dfn class="local col9 decl" id="9dname" title='dname' data-type='const char *' data-ref="9dname">dname</dfn>,		<i>/* domain name */</i></td></tr>
+<tr><th id="171">171</th><td>	    <em>int</em> <dfn class="local col0 decl" id="10class" title='class' data-type='int' data-ref="10class">class</dfn>, <em>int</em> <dfn class="local col1 decl" id="11type" title='type' data-type='int' data-ref="11type">type</dfn>,	<i>/* class and type of query */</i></td></tr>
+<tr><th id="172">172</th><td>	    <em>const</em> <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col2 decl" id="12data" title='data' data-type='const u_char *' data-ref="12data">data</dfn>,		<i>/* resource record data */</i></td></tr>
+<tr><th id="173">173</th><td>	    <em>int</em> <dfn class="local col3 decl" id="13datalen" title='datalen' data-type='int' data-ref="13datalen">datalen</dfn>,		<i>/* length of data */</i></td></tr>
+<tr><th id="174">174</th><td>	    <em>const</em> <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col4 decl" id="14newrr_in" title='newrr_in' data-type='const u_char *' data-ref="14newrr_in">newrr_in</dfn>,	<i>/* new rr for modify or append */</i></td></tr>
+<tr><th id="175">175</th><td>	    <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col5 decl" id="15buf" title='buf' data-type='u_char *' data-ref="15buf">buf</dfn>,		<i>/* buffer to put query */</i></td></tr>
+<tr><th id="176">176</th><td>	    <em>int</em> <dfn class="local col6 decl" id="16buflen" title='buflen' data-type='int' data-ref="16buflen">buflen</dfn>)			<i>/* size of buffer */</i></td></tr>
+<tr><th id="177">177</th><td>{</td></tr>
+<tr><th id="178">178</th><td>	<b>if</b> (<a class="macro" href="#85" title="((_nres.options &amp; 0x00000001) == 0U)" data-ref="_M/res_need_init">res_need_init</a>() &amp;&amp; <a class="ref" href="#res_init" title='res_init' data-ref="res_init">res_init</a>() == -<var>1</var>) {</td></tr>
+<tr><th id="179">179</th><td>		<a class="macro" href="../include/resolv_private.h.html#105" title="((*__get_h_errno()) = (&amp;_nres)-&gt;res_h_errno = (-1))" data-ref="_M/RES_SET_H_ERRNO">RES_SET_H_ERRNO</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="macro" href="../../include/netdb.h.html#126" title="-1" data-ref="_M/NETDB_INTERNAL">NETDB_INTERNAL</a>);</td></tr>
+<tr><th id="180">180</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="181">181</th><td>	}</td></tr>
+<tr><th id="182">182</th><td>	<b>return</b> (<a class="macro" href="../include/resolv_private.h.html#411" title="__res_nmkquery" data-ref="_M/res_nmkquery">res_nmkquery</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="local col8 ref" href="#8op" title='op' data-ref="8op">op</a>, <a class="local col9 ref" href="#9dname" title='dname' data-ref="9dname">dname</a>, <a class="local col0 ref" href="#10class" title='class' data-ref="10class">class</a>, <a class="local col1 ref" href="#11type" title='type' data-ref="11type">type</a>,</td></tr>
+<tr><th id="183">183</th><td>			     <a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>, <a class="local col3 ref" href="#13datalen" title='datalen' data-ref="13datalen">datalen</a>,</td></tr>
+<tr><th id="184">184</th><td>			     <a class="local col4 ref" href="#14newrr_in" title='newrr_in' data-ref="14newrr_in">newrr_in</a>, <a class="local col5 ref" href="#15buf" title='buf' data-ref="15buf">buf</a>, <a class="local col6 ref" href="#16buflen" title='buflen' data-ref="16buflen">buflen</a>));</td></tr>
+<tr><th id="185">185</th><td>}</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td><u>#<span data-ppcond="187">ifdef</span> <span class="macro" data-ref="_M/_LIBRESOLV">_LIBRESOLV</span></u></td></tr>
+<tr><th id="188">188</th><td><em>int</em></td></tr>
+<tr><th id="189">189</th><td>res_mkupdate(ns_updrec *rrecp_in, u_char *buf, <em>int</em> buflen) {</td></tr>
+<tr><th id="190">190</th><td>	<b>if</b> (res_need_init() &amp;&amp; res_init() == -<var>1</var>) {</td></tr>
+<tr><th id="191">191</th><td>		RES_SET_H_ERRNO(&amp;_nres, NETDB_INTERNAL);</td></tr>
+<tr><th id="192">192</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="193">193</th><td>	}</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td>	<b>return</b> (res_nmkupdate(&amp;_nres, rrecp_in, buf, buflen));</td></tr>
+<tr><th id="196">196</th><td>}</td></tr>
+<tr><th id="197">197</th><td><u>#<span data-ppcond="187">endif</span></u></td></tr>
+<tr><th id="198">198</th><td></td></tr>
+<tr><th id="199">199</th><td><em>int</em></td></tr>
+<tr><th id="200">200</th><td><dfn class="decl def" id="res_query" title='res_query' data-ref="res_query">res_query</dfn>(<em>const</em> <em>char</em> *<dfn class="local col7 decl" id="17name" title='name' data-type='const char *' data-ref="17name">name</dfn>,	<i>/* domain name */</i></td></tr>
+<tr><th id="201">201</th><td>	  <em>int</em> <dfn class="local col8 decl" id="18class" title='class' data-type='int' data-ref="18class">class</dfn>, <em>int</em> <dfn class="local col9 decl" id="19type" title='type' data-type='int' data-ref="19type">type</dfn>,	<i>/* class and type of query */</i></td></tr>
+<tr><th id="202">202</th><td>	  <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col0 decl" id="20answer" title='answer' data-type='u_char *' data-ref="20answer">answer</dfn>,	<i>/* buffer to put answer */</i></td></tr>
+<tr><th id="203">203</th><td>	  <em>int</em> <dfn class="local col1 decl" id="21anslen" title='anslen' data-type='int' data-ref="21anslen">anslen</dfn>)		<i>/* size of answer buffer */</i></td></tr>
+<tr><th id="204">204</th><td>{</td></tr>
+<tr><th id="205">205</th><td>	<b>if</b> (<a class="macro" href="#85" title="((_nres.options &amp; 0x00000001) == 0U)" data-ref="_M/res_need_init">res_need_init</a>() &amp;&amp; <a class="ref" href="#res_init" title='res_init' data-ref="res_init">res_init</a>() == -<var>1</var>) {</td></tr>
+<tr><th id="206">206</th><td>		<a class="macro" href="../include/resolv_private.h.html#105" title="((*__get_h_errno()) = (&amp;_nres)-&gt;res_h_errno = (-1))" data-ref="_M/RES_SET_H_ERRNO">RES_SET_H_ERRNO</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="macro" href="../../include/netdb.h.html#126" title="-1" data-ref="_M/NETDB_INTERNAL">NETDB_INTERNAL</a>);</td></tr>
+<tr><th id="207">207</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="208">208</th><td>	}</td></tr>
+<tr><th id="209">209</th><td>	<b>return</b> (<a class="macro" href="../include/resolv_private.h.html#413" title="__res_nquery" data-ref="_M/res_nquery">res_nquery</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="local col7 ref" href="#17name" title='name' data-ref="17name">name</a>, <a class="local col8 ref" href="#18class" title='class' data-ref="18class">class</a>, <a class="local col9 ref" href="#19type" title='type' data-ref="19type">type</a>, <a class="local col0 ref" href="#20answer" title='answer' data-ref="20answer">answer</a>, <a class="local col1 ref" href="#21anslen" title='anslen' data-ref="21anslen">anslen</a>));</td></tr>
+<tr><th id="210">210</th><td>}</td></tr>
+<tr><th id="211">211</th><td></td></tr>
+<tr><th id="212">212</th><td><em>void</em></td></tr>
+<tr><th id="213">213</th><td><a class="macro" href="../include/resolv_private.h.html#438" title="__res_send_setqhook" data-ref="_M/res_send_setqhook">res_send_setqhook</a>(<a class="typedef" href="../include/resolv_private.h.html#res_send_qhook" title='res_send_qhook' data-type='res_sendhookact (*)(struct sockaddr *const *, const u_char **, int *, u_char *, int, int *)' data-ref="res_send_qhook">res_send_qhook</a> <dfn class="local col2 decl" id="22hook" title='hook' data-type='res_send_qhook' data-ref="22hook">hook</dfn>) {</td></tr>
+<tr><th id="214">214</th><td>	<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::qhook" title='__res_state::qhook' data-ref="__res_state::qhook">qhook</a> = <a class="local col2 ref" href="#22hook" title='hook' data-ref="22hook">hook</a>;</td></tr>
+<tr><th id="215">215</th><td>}</td></tr>
+<tr><th id="216">216</th><td></td></tr>
+<tr><th id="217">217</th><td><em>void</em></td></tr>
+<tr><th id="218">218</th><td><a class="macro" href="../include/resolv_private.h.html#439" title="__res_send_setrhook" data-ref="_M/res_send_setrhook">res_send_setrhook</a>(<a class="typedef" href="../include/resolv_private.h.html#res_send_rhook" title='res_send_rhook' data-type='res_sendhookact (*)(const struct sockaddr *, const u_char *, int, u_char *, int, int *)' data-ref="res_send_rhook">res_send_rhook</a> <dfn class="local col3 decl" id="23hook" title='hook' data-type='res_send_rhook' data-ref="23hook">hook</dfn>) {</td></tr>
+<tr><th id="219">219</th><td>	<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>.<a class="ref" href="../include/resolv_private.h.html#__res_state::rhook" title='__res_state::rhook' data-ref="__res_state::rhook">rhook</a> = <a class="local col3 ref" href="#23hook" title='hook' data-ref="23hook">hook</a>;</td></tr>
+<tr><th id="220">220</th><td>}</td></tr>
+<tr><th id="221">221</th><td></td></tr>
+<tr><th id="222">222</th><td><em>int</em></td></tr>
+<tr><th id="223">223</th><td><a class="macro" href="../include/resolv_private.h.html#334" title="__res_isourserver" data-ref="_M/res_isourserver">res_isourserver</a>(<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/in.h.html#sockaddr_in" title='sockaddr_in' data-ref="sockaddr_in">sockaddr_in</a> *<dfn class="local col4 decl" id="24inp" title='inp' data-type='const struct sockaddr_in *' data-ref="24inp">inp</dfn>) {</td></tr>
+<tr><th id="224">224</th><td>	<b>return</b> (<a class="macro" href="../include/resolv_private.h.html#435" title="__res_ourserver_p" data-ref="_M/res_ourserver_p">res_ourserver_p</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, (<em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a> *)(<em>const</em> <em>void</em> *)<a class="local col4 ref" href="#24inp" title='inp' data-ref="24inp">inp</a>));</td></tr>
+<tr><th id="225">225</th><td>}</td></tr>
+<tr><th id="226">226</th><td></td></tr>
+<tr><th id="227">227</th><td><em>int</em></td></tr>
+<tr><th id="228">228</th><td><a class="macro" href="../include/resolv_private.h.html#336" title="__res_send" data-ref="_M/res_send">res_send</a>(<em>const</em> <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col5 decl" id="25buf" title='buf' data-type='const u_char *' data-ref="25buf">buf</dfn>, <em>int</em> <dfn class="local col6 decl" id="26buflen" title='buflen' data-type='int' data-ref="26buflen">buflen</dfn>, <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col7 decl" id="27ans" title='ans' data-type='u_char *' data-ref="27ans">ans</dfn>, <em>int</em> <dfn class="local col8 decl" id="28anssiz" title='anssiz' data-type='int' data-ref="28anssiz">anssiz</dfn>) {</td></tr>
+<tr><th id="229">229</th><td>	<b>if</b> (<a class="macro" href="#85" title="((_nres.options &amp; 0x00000001) == 0U)" data-ref="_M/res_need_init">res_need_init</a>() &amp;&amp; <a class="ref" href="#res_init" title='res_init' data-ref="res_init">res_init</a>() == -<var>1</var>) {</td></tr>
+<tr><th id="230">230</th><td>		<i>/* errno should have been set by res_init() in this case. */</i></td></tr>
+<tr><th id="231">231</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="232">232</th><td>	}</td></tr>
+<tr><th id="233">233</th><td></td></tr>
+<tr><th id="234">234</th><td>	<b>return</b> (<a class="macro" href="../include/resolv_private.h.html#416" title="__res_nsend" data-ref="_M/res_nsend">res_nsend</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="local col5 ref" href="#25buf" title='buf' data-ref="25buf">buf</a>, <a class="local col6 ref" href="#26buflen" title='buflen' data-ref="26buflen">buflen</a>, <a class="local col7 ref" href="#27ans" title='ans' data-ref="27ans">ans</a>, <a class="local col8 ref" href="#28anssiz" title='anssiz' data-ref="28anssiz">anssiz</a>));</td></tr>
+<tr><th id="235">235</th><td>}</td></tr>
+<tr><th id="236">236</th><td></td></tr>
+<tr><th id="237">237</th><td><u>#<span data-ppcond="237">ifdef</span> <span class="macro" data-ref="_M/_LIBRESOLV">_LIBRESOLV</span></u></td></tr>
+<tr><th id="238">238</th><td><em>int</em></td></tr>
+<tr><th id="239">239</th><td>res_sendsigned(<em>const</em> u_char *buf, <em>int</em> buflen, ns_tsig_key *key,</td></tr>
+<tr><th id="240">240</th><td>	       u_char *ans, <em>int</em> anssiz)</td></tr>
+<tr><th id="241">241</th><td>{</td></tr>
+<tr><th id="242">242</th><td>	<b>if</b> (res_need_init() &amp;&amp; res_init() == -<var>1</var>) {</td></tr>
+<tr><th id="243">243</th><td>		<i>/* errno should have been set by res_init() in this case. */</i></td></tr>
+<tr><th id="244">244</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="245">245</th><td>	}</td></tr>
+<tr><th id="246">246</th><td></td></tr>
+<tr><th id="247">247</th><td>	<b>return</b> (res_nsendsigned(&amp;_nres, buf, buflen, key, ans, anssiz));</td></tr>
+<tr><th id="248">248</th><td>}</td></tr>
+<tr><th id="249">249</th><td><u>#<span data-ppcond="237">endif</span></u></td></tr>
+<tr><th id="250">250</th><td></td></tr>
+<tr><th id="251">251</th><td><em>void</em></td></tr>
+<tr><th id="252">252</th><td><a class="macro" href="../include/resolv_private.h.html#332" title="__res_close" data-ref="_M/res_close">res_close</a>(<em>void</em>) {</td></tr>
+<tr><th id="253">253</th><td>	<a class="macro" href="../include/resolv_private.h.html#409" title="__res_nclose" data-ref="_M/res_nclose">res_nclose</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>);</td></tr>
+<tr><th id="254">254</th><td>}</td></tr>
+<tr><th id="255">255</th><td></td></tr>
+<tr><th id="256">256</th><td><u>#<span data-ppcond="256">ifdef</span> <span class="macro" data-ref="_M/_LIBRESOLV">_LIBRESOLV</span></u></td></tr>
+<tr><th id="257">257</th><td><em>int</em></td></tr>
+<tr><th id="258">258</th><td>res_update(ns_updrec *rrecp_in) {</td></tr>
+<tr><th id="259">259</th><td>	<b>if</b> (res_need_init() &amp;&amp; res_init() == -<var>1</var>) {</td></tr>
+<tr><th id="260">260</th><td>		RES_SET_H_ERRNO(&amp;_nres, NETDB_INTERNAL);</td></tr>
+<tr><th id="261">261</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="262">262</th><td>	}</td></tr>
+<tr><th id="263">263</th><td></td></tr>
+<tr><th id="264">264</th><td>	<b>return</b> (res_nupdate(&amp;_nres, rrecp_in, NULL));</td></tr>
+<tr><th id="265">265</th><td>}</td></tr>
+<tr><th id="266">266</th><td><u>#<span data-ppcond="256">endif</span></u></td></tr>
+<tr><th id="267">267</th><td></td></tr>
+<tr><th id="268">268</th><td><em>int</em></td></tr>
+<tr><th id="269">269</th><td><dfn class="decl def" id="res_search" title='res_search' data-ref="res_search">res_search</dfn>(<em>const</em> <em>char</em> *<dfn class="local col9 decl" id="29name" title='name' data-type='const char *' data-ref="29name">name</dfn>,	<i>/* domain name */</i></td></tr>
+<tr><th id="270">270</th><td>	   <em>int</em> <dfn class="local col0 decl" id="30class" title='class' data-type='int' data-ref="30class">class</dfn>, <em>int</em> <dfn class="local col1 decl" id="31type" title='type' data-type='int' data-ref="31type">type</dfn>,	<i>/* class and type of query */</i></td></tr>
+<tr><th id="271">271</th><td>	   <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col2 decl" id="32answer" title='answer' data-type='u_char *' data-ref="32answer">answer</dfn>,	<i>/* buffer to put answer */</i></td></tr>
+<tr><th id="272">272</th><td>	   <em>int</em> <dfn class="local col3 decl" id="33anslen" title='anslen' data-type='int' data-ref="33anslen">anslen</dfn>)		<i>/* size of answer */</i></td></tr>
+<tr><th id="273">273</th><td>{</td></tr>
+<tr><th id="274">274</th><td>	<b>if</b> (<a class="macro" href="#85" title="((_nres.options &amp; 0x00000001) == 0U)" data-ref="_M/res_need_init">res_need_init</a>() &amp;&amp; <a class="ref" href="#res_init" title='res_init' data-ref="res_init">res_init</a>() == -<var>1</var>) {</td></tr>
+<tr><th id="275">275</th><td>		<a class="macro" href="../include/resolv_private.h.html#105" title="((*__get_h_errno()) = (&amp;_nres)-&gt;res_h_errno = (-1))" data-ref="_M/RES_SET_H_ERRNO">RES_SET_H_ERRNO</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="macro" href="../../include/netdb.h.html#126" title="-1" data-ref="_M/NETDB_INTERNAL">NETDB_INTERNAL</a>);</td></tr>
+<tr><th id="276">276</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="277">277</th><td>	}</td></tr>
+<tr><th id="278">278</th><td></td></tr>
+<tr><th id="279">279</th><td>	<b>return</b> (<a class="macro" href="../include/resolv_private.h.html#415" title="__res_nsearch" data-ref="_M/res_nsearch">res_nsearch</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="local col9 ref" href="#29name" title='name' data-ref="29name">name</a>, <a class="local col0 ref" href="#30class" title='class' data-ref="30class">class</a>, <a class="local col1 ref" href="#31type" title='type' data-ref="31type">type</a>, <a class="local col2 ref" href="#32answer" title='answer' data-ref="32answer">answer</a>, <a class="local col3 ref" href="#33anslen" title='anslen' data-ref="33anslen">anslen</a>));</td></tr>
+<tr><th id="280">280</th><td>}</td></tr>
+<tr><th id="281">281</th><td></td></tr>
+<tr><th id="282">282</th><td><em>int</em></td></tr>
+<tr><th id="283">283</th><td><a class="macro" href="../include/resolv_private.h.html#335" title="__res_querydomain" data-ref="_M/res_querydomain">res_querydomain</a>(<em>const</em> <em>char</em> *<dfn class="local col4 decl" id="34name" title='name' data-type='const char *' data-ref="34name">name</dfn>,</td></tr>
+<tr><th id="284">284</th><td>		<em>const</em> <em>char</em> *<dfn class="local col5 decl" id="35domain" title='domain' data-type='const char *' data-ref="35domain">domain</dfn>,</td></tr>
+<tr><th id="285">285</th><td>		<em>int</em> <dfn class="local col6 decl" id="36class" title='class' data-type='int' data-ref="36class">class</dfn>, <em>int</em> <dfn class="local col7 decl" id="37type" title='type' data-type='int' data-ref="37type">type</dfn>,	<i>/* class and type of query */</i></td></tr>
+<tr><th id="286">286</th><td>		<a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col8 decl" id="38answer" title='answer' data-type='u_char *' data-ref="38answer">answer</dfn>,		<i>/* buffer to put answer */</i></td></tr>
+<tr><th id="287">287</th><td>		<em>int</em> <dfn class="local col9 decl" id="39anslen" title='anslen' data-type='int' data-ref="39anslen">anslen</dfn>)		<i>/* size of answer */</i></td></tr>
+<tr><th id="288">288</th><td>{</td></tr>
+<tr><th id="289">289</th><td>	<b>if</b> (<a class="macro" href="#85" title="((_nres.options &amp; 0x00000001) == 0U)" data-ref="_M/res_need_init">res_need_init</a>() &amp;&amp; <a class="ref" href="#res_init" title='res_init' data-ref="res_init">res_init</a>() == -<var>1</var>) {</td></tr>
+<tr><th id="290">290</th><td>		<a class="macro" href="../include/resolv_private.h.html#105" title="((*__get_h_errno()) = (&amp;_nres)-&gt;res_h_errno = (-1))" data-ref="_M/RES_SET_H_ERRNO">RES_SET_H_ERRNO</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="macro" href="../../include/netdb.h.html#126" title="-1" data-ref="_M/NETDB_INTERNAL">NETDB_INTERNAL</a>);</td></tr>
+<tr><th id="291">291</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="292">292</th><td>	}</td></tr>
+<tr><th id="293">293</th><td></td></tr>
+<tr><th id="294">294</th><td>	<b>return</b> (<a class="macro" href="../include/resolv_private.h.html#414" title="__res_nquerydomain" data-ref="_M/res_nquerydomain">res_nquerydomain</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="local col4 ref" href="#34name" title='name' data-ref="34name">name</a>, <a class="local col5 ref" href="#35domain" title='domain' data-ref="35domain">domain</a>,</td></tr>
+<tr><th id="295">295</th><td>				 <a class="local col6 ref" href="#36class" title='class' data-ref="36class">class</a>, <a class="local col7 ref" href="#37type" title='type' data-ref="37type">type</a>,</td></tr>
+<tr><th id="296">296</th><td>				 <a class="local col8 ref" href="#38answer" title='answer' data-ref="38answer">answer</a>, <a class="local col9 ref" href="#39anslen" title='anslen' data-ref="39anslen">anslen</a>));</td></tr>
+<tr><th id="297">297</th><td>}</td></tr>
+<tr><th id="298">298</th><td></td></tr>
+<tr><th id="299">299</th><td><em>int</em></td></tr>
+<tr><th id="300">300</th><td><a class="macro" href="../include/resolv_private.h.html#333" title="__res_opt" data-ref="_M/res_opt">res_opt</a>(<em>int</em> <dfn class="local col0 decl" id="40a" title='a' data-type='int' data-ref="40a">a</dfn>, <a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col1 decl" id="41b" title='b' data-type='u_char *' data-ref="41b">b</dfn>, <em>int</em> <dfn class="local col2 decl" id="42c" title='c' data-type='int' data-ref="42c">c</dfn>, <em>int</em> <dfn class="local col3 decl" id="43d" title='d' data-type='int' data-ref="43d">d</dfn>)</td></tr>
+<tr><th id="301">301</th><td>{</td></tr>
+<tr><th id="302">302</th><td>	<b>return</b> <a class="macro" href="../include/resolv_private.h.html#424" title="__res_nopt" data-ref="_M/res_nopt">res_nopt</a>(&amp;<a class="ref" href="#_nres" title='_nres' data-ref="_nres">_nres</a>, <a class="local col0 ref" href="#40a" title='a' data-ref="40a">a</a>, <a class="local col1 ref" href="#41b" title='b' data-ref="41b">b</a>, <a class="local col2 ref" href="#42c" title='c' data-ref="42c">c</a>, <a class="local col3 ref" href="#43d" title='d' data-ref="43d">d</a>);</td></tr>
+<tr><th id="303">303</th><td>}</td></tr>
+<tr><th id="304">304</th><td></td></tr>
+<tr><th id="305">305</th><td><em>const</em> <em>char</em> *</td></tr>
+<tr><th id="306">306</th><td><a class="macro" href="../include/resolv_private.h.html#330" title="__hostalias" data-ref="_M/hostalias">hostalias</a>(<em>const</em> <em>char</em> *<dfn class="local col4 decl" id="44name" title='name' data-type='const char *' data-ref="44name">name</dfn>) {</td></tr>
+<tr><th id="307">307</th><td>	<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="308">308</th><td>}</td></tr>
+<tr><th id="309">309</th><td></td></tr>
+<tr><th id="310">310</th><td><u>#<span data-ppcond="310">ifdef</span> <span class="macro" data-ref="_M/ultrix">ultrix</span></u></td></tr>
+<tr><th id="311">311</th><td><em>int</em></td></tr>
+<tr><th id="312">312</th><td>local_hostname_length(<em>const</em> <em>char</em> *hostname) {</td></tr>
+<tr><th id="313">313</th><td>	<em>int</em> len_host, len_domain;</td></tr>
+<tr><th id="314">314</th><td></td></tr>
+<tr><th id="315">315</th><td>	<b>if</b> (!*_nres.defdname)</td></tr>
+<tr><th id="316">316</th><td>		res_init();</td></tr>
+<tr><th id="317">317</th><td>	len_host = strlen(hostname);</td></tr>
+<tr><th id="318">318</th><td>	len_domain = strlen(_nres.defdname);</td></tr>
+<tr><th id="319">319</th><td>	<b>if</b> (len_host &gt; len_domain &amp;&amp;</td></tr>
+<tr><th id="320">320</th><td>	    !strcasecmp(hostname + len_host - len_domain, _nres.defdname) &amp;&amp;</td></tr>
+<tr><th id="321">321</th><td>	    hostname[len_host - len_domain - <var>1</var>] == <kbd>'.'</kbd>)</td></tr>
+<tr><th id="322">322</th><td>		<b>return</b> (len_host - len_domain - <var>1</var>);</td></tr>
+<tr><th id="323">323</th><td>	<b>return</b> (<var>0</var>);</td></tr>
+<tr><th id="324">324</th><td>}</td></tr>
+<tr><th id="325">325</th><td><u>#<span data-ppcond="310">endif</span> /*ultrix*/</u></td></tr>
+<tr><th id="326">326</th><td></td></tr>
+<tr><th id="327">327</th><td><u>#<span data-ppcond="78">endif</span></u></td></tr>
+<tr><th id="328">328</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,45 @@
+<dec f='codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/cdefs.h' l='405'/>
+<doc f='codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/cdefs.h' l='361'>/*
+ * Macros for manipulating &quot;link sets&quot;.  Link sets are arrays of pointers
+ * to objects, which are gathered up by the linker.
+ *
+ * Object format-specific code has provided us with the following macros:
+ *
+ *	__link_set_add_text(set, sym)
+ *		Add a reference to the .text symbol `sym&apos; to `set&apos;.
+ *
+ *	__link_set_add_rodata(set, sym)
+ *		Add a reference to the .rodata symbol `sym&apos; to `set&apos;.
+ *
+ *	__link_set_add_data(set, sym)
+ *		Add a reference to the .data symbol `sym&apos; to `set&apos;.
+ *
+ *	__link_set_add_bss(set, sym)
+ *		Add a reference to the .bss symbol `sym&apos; to `set&apos;.
+ *
+ *	__link_set_decl(set, ptype)
+ *		Provide an extern declaration of the set `set&apos;, which
+ *		contains an array of the pointer type `ptype&apos;.  This
+ *		macro must be used by any code which wishes to reference
+ *		the elements of a link set.
+ *
+ *	__link_set_start(set)
+ *		This points to the first slot in the link set.
+ *
+ *	__link_set_end(set)
+ *		This points to the (non-existent) slot after the last
+ *		entry in the link set.
+ *
+ *	__link_set_count(set)
+ *		Count the number of entries in link set `set&apos;.
+ *
+ * In addition, we provide the following macros for accessing link sets:
+ *
+ *	__link_set_foreach(pvar, set)
+ *		Iterate over the link set `set&apos;.  Because a link set is
+ *		an array of pointers, pvar must be declared as &quot;type **pvar&quot;,
+ *		and the actual entry accessed as &quot;*pvar&quot;.
+ *
+ *	__link_set_entry(set, idx)
+ *		Access the link set entry at index `idx&apos; from set `set&apos;.
+ */</doc>

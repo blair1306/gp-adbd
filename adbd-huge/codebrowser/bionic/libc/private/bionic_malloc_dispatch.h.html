@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>bionic_malloc_dispatch.h source code [codebrowser/bionic/libc/private/bionic_malloc_dispatch.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="MallocDispatch "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/private/bionic_malloc_dispatch.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>private</a>/<a href='bionic_malloc_dispatch.h.html'>bionic_malloc_dispatch.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2015 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="29">ifndef</span> <span class="macro" data-ref="_M/_PRIVATE_BIONIC_MALLOC_DISPATCH_H">_PRIVATE_BIONIC_MALLOC_DISPATCH_H</span></u></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/_PRIVATE_BIONIC_MALLOC_DISPATCH_H" data-ref="_M/_PRIVATE_BIONIC_MALLOC_DISPATCH_H">_PRIVATE_BIONIC_MALLOC_DISPATCH_H</dfn></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../include/stdint.h.html">&lt;stdint.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="bionic_config.h.html">&lt;private/bionic_config.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><i>// Entry in malloc dispatch table.</i></td></tr>
+<tr><th id="37">37</th><td><b>typedef</b> <em>void</em>* (*<dfn class="typedef" id="MallocCalloc" title='MallocCalloc' data-type='void *(*)(size_t, size_t)' data-ref="MallocCalloc">MallocCalloc</dfn>)(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="38">38</th><td><b>typedef</b> <em>void</em> (*<dfn class="typedef" id="MallocFree" title='MallocFree' data-type='void (*)(void *)' data-ref="MallocFree">MallocFree</dfn>)(<em>void</em>*);</td></tr>
+<tr><th id="39">39</th><td><b>typedef</b> <b>struct</b> <dfn class="type" id="mallinfo" title='mallinfo' data-ref="mallinfo"><a class="type" href="#mallinfo" title='mallinfo' data-ref="mallinfo">mallinfo</a></dfn> (*<dfn class="typedef" id="MallocMallinfo" title='MallocMallinfo' data-type='struct mallinfo (*)()' data-ref="MallocMallinfo">MallocMallinfo</dfn>)();</td></tr>
+<tr><th id="40">40</th><td><b>typedef</b> <em>void</em>* (*<dfn class="typedef" id="MallocMalloc" title='MallocMalloc' data-type='void *(*)(size_t)' data-ref="MallocMalloc">MallocMalloc</dfn>)(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="41">41</th><td><b>typedef</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> (*<dfn class="typedef" id="MallocMallocUsableSize" title='MallocMallocUsableSize' data-type='size_t (*)(const void *)' data-ref="MallocMallocUsableSize">MallocMallocUsableSize</dfn>)(<em>const</em> <em>void</em>*);</td></tr>
+<tr><th id="42">42</th><td><b>typedef</b> <em>void</em>* (*<dfn class="typedef" id="MallocMemalign" title='MallocMemalign' data-type='void *(*)(size_t, size_t)' data-ref="MallocMemalign">MallocMemalign</dfn>)(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="43">43</th><td><b>typedef</b> <em>int</em> (*<dfn class="typedef" id="MallocPosixMemalign" title='MallocPosixMemalign' data-type='int (*)(void **, size_t, size_t)' data-ref="MallocPosixMemalign">MallocPosixMemalign</dfn>)(<em>void</em>**, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="44">44</th><td><b>typedef</b> <em>void</em>* (*<dfn class="typedef" id="MallocRealloc" title='MallocRealloc' data-type='void *(*)(void *, size_t)' data-ref="MallocRealloc">MallocRealloc</dfn>)(<em>void</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="45">45</th><td><b>typedef</b> <em>int</em> (*<dfn class="typedef" id="MallocIterate" title='MallocIterate' data-type='int (*)(uintptr_t, size_t, void (*)(uintptr_t, size_t, void *), void *)' data-ref="MallocIterate">MallocIterate</dfn>)(<a class="typedef" href="../include/stdint.h.html#uintptr_t" title='uintptr_t' data-type='__uintptr_t' data-ref="uintptr_t">uintptr_t</a>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>void</em> (*)(<a class="typedef" href="../include/stdint.h.html#uintptr_t" title='uintptr_t' data-type='__uintptr_t' data-ref="uintptr_t">uintptr_t</a>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>void</em>*), <em>void</em>*);</td></tr>
+<tr><th id="46">46</th><td><b>typedef</b> <em>void</em> (*<dfn class="typedef" id="MallocMallocDisable" title='MallocMallocDisable' data-type='void (*)()' data-ref="MallocMallocDisable">MallocMallocDisable</dfn>)();</td></tr>
+<tr><th id="47">47</th><td><b>typedef</b> <em>void</em> (*<dfn class="typedef" id="MallocMallocEnable" title='MallocMallocEnable' data-type='void (*)()' data-ref="MallocMallocEnable">MallocMallocEnable</dfn>)();</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><u>#<span data-ppcond="49">if</span> defined(<span class="macro" data-ref="_M/HAVE_DEPRECATED_MALLOC_FUNCS">HAVE_DEPRECATED_MALLOC_FUNCS</span>)</u></td></tr>
+<tr><th id="50">50</th><td><b>typedef</b> <em>void</em>* (*MallocPvalloc)(size_t);</td></tr>
+<tr><th id="51">51</th><td><b>typedef</b> <em>void</em>* (*MallocValloc)(size_t);</td></tr>
+<tr><th id="52">52</th><td><u>#<span data-ppcond="49">endif</span></u></td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><b>struct</b> <dfn class="type def" id="MallocDispatch" title='MallocDispatch' data-ref="MallocDispatch">MallocDispatch</dfn> {</td></tr>
+<tr><th id="55">55</th><td>  <a class="typedef" href="#MallocCalloc" title='MallocCalloc' data-type='void *(*)(size_t, size_t)' data-ref="MallocCalloc">MallocCalloc</a> <dfn class="decl" id="MallocDispatch::calloc" title='MallocDispatch::calloc' data-ref="MallocDispatch::calloc">calloc</dfn>;</td></tr>
+<tr><th id="56">56</th><td>  <a class="typedef" href="#MallocFree" title='MallocFree' data-type='void (*)(void *)' data-ref="MallocFree">MallocFree</a> <dfn class="decl" id="MallocDispatch::free" title='MallocDispatch::free' data-ref="MallocDispatch::free">free</dfn>;</td></tr>
+<tr><th id="57">57</th><td>  <a class="typedef" href="#MallocMallinfo" title='MallocMallinfo' data-type='struct mallinfo (*)()' data-ref="MallocMallinfo">MallocMallinfo</a> <dfn class="decl" id="MallocDispatch::mallinfo" title='MallocDispatch::mallinfo' data-ref="MallocDispatch::mallinfo">mallinfo</dfn>;</td></tr>
+<tr><th id="58">58</th><td>  <a class="typedef" href="#MallocMalloc" title='MallocMalloc' data-type='void *(*)(size_t)' data-ref="MallocMalloc">MallocMalloc</a> <dfn class="decl" id="MallocDispatch::malloc" title='MallocDispatch::malloc' data-ref="MallocDispatch::malloc">malloc</dfn>;</td></tr>
+<tr><th id="59">59</th><td>  <a class="typedef" href="#MallocMallocUsableSize" title='MallocMallocUsableSize' data-type='size_t (*)(const void *)' data-ref="MallocMallocUsableSize">MallocMallocUsableSize</a> <dfn class="decl" id="MallocDispatch::malloc_usable_size" title='MallocDispatch::malloc_usable_size' data-ref="MallocDispatch::malloc_usable_size">malloc_usable_size</dfn>;</td></tr>
+<tr><th id="60">60</th><td>  <a class="typedef" href="#MallocMemalign" title='MallocMemalign' data-type='void *(*)(size_t, size_t)' data-ref="MallocMemalign">MallocMemalign</a> <dfn class="decl" id="MallocDispatch::memalign" title='MallocDispatch::memalign' data-ref="MallocDispatch::memalign">memalign</dfn>;</td></tr>
+<tr><th id="61">61</th><td>  <a class="typedef" href="#MallocPosixMemalign" title='MallocPosixMemalign' data-type='int (*)(void **, size_t, size_t)' data-ref="MallocPosixMemalign">MallocPosixMemalign</a> <dfn class="decl" id="MallocDispatch::posix_memalign" title='MallocDispatch::posix_memalign' data-ref="MallocDispatch::posix_memalign">posix_memalign</dfn>;</td></tr>
+<tr><th id="62">62</th><td><u>#<span data-ppcond="62">if</span> defined(<span class="macro" data-ref="_M/HAVE_DEPRECATED_MALLOC_FUNCS">HAVE_DEPRECATED_MALLOC_FUNCS</span>)</u></td></tr>
+<tr><th id="63">63</th><td>  MallocPvalloc pvalloc;</td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="62">endif</span></u></td></tr>
+<tr><th id="65">65</th><td>  <a class="typedef" href="#MallocRealloc" title='MallocRealloc' data-type='void *(*)(void *, size_t)' data-ref="MallocRealloc">MallocRealloc</a> <dfn class="decl" id="MallocDispatch::realloc" title='MallocDispatch::realloc' data-ref="MallocDispatch::realloc">realloc</dfn>;</td></tr>
+<tr><th id="66">66</th><td><u>#<span data-ppcond="66">if</span> defined(<span class="macro" data-ref="_M/HAVE_DEPRECATED_MALLOC_FUNCS">HAVE_DEPRECATED_MALLOC_FUNCS</span>)</u></td></tr>
+<tr><th id="67">67</th><td>  MallocValloc valloc;</td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="66">endif</span></u></td></tr>
+<tr><th id="69">69</th><td>  <a class="typedef" href="#MallocIterate" title='MallocIterate' data-type='int (*)(uintptr_t, size_t, void (*)(uintptr_t, size_t, void *), void *)' data-ref="MallocIterate">MallocIterate</a> <dfn class="decl" id="MallocDispatch::iterate" title='MallocDispatch::iterate' data-ref="MallocDispatch::iterate">iterate</dfn>;</td></tr>
+<tr><th id="70">70</th><td>  <a class="typedef" href="#MallocMallocDisable" title='MallocMallocDisable' data-type='void (*)()' data-ref="MallocMallocDisable">MallocMallocDisable</a> <dfn class="decl" id="MallocDispatch::malloc_disable" title='MallocDispatch::malloc_disable' data-ref="MallocDispatch::malloc_disable">malloc_disable</dfn>;</td></tr>
+<tr><th id="71">71</th><td>  <a class="typedef" href="#MallocMallocEnable" title='MallocMallocEnable' data-type='void (*)()' data-ref="MallocMallocEnable">MallocMallocEnable</a> <dfn class="decl" id="MallocDispatch::malloc_enable" title='MallocDispatch::malloc_enable' data-ref="MallocDispatch::malloc_enable">malloc_enable</dfn>;</td></tr>
+<tr><th id="72">72</th><td>} <b>__attribute__</b>((aligned(<var>32</var>)));</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><u>#<span data-ppcond="29">endif</span></u></td></tr>
+<tr><th id="75">75</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/__libc_init_main_thread.cpp.html'>codebrowser/bionic/libc/bionic/__libc_init_main_thread.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

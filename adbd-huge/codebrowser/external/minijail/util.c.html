@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>util.c source code [codebrowser/external/minijail/util.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/minijail/util.c'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>minijail</a>/<a href='util.c.html'>util.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2012 The Chromium OS Authors. All rights reserved.</i></td></tr>
+<tr><th id="2">2</th><td><i> * Use of this source code is governed by a BSD-style license that can be</i></td></tr>
+<tr><th id="3">3</th><td><i> * found in the LICENSE file.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><u>#include <a href="../../bionic/libc/include/ctype.h.html">&lt;ctype.h&gt;</a></u></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><u>#include <a href="util.h.html">"util.h"</a></u></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><u>#include <a href="libconstants.h.html">"libconstants.h"</a></u></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="libsyscalls.h.html">"libsyscalls.h"</a></u></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><i>/*</i></td></tr>
+<tr><th id="16">16</th><td><i> * These are syscalls used by the syslog() C library call.  You can find them</i></td></tr>
+<tr><th id="17">17</th><td><i> * by running a simple test program.  See below for x86_64 behavior:</i></td></tr>
+<tr><th id="18">18</th><td><i> * $ cat test.c</i></td></tr>
+<tr><th id="19">19</th><td><i> * #include &lt;syslog.h&gt;</i></td></tr>
+<tr><th id="20">20</th><td><i> * main() { syslog(0, "foo"); }</i></td></tr>
+<tr><th id="21">21</th><td><i> * $ gcc test.c -static</i></td></tr>
+<tr><th id="22">22</th><td><i> * $ strace ./a.out</i></td></tr>
+<tr><th id="23">23</th><td><i> * ...</i></td></tr>
+<tr><th id="24">24</th><td><i> * socket(PF_FILE, SOCK_DGRAM|SOCK_CLOEXEC, 0) = 3 &lt;- look for socket connection</i></td></tr>
+<tr><th id="25">25</th><td><i> * connect(...)                                    &lt;- important</i></td></tr>
+<tr><th id="26">26</th><td><i> * sendto(...)                                     &lt;- important</i></td></tr>
+<tr><th id="27">27</th><td><i> * exit_group(0)                                   &lt;- finish!</i></td></tr>
+<tr><th id="28">28</th><td><i> */</i></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="29">if</span> defined(<span class="macro" data-ref="_M/__x86_64__">__x86_64__</span>)</u></td></tr>
+<tr><th id="30">30</th><td><u>#<span data-ppcond="30">if</span> defined(<span class="macro" data-ref="_M/__ANDROID__">__ANDROID__</span>)</u></td></tr>
+<tr><th id="31">31</th><td><em>const</em> <em>char</em> *<dfn class="decl def" id="log_syscalls" title='log_syscalls' data-ref="log_syscalls">log_syscalls</dfn>[] = {<q>"socket"</q>, <q>"connect"</q>, <q>"fcntl"</q>, <q>"writev"</q>};</td></tr>
+<tr><th id="32">32</th><td><u>#<span data-ppcond="30">else</span></u></td></tr>
+<tr><th id="33">33</th><td><em>const</em> <em>char</em> *log_syscalls[] = {<q>"connect"</q>, <q>"sendto"</q>};</td></tr>
+<tr><th id="34">34</th><td><u>#<span data-ppcond="30">endif</span></u></td></tr>
+<tr><th id="35">35</th><td><u>#<span data-ppcond="29">elif</span> defined(__i386__)</u></td></tr>
+<tr><th id="36">36</th><td><u>#if defined(__ANDROID__)</u></td></tr>
+<tr><th id="37">37</th><td><em>const</em> <em>char</em> *log_syscalls[] = {<q>"socketcall"</q>, <q>"writev"</q>, <q>"fcntl64"</q>,</td></tr>
+<tr><th id="38">38</th><td>			      <q>"clock_gettime"</q>};</td></tr>
+<tr><th id="39">39</th><td><u>#else</u></td></tr>
+<tr><th id="40">40</th><td><em>const</em> <em>char</em> *log_syscalls[] = {<q>"socketcall"</q>, <q>"time"</q>};</td></tr>
+<tr><th id="41">41</th><td><u>#endif</u></td></tr>
+<tr><th id="42">42</th><td><u>#elif defined(__arm__)</u></td></tr>
+<tr><th id="43">43</th><td><u>#if defined(__ANDROID__)</u></td></tr>
+<tr><th id="44">44</th><td><em>const</em> <em>char</em> *log_syscalls[] = {<q>"clock_gettime"</q>, <q>"connect"</q>, <q>"fcntl64"</q>, <q>"socket"</q>,</td></tr>
+<tr><th id="45">45</th><td>			      <q>"writev"</q>};</td></tr>
+<tr><th id="46">46</th><td><u>#else</u></td></tr>
+<tr><th id="47">47</th><td><em>const</em> <em>char</em> *log_syscalls[] = {<q>"connect"</q>, <q>"gettimeofday"</q>, <q>"send"</q>};</td></tr>
+<tr><th id="48">48</th><td><u>#endif</u></td></tr>
+<tr><th id="49">49</th><td><u>#elif defined(__aarch64__)</u></td></tr>
+<tr><th id="50">50</th><td><u>#if defined(__ANDROID__)</u></td></tr>
+<tr><th id="51">51</th><td><em>const</em> <em>char</em> *log_syscalls[] = {<q>"connect"</q>, <q>"fcntl"</q>, <q>"sendto"</q>, <q>"socket"</q>, <q>"writev"</q>};</td></tr>
+<tr><th id="52">52</th><td><u>#else</u></td></tr>
+<tr><th id="53">53</th><td><em>const</em> <em>char</em> *log_syscalls[] = {<q>"connect"</q>, <q>"send"</q>};</td></tr>
+<tr><th id="54">54</th><td><u>#endif</u></td></tr>
+<tr><th id="55">55</th><td><u>#elif defined(__powerpc__) || defined(__ia64__) || defined(__hppa__) ||        \</u></td></tr>
+<tr><th id="56">56</th><td><u>      defined(__sparc__) || defined(__mips__)</u></td></tr>
+<tr><th id="57">57</th><td><em>const</em> <em>char</em> *log_syscalls[] = {<q>"connect"</q>, <q>"send"</q>};</td></tr>
+<tr><th id="58">58</th><td><u>#else</u></td></tr>
+<tr><th id="59">59</th><td><u>#error "Unsupported platform"</u></td></tr>
+<tr><th id="60">60</th><td><u>#<span data-ppcond="29">endif</span></u></td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><em>const</em> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl def" id="log_syscalls_len" title='log_syscalls_len' data-ref="log_syscalls_len">log_syscalls_len</dfn> = <b>sizeof</b>(<a class="ref" href="util.h.html#log_syscalls" title='log_syscalls' data-ref="log_syscalls">log_syscalls</a>)/<b>sizeof</b>(<a class="ref" href="util.h.html#log_syscalls" title='log_syscalls' data-ref="log_syscalls">log_syscalls</a>[<var>0</var>]);</td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><em>long</em> <em>int</em> <a class="decl" href="#parse_single_constant" title='parse_single_constant' data-ref="parse_single_constant">parse_single_constant</a>(<em>char</em> *<dfn class="local col1 decl" id="1constant_str" title='constant_str' data-type='char *' data-ref="1constant_str">constant_str</dfn>, <em>char</em> **<dfn class="local col2 decl" id="2endptr" title='endptr' data-type='char **' data-ref="2endptr">endptr</dfn>);</td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><em>int</em> <dfn class="decl def" id="lookup_syscall" title='lookup_syscall' data-ref="lookup_syscall">lookup_syscall</dfn>(<em>const</em> <em>char</em> *<dfn class="local col3 decl" id="3name" title='name' data-type='const char *' data-ref="3name">name</dfn>)</td></tr>
+<tr><th id="67">67</th><td>{</td></tr>
+<tr><th id="68">68</th><td>	<em>const</em> <b>struct</b> <a class="type" href="libsyscalls.h.html#syscall_entry" title='syscall_entry' data-ref="syscall_entry">syscall_entry</a> *<dfn class="local col4 decl" id="4entry" title='entry' data-type='const struct syscall_entry *' data-ref="4entry">entry</dfn> = <a class="ref" href="libsyscalls.h.html#syscall_table" title='syscall_table' data-ref="syscall_table">syscall_table</a>;</td></tr>
+<tr><th id="69">69</th><td>	<b>for</b> (; <a class="local col4 ref" href="#4entry" title='entry' data-ref="4entry">entry</a>-&gt;<a class="ref" href="libsyscalls.h.html#syscall_entry::name" title='syscall_entry::name' data-ref="syscall_entry::name">name</a> &amp;&amp; <a class="local col4 ref" href="#4entry" title='entry' data-ref="4entry">entry</a>-&gt;<a class="ref" href="libsyscalls.h.html#syscall_entry::nr" title='syscall_entry::nr' data-ref="syscall_entry::nr">nr</a> &gt;= <var>0</var>; ++<a class="local col4 ref" href="#4entry" title='entry' data-ref="4entry">entry</a>)</td></tr>
+<tr><th id="70">70</th><td>		<b>if</b> (!<a class="ref" href="../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col4 ref" href="#4entry" title='entry' data-ref="4entry">entry</a>-&gt;<a class="ref" href="libsyscalls.h.html#syscall_entry::name" title='syscall_entry::name' data-ref="syscall_entry::name">name</a>, <a class="local col3 ref" href="#3name" title='name' data-ref="3name">name</a>))</td></tr>
+<tr><th id="71">71</th><td>			<b>return</b> <a class="local col4 ref" href="#4entry" title='entry' data-ref="4entry">entry</a>-&gt;<a class="ref" href="libsyscalls.h.html#syscall_entry::nr" title='syscall_entry::nr' data-ref="syscall_entry::nr">nr</a>;</td></tr>
+<tr><th id="72">72</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="73">73</th><td>}</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><em>const</em> <em>char</em> *<dfn class="decl def" id="lookup_syscall_name" title='lookup_syscall_name' data-ref="lookup_syscall_name">lookup_syscall_name</dfn>(<em>int</em> <dfn class="local col5 decl" id="5nr" title='nr' data-type='int' data-ref="5nr">nr</dfn>)</td></tr>
+<tr><th id="76">76</th><td>{</td></tr>
+<tr><th id="77">77</th><td>	<em>const</em> <b>struct</b> <a class="type" href="libsyscalls.h.html#syscall_entry" title='syscall_entry' data-ref="syscall_entry">syscall_entry</a> *<dfn class="local col6 decl" id="6entry" title='entry' data-type='const struct syscall_entry *' data-ref="6entry">entry</dfn> = <a class="ref" href="libsyscalls.h.html#syscall_table" title='syscall_table' data-ref="syscall_table">syscall_table</a>;</td></tr>
+<tr><th id="78">78</th><td>	<b>for</b> (; <a class="local col6 ref" href="#6entry" title='entry' data-ref="6entry">entry</a>-&gt;<a class="ref" href="libsyscalls.h.html#syscall_entry::name" title='syscall_entry::name' data-ref="syscall_entry::name">name</a> &amp;&amp; <a class="local col6 ref" href="#6entry" title='entry' data-ref="6entry">entry</a>-&gt;<a class="ref" href="libsyscalls.h.html#syscall_entry::nr" title='syscall_entry::nr' data-ref="syscall_entry::nr">nr</a> &gt;= <var>0</var>; ++<a class="local col6 ref" href="#6entry" title='entry' data-ref="6entry">entry</a>)</td></tr>
+<tr><th id="79">79</th><td>		<b>if</b> (<a class="local col6 ref" href="#6entry" title='entry' data-ref="6entry">entry</a>-&gt;<a class="ref" href="libsyscalls.h.html#syscall_entry::nr" title='syscall_entry::nr' data-ref="syscall_entry::nr">nr</a> == <a class="local col5 ref" href="#5nr" title='nr' data-ref="5nr">nr</a>)</td></tr>
+<tr><th id="80">80</th><td>			<b>return</b> <a class="local col6 ref" href="#6entry" title='entry' data-ref="6entry">entry</a>-&gt;<a class="ref" href="libsyscalls.h.html#syscall_entry::name" title='syscall_entry::name' data-ref="syscall_entry::name">name</a>;</td></tr>
+<tr><th id="81">81</th><td>	<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="82">82</th><td>}</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><em>long</em> <em>int</em> <dfn class="decl def" id="parse_constant" title='parse_constant' data-ref="parse_constant">parse_constant</dfn>(<em>char</em> *<dfn class="local col7 decl" id="7constant_str" title='constant_str' data-type='char *' data-ref="7constant_str">constant_str</dfn>, <em>char</em> **<dfn class="local col8 decl" id="8endptr" title='endptr' data-type='char **' data-ref="8endptr">endptr</dfn>)</td></tr>
+<tr><th id="85">85</th><td>{</td></tr>
+<tr><th id="86">86</th><td>	<em>long</em> <em>int</em> <dfn class="local col9 decl" id="9value" title='value' data-type='long' data-ref="9value">value</dfn> = <var>0</var>;</td></tr>
+<tr><th id="87">87</th><td>	<em>char</em> *<dfn class="local col0 decl" id="10group" title='group' data-type='char *' data-ref="10group">group</dfn>, *<dfn class="local col1 decl" id="11lastpos" title='lastpos' data-type='char *' data-ref="11lastpos">lastpos</dfn> = <a class="local col7 ref" href="#7constant_str" title='constant_str' data-ref="7constant_str">constant_str</a>;</td></tr>
+<tr><th id="88">88</th><td>	<em>char</em> *<dfn class="local col2 decl" id="12original_constant_str" title='original_constant_str' data-type='char *' data-ref="12original_constant_str">original_constant_str</dfn> = <a class="local col7 ref" href="#7constant_str" title='constant_str' data-ref="7constant_str">constant_str</a>;</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td>	<i>/*</i></td></tr>
+<tr><th id="91">91</th><td><i>	 * Try to parse constants separated by pipes.  Note that since</i></td></tr>
+<tr><th id="92">92</th><td><i>	 * |constant_str| is an atom, there can be no spaces between the</i></td></tr>
+<tr><th id="93">93</th><td><i>	 * constant and the pipe.  Constants can be either a named constant</i></td></tr>
+<tr><th id="94">94</th><td><i>	 * defined in libconstants.gen.c or a number parsed with strtol.</i></td></tr>
+<tr><th id="95">95</th><td><i>	 *</i></td></tr>
+<tr><th id="96">96</th><td><i>	 * If there is an error parsing any of the constants, the whole process</i></td></tr>
+<tr><th id="97">97</th><td><i>	 * fails.</i></td></tr>
+<tr><th id="98">98</th><td><i>	 */</i></td></tr>
+<tr><th id="99">99</th><td>	<b>while</b> ((<a class="local col0 ref" href="#10group" title='group' data-ref="10group">group</a> = <a class="ref" href="#tokenize" title='tokenize' data-ref="tokenize">tokenize</a>(&amp;<a class="local col7 ref" href="#7constant_str" title='constant_str' data-ref="7constant_str">constant_str</a>, <q>"|"</q>)) != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="100">100</th><td>		<em>char</em> *<dfn class="local col3 decl" id="13end" title='end' data-type='char *' data-ref="13end">end</dfn> = <a class="local col0 ref" href="#10group" title='group' data-ref="10group">group</a>;</td></tr>
+<tr><th id="101">101</th><td>		<a class="local col9 ref" href="#9value" title='value' data-ref="9value">value</a> |= <a class="ref" href="#parse_single_constant" title='parse_single_constant' data-ref="parse_single_constant">parse_single_constant</a>(<a class="local col0 ref" href="#10group" title='group' data-ref="10group">group</a>, &amp;<a class="local col3 ref" href="#13end" title='end' data-ref="13end">end</a>);</td></tr>
+<tr><th id="102">102</th><td>		<b>if</b> (<a class="local col3 ref" href="#13end" title='end' data-ref="13end">end</a> == <a class="local col0 ref" href="#10group" title='group' data-ref="10group">group</a>) {</td></tr>
+<tr><th id="103">103</th><td>			<a class="local col1 ref" href="#11lastpos" title='lastpos' data-ref="11lastpos">lastpos</a> = <a class="local col2 ref" href="#12original_constant_str" title='original_constant_str' data-ref="12original_constant_str">original_constant_str</a>;</td></tr>
+<tr><th id="104">104</th><td>			<a class="local col9 ref" href="#9value" title='value' data-ref="9value">value</a> = <var>0</var>;</td></tr>
+<tr><th id="105">105</th><td>			<b>break</b>;</td></tr>
+<tr><th id="106">106</th><td>		}</td></tr>
+<tr><th id="107">107</th><td>		<a class="local col1 ref" href="#11lastpos" title='lastpos' data-ref="11lastpos">lastpos</a> = <a class="local col3 ref" href="#13end" title='end' data-ref="13end">end</a>;</td></tr>
+<tr><th id="108">108</th><td>	}</td></tr>
+<tr><th id="109">109</th><td>	<b>if</b> (<a class="local col8 ref" href="#8endptr" title='endptr' data-ref="8endptr">endptr</a>)</td></tr>
+<tr><th id="110">110</th><td>		*<a class="local col8 ref" href="#8endptr" title='endptr' data-ref="8endptr">endptr</a> = <a class="local col1 ref" href="#11lastpos" title='lastpos' data-ref="11lastpos">lastpos</a>;</td></tr>
+<tr><th id="111">111</th><td>	<b>return</b> <a class="local col9 ref" href="#9value" title='value' data-ref="9value">value</a>;</td></tr>
+<tr><th id="112">112</th><td>}</td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><em>long</em> <em>int</em> <dfn class="decl def" id="parse_single_constant" title='parse_single_constant' data-ref="parse_single_constant">parse_single_constant</dfn>(<em>char</em> *<dfn class="local col4 decl" id="14constant_str" title='constant_str' data-type='char *' data-ref="14constant_str">constant_str</dfn>, <em>char</em> **<dfn class="local col5 decl" id="15endptr" title='endptr' data-type='char **' data-ref="15endptr">endptr</dfn>)</td></tr>
+<tr><th id="115">115</th><td>{</td></tr>
+<tr><th id="116">116</th><td>	<em>const</em> <b>struct</b> <a class="type" href="libconstants.h.html#constant_entry" title='constant_entry' data-ref="constant_entry">constant_entry</a> *<dfn class="local col6 decl" id="16entry" title='entry' data-type='const struct constant_entry *' data-ref="16entry">entry</dfn> = <a class="ref" href="libconstants.h.html#constant_table" title='constant_table' data-ref="constant_table">constant_table</a>;</td></tr>
+<tr><th id="117">117</th><td>	<b>for</b> (; <a class="local col6 ref" href="#16entry" title='entry' data-ref="16entry">entry</a>-&gt;<a class="ref" href="libconstants.h.html#constant_entry::name" title='constant_entry::name' data-ref="constant_entry::name">name</a>; ++<a class="local col6 ref" href="#16entry" title='entry' data-ref="16entry">entry</a>) {</td></tr>
+<tr><th id="118">118</th><td>		<b>if</b> (!<a class="ref" href="../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col6 ref" href="#16entry" title='entry' data-ref="16entry">entry</a>-&gt;<a class="ref" href="libconstants.h.html#constant_entry::name" title='constant_entry::name' data-ref="constant_entry::name">name</a>, <a class="local col4 ref" href="#14constant_str" title='constant_str' data-ref="14constant_str">constant_str</a>)) {</td></tr>
+<tr><th id="119">119</th><td>			<b>if</b> (<a class="local col5 ref" href="#15endptr" title='endptr' data-ref="15endptr">endptr</a>)</td></tr>
+<tr><th id="120">120</th><td>				*<a class="local col5 ref" href="#15endptr" title='endptr' data-ref="15endptr">endptr</a> = <a class="local col4 ref" href="#14constant_str" title='constant_str' data-ref="14constant_str">constant_str</a> + <a class="ref" href="../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col4 ref" href="#14constant_str" title='constant_str' data-ref="14constant_str">constant_str</a>);</td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td>			<b>return</b> <a class="local col6 ref" href="#16entry" title='entry' data-ref="16entry">entry</a>-&gt;<a class="ref" href="libconstants.h.html#constant_entry::value" title='constant_entry::value' data-ref="constant_entry::value">value</a>;</td></tr>
+<tr><th id="123">123</th><td>		}</td></tr>
+<tr><th id="124">124</th><td>	}</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td>	<b>return</b> <a class="ref" href="../../bionic/libc/include/stdlib.h.html#strtol" title='strtol' data-ref="strtol">strtol</a>(<a class="local col4 ref" href="#14constant_str" title='constant_str' data-ref="14constant_str">constant_str</a>, <a class="local col5 ref" href="#15endptr" title='endptr' data-ref="15endptr">endptr</a>, <var>0</var>);</td></tr>
+<tr><th id="127">127</th><td>}</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td><em>char</em> *<dfn class="decl def" id="strip" title='strip' data-ref="strip">strip</dfn>(<em>char</em> *<dfn class="local col7 decl" id="17s" title='s' data-type='char *' data-ref="17s">s</dfn>)</td></tr>
+<tr><th id="130">130</th><td>{</td></tr>
+<tr><th id="131">131</th><td>	<em>char</em> *<dfn class="local col8 decl" id="18end" title='end' data-type='char *' data-ref="18end">end</dfn>;</td></tr>
+<tr><th id="132">132</th><td>	<b>while</b> (*<a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a> &amp;&amp; <a class="ref" href="../../bionic/libc/include/ctype.h.html#isblank" title='isblank' data-ref="isblank">isblank</a>(*<a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a>))</td></tr>
+<tr><th id="133">133</th><td>		<a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a>++;</td></tr>
+<tr><th id="134">134</th><td>	<a class="local col8 ref" href="#18end" title='end' data-ref="18end">end</a> = <a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a> + <a class="ref" href="../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a>) - <var>1</var>;</td></tr>
+<tr><th id="135">135</th><td>	<b>while</b> (<a class="local col8 ref" href="#18end" title='end' data-ref="18end">end</a> &gt;= <a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a> &amp;&amp; *<a class="local col8 ref" href="#18end" title='end' data-ref="18end">end</a> &amp;&amp; (<a class="ref" href="../../bionic/libc/include/ctype.h.html#isblank" title='isblank' data-ref="isblank">isblank</a>(*<a class="local col8 ref" href="#18end" title='end' data-ref="18end">end</a>) || *<a class="local col8 ref" href="#18end" title='end' data-ref="18end">end</a> == <kbd>'\n'</kbd>))</td></tr>
+<tr><th id="136">136</th><td>		<a class="local col8 ref" href="#18end" title='end' data-ref="18end">end</a>--;</td></tr>
+<tr><th id="137">137</th><td>	*(<a class="local col8 ref" href="#18end" title='end' data-ref="18end">end</a> + <var>1</var>) = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="138">138</th><td>	<b>return</b> <a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a>;</td></tr>
+<tr><th id="139">139</th><td>}</td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><em>char</em> *<dfn class="decl def" id="tokenize" title='tokenize' data-ref="tokenize">tokenize</dfn>(<em>char</em> **<dfn class="local col9 decl" id="19stringp" title='stringp' data-type='char **' data-ref="19stringp">stringp</dfn>, <em>const</em> <em>char</em> *<dfn class="local col0 decl" id="20delim" title='delim' data-type='const char *' data-ref="20delim">delim</dfn>)</td></tr>
+<tr><th id="142">142</th><td>{</td></tr>
+<tr><th id="143">143</th><td>	<em>char</em> *<dfn class="local col1 decl" id="21ret" title='ret' data-type='char *' data-ref="21ret">ret</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td>	<i>/* If the string is NULL or empty, there are no tokens to be found. */</i></td></tr>
+<tr><th id="146">146</th><td>	<b>if</b> (<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || *<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || **<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a> == <kbd>'\0'</kbd>)</td></tr>
+<tr><th id="147">147</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td>	<i>/*</i></td></tr>
+<tr><th id="150">150</th><td><i>	 * If the delimiter is NULL or empty,</i></td></tr>
+<tr><th id="151">151</th><td><i>	 * the full string makes up the only token.</i></td></tr>
+<tr><th id="152">152</th><td><i>	 */</i></td></tr>
+<tr><th id="153">153</th><td>	<b>if</b> (<a class="local col0 ref" href="#20delim" title='delim' data-ref="20delim">delim</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || *<a class="local col0 ref" href="#20delim" title='delim' data-ref="20delim">delim</a> == <kbd>'\0'</kbd>) {</td></tr>
+<tr><th id="154">154</th><td>		<a class="local col1 ref" href="#21ret" title='ret' data-ref="21ret">ret</a> = *<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a>;</td></tr>
+<tr><th id="155">155</th><td>		*<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="156">156</th><td>		<b>return</b> <a class="local col1 ref" href="#21ret" title='ret' data-ref="21ret">ret</a>;</td></tr>
+<tr><th id="157">157</th><td>	}</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td>	<em>char</em> *<dfn class="local col2 decl" id="22found" title='found' data-type='char *' data-ref="22found">found</dfn>;</td></tr>
+<tr><th id="160">160</th><td>	<b>while</b> (**<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a> != <kbd>'\0'</kbd>) {</td></tr>
+<tr><th id="161">161</th><td>		<a class="local col2 ref" href="#22found" title='found' data-ref="22found">found</a> = <a class="ref" href="../../bionic/libc/include/string.h.html#strstr" title='strstr' data-ref="strstr">strstr</a>(*<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a>, <a class="local col0 ref" href="#20delim" title='delim' data-ref="20delim">delim</a>);</td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td>		<b>if</b> (!<a class="local col2 ref" href="#22found" title='found' data-ref="22found">found</a>) {</td></tr>
+<tr><th id="164">164</th><td>			<i>/*</i></td></tr>
+<tr><th id="165">165</th><td><i>			 * The delimiter was not found, so the full string</i></td></tr>
+<tr><th id="166">166</th><td><i>			 * makes up the only token, and we're done.</i></td></tr>
+<tr><th id="167">167</th><td><i>			 */</i></td></tr>
+<tr><th id="168">168</th><td>			<a class="local col1 ref" href="#21ret" title='ret' data-ref="21ret">ret</a> = *<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a>;</td></tr>
+<tr><th id="169">169</th><td>			*<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="170">170</th><td>			<b>break</b>;</td></tr>
+<tr><th id="171">171</th><td>		}</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td>		<b>if</b> (<a class="local col2 ref" href="#22found" title='found' data-ref="22found">found</a> != *<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a>) {</td></tr>
+<tr><th id="174">174</th><td>			<i>/* There's a non-empty token before the delimiter. */</i></td></tr>
+<tr><th id="175">175</th><td>			*<a class="local col2 ref" href="#22found" title='found' data-ref="22found">found</a> = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="176">176</th><td>			<a class="local col1 ref" href="#21ret" title='ret' data-ref="21ret">ret</a> = *<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a>;</td></tr>
+<tr><th id="177">177</th><td>			*<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a> = <a class="local col2 ref" href="#22found" title='found' data-ref="22found">found</a> + <a class="ref" href="../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col0 ref" href="#20delim" title='delim' data-ref="20delim">delim</a>);</td></tr>
+<tr><th id="178">178</th><td>			<b>break</b>;</td></tr>
+<tr><th id="179">179</th><td>		}</td></tr>
+<tr><th id="180">180</th><td></td></tr>
+<tr><th id="181">181</th><td>		<i>/*</i></td></tr>
+<tr><th id="182">182</th><td><i>		 * The delimiter was found at the start of the string,</i></td></tr>
+<tr><th id="183">183</th><td><i>		 * skip it and keep looking for a non-empty token.</i></td></tr>
+<tr><th id="184">184</th><td><i>		 */</i></td></tr>
+<tr><th id="185">185</th><td>		*<a class="local col9 ref" href="#19stringp" title='stringp' data-ref="19stringp">stringp</a> += <a class="ref" href="../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col0 ref" href="#20delim" title='delim' data-ref="20delim">delim</a>);</td></tr>
+<tr><th id="186">186</th><td>	}</td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td>	<b>return</b> <a class="local col1 ref" href="#21ret" title='ret' data-ref="21ret">ret</a>;</td></tr>
+<tr><th id="189">189</th><td>}</td></tr>
+<tr><th id="190">190</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

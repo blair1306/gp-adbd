@@ -1,0 +1,21 @@
+<dec f='codebrowser/external/boringssl/src/crypto/cipher/internal.h' l='153' type='int EVP_tls_cbc_digest_record(const EVP_MD * md, uint8_t * md_out, size_t * md_out_size, const uint8_t * header, const uint8_t * data, size_t data_plus_mac_size, size_t data_plus_mac_plus_padding_size, const uint8_t * mac_secret, unsigned int mac_secret_length)'/>
+<doc f='codebrowser/external/boringssl/src/crypto/cipher/internal.h' l='135'>/* EVP_tls_cbc_digest_record computes the MAC of a decrypted, padded TLS
+ * record.
+ *
+ *   md: the hash function used in the HMAC.
+ *     EVP_tls_cbc_record_digest_supported must return true for this hash.
+ *   md_out: the digest output. At most EVP_MAX_MD_SIZE bytes will be written.
+ *   md_out_size: the number of output bytes is written here.
+ *   header: the 13-byte, TLS record header.
+ *   data: the record data itself
+ *   data_plus_mac_size: the secret, reported length of the data and MAC
+ *     once the padding has been removed.
+ *   data_plus_mac_plus_padding_size: the public length of the whole
+ *     record, including padding.
+ *
+ * On entry: by virtue of having been through one of the remove_padding
+ * functions, above, we know that data_plus_mac_size is large enough to contain
+ * a padding byte and MAC. (If the padding was invalid, it might contain the
+ * padding too. ) */</doc>
+<use f='codebrowser/external/boringssl/src/crypto/cipher/e_tls.c' l='307' u='c' c='aead_tls_open'/>
+<def f='codebrowser/external/boringssl/src/crypto/cipher/tls_cbc.c' l='274' ll='495' type='int EVP_tls_cbc_digest_record(const EVP_MD * md, uint8_t * md_out, size_t * md_out_size, const uint8_t * header, const uint8_t * data, size_t data_plus_mac_size, size_t data_plus_mac_plus_padding_size, const uint8_t * mac_secret, unsigned int mac_secret_length)'/>

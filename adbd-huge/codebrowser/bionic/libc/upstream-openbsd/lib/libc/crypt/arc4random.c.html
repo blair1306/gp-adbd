@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>arc4random.c source code [codebrowser/bionic/libc/upstream-openbsd/lib/libc/crypt/arc4random.c] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="_rs,_rsx "/>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/upstream-openbsd/lib/libc/crypt/arc4random.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libc</a>/<a href='../../..'>upstream-openbsd</a>/<a href='../..'>lib</a>/<a href='..'>libc</a>/<a href='./'>crypt</a>/<a href='arc4random.c.html'>arc4random.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$OpenBSD: arc4random.c,v 1.50 2014/07/21 18:13:12 deraadt Exp $	*/</i></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><i>/*</i></td></tr>
+<tr><th id="4">4</th><td><i> * Copyright (c) 1996, David Mazieres &lt;dm@uun.org&gt;</i></td></tr>
+<tr><th id="5">5</th><td><i> * Copyright (c) 2008, Damien Miller &lt;djm@openbsd.org&gt;</i></td></tr>
+<tr><th id="6">6</th><td><i> * Copyright (c) 2013, Markus Friedl &lt;markus@openbsd.org&gt;</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * Permission to use, copy, modify, and distribute this software for any</i></td></tr>
+<tr><th id="9">9</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="10">10</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="11">11</th><td><i> *</i></td></tr>
+<tr><th id="12">12</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="13">13</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="14">14</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</i></td></tr>
+<tr><th id="15">15</th><td><i> * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="16">16</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</i></td></tr>
+<tr><th id="17">17</th><td><i> * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</i></td></tr>
+<tr><th id="18">18</th><td><i> * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</i></td></tr>
+<tr><th id="19">19</th><td><i> */</i></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><i>/*</i></td></tr>
+<tr><th id="22">22</th><td><i> * ChaCha based random number generator for OpenBSD.</i></td></tr>
+<tr><th id="23">23</th><td><i> */</i></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../../../../include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="../../../../include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../../include/signal.h.html">&lt;signal.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../../../../include/stdint.h.html">&lt;stdint.h&gt;</a></u></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../../../../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../../../../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../../../../include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../../../../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../../../../include/sys/param.h.html">&lt;sys/param.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../../../../include/sys/time.h.html">&lt;sys/time.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><u>#define <dfn class="macro" id="_M/KEYSTREAM_ONLY" data-ref="_M/KEYSTREAM_ONLY">KEYSTREAM_ONLY</dfn></u></td></tr>
+<tr><th id="37">37</th><td><u>#include <a href="chacha_private.h.html">"chacha_private.h"</a></u></td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/min" data-ref="_M/min">min</dfn>(a, b) ((a) &lt; (b) ? (a) : (b))</u></td></tr>
+<tr><th id="40">40</th><td><u>#<span data-ppcond="40">ifdef</span> <span class="macro" data-ref="_M/__GNUC__">__GNUC__</span></u></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/inline" data-ref="_M/inline">inline</dfn> __inline</u></td></tr>
+<tr><th id="42">42</th><td><u>#<span data-ppcond="40">else</span>				/* !__GNUC__ */</u></td></tr>
+<tr><th id="43">43</th><td><u>#define inline</u></td></tr>
+<tr><th id="44">44</th><td><u>#<span data-ppcond="40">endif</span>				/* !__GNUC__ */</u></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><u>#define <dfn class="macro" id="_M/KEYSZ" data-ref="_M/KEYSZ">KEYSZ</dfn>	32</u></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/IVSZ" data-ref="_M/IVSZ">IVSZ</dfn>	8</u></td></tr>
+<tr><th id="48">48</th><td><u>#define <dfn class="macro" id="_M/BLOCKSZ" data-ref="_M/BLOCKSZ">BLOCKSZ</dfn>	64</u></td></tr>
+<tr><th id="49">49</th><td><u>#define <dfn class="macro" id="_M/RSBUFSZ" data-ref="_M/RSBUFSZ">RSBUFSZ</dfn>	(16*BLOCKSZ)</u></td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td><i>/* Marked MAP_INHERIT_ZERO, so zero'd out in fork children. */</i></td></tr>
+<tr><th id="52">52</th><td><em>static</em> <b>struct</b> <dfn class="type def" id="_rs" title='_rs' data-ref="_rs"><a class="type" href="#_rs" title='_rs' data-ref="_rs">_rs</a></dfn> {</td></tr>
+<tr><th id="53">53</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>		<dfn class="tu decl" id="_rs::rs_have" title='_rs::rs_have' data-type='size_t' data-ref="_rs::rs_have">rs_have</dfn>;	<i  data-doc="_rs::rs_have">/* valid bytes at end of rs_buf */</i></td></tr>
+<tr><th id="54">54</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>		<dfn class="tu decl" id="_rs::rs_count" title='_rs::rs_count' data-type='size_t' data-ref="_rs::rs_count">rs_count</dfn>;	<i  data-doc="_rs::rs_count">/* bytes till reseed */</i></td></tr>
+<tr><th id="55">55</th><td>} *<dfn class="tu decl def" id="rs" title='rs' data-type='struct _rs *' data-ref="rs">rs</dfn>;</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><i>/* Maybe be preserved in fork children, if _rs_allocate() decides. */</i></td></tr>
+<tr><th id="58">58</th><td><em>static</em> <b>struct</b> <dfn class="type def" id="_rsx" title='_rsx' data-ref="_rsx"><a class="type" href="#_rsx" title='_rsx' data-ref="_rsx">_rsx</a></dfn> {</td></tr>
+<tr><th id="59">59</th><td>	<a class="typedef" href="chacha_private.h.html#chacha_ctx" title='chacha_ctx' data-type='struct chacha_ctx' data-ref="chacha_ctx">chacha_ctx</a>	<dfn class="tu decl" id="_rsx::rs_chacha" title='_rsx::rs_chacha' data-type='chacha_ctx' data-ref="_rsx::rs_chacha">rs_chacha</dfn>;	<i  data-doc="_rsx::rs_chacha">/* chacha context for random keystream */</i></td></tr>
+<tr><th id="60">60</th><td>	<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a>		<dfn class="tu decl" id="_rsx::rs_buf" title='_rsx::rs_buf' data-type='u_char [1024]' data-ref="_rsx::rs_buf">rs_buf</dfn>[<a class="macro" href="#49" title="(16*64)" data-ref="_M/RSBUFSZ">RSBUFSZ</a>];	<i  data-doc="_rsx::rs_buf">/* keystream blocks */</i></td></tr>
+<tr><th id="61">61</th><td>} *<dfn class="tu decl def" id="rsx" title='rsx' data-type='struct _rsx *' data-ref="rsx">rsx</dfn>;</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><em>static</em> <a class="macro" href="#41" title="__inline" data-ref="_M/inline"><b>inline</b></a> <em>int</em> <a class="tu decl" href="../../../android/include/arc4random.h.html#_rs_allocate" title='_rs_allocate' data-type='int _rs_allocate(struct _rs ** , struct _rsx ** )' data-ref="_rs_allocate" id="_rs_allocate">_rs_allocate</a>(<b>struct</b> <a class="type" href="#_rs" title='_rs' data-ref="_rs">_rs</a> **, <b>struct</b> <a class="type" href="#_rsx" title='_rsx' data-ref="_rsx">_rsx</a> **);</td></tr>
+<tr><th id="64">64</th><td><em>static</em> <a class="macro" href="#41" title="__inline" data-ref="_M/inline"><b>inline</b></a> <em>void</em> <a class="tu decl" href="../../../android/include/arc4random.h.html#_rs_forkdetect" title='_rs_forkdetect' data-type='void _rs_forkdetect()' data-ref="_rs_forkdetect" id="_rs_forkdetect">_rs_forkdetect</a>(<em>void</em>);</td></tr>
+<tr><th id="65">65</th><td><u>#include <a href="../../../android/include/arc4random.h.html">"arc4random.h"</a></u></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><em>static</em> <a class="macro" href="#41" title="__inline" data-ref="_M/inline"><b>inline</b></a> <em>void</em> <a class="tu decl" href="#_rs_rekey" title='_rs_rekey' data-type='void _rs_rekey(u_char * dat, size_t datlen)' data-ref="_rs_rekey">_rs_rekey</a>(<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col1 decl" id="51dat" title='dat' data-type='u_char *' data-ref="51dat">dat</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="52datlen" title='datlen' data-type='size_t' data-ref="52datlen">datlen</dfn>);</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><em>static</em> <a class="macro" href="#41" title="__inline" data-ref="_M/inline"><b>inline</b></a> <em>void</em></td></tr>
+<tr><th id="70">70</th><td><dfn class="tu decl def" id="_rs_init" title='_rs_init' data-type='void _rs_init(u_char * buf, size_t n)' data-ref="_rs_init">_rs_init</dfn>(<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col3 decl" id="53buf" title='buf' data-type='u_char *' data-ref="53buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="54n" title='n' data-type='size_t' data-ref="54n">n</dfn>)</td></tr>
+<tr><th id="71">71</th><td>{</td></tr>
+<tr><th id="72">72</th><td>	<b>if</b> (<a class="local col4 ref" href="#54n" title='n' data-ref="54n">n</a> &lt; <a class="macro" href="#46" title="32" data-ref="_M/KEYSZ">KEYSZ</a> + <a class="macro" href="#47" title="8" data-ref="_M/IVSZ">IVSZ</a>)</td></tr>
+<tr><th id="73">73</th><td>		<b>return</b>;</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td>	<b>if</b> (<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="76">76</th><td>		<b>if</b> (<a class="ref" href="../../../android/include/arc4random.h.html#_rs_allocate" title='_rs_allocate' data-ref="_rs_allocate">_rs_allocate</a>(&amp;<a class="tu ref" href="#rs" title='rs' data-use='a' data-ref="rs">rs</a>, &amp;<a class="tu ref" href="#rsx" title='rsx' data-use='a' data-ref="rsx">rsx</a>) == -<var>1</var>)</td></tr>
+<tr><th id="77">77</th><td>			<a class="ref" href="../../../../include/stdlib.h.html#abort" title='abort' data-ref="abort">abort</a>();</td></tr>
+<tr><th id="78">78</th><td>	}</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td>	<a class="ref" href="chacha_private.h.html#chacha_keysetup" title='chacha_keysetup' data-ref="chacha_keysetup">chacha_keysetup</a>(&amp;<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_chacha" title='_rsx::rs_chacha' data-use='a' data-ref="_rsx::rs_chacha">rs_chacha</a>, <a class="local col3 ref" href="#53buf" title='buf' data-ref="53buf">buf</a>, <a class="macro" href="#46" title="32" data-ref="_M/KEYSZ">KEYSZ</a> * <var>8</var>, <var>0</var>);</td></tr>
+<tr><th id="81">81</th><td>	<a class="ref" href="chacha_private.h.html#chacha_ivsetup" title='chacha_ivsetup' data-ref="chacha_ivsetup">chacha_ivsetup</a>(&amp;<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_chacha" title='_rsx::rs_chacha' data-use='a' data-ref="_rsx::rs_chacha">rs_chacha</a>, <a class="local col3 ref" href="#53buf" title='buf' data-ref="53buf">buf</a> + <a class="macro" href="#46" title="32" data-ref="_M/KEYSZ">KEYSZ</a>);</td></tr>
+<tr><th id="82">82</th><td>}</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><em>static</em> <em>void</em></td></tr>
+<tr><th id="85">85</th><td><dfn class="tu decl def" id="_rs_stir" title='_rs_stir' data-type='void _rs_stir()' data-ref="_rs_stir">_rs_stir</dfn>(<em>void</em>)</td></tr>
+<tr><th id="86">86</th><td>{</td></tr>
+<tr><th id="87">87</th><td>	<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> <dfn class="local col5 decl" id="55rnd" title='rnd' data-type='u_char [40]' data-ref="55rnd">rnd</dfn>[<a class="macro" href="#46" title="32" data-ref="_M/KEYSZ">KEYSZ</a> + <a class="macro" href="#47" title="8" data-ref="_M/IVSZ">IVSZ</a>];</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td>	<b>if</b> (<a class="ref" href="../../../android/include/openbsd-compat.h.html#getentropy" title='getentropy' data-ref="getentropy">getentropy</a>(<a class="local col5 ref" href="#55rnd" title='rnd' data-ref="55rnd">rnd</a>, <b>sizeof</b> <a class="local col5 ref" href="#55rnd" title='rnd' data-ref="55rnd">rnd</a>) == -<var>1</var>)</td></tr>
+<tr><th id="90">90</th><td>		<a class="ref" href="../../../android/include/arc4random.h.html#_getentropy_fail" title='_getentropy_fail' data-ref="_getentropy_fail">_getentropy_fail</a>();</td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td>	<b>if</b> (!<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>)</td></tr>
+<tr><th id="93">93</th><td>		<a class="tu ref" href="#_rs_init" title='_rs_init' data-use='c' data-ref="_rs_init">_rs_init</a>(<a class="local col5 ref" href="#55rnd" title='rnd' data-ref="55rnd">rnd</a>, <b>sizeof</b>(<a class="local col5 ref" href="#55rnd" title='rnd' data-ref="55rnd">rnd</a>));</td></tr>
+<tr><th id="94">94</th><td>	<b>else</b></td></tr>
+<tr><th id="95">95</th><td>		<a class="tu ref" href="#_rs_rekey" title='_rs_rekey' data-use='c' data-ref="_rs_rekey">_rs_rekey</a>(<a class="local col5 ref" href="#55rnd" title='rnd' data-ref="55rnd">rnd</a>, <b>sizeof</b>(<a class="local col5 ref" href="#55rnd" title='rnd' data-ref="55rnd">rnd</a>));</td></tr>
+<tr><th id="96">96</th><td>	<a class="macro" href="../../../android/include/openbsd-compat.h.html#57" title="memset(rnd, 0, sizeof(rnd))" data-ref="_M/explicit_bzero">explicit_bzero</a>(<a class="local col5 ref" href="#55rnd" title='rnd' data-ref="55rnd">rnd</a>, <b>sizeof</b>(<a class="local col5 ref" href="#55rnd" title='rnd' data-ref="55rnd">rnd</a>));	<i>/* discard source seed */</i></td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td>	<i>/* invalidate rs_buf */</i></td></tr>
+<tr><th id="99">99</th><td>	<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='w' data-ref="_rs::rs_have">rs_have</a> = <var>0</var>;</td></tr>
+<tr><th id="100">100</th><td>	<a class="ref" href="../../../../include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>, <var>0</var>, <b>sizeof</b>(<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>));</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td>	<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_count" title='_rs::rs_count' data-use='w' data-ref="_rs::rs_count">rs_count</a> = <var>1600000</var>;</td></tr>
+<tr><th id="103">103</th><td>}</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><em>static</em> <a class="macro" href="#41" title="__inline" data-ref="_M/inline"><b>inline</b></a> <em>void</em></td></tr>
+<tr><th id="106">106</th><td><dfn class="tu decl def" id="_rs_stir_if_needed" title='_rs_stir_if_needed' data-type='void _rs_stir_if_needed(size_t len)' data-ref="_rs_stir_if_needed">_rs_stir_if_needed</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="56len" title='len' data-type='size_t' data-ref="56len">len</dfn>)</td></tr>
+<tr><th id="107">107</th><td>{</td></tr>
+<tr><th id="108">108</th><td>	<a class="ref" href="../../../android/include/arc4random.h.html#_rs_forkdetect" title='_rs_forkdetect' data-ref="_rs_forkdetect">_rs_forkdetect</a>();</td></tr>
+<tr><th id="109">109</th><td>	<b>if</b> (!<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a> || <a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_count" title='_rs::rs_count' data-use='r' data-ref="_rs::rs_count">rs_count</a> &lt;= <a class="local col6 ref" href="#56len" title='len' data-ref="56len">len</a>)</td></tr>
+<tr><th id="110">110</th><td>		<a class="tu ref" href="#_rs_stir" title='_rs_stir' data-use='c' data-ref="_rs_stir">_rs_stir</a>();</td></tr>
+<tr><th id="111">111</th><td>	<b>if</b> (<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_count" title='_rs::rs_count' data-use='r' data-ref="_rs::rs_count">rs_count</a> &lt;= <a class="local col6 ref" href="#56len" title='len' data-ref="56len">len</a>)</td></tr>
+<tr><th id="112">112</th><td>		<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_count" title='_rs::rs_count' data-use='w' data-ref="_rs::rs_count">rs_count</a> = <var>0</var>;</td></tr>
+<tr><th id="113">113</th><td>	<b>else</b></td></tr>
+<tr><th id="114">114</th><td>		<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_count" title='_rs::rs_count' data-use='w' data-ref="_rs::rs_count">rs_count</a> -= <a class="local col6 ref" href="#56len" title='len' data-ref="56len">len</a>;</td></tr>
+<tr><th id="115">115</th><td>}</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><em>static</em> <a class="macro" href="#41" title="__inline" data-ref="_M/inline"><b>inline</b></a> <em>void</em></td></tr>
+<tr><th id="118">118</th><td><dfn class="tu decl def" id="_rs_rekey" title='_rs_rekey' data-type='void _rs_rekey(u_char * dat, size_t datlen)' data-ref="_rs_rekey">_rs_rekey</dfn>(<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col7 decl" id="57dat" title='dat' data-type='u_char *' data-ref="57dat">dat</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="58datlen" title='datlen' data-type='size_t' data-ref="58datlen">datlen</dfn>)</td></tr>
+<tr><th id="119">119</th><td>{</td></tr>
+<tr><th id="120">120</th><td><u>#<span data-ppcond="120">ifndef</span> <a class="macro" href="#36" data-ref="_M/KEYSTREAM_ONLY">KEYSTREAM_ONLY</a></u></td></tr>
+<tr><th id="121">121</th><td>	memset(rsx-&gt;rs_buf, <var>0</var>, <b>sizeof</b>(rsx-&gt;rs_buf));</td></tr>
+<tr><th id="122">122</th><td><u>#<span data-ppcond="120">endif</span></u></td></tr>
+<tr><th id="123">123</th><td>	<i>/* fill rs_buf with the keystream */</i></td></tr>
+<tr><th id="124">124</th><td>	<a class="ref" href="chacha_private.h.html#chacha_encrypt_bytes" title='chacha_encrypt_bytes' data-ref="chacha_encrypt_bytes">chacha_encrypt_bytes</a>(&amp;<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_chacha" title='_rsx::rs_chacha' data-use='a' data-ref="_rsx::rs_chacha">rs_chacha</a>, <a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>,</td></tr>
+<tr><th id="125">125</th><td>	    <a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>, <b>sizeof</b>(<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>));</td></tr>
+<tr><th id="126">126</th><td>	<i>/* mix in optional user provided data */</i></td></tr>
+<tr><th id="127">127</th><td>	<b>if</b> (<a class="local col7 ref" href="#57dat" title='dat' data-ref="57dat">dat</a>) {</td></tr>
+<tr><th id="128">128</th><td>		<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="59i" title='i' data-type='size_t' data-ref="59i">i</dfn>, <dfn class="local col0 decl" id="60m" title='m' data-type='size_t' data-ref="60m">m</dfn>;</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td>		<a class="local col0 ref" href="#60m" title='m' data-ref="60m">m</a> = <a class="macro" href="#39" title="((datlen) &lt; (32 + 8) ? (datlen) : (32 + 8))" data-ref="_M/min">min</a>(<a class="local col8 ref" href="#58datlen" title='datlen' data-ref="58datlen">datlen</a>, <a class="macro" href="#46" title="32" data-ref="_M/KEYSZ">KEYSZ</a> + <a class="macro" href="#47" title="8" data-ref="_M/IVSZ">IVSZ</a>);</td></tr>
+<tr><th id="131">131</th><td>		<b>for</b> (<a class="local col9 ref" href="#59i" title='i' data-ref="59i">i</a> = <var>0</var>; <a class="local col9 ref" href="#59i" title='i' data-ref="59i">i</a> &lt; <a class="local col0 ref" href="#60m" title='m' data-ref="60m">m</a>; <a class="local col9 ref" href="#59i" title='i' data-ref="59i">i</a>++)</td></tr>
+<tr><th id="132">132</th><td>			<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='w' data-ref="_rsx::rs_buf">rs_buf</a>[<a class="local col9 ref" href="#59i" title='i' data-ref="59i">i</a>] ^= <a class="local col7 ref" href="#57dat" title='dat' data-ref="57dat">dat</a>[<a class="local col9 ref" href="#59i" title='i' data-ref="59i">i</a>];</td></tr>
+<tr><th id="133">133</th><td>	}</td></tr>
+<tr><th id="134">134</th><td>	<i>/* immediately reinit for backtracking resistance */</i></td></tr>
+<tr><th id="135">135</th><td>	<a class="tu ref" href="#_rs_init" title='_rs_init' data-use='c' data-ref="_rs_init">_rs_init</a>(<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>, <a class="macro" href="#46" title="32" data-ref="_M/KEYSZ">KEYSZ</a> + <a class="macro" href="#47" title="8" data-ref="_M/IVSZ">IVSZ</a>);</td></tr>
+<tr><th id="136">136</th><td>	<a class="ref" href="../../../../include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>, <var>0</var>, <a class="macro" href="#46" title="32" data-ref="_M/KEYSZ">KEYSZ</a> + <a class="macro" href="#47" title="8" data-ref="_M/IVSZ">IVSZ</a>);</td></tr>
+<tr><th id="137">137</th><td>	<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='w' data-ref="_rs::rs_have">rs_have</a> = <b>sizeof</b>(<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>) - <a class="macro" href="#46" title="32" data-ref="_M/KEYSZ">KEYSZ</a> - <a class="macro" href="#47" title="8" data-ref="_M/IVSZ">IVSZ</a>;</td></tr>
+<tr><th id="138">138</th><td>}</td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td><em>static</em> <a class="macro" href="#41" title="__inline" data-ref="_M/inline"><b>inline</b></a> <em>void</em></td></tr>
+<tr><th id="141">141</th><td><dfn class="tu decl def" id="_rs_random_buf" title='_rs_random_buf' data-type='void _rs_random_buf(void * _buf, size_t n)' data-ref="_rs_random_buf">_rs_random_buf</dfn>(<em>void</em> *<dfn class="local col1 decl" id="61_buf" title='_buf' data-type='void *' data-ref="61_buf">_buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="62n" title='n' data-type='size_t' data-ref="62n">n</dfn>)</td></tr>
+<tr><th id="142">142</th><td>{</td></tr>
+<tr><th id="143">143</th><td>	<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col3 decl" id="63buf" title='buf' data-type='u_char *' data-ref="63buf">buf</dfn> = (<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *)<a class="local col1 ref" href="#61_buf" title='_buf' data-ref="61_buf">_buf</a>;</td></tr>
+<tr><th id="144">144</th><td>	<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col4 decl" id="64keystream" title='keystream' data-type='u_char *' data-ref="64keystream">keystream</dfn>;</td></tr>
+<tr><th id="145">145</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="65m" title='m' data-type='size_t' data-ref="65m">m</dfn>;</td></tr>
+<tr><th id="146">146</th><td></td></tr>
+<tr><th id="147">147</th><td>	<a class="tu ref" href="#_rs_stir_if_needed" title='_rs_stir_if_needed' data-use='c' data-ref="_rs_stir_if_needed">_rs_stir_if_needed</a>(<a class="local col2 ref" href="#62n" title='n' data-ref="62n">n</a>);</td></tr>
+<tr><th id="148">148</th><td>	<b>while</b> (<a class="local col2 ref" href="#62n" title='n' data-ref="62n">n</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="149">149</th><td>		<b>if</b> (<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='r' data-ref="_rs::rs_have">rs_have</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="150">150</th><td>			<a class="local col5 ref" href="#65m" title='m' data-ref="65m">m</a> = <a class="macro" href="#39" title="((n) &lt; (rs-&gt;rs_have) ? (n) : (rs-&gt;rs_have))" data-ref="_M/min">min</a>(<a class="local col2 ref" href="#62n" title='n' data-ref="62n">n</a>, <a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='r' data-ref="_rs::rs_have">rs_have</a>);</td></tr>
+<tr><th id="151">151</th><td>			<a class="local col4 ref" href="#64keystream" title='keystream' data-ref="64keystream">keystream</a> = <a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a> + <b>sizeof</b>(<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>)</td></tr>
+<tr><th id="152">152</th><td>			    - <a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='r' data-ref="_rs::rs_have">rs_have</a>;</td></tr>
+<tr><th id="153">153</th><td>			<a class="ref" href="../../../../include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col3 ref" href="#63buf" title='buf' data-ref="63buf">buf</a>, <a class="local col4 ref" href="#64keystream" title='keystream' data-ref="64keystream">keystream</a>, <a class="local col5 ref" href="#65m" title='m' data-ref="65m">m</a>);</td></tr>
+<tr><th id="154">154</th><td>			<a class="ref" href="../../../../include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col4 ref" href="#64keystream" title='keystream' data-ref="64keystream">keystream</a>, <var>0</var>, <a class="local col5 ref" href="#65m" title='m' data-ref="65m">m</a>);</td></tr>
+<tr><th id="155">155</th><td>			<a class="local col3 ref" href="#63buf" title='buf' data-ref="63buf">buf</a> += <a class="local col5 ref" href="#65m" title='m' data-ref="65m">m</a>;</td></tr>
+<tr><th id="156">156</th><td>			<a class="local col2 ref" href="#62n" title='n' data-ref="62n">n</a> -= <a class="local col5 ref" href="#65m" title='m' data-ref="65m">m</a>;</td></tr>
+<tr><th id="157">157</th><td>			<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='w' data-ref="_rs::rs_have">rs_have</a> -= <a class="local col5 ref" href="#65m" title='m' data-ref="65m">m</a>;</td></tr>
+<tr><th id="158">158</th><td>		}</td></tr>
+<tr><th id="159">159</th><td>		<b>if</b> (<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='r' data-ref="_rs::rs_have">rs_have</a> == <var>0</var>)</td></tr>
+<tr><th id="160">160</th><td>			<a class="tu ref" href="#_rs_rekey" title='_rs_rekey' data-use='c' data-ref="_rs_rekey">_rs_rekey</a>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <var>0</var>);</td></tr>
+<tr><th id="161">161</th><td>	}</td></tr>
+<tr><th id="162">162</th><td>}</td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><em>static</em> <a class="macro" href="#41" title="__inline" data-ref="_M/inline"><b>inline</b></a> <em>void</em></td></tr>
+<tr><th id="165">165</th><td><dfn class="tu decl def" id="_rs_random_u32" title='_rs_random_u32' data-type='void _rs_random_u32(uint32_t * val)' data-ref="_rs_random_u32">_rs_random_u32</dfn>(<a class="typedef" href="../../../../include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> *<dfn class="local col6 decl" id="66val" title='val' data-type='uint32_t *' data-ref="66val">val</dfn>)</td></tr>
+<tr><th id="166">166</th><td>{</td></tr>
+<tr><th id="167">167</th><td>	<a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col7 decl" id="67keystream" title='keystream' data-type='u_char *' data-ref="67keystream">keystream</dfn>;</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td>	<a class="tu ref" href="#_rs_stir_if_needed" title='_rs_stir_if_needed' data-use='c' data-ref="_rs_stir_if_needed">_rs_stir_if_needed</a>(<b>sizeof</b>(*<a class="local col6 ref" href="#66val" title='val' data-ref="66val">val</a>));</td></tr>
+<tr><th id="170">170</th><td>	<b>if</b> (<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='r' data-ref="_rs::rs_have">rs_have</a> &lt; <b>sizeof</b>(*<a class="local col6 ref" href="#66val" title='val' data-ref="66val">val</a>))</td></tr>
+<tr><th id="171">171</th><td>		<a class="tu ref" href="#_rs_rekey" title='_rs_rekey' data-use='c' data-ref="_rs_rekey">_rs_rekey</a>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <var>0</var>);</td></tr>
+<tr><th id="172">172</th><td>	<a class="local col7 ref" href="#67keystream" title='keystream' data-ref="67keystream">keystream</a> = <a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a> + <b>sizeof</b>(<a class="tu ref" href="#rsx" title='rsx' data-use='r' data-ref="rsx">rsx</a>-&gt;<a class="tu ref" href="#_rsx::rs_buf" title='_rsx::rs_buf' data-use='r' data-ref="_rsx::rs_buf">rs_buf</a>) - <a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='r' data-ref="_rs::rs_have">rs_have</a>;</td></tr>
+<tr><th id="173">173</th><td>	<a class="ref" href="../../../../include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col6 ref" href="#66val" title='val' data-ref="66val">val</a>, <a class="local col7 ref" href="#67keystream" title='keystream' data-ref="67keystream">keystream</a>, <b>sizeof</b>(*<a class="local col6 ref" href="#66val" title='val' data-ref="66val">val</a>));</td></tr>
+<tr><th id="174">174</th><td>	<a class="ref" href="../../../../include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col7 ref" href="#67keystream" title='keystream' data-ref="67keystream">keystream</a>, <var>0</var>, <b>sizeof</b>(*<a class="local col6 ref" href="#66val" title='val' data-ref="66val">val</a>));</td></tr>
+<tr><th id="175">175</th><td>	<a class="tu ref" href="#rs" title='rs' data-use='r' data-ref="rs">rs</a>-&gt;<a class="tu ref" href="#_rs::rs_have" title='_rs::rs_have' data-use='w' data-ref="_rs::rs_have">rs_have</a> -= <b>sizeof</b>(*<a class="local col6 ref" href="#66val" title='val' data-ref="66val">val</a>);</td></tr>
+<tr><th id="176">176</th><td>}</td></tr>
+<tr><th id="177">177</th><td></td></tr>
+<tr><th id="178">178</th><td><a class="typedef" href="../../../../include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a></td></tr>
+<tr><th id="179">179</th><td><dfn class="decl def" id="arc4random" title='arc4random' data-ref="arc4random">arc4random</dfn>(<em>void</em>)</td></tr>
+<tr><th id="180">180</th><td>{</td></tr>
+<tr><th id="181">181</th><td>	<a class="typedef" href="../../../../include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col8 decl" id="68val" title='val' data-type='uint32_t' data-ref="68val">val</dfn>;</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td>	<a class="macro" href="../../../../private/thread_private.h.html#49" title="_thread_arc4_lock()" data-ref="_M/_ARC4_LOCK">_ARC4_LOCK</a>();</td></tr>
+<tr><th id="184">184</th><td>	<a class="tu ref" href="#_rs_random_u32" title='_rs_random_u32' data-use='c' data-ref="_rs_random_u32">_rs_random_u32</a>(&amp;<a class="local col8 ref" href="#68val" title='val' data-ref="68val">val</a>);</td></tr>
+<tr><th id="185">185</th><td>	<a class="macro" href="../../../../private/thread_private.h.html#50" title="_thread_arc4_unlock()" data-ref="_M/_ARC4_UNLOCK">_ARC4_UNLOCK</a>();</td></tr>
+<tr><th id="186">186</th><td>	<b>return</b> <a class="local col8 ref" href="#68val" title='val' data-ref="68val">val</a>;</td></tr>
+<tr><th id="187">187</th><td>}</td></tr>
+<tr><th id="188">188</th><td></td></tr>
+<tr><th id="189">189</th><td><em>void</em></td></tr>
+<tr><th id="190">190</th><td><dfn class="decl def" id="arc4random_buf" title='arc4random_buf' data-ref="arc4random_buf">arc4random_buf</dfn>(<em>void</em> *<dfn class="local col9 decl" id="69buf" title='buf' data-type='void *' data-ref="69buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="70n" title='n' data-type='size_t' data-ref="70n">n</dfn>)</td></tr>
+<tr><th id="191">191</th><td>{</td></tr>
+<tr><th id="192">192</th><td>	<a class="macro" href="../../../../private/thread_private.h.html#49" title="_thread_arc4_lock()" data-ref="_M/_ARC4_LOCK">_ARC4_LOCK</a>();</td></tr>
+<tr><th id="193">193</th><td>	<a class="tu ref" href="#_rs_random_buf" title='_rs_random_buf' data-use='c' data-ref="_rs_random_buf">_rs_random_buf</a>(<a class="local col9 ref" href="#69buf" title='buf' data-ref="69buf">buf</a>, <a class="local col0 ref" href="#70n" title='n' data-ref="70n">n</a>);</td></tr>
+<tr><th id="194">194</th><td>	<a class="macro" href="../../../../private/thread_private.h.html#50" title="_thread_arc4_unlock()" data-ref="_M/_ARC4_UNLOCK">_ARC4_UNLOCK</a>();</td></tr>
+<tr><th id="195">195</th><td>}</td></tr>
+<tr><th id="196">196</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

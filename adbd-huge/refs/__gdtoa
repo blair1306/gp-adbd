@@ -1,0 +1,36 @@
+<dec f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/gdtoa.h' l='109' type='char * __gdtoa(FPI * fpi, int be, ULong * bits, int * kindp, int mode, int ndigits, int * decpt, char ** rve)'/>
+<def f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/gdtoa.c' l='114' macro='1' type='char * __gdtoa(FPI * fpi, int be, ULong * bits, int * kindp, int mode, int ndigits, int * decpt, char ** rve)'/>
+<doc f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/gdtoa.c' l='79'>/* dtoa for IEEE arithmetic (dmg): convert double to ASCII string.
+ *
+ * Inspired by &quot;How to Print Floating-Point Numbers Accurately&quot; by
+ * Guy L. Steele, Jr. and Jon L. White [Proc. ACM SIGPLAN &apos;90, pp. 112-126].
+ *
+ * Modifications:
+ *	1. Rather than iterating, we use a simple numeric overestimate
+ *	   to determine k = floor(log10(d)).  We scale relevant
+ *	   quantities using O(log2(k)) rather than O(k) multiplications.
+ *	2. For some modes &gt; 2 (corresponding to ecvt and fcvt), we don&apos;t
+ *	   try to generate digits strictly left to right.  Instead, we
+ *	   compute with fewer bits and propagate the carry if necessary
+ *	   when rounding the final digit up.  This is often faster.
+ *	3. Under the assumption that input will be rounded nearest,
+ *	   mode 0 renders 1e23 as 1e23 rather than 9.999999999999999e22.
+ *	   That is, we allow equality in stopping tests when the
+ *	   round-nearest rule will give the same floating-point value
+ *	   as would satisfaction of the stopping test with strict
+ *	   inequality.
+ *	4. We remove common factors of powers of 2 from relevant
+ *	   quantities.
+ *	5. When converting floating-point integers less than 1e16,
+ *	   we use floating-point arithmetic rather than resorting
+ *	   to multiple-precision integers.
+ *	6. When asked to produce fewer than 15 digits, we first try
+ *	   to get by with floating-point arithmetic; we resort to
+ *	   multiple-precision integer arithmetic only if we cannot
+ *	   guarantee that the floating-point calculation has given
+ *	   the correctly rounded result.  For k requested digits and
+ *	   &quot;uniformly&quot; distributed input, the probability is
+ *	   something like 10^(k-15) that we must resort to the Long
+ *	   calculation.
+ */</doc>
+<use f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/ldtoa.c' l='104' macro='1' u='c'/>

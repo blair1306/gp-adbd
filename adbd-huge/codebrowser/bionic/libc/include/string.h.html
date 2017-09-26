@@ -1,0 +1,388 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>string.h source code [codebrowser/bionic/libc/include/string.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/string.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>include</a>/<a href='string.h.html'>string.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="29">ifndef</span> <span class="macro" data-ref="_M/_STRING_H">_STRING_H</span></u></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/_STRING_H" data-ref="_M/_STRING_H">_STRING_H</dfn></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="xlocale.h.html">&lt;xlocale.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><a class="macro" href="sys/cdefs.h.html#85" title="extern &quot;C&quot; {" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#<span data-ppcond="38">if</span> defined(<a class="macro" href="sys/cdefs.h.html#256" data-ref="_M/__USE_BSD">__USE_BSD</a>)</u></td></tr>
+<tr><th id="39">39</th><td><u>#include <a href="strings.h.html">&lt;strings.h&gt;</a></u></td></tr>
+<tr><th id="40">40</th><td><u>#<span data-ppcond="38">endif</span></u></td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><b>extern</b> <em>void</em>*  <dfn class="decl" id="memccpy" title='memccpy' data-ref="memccpy">memccpy</dfn>(<em>void</em>* <b>__restrict</b>, <em>const</em> <em>void</em>* <b>__restrict</b>, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="43">43</th><td><b>extern</b> <em>void</em>*  <a class="decl" href="#memchr" title='memchr' data-ref="memchr">memchr</a>(<em>const</em> <em>void</em> *, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="44">44</th><td><b>extern</b> <em>void</em>*  <a class="decl" href="#memrchr" title='memrchr' data-ref="memrchr">memrchr</a>(<em>const</em> <em>void</em> *, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="45">45</th><td><b>extern</b> <em>int</em>    <dfn class="decl" id="memcmp" title='memcmp' data-ref="memcmp">memcmp</dfn>(<em>const</em> <em>void</em> *, <em>const</em> <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="46">46</th><td><b>extern</b> <em>void</em>*  <a class="decl" href="#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<em>void</em>* <b>__restrict</b>, <em>const</em> <em>void</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="47">47</th><td><u>#<span data-ppcond="47">if</span> defined(<a class="macro" href="sys/cdefs.h.html#246" data-ref="_M/__USE_GNU">__USE_GNU</a>)</u></td></tr>
+<tr><th id="48">48</th><td><b>extern</b> <em>void</em>*  <dfn class="decl" id="mempcpy" title='mempcpy' data-ref="mempcpy">mempcpy</dfn>(<em>void</em>* <b>__restrict</b>, <em>const</em> <em>void</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="49">49</th><td><u>#<span data-ppcond="47">endif</span></u></td></tr>
+<tr><th id="50">50</th><td><b>extern</b> <em>void</em>*  <a class="decl" href="#memmove" title='memmove' data-ref="memmove">memmove</a>(<em>void</em> *, <em>const</em> <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="51">51</th><td><b>extern</b> <em>void</em>*  <a class="decl" href="#memset" title='memset' data-ref="memset">memset</a>(<em>void</em> *, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="52">52</th><td><b>extern</b> <em>void</em>*  <dfn class="decl" id="memmem" title='memmem' data-ref="memmem">memmem</dfn>(<em>const</em> <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>const</em> <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><b>extern</b> <em>char</em>*  <a class="decl" href="#strchr" title='strchr' data-ref="strchr">strchr</a>(<em>const</em> <em>char</em> *, <em>int</em>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="55">55</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="__strchr_chk" title='__strchr_chk' data-ref="__strchr_chk">__strchr_chk</dfn>(<em>const</em> <em>char</em> *, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="56">56</th><td><u>#<span data-ppcond="56">if</span> defined(<a class="macro" href="sys/cdefs.h.html#246" data-ref="_M/__USE_GNU">__USE_GNU</a>)</u></td></tr>
+<tr><th id="57">57</th><td><u>#<span data-ppcond="57">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="58">58</th><td><b>extern</b> <q>"C++"</q> <em>char</em>* <dfn class="decl" id="strchrnul" title='strchrnul' data-ref="strchrnul">strchrnul</dfn>(<em>char</em>*, <em>int</em>) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;strchrnul&quot;)" data-ref="_M/__RENAME">__RENAME</a>(strchrnul) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="59">59</th><td><b>extern</b> <q>"C++"</q> <em>const</em> <em>char</em>* <dfn class="decl" id="strchrnul" title='strchrnul' data-ref="strchrnul">strchrnul</dfn>(<em>const</em> <em>char</em>*, <em>int</em>) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;strchrnul&quot;)" data-ref="_M/__RENAME">__RENAME</a>(strchrnul) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="60">60</th><td><u>#<span data-ppcond="57">else</span></u></td></tr>
+<tr><th id="61">61</th><td><em>char</em>* strchrnul(<em>const</em> <em>char</em>*, <em>int</em>) __purefunc;</td></tr>
+<tr><th id="62">62</th><td><u>#<span data-ppcond="57">endif</span></u></td></tr>
+<tr><th id="63">63</th><td><u>#<span data-ppcond="56">endif</span></u></td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><b>extern</b> <em>char</em>*  <a class="decl" href="#strrchr" title='strrchr' data-ref="strrchr">strrchr</a>(<em>const</em> <em>char</em> *, <em>int</em>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="66">66</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="__strrchr_chk" title='__strrchr_chk' data-ref="__strrchr_chk">__strrchr_chk</dfn>(<em>const</em> <em>char</em> *, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="#strlen" title='strlen' data-ref="strlen">strlen</a>(<em>const</em> <em>char</em> *) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="69">69</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="__strlen_chk" title='__strlen_chk' data-ref="__strlen_chk">__strlen_chk</dfn>(<em>const</em> <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="70">70</th><td><b>extern</b> <em>int</em>    <dfn class="decl" id="strcmp" title='strcmp' data-ref="strcmp">strcmp</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="71">71</th><td><b>extern</b> <em>char</em>*  <a class="decl" href="#stpcpy" title='stpcpy' data-ref="stpcpy">stpcpy</a>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>);</td></tr>
+<tr><th id="72">72</th><td><b>extern</b> <em>char</em>*  <a class="decl" href="#strcpy" title='strcpy' data-ref="strcpy">strcpy</a>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>);</td></tr>
+<tr><th id="73">73</th><td><b>extern</b> <em>char</em>*  <a class="decl" href="#strcat" title='strcat' data-ref="strcat">strcat</a>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>);</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><em>int</em> <a class="decl" href="strings.h.html#strcasecmp" title='strcasecmp' data-ref="strcasecmp" id="strcasecmp">strcasecmp</a>(<em>const</em> <em>char</em>*, <em>const</em> <em>char</em>*) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="76">76</th><td><em>int</em> <a class="decl" href="strings.h.html#strcasecmp_l" title='strcasecmp_l' data-ref="strcasecmp_l" id="strcasecmp_l">strcasecmp_l</a>(<em>const</em> <em>char</em>*, <em>const</em> <em>char</em>*, <a class="typedef" href="xlocale.h.html#locale_t" title='locale_t' data-type='struct __locale_t *' data-ref="locale_t">locale_t</a>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="77">77</th><td><em>int</em> <a class="decl" href="strings.h.html#strncasecmp" title='strncasecmp' data-ref="strncasecmp" id="strncasecmp">strncasecmp</a>(<em>const</em> <em>char</em>*, <em>const</em> <em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="78">78</th><td><em>int</em> <a class="decl" href="strings.h.html#strncasecmp_l" title='strncasecmp_l' data-ref="strncasecmp_l" id="strncasecmp_l">strncasecmp_l</a>(<em>const</em> <em>char</em>*, <em>const</em> <em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <a class="typedef" href="xlocale.h.html#locale_t" title='locale_t' data-type='struct __locale_t *' data-ref="locale_t">locale_t</a>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><b>extern</b> <em>char</em>*  <dfn class="decl" id="strdup" title='strdup' data-ref="strdup">strdup</dfn>(<em>const</em> <em>char</em> *);</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><b>extern</b> <em>char</em>*  <dfn class="decl" id="strstr" title='strstr' data-ref="strstr">strstr</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="83">83</th><td><b>extern</b> <em>char</em>*  <dfn class="decl" id="strcasestr" title='strcasestr' data-ref="strcasestr">strcasestr</dfn>(<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="1haystack" title='haystack' data-type='const char *' data-ref="1haystack">haystack</dfn>, <em>const</em> <em>char</em> *<dfn class="local col2 decl" id="2needle" title='needle' data-type='const char *' data-ref="2needle">needle</dfn>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="84">84</th><td><b>extern</b> <em>char</em>*  <dfn class="decl" id="strtok" title='strtok' data-ref="strtok">strtok</dfn>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>);</td></tr>
+<tr><th id="85">85</th><td><b>extern</b> <em>char</em>*  <dfn class="decl" id="strtok_r" title='strtok_r' data-ref="strtok_r">strtok_r</dfn>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <em>char</em>** <b>__restrict</b>);</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="strerror" title='strerror' data-ref="strerror">strerror</dfn>(<em>int</em>);</td></tr>
+<tr><th id="88">88</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="strerror_l" title='strerror_l' data-ref="strerror_l">strerror_l</dfn>(<em>int</em>, <a class="typedef" href="xlocale.h.html#locale_t" title='locale_t' data-type='struct __locale_t *' data-ref="locale_t">locale_t</a>);</td></tr>
+<tr><th id="89">89</th><td><u>#<span data-ppcond="89">if</span> defined(<a class="macro" href="sys/cdefs.h.html#246" data-ref="_M/__USE_GNU">__USE_GNU</a>)</u></td></tr>
+<tr><th id="90">90</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="__gnu_strerror_r" title='strerror_r' data-ref="__gnu_strerror_r">strerror_r</dfn>(<em>int</em>, <em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;__gnu_strerror_r&quot;)" data-ref="_M/__RENAME">__RENAME</a>(__gnu_strerror_r);</td></tr>
+<tr><th id="91">91</th><td><u>#<span data-ppcond="89">else</span> /* POSIX */</u></td></tr>
+<tr><th id="92">92</th><td><b>extern</b> <em>int</em> strerror_r(<em>int</em>, <em>char</em>*, size_t);</td></tr>
+<tr><th id="93">93</th><td><u>#<span data-ppcond="89">endif</span></u></td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="strnlen" title='strnlen' data-ref="strnlen">strnlen</dfn>(<em>const</em> <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="96">96</th><td><b>extern</b> <em>char</em>*  <a class="decl" href="#strncat" title='strncat' data-ref="strncat">strncat</a>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="97">97</th><td><b>extern</b> <em>char</em>*  <dfn class="decl" id="strndup" title='strndup' data-ref="strndup">strndup</dfn>(<em>const</em> <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="98">98</th><td><b>extern</b> <em>int</em>    <dfn class="decl" id="strncmp" title='strncmp' data-ref="strncmp">strncmp</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="99">99</th><td><b>extern</b> <em>char</em>*  <a class="decl" href="#stpncpy" title='stpncpy' data-ref="stpncpy">stpncpy</a>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="100">100</th><td><b>extern</b> <em>char</em>*  <a class="decl" href="#strncpy" title='strncpy' data-ref="strncpy">strncpy</a>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="#strlcat" title='strlcat' data-ref="strlcat">strlcat</a>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="103">103</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="#strlcpy" title='strlcpy' data-ref="strlcpy">strlcpy</a>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="strcspn" title='strcspn' data-ref="strcspn">strcspn</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="106">106</th><td><b>extern</b> <em>char</em>*  <dfn class="decl" id="strpbrk" title='strpbrk' data-ref="strpbrk">strpbrk</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="107">107</th><td><b>extern</b> <em>char</em>*  <dfn class="decl" id="strsep" title='strsep' data-ref="strsep">strsep</dfn>(<em>char</em>** <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>);</td></tr>
+<tr><th id="108">108</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="strspn" title='strspn' data-ref="strspn">strspn</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *);</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><b>extern</b> <em>char</em>*  <dfn class="decl" id="strsignal" title='strsignal' data-ref="strsignal">strsignal</dfn>(<em>int</em>  <dfn class="local col3 decl" id="3sig" title='sig' data-type='int' data-ref="3sig">sig</dfn>);</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><b>extern</b> <em>int</em>    <dfn class="decl" id="strcoll" title='strcoll' data-ref="strcoll">strcoll</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="113">113</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="strxfrm" title='strxfrm' data-ref="strxfrm">strxfrm</dfn>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td><b>extern</b> <em>int</em>    <dfn class="decl" id="strcoll_l" title='strcoll_l' data-ref="strcoll_l">strcoll_l</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *, <a class="typedef" href="xlocale.h.html#locale_t" title='locale_t' data-type='struct __locale_t *' data-ref="locale_t">locale_t</a>) <a class="macro" href="sys/cdefs.h.html#212" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="116">116</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="strxfrm_l" title='strxfrm_l' data-ref="strxfrm_l">strxfrm_l</dfn>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <a class="typedef" href="xlocale.h.html#locale_t" title='locale_t' data-type='struct __locale_t *' data-ref="locale_t">locale_t</a>);</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><u>#<span data-ppcond="118">if</span> defined(<a class="macro" href="sys/cdefs.h.html#246" data-ref="_M/__USE_GNU">__USE_GNU</a>) &amp;&amp; !defined(<span class="macro" data-ref="_M/basename">basename</span>)</u></td></tr>
+<tr><th id="119">119</th><td><i>/*</i></td></tr>
+<tr><th id="120">120</th><td><i> * glibc has a basename in &lt;string.h&gt; that's different to the POSIX one in &lt;libgen.h&gt;.</i></td></tr>
+<tr><th id="121">121</th><td><i> * It doesn't modify its argument, and in C++ it's const-correct.</i></td></tr>
+<tr><th id="122">122</th><td><i> */</i></td></tr>
+<tr><th id="123">123</th><td></td></tr>
+<tr><th id="124">124</th><td><u>#<span data-ppcond="124">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="125">125</th><td><b>extern</b> <q>"C++"</q> <em>char</em>* <dfn class="decl" id="__gnu_basename" title='basename' data-ref="__gnu_basename">basename</dfn>(<em>char</em>*) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;__gnu_basename&quot;)" data-ref="_M/__RENAME">__RENAME</a>(__gnu_basename) <a class="macro" href="sys/cdefs.h.html#160" title="__attribute__((__nonnull__ (1)))" data-ref="_M/__nonnull">__nonnull</a>((<var>1</var>));</td></tr>
+<tr><th id="126">126</th><td><b>extern</b> <q>"C++"</q> <em>const</em> <em>char</em>* <dfn class="decl" id="__gnu_basename" title='basename' data-ref="__gnu_basename">basename</dfn>(<em>const</em> <em>char</em>*) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;__gnu_basename&quot;)" data-ref="_M/__RENAME">__RENAME</a>(__gnu_basename) <a class="macro" href="sys/cdefs.h.html#160" title="__attribute__((__nonnull__ (1)))" data-ref="_M/__nonnull">__nonnull</a>((<var>1</var>));</td></tr>
+<tr><th id="127">127</th><td><u>#<span data-ppcond="124">else</span></u></td></tr>
+<tr><th id="128">128</th><td><b>extern</b> <em>char</em>* basename(<em>const</em> <em>char</em>*) __RENAME(__gnu_basename) __nonnull((<var>1</var>));</td></tr>
+<tr><th id="129">129</th><td><u>#<span data-ppcond="124">endif</span></u></td></tr>
+<tr><th id="130">130</th><td><u>#<span data-ppcond="118">endif</span></u></td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><b>extern</b> <em>void</em>* <dfn class="decl" id="__memchr_chk" title='__memchr_chk' data-ref="__memchr_chk">__memchr_chk</dfn>(<em>const</em> <em>void</em>*, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="133">133</th><td><a class="macro" href="sys/cdefs.h.html#221" title="extern void __memchr_buf_size_error(void) __attribute__((__error__(&quot;memchr called with size bigger than buffer&quot;)))" data-ref="_M/__errordecl">__errordecl</a>(<dfn class="decl" id="__memchr_buf_size_error" title='__memchr_buf_size_error' data-ref="__memchr_buf_size_error">__memchr_buf_size_error</dfn>, <q>"memchr called with size bigger than buffer"</q>);</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td><b>extern</b> <em>void</em>* <dfn class="decl" id="__memrchr_chk" title='__memrchr_chk' data-ref="__memrchr_chk">__memrchr_chk</dfn>(<em>const</em> <em>void</em>*, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="136">136</th><td><a class="macro" href="sys/cdefs.h.html#221" title="extern void __memrchr_buf_size_error(void) __attribute__((__error__(&quot;memrchr called with size bigger than buffer&quot;)))" data-ref="_M/__errordecl">__errordecl</a>(<dfn class="decl" id="__memrchr_buf_size_error" title='__memrchr_buf_size_error' data-ref="__memrchr_buf_size_error">__memrchr_buf_size_error</dfn>, <q>"memrchr called with size bigger than buffer"</q>);</td></tr>
+<tr><th id="137">137</th><td><b>extern</b> <em>void</em>* <dfn class="decl" id="__memrchr_real" title='__memrchr_real' data-ref="__memrchr_real">__memrchr_real</dfn>(<em>const</em> <em>void</em>*, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;memrchr&quot;)" data-ref="_M/__RENAME">__RENAME</a>(memrchr);</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="__stpncpy_chk2" title='__stpncpy_chk2' data-ref="__stpncpy_chk2">__stpncpy_chk2</dfn>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="140">140</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="__strncpy_chk2" title='__strncpy_chk2' data-ref="__strncpy_chk2">__strncpy_chk2</dfn>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="141">141</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="__strlcpy_real" title='__strlcpy_real' data-ref="__strlcpy_real">__strlcpy_real</dfn>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;strlcpy&quot;)" data-ref="_M/__RENAME">__RENAME</a>(strlcpy);</td></tr>
+<tr><th id="142">142</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="__strlcpy_chk" title='__strlcpy_chk' data-ref="__strlcpy_chk">__strlcpy_chk</dfn>(<em>char</em> *, <em>const</em> <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="143">143</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="__strlcat_real" title='__strlcat_real' data-ref="__strlcat_real">__strlcat_real</dfn>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;strlcat&quot;)" data-ref="_M/__RENAME">__RENAME</a>(strlcat);</td></tr>
+<tr><th id="144">144</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="__strlcat_chk" title='__strlcat_chk' data-ref="__strlcat_chk">__strlcat_chk</dfn>(<em>char</em>* <b>__restrict</b>, <em>const</em> <em>char</em>* <b>__restrict</b>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td><u>#<span data-ppcond="146">if</span> defined(<a class="macro" href="sys/cdefs.h.html#419" data-ref="_M/__BIONIC_FORTIFY">__BIONIC_FORTIFY</a>)</u></td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="149">149</th><td><em>void</em>* <dfn class="decl def" id="memchr" title='memchr' data-ref="memchr">memchr</dfn>(<em>const</em> <em>void</em> *<dfn class="local col4 decl" id="4s" title='s' data-type='const void *' data-ref="4s">s</dfn>, <em>int</em> <dfn class="local col5 decl" id="5c" title='c' data-type='int' data-ref="5c">c</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="6n" title='n' data-type='size_t' data-ref="6n">n</dfn>) {</td></tr>
+<tr><th id="150">150</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="7bos" title='bos' data-type='size_t' data-ref="7bos">bos</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((s), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col4 ref" href="#4s" title='s' data-ref="4s">s</a>);</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><u>#<span data-ppcond="152">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="153">153</th><td>    <b>if</b> (bos == __BIONIC_FORTIFY_UNKNOWN_SIZE) {</td></tr>
+<tr><th id="154">154</th><td>        <b>return</b> __builtin_memchr(s, c, n);</td></tr>
+<tr><th id="155">155</th><td>    }</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td>    <b>if</b> (__builtin_constant_p(n) &amp;&amp; (n &gt; bos)) {</td></tr>
+<tr><th id="158">158</th><td>        __memchr_buf_size_error();</td></tr>
+<tr><th id="159">159</th><td>    }</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td>    <b>if</b> (__builtin_constant_p(n) &amp;&amp; (n &lt;= bos)) {</td></tr>
+<tr><th id="162">162</th><td>        <b>return</b> __builtin_memchr(s, c, n);</td></tr>
+<tr><th id="163">163</th><td>    }</td></tr>
+<tr><th id="164">164</th><td><u>#<span data-ppcond="152">endif</span></u></td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td>    <b>return</b> <a class="ref" href="#__memchr_chk" title='__memchr_chk' data-ref="__memchr_chk">__memchr_chk</a>(<a class="local col4 ref" href="#4s" title='s' data-ref="4s">s</a>, <a class="local col5 ref" href="#5c" title='c' data-ref="5c">c</a>, <a class="local col6 ref" href="#6n" title='n' data-ref="6n">n</a>, <a class="local col7 ref" href="#7bos" title='bos' data-ref="7bos">bos</a>);</td></tr>
+<tr><th id="167">167</th><td>}</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="170">170</th><td><em>void</em>* <dfn class="decl def" id="memrchr" title='memrchr' data-ref="memrchr">memrchr</dfn>(<em>const</em> <em>void</em> *<dfn class="local col8 decl" id="8s" title='s' data-type='const void *' data-ref="8s">s</dfn>, <em>int</em> <dfn class="local col9 decl" id="9c" title='c' data-type='int' data-ref="9c">c</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="10n" title='n' data-type='size_t' data-ref="10n">n</dfn>) {</td></tr>
+<tr><th id="171">171</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="11bos" title='bos' data-type='size_t' data-ref="11bos">bos</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((s), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col8 ref" href="#8s" title='s' data-ref="8s">s</a>);</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td><u>#<span data-ppcond="173">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="174">174</th><td>    <b>if</b> (bos == __BIONIC_FORTIFY_UNKNOWN_SIZE) {</td></tr>
+<tr><th id="175">175</th><td>        <b>return</b> __memrchr_real(s, c, n);</td></tr>
+<tr><th id="176">176</th><td>    }</td></tr>
+<tr><th id="177">177</th><td></td></tr>
+<tr><th id="178">178</th><td>    <b>if</b> (__builtin_constant_p(n) &amp;&amp; (n &gt; bos)) {</td></tr>
+<tr><th id="179">179</th><td>        __memrchr_buf_size_error();</td></tr>
+<tr><th id="180">180</th><td>    }</td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td>    <b>if</b> (__builtin_constant_p(n) &amp;&amp; (n &lt;= bos)) {</td></tr>
+<tr><th id="183">183</th><td>        <b>return</b> __memrchr_real(s, c, n);</td></tr>
+<tr><th id="184">184</th><td>    }</td></tr>
+<tr><th id="185">185</th><td><u>#<span data-ppcond="173">endif</span></u></td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td>    <b>return</b> <a class="ref" href="#__memrchr_chk" title='__memrchr_chk' data-ref="__memrchr_chk">__memrchr_chk</a>(<a class="local col8 ref" href="#8s" title='s' data-ref="8s">s</a>, <a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a>, <a class="local col0 ref" href="#10n" title='n' data-ref="10n">n</a>, <a class="local col1 ref" href="#11bos" title='bos' data-ref="11bos">bos</a>);</td></tr>
+<tr><th id="188">188</th><td>}</td></tr>
+<tr><th id="189">189</th><td></td></tr>
+<tr><th id="190">190</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="191">191</th><td><em>void</em>* <dfn class="decl def" id="memcpy" title='memcpy' data-ref="memcpy">memcpy</dfn>(<em>void</em>* <b>__restrict</b> <dfn class="local col2 decl" id="12dest" title='dest' data-type='void *__restrict' data-ref="12dest">dest</dfn>, <em>const</em> <em>void</em>* <b>__restrict</b> <dfn class="local col3 decl" id="13src" title='src' data-type='const void *__restrict' data-ref="13src">src</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="14copy_amount" title='copy_amount' data-type='size_t' data-ref="14copy_amount">copy_amount</dfn>) {</td></tr>
+<tr><th id="192">192</th><td>    <b>return</b> <a class="ref" href="#192" title='__builtin___memcpy_chk' data-ref="__builtin___memcpy_chk">__builtin___memcpy_chk</a>(<a class="local col2 ref" href="#12dest" title='dest' data-ref="12dest">dest</a>, <a class="local col3 ref" href="#13src" title='src' data-ref="13src">src</a>, <a class="local col4 ref" href="#14copy_amount" title='copy_amount' data-ref="14copy_amount">copy_amount</a>, <a class="macro" href="sys/cdefs.h.html#425" title="__builtin_object_size((dest), 0)" data-ref="_M/__bos0">__bos0</a>(<a class="local col2 ref" href="#12dest" title='dest' data-ref="12dest">dest</a>));</td></tr>
+<tr><th id="193">193</th><td>}</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="196">196</th><td><em>void</em>* <dfn class="decl def" id="memmove" title='memmove' data-ref="memmove">memmove</dfn>(<em>void</em> *<dfn class="local col5 decl" id="15dest" title='dest' data-type='void *' data-ref="15dest">dest</dfn>, <em>const</em> <em>void</em> *<dfn class="local col6 decl" id="16src" title='src' data-type='const void *' data-ref="16src">src</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="17len" title='len' data-type='size_t' data-ref="17len">len</dfn>) {</td></tr>
+<tr><th id="197">197</th><td>    <b>return</b> <a class="ref" href="#197" title='__builtin___memmove_chk' data-ref="__builtin___memmove_chk">__builtin___memmove_chk</a>(<a class="local col5 ref" href="#15dest" title='dest' data-ref="15dest">dest</a>, <a class="local col6 ref" href="#16src" title='src' data-ref="16src">src</a>, <a class="local col7 ref" href="#17len" title='len' data-ref="17len">len</a>, <a class="macro" href="sys/cdefs.h.html#425" title="__builtin_object_size((dest), 0)" data-ref="_M/__bos0">__bos0</a>(<a class="local col5 ref" href="#15dest" title='dest' data-ref="15dest">dest</a>));</td></tr>
+<tr><th id="198">198</th><td>}</td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="201">201</th><td><em>char</em>* <dfn class="decl def" id="stpcpy" title='stpcpy' data-ref="stpcpy">stpcpy</dfn>(<em>char</em>* <b>__restrict</b> <dfn class="local col8 decl" id="18dest" title='dest' data-type='char *__restrict' data-ref="18dest">dest</dfn>, <em>const</em> <em>char</em>* <b>__restrict</b> <dfn class="local col9 decl" id="19src" title='src' data-type='const char *__restrict' data-ref="19src">src</dfn>) {</td></tr>
+<tr><th id="202">202</th><td>    <b>return</b> <a class="ref" href="#202" title='__builtin___stpcpy_chk' data-ref="__builtin___stpcpy_chk">__builtin___stpcpy_chk</a>(<a class="local col8 ref" href="#18dest" title='dest' data-ref="18dest">dest</a>, <a class="local col9 ref" href="#19src" title='src' data-ref="19src">src</a>, <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((dest), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col8 ref" href="#18dest" title='dest' data-ref="18dest">dest</a>));</td></tr>
+<tr><th id="203">203</th><td>}</td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="206">206</th><td><em>char</em>* <dfn class="decl def" id="strcpy" title='strcpy' data-ref="strcpy">strcpy</dfn>(<em>char</em>* <b>__restrict</b> <dfn class="local col0 decl" id="20dest" title='dest' data-type='char *__restrict' data-ref="20dest">dest</dfn>, <em>const</em> <em>char</em>* <b>__restrict</b> <dfn class="local col1 decl" id="21src" title='src' data-type='const char *__restrict' data-ref="21src">src</dfn>) {</td></tr>
+<tr><th id="207">207</th><td>    <b>return</b> <a class="ref" href="#207" title='__builtin___strcpy_chk' data-ref="__builtin___strcpy_chk">__builtin___strcpy_chk</a>(<a class="local col0 ref" href="#20dest" title='dest' data-ref="20dest">dest</a>, <a class="local col1 ref" href="#21src" title='src' data-ref="21src">src</a>, <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((dest), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col0 ref" href="#20dest" title='dest' data-ref="20dest">dest</a>));</td></tr>
+<tr><th id="208">208</th><td>}</td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="211">211</th><td><em>char</em>* <dfn class="decl def" id="stpncpy" title='stpncpy' data-ref="stpncpy">stpncpy</dfn>(<em>char</em>* <b>__restrict</b> <dfn class="local col2 decl" id="22dest" title='dest' data-type='char *__restrict' data-ref="22dest">dest</dfn>, <em>const</em> <em>char</em>* <b>__restrict</b> <dfn class="local col3 decl" id="23src" title='src' data-type='const char *__restrict' data-ref="23src">src</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="24n" title='n' data-type='size_t' data-ref="24n">n</dfn>) {</td></tr>
+<tr><th id="212">212</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="25bos_dest" title='bos_dest' data-type='size_t' data-ref="25bos_dest">bos_dest</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((dest), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col2 ref" href="#22dest" title='dest' data-ref="22dest">dest</a>);</td></tr>
+<tr><th id="213">213</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="26bos_src" title='bos_src' data-type='size_t' data-ref="26bos_src">bos_src</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((src), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col3 ref" href="#23src" title='src' data-ref="23src">src</a>);</td></tr>
+<tr><th id="214">214</th><td></td></tr>
+<tr><th id="215">215</th><td>    <b>if</b> (<a class="local col6 ref" href="#26bos_src" title='bos_src' data-ref="26bos_src">bos_src</a> == <a class="macro" href="sys/cdefs.h.html#428" title="((size_t) -1)" data-ref="_M/__BIONIC_FORTIFY_UNKNOWN_SIZE">__BIONIC_FORTIFY_UNKNOWN_SIZE</a>) {</td></tr>
+<tr><th id="216">216</th><td>        <b>return</b> <a class="ref" href="#216" title='__builtin___stpncpy_chk' data-ref="__builtin___stpncpy_chk">__builtin___stpncpy_chk</a>(<a class="local col2 ref" href="#22dest" title='dest' data-ref="22dest">dest</a>, <a class="local col3 ref" href="#23src" title='src' data-ref="23src">src</a>, <a class="local col4 ref" href="#24n" title='n' data-ref="24n">n</a>, <a class="local col5 ref" href="#25bos_dest" title='bos_dest' data-ref="25bos_dest">bos_dest</a>);</td></tr>
+<tr><th id="217">217</th><td>    }</td></tr>
+<tr><th id="218">218</th><td></td></tr>
+<tr><th id="219">219</th><td>    <b>if</b> (<a class="ref" href="#219" title='__builtin_constant_p' data-ref="__builtin_constant_p">__builtin_constant_p</a>(<a class="local col4 ref" href="#24n" title='n' data-ref="24n">n</a>) &amp;&amp; (<a class="local col4 ref" href="#24n" title='n' data-ref="24n">n</a> &lt;= <a class="local col6 ref" href="#26bos_src" title='bos_src' data-ref="26bos_src">bos_src</a>)) {</td></tr>
+<tr><th id="220">220</th><td>        <b>return</b> <a class="ref" href="#216" title='__builtin___stpncpy_chk' data-ref="__builtin___stpncpy_chk">__builtin___stpncpy_chk</a>(<a class="local col2 ref" href="#22dest" title='dest' data-ref="22dest">dest</a>, <a class="local col3 ref" href="#23src" title='src' data-ref="23src">src</a>, <a class="local col4 ref" href="#24n" title='n' data-ref="24n">n</a>, <a class="local col5 ref" href="#25bos_dest" title='bos_dest' data-ref="25bos_dest">bos_dest</a>);</td></tr>
+<tr><th id="221">221</th><td>    }</td></tr>
+<tr><th id="222">222</th><td></td></tr>
+<tr><th id="223">223</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="27slen" title='slen' data-type='size_t' data-ref="27slen">slen</dfn> = <a class="ref" href="#223" title='__builtin_strlen' data-ref="__builtin_strlen">__builtin_strlen</a>(<a class="local col3 ref" href="#23src" title='src' data-ref="23src">src</a>);</td></tr>
+<tr><th id="224">224</th><td>    <b>if</b> (<a class="ref" href="#219" title='__builtin_constant_p' data-ref="__builtin_constant_p">__builtin_constant_p</a>(<a class="local col7 ref" href="#27slen" title='slen' data-ref="27slen">slen</a>)) {</td></tr>
+<tr><th id="225">225</th><td>        <b>return</b> <a class="ref" href="#216" title='__builtin___stpncpy_chk' data-ref="__builtin___stpncpy_chk">__builtin___stpncpy_chk</a>(<a class="local col2 ref" href="#22dest" title='dest' data-ref="22dest">dest</a>, <a class="local col3 ref" href="#23src" title='src' data-ref="23src">src</a>, <a class="local col4 ref" href="#24n" title='n' data-ref="24n">n</a>, <a class="local col5 ref" href="#25bos_dest" title='bos_dest' data-ref="25bos_dest">bos_dest</a>);</td></tr>
+<tr><th id="226">226</th><td>    }</td></tr>
+<tr><th id="227">227</th><td></td></tr>
+<tr><th id="228">228</th><td>    <b>return</b> <a class="ref" href="#__stpncpy_chk2" title='__stpncpy_chk2' data-ref="__stpncpy_chk2">__stpncpy_chk2</a>(<a class="local col2 ref" href="#22dest" title='dest' data-ref="22dest">dest</a>, <a class="local col3 ref" href="#23src" title='src' data-ref="23src">src</a>, <a class="local col4 ref" href="#24n" title='n' data-ref="24n">n</a>, <a class="local col5 ref" href="#25bos_dest" title='bos_dest' data-ref="25bos_dest">bos_dest</a>, <a class="local col6 ref" href="#26bos_src" title='bos_src' data-ref="26bos_src">bos_src</a>);</td></tr>
+<tr><th id="229">229</th><td>}</td></tr>
+<tr><th id="230">230</th><td></td></tr>
+<tr><th id="231">231</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="232">232</th><td><em>char</em>* <dfn class="decl def" id="strncpy" title='strncpy' data-ref="strncpy">strncpy</dfn>(<em>char</em>* <b>__restrict</b> <dfn class="local col8 decl" id="28dest" title='dest' data-type='char *__restrict' data-ref="28dest">dest</dfn>, <em>const</em> <em>char</em>* <b>__restrict</b> <dfn class="local col9 decl" id="29src" title='src' data-type='const char *__restrict' data-ref="29src">src</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="30n" title='n' data-type='size_t' data-ref="30n">n</dfn>) {</td></tr>
+<tr><th id="233">233</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="31bos_dest" title='bos_dest' data-type='size_t' data-ref="31bos_dest">bos_dest</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((dest), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col8 ref" href="#28dest" title='dest' data-ref="28dest">dest</a>);</td></tr>
+<tr><th id="234">234</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="32bos_src" title='bos_src' data-type='size_t' data-ref="32bos_src">bos_src</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((src), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col9 ref" href="#29src" title='src' data-ref="29src">src</a>);</td></tr>
+<tr><th id="235">235</th><td></td></tr>
+<tr><th id="236">236</th><td>    <b>if</b> (<a class="local col2 ref" href="#32bos_src" title='bos_src' data-ref="32bos_src">bos_src</a> == <a class="macro" href="sys/cdefs.h.html#428" title="((size_t) -1)" data-ref="_M/__BIONIC_FORTIFY_UNKNOWN_SIZE">__BIONIC_FORTIFY_UNKNOWN_SIZE</a>) {</td></tr>
+<tr><th id="237">237</th><td>        <b>return</b> <a class="ref" href="#237" title='__builtin___strncpy_chk' data-ref="__builtin___strncpy_chk">__builtin___strncpy_chk</a>(<a class="local col8 ref" href="#28dest" title='dest' data-ref="28dest">dest</a>, <a class="local col9 ref" href="#29src" title='src' data-ref="29src">src</a>, <a class="local col0 ref" href="#30n" title='n' data-ref="30n">n</a>, <a class="local col1 ref" href="#31bos_dest" title='bos_dest' data-ref="31bos_dest">bos_dest</a>);</td></tr>
+<tr><th id="238">238</th><td>    }</td></tr>
+<tr><th id="239">239</th><td></td></tr>
+<tr><th id="240">240</th><td>    <b>if</b> (<a class="ref" href="#219" title='__builtin_constant_p' data-ref="__builtin_constant_p">__builtin_constant_p</a>(<a class="local col0 ref" href="#30n" title='n' data-ref="30n">n</a>) &amp;&amp; (<a class="local col0 ref" href="#30n" title='n' data-ref="30n">n</a> &lt;= <a class="local col2 ref" href="#32bos_src" title='bos_src' data-ref="32bos_src">bos_src</a>)) {</td></tr>
+<tr><th id="241">241</th><td>        <b>return</b> <a class="ref" href="#237" title='__builtin___strncpy_chk' data-ref="__builtin___strncpy_chk">__builtin___strncpy_chk</a>(<a class="local col8 ref" href="#28dest" title='dest' data-ref="28dest">dest</a>, <a class="local col9 ref" href="#29src" title='src' data-ref="29src">src</a>, <a class="local col0 ref" href="#30n" title='n' data-ref="30n">n</a>, <a class="local col1 ref" href="#31bos_dest" title='bos_dest' data-ref="31bos_dest">bos_dest</a>);</td></tr>
+<tr><th id="242">242</th><td>    }</td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="33slen" title='slen' data-type='size_t' data-ref="33slen">slen</dfn> = <a class="ref" href="#223" title='__builtin_strlen' data-ref="__builtin_strlen">__builtin_strlen</a>(<a class="local col9 ref" href="#29src" title='src' data-ref="29src">src</a>);</td></tr>
+<tr><th id="245">245</th><td>    <b>if</b> (<a class="ref" href="#219" title='__builtin_constant_p' data-ref="__builtin_constant_p">__builtin_constant_p</a>(<a class="local col3 ref" href="#33slen" title='slen' data-ref="33slen">slen</a>)) {</td></tr>
+<tr><th id="246">246</th><td>        <b>return</b> <a class="ref" href="#237" title='__builtin___strncpy_chk' data-ref="__builtin___strncpy_chk">__builtin___strncpy_chk</a>(<a class="local col8 ref" href="#28dest" title='dest' data-ref="28dest">dest</a>, <a class="local col9 ref" href="#29src" title='src' data-ref="29src">src</a>, <a class="local col0 ref" href="#30n" title='n' data-ref="30n">n</a>, <a class="local col1 ref" href="#31bos_dest" title='bos_dest' data-ref="31bos_dest">bos_dest</a>);</td></tr>
+<tr><th id="247">247</th><td>    }</td></tr>
+<tr><th id="248">248</th><td></td></tr>
+<tr><th id="249">249</th><td>    <b>return</b> <a class="ref" href="#__strncpy_chk2" title='__strncpy_chk2' data-ref="__strncpy_chk2">__strncpy_chk2</a>(<a class="local col8 ref" href="#28dest" title='dest' data-ref="28dest">dest</a>, <a class="local col9 ref" href="#29src" title='src' data-ref="29src">src</a>, <a class="local col0 ref" href="#30n" title='n' data-ref="30n">n</a>, <a class="local col1 ref" href="#31bos_dest" title='bos_dest' data-ref="31bos_dest">bos_dest</a>, <a class="local col2 ref" href="#32bos_src" title='bos_src' data-ref="32bos_src">bos_src</a>);</td></tr>
+<tr><th id="250">250</th><td>}</td></tr>
+<tr><th id="251">251</th><td></td></tr>
+<tr><th id="252">252</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="253">253</th><td><em>char</em>* <dfn class="decl def" id="strcat" title='strcat' data-ref="strcat">strcat</dfn>(<em>char</em>* <b>__restrict</b> <dfn class="local col4 decl" id="34dest" title='dest' data-type='char *__restrict' data-ref="34dest">dest</dfn>, <em>const</em> <em>char</em>* <b>__restrict</b> <dfn class="local col5 decl" id="35src" title='src' data-type='const char *__restrict' data-ref="35src">src</dfn>) {</td></tr>
+<tr><th id="254">254</th><td>    <b>return</b> <a class="ref" href="#254" title='__builtin___strcat_chk' data-ref="__builtin___strcat_chk">__builtin___strcat_chk</a>(<a class="local col4 ref" href="#34dest" title='dest' data-ref="34dest">dest</a>, <a class="local col5 ref" href="#35src" title='src' data-ref="35src">src</a>, <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((dest), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col4 ref" href="#34dest" title='dest' data-ref="34dest">dest</a>));</td></tr>
+<tr><th id="255">255</th><td>}</td></tr>
+<tr><th id="256">256</th><td></td></tr>
+<tr><th id="257">257</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="258">258</th><td><em>char</em> *<dfn class="decl def" id="strncat" title='strncat' data-ref="strncat">strncat</dfn>(<em>char</em>* <b>__restrict</b> <dfn class="local col6 decl" id="36dest" title='dest' data-type='char *__restrict' data-ref="36dest">dest</dfn>, <em>const</em> <em>char</em>* <b>__restrict</b> <dfn class="local col7 decl" id="37src" title='src' data-type='const char *__restrict' data-ref="37src">src</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="38n" title='n' data-type='size_t' data-ref="38n">n</dfn>) {</td></tr>
+<tr><th id="259">259</th><td>    <b>return</b> <a class="ref" href="#259" title='__builtin___strncat_chk' data-ref="__builtin___strncat_chk">__builtin___strncat_chk</a>(<a class="local col6 ref" href="#36dest" title='dest' data-ref="36dest">dest</a>, <a class="local col7 ref" href="#37src" title='src' data-ref="37src">src</a>, <a class="local col8 ref" href="#38n" title='n' data-ref="38n">n</a>, <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((dest), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col6 ref" href="#36dest" title='dest' data-ref="36dest">dest</a>));</td></tr>
+<tr><th id="260">260</th><td>}</td></tr>
+<tr><th id="261">261</th><td></td></tr>
+<tr><th id="262">262</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="263">263</th><td><em>void</em>* <dfn class="decl def" id="memset" title='memset' data-ref="memset">memset</dfn>(<em>void</em> *<dfn class="local col9 decl" id="39s" title='s' data-type='void *' data-ref="39s">s</dfn>, <em>int</em> <dfn class="local col0 decl" id="40c" title='c' data-type='int' data-ref="40c">c</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="41n" title='n' data-type='size_t' data-ref="41n">n</dfn>) {</td></tr>
+<tr><th id="264">264</th><td>    <b>return</b> <a class="ref" href="#264" title='__builtin___memset_chk' data-ref="__builtin___memset_chk">__builtin___memset_chk</a>(<a class="local col9 ref" href="#39s" title='s' data-ref="39s">s</a>, <a class="local col0 ref" href="#40c" title='c' data-ref="40c">c</a>, <a class="local col1 ref" href="#41n" title='n' data-ref="41n">n</a>, <a class="macro" href="sys/cdefs.h.html#425" title="__builtin_object_size((s), 0)" data-ref="_M/__bos0">__bos0</a>(<a class="local col9 ref" href="#39s" title='s' data-ref="39s">s</a>));</td></tr>
+<tr><th id="265">265</th><td>}</td></tr>
+<tr><th id="266">266</th><td></td></tr>
+<tr><th id="267">267</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="268">268</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl def" id="strlcpy" title='strlcpy' data-ref="strlcpy">strlcpy</dfn>(<em>char</em>* <b>__restrict</b> <dfn class="local col2 decl" id="42dest" title='dest' data-type='char *__restrict' data-ref="42dest">dest</dfn>, <em>const</em> <em>char</em>* <b>__restrict</b> <dfn class="local col3 decl" id="43src" title='src' data-type='const char *__restrict' data-ref="43src">src</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="44size" title='size' data-type='size_t' data-ref="44size">size</dfn>) {</td></tr>
+<tr><th id="269">269</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="45bos" title='bos' data-type='size_t' data-ref="45bos">bos</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((dest), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col2 ref" href="#42dest" title='dest' data-ref="42dest">dest</a>);</td></tr>
+<tr><th id="270">270</th><td></td></tr>
+<tr><th id="271">271</th><td><u>#<span data-ppcond="271">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="272">272</th><td>    <i>// Compiler doesn't know destination size. Don't call __strlcpy_chk</i></td></tr>
+<tr><th id="273">273</th><td>    <b>if</b> (bos == __BIONIC_FORTIFY_UNKNOWN_SIZE) {</td></tr>
+<tr><th id="274">274</th><td>        <b>return</b> __strlcpy_real(dest, src, size);</td></tr>
+<tr><th id="275">275</th><td>    }</td></tr>
+<tr><th id="276">276</th><td></td></tr>
+<tr><th id="277">277</th><td>    <i>// Compiler can prove, at compile time, that the passed in size</i></td></tr>
+<tr><th id="278">278</th><td><i>    // is always &lt;= the actual object size. Don't call __strlcpy_chk</i></td></tr>
+<tr><th id="279">279</th><td>    <b>if</b> (__builtin_constant_p(size) &amp;&amp; (size &lt;= bos)) {</td></tr>
+<tr><th id="280">280</th><td>        <b>return</b> __strlcpy_real(dest, src, size);</td></tr>
+<tr><th id="281">281</th><td>    }</td></tr>
+<tr><th id="282">282</th><td><u>#<span data-ppcond="271">endif</span> /* !defined(__clang__) */</u></td></tr>
+<tr><th id="283">283</th><td></td></tr>
+<tr><th id="284">284</th><td>    <b>return</b> <a class="ref" href="#__strlcpy_chk" title='__strlcpy_chk' data-ref="__strlcpy_chk">__strlcpy_chk</a>(<a class="local col2 ref" href="#42dest" title='dest' data-ref="42dest">dest</a>, <a class="local col3 ref" href="#43src" title='src' data-ref="43src">src</a>, <a class="local col4 ref" href="#44size" title='size' data-ref="44size">size</a>, <a class="local col5 ref" href="#45bos" title='bos' data-ref="45bos">bos</a>);</td></tr>
+<tr><th id="285">285</th><td>}</td></tr>
+<tr><th id="286">286</th><td></td></tr>
+<tr><th id="287">287</th><td></td></tr>
+<tr><th id="288">288</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="289">289</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl def" id="strlcat" title='strlcat' data-ref="strlcat">strlcat</dfn>(<em>char</em>* <b>__restrict</b> <dfn class="local col6 decl" id="46dest" title='dest' data-type='char *__restrict' data-ref="46dest">dest</dfn>, <em>const</em> <em>char</em>* <b>__restrict</b> <dfn class="local col7 decl" id="47src" title='src' data-type='const char *__restrict' data-ref="47src">src</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="48size" title='size' data-type='size_t' data-ref="48size">size</dfn>) {</td></tr>
+<tr><th id="290">290</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="49bos" title='bos' data-type='size_t' data-ref="49bos">bos</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((dest), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col6 ref" href="#46dest" title='dest' data-ref="46dest">dest</a>);</td></tr>
+<tr><th id="291">291</th><td></td></tr>
+<tr><th id="292">292</th><td><u>#<span data-ppcond="292">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="293">293</th><td>    <i>// Compiler doesn't know destination size. Don't call __strlcat_chk</i></td></tr>
+<tr><th id="294">294</th><td>    <b>if</b> (bos == __BIONIC_FORTIFY_UNKNOWN_SIZE) {</td></tr>
+<tr><th id="295">295</th><td>        <b>return</b> __strlcat_real(dest, src, size);</td></tr>
+<tr><th id="296">296</th><td>    }</td></tr>
+<tr><th id="297">297</th><td></td></tr>
+<tr><th id="298">298</th><td>    <i>// Compiler can prove, at compile time, that the passed in size</i></td></tr>
+<tr><th id="299">299</th><td><i>    // is always &lt;= the actual object size. Don't call __strlcat_chk</i></td></tr>
+<tr><th id="300">300</th><td>    <b>if</b> (__builtin_constant_p(size) &amp;&amp; (size &lt;= bos)) {</td></tr>
+<tr><th id="301">301</th><td>        <b>return</b> __strlcat_real(dest, src, size);</td></tr>
+<tr><th id="302">302</th><td>    }</td></tr>
+<tr><th id="303">303</th><td><u>#<span data-ppcond="292">endif</span> /* !defined(__clang__) */</u></td></tr>
+<tr><th id="304">304</th><td></td></tr>
+<tr><th id="305">305</th><td>    <b>return</b> <a class="ref" href="#__strlcat_chk" title='__strlcat_chk' data-ref="__strlcat_chk">__strlcat_chk</a>(<a class="local col6 ref" href="#46dest" title='dest' data-ref="46dest">dest</a>, <a class="local col7 ref" href="#47src" title='src' data-ref="47src">src</a>, <a class="local col8 ref" href="#48size" title='size' data-ref="48size">size</a>, <a class="local col9 ref" href="#49bos" title='bos' data-ref="49bos">bos</a>);</td></tr>
+<tr><th id="306">306</th><td>}</td></tr>
+<tr><th id="307">307</th><td></td></tr>
+<tr><th id="308">308</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="309">309</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl def" id="strlen" title='strlen' data-ref="strlen">strlen</dfn>(<em>const</em> <em>char</em> *<dfn class="local col0 decl" id="50s" title='s' data-type='const char *' data-ref="50s">s</dfn>) {</td></tr>
+<tr><th id="310">310</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="51bos" title='bos' data-type='size_t' data-ref="51bos">bos</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((s), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col0 ref" href="#50s" title='s' data-ref="50s">s</a>);</td></tr>
+<tr><th id="311">311</th><td></td></tr>
+<tr><th id="312">312</th><td><u>#<span data-ppcond="312">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="313">313</th><td>    <i>// Compiler doesn't know destination size. Don't call __strlen_chk</i></td></tr>
+<tr><th id="314">314</th><td>    <b>if</b> (bos == __BIONIC_FORTIFY_UNKNOWN_SIZE) {</td></tr>
+<tr><th id="315">315</th><td>        <b>return</b> __builtin_strlen(s);</td></tr>
+<tr><th id="316">316</th><td>    }</td></tr>
+<tr><th id="317">317</th><td></td></tr>
+<tr><th id="318">318</th><td>    size_t slen = __builtin_strlen(s);</td></tr>
+<tr><th id="319">319</th><td>    <b>if</b> (__builtin_constant_p(slen)) {</td></tr>
+<tr><th id="320">320</th><td>        <b>return</b> slen;</td></tr>
+<tr><th id="321">321</th><td>    }</td></tr>
+<tr><th id="322">322</th><td><u>#<span data-ppcond="312">endif</span> /* !defined(__clang__) */</u></td></tr>
+<tr><th id="323">323</th><td></td></tr>
+<tr><th id="324">324</th><td>    <b>return</b> <a class="ref" href="#__strlen_chk" title='__strlen_chk' data-ref="__strlen_chk">__strlen_chk</a>(<a class="local col0 ref" href="#50s" title='s' data-ref="50s">s</a>, <a class="local col1 ref" href="#51bos" title='bos' data-ref="51bos">bos</a>);</td></tr>
+<tr><th id="325">325</th><td>}</td></tr>
+<tr><th id="326">326</th><td></td></tr>
+<tr><th id="327">327</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="328">328</th><td><em>char</em>* <dfn class="decl def" id="strchr" title='strchr' data-ref="strchr">strchr</dfn>(<em>const</em> <em>char</em> *<dfn class="local col2 decl" id="52s" title='s' data-type='const char *' data-ref="52s">s</dfn>, <em>int</em> <dfn class="local col3 decl" id="53c" title='c' data-type='int' data-ref="53c">c</dfn>) {</td></tr>
+<tr><th id="329">329</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="54bos" title='bos' data-type='size_t' data-ref="54bos">bos</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((s), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col2 ref" href="#52s" title='s' data-ref="52s">s</a>);</td></tr>
+<tr><th id="330">330</th><td></td></tr>
+<tr><th id="331">331</th><td><u>#<span data-ppcond="331">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="332">332</th><td>    <i>// Compiler doesn't know destination size. Don't call __strchr_chk</i></td></tr>
+<tr><th id="333">333</th><td>    <b>if</b> (bos == __BIONIC_FORTIFY_UNKNOWN_SIZE) {</td></tr>
+<tr><th id="334">334</th><td>        <b>return</b> __builtin_strchr(s, c);</td></tr>
+<tr><th id="335">335</th><td>    }</td></tr>
+<tr><th id="336">336</th><td></td></tr>
+<tr><th id="337">337</th><td>    size_t slen = __builtin_strlen(s);</td></tr>
+<tr><th id="338">338</th><td>    <b>if</b> (__builtin_constant_p(slen) &amp;&amp; (slen &lt; bos)) {</td></tr>
+<tr><th id="339">339</th><td>        <b>return</b> __builtin_strchr(s, c);</td></tr>
+<tr><th id="340">340</th><td>    }</td></tr>
+<tr><th id="341">341</th><td><u>#<span data-ppcond="331">endif</span> /* !defined(__clang__) */</u></td></tr>
+<tr><th id="342">342</th><td></td></tr>
+<tr><th id="343">343</th><td>    <b>return</b> <a class="ref" href="#__strchr_chk" title='__strchr_chk' data-ref="__strchr_chk">__strchr_chk</a>(<a class="local col2 ref" href="#52s" title='s' data-ref="52s">s</a>, <a class="local col3 ref" href="#53c" title='c' data-ref="53c">c</a>, <a class="local col4 ref" href="#54bos" title='bos' data-ref="54bos">bos</a>);</td></tr>
+<tr><th id="344">344</th><td>}</td></tr>
+<tr><th id="345">345</th><td></td></tr>
+<tr><th id="346">346</th><td><a class="macro" href="sys/cdefs.h.html#426" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="347">347</th><td><em>char</em>* <dfn class="decl def" id="strrchr" title='strrchr' data-ref="strrchr">strrchr</dfn>(<em>const</em> <em>char</em> *<dfn class="local col5 decl" id="55s" title='s' data-type='const char *' data-ref="55s">s</dfn>, <em>int</em> <dfn class="local col6 decl" id="56c" title='c' data-type='int' data-ref="56c">c</dfn>) {</td></tr>
+<tr><th id="348">348</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="57bos" title='bos' data-type='size_t' data-ref="57bos">bos</dfn> = <a class="macro" href="sys/cdefs.h.html#421" title="__builtin_object_size((s), 1)" data-ref="_M/__bos">__bos</a>(<a class="local col5 ref" href="#55s" title='s' data-ref="55s">s</a>);</td></tr>
+<tr><th id="349">349</th><td></td></tr>
+<tr><th id="350">350</th><td><u>#<span data-ppcond="350">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="351">351</th><td>    <i>// Compiler doesn't know destination size. Don't call __strrchr_chk</i></td></tr>
+<tr><th id="352">352</th><td>    <b>if</b> (bos == __BIONIC_FORTIFY_UNKNOWN_SIZE) {</td></tr>
+<tr><th id="353">353</th><td>        <b>return</b> __builtin_strrchr(s, c);</td></tr>
+<tr><th id="354">354</th><td>    }</td></tr>
+<tr><th id="355">355</th><td></td></tr>
+<tr><th id="356">356</th><td>    size_t slen = __builtin_strlen(s);</td></tr>
+<tr><th id="357">357</th><td>    <b>if</b> (__builtin_constant_p(slen) &amp;&amp; (slen &lt; bos)) {</td></tr>
+<tr><th id="358">358</th><td>        <b>return</b> __builtin_strrchr(s, c);</td></tr>
+<tr><th id="359">359</th><td>    }</td></tr>
+<tr><th id="360">360</th><td><u>#<span data-ppcond="350">endif</span> /* !defined(__clang__) */</u></td></tr>
+<tr><th id="361">361</th><td></td></tr>
+<tr><th id="362">362</th><td>    <b>return</b> <a class="ref" href="#__strrchr_chk" title='__strrchr_chk' data-ref="__strrchr_chk">__strrchr_chk</a>(<a class="local col5 ref" href="#55s" title='s' data-ref="55s">s</a>, <a class="local col6 ref" href="#56c" title='c' data-ref="56c">c</a>, <a class="local col7 ref" href="#57bos" title='bos' data-ref="57bos">bos</a>);</td></tr>
+<tr><th id="363">363</th><td>}</td></tr>
+<tr><th id="364">364</th><td></td></tr>
+<tr><th id="365">365</th><td></td></tr>
+<tr><th id="366">366</th><td><u>#<span data-ppcond="146">endif</span> /* defined(__BIONIC_FORTIFY) */</u></td></tr>
+<tr><th id="367">367</th><td></td></tr>
+<tr><th id="368">368</th><td><a class="macro" href="sys/cdefs.h.html#86" title="}" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="369">369</th><td></td></tr>
+<tr><th id="370">370</th><td><u>#<span data-ppcond="29">endif</span> /* _STRING_H */</u></td></tr>
+<tr><th id="371">371</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/__gnu_basename.cpp.html'>codebrowser/bionic/libc/bionic/__gnu_basename.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

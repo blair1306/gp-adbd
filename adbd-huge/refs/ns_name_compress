@@ -1,0 +1,18 @@
+<dec f='codebrowser/bionic/libc/include/arpa/nameser.h' l='600' type='int ns_name_compress(const char * , u_char * , size_t , const u_char ** , const u_char ** )'/>
+<def f='codebrowser/bionic/libc/dns/nameser/ns_name.c' l='656' ll='665' type='int ns_name_compress(const char * src, u_char * dst, size_t dstsiz, const u_char ** dnptrs, const u_char ** lastdnptr)'/>
+<doc f='codebrowser/bionic/libc/dns/nameser/ns_name.c' l='641'>/*
+ *	Compress a domain name into wire format, using compression pointers.
+ *
+ * return:
+ *	Number of bytes consumed in `dst&apos; or -1 (with errno set).
+ *
+ * notes:
+ *	&apos;dnptrs&apos; is an array of pointers to previous compressed names.
+ *	dnptrs[0] is a pointer to the beginning of the message.
+ *	The list ends with NULL.  &apos;lastdnptr&apos; is a pointer to the end of the
+ *	array pointed to by &apos;dnptrs&apos;. Side effect is to update the list of
+ *	pointers for labels inserted into the message as we compress the name.
+ *	If &apos;dnptr&apos; is NULL, we don&apos;t try to compress names. If &apos;lastdnptr&apos;
+ *	is NULL, we don&apos;t update the list.
+ */</doc>
+<use f='codebrowser/bionic/libc/dns/resolv/res_comp.c' l='123' u='c' c='__dn_comp'/>

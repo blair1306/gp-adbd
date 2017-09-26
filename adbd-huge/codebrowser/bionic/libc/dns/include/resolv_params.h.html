@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>resolv_params.h source code [codebrowser/bionic/libc/dns/include/resolv_params.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="__res_params "/>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/dns/include/resolv_params.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>bionic</a>/<a href='../..'>libc</a>/<a href='..'>dns</a>/<a href='./'>include</a>/<a href='resolv_params.h.html'>resolv_params.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2016 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/_RESOLV_PARAMS_H">_RESOLV_PARAMS_H</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/_RESOLV_PARAMS_H" data-ref="_M/_RESOLV_PARAMS_H">_RESOLV_PARAMS_H</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../include/stdint.h.html">&lt;stdint.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><i>/* Hard-coded defines */</i></td></tr>
+<tr><th id="23">23</th><td><u>#define	<dfn class="macro" id="_M/MAXNS" data-ref="_M/MAXNS">MAXNS</dfn>			3	/* max # name servers we'll track */</u></td></tr>
+<tr><th id="24">24</th><td><u>#define	<dfn class="macro" id="_M/MAXNSSAMPLES" data-ref="_M/MAXNSSAMPLES">MAXNSSAMPLES</dfn>		64	/* max # samples to store per server */</u></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><i>/* Defaults used for initializing __res_params */</i></td></tr>
+<tr><th id="27">27</th><td><u>#define <dfn class="macro" id="_M/SUCCESS_THRESHOLD" data-ref="_M/SUCCESS_THRESHOLD">SUCCESS_THRESHOLD</dfn>       75      /* if successes * 100 / total_samples is less than</u></td></tr>
+<tr><th id="28">28</th><td><u>					 * this value, the server is considered failing</u></td></tr>
+<tr><th id="29">29</th><td><u>					 */</u></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/NSSAMPLE_VALIDITY" data-ref="_M/NSSAMPLE_VALIDITY">NSSAMPLE_VALIDITY</dfn>	1800	/* Sample validity in seconds.</u></td></tr>
+<tr><th id="31">31</th><td><u>					 * Set to -1 to disable skipping failing</u></td></tr>
+<tr><th id="32">32</th><td><u>					 * servers.</u></td></tr>
+<tr><th id="33">33</th><td><u>					 */</u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><i>/* per-netid configuration parameters passed from netd to the resolver */</i></td></tr>
+<tr><th id="36">36</th><td><b>struct</b> <dfn class="type def" id="__res_params" title='__res_params' data-ref="__res_params">__res_params</dfn> {</td></tr>
+<tr><th id="37">37</th><td>    <a class="typedef" href="../../include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a> <dfn class="decl" id="__res_params::sample_validity" title='__res_params::sample_validity' data-ref="__res_params::sample_validity">sample_validity</dfn>; <i>// sample lifetime in s</i></td></tr>
+<tr><th id="38">38</th><td>    <i>// threshold of success / total samples below which a server is considered broken</i></td></tr>
+<tr><th id="39">39</th><td>    <a class="typedef" href="../../include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="__res_params::success_threshold" title='__res_params::success_threshold' data-ref="__res_params::success_threshold">success_threshold</dfn>; <i>// 0: disable, value / 100 otherwise</i></td></tr>
+<tr><th id="40">40</th><td>    <a class="typedef" href="../../include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="__res_params::min_samples" title='__res_params::min_samples' data-ref="__res_params::min_samples">min_samples</dfn>; <i>// min # samples needed for statistics to be considered meaningful</i></td></tr>
+<tr><th id="41">41</th><td>    <a class="typedef" href="../../include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="__res_params::max_samples" title='__res_params::max_samples' data-ref="__res_params::max_samples">max_samples</dfn>; <i>// max # samples taken into account for statistics</i></td></tr>
+<tr><th id="42">42</th><td>} <b>__attribute__</b>((__packed__));</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><u>#<span data-ppcond="17">endif</span> // _RESOLV_PARAMS_H</u></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../nameser/ns_name.c.html'>codebrowser/bionic/libc/dns/nameser/ns_name.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

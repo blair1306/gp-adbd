@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ext4_extents.h source code [codebrowser/system/extras/ext4_utils/ext4_extents.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ext4_ext_path,ext4_extent,ext4_extent_header,ext4_extent_idx "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/extras/ext4_utils/ext4_extents.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>extras</a>/<a href='./'>ext4_utils</a>/<a href='ext4_extents.h.html'>ext4_extents.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/****************************************************************************</i></td></tr>
+<tr><th id="2">2</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="3">3</th><td><i> ***</i></td></tr>
+<tr><th id="4">4</th><td><i> ***   This header was automatically generated from a Linux kernel header</i></td></tr>
+<tr><th id="5">5</th><td><i> ***   of the same name, to make information necessary for userspace to</i></td></tr>
+<tr><th id="6">6</th><td><i> ***   call into the kernel available to libc.  It contains only constants,</i></td></tr>
+<tr><th id="7">7</th><td><i> ***   structures, and macros generated from the original header, and thus,</i></td></tr>
+<tr><th id="8">8</th><td><i> ***   contains no copyrightable information.</i></td></tr>
+<tr><th id="9">9</th><td><i> ***</i></td></tr>
+<tr><th id="10">10</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="11">11</th><td><i> ****************************************************************************/</i></td></tr>
+<tr><th id="12">12</th><td><u>#<span data-ppcond="12">ifndef</span> <span class="macro" data-ref="_M/_EXT4_EXTENTS">_EXT4_EXTENTS</span></u></td></tr>
+<tr><th id="13">13</th><td><u>#define <dfn class="macro" id="_M/_EXT4_EXTENTS" data-ref="_M/_EXT4_EXTENTS">_EXT4_EXTENTS</dfn></u></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#include <a href="ext4.h.html">"ext4.h"</a></u></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#define <dfn class="macro" id="_M/AGGRESSIVE_TEST_" data-ref="_M/AGGRESSIVE_TEST_">AGGRESSIVE_TEST_</dfn></u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#define <dfn class="macro" id="_M/EXTENTS_STATS__" data-ref="_M/EXTENTS_STATS__">EXTENTS_STATS__</dfn></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#define <dfn class="macro" id="_M/CHECK_BINSEARCH__" data-ref="_M/CHECK_BINSEARCH__">CHECK_BINSEARCH__</dfn></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#define <dfn class="macro" id="_M/EXT_DEBUG__" data-ref="_M/EXT_DEBUG__">EXT_DEBUG__</dfn></u></td></tr>
+<tr><th id="24">24</th><td><u>#<span data-ppcond="24">ifdef</span> <span class="macro" data-ref="_M/EXT_DEBUG">EXT_DEBUG</span></u></td></tr>
+<tr><th id="25">25</th><td><u>#define ext_debug(a...) printk(a)</u></td></tr>
+<tr><th id="26">26</th><td><u>#<span data-ppcond="24">else</span></u></td></tr>
+<tr><th id="27">27</th><td><u>#define <dfn class="macro" id="_M/ext_debug" data-ref="_M/ext_debug">ext_debug</dfn>(a...)</u></td></tr>
+<tr><th id="28">28</th><td><u>#<span data-ppcond="24">endif</span></u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/EXT_STATS_" data-ref="_M/EXT_STATS_">EXT_STATS_</dfn></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><b>struct</b> <dfn class="type def" id="ext4_extent" title='ext4_extent' data-ref="ext4_extent">ext4_extent</dfn> {</td></tr>
+<tr><th id="33">33</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_extent::ee_block" title='ext4_extent::ee_block' data-ref="ext4_extent::ee_block">ee_block</dfn>;</td></tr>
+<tr><th id="34">34</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_extent::ee_len" title='ext4_extent::ee_len' data-ref="ext4_extent::ee_len">ee_len</dfn>;</td></tr>
+<tr><th id="35">35</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_extent::ee_start_hi" title='ext4_extent::ee_start_hi' data-ref="ext4_extent::ee_start_hi">ee_start_hi</dfn>;</td></tr>
+<tr><th id="36">36</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_extent::ee_start_lo" title='ext4_extent::ee_start_lo' data-ref="ext4_extent::ee_start_lo">ee_start_lo</dfn>;</td></tr>
+<tr><th id="37">37</th><td>};</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><b>struct</b> <dfn class="type def" id="ext4_extent_idx" title='ext4_extent_idx' data-ref="ext4_extent_idx">ext4_extent_idx</dfn> {</td></tr>
+<tr><th id="40">40</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_extent_idx::ei_block" title='ext4_extent_idx::ei_block' data-ref="ext4_extent_idx::ei_block">ei_block</dfn>;</td></tr>
+<tr><th id="41">41</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_extent_idx::ei_leaf_lo" title='ext4_extent_idx::ei_leaf_lo' data-ref="ext4_extent_idx::ei_leaf_lo">ei_leaf_lo</dfn>;</td></tr>
+<tr><th id="42">42</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_extent_idx::ei_leaf_hi" title='ext4_extent_idx::ei_leaf_hi' data-ref="ext4_extent_idx::ei_leaf_hi">ei_leaf_hi</dfn>;</td></tr>
+<tr><th id="43">43</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="ext4_extent_idx::ei_unused" title='ext4_extent_idx::ei_unused' data-ref="ext4_extent_idx::ei_unused">ei_unused</dfn>;</td></tr>
+<tr><th id="44">44</th><td>};</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><b>struct</b> <dfn class="type def" id="ext4_extent_header" title='ext4_extent_header' data-ref="ext4_extent_header">ext4_extent_header</dfn> {</td></tr>
+<tr><th id="47">47</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_extent_header::eh_magic" title='ext4_extent_header::eh_magic' data-ref="ext4_extent_header::eh_magic">eh_magic</dfn>;</td></tr>
+<tr><th id="48">48</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_extent_header::eh_entries" title='ext4_extent_header::eh_entries' data-ref="ext4_extent_header::eh_entries">eh_entries</dfn>;</td></tr>
+<tr><th id="49">49</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_extent_header::eh_max" title='ext4_extent_header::eh_max' data-ref="ext4_extent_header::eh_max">eh_max</dfn>;</td></tr>
+<tr><th id="50">50</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_extent_header::eh_depth" title='ext4_extent_header::eh_depth' data-ref="ext4_extent_header::eh_depth">eh_depth</dfn>;</td></tr>
+<tr><th id="51">51</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_extent_header::eh_generation" title='ext4_extent_header::eh_generation' data-ref="ext4_extent_header::eh_generation">eh_generation</dfn>;</td></tr>
+<tr><th id="52">52</th><td>};</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><u>#define <dfn class="macro" id="_M/EXT4_EXT_MAGIC" data-ref="_M/EXT4_EXT_MAGIC">EXT4_EXT_MAGIC</dfn> 0xf30a</u></td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><b>struct</b> <dfn class="type def" id="ext4_ext_path" title='ext4_ext_path' data-ref="ext4_ext_path">ext4_ext_path</dfn> {</td></tr>
+<tr><th id="57">57</th><td> <a class="typedef" href="ext4.h.html#ext4_fsblk_t" title='ext4_fsblk_t' data-type='unsigned long long' data-ref="ext4_fsblk_t">ext4_fsblk_t</a> <dfn class="decl" id="ext4_ext_path::p_block" title='ext4_ext_path::p_block' data-ref="ext4_ext_path::p_block">p_block</dfn>;</td></tr>
+<tr><th id="58">58</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="ext4_ext_path::p_depth" title='ext4_ext_path::p_depth' data-ref="ext4_ext_path::p_depth">p_depth</dfn>;</td></tr>
+<tr><th id="59">59</th><td> <b>struct</b> <a class="type" href="#ext4_extent" title='ext4_extent' data-ref="ext4_extent">ext4_extent</a> *<dfn class="decl" id="ext4_ext_path::p_ext" title='ext4_ext_path::p_ext' data-ref="ext4_ext_path::p_ext">p_ext</dfn>;</td></tr>
+<tr><th id="60">60</th><td> <b>struct</b> <a class="type" href="#ext4_extent_idx" title='ext4_extent_idx' data-ref="ext4_extent_idx">ext4_extent_idx</a> *<dfn class="decl" id="ext4_ext_path::p_idx" title='ext4_ext_path::p_idx' data-ref="ext4_ext_path::p_idx">p_idx</dfn>;</td></tr>
+<tr><th id="61">61</th><td> <b>struct</b> <a class="type" href="#ext4_extent_header" title='ext4_extent_header' data-ref="ext4_extent_header">ext4_extent_header</a> *<dfn class="decl" id="ext4_ext_path::p_hdr" title='ext4_ext_path::p_hdr' data-ref="ext4_ext_path::p_hdr">p_hdr</dfn>;</td></tr>
+<tr><th id="62">62</th><td> <b>struct</b> <dfn class="type" id="buffer_head" title='buffer_head' data-ref="buffer_head"><a class="type" href="#buffer_head" title='buffer_head' data-ref="buffer_head">buffer_head</a></dfn> *<dfn class="decl" id="ext4_ext_path::p_bh" title='ext4_ext_path::p_bh' data-ref="ext4_ext_path::p_bh">p_bh</dfn>;</td></tr>
+<tr><th id="63">63</th><td>};</td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><u>#define <dfn class="macro" id="_M/EXT4_EXT_CACHE_NO" data-ref="_M/EXT4_EXT_CACHE_NO">EXT4_EXT_CACHE_NO</dfn> 0</u></td></tr>
+<tr><th id="66">66</th><td><u>#define <dfn class="macro" id="_M/EXT4_EXT_CACHE_GAP" data-ref="_M/EXT4_EXT_CACHE_GAP">EXT4_EXT_CACHE_GAP</dfn> 1</u></td></tr>
+<tr><th id="67">67</th><td><u>#define <dfn class="macro" id="_M/EXT4_EXT_CACHE_EXTENT" data-ref="_M/EXT4_EXT_CACHE_EXTENT">EXT4_EXT_CACHE_EXTENT</dfn> 2</u></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><u>#define <dfn class="macro" id="_M/EXT_CONTINUE" data-ref="_M/EXT_CONTINUE">EXT_CONTINUE</dfn> 0</u></td></tr>
+<tr><th id="70">70</th><td><u>#define <dfn class="macro" id="_M/EXT_BREAK" data-ref="_M/EXT_BREAK">EXT_BREAK</dfn> 1</u></td></tr>
+<tr><th id="71">71</th><td><u>#define <dfn class="macro" id="_M/EXT_REPEAT" data-ref="_M/EXT_REPEAT">EXT_REPEAT</dfn> 2</u></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><u>#define <dfn class="macro" id="_M/EXT_MAX_BLOCK" data-ref="_M/EXT_MAX_BLOCK">EXT_MAX_BLOCK</dfn> 0xffffffff</u></td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><u>#define <dfn class="macro" id="_M/EXT_INIT_MAX_LEN" data-ref="_M/EXT_INIT_MAX_LEN">EXT_INIT_MAX_LEN</dfn> (1UL &lt;&lt; 15)</u></td></tr>
+<tr><th id="76">76</th><td><u>#define <dfn class="macro" id="_M/EXT_UNINIT_MAX_LEN" data-ref="_M/EXT_UNINIT_MAX_LEN">EXT_UNINIT_MAX_LEN</dfn> (EXT_INIT_MAX_LEN - 1)</u></td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td><u>#define <dfn class="macro" id="_M/EXT_FIRST_EXTENT" data-ref="_M/EXT_FIRST_EXTENT">EXT_FIRST_EXTENT</dfn>(__hdr__)   ((struct ext4_extent *) (((char *) (__hdr__)) +   sizeof(struct ext4_extent_header)))</u></td></tr>
+<tr><th id="79">79</th><td><u>#define <dfn class="macro" id="_M/EXT_FIRST_INDEX" data-ref="_M/EXT_FIRST_INDEX">EXT_FIRST_INDEX</dfn>(__hdr__)   ((struct ext4_extent_idx *) (((char *) (__hdr__)) +   sizeof(struct ext4_extent_header)))</u></td></tr>
+<tr><th id="80">80</th><td><u>#define <dfn class="macro" id="_M/EXT_HAS_FREE_INDEX" data-ref="_M/EXT_HAS_FREE_INDEX">EXT_HAS_FREE_INDEX</dfn>(__path__)   (le16_to_cpu((__path__)-&gt;p_hdr-&gt;eh_entries)   &lt; le16_to_cpu((__path__)-&gt;p_hdr-&gt;eh_max))</u></td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/EXT_LAST_EXTENT" data-ref="_M/EXT_LAST_EXTENT">EXT_LAST_EXTENT</dfn>(__hdr__)   (EXT_FIRST_EXTENT((__hdr__)) + le16_to_cpu((__hdr__)-&gt;eh_entries) - 1)</u></td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/EXT_LAST_INDEX" data-ref="_M/EXT_LAST_INDEX">EXT_LAST_INDEX</dfn>(__hdr__)   (EXT_FIRST_INDEX((__hdr__)) + le16_to_cpu((__hdr__)-&gt;eh_entries) - 1)</u></td></tr>
+<tr><th id="83">83</th><td><u>#define <dfn class="macro" id="_M/EXT_MAX_EXTENT" data-ref="_M/EXT_MAX_EXTENT">EXT_MAX_EXTENT</dfn>(__hdr__)   (EXT_FIRST_EXTENT((__hdr__)) + le16_to_cpu((__hdr__)-&gt;eh_max) - 1)</u></td></tr>
+<tr><th id="84">84</th><td><u>#define <dfn class="macro" id="_M/EXT_MAX_INDEX" data-ref="_M/EXT_MAX_INDEX">EXT_MAX_INDEX</dfn>(__hdr__)   (EXT_FIRST_INDEX((__hdr__)) + le16_to_cpu((__hdr__)-&gt;eh_max) - 1)</u></td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><u>#<span data-ppcond="12">endif</span></u></td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../core/fs_mgr/fs_mgr.c.html'>codebrowser/system/core/fs_mgr/fs_mgr.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,468 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>math.h source code [codebrowser/bionic/libc/include/math.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/math.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>include</a>/<a href='math.h.html'>math.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Developed at SunPro, a Sun Microsystems, Inc. business.</i></td></tr>
+<tr><th id="6">6</th><td><i> * Permission to use, copy, modify, and distribute this</i></td></tr>
+<tr><th id="7">7</th><td><i> * software is freely granted, provided that this notice</i></td></tr>
+<tr><th id="8">8</th><td><i> * is preserved.</i></td></tr>
+<tr><th id="9">9</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="10">10</th><td><i> */</i></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><i>/*</i></td></tr>
+<tr><th id="13">13</th><td><i> * from: @(#)fdlibm.h 5.1 93/09/24</i></td></tr>
+<tr><th id="14">14</th><td><i> * $FreeBSD$</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/_MATH_H_">_MATH_H_</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/_MATH_H_" data-ref="_M/_MATH_H_">_MATH_H_</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="23">if</span> !defined(<span class="macro" data-ref="_M/__BIONIC_NO_MATH_INLINES">__BIONIC_NO_MATH_INLINES</span>)</u></td></tr>
+<tr><th id="24">24</th><td><u>#define <dfn class="macro" id="_M/__BIONIC_MATH_INLINE" data-ref="_M/__BIONIC_MATH_INLINE">__BIONIC_MATH_INLINE</dfn>(__def) extern __inline__ __always_inline __attribute__((gnu_inline)) __attribute__((__artificial__)) __def</u></td></tr>
+<tr><th id="25">25</th><td><u>#<span data-ppcond="23">else</span></u></td></tr>
+<tr><th id="26">26</th><td><u>#define __BIONIC_MATH_INLINE(__def)</u></td></tr>
+<tr><th id="27">27</th><td><u>#<span data-ppcond="23">endif</span></u></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><a class="macro" href="sys/cdefs.h.html#85" title="extern &quot;C&quot; {" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="30">30</th><td><u>#pragma GCC visibility push(default)</u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#define <dfn class="macro" id="_M/HUGE_VAL" data-ref="_M/HUGE_VAL">HUGE_VAL</dfn>	__builtin_huge_val()</u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#<span data-ppcond="34">if</span> <a class="macro" href="sys/cdefs.h.html#328" title="1999" data-ref="_M/__ISO_C_VISIBLE">__ISO_C_VISIBLE</a> &gt;= 1999</u></td></tr>
+<tr><th id="35">35</th><td><u>#define <dfn class="macro" id="_M/FP_ILOGB0" data-ref="_M/FP_ILOGB0">FP_ILOGB0</dfn>	(-INT_MAX)</u></td></tr>
+<tr><th id="36">36</th><td><u>#define <dfn class="macro" id="_M/FP_ILOGBNAN" data-ref="_M/FP_ILOGBNAN">FP_ILOGBNAN</dfn>	INT_MAX</u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/HUGE_VALF" data-ref="_M/HUGE_VALF">HUGE_VALF</dfn>	__builtin_huge_valf()</u></td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/HUGE_VALL" data-ref="_M/HUGE_VALL">HUGE_VALL</dfn>	__builtin_huge_vall()</u></td></tr>
+<tr><th id="40">40</th><td><u>#define <dfn class="macro" id="_M/INFINITY" data-ref="_M/INFINITY">INFINITY</dfn>	__builtin_inff()</u></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/NAN" data-ref="_M/NAN">NAN</dfn>		__builtin_nanf("")</u></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/MATH_ERRNO" data-ref="_M/MATH_ERRNO">MATH_ERRNO</dfn>	1</u></td></tr>
+<tr><th id="44">44</th><td><u>#define <dfn class="macro" id="_M/MATH_ERREXCEPT" data-ref="_M/MATH_ERREXCEPT">MATH_ERREXCEPT</dfn>	2</u></td></tr>
+<tr><th id="45">45</th><td><u>#define <dfn class="macro" id="_M/math_errhandling" data-ref="_M/math_errhandling">math_errhandling</dfn>	MATH_ERREXCEPT</u></td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td><u>#<span data-ppcond="47">if</span> defined(<span class="macro" data-ref="_M/__FP_FAST_FMA">__FP_FAST_FMA</span>)</u></td></tr>
+<tr><th id="48">48</th><td><u>#define FP_FAST_FMA 1</u></td></tr>
+<tr><th id="49">49</th><td><u>#<span data-ppcond="47">endif</span></u></td></tr>
+<tr><th id="50">50</th><td><u>#<span data-ppcond="50">if</span> defined(<span class="macro" data-ref="_M/__FP_FAST_FMAF">__FP_FAST_FMAF</span>)</u></td></tr>
+<tr><th id="51">51</th><td><u>#define FP_FAST_FMAF 1</u></td></tr>
+<tr><th id="52">52</th><td><u>#<span data-ppcond="50">endif</span></u></td></tr>
+<tr><th id="53">53</th><td><u>#<span data-ppcond="53">if</span> defined(<span class="macro" data-ref="_M/__FP_FAST_FMAL">__FP_FAST_FMAL</span>)</u></td></tr>
+<tr><th id="54">54</th><td><u>#define FP_FAST_FMAL 1</u></td></tr>
+<tr><th id="55">55</th><td><u>#<span data-ppcond="53">endif</span></u></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><i>/* Symbolic constants to classify floating point numbers. */</i></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/FP_INFINITE" data-ref="_M/FP_INFINITE">FP_INFINITE</dfn>	0x01</u></td></tr>
+<tr><th id="59">59</th><td><u>#define <dfn class="macro" id="_M/FP_NAN" data-ref="_M/FP_NAN">FP_NAN</dfn>		0x02</u></td></tr>
+<tr><th id="60">60</th><td><u>#define <dfn class="macro" id="_M/FP_NORMAL" data-ref="_M/FP_NORMAL">FP_NORMAL</dfn>	0x04</u></td></tr>
+<tr><th id="61">61</th><td><u>#define <dfn class="macro" id="_M/FP_SUBNORMAL" data-ref="_M/FP_SUBNORMAL">FP_SUBNORMAL</dfn>	0x08</u></td></tr>
+<tr><th id="62">62</th><td><u>#define <dfn class="macro" id="_M/FP_ZERO" data-ref="_M/FP_ZERO">FP_ZERO</dfn>		0x10</u></td></tr>
+<tr><th id="63">63</th><td><u>#define <dfn class="macro" id="_M/fpclassify" data-ref="_M/fpclassify">fpclassify</dfn>(x) \</u></td></tr>
+<tr><th id="64">64</th><td><u>    __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x)</u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><u>#define <dfn class="macro" id="_M/isfinite" data-ref="_M/isfinite">isfinite</dfn>(x) __builtin_isfinite(x)</u></td></tr>
+<tr><th id="67">67</th><td><u>#define <dfn class="macro" id="_M/isinf" data-ref="_M/isinf">isinf</dfn>(x) __builtin_isinf(x)</u></td></tr>
+<tr><th id="68">68</th><td><u>#define <dfn class="macro" id="_M/isnan" data-ref="_M/isnan">isnan</dfn>(x) __builtin_isnan(x)</u></td></tr>
+<tr><th id="69">69</th><td><u>#define <dfn class="macro" id="_M/isnormal" data-ref="_M/isnormal">isnormal</dfn>(x) __builtin_isnormal(x)</u></td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><u>#define <dfn class="macro" id="_M/isgreater" data-ref="_M/isgreater">isgreater</dfn>(x, y) __builtin_isgreater((x), (y))</u></td></tr>
+<tr><th id="72">72</th><td><u>#define <dfn class="macro" id="_M/isgreaterequal" data-ref="_M/isgreaterequal">isgreaterequal</dfn>(x, y) __builtin_isgreaterequal((x), (y))</u></td></tr>
+<tr><th id="73">73</th><td><u>#define <dfn class="macro" id="_M/isless" data-ref="_M/isless">isless</dfn>(x, y) __builtin_isless((x), (y))</u></td></tr>
+<tr><th id="74">74</th><td><u>#define <dfn class="macro" id="_M/islessequal" data-ref="_M/islessequal">islessequal</dfn>(x, y) __builtin_islessequal((x), (y))</u></td></tr>
+<tr><th id="75">75</th><td><u>#define <dfn class="macro" id="_M/islessgreater" data-ref="_M/islessgreater">islessgreater</dfn>(x, y) __builtin_islessgreater((x), (y))</u></td></tr>
+<tr><th id="76">76</th><td><u>#define <dfn class="macro" id="_M/isunordered" data-ref="_M/isunordered">isunordered</dfn>(x, y) __builtin_isunordered((x), (y))</u></td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td><u>#define <dfn class="macro" id="_M/signbit" data-ref="_M/signbit">signbit</dfn>(x) \</u></td></tr>
+<tr><th id="79">79</th><td><u>    ((sizeof(x) == sizeof(float)) ? __builtin_signbitf(x) \</u></td></tr>
+<tr><th id="80">80</th><td><u>    : (sizeof(x) == sizeof(double)) ? __builtin_signbit(x) \</u></td></tr>
+<tr><th id="81">81</th><td><u>    : __builtin_signbitl(x))</u></td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><b>typedef</b> <em>double</em> <dfn class="typedef" id="__double_t" title='__double_t' data-type='double' data-ref="__double_t">__double_t</dfn>;</td></tr>
+<tr><th id="84">84</th><td><b>typedef</b> <a class="typedef" href="#__double_t" title='__double_t' data-type='double' data-ref="__double_t">__double_t</a> <dfn class="typedef" id="double_t" title='double_t' data-type='__double_t' data-ref="double_t">double_t</dfn>;</td></tr>
+<tr><th id="85">85</th><td><b>typedef</b> <em>float</em> <dfn class="typedef" id="__float_t" title='__float_t' data-type='float' data-ref="__float_t">__float_t</dfn>;</td></tr>
+<tr><th id="86">86</th><td><b>typedef</b> <a class="typedef" href="#__float_t" title='__float_t' data-type='float' data-ref="__float_t">__float_t</a> <dfn class="typedef" id="float_t" title='float_t' data-type='__float_t' data-ref="float_t">float_t</dfn>;</td></tr>
+<tr><th id="87">87</th><td><u>#<span data-ppcond="34">endif</span> /* __ISO_C_VISIBLE &gt;= 1999 */</u></td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><i>/*</i></td></tr>
+<tr><th id="90">90</th><td><i> * XOPEN/SVID</i></td></tr>
+<tr><th id="91">91</th><td><i> */</i></td></tr>
+<tr><th id="92">92</th><td><u>#<span data-ppcond="92">if</span> <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a> || __XSI_VISIBLE</u></td></tr>
+<tr><th id="93">93</th><td><u>#define	<dfn class="macro" id="_M/M_E" data-ref="_M/M_E">M_E</dfn>		2.7182818284590452354	/* e */</u></td></tr>
+<tr><th id="94">94</th><td><u>#define	<dfn class="macro" id="_M/M_LOG2E" data-ref="_M/M_LOG2E">M_LOG2E</dfn>		1.4426950408889634074	/* log 2e */</u></td></tr>
+<tr><th id="95">95</th><td><u>#define	<dfn class="macro" id="_M/M_LOG10E" data-ref="_M/M_LOG10E">M_LOG10E</dfn>	0.43429448190325182765	/* log 10e */</u></td></tr>
+<tr><th id="96">96</th><td><u>#define	<dfn class="macro" id="_M/M_LN2" data-ref="_M/M_LN2">M_LN2</dfn>		0.69314718055994530942	/* log e2 */</u></td></tr>
+<tr><th id="97">97</th><td><u>#define	<dfn class="macro" id="_M/M_LN10" data-ref="_M/M_LN10">M_LN10</dfn>		2.30258509299404568402	/* log e10 */</u></td></tr>
+<tr><th id="98">98</th><td><u>#define	<dfn class="macro" id="_M/M_PI" data-ref="_M/M_PI">M_PI</dfn>		3.14159265358979323846	/* pi */</u></td></tr>
+<tr><th id="99">99</th><td><u>#define	<dfn class="macro" id="_M/M_PI_2" data-ref="_M/M_PI_2">M_PI_2</dfn>		1.57079632679489661923	/* pi/2 */</u></td></tr>
+<tr><th id="100">100</th><td><u>#define	<dfn class="macro" id="_M/M_PI_4" data-ref="_M/M_PI_4">M_PI_4</dfn>		0.78539816339744830962	/* pi/4 */</u></td></tr>
+<tr><th id="101">101</th><td><u>#define	<dfn class="macro" id="_M/M_1_PI" data-ref="_M/M_1_PI">M_1_PI</dfn>		0.31830988618379067154	/* 1/pi */</u></td></tr>
+<tr><th id="102">102</th><td><u>#define	<dfn class="macro" id="_M/M_2_PI" data-ref="_M/M_2_PI">M_2_PI</dfn>		0.63661977236758134308	/* 2/pi */</u></td></tr>
+<tr><th id="103">103</th><td><u>#define	<dfn class="macro" id="_M/M_2_SQRTPI" data-ref="_M/M_2_SQRTPI">M_2_SQRTPI</dfn>	1.12837916709551257390	/* 2/sqrt(pi) */</u></td></tr>
+<tr><th id="104">104</th><td><u>#define	<dfn class="macro" id="_M/M_SQRT2" data-ref="_M/M_SQRT2">M_SQRT2</dfn>		1.41421356237309504880	/* sqrt(2) */</u></td></tr>
+<tr><th id="105">105</th><td><u>#define	<dfn class="macro" id="_M/M_SQRT1_2" data-ref="_M/M_SQRT1_2">M_SQRT1_2</dfn>	0.70710678118654752440	/* 1/sqrt(2) */</u></td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><u>#define	<dfn class="macro" id="_M/MAXFLOAT" data-ref="_M/MAXFLOAT">MAXFLOAT</dfn>	((float)3.40282346638528860e+38)</u></td></tr>
+<tr><th id="108">108</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="signgam" title='signgam' data-ref="signgam">signgam</dfn>;</td></tr>
+<tr><th id="109">109</th><td><u>#<span data-ppcond="92">endif</span> /* __BSD_VISIBLE || __XSI_VISIBLE */</u></td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><u>#<span data-ppcond="111">if</span> <a class="macro" href="sys/cdefs.h.html#246" title="1" data-ref="_M/__USE_GNU">__USE_GNU</a></u></td></tr>
+<tr><th id="112">112</th><td><u>#define <dfn class="macro" id="_M/M_El" data-ref="_M/M_El">M_El</dfn>            2.718281828459045235360287471352662498L /* e */</u></td></tr>
+<tr><th id="113">113</th><td><u>#define <dfn class="macro" id="_M/M_LOG2El" data-ref="_M/M_LOG2El">M_LOG2El</dfn>        1.442695040888963407359924681001892137L /* log 2e */</u></td></tr>
+<tr><th id="114">114</th><td><u>#define <dfn class="macro" id="_M/M_LOG10El" data-ref="_M/M_LOG10El">M_LOG10El</dfn>       0.434294481903251827651128918916605082L /* log 10e */</u></td></tr>
+<tr><th id="115">115</th><td><u>#define <dfn class="macro" id="_M/M_LN2l" data-ref="_M/M_LN2l">M_LN2l</dfn>          0.693147180559945309417232121458176568L /* log e2 */</u></td></tr>
+<tr><th id="116">116</th><td><u>#define <dfn class="macro" id="_M/M_LN10l" data-ref="_M/M_LN10l">M_LN10l</dfn>         2.302585092994045684017991454684364208L /* log e10 */</u></td></tr>
+<tr><th id="117">117</th><td><u>#define <dfn class="macro" id="_M/M_PIl" data-ref="_M/M_PIl">M_PIl</dfn>           3.141592653589793238462643383279502884L /* pi */</u></td></tr>
+<tr><th id="118">118</th><td><u>#define <dfn class="macro" id="_M/M_PI_2l" data-ref="_M/M_PI_2l">M_PI_2l</dfn>         1.570796326794896619231321691639751442L /* pi/2 */</u></td></tr>
+<tr><th id="119">119</th><td><u>#define <dfn class="macro" id="_M/M_PI_4l" data-ref="_M/M_PI_4l">M_PI_4l</dfn>         0.785398163397448309615660845819875721L /* pi/4 */</u></td></tr>
+<tr><th id="120">120</th><td><u>#define <dfn class="macro" id="_M/M_1_PIl" data-ref="_M/M_1_PIl">M_1_PIl</dfn>         0.318309886183790671537767526745028724L /* 1/pi */</u></td></tr>
+<tr><th id="121">121</th><td><u>#define <dfn class="macro" id="_M/M_2_PIl" data-ref="_M/M_2_PIl">M_2_PIl</dfn>         0.636619772367581343075535053490057448L /* 2/pi */</u></td></tr>
+<tr><th id="122">122</th><td><u>#define <dfn class="macro" id="_M/M_2_SQRTPIl" data-ref="_M/M_2_SQRTPIl">M_2_SQRTPIl</dfn>     1.128379167095512573896158903121545172L /* 2/sqrt(pi) */</u></td></tr>
+<tr><th id="123">123</th><td><u>#define <dfn class="macro" id="_M/M_SQRT2l" data-ref="_M/M_SQRT2l">M_SQRT2l</dfn>        1.414213562373095048801688724209698079L /* sqrt(2) */</u></td></tr>
+<tr><th id="124">124</th><td><u>#define <dfn class="macro" id="_M/M_SQRT1_2l" data-ref="_M/M_SQRT1_2l">M_SQRT1_2l</dfn>      0.707106781186547524400844362104849039L /* 1/sqrt(2) */</u></td></tr>
+<tr><th id="125">125</th><td><u>#<span data-ppcond="111">endif</span></u></td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><u>#<span data-ppcond="127">if</span> <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a></u></td></tr>
+<tr><th id="128">128</th><td><u>#<span data-ppcond="128">if</span> 0</u></td></tr>
+<tr><th id="129">129</th><td><i>/* Old value from 4.4BSD-Lite math.h; this is probably better. */</i></td></tr>
+<tr><th id="130">130</th><td><u>#define	HUGE		HUGE_VAL</u></td></tr>
+<tr><th id="131">131</th><td><u>#<span data-ppcond="128">else</span></u></td></tr>
+<tr><th id="132">132</th><td><u>#define	<dfn class="macro" id="_M/HUGE" data-ref="_M/HUGE">HUGE</dfn>		MAXFLOAT</u></td></tr>
+<tr><th id="133">133</th><td><u>#<span data-ppcond="128">endif</span></u></td></tr>
+<tr><th id="134">134</th><td><u>#<span data-ppcond="127">endif</span> /* __BSD_VISIBLE */</u></td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td><i>/*</i></td></tr>
+<tr><th id="137">137</th><td><i> * Most of these functions depend on the rounding mode and have the side</i></td></tr>
+<tr><th id="138">138</th><td><i> * effect of raising floating-point exceptions, so they are not declared</i></td></tr>
+<tr><th id="139">139</th><td><i> * as __pure2.  In C99, FENV_ACCESS affects the purity of these functions.</i></td></tr>
+<tr><th id="140">140</th><td><i> */</i></td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td><i>/*</i></td></tr>
+<tr><th id="143">143</th><td><i> * ANSI/POSIX</i></td></tr>
+<tr><th id="144">144</th><td><i> */</i></td></tr>
+<tr><th id="145">145</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__fpclassifyd" title='__fpclassifyd' data-ref="__fpclassifyd" id="__fpclassifyd">__fpclassifyd</a>(<em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="146">146</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__fpclassifyf" title='__fpclassifyf' data-ref="__fpclassifyf" id="__fpclassifyf">__fpclassifyf</a>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="147">147</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__fpclassifyl" title='__fpclassifyl' data-ref="__fpclassifyl" id="__fpclassifyl">__fpclassifyl</a>(<em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="148">148</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isfinitef" title='__isfinitef' data-ref="__isfinitef" id="__isfinitef">__isfinitef</a>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="149">149</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isfinite" title='__isfinite' data-ref="__isfinite" id="__isfinite">__isfinite</a>(<em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="150">150</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isfinitel" title='__isfinitel' data-ref="__isfinitel" id="__isfinitel">__isfinitel</a>(<em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="151">151</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isinff" title='__isinff' data-ref="__isinff" id="__isinff">__isinff</a>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="152">152</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isinfl" title='__isinfl' data-ref="__isinfl" id="__isinfl">__isinfl</a>(<em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="153">153</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isnanf" title='__isnanf' data-ref="__isnanf" id="__isnanf">__isnanf</a>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="154">154</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isnanl" title='__isnanl' data-ref="__isnanl" id="__isnanl">__isnanl</a>(<em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="155">155</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isnormalf" title='__isnormalf' data-ref="__isnormalf" id="__isnormalf">__isnormalf</a>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="156">156</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isnormal" title='__isnormal' data-ref="__isnormal" id="__isnormal">__isnormal</a>(<em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="157">157</th><td><em>int</em>	<a class="decl" href="../bionic/fpclassify.cpp.html#__isnormall" title='__isnormall' data-ref="__isnormall" id="__isnormall">__isnormall</a>(<em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="158">158</th><td><em>int</em>	<dfn class="decl" id="__signbit" title='__signbit' data-ref="__signbit">__signbit</dfn>(<em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="159">159</th><td><em>int</em>	<dfn class="decl" id="__signbitf" title='__signbitf' data-ref="__signbitf">__signbitf</dfn>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="160">160</th><td><em>int</em>	<dfn class="decl" id="__signbitl" title='__signbitl' data-ref="__signbitl">__signbitl</dfn>(<em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td><em>double</em>	<dfn class="decl" id="acos" title='acos' data-ref="acos">acos</dfn>(<em>double</em>);</td></tr>
+<tr><th id="163">163</th><td><em>double</em>	<dfn class="decl" id="asin" title='asin' data-ref="asin">asin</dfn>(<em>double</em>);</td></tr>
+<tr><th id="164">164</th><td><em>double</em>	<dfn class="decl" id="atan" title='atan' data-ref="atan">atan</dfn>(<em>double</em>);</td></tr>
+<tr><th id="165">165</th><td><em>double</em>	<dfn class="decl" id="atan2" title='atan2' data-ref="atan2">atan2</dfn>(<em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="166">166</th><td><em>double</em>	<dfn class="decl" id="cos" title='cos' data-ref="cos">cos</dfn>(<em>double</em>);</td></tr>
+<tr><th id="167">167</th><td><em>double</em>	<dfn class="decl" id="sin" title='sin' data-ref="sin">sin</dfn>(<em>double</em>);</td></tr>
+<tr><th id="168">168</th><td><em>double</em>	<dfn class="decl" id="tan" title='tan' data-ref="tan">tan</dfn>(<em>double</em>);</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td><em>double</em>	<dfn class="decl" id="cosh" title='cosh' data-ref="cosh">cosh</dfn>(<em>double</em>);</td></tr>
+<tr><th id="171">171</th><td><em>double</em>	<dfn class="decl" id="sinh" title='sinh' data-ref="sinh">sinh</dfn>(<em>double</em>);</td></tr>
+<tr><th id="172">172</th><td><em>double</em>	<dfn class="decl" id="tanh" title='tanh' data-ref="tanh">tanh</dfn>(<em>double</em>);</td></tr>
+<tr><th id="173">173</th><td></td></tr>
+<tr><th id="174">174</th><td><em>double</em>	<dfn class="decl" id="exp" title='exp' data-ref="exp">exp</dfn>(<em>double</em>);</td></tr>
+<tr><th id="175">175</th><td><em>double</em>	<dfn class="decl" id="frexp" title='frexp' data-ref="frexp">frexp</dfn>(<em>double</em>, <em>int</em> *);	<i>/* fundamentally !__pure2 */</i></td></tr>
+<tr><th id="176">176</th><td><em>double</em>	<dfn class="decl" id="ldexp" title='ldexp' data-ref="ldexp">ldexp</dfn>(<em>double</em>, <em>int</em>);</td></tr>
+<tr><th id="177">177</th><td><em>double</em>	<dfn class="decl" id="log" title='log' data-ref="log">log</dfn>(<em>double</em>);</td></tr>
+<tr><th id="178">178</th><td><em>double</em>	<dfn class="decl" id="log10" title='log10' data-ref="log10">log10</dfn>(<em>double</em>);</td></tr>
+<tr><th id="179">179</th><td><em>double</em>	<dfn class="decl" id="modf" title='modf' data-ref="modf">modf</dfn>(<em>double</em>, <em>double</em> *);	<i>/* fundamentally !__pure2 */</i></td></tr>
+<tr><th id="180">180</th><td></td></tr>
+<tr><th id="181">181</th><td><em>double</em>	<dfn class="decl" id="pow" title='pow' data-ref="pow">pow</dfn>(<em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="182">182</th><td><em>double</em>	<dfn class="decl" id="sqrt" title='sqrt' data-ref="sqrt">sqrt</dfn>(<em>double</em>);</td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td><em>double</em>	<dfn class="decl" id="ceil" title='ceil' data-ref="ceil">ceil</dfn>(<em>double</em>);</td></tr>
+<tr><th id="185">185</th><td><em>double</em>	<a class="decl" href="#186" title='fabs' data-ref="fabs">fabs</a>(<em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="186">186</th><td><a class="macro" href="#24" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__)) double fabs(double x) { return __builtin_fabs(x); }" data-ref="_M/__BIONIC_MATH_INLINE">__BIONIC_MATH_INLINE</a>(<em>double</em> <dfn class="decl def" id="fabs" title='fabs' data-ref="fabs">fabs</dfn>(<em>double</em> <dfn class="local col1 decl" id="1x" title='x' data-type='double' data-ref="1x">x</dfn>) { <b>return</b> <a class="ref" href="#186" title='__builtin_fabs' data-ref="__builtin_fabs">__builtin_fabs</a>(<a class="local col1 ref" href="#186" title='x' data-ref="1x">x</a>); })</td></tr>
+<tr><th id="187">187</th><td><em>double</em>	<dfn class="decl" id="floor" title='floor' data-ref="floor">floor</dfn>(<em>double</em>);</td></tr>
+<tr><th id="188">188</th><td><em>double</em>	<dfn class="decl" id="fmod" title='fmod' data-ref="fmod">fmod</dfn>(<em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="189">189</th><td></td></tr>
+<tr><th id="190">190</th><td><i>/*</i></td></tr>
+<tr><th id="191">191</th><td><i> * These functions are not in C90.</i></td></tr>
+<tr><th id="192">192</th><td><i> */</i></td></tr>
+<tr><th id="193">193</th><td><u>#<span data-ppcond="193">if</span> <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a> || <a class="macro" href="sys/cdefs.h.html#328" title="1999" data-ref="_M/__ISO_C_VISIBLE">__ISO_C_VISIBLE</a> &gt;= 1999 || __XSI_VISIBLE</u></td></tr>
+<tr><th id="194">194</th><td><em>double</em>	<dfn class="decl" id="acosh" title='acosh' data-ref="acosh">acosh</dfn>(<em>double</em>);</td></tr>
+<tr><th id="195">195</th><td><em>double</em>	<dfn class="decl" id="asinh" title='asinh' data-ref="asinh">asinh</dfn>(<em>double</em>);</td></tr>
+<tr><th id="196">196</th><td><em>double</em>	<dfn class="decl" id="atanh" title='atanh' data-ref="atanh">atanh</dfn>(<em>double</em>);</td></tr>
+<tr><th id="197">197</th><td><em>double</em>	<dfn class="decl" id="cbrt" title='cbrt' data-ref="cbrt">cbrt</dfn>(<em>double</em>);</td></tr>
+<tr><th id="198">198</th><td><em>double</em>	<dfn class="decl" id="erf" title='erf' data-ref="erf">erf</dfn>(<em>double</em>);</td></tr>
+<tr><th id="199">199</th><td><em>double</em>	<dfn class="decl" id="erfc" title='erfc' data-ref="erfc">erfc</dfn>(<em>double</em>);</td></tr>
+<tr><th id="200">200</th><td><em>double</em>	<dfn class="decl" id="exp2" title='exp2' data-ref="exp2">exp2</dfn>(<em>double</em>);</td></tr>
+<tr><th id="201">201</th><td><em>double</em>	<dfn class="decl" id="expm1" title='expm1' data-ref="expm1">expm1</dfn>(<em>double</em>);</td></tr>
+<tr><th id="202">202</th><td><em>double</em>	<dfn class="decl" id="fma" title='fma' data-ref="fma">fma</dfn>(<em>double</em>, <em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="203">203</th><td><em>double</em>	<dfn class="decl" id="hypot" title='hypot' data-ref="hypot">hypot</dfn>(<em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="204">204</th><td><em>int</em>	<dfn class="decl" id="ilogb" title='ilogb' data-ref="ilogb">ilogb</dfn>(<em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="205">205</th><td><em>int</em>	(<dfn class="decl" id="isinf" title='isinf' data-ref="isinf">isinf</dfn>)(<em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="206">206</th><td><em>int</em>	(<dfn class="decl" id="isnan" title='isnan' data-ref="isnan">isnan</dfn>)(<em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="207">207</th><td><em>double</em>	<dfn class="decl" id="lgamma" title='lgamma' data-ref="lgamma">lgamma</dfn>(<em>double</em>);</td></tr>
+<tr><th id="208">208</th><td><em>long</em> <em>long</em> <dfn class="decl" id="llrint" title='llrint' data-ref="llrint">llrint</dfn>(<em>double</em>);</td></tr>
+<tr><th id="209">209</th><td><em>long</em> <em>long</em> <dfn class="decl" id="llround" title='llround' data-ref="llround">llround</dfn>(<em>double</em>);</td></tr>
+<tr><th id="210">210</th><td><em>double</em>	<dfn class="decl" id="log1p" title='log1p' data-ref="log1p">log1p</dfn>(<em>double</em>);</td></tr>
+<tr><th id="211">211</th><td><em>double</em>	<dfn class="decl" id="log2" title='log2' data-ref="log2">log2</dfn>(<em>double</em>);</td></tr>
+<tr><th id="212">212</th><td><em>double</em>	<dfn class="decl" id="logb" title='logb' data-ref="logb">logb</dfn>(<em>double</em>);</td></tr>
+<tr><th id="213">213</th><td><em>long</em>	<dfn class="decl" id="lrint" title='lrint' data-ref="lrint">lrint</dfn>(<em>double</em>);</td></tr>
+<tr><th id="214">214</th><td><em>long</em>	<dfn class="decl" id="lround" title='lround' data-ref="lround">lround</dfn>(<em>double</em>);</td></tr>
+<tr><th id="215">215</th><td><em>double</em>	<dfn class="decl" id="nan" title='nan' data-ref="nan">nan</dfn>(<em>const</em> <em>char</em> *) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="216">216</th><td><em>double</em>	<dfn class="decl" id="nextafter" title='nextafter' data-ref="nextafter">nextafter</dfn>(<em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="217">217</th><td><em>double</em>	<dfn class="decl" id="remainder" title='remainder' data-ref="remainder">remainder</dfn>(<em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="218">218</th><td><em>double</em>	<dfn class="decl" id="remquo" title='remquo' data-ref="remquo">remquo</dfn>(<em>double</em>, <em>double</em>, <em>int</em> *);</td></tr>
+<tr><th id="219">219</th><td><em>double</em>	<dfn class="decl" id="rint" title='rint' data-ref="rint">rint</dfn>(<em>double</em>);</td></tr>
+<tr><th id="220">220</th><td><u>#<span data-ppcond="193">endif</span> /* __BSD_VISIBLE || __ISO_C_VISIBLE &gt;= 1999 || __XSI_VISIBLE */</u></td></tr>
+<tr><th id="221">221</th><td></td></tr>
+<tr><th id="222">222</th><td><u>#<span data-ppcond="222">if</span> <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a> || __XSI_VISIBLE</u></td></tr>
+<tr><th id="223">223</th><td><em>double</em>	<dfn class="decl" id="j0" title='j0' data-ref="j0">j0</dfn>(<em>double</em>);</td></tr>
+<tr><th id="224">224</th><td><em>double</em>	<dfn class="decl" id="j1" title='j1' data-ref="j1">j1</dfn>(<em>double</em>);</td></tr>
+<tr><th id="225">225</th><td><em>double</em>	<dfn class="decl" id="jn" title='jn' data-ref="jn">jn</dfn>(<em>int</em>, <em>double</em>);</td></tr>
+<tr><th id="226">226</th><td><em>double</em>	<dfn class="decl" id="y0" title='y0' data-ref="y0">y0</dfn>(<em>double</em>);</td></tr>
+<tr><th id="227">227</th><td><em>double</em>	<dfn class="decl" id="y1" title='y1' data-ref="y1">y1</dfn>(<em>double</em>);</td></tr>
+<tr><th id="228">228</th><td><em>double</em>	<dfn class="decl" id="yn" title='yn' data-ref="yn">yn</dfn>(<em>int</em>, <em>double</em>);</td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td><u>#<span data-ppcond="230">if</span> __XSI_VISIBLE &lt;= 500 || <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a></u></td></tr>
+<tr><th id="231">231</th><td><em>double</em>	<dfn class="decl" id="gamma" title='gamma' data-ref="gamma">gamma</dfn>(<em>double</em>);</td></tr>
+<tr><th id="232">232</th><td><u>#<span data-ppcond="230">endif</span></u></td></tr>
+<tr><th id="233">233</th><td></td></tr>
+<tr><th id="234">234</th><td><u>#<span data-ppcond="234">if</span> __XSI_VISIBLE &lt;= 600 || <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a></u></td></tr>
+<tr><th id="235">235</th><td><em>double</em>	<dfn class="decl" id="scalb" title='scalb' data-ref="scalb">scalb</dfn>(<em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="236">236</th><td><u>#<span data-ppcond="234">endif</span></u></td></tr>
+<tr><th id="237">237</th><td><u>#<span data-ppcond="222">endif</span> /* __BSD_VISIBLE || __XSI_VISIBLE */</u></td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td><u>#<span data-ppcond="239">if</span> <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a> || <a class="macro" href="sys/cdefs.h.html#328" title="1999" data-ref="_M/__ISO_C_VISIBLE">__ISO_C_VISIBLE</a> &gt;= 1999</u></td></tr>
+<tr><th id="240">240</th><td><em>double</em>	<dfn class="decl" id="copysign" title='copysign' data-ref="copysign">copysign</dfn>(<em>double</em>, <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="241">241</th><td><em>double</em>	<dfn class="decl" id="fdim" title='fdim' data-ref="fdim">fdim</dfn>(<em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="242">242</th><td><em>double</em>	<dfn class="decl" id="fmax" title='fmax' data-ref="fmax">fmax</dfn>(<em>double</em>, <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="243">243</th><td><em>double</em>	<dfn class="decl" id="fmin" title='fmin' data-ref="fmin">fmin</dfn>(<em>double</em>, <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="244">244</th><td><em>double</em>	<dfn class="decl" id="nearbyint" title='nearbyint' data-ref="nearbyint">nearbyint</dfn>(<em>double</em>);</td></tr>
+<tr><th id="245">245</th><td><em>double</em>	<dfn class="decl" id="round" title='round' data-ref="round">round</dfn>(<em>double</em>);</td></tr>
+<tr><th id="246">246</th><td><em>double</em>	<dfn class="decl" id="scalbln" title='scalbln' data-ref="scalbln">scalbln</dfn>(<em>double</em>, <em>long</em>);</td></tr>
+<tr><th id="247">247</th><td><em>double</em>	<dfn class="decl" id="scalbn" title='scalbn' data-ref="scalbn">scalbn</dfn>(<em>double</em>, <em>int</em>);</td></tr>
+<tr><th id="248">248</th><td><em>double</em>	<dfn class="decl" id="tgamma" title='tgamma' data-ref="tgamma">tgamma</dfn>(<em>double</em>);</td></tr>
+<tr><th id="249">249</th><td><em>double</em>	<dfn class="decl" id="trunc" title='trunc' data-ref="trunc">trunc</dfn>(<em>double</em>);</td></tr>
+<tr><th id="250">250</th><td><u>#<span data-ppcond="239">endif</span></u></td></tr>
+<tr><th id="251">251</th><td></td></tr>
+<tr><th id="252">252</th><td><i>/*</i></td></tr>
+<tr><th id="253">253</th><td><i> * BSD math library entry points</i></td></tr>
+<tr><th id="254">254</th><td><i> */</i></td></tr>
+<tr><th id="255">255</th><td><u>#<span data-ppcond="255">if</span> <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a></u></td></tr>
+<tr><th id="256">256</th><td><em>double</em>	<dfn class="decl" id="drem" title='drem' data-ref="drem">drem</dfn>(<em>double</em>, <em>double</em>);</td></tr>
+<tr><th id="257">257</th><td><em>int</em>	<dfn class="decl" id="finite" title='finite' data-ref="finite">finite</dfn>(<em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="258">258</th><td><em>int</em>	<dfn class="decl" id="isnanf" title='isnanf' data-ref="isnanf">isnanf</dfn>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="259">259</th><td><em>long</em> <em>double</em> <dfn class="decl" id="significandl" title='significandl' data-ref="significandl">significandl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="260">260</th><td></td></tr>
+<tr><th id="261">261</th><td><i>/*</i></td></tr>
+<tr><th id="262">262</th><td><i> * Reentrant version of gamma &amp; lgamma; passes signgam back by reference</i></td></tr>
+<tr><th id="263">263</th><td><i> * as the second argument; user must allocate space for signgam.</i></td></tr>
+<tr><th id="264">264</th><td><i> */</i></td></tr>
+<tr><th id="265">265</th><td><em>double</em>	<dfn class="decl" id="gamma_r" title='gamma_r' data-ref="gamma_r">gamma_r</dfn>(<em>double</em>, <em>int</em> *);</td></tr>
+<tr><th id="266">266</th><td><em>double</em>	<dfn class="decl" id="lgamma_r" title='lgamma_r' data-ref="lgamma_r">lgamma_r</dfn>(<em>double</em>, <em>int</em> *);</td></tr>
+<tr><th id="267">267</th><td></td></tr>
+<tr><th id="268">268</th><td><i>/*</i></td></tr>
+<tr><th id="269">269</th><td><i> * IEEE Test Vector</i></td></tr>
+<tr><th id="270">270</th><td><i> */</i></td></tr>
+<tr><th id="271">271</th><td><em>double</em>	<dfn class="decl" id="significand" title='significand' data-ref="significand">significand</dfn>(<em>double</em>);</td></tr>
+<tr><th id="272">272</th><td><u>#<span data-ppcond="255">endif</span> /* __BSD_VISIBLE */</u></td></tr>
+<tr><th id="273">273</th><td></td></tr>
+<tr><th id="274">274</th><td><i>/* float versions of ANSI/POSIX functions */</i></td></tr>
+<tr><th id="275">275</th><td><u>#<span data-ppcond="275">if</span> <a class="macro" href="sys/cdefs.h.html#328" title="1999" data-ref="_M/__ISO_C_VISIBLE">__ISO_C_VISIBLE</a> &gt;= 1999</u></td></tr>
+<tr><th id="276">276</th><td><em>float</em>	<dfn class="decl" id="acosf" title='acosf' data-ref="acosf">acosf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="277">277</th><td><em>float</em>	<dfn class="decl" id="asinf" title='asinf' data-ref="asinf">asinf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="278">278</th><td><em>float</em>	<dfn class="decl" id="atanf" title='atanf' data-ref="atanf">atanf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="279">279</th><td><em>float</em>	<dfn class="decl" id="atan2f" title='atan2f' data-ref="atan2f">atan2f</dfn>(<em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="280">280</th><td><em>float</em>	<dfn class="decl" id="cosf" title='cosf' data-ref="cosf">cosf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="281">281</th><td><em>float</em>	<dfn class="decl" id="sinf" title='sinf' data-ref="sinf">sinf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="282">282</th><td><em>float</em>	<dfn class="decl" id="tanf" title='tanf' data-ref="tanf">tanf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="283">283</th><td></td></tr>
+<tr><th id="284">284</th><td><em>float</em>	<dfn class="decl" id="coshf" title='coshf' data-ref="coshf">coshf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="285">285</th><td><em>float</em>	<dfn class="decl" id="sinhf" title='sinhf' data-ref="sinhf">sinhf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="286">286</th><td><em>float</em>	<dfn class="decl" id="tanhf" title='tanhf' data-ref="tanhf">tanhf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="287">287</th><td></td></tr>
+<tr><th id="288">288</th><td><em>float</em>	<dfn class="decl" id="exp2f" title='exp2f' data-ref="exp2f">exp2f</dfn>(<em>float</em>);</td></tr>
+<tr><th id="289">289</th><td><em>float</em>	<dfn class="decl" id="expf" title='expf' data-ref="expf">expf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="290">290</th><td><em>float</em>	<dfn class="decl" id="expm1f" title='expm1f' data-ref="expm1f">expm1f</dfn>(<em>float</em>);</td></tr>
+<tr><th id="291">291</th><td><em>float</em>	<dfn class="decl" id="frexpf" title='frexpf' data-ref="frexpf">frexpf</dfn>(<em>float</em>, <em>int</em> *);	<i>/* fundamentally !__pure2 */</i></td></tr>
+<tr><th id="292">292</th><td><em>int</em>	<dfn class="decl" id="ilogbf" title='ilogbf' data-ref="ilogbf">ilogbf</dfn>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="293">293</th><td><em>float</em>	<dfn class="decl" id="ldexpf" title='ldexpf' data-ref="ldexpf">ldexpf</dfn>(<em>float</em>, <em>int</em>);</td></tr>
+<tr><th id="294">294</th><td><em>float</em>	<dfn class="decl" id="log10f" title='log10f' data-ref="log10f">log10f</dfn>(<em>float</em>);</td></tr>
+<tr><th id="295">295</th><td><em>float</em>	<dfn class="decl" id="log1pf" title='log1pf' data-ref="log1pf">log1pf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="296">296</th><td><em>float</em>	<dfn class="decl" id="log2f" title='log2f' data-ref="log2f">log2f</dfn>(<em>float</em>);</td></tr>
+<tr><th id="297">297</th><td><em>float</em>	<dfn class="decl" id="logf" title='logf' data-ref="logf">logf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="298">298</th><td><em>float</em>	<dfn class="decl" id="modff" title='modff' data-ref="modff">modff</dfn>(<em>float</em>, <em>float</em> *);	<i>/* fundamentally !__pure2 */</i></td></tr>
+<tr><th id="299">299</th><td></td></tr>
+<tr><th id="300">300</th><td><em>float</em>	<dfn class="decl" id="powf" title='powf' data-ref="powf">powf</dfn>(<em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="301">301</th><td><em>float</em>	<dfn class="decl" id="sqrtf" title='sqrtf' data-ref="sqrtf">sqrtf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="302">302</th><td></td></tr>
+<tr><th id="303">303</th><td><em>float</em>	<dfn class="decl" id="ceilf" title='ceilf' data-ref="ceilf">ceilf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="304">304</th><td><em>float</em>	<a class="decl" href="#305" title='fabsf' data-ref="fabsf">fabsf</a>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="305">305</th><td><a class="macro" href="#24" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__)) float fabsf(float x) { return __builtin_fabsf(x); }" data-ref="_M/__BIONIC_MATH_INLINE">__BIONIC_MATH_INLINE</a>(<em>float</em> <dfn class="decl def" id="fabsf" title='fabsf' data-ref="fabsf">fabsf</dfn>(<em>float</em> <dfn class="local col2 decl" id="2x" title='x' data-type='float' data-ref="2x">x</dfn>) { <b>return</b> <a class="ref" href="#305" title='__builtin_fabsf' data-ref="__builtin_fabsf">__builtin_fabsf</a>(<a class="local col2 ref" href="#305" title='x' data-ref="2x">x</a>); })</td></tr>
+<tr><th id="306">306</th><td><em>float</em>	<dfn class="decl" id="floorf" title='floorf' data-ref="floorf">floorf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="307">307</th><td><em>float</em>	<dfn class="decl" id="fmodf" title='fmodf' data-ref="fmodf">fmodf</dfn>(<em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="308">308</th><td><em>float</em>	<dfn class="decl" id="roundf" title='roundf' data-ref="roundf">roundf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="309">309</th><td></td></tr>
+<tr><th id="310">310</th><td><em>float</em>	<dfn class="decl" id="erff" title='erff' data-ref="erff">erff</dfn>(<em>float</em>);</td></tr>
+<tr><th id="311">311</th><td><em>float</em>	<dfn class="decl" id="erfcf" title='erfcf' data-ref="erfcf">erfcf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="312">312</th><td><em>float</em>	<dfn class="decl" id="hypotf" title='hypotf' data-ref="hypotf">hypotf</dfn>(<em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="313">313</th><td><em>float</em>	<dfn class="decl" id="lgammaf" title='lgammaf' data-ref="lgammaf">lgammaf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="314">314</th><td><em>float</em>	<dfn class="decl" id="tgammaf" title='tgammaf' data-ref="tgammaf">tgammaf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="315">315</th><td></td></tr>
+<tr><th id="316">316</th><td><em>float</em>	<dfn class="decl" id="acoshf" title='acoshf' data-ref="acoshf">acoshf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="317">317</th><td><em>float</em>	<dfn class="decl" id="asinhf" title='asinhf' data-ref="asinhf">asinhf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="318">318</th><td><em>float</em>	<dfn class="decl" id="atanhf" title='atanhf' data-ref="atanhf">atanhf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="319">319</th><td><em>float</em>	<dfn class="decl" id="cbrtf" title='cbrtf' data-ref="cbrtf">cbrtf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="320">320</th><td><em>float</em>	<dfn class="decl" id="logbf" title='logbf' data-ref="logbf">logbf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="321">321</th><td><em>float</em>	<dfn class="decl" id="copysignf" title='copysignf' data-ref="copysignf">copysignf</dfn>(<em>float</em>, <em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="322">322</th><td><em>long</em> <em>long</em> <dfn class="decl" id="llrintf" title='llrintf' data-ref="llrintf">llrintf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="323">323</th><td><em>long</em> <em>long</em> <dfn class="decl" id="llroundf" title='llroundf' data-ref="llroundf">llroundf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="324">324</th><td><em>long</em>	<dfn class="decl" id="lrintf" title='lrintf' data-ref="lrintf">lrintf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="325">325</th><td><em>long</em>	<dfn class="decl" id="lroundf" title='lroundf' data-ref="lroundf">lroundf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="326">326</th><td><em>float</em>	<dfn class="decl" id="nanf" title='nanf' data-ref="nanf">nanf</dfn>(<em>const</em> <em>char</em> *) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="327">327</th><td><em>float</em>	<dfn class="decl" id="nearbyintf" title='nearbyintf' data-ref="nearbyintf">nearbyintf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="328">328</th><td><em>float</em>	<dfn class="decl" id="nextafterf" title='nextafterf' data-ref="nextafterf">nextafterf</dfn>(<em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="329">329</th><td><em>float</em>	<dfn class="decl" id="remainderf" title='remainderf' data-ref="remainderf">remainderf</dfn>(<em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="330">330</th><td><em>float</em>	<dfn class="decl" id="remquof" title='remquof' data-ref="remquof">remquof</dfn>(<em>float</em>, <em>float</em>, <em>int</em> *);</td></tr>
+<tr><th id="331">331</th><td><em>float</em>	<dfn class="decl" id="rintf" title='rintf' data-ref="rintf">rintf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="332">332</th><td><em>float</em>	<dfn class="decl" id="scalblnf" title='scalblnf' data-ref="scalblnf">scalblnf</dfn>(<em>float</em>, <em>long</em>);</td></tr>
+<tr><th id="333">333</th><td><em>float</em>	<dfn class="decl" id="scalbnf" title='scalbnf' data-ref="scalbnf">scalbnf</dfn>(<em>float</em>, <em>int</em>);</td></tr>
+<tr><th id="334">334</th><td><em>float</em>	<dfn class="decl" id="truncf" title='truncf' data-ref="truncf">truncf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="335">335</th><td></td></tr>
+<tr><th id="336">336</th><td><em>float</em>	<dfn class="decl" id="fdimf" title='fdimf' data-ref="fdimf">fdimf</dfn>(<em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="337">337</th><td><em>float</em>	<dfn class="decl" id="fmaf" title='fmaf' data-ref="fmaf">fmaf</dfn>(<em>float</em>, <em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="338">338</th><td><em>float</em>	<dfn class="decl" id="fmaxf" title='fmaxf' data-ref="fmaxf">fmaxf</dfn>(<em>float</em>, <em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="339">339</th><td><em>float</em>	<dfn class="decl" id="fminf" title='fminf' data-ref="fminf">fminf</dfn>(<em>float</em>, <em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="340">340</th><td><u>#<span data-ppcond="275">endif</span></u></td></tr>
+<tr><th id="341">341</th><td></td></tr>
+<tr><th id="342">342</th><td><i>/*</i></td></tr>
+<tr><th id="343">343</th><td><i> * float versions of BSD math library entry points</i></td></tr>
+<tr><th id="344">344</th><td><i> */</i></td></tr>
+<tr><th id="345">345</th><td><u>#<span data-ppcond="345">if</span> <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a></u></td></tr>
+<tr><th id="346">346</th><td><em>float</em>	<dfn class="decl" id="dremf" title='dremf' data-ref="dremf">dremf</dfn>(<em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="347">347</th><td><em>int</em>	<dfn class="decl" id="finitef" title='finitef' data-ref="finitef">finitef</dfn>(<em>float</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="348">348</th><td><em>float</em>	<dfn class="decl" id="gammaf" title='gammaf' data-ref="gammaf">gammaf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="349">349</th><td><em>float</em>	<dfn class="decl" id="j0f" title='j0f' data-ref="j0f">j0f</dfn>(<em>float</em>);</td></tr>
+<tr><th id="350">350</th><td><em>float</em>	<dfn class="decl" id="j1f" title='j1f' data-ref="j1f">j1f</dfn>(<em>float</em>);</td></tr>
+<tr><th id="351">351</th><td><em>float</em>	<dfn class="decl" id="jnf" title='jnf' data-ref="jnf">jnf</dfn>(<em>int</em>, <em>float</em>);</td></tr>
+<tr><th id="352">352</th><td><em>float</em>	<dfn class="decl" id="scalbf" title='scalbf' data-ref="scalbf">scalbf</dfn>(<em>float</em>, <em>float</em>);</td></tr>
+<tr><th id="353">353</th><td><em>float</em>	<dfn class="decl" id="y0f" title='y0f' data-ref="y0f">y0f</dfn>(<em>float</em>);</td></tr>
+<tr><th id="354">354</th><td><em>float</em>	<dfn class="decl" id="y1f" title='y1f' data-ref="y1f">y1f</dfn>(<em>float</em>);</td></tr>
+<tr><th id="355">355</th><td><em>float</em>	<dfn class="decl" id="ynf" title='ynf' data-ref="ynf">ynf</dfn>(<em>int</em>, <em>float</em>);</td></tr>
+<tr><th id="356">356</th><td></td></tr>
+<tr><th id="357">357</th><td><i>/*</i></td></tr>
+<tr><th id="358">358</th><td><i> * Float versions of reentrant version of gamma &amp; lgamma; passes</i></td></tr>
+<tr><th id="359">359</th><td><i> * signgam back by reference as the second argument; user must</i></td></tr>
+<tr><th id="360">360</th><td><i> * allocate space for signgam.</i></td></tr>
+<tr><th id="361">361</th><td><i> */</i></td></tr>
+<tr><th id="362">362</th><td><em>float</em>	<dfn class="decl" id="gammaf_r" title='gammaf_r' data-ref="gammaf_r">gammaf_r</dfn>(<em>float</em>, <em>int</em> *);</td></tr>
+<tr><th id="363">363</th><td><em>float</em>	<dfn class="decl" id="lgammaf_r" title='lgammaf_r' data-ref="lgammaf_r">lgammaf_r</dfn>(<em>float</em>, <em>int</em> *);</td></tr>
+<tr><th id="364">364</th><td></td></tr>
+<tr><th id="365">365</th><td><i>/*</i></td></tr>
+<tr><th id="366">366</th><td><i> * float version of IEEE Test Vector</i></td></tr>
+<tr><th id="367">367</th><td><i> */</i></td></tr>
+<tr><th id="368">368</th><td><em>float</em>	<dfn class="decl" id="significandf" title='significandf' data-ref="significandf">significandf</dfn>(<em>float</em>);</td></tr>
+<tr><th id="369">369</th><td><u>#<span data-ppcond="345">endif</span>	/* __BSD_VISIBLE */</u></td></tr>
+<tr><th id="370">370</th><td></td></tr>
+<tr><th id="371">371</th><td><i>/*</i></td></tr>
+<tr><th id="372">372</th><td><i> * long double versions of ISO/POSIX math functions</i></td></tr>
+<tr><th id="373">373</th><td><i> */</i></td></tr>
+<tr><th id="374">374</th><td><u>#<span data-ppcond="374">if</span> <a class="macro" href="sys/cdefs.h.html#328" title="1999" data-ref="_M/__ISO_C_VISIBLE">__ISO_C_VISIBLE</a> &gt;= 1999</u></td></tr>
+<tr><th id="375">375</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="acoshl" title='acoshl' data-ref="acoshl">acoshl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="376">376</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="acosl" title='acosl' data-ref="acosl">acosl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="377">377</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="asinhl" title='asinhl' data-ref="asinhl">asinhl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="378">378</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="asinl" title='asinl' data-ref="asinl">asinl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="379">379</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="atan2l" title='atan2l' data-ref="atan2l">atan2l</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="380">380</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="atanhl" title='atanhl' data-ref="atanhl">atanhl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="381">381</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="atanl" title='atanl' data-ref="atanl">atanl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="382">382</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="cbrtl" title='cbrtl' data-ref="cbrtl">cbrtl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="383">383</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="ceill" title='ceill' data-ref="ceill">ceill</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="384">384</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="copysignl" title='copysignl' data-ref="copysignl">copysignl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="385">385</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="coshl" title='coshl' data-ref="coshl">coshl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="386">386</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="cosl" title='cosl' data-ref="cosl">cosl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="387">387</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="erfcl" title='erfcl' data-ref="erfcl">erfcl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="388">388</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="erfl" title='erfl' data-ref="erfl">erfl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="389">389</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="exp2l" title='exp2l' data-ref="exp2l">exp2l</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="390">390</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="expl" title='expl' data-ref="expl">expl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="391">391</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="expm1l" title='expm1l' data-ref="expm1l">expm1l</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="392">392</th><td><em>long</em> <em>double</em>	<a class="decl" href="#393" title='fabsl' data-ref="fabsl">fabsl</a>(<em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="393">393</th><td><a class="macro" href="#24" title="extern __inline__ __attribute__((__always_inline__)) __attribute__((gnu_inline)) __attribute__((__artificial__)) long double fabsl(long double x) { return __builtin_fabsl(x); }" data-ref="_M/__BIONIC_MATH_INLINE">__BIONIC_MATH_INLINE</a>(<em>long</em> <em>double</em> <dfn class="decl def" id="fabsl" title='fabsl' data-ref="fabsl">fabsl</dfn>(<em>long</em> <em>double</em> <dfn class="local col3 decl" id="3x" title='x' data-type='long double' data-ref="3x">x</dfn>) { <b>return</b> <a class="ref" href="#393" title='__builtin_fabsl' data-ref="__builtin_fabsl">__builtin_fabsl</a>(<a class="local col3 ref" href="#393" title='x' data-ref="3x">x</a>); })</td></tr>
+<tr><th id="394">394</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="fdiml" title='fdiml' data-ref="fdiml">fdiml</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="395">395</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="floorl" title='floorl' data-ref="floorl">floorl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="396">396</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="fmal" title='fmal' data-ref="fmal">fmal</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="397">397</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="fmaxl" title='fmaxl' data-ref="fmaxl">fmaxl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="398">398</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="fminl" title='fminl' data-ref="fminl">fminl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="399">399</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="fmodl" title='fmodl' data-ref="fmodl">fmodl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="400">400</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="frexpl" title='frexpl' data-ref="frexpl">frexpl</dfn>(<em>long</em> <em>double</em> <dfn class="local col4 decl" id="4value" title='value' data-type='long double' data-ref="4value">value</dfn>, <em>int</em> *); <i>/* fundamentally !__pure2 */</i></td></tr>
+<tr><th id="401">401</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="hypotl" title='hypotl' data-ref="hypotl">hypotl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="402">402</th><td><em>int</em>		<dfn class="decl" id="ilogbl" title='ilogbl' data-ref="ilogbl">ilogbl</dfn>(<em>long</em> <em>double</em>) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="403">403</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="ldexpl" title='ldexpl' data-ref="ldexpl">ldexpl</dfn>(<em>long</em> <em>double</em>, <em>int</em>);</td></tr>
+<tr><th id="404">404</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="lgammal" title='lgammal' data-ref="lgammal">lgammal</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="405">405</th><td><em>long</em> <em>long</em>	<dfn class="decl" id="llrintl" title='llrintl' data-ref="llrintl">llrintl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="406">406</th><td><em>long</em> <em>long</em>	<dfn class="decl" id="llroundl" title='llroundl' data-ref="llroundl">llroundl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="407">407</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="log10l" title='log10l' data-ref="log10l">log10l</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="408">408</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="log1pl" title='log1pl' data-ref="log1pl">log1pl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="409">409</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="log2l" title='log2l' data-ref="log2l">log2l</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="410">410</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="logbl" title='logbl' data-ref="logbl">logbl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="411">411</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="logl" title='logl' data-ref="logl">logl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="412">412</th><td><em>long</em>		<dfn class="decl" id="lrintl" title='lrintl' data-ref="lrintl">lrintl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="413">413</th><td><em>long</em>		<dfn class="decl" id="lroundl" title='lroundl' data-ref="lroundl">lroundl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="414">414</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="modfl" title='modfl' data-ref="modfl">modfl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em> *); <i>/* fundamentally !__pure2 */</i></td></tr>
+<tr><th id="415">415</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="nanl" title='nanl' data-ref="nanl">nanl</dfn>(<em>const</em> <em>char</em> *) <a class="macro" href="sys/cdefs.h.html#148" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="416">416</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="nearbyintl" title='nearbyintl' data-ref="nearbyintl">nearbyintl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="417">417</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="nextafterl" title='nextafterl' data-ref="nextafterl">nextafterl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="418">418</th><td><em>double</em>		<dfn class="decl" id="nexttoward" title='nexttoward' data-ref="nexttoward">nexttoward</dfn>(<em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="419">419</th><td><em>float</em>		<dfn class="decl" id="nexttowardf" title='nexttowardf' data-ref="nexttowardf">nexttowardf</dfn>(<em>float</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="420">420</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="nexttowardl" title='nexttowardl' data-ref="nexttowardl">nexttowardl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="421">421</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="powl" title='powl' data-ref="powl">powl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="422">422</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="remainderl" title='remainderl' data-ref="remainderl">remainderl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>);</td></tr>
+<tr><th id="423">423</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="remquol" title='remquol' data-ref="remquol">remquol</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>, <em>int</em> *);</td></tr>
+<tr><th id="424">424</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="rintl" title='rintl' data-ref="rintl">rintl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="425">425</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="roundl" title='roundl' data-ref="roundl">roundl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="426">426</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="scalblnl" title='scalblnl' data-ref="scalblnl">scalblnl</dfn>(<em>long</em> <em>double</em>, <em>long</em>);</td></tr>
+<tr><th id="427">427</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="scalbnl" title='scalbnl' data-ref="scalbnl">scalbnl</dfn>(<em>long</em> <em>double</em>, <em>int</em>);</td></tr>
+<tr><th id="428">428</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="sinhl" title='sinhl' data-ref="sinhl">sinhl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="429">429</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="sinl" title='sinl' data-ref="sinl">sinl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="430">430</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="sqrtl" title='sqrtl' data-ref="sqrtl">sqrtl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="431">431</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="tanhl" title='tanhl' data-ref="tanhl">tanhl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="432">432</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="tanl" title='tanl' data-ref="tanl">tanl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="433">433</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="tgammal" title='tgammal' data-ref="tgammal">tgammal</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="434">434</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="truncl" title='truncl' data-ref="truncl">truncl</dfn>(<em>long</em> <em>double</em>);</td></tr>
+<tr><th id="435">435</th><td><u>#<span data-ppcond="374">endif</span> /* __ISO_C_VISIBLE &gt;= 1999 */</u></td></tr>
+<tr><th id="436">436</th><td></td></tr>
+<tr><th id="437">437</th><td><u>#<span data-ppcond="437">if</span> <a class="macro" href="sys/cdefs.h.html#392" title="1" data-ref="_M/__BSD_VISIBLE">__BSD_VISIBLE</a></u></td></tr>
+<tr><th id="438">438</th><td><em>long</em> <em>double</em>	<dfn class="decl" id="lgammal_r" title='lgammal_r' data-ref="lgammal_r">lgammal_r</dfn>(<em>long</em> <em>double</em>, <em>int</em> *);</td></tr>
+<tr><th id="439">439</th><td><u>#<span data-ppcond="437">endif</span></u></td></tr>
+<tr><th id="440">440</th><td></td></tr>
+<tr><th id="441">441</th><td><u>#<span data-ppcond="441">if</span> defined(<a class="macro" href="sys/cdefs.h.html#246" data-ref="_M/__USE_GNU">__USE_GNU</a>)</u></td></tr>
+<tr><th id="442">442</th><td><em>void</em> <dfn class="decl" id="sincos" title='sincos' data-ref="sincos">sincos</dfn>(<em>double</em>, <em>double</em>*, <em>double</em>*);</td></tr>
+<tr><th id="443">443</th><td><em>void</em> <dfn class="decl" id="sincosf" title='sincosf' data-ref="sincosf">sincosf</dfn>(<em>float</em>, <em>float</em>*, <em>float</em>*);</td></tr>
+<tr><th id="444">444</th><td><em>void</em> <dfn class="decl" id="sincosl" title='sincosl' data-ref="sincosl">sincosl</dfn>(<em>long</em> <em>double</em>, <em>long</em> <em>double</em>*, <em>long</em> <em>double</em>*);</td></tr>
+<tr><th id="445">445</th><td><u>#<span data-ppcond="441">endif</span> /* __USE_GNU */</u></td></tr>
+<tr><th id="446">446</th><td></td></tr>
+<tr><th id="447">447</th><td><u>#pragma GCC visibility pop</u></td></tr>
+<tr><th id="448">448</th><td><a class="macro" href="sys/cdefs.h.html#86" title="}" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="449">449</th><td></td></tr>
+<tr><th id="450">450</th><td><u>#<span data-ppcond="17">endif</span> /* !_MATH_H_ */</u></td></tr>
+<tr><th id="451">451</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/fpclassify.cpp.html'>codebrowser/bionic/libc/bionic/fpclassify.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

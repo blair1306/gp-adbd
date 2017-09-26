@@ -1,0 +1,39 @@
+<dec f='codebrowser/system/core/fs_mgr/fs_mgr_priv.h' l='68'/>
+<use f='codebrowser/system/core/fs_mgr/fs_mgr.c' l='549' u='c'/>
+<use f='codebrowser/system/core/fs_mgr/fs_mgr.c' l='691' u='c'/>
+<use f='codebrowser/system/core/fs_mgr/fs_mgr.c' l='824' u='c'/>
+<doc f='codebrowser/system/core/fs_mgr/fs_mgr_priv.h' l='33'>/* fstab has the following format:
+ *
+ * Any line starting with a # is a comment and ignored
+ *
+ * Any blank line is ignored
+ *
+ * All other lines must be in this format:
+ *   &lt;source&gt;  &lt;mount_point&gt; &lt;fs_type&gt; &lt;mount_flags&gt; &lt;fs_options&gt; &lt;fs_mgr_options&gt;
+ *
+ *   &lt;mount_flags&gt; is a comma separated list of flags that can be passed to the
+ *                 mount command.  The list includes noatime, nosuid, nodev, nodiratime,
+ *                 ro, rw, remount, defaults.
+ *
+ *   &lt;fs_options&gt; is a comma separated list of options accepted by the filesystem being
+ *                mounted.  It is passed directly to mount without being parsed
+ *
+ *   &lt;fs_mgr_options&gt; is a comma separated list of flags that control the operation of
+ *                     the fs_mgr program.  The list includes &quot;wait&quot;, which will wait till
+ *                     the &lt;source&gt; file exists, and &quot;check&quot;, which requests that the fs_mgr 
+ *                     run an fscheck program on the &lt;source&gt; before mounting the filesystem.
+ *                     If check is specifed on a read-only filesystem, it is ignored.
+ *                     Also, &quot;encryptable&quot; means that filesystem can be encrypted.
+ *                     The &quot;encryptable&quot; flag _MUST_ be followed by a = and a string which
+ *                     is the location of the encryption keys.  It can either be a path
+ *                     to a file or partition which contains the keys, or the word &quot;footer&quot;
+ *                     which means the keys are in the last 16 Kbytes of the partition
+ *                     containing the filesystem.
+ *
+ * When the fs_mgr is requested to mount all filesystems, it will first mount all the
+ * filesystems that do _NOT_ specify check (including filesystems that are read-only and
+ * specify check, because check is ignored in that case) and then it will check and mount
+ * filesystem marked with check.
+ *
+ */</doc>
+<use f='codebrowser/system/core/fs_mgr/fs_mgr_fstab.c' l='62' u='c'/>

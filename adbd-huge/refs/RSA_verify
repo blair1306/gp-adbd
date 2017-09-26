@@ -1,0 +1,14 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/rsa.h' l='218' type='int RSA_verify(int hash_nid, const uint8_t * msg, size_t msg_len, const uint8_t * sig, size_t sig_len, RSA * rsa)'/>
+<use f='codebrowser/external/boringssl/src/crypto/evp/p_rsa.c' l='231' u='c' c='pkey_rsa_verify'/>
+<def f='codebrowser/external/boringssl/src/crypto/rsa/rsa.c' l='474' ll='526' type='int RSA_verify(int hash_nid, const uint8_t * msg, size_t msg_len, const uint8_t * sig, size_t sig_len, RSA * rsa)'/>
+<dec f='codebrowser/system/core/include/mincrypt/rsa.h' l='48' type='int RSA_verify(const RSAPublicKey * key, const uint8_t * signature, const int len, const uint8_t * hash, const int hash_len)'/>
+<use f='codebrowser/system/core/adb/adb_auth_client.cpp' l='155' u='c' c='_Z15adb_auth_verifyPhS_i'/>
+<use f='codebrowser/system/core/fs_mgr/fs_mgr_verity.cpp' l='137' u='c' c='_ZL12verify_tablePKhPKcj'/>
+<def f='codebrowser/system/core/libmincrypt/rsa.c' l='249' ll='308' type='int RSA_verify(const RSAPublicKey * key, const uint8_t * signature, const int len, const uint8_t * hash, const int hash_len)'/>
+<doc f='codebrowser/system/core/libmincrypt/rsa.c' l='242'>// Verify a 2048-bit RSA PKCS1.5 signature against an expected hash.
+// Both e=3 and e=65537 are supported.  hash_len may be
+// SHA_DIGEST_SIZE (== 20) to indicate a SHA-1 hash, or
+// SHA256_DIGEST_SIZE (== 32) to indicate a SHA-256 hash.  No other
+// values are supported.
+//
+// Returns 1 on successful verification, 0 on failure.</doc>

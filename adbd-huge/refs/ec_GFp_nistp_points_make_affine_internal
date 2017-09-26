@@ -1,0 +1,12 @@
+<dec f='codebrowser/external/boringssl/src/crypto/ec/internal.h' l='252' type='void ec_GFp_nistp_points_make_affine_internal(size_t num, void * point_array, size_t felem_size, void * tmp_felems, void (*)(void *) felem_one, int (*)(const void *) felem_is_zero, void (*)(void *, const void *) felem_assign, void (*)(void *, const void *) felem_square, void (*)(void *, const void *, const void *) felem_mul, void (*)(void *, const void *) felem_inv, void (*)(void *, const void *) felem_contract)'/>
+<use f='codebrowser/external/boringssl/src/crypto/ec/p256-64.c' l='1692' u='c' c='make_points_affine'/>
+<def f='codebrowser/external/boringssl/src/crypto/ec/util-64.c' l='33' ll='96' type='void ec_GFp_nistp_points_make_affine_internal(size_t num, void * point_array, size_t felem_size, void * tmp_felems, void (*)(void *) felem_one, int (*)(const void *) felem_is_zero, void (*)(void *, const void *) felem_assign, void (*)(void *, const void *) felem_square, void (*)(void *, const void *, const void *) felem_mul, void (*)(void *, const void *) felem_inv, void (*)(void *, const void *) felem_contract)'/>
+<doc f='codebrowser/external/boringssl/src/crypto/ec/util-64.c' l='24'>/* Convert an array of points into affine coordinates. (If the point at
+ * infinity is found (Z = 0), it remains unchanged.) This function is
+ * essentially an equivalent to EC_POINTs_make_affine(), but works with the
+ * internal representation of points as used by ecp_nistp###.c rather than
+ * with (BIGNUM-based) EC_POINT data structures. point_array is the
+ * input/output buffer (&apos;num&apos; points in projective form, i.e. three
+ * coordinates each), based on an internal representation of field elements
+ * of size &apos;felem_size&apos;. tmp_felems needs to point to a temporary array of
+ * &apos;num&apos;+1 field elements for storage of intermediate values. */</doc>

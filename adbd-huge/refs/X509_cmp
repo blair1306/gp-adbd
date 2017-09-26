@@ -1,0 +1,15 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/x509.h' l='926' type='int X509_cmp(const X509 * a, const X509 * b)'/>
+<def f='codebrowser/external/boringssl/src/crypto/x509/x509_cmp.c' l='174' ll='194' type='int X509_cmp(const X509 * a, const X509 * b)'/>
+<doc f='codebrowser/external/boringssl/src/crypto/x509/x509_cmp.c' l='165'>/* Compare two certificates: they must be identical for
+ * this to work. NB: Although &quot;cmp&quot; operations are generally
+ * prototyped to take &quot;const&quot; arguments (eg. for use in
+ * STACKs), the way X509 handling is - these operations may
+ * involve ensuring the hashes are up-to-date and ensuring
+ * certain cert information is cached. So this is the point
+ * where the &quot;depth-first&quot; constification tree has to halt
+ * with an evil cast.
+ */</doc>
+<use f='codebrowser/external/boringssl/src/crypto/x509/x509_lu.c' l='611' u='c' c='X509_OBJECT_retrieve_match'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509/x509_vfy.c' l='182' u='c' c='lookup_cert_match'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509/x509_vfy.c' l='313' u='c' c='X509_verify_cert'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509/x509_vfy.c' l='1300' u='c' c='check_crl_chain'/>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>tcp.h source code [codebrowser/bionic/libc/kernel/uapi/linux/tcp.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="tcp_ca_state,tcp_info,tcp_md5sig,tcp_repair_opt,tcp_word_hdr,tcphdr "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/kernel/uapi/linux/tcp.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>bionic</a>/<a href='../../..'>libc</a>/<a href='../..'>kernel</a>/<a href='..'>uapi</a>/<a href='./'>linux</a>/<a href='tcp.h.html'>tcp.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/****************************************************************************</i></td></tr>
+<tr><th id="2">2</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="3">3</th><td><i> ***</i></td></tr>
+<tr><th id="4">4</th><td><i> ***   This header was automatically generated from a Linux kernel header</i></td></tr>
+<tr><th id="5">5</th><td><i> ***   of the same name, to make information necessary for userspace to</i></td></tr>
+<tr><th id="6">6</th><td><i> ***   call into the kernel available to libc.  It contains only constants,</i></td></tr>
+<tr><th id="7">7</th><td><i> ***   structures, and macros generated from the original header, and thus,</i></td></tr>
+<tr><th id="8">8</th><td><i> ***   contains no copyrightable information.</i></td></tr>
+<tr><th id="9">9</th><td><i> ***</i></td></tr>
+<tr><th id="10">10</th><td><i> ***   To edit the content of this header, modify the corresponding</i></td></tr>
+<tr><th id="11">11</th><td><i> ***   source file (e.g. under external/kernel-headers/original/) then</i></td></tr>
+<tr><th id="12">12</th><td><i> ***   run bionic/libc/kernel/tools/update_all.py</i></td></tr>
+<tr><th id="13">13</th><td><i> ***</i></td></tr>
+<tr><th id="14">14</th><td><i> ***   Any manual change here will be lost the next time this script will</i></td></tr>
+<tr><th id="15">15</th><td><i> ***   be run. You've been warned!</i></td></tr>
+<tr><th id="16">16</th><td><i> ***</i></td></tr>
+<tr><th id="17">17</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="18">18</th><td><i> ****************************************************************************/</i></td></tr>
+<tr><th id="19">19</th><td><u>#<span data-ppcond="19">ifndef</span> <span class="macro" data-ref="_M/_UAPI_LINUX_TCP_H">_UAPI_LINUX_TCP_H</span></u></td></tr>
+<tr><th id="20">20</th><td><u>#define <dfn class="macro" id="_M/_UAPI_LINUX_TCP_H" data-ref="_M/_UAPI_LINUX_TCP_H">_UAPI_LINUX_TCP_H</dfn></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="types.h.html">&lt;linux/types.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../asm-x86/asm/byteorder.h.html">&lt;asm/byteorder.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="socket.h.html">&lt;linux/socket.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td><b>struct</b> <dfn class="type def" id="tcphdr" title='tcphdr' data-ref="tcphdr">tcphdr</dfn> {</td></tr>
+<tr><th id="26">26</th><td>  <a class="typedef" href="types.h.html#__be16" title='__be16' data-type='__u16' data-ref="__be16">__be16</a> <dfn class="decl" id="tcphdr::source" title='tcphdr::source' data-ref="tcphdr::source">source</dfn>;</td></tr>
+<tr><th id="27">27</th><td>  <a class="typedef" href="types.h.html#__be16" title='__be16' data-type='__u16' data-ref="__be16">__be16</a> <dfn class="decl" id="tcphdr::dest" title='tcphdr::dest' data-ref="tcphdr::dest">dest</dfn>;</td></tr>
+<tr><th id="28">28</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="29">29</th><td>  <a class="typedef" href="types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="tcphdr::seq" title='tcphdr::seq' data-ref="tcphdr::seq">seq</dfn>;</td></tr>
+<tr><th id="30">30</th><td>  <a class="typedef" href="types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="tcphdr::ack_seq" title='tcphdr::ack_seq' data-ref="tcphdr::ack_seq">ack_seq</dfn>;</td></tr>
+<tr><th id="31">31</th><td><u>#<span data-ppcond="31">ifdef</span> <a class="macro" href="../../../include/sys/endian.h.html#36" data-ref="_M/__LITTLE_ENDIAN_BITFIELD">__LITTLE_ENDIAN_BITFIELD</a></u></td></tr>
+<tr><th id="32">32</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="tcphdr::res1" title='tcphdr::res1' data-ref="tcphdr::res1">res1</dfn> : <var>4</var>, <dfn class="decl" id="tcphdr::doff" title='tcphdr::doff' data-ref="tcphdr::doff">doff</dfn> : <var>4</var>, <dfn class="decl" id="tcphdr::fin" title='tcphdr::fin' data-ref="tcphdr::fin">fin</dfn> : <var>1</var>, <dfn class="decl" id="tcphdr::syn" title='tcphdr::syn' data-ref="tcphdr::syn">syn</dfn> : <var>1</var>, <dfn class="decl" id="tcphdr::rst" title='tcphdr::rst' data-ref="tcphdr::rst">rst</dfn> : <var>1</var>, <dfn class="decl" id="tcphdr::psh" title='tcphdr::psh' data-ref="tcphdr::psh">psh</dfn> : <var>1</var>, <dfn class="decl" id="tcphdr::ack" title='tcphdr::ack' data-ref="tcphdr::ack">ack</dfn> : <var>1</var>, <dfn class="decl" id="tcphdr::urg" title='tcphdr::urg' data-ref="tcphdr::urg">urg</dfn> : <var>1</var>, <dfn class="decl" id="tcphdr::ece" title='tcphdr::ece' data-ref="tcphdr::ece">ece</dfn> : <var>1</var>, <dfn class="decl" id="tcphdr::cwr" title='tcphdr::cwr' data-ref="tcphdr::cwr">cwr</dfn> : <var>1</var>;</td></tr>
+<tr><th id="33">33</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="34">34</th><td><u>#<span data-ppcond="31">elif</span> defined(__BIG_ENDIAN_BITFIELD)</u></td></tr>
+<tr><th id="35">35</th><td>  __u16 doff : <var>4</var>, res1 : <var>4</var>, cwr : <var>1</var>, ece : <var>1</var>, urg : <var>1</var>, ack : <var>1</var>, psh : <var>1</var>, rst : <var>1</var>, syn : <var>1</var>, fin : <var>1</var>;</td></tr>
+<tr><th id="36">36</th><td><u>#else</u></td></tr>
+<tr><th id="37">37</th><td><u>#error "Adjust your &lt;asm/byteorder.h&gt; defines"</u></td></tr>
+<tr><th id="38">38</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="39">39</th><td><u>#<span data-ppcond="31">endif</span></u></td></tr>
+<tr><th id="40">40</th><td>  <a class="typedef" href="types.h.html#__be16" title='__be16' data-type='__u16' data-ref="__be16">__be16</a> <dfn class="decl" id="tcphdr::window" title='tcphdr::window' data-ref="tcphdr::window">window</dfn>;</td></tr>
+<tr><th id="41">41</th><td>  <a class="typedef" href="types.h.html#__sum16" title='__sum16' data-type='__u16' data-ref="__sum16">__sum16</a> <dfn class="decl" id="tcphdr::check" title='tcphdr::check' data-ref="tcphdr::check">check</dfn>;</td></tr>
+<tr><th id="42">42</th><td>  <a class="typedef" href="types.h.html#__be16" title='__be16' data-type='__u16' data-ref="__be16">__be16</a> <dfn class="decl" id="tcphdr::urg_ptr" title='tcphdr::urg_ptr' data-ref="tcphdr::urg_ptr">urg_ptr</dfn>;</td></tr>
+<tr><th id="43">43</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="44">44</th><td>};</td></tr>
+<tr><th id="45">45</th><td><b>union</b> <dfn class="type def" id="tcp_word_hdr" title='tcp_word_hdr' data-ref="tcp_word_hdr">tcp_word_hdr</dfn> {</td></tr>
+<tr><th id="46">46</th><td>  <b>struct</b> <a class="type" href="#tcphdr" title='tcphdr' data-ref="tcphdr">tcphdr</a> <dfn class="decl" id="tcp_word_hdr::hdr" title='tcp_word_hdr::hdr' data-ref="tcp_word_hdr::hdr">hdr</dfn>;</td></tr>
+<tr><th id="47">47</th><td>  <a class="typedef" href="types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="tcp_word_hdr::words" title='tcp_word_hdr::words' data-ref="tcp_word_hdr::words">words</dfn>[<var>5</var>];</td></tr>
+<tr><th id="48">48</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="49">49</th><td>};</td></tr>
+<tr><th id="50">50</th><td><u>#define <dfn class="macro" id="_M/tcp_flag_word" data-ref="_M/tcp_flag_word">tcp_flag_word</dfn>(tp) (((union tcp_word_hdr *) (tp))-&gt;words[3])</u></td></tr>
+<tr><th id="51">51</th><td><b>enum</b> {</td></tr>
+<tr><th id="52">52</th><td>  <dfn class="enum" id="TCP_FLAG_CWR" title='TCP_FLAG_CWR' data-ref="TCP_FLAG_CWR">TCP_FLAG_CWR</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0x00800000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0x00800000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0x00800000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0x00800000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0x00800000</var>),</td></tr>
+<tr><th id="53">53</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="54">54</th><td>  <dfn class="enum" id="TCP_FLAG_ECE" title='TCP_FLAG_ECE' data-ref="TCP_FLAG_ECE">TCP_FLAG_ECE</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0x00400000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0x00400000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0x00400000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0x00400000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0x00400000</var>),</td></tr>
+<tr><th id="55">55</th><td>  <dfn class="enum" id="TCP_FLAG_URG" title='TCP_FLAG_URG' data-ref="TCP_FLAG_URG">TCP_FLAG_URG</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0x00200000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0x00200000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0x00200000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0x00200000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0x00200000</var>),</td></tr>
+<tr><th id="56">56</th><td>  <dfn class="enum" id="TCP_FLAG_ACK" title='TCP_FLAG_ACK' data-ref="TCP_FLAG_ACK">TCP_FLAG_ACK</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0x00100000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0x00100000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0x00100000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0x00100000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0x00100000</var>),</td></tr>
+<tr><th id="57">57</th><td>  <dfn class="enum" id="TCP_FLAG_PSH" title='TCP_FLAG_PSH' data-ref="TCP_FLAG_PSH">TCP_FLAG_PSH</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0x00080000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0x00080000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0x00080000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0x00080000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0x00080000</var>),</td></tr>
+<tr><th id="58">58</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="59">59</th><td>  <dfn class="enum" id="TCP_FLAG_RST" title='TCP_FLAG_RST' data-ref="TCP_FLAG_RST">TCP_FLAG_RST</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0x00040000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0x00040000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0x00040000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0x00040000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0x00040000</var>),</td></tr>
+<tr><th id="60">60</th><td>  <dfn class="enum" id="TCP_FLAG_SYN" title='TCP_FLAG_SYN' data-ref="TCP_FLAG_SYN">TCP_FLAG_SYN</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0x00020000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0x00020000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0x00020000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0x00020000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0x00020000</var>),</td></tr>
+<tr><th id="61">61</th><td>  <dfn class="enum" id="TCP_FLAG_FIN" title='TCP_FLAG_FIN' data-ref="TCP_FLAG_FIN">TCP_FLAG_FIN</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0x00010000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0x00010000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0x00010000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0x00010000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0x00010000</var>),</td></tr>
+<tr><th id="62">62</th><td>  <dfn class="enum" id="TCP_RESERVED_BITS" title='TCP_RESERVED_BITS' data-ref="TCP_RESERVED_BITS">TCP_RESERVED_BITS</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0x0F000000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0x0F000000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0x0F000000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0x0F000000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0x0F000000</var>),</td></tr>
+<tr><th id="63">63</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="64">64</th><td>  <dfn class="enum" id="TCP_DATA_OFFSET" title='TCP_DATA_OFFSET' data-ref="TCP_DATA_OFFSET">TCP_DATA_OFFSET</dfn> = <a class="macro" href="byteorder/little_endian.h.html#46" title="(( __be32) ((__u32) ((((__u32) ((0xF0000000)) &amp; (__u32) 0x000000ffUL) &lt;&lt; 24) | (((__u32) ((0xF0000000)) &amp; (__u32) 0x0000ff00UL) &lt;&lt; 8) | (((__u32) ((0xF0000000)) &amp; (__u32) 0x00ff0000UL) &gt;&gt; 8) | (((__u32) ((0xF0000000)) &amp; (__u32) 0xff000000UL) &gt;&gt; 24))))" data-ref="_M/__constant_cpu_to_be32">__constant_cpu_to_be32</a>(<var>0xF0000000</var>)</td></tr>
+<tr><th id="65">65</th><td>};</td></tr>
+<tr><th id="66">66</th><td><u>#define <dfn class="macro" id="_M/TCP_MSS_DEFAULT" data-ref="_M/TCP_MSS_DEFAULT">TCP_MSS_DEFAULT</dfn> 536U</u></td></tr>
+<tr><th id="67">67</th><td><u>#define <dfn class="macro" id="_M/TCP_MSS_DESIRED" data-ref="_M/TCP_MSS_DESIRED">TCP_MSS_DESIRED</dfn> 1220U</u></td></tr>
+<tr><th id="68">68</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="69">69</th><td><u>#define <dfn class="macro" id="_M/TCP_NODELAY" data-ref="_M/TCP_NODELAY">TCP_NODELAY</dfn> 1</u></td></tr>
+<tr><th id="70">70</th><td><u>#define <dfn class="macro" id="_M/TCP_MAXSEG" data-ref="_M/TCP_MAXSEG">TCP_MAXSEG</dfn> 2</u></td></tr>
+<tr><th id="71">71</th><td><u>#define <dfn class="macro" id="_M/TCP_CORK" data-ref="_M/TCP_CORK">TCP_CORK</dfn> 3</u></td></tr>
+<tr><th id="72">72</th><td><u>#define <dfn class="macro" id="_M/TCP_KEEPIDLE" data-ref="_M/TCP_KEEPIDLE">TCP_KEEPIDLE</dfn> 4</u></td></tr>
+<tr><th id="73">73</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="74">74</th><td><u>#define <dfn class="macro" id="_M/TCP_KEEPINTVL" data-ref="_M/TCP_KEEPINTVL">TCP_KEEPINTVL</dfn> 5</u></td></tr>
+<tr><th id="75">75</th><td><u>#define <dfn class="macro" id="_M/TCP_KEEPCNT" data-ref="_M/TCP_KEEPCNT">TCP_KEEPCNT</dfn> 6</u></td></tr>
+<tr><th id="76">76</th><td><u>#define <dfn class="macro" id="_M/TCP_SYNCNT" data-ref="_M/TCP_SYNCNT">TCP_SYNCNT</dfn> 7</u></td></tr>
+<tr><th id="77">77</th><td><u>#define <dfn class="macro" id="_M/TCP_LINGER2" data-ref="_M/TCP_LINGER2">TCP_LINGER2</dfn> 8</u></td></tr>
+<tr><th id="78">78</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="79">79</th><td><u>#define <dfn class="macro" id="_M/TCP_DEFER_ACCEPT" data-ref="_M/TCP_DEFER_ACCEPT">TCP_DEFER_ACCEPT</dfn> 9</u></td></tr>
+<tr><th id="80">80</th><td><u>#define <dfn class="macro" id="_M/TCP_WINDOW_CLAMP" data-ref="_M/TCP_WINDOW_CLAMP">TCP_WINDOW_CLAMP</dfn> 10</u></td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/TCP_INFO" data-ref="_M/TCP_INFO">TCP_INFO</dfn> 11</u></td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/TCP_QUICKACK" data-ref="_M/TCP_QUICKACK">TCP_QUICKACK</dfn> 12</u></td></tr>
+<tr><th id="83">83</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="84">84</th><td><u>#define <dfn class="macro" id="_M/TCP_CONGESTION" data-ref="_M/TCP_CONGESTION">TCP_CONGESTION</dfn> 13</u></td></tr>
+<tr><th id="85">85</th><td><u>#define <dfn class="macro" id="_M/TCP_MD5SIG" data-ref="_M/TCP_MD5SIG">TCP_MD5SIG</dfn> 14</u></td></tr>
+<tr><th id="86">86</th><td><u>#define <dfn class="macro" id="_M/TCP_THIN_LINEAR_TIMEOUTS" data-ref="_M/TCP_THIN_LINEAR_TIMEOUTS">TCP_THIN_LINEAR_TIMEOUTS</dfn> 16</u></td></tr>
+<tr><th id="87">87</th><td><u>#define <dfn class="macro" id="_M/TCP_THIN_DUPACK" data-ref="_M/TCP_THIN_DUPACK">TCP_THIN_DUPACK</dfn> 17</u></td></tr>
+<tr><th id="88">88</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="89">89</th><td><u>#define <dfn class="macro" id="_M/TCP_USER_TIMEOUT" data-ref="_M/TCP_USER_TIMEOUT">TCP_USER_TIMEOUT</dfn> 18</u></td></tr>
+<tr><th id="90">90</th><td><u>#define <dfn class="macro" id="_M/TCP_REPAIR" data-ref="_M/TCP_REPAIR">TCP_REPAIR</dfn> 19</u></td></tr>
+<tr><th id="91">91</th><td><u>#define <dfn class="macro" id="_M/TCP_REPAIR_QUEUE" data-ref="_M/TCP_REPAIR_QUEUE">TCP_REPAIR_QUEUE</dfn> 20</u></td></tr>
+<tr><th id="92">92</th><td><u>#define <dfn class="macro" id="_M/TCP_QUEUE_SEQ" data-ref="_M/TCP_QUEUE_SEQ">TCP_QUEUE_SEQ</dfn> 21</u></td></tr>
+<tr><th id="93">93</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="94">94</th><td><u>#define <dfn class="macro" id="_M/TCP_REPAIR_OPTIONS" data-ref="_M/TCP_REPAIR_OPTIONS">TCP_REPAIR_OPTIONS</dfn> 22</u></td></tr>
+<tr><th id="95">95</th><td><u>#define <dfn class="macro" id="_M/TCP_FASTOPEN" data-ref="_M/TCP_FASTOPEN">TCP_FASTOPEN</dfn> 23</u></td></tr>
+<tr><th id="96">96</th><td><u>#define <dfn class="macro" id="_M/TCP_TIMESTAMP" data-ref="_M/TCP_TIMESTAMP">TCP_TIMESTAMP</dfn> 24</u></td></tr>
+<tr><th id="97">97</th><td><u>#define <dfn class="macro" id="_M/TCP_NOTSENT_LOWAT" data-ref="_M/TCP_NOTSENT_LOWAT">TCP_NOTSENT_LOWAT</dfn> 25</u></td></tr>
+<tr><th id="98">98</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="99">99</th><td><u>#define <dfn class="macro" id="_M/TCP_CC_INFO" data-ref="_M/TCP_CC_INFO">TCP_CC_INFO</dfn> 26</u></td></tr>
+<tr><th id="100">100</th><td><u>#define <dfn class="macro" id="_M/TCP_SAVE_SYN" data-ref="_M/TCP_SAVE_SYN">TCP_SAVE_SYN</dfn> 27</u></td></tr>
+<tr><th id="101">101</th><td><u>#define <dfn class="macro" id="_M/TCP_SAVED_SYN" data-ref="_M/TCP_SAVED_SYN">TCP_SAVED_SYN</dfn> 28</u></td></tr>
+<tr><th id="102">102</th><td><b>struct</b> <dfn class="type def" id="tcp_repair_opt" title='tcp_repair_opt' data-ref="tcp_repair_opt">tcp_repair_opt</dfn> {</td></tr>
+<tr><th id="103">103</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="104">104</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_repair_opt::opt_code" title='tcp_repair_opt::opt_code' data-ref="tcp_repair_opt::opt_code">opt_code</dfn>;</td></tr>
+<tr><th id="105">105</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_repair_opt::opt_val" title='tcp_repair_opt::opt_val' data-ref="tcp_repair_opt::opt_val">opt_val</dfn>;</td></tr>
+<tr><th id="106">106</th><td>};</td></tr>
+<tr><th id="107">107</th><td><b>enum</b> {</td></tr>
+<tr><th id="108">108</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="109">109</th><td>  <dfn class="enum" id="TCP_NO_QUEUE" title='TCP_NO_QUEUE' data-ref="TCP_NO_QUEUE">TCP_NO_QUEUE</dfn>,</td></tr>
+<tr><th id="110">110</th><td>  <dfn class="enum" id="TCP_RECV_QUEUE" title='TCP_RECV_QUEUE' data-ref="TCP_RECV_QUEUE">TCP_RECV_QUEUE</dfn>,</td></tr>
+<tr><th id="111">111</th><td>  <dfn class="enum" id="TCP_SEND_QUEUE" title='TCP_SEND_QUEUE' data-ref="TCP_SEND_QUEUE">TCP_SEND_QUEUE</dfn>,</td></tr>
+<tr><th id="112">112</th><td>  <dfn class="enum" id="TCP_QUEUES_NR" title='TCP_QUEUES_NR' data-ref="TCP_QUEUES_NR">TCP_QUEUES_NR</dfn>,</td></tr>
+<tr><th id="113">113</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="114">114</th><td>};</td></tr>
+<tr><th id="115">115</th><td><u>#define <dfn class="macro" id="_M/TCPI_OPT_TIMESTAMPS" data-ref="_M/TCPI_OPT_TIMESTAMPS">TCPI_OPT_TIMESTAMPS</dfn> 1</u></td></tr>
+<tr><th id="116">116</th><td><u>#define <dfn class="macro" id="_M/TCPI_OPT_SACK" data-ref="_M/TCPI_OPT_SACK">TCPI_OPT_SACK</dfn> 2</u></td></tr>
+<tr><th id="117">117</th><td><u>#define <dfn class="macro" id="_M/TCPI_OPT_WSCALE" data-ref="_M/TCPI_OPT_WSCALE">TCPI_OPT_WSCALE</dfn> 4</u></td></tr>
+<tr><th id="118">118</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="119">119</th><td><u>#define <dfn class="macro" id="_M/TCPI_OPT_ECN" data-ref="_M/TCPI_OPT_ECN">TCPI_OPT_ECN</dfn> 8</u></td></tr>
+<tr><th id="120">120</th><td><u>#define <dfn class="macro" id="_M/TCPI_OPT_ECN_SEEN" data-ref="_M/TCPI_OPT_ECN_SEEN">TCPI_OPT_ECN_SEEN</dfn> 16</u></td></tr>
+<tr><th id="121">121</th><td><u>#define <dfn class="macro" id="_M/TCPI_OPT_SYN_DATA" data-ref="_M/TCPI_OPT_SYN_DATA">TCPI_OPT_SYN_DATA</dfn> 32</u></td></tr>
+<tr><th id="122">122</th><td><b>enum</b> <dfn class="type def" id="tcp_ca_state" title='tcp_ca_state' data-ref="tcp_ca_state">tcp_ca_state</dfn> {</td></tr>
+<tr><th id="123">123</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="124">124</th><td>  <dfn class="enum" id="tcp_ca_state::TCP_CA_Open" title='tcp_ca_state::TCP_CA_Open' data-ref="tcp_ca_state::TCP_CA_Open">TCP_CA_Open</dfn> = <var>0</var>,</td></tr>
+<tr><th id="125">125</th><td><u>#define <dfn class="macro" id="_M/TCPF_CA_Open" data-ref="_M/TCPF_CA_Open">TCPF_CA_Open</dfn> (1 &lt;&lt; TCP_CA_Open)</u></td></tr>
+<tr><th id="126">126</th><td>  <dfn class="enum" id="tcp_ca_state::TCP_CA_Disorder" title='tcp_ca_state::TCP_CA_Disorder' data-ref="tcp_ca_state::TCP_CA_Disorder">TCP_CA_Disorder</dfn> = <var>1</var>,</td></tr>
+<tr><th id="127">127</th><td><u>#define <dfn class="macro" id="_M/TCPF_CA_Disorder" data-ref="_M/TCPF_CA_Disorder">TCPF_CA_Disorder</dfn> (1 &lt;&lt; TCP_CA_Disorder)</u></td></tr>
+<tr><th id="128">128</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="129">129</th><td>  <dfn class="enum" id="tcp_ca_state::TCP_CA_CWR" title='tcp_ca_state::TCP_CA_CWR' data-ref="tcp_ca_state::TCP_CA_CWR">TCP_CA_CWR</dfn> = <var>2</var>,</td></tr>
+<tr><th id="130">130</th><td><u>#define <dfn class="macro" id="_M/TCPF_CA_CWR" data-ref="_M/TCPF_CA_CWR">TCPF_CA_CWR</dfn> (1 &lt;&lt; TCP_CA_CWR)</u></td></tr>
+<tr><th id="131">131</th><td>  <dfn class="enum" id="tcp_ca_state::TCP_CA_Recovery" title='tcp_ca_state::TCP_CA_Recovery' data-ref="tcp_ca_state::TCP_CA_Recovery">TCP_CA_Recovery</dfn> = <var>3</var>,</td></tr>
+<tr><th id="132">132</th><td><u>#define <dfn class="macro" id="_M/TCPF_CA_Recovery" data-ref="_M/TCPF_CA_Recovery">TCPF_CA_Recovery</dfn> (1 &lt;&lt; TCP_CA_Recovery)</u></td></tr>
+<tr><th id="133">133</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="134">134</th><td>  <dfn class="enum" id="tcp_ca_state::TCP_CA_Loss" title='tcp_ca_state::TCP_CA_Loss' data-ref="tcp_ca_state::TCP_CA_Loss">TCP_CA_Loss</dfn> = <var>4</var></td></tr>
+<tr><th id="135">135</th><td><u>#define <dfn class="macro" id="_M/TCPF_CA_Loss" data-ref="_M/TCPF_CA_Loss">TCPF_CA_Loss</dfn> (1 &lt;&lt; TCP_CA_Loss)</u></td></tr>
+<tr><th id="136">136</th><td>};</td></tr>
+<tr><th id="137">137</th><td><b>struct</b> <dfn class="type def" id="tcp_info" title='tcp_info' data-ref="tcp_info">tcp_info</dfn> {</td></tr>
+<tr><th id="138">138</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="139">139</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="tcp_info::tcpi_state" title='tcp_info::tcpi_state' data-ref="tcp_info::tcpi_state">tcpi_state</dfn>;</td></tr>
+<tr><th id="140">140</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="tcp_info::tcpi_ca_state" title='tcp_info::tcpi_ca_state' data-ref="tcp_info::tcpi_ca_state">tcpi_ca_state</dfn>;</td></tr>
+<tr><th id="141">141</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="tcp_info::tcpi_retransmits" title='tcp_info::tcpi_retransmits' data-ref="tcp_info::tcpi_retransmits">tcpi_retransmits</dfn>;</td></tr>
+<tr><th id="142">142</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="tcp_info::tcpi_probes" title='tcp_info::tcpi_probes' data-ref="tcp_info::tcpi_probes">tcpi_probes</dfn>;</td></tr>
+<tr><th id="143">143</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="144">144</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="tcp_info::tcpi_backoff" title='tcp_info::tcpi_backoff' data-ref="tcp_info::tcpi_backoff">tcpi_backoff</dfn>;</td></tr>
+<tr><th id="145">145</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="tcp_info::tcpi_options" title='tcp_info::tcpi_options' data-ref="tcp_info::tcpi_options">tcpi_options</dfn>;</td></tr>
+<tr><th id="146">146</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="tcp_info::tcpi_snd_wscale" title='tcp_info::tcpi_snd_wscale' data-ref="tcp_info::tcpi_snd_wscale">tcpi_snd_wscale</dfn> : <var>4</var>, <dfn class="decl" id="tcp_info::tcpi_rcv_wscale" title='tcp_info::tcpi_rcv_wscale' data-ref="tcp_info::tcpi_rcv_wscale">tcpi_rcv_wscale</dfn> : <var>4</var>;</td></tr>
+<tr><th id="147">147</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_rto" title='tcp_info::tcpi_rto' data-ref="tcp_info::tcpi_rto">tcpi_rto</dfn>;</td></tr>
+<tr><th id="148">148</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="149">149</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_ato" title='tcp_info::tcpi_ato' data-ref="tcp_info::tcpi_ato">tcpi_ato</dfn>;</td></tr>
+<tr><th id="150">150</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_snd_mss" title='tcp_info::tcpi_snd_mss' data-ref="tcp_info::tcpi_snd_mss">tcpi_snd_mss</dfn>;</td></tr>
+<tr><th id="151">151</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_rcv_mss" title='tcp_info::tcpi_rcv_mss' data-ref="tcp_info::tcpi_rcv_mss">tcpi_rcv_mss</dfn>;</td></tr>
+<tr><th id="152">152</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_unacked" title='tcp_info::tcpi_unacked' data-ref="tcp_info::tcpi_unacked">tcpi_unacked</dfn>;</td></tr>
+<tr><th id="153">153</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="154">154</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_sacked" title='tcp_info::tcpi_sacked' data-ref="tcp_info::tcpi_sacked">tcpi_sacked</dfn>;</td></tr>
+<tr><th id="155">155</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_lost" title='tcp_info::tcpi_lost' data-ref="tcp_info::tcpi_lost">tcpi_lost</dfn>;</td></tr>
+<tr><th id="156">156</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_retrans" title='tcp_info::tcpi_retrans' data-ref="tcp_info::tcpi_retrans">tcpi_retrans</dfn>;</td></tr>
+<tr><th id="157">157</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_fackets" title='tcp_info::tcpi_fackets' data-ref="tcp_info::tcpi_fackets">tcpi_fackets</dfn>;</td></tr>
+<tr><th id="158">158</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="159">159</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_last_data_sent" title='tcp_info::tcpi_last_data_sent' data-ref="tcp_info::tcpi_last_data_sent">tcpi_last_data_sent</dfn>;</td></tr>
+<tr><th id="160">160</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_last_ack_sent" title='tcp_info::tcpi_last_ack_sent' data-ref="tcp_info::tcpi_last_ack_sent">tcpi_last_ack_sent</dfn>;</td></tr>
+<tr><th id="161">161</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_last_data_recv" title='tcp_info::tcpi_last_data_recv' data-ref="tcp_info::tcpi_last_data_recv">tcpi_last_data_recv</dfn>;</td></tr>
+<tr><th id="162">162</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_last_ack_recv" title='tcp_info::tcpi_last_ack_recv' data-ref="tcp_info::tcpi_last_ack_recv">tcpi_last_ack_recv</dfn>;</td></tr>
+<tr><th id="163">163</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="164">164</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_pmtu" title='tcp_info::tcpi_pmtu' data-ref="tcp_info::tcpi_pmtu">tcpi_pmtu</dfn>;</td></tr>
+<tr><th id="165">165</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_rcv_ssthresh" title='tcp_info::tcpi_rcv_ssthresh' data-ref="tcp_info::tcpi_rcv_ssthresh">tcpi_rcv_ssthresh</dfn>;</td></tr>
+<tr><th id="166">166</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_rtt" title='tcp_info::tcpi_rtt' data-ref="tcp_info::tcpi_rtt">tcpi_rtt</dfn>;</td></tr>
+<tr><th id="167">167</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_rttvar" title='tcp_info::tcpi_rttvar' data-ref="tcp_info::tcpi_rttvar">tcpi_rttvar</dfn>;</td></tr>
+<tr><th id="168">168</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="169">169</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_snd_ssthresh" title='tcp_info::tcpi_snd_ssthresh' data-ref="tcp_info::tcpi_snd_ssthresh">tcpi_snd_ssthresh</dfn>;</td></tr>
+<tr><th id="170">170</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_snd_cwnd" title='tcp_info::tcpi_snd_cwnd' data-ref="tcp_info::tcpi_snd_cwnd">tcpi_snd_cwnd</dfn>;</td></tr>
+<tr><th id="171">171</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_advmss" title='tcp_info::tcpi_advmss' data-ref="tcp_info::tcpi_advmss">tcpi_advmss</dfn>;</td></tr>
+<tr><th id="172">172</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_reordering" title='tcp_info::tcpi_reordering' data-ref="tcp_info::tcpi_reordering">tcpi_reordering</dfn>;</td></tr>
+<tr><th id="173">173</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="174">174</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_rcv_rtt" title='tcp_info::tcpi_rcv_rtt' data-ref="tcp_info::tcpi_rcv_rtt">tcpi_rcv_rtt</dfn>;</td></tr>
+<tr><th id="175">175</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_rcv_space" title='tcp_info::tcpi_rcv_space' data-ref="tcp_info::tcpi_rcv_space">tcpi_rcv_space</dfn>;</td></tr>
+<tr><th id="176">176</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_total_retrans" title='tcp_info::tcpi_total_retrans' data-ref="tcp_info::tcpi_total_retrans">tcpi_total_retrans</dfn>;</td></tr>
+<tr><th id="177">177</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="tcp_info::tcpi_pacing_rate" title='tcp_info::tcpi_pacing_rate' data-ref="tcp_info::tcpi_pacing_rate">tcpi_pacing_rate</dfn>;</td></tr>
+<tr><th id="178">178</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="179">179</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="tcp_info::tcpi_max_pacing_rate" title='tcp_info::tcpi_max_pacing_rate' data-ref="tcp_info::tcpi_max_pacing_rate">tcpi_max_pacing_rate</dfn>;</td></tr>
+<tr><th id="180">180</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="tcp_info::tcpi_bytes_acked" title='tcp_info::tcpi_bytes_acked' data-ref="tcp_info::tcpi_bytes_acked">tcpi_bytes_acked</dfn>;</td></tr>
+<tr><th id="181">181</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="tcp_info::tcpi_bytes_received" title='tcp_info::tcpi_bytes_received' data-ref="tcp_info::tcpi_bytes_received">tcpi_bytes_received</dfn>;</td></tr>
+<tr><th id="182">182</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_segs_out" title='tcp_info::tcpi_segs_out' data-ref="tcp_info::tcpi_segs_out">tcpi_segs_out</dfn>;</td></tr>
+<tr><th id="183">183</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="184">184</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_info::tcpi_segs_in" title='tcp_info::tcpi_segs_in' data-ref="tcp_info::tcpi_segs_in">tcpi_segs_in</dfn>;</td></tr>
+<tr><th id="185">185</th><td>};</td></tr>
+<tr><th id="186">186</th><td><u>#define <dfn class="macro" id="_M/TCP_MD5SIG_MAXKEYLEN" data-ref="_M/TCP_MD5SIG_MAXKEYLEN">TCP_MD5SIG_MAXKEYLEN</dfn> 80</u></td></tr>
+<tr><th id="187">187</th><td><b>struct</b> <dfn class="type def" id="tcp_md5sig" title='tcp_md5sig' data-ref="tcp_md5sig">tcp_md5sig</dfn> {</td></tr>
+<tr><th id="188">188</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="189">189</th><td>  <b>struct</b> <a class="type" href="socket.h.html#__kernel_sockaddr_storage" title='__kernel_sockaddr_storage' data-ref="__kernel_sockaddr_storage">__kernel_sockaddr_storage</a> <dfn class="decl" id="tcp_md5sig::tcpm_addr" title='tcp_md5sig::tcpm_addr' data-ref="tcp_md5sig::tcpm_addr">tcpm_addr</dfn>;</td></tr>
+<tr><th id="190">190</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="tcp_md5sig::__tcpm_pad1" title='tcp_md5sig::__tcpm_pad1' data-ref="tcp_md5sig::__tcpm_pad1">__tcpm_pad1</dfn>;</td></tr>
+<tr><th id="191">191</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="tcp_md5sig::tcpm_keylen" title='tcp_md5sig::tcpm_keylen' data-ref="tcp_md5sig::tcpm_keylen">tcpm_keylen</dfn>;</td></tr>
+<tr><th id="192">192</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="tcp_md5sig::__tcpm_pad2" title='tcp_md5sig::__tcpm_pad2' data-ref="tcp_md5sig::__tcpm_pad2">__tcpm_pad2</dfn>;</td></tr>
+<tr><th id="193">193</th><td><i>/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */</i></td></tr>
+<tr><th id="194">194</th><td>  <a class="typedef" href="../asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="tcp_md5sig::tcpm_key" title='tcp_md5sig::tcpm_key' data-ref="tcp_md5sig::tcpm_key">tcpm_key</dfn>[<a class="macro" href="#186" title="80" data-ref="_M/TCP_MD5SIG_MAXKEYLEN">TCP_MD5SIG_MAXKEYLEN</a>];</td></tr>
+<tr><th id="195">195</th><td>};</td></tr>
+<tr><th id="196">196</th><td><u>#<span data-ppcond="19">endif</span></u></td></tr>
+<tr><th id="197">197</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../../../system/core/adb/adb.cpp.html'>codebrowser/system/core/adb/adb.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

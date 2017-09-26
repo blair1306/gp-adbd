@@ -1,0 +1,11 @@
+<dec f='codebrowser/system/core/adb/sysdeps.h' l='702'/>
+<doc f='codebrowser/system/core/adb/sysdeps.h' l='694'>// Operate on a file descriptor returned from unix_open() or a well-known file
+// descriptor such as STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO.
+//
+// On Unix, unix_read(), unix_write(), unix_close() map to adb_read(),
+// adb_write(), adb_close() (which all map to Unix system calls), but the
+// Windows implementations (in the ifdef above and in sysdeps_win32.cpp) call
+// into the C Runtime and its configurable CR/LF translation (which is settable
+// via _setmode()).</doc>
+<use f='codebrowser/system/core/adb/adb_auth_client.cpp' l='182' u='c'/>
+<use f='codebrowser/system/core/adb/usb_linux_client.cpp' l='296' u='c'/>

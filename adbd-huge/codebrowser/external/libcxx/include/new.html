@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>new source code [codebrowser/external/libcxx/include/new] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="std::bad_alloc,std::bad_array_length,std::bad_array_new_length,std::nothrow_t "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libcxx/include/new'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libcxx</a>/<a href='./'>include</a>/<a href='new.html'>new</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>// -*- C++ -*-</i></td></tr>
+<tr><th id="2">2</th><td><i>//===----------------------------- new ------------------------------------===//</i></td></tr>
+<tr><th id="3">3</th><td><i>//</i></td></tr>
+<tr><th id="4">4</th><td><i>//                     The LLVM Compiler Infrastructure</i></td></tr>
+<tr><th id="5">5</th><td><i>//</i></td></tr>
+<tr><th id="6">6</th><td><i>// This file is dual licensed under the MIT and the University of Illinois Open</i></td></tr>
+<tr><th id="7">7</th><td><i>// Source Licenses. See LICENSE.TXT for details.</i></td></tr>
+<tr><th id="8">8</th><td><i>//</i></td></tr>
+<tr><th id="9">9</th><td><i>//===----------------------------------------------------------------------===//</i></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><u>#<span data-ppcond="11">ifndef</span> <span class="macro" data-ref="_M/_LIBCPP_NEW">_LIBCPP_NEW</span></u></td></tr>
+<tr><th id="12">12</th><td><u>#define <dfn class="macro" id="_M/_LIBCPP_NEW" data-ref="_M/_LIBCPP_NEW">_LIBCPP_NEW</dfn></u></td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td><i>/*</i></td></tr>
+<tr><th id="15">15</th><td><i>    new synopsis</i></td></tr>
+<tr><th id="16">16</th><td><i></i></td></tr>
+<tr><th id="17">17</th><td><i>namespace std</i></td></tr>
+<tr><th id="18">18</th><td><i>{</i></td></tr>
+<tr><th id="19">19</th><td><i></i></td></tr>
+<tr><th id="20">20</th><td><i>class bad_alloc</i></td></tr>
+<tr><th id="21">21</th><td><i>    : public exception</i></td></tr>
+<tr><th id="22">22</th><td><i>{</i></td></tr>
+<tr><th id="23">23</th><td><i>public:</i></td></tr>
+<tr><th id="24">24</th><td><i>    bad_alloc() noexcept;</i></td></tr>
+<tr><th id="25">25</th><td><i>    bad_alloc(const bad_alloc&amp;) noexcept;</i></td></tr>
+<tr><th id="26">26</th><td><i>    bad_alloc&amp; operator=(const bad_alloc&amp;) noexcept;</i></td></tr>
+<tr><th id="27">27</th><td><i>    virtual const char* what() const noexcept;</i></td></tr>
+<tr><th id="28">28</th><td><i>};</i></td></tr>
+<tr><th id="29">29</th><td><i></i></td></tr>
+<tr><th id="30">30</th><td><i>class bad_array_length : public bad_alloc // C++14</i></td></tr>
+<tr><th id="31">31</th><td><i>{</i></td></tr>
+<tr><th id="32">32</th><td><i>public:</i></td></tr>
+<tr><th id="33">33</th><td><i>    bad_array_length() noexcept;</i></td></tr>
+<tr><th id="34">34</th><td><i>};</i></td></tr>
+<tr><th id="35">35</th><td><i></i></td></tr>
+<tr><th id="36">36</th><td><i>class bad_array_new_length : public bad_alloc</i></td></tr>
+<tr><th id="37">37</th><td><i>{</i></td></tr>
+<tr><th id="38">38</th><td><i>public:</i></td></tr>
+<tr><th id="39">39</th><td><i>    bad_array_new_length() noexcept;</i></td></tr>
+<tr><th id="40">40</th><td><i>};</i></td></tr>
+<tr><th id="41">41</th><td><i></i></td></tr>
+<tr><th id="42">42</th><td><i>struct nothrow_t {};</i></td></tr>
+<tr><th id="43">43</th><td><i>extern const nothrow_t nothrow;</i></td></tr>
+<tr><th id="44">44</th><td><i>typedef void (*new_handler)();</i></td></tr>
+<tr><th id="45">45</th><td><i>new_handler set_new_handler(new_handler new_p) noexcept;</i></td></tr>
+<tr><th id="46">46</th><td><i>new_handler get_new_handler() noexcept;</i></td></tr>
+<tr><th id="47">47</th><td><i></i></td></tr>
+<tr><th id="48">48</th><td><i>}  // std</i></td></tr>
+<tr><th id="49">49</th><td><i></i></td></tr>
+<tr><th id="50">50</th><td><i>void* operator new(std::size_t size);                                   // replaceable</i></td></tr>
+<tr><th id="51">51</th><td><i>void* operator new(std::size_t size, const std::nothrow_t&amp;) noexcept;   // replaceable</i></td></tr>
+<tr><th id="52">52</th><td><i>void  operator delete(void* ptr) noexcept;                              // replaceable</i></td></tr>
+<tr><th id="53">53</th><td><i>void  operator delete(void* ptr, std::size_t size) noexcept;            // replaceable, C++14</i></td></tr>
+<tr><th id="54">54</th><td><i>void  operator delete(void* ptr, const std::nothrow_t&amp;) noexcept;       // replaceable</i></td></tr>
+<tr><th id="55">55</th><td><i></i></td></tr>
+<tr><th id="56">56</th><td><i>void* operator new[](std::size_t size);                                 // replaceable</i></td></tr>
+<tr><th id="57">57</th><td><i>void* operator new[](std::size_t size, const std::nothrow_t&amp;) noexcept; // replaceable</i></td></tr>
+<tr><th id="58">58</th><td><i>void  operator delete[](void* ptr) noexcept;                            // replaceable</i></td></tr>
+<tr><th id="59">59</th><td><i>void  operator delete[](void* ptr, std::size_t size) noexcept;          // replaceable, C++14</i></td></tr>
+<tr><th id="60">60</th><td><i>void  operator delete[](void* ptr, const std::nothrow_t&amp;) noexcept;     // replaceable</i></td></tr>
+<tr><th id="61">61</th><td><i></i></td></tr>
+<tr><th id="62">62</th><td><i>void* operator new  (std::size_t size, void* ptr) noexcept;</i></td></tr>
+<tr><th id="63">63</th><td><i>void* operator new[](std::size_t size, void* ptr) noexcept;</i></td></tr>
+<tr><th id="64">64</th><td><i>void  operator delete  (void* ptr, void*) noexcept;</i></td></tr>
+<tr><th id="65">65</th><td><i>void  operator delete[](void* ptr, void*) noexcept;</i></td></tr>
+<tr><th id="66">66</th><td><i></i></td></tr>
+<tr><th id="67">67</th><td><i>*/</i></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><u>#include <a href="__config.html">&lt;__config&gt;</a></u></td></tr>
+<tr><th id="70">70</th><td><u>#include <a href="exception.html">&lt;exception&gt;</a></u></td></tr>
+<tr><th id="71">71</th><td><u>#include <a href="cstddef.html">&lt;cstddef&gt;</a></u></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><u>#include <a href="__undef___deallocate.html">&lt;__undef___deallocate&gt;</a></u></td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><u>#<span data-ppcond="75">if</span> !defined(<span class="macro" data-ref="_M/_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER">_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER</span>)</u></td></tr>
+<tr><th id="76">76</th><td><u>#pragma GCC system_header</u></td></tr>
+<tr><th id="77">77</th><td><u>#<span data-ppcond="75">endif</span></u></td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><b>namespace</b> <span class="namespace">std</span>  <i>// purposefully not using versioning namespace</i></td></tr>
+<tr><th id="80">80</th><td>{</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><b>class</b> <a class="macro" href="__config.html#221" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_EXCEPTION_ABI">_LIBCPP_EXCEPTION_ABI</a> <dfn class="type def" id="std::bad_alloc" title='std::bad_alloc' data-ref="std::bad_alloc">bad_alloc</dfn></td></tr>
+<tr><th id="83">83</th><td>    : <b>public</b> <a class="type" href="exception.html#std::exception" title='std::exception' data-ref="std::exception">exception</a></td></tr>
+<tr><th id="84">84</th><td>{</td></tr>
+<tr><th id="85">85</th><td><b>public</b>:</td></tr>
+<tr><th id="86">86</th><td>    <dfn class="decl" id="_ZNSt9bad_allocC1Ev" title='std::bad_alloc::bad_alloc' data-ref="_ZNSt9bad_allocC1Ev">bad_alloc</dfn>() <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="87">87</th><td>    <b>virtual</b> <dfn class="virtual decl" id="_ZNSt9bad_allocD1Ev" title='std::bad_alloc::~bad_alloc' data-ref="_ZNSt9bad_allocD1Ev">~bad_alloc</dfn>() <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="88">88</th><td>    <b>virtual</b> <em>const</em> <em>char</em>* <dfn class="virtual decl" id="_ZNKSt9bad_alloc4whatEv" title='std::bad_alloc::what' data-ref="_ZNKSt9bad_alloc4whatEv">what</dfn>() <em>const</em> <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="89">89</th><td>};</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td><b>class</b> <a class="macro" href="__config.html#221" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_EXCEPTION_ABI">_LIBCPP_EXCEPTION_ABI</a> <dfn class="type def" id="std::bad_array_new_length" title='std::bad_array_new_length' data-ref="std::bad_array_new_length">bad_array_new_length</dfn></td></tr>
+<tr><th id="92">92</th><td>    : <b>public</b> <a class="type" href="#std::bad_alloc" title='std::bad_alloc' data-ref="std::bad_alloc">bad_alloc</a></td></tr>
+<tr><th id="93">93</th><td>{</td></tr>
+<tr><th id="94">94</th><td><b>public</b>:</td></tr>
+<tr><th id="95">95</th><td>    <dfn class="decl" id="_ZNSt20bad_array_new_lengthC1Ev" title='std::bad_array_new_length::bad_array_new_length' data-ref="_ZNSt20bad_array_new_lengthC1Ev">bad_array_new_length</dfn>() <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="96">96</th><td>    <b>virtual</b> <dfn class="virtual decl" id="_ZNSt20bad_array_new_lengthD1Ev" title='std::bad_array_new_length::~bad_array_new_length' data-ref="_ZNSt20bad_array_new_lengthD1Ev">~bad_array_new_length</dfn>() <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="97">97</th><td>    <b>virtual</b> <em>const</em> <em>char</em>* <dfn class="virtual decl" id="_ZNKSt20bad_array_new_length4whatEv" title='std::bad_array_new_length::what' data-ref="_ZNKSt20bad_array_new_length4whatEv">what</dfn>() <em>const</em> <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="98">98</th><td>};</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><u>#<span data-ppcond="100">if</span> defined(<span class="macro" data-ref="_M/_LIBCPP_BUILDING_NEW">_LIBCPP_BUILDING_NEW</span>) || (<a class="macro" href="__config.html#693" title="14" data-ref="_M/_LIBCPP_STD_VER">_LIBCPP_STD_VER</a> &gt; 11)</u></td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td><b>class</b> <a class="macro" href="__config.html#221" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_EXCEPTION_ABI">_LIBCPP_EXCEPTION_ABI</a> <dfn class="type def" id="std::bad_array_length" title='std::bad_array_length' data-ref="std::bad_array_length">bad_array_length</dfn></td></tr>
+<tr><th id="103">103</th><td>    : <b>public</b> <a class="type" href="#std::bad_alloc" title='std::bad_alloc' data-ref="std::bad_alloc">bad_alloc</a></td></tr>
+<tr><th id="104">104</th><td>{</td></tr>
+<tr><th id="105">105</th><td><b>public</b>:</td></tr>
+<tr><th id="106">106</th><td>    <dfn class="decl" id="_ZNSt16bad_array_lengthC1Ev" title='std::bad_array_length::bad_array_length' data-ref="_ZNSt16bad_array_lengthC1Ev">bad_array_length</dfn>() <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="107">107</th><td>    <b>virtual</b> <dfn class="virtual decl" id="_ZNSt16bad_array_lengthD1Ev" title='std::bad_array_length::~bad_array_length' data-ref="_ZNSt16bad_array_lengthD1Ev">~bad_array_length</dfn>() <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="108">108</th><td>    <b>virtual</b> <em>const</em> <em>char</em>* <dfn class="virtual decl" id="_ZNKSt16bad_array_length4whatEv" title='std::bad_array_length::what' data-ref="_ZNKSt16bad_array_length4whatEv">what</dfn>() <em>const</em> <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="109">109</th><td>};</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><u>#define <dfn class="macro" id="_M/_LIBCPP_BAD_ARRAY_LENGTH_DEFINED" data-ref="_M/_LIBCPP_BAD_ARRAY_LENGTH_DEFINED">_LIBCPP_BAD_ARRAY_LENGTH_DEFINED</dfn></u></td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><u>#<span data-ppcond="100">endif</span>  // defined(_LIBCPP_BUILDING_NEW) || (_LIBCPP_STD_VER &gt; 11)</u></td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td><a class="macro" href="__config.html#197" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_FUNC_VIS">_LIBCPP_FUNC_VIS</a> <em>void</em> <dfn class="decl" id="_ZSt17__throw_bad_allocv" title='std::__throw_bad_alloc' data-ref="_ZSt17__throw_bad_allocv">__throw_bad_alloc</dfn>();  <i>// not in C++ spec</i></td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><b>struct</b> <a class="macro" href="__config.html#202" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS">_LIBCPP_TYPE_VIS</a> <dfn class="type def" id="std::nothrow_t" title='std::nothrow_t' data-ref="std::nothrow_t">nothrow_t</dfn> {};</td></tr>
+<tr><th id="118">118</th><td><b>extern</b> <a class="macro" href="__config.html#197" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_FUNC_VIS">_LIBCPP_FUNC_VIS</a> <em>const</em> <a class="type" href="#std::nothrow_t" title='std::nothrow_t' data-ref="std::nothrow_t">nothrow_t</a> <dfn class="decl" id="std::nothrow" title='std::nothrow' data-ref="std::nothrow">nothrow</dfn>;</td></tr>
+<tr><th id="119">119</th><td><b>typedef</b> <em>void</em> (*<dfn class="typedef" id="std::new_handler" title='std::new_handler' data-type='void (*)()' data-ref="std::new_handler">new_handler</dfn>)();</td></tr>
+<tr><th id="120">120</th><td><a class="macro" href="__config.html#197" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_FUNC_VIS">_LIBCPP_FUNC_VIS</a> <a class="typedef" href="#std::new_handler" title='std::new_handler' data-type='void (*)()' data-ref="std::new_handler">new_handler</a> <dfn class="decl" id="_ZSt15set_new_handlerPFvvE" title='std::set_new_handler' data-ref="_ZSt15set_new_handlerPFvvE">set_new_handler</dfn>(<a class="typedef" href="#std::new_handler" title='std::new_handler' data-type='void (*)()' data-ref="std::new_handler">new_handler</a>) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="121">121</th><td><a class="macro" href="__config.html#197" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_FUNC_VIS">_LIBCPP_FUNC_VIS</a> <a class="typedef" href="#std::new_handler" title='std::new_handler' data-type='void (*)()' data-ref="std::new_handler">new_handler</a> <dfn class="decl" id="_ZSt15get_new_handlerv" title='std::get_new_handler' data-ref="_ZSt15get_new_handlerv">get_new_handler</dfn>() <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td>}  <i>// std</i></td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td><u>#<span data-ppcond="125">if</span> defined(<span class="macro" data-ref="_M/_WIN32">_WIN32</span>) &amp;&amp; !defined(<span class="macro" data-ref="_M/cxx_EXPORTS">cxx_EXPORTS</span>)</u></td></tr>
+<tr><th id="126">126</th><td><u># define _LIBCPP_NEW_DELETE_VIS _LIBCPP_FUNC_VIS_ONLY</u></td></tr>
+<tr><th id="127">127</th><td><u>#<span data-ppcond="125">else</span></u></td></tr>
+<tr><th id="128">128</th><td><u># define <dfn class="macro" id="_M/_LIBCPP_NEW_DELETE_VIS" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</dfn> _LIBCPP_FUNC_VIS</u></td></tr>
+<tr><th id="129">129</th><td><u>#<span data-ppcond="125">endif</span></u></td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>* <dfn class='decl' title='operator new' data-ref="_Znwm" id="_Znwm"><b>operator</b> <b>new</b></dfn>(<span class="namespace">std::</span><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="133__sz" title='__sz' data-type='std::size_t' data-ref="133__sz">__sz</dfn>)</td></tr>
+<tr><th id="132">132</th><td><u>#<span data-ppcond="132">if</span> !<span class="macro" title="" data-ref="_M/__has_feature">__has_feature</span>(cxx_noexcept)</u></td></tr>
+<tr><th id="133">133</th><td>    <b>throw</b>(std::bad_alloc)</td></tr>
+<tr><th id="134">134</th><td><u>#<span data-ppcond="132">endif</span></u></td></tr>
+<tr><th id="135">135</th><td>;</td></tr>
+<tr><th id="136">136</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>* <dfn class="decl" id="_ZnwmRKSt9nothrow_t" title='operator new' data-ref="_ZnwmRKSt9nothrow_t"><b>operator</b> <b>new</b></dfn>(<span class="namespace">std::</span><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="134__sz" title='__sz' data-type='std::size_t' data-ref="134__sz">__sz</dfn>, <em>const</em> <span class="namespace">std::</span><a class="type" href="#std::nothrow_t" title='std::nothrow_t' data-ref="std::nothrow_t">nothrow_t</a>&amp;) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a> <a class="macro" href="__config.html#612" title="__attribute__((__malloc__))" data-ref="_M/_NOALIAS">_NOALIAS</a>;</td></tr>
+<tr><th id="137">137</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>  <dfn class='decl' title='operator delete' data-ref="_ZdlPv" id="_ZdlPv"><b>operator</b> <b>delete</b></dfn>(<em>void</em>* <dfn class="local col5 decl" id="135__p" title='__p' data-type='void *' data-ref="135__p">__p</dfn>) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="138">138</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>  <dfn class="decl" id="_ZdlPvRKSt9nothrow_t" title='operator delete' data-ref="_ZdlPvRKSt9nothrow_t"><b>operator</b> <b>delete</b></dfn>(<em>void</em>* <dfn class="local col6 decl" id="136__p" title='__p' data-type='void *' data-ref="136__p">__p</dfn>, <em>const</em> <span class="namespace">std::</span><a class="type" href="#std::nothrow_t" title='std::nothrow_t' data-ref="std::nothrow_t">nothrow_t</a>&amp;) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="139">139</th><td><u>#<span data-ppcond="139">if</span> defined(<span class="macro" data-ref="_M/_LIBCPP_BUILDING_NEW">_LIBCPP_BUILDING_NEW</span>) || <a class="macro" href="__config.html#693" title="14" data-ref="_M/_LIBCPP_STD_VER">_LIBCPP_STD_VER</a> &gt;= 14 || \</u></td></tr>
+<tr><th id="140">140</th><td><u>    (defined(<span class="macro" data-ref="_M/__cpp_sized_deallocation">__cpp_sized_deallocation</span>) &amp;&amp; __cpp_sized_deallocation &gt;= 201309)</u></td></tr>
+<tr><th id="141">141</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>  <dfn class="decl" id="_ZdlPvm" title='operator delete' data-ref="_ZdlPvm"><b>operator</b> <b>delete</b></dfn>(<em>void</em>* <dfn class="local col7 decl" id="137__p" title='__p' data-type='void *' data-ref="137__p">__p</dfn>, <span class="namespace">std::</span><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="138__sz" title='__sz' data-type='std::size_t' data-ref="138__sz">__sz</dfn>) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="142">142</th><td><u>#<span data-ppcond="139">endif</span></u></td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>* <dfn class='decl' title='operator new[]' data-ref="_Znam" id="_Znam"><b>operator</b> <b>new</b>[]</dfn>(<span class="namespace">std::</span><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="139__sz" title='__sz' data-type='std::size_t' data-ref="139__sz">__sz</dfn>)</td></tr>
+<tr><th id="145">145</th><td><u>#<span data-ppcond="145">if</span> !<span class="macro" title="" data-ref="_M/__has_feature">__has_feature</span>(cxx_noexcept)</u></td></tr>
+<tr><th id="146">146</th><td>    <b>throw</b>(std::bad_alloc)</td></tr>
+<tr><th id="147">147</th><td><u>#<span data-ppcond="145">endif</span></u></td></tr>
+<tr><th id="148">148</th><td>;</td></tr>
+<tr><th id="149">149</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>* <dfn class="decl" id="_ZnamRKSt9nothrow_t" title='operator new[]' data-ref="_ZnamRKSt9nothrow_t"><b>operator</b> <b>new</b>[]</dfn>(<span class="namespace">std::</span><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="140__sz" title='__sz' data-type='std::size_t' data-ref="140__sz">__sz</dfn>, <em>const</em> <span class="namespace">std::</span><a class="type" href="#std::nothrow_t" title='std::nothrow_t' data-ref="std::nothrow_t">nothrow_t</a>&amp;) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a> <a class="macro" href="__config.html#612" title="__attribute__((__malloc__))" data-ref="_M/_NOALIAS">_NOALIAS</a>;</td></tr>
+<tr><th id="150">150</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>  <dfn class='decl' title='operator delete[]' data-ref="_ZdaPv" id="_ZdaPv"><b>operator</b> <b>delete</b>[]</dfn>(<em>void</em>* <dfn class="local col1 decl" id="141__p" title='__p' data-type='void *' data-ref="141__p">__p</dfn>) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="151">151</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>  <dfn class="decl" id="_ZdaPvRKSt9nothrow_t" title='operator delete[]' data-ref="_ZdaPvRKSt9nothrow_t"><b>operator</b> <b>delete</b>[]</dfn>(<em>void</em>* <dfn class="local col2 decl" id="142__p" title='__p' data-type='void *' data-ref="142__p">__p</dfn>, <em>const</em> <span class="namespace">std::</span><a class="type" href="#std::nothrow_t" title='std::nothrow_t' data-ref="std::nothrow_t">nothrow_t</a>&amp;) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="152">152</th><td><u>#<span data-ppcond="152">if</span> defined(<span class="macro" data-ref="_M/_LIBCPP_BUILDING_NEW">_LIBCPP_BUILDING_NEW</span>) || <a class="macro" href="__config.html#693" title="14" data-ref="_M/_LIBCPP_STD_VER">_LIBCPP_STD_VER</a> &gt;= 14 || \</u></td></tr>
+<tr><th id="153">153</th><td><u>    (defined(<span class="macro" data-ref="_M/__cpp_sized_deallocation">__cpp_sized_deallocation</span>) &amp;&amp; __cpp_sized_deallocation &gt;= 201309)</u></td></tr>
+<tr><th id="154">154</th><td><a class="macro" href="#128" title="__attribute__ ((__visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_NEW_DELETE_VIS">_LIBCPP_NEW_DELETE_VIS</a> <em>void</em>  <dfn class="decl" id="_ZdaPvm" title='operator delete[]' data-ref="_ZdaPvm"><b>operator</b> <b>delete</b>[]</dfn>(<em>void</em>* <dfn class="local col3 decl" id="143__p" title='__p' data-type='void *' data-ref="143__p">__p</dfn>, <span class="namespace">std::</span><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="144__sz" title='__sz' data-type='std::size_t' data-ref="144__sz">__sz</dfn>) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a>;</td></tr>
+<tr><th id="155">155</th><td><u>#<span data-ppcond="152">endif</span></u></td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a> <em>void</em>* <dfn class="decl def" id="_ZnwmPv" title='operator new' data-ref="_ZnwmPv"><b>operator</b> <b>new</b></dfn>  (<span class="namespace">std::</span><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>void</em>* <dfn class="local col5 decl" id="145__p" title='__p' data-type='void *' data-ref="145__p">__p</dfn>) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a> {<b>return</b> <a class="local col5 ref" href="#145__p" title='__p' data-ref="145__p">__p</a>;}</td></tr>
+<tr><th id="158">158</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a> <em>void</em>* <dfn class="decl def" id="_ZnamPv" title='operator new[]' data-ref="_ZnamPv"><b>operator</b> <b>new</b>[]</dfn>(<span class="namespace">std::</span><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>void</em>* <dfn class="local col6 decl" id="146__p" title='__p' data-type='void *' data-ref="146__p">__p</dfn>) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a> {<b>return</b> <a class="local col6 ref" href="#146__p" title='__p' data-ref="146__p">__p</a>;}</td></tr>
+<tr><th id="159">159</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a> <em>void</em>  <dfn class="decl def" id="_ZdlPvS_" title='operator delete' data-ref="_ZdlPvS_"><b>operator</b> <b>delete</b></dfn>  (<em>void</em>*, <em>void</em>*) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a> {}</td></tr>
+<tr><th id="160">160</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a> <em>void</em>  <dfn class="decl def" id="_ZdaPvS_" title='operator delete[]' data-ref="_ZdaPvS_"><b>operator</b> <b>delete</b>[]</dfn>(<em>void</em>*, <em>void</em>*) <a class="macro" href="__config.html#368" title="noexcept" data-ref="_M/_NOEXCEPT">_NOEXCEPT</a> {}</td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td><a class="macro" href="__config.html#386" title="namespace std {inline namespace __1 {" data-ref="_M/_LIBCPP_BEGIN_NAMESPACE_STD">_LIBCPP_BEGIN_NAMESPACE_STD</a></td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a> <em>void</em> *<dfn class="decl def" id="_ZNSt3__110__allocateEm" title='std::__1::__allocate' data-ref="_ZNSt3__110__allocateEm">__allocate</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="147__size" title='__size' data-type='size_t' data-ref="147__size">__size</dfn>) {</td></tr>
+<tr><th id="165">165</th><td><u>#<span data-ppcond="165">ifdef</span> <span class="macro" data-ref="_M/_LIBCPP_HAS_NO_BUILTIN_OPERATOR_NEW_DELETE">_LIBCPP_HAS_NO_BUILTIN_OPERATOR_NEW_DELETE</span></u></td></tr>
+<tr><th id="166">166</th><td>  <b>return</b> ::<b>operator</b> <b>new</b>(__size);</td></tr>
+<tr><th id="167">167</th><td><u>#<span data-ppcond="165">else</span></u></td></tr>
+<tr><th id="168">168</th><td>  <b>return</b> <a class="ref" href="#168" title='__builtin_operator_new' data-ref="__builtin_operator_new">__builtin_operator_new</a>(<a class="local col7 ref" href="#147__size" title='__size' data-ref="147__size">__size</a>);</td></tr>
+<tr><th id="169">169</th><td><u>#<span data-ppcond="165">endif</span></u></td></tr>
+<tr><th id="170">170</th><td>}</td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a> <em>void</em> <dfn class="decl def" id="_ZNSt3__112__deallocateEPv" title='std::__1::__deallocate' data-ref="_ZNSt3__112__deallocateEPv">__deallocate</dfn>(<em>void</em> *<dfn class="local col8 decl" id="148__ptr" title='__ptr' data-type='void *' data-ref="148__ptr">__ptr</dfn>) {</td></tr>
+<tr><th id="173">173</th><td><u>#<span data-ppcond="173">ifdef</span> <span class="macro" data-ref="_M/_LIBCPP_HAS_NO_BUILTIN_OPERATOR_NEW_DELETE">_LIBCPP_HAS_NO_BUILTIN_OPERATOR_NEW_DELETE</span></u></td></tr>
+<tr><th id="174">174</th><td>  ::<b>operator</b> <b>delete</b>(__ptr);</td></tr>
+<tr><th id="175">175</th><td><u>#<span data-ppcond="173">else</span></u></td></tr>
+<tr><th id="176">176</th><td>  <a class="ref" href="#176" title='__builtin_operator_delete' data-ref="__builtin_operator_delete">__builtin_operator_delete</a>(<a class="local col8 ref" href="#148__ptr" title='__ptr' data-ref="148__ptr">__ptr</a>);</td></tr>
+<tr><th id="177">177</th><td><u>#<span data-ppcond="173">endif</span></u></td></tr>
+<tr><th id="178">178</th><td>}</td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td><a class="macro" href="__config.html#387" title="} }" data-ref="_M/_LIBCPP_END_NAMESPACE_STD">_LIBCPP_END_NAMESPACE_STD</a></td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td><u>#<span data-ppcond="11">endif</span>  // _LIBCPP_NEW</u></td></tr>
+<tr><th id="183">183</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../src/algorithm.cpp.html'>codebrowser/external/libcxx/src/algorithm.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

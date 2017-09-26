@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>errors.h source code [codebrowser/system/core/base/include/android-base/errors.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/base/include/android-base/errors.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>system</a>/<a href='../../..'>core</a>/<a href='../..'>base</a>/<a href='..'>include</a>/<a href='./'>android-base</a>/<a href='errors.h.html'>errors.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2016 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td><i></i></td></tr>
+<tr><th id="17">17</th><td><i>// Portable error handling functions. This is only necessary for host-side</i></td></tr>
+<tr><th id="18">18</th><td><i>// code that needs to be cross-platform; code that is only run on Unix should</i></td></tr>
+<tr><th id="19">19</th><td><i>// just use errno and strerror() for simplicity.</i></td></tr>
+<tr><th id="20">20</th><td><i>//</i></td></tr>
+<tr><th id="21">21</th><td><i>// There is some complexity since Windows has (at least) three different error</i></td></tr>
+<tr><th id="22">22</th><td><i>// numbers, not all of which share the same type:</i></td></tr>
+<tr><th id="23">23</th><td><i>//   * errno: for C runtime errors.</i></td></tr>
+<tr><th id="24">24</th><td><i>//   * GetLastError(): Windows non-socket errors.</i></td></tr>
+<tr><th id="25">25</th><td><i>//   * WSAGetLastError(): Windows socket errors.</i></td></tr>
+<tr><th id="26">26</th><td><i>// errno can be passed to strerror() on all platforms, but the other two require</i></td></tr>
+<tr><th id="27">27</th><td><i>// special handling to get the error string. Refer to Microsoft documentation</i></td></tr>
+<tr><th id="28">28</th><td><i>// to determine which error code to check for each function.</i></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#<span data-ppcond="30">ifndef</span> <span class="macro" data-ref="_M/ANDROID_BASE_ERRORS_H">ANDROID_BASE_ERRORS_H</span></u></td></tr>
+<tr><th id="31">31</th><td><u>#define <dfn class="macro" id="_M/ANDROID_BASE_ERRORS_H" data-ref="_M/ANDROID_BASE_ERRORS_H">ANDROID_BASE_ERRORS_H</dfn></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../../../../../external/libcxx/include/string.html">&lt;string&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><b>namespace</b> <span class="namespace">android</span> {</td></tr>
+<tr><th id="36">36</th><td><b>namespace</b> <span class="namespace">base</span> {</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i>// Returns a string describing the given system error code. |error_code| must</i></td></tr>
+<tr><th id="39">39</th><td><i>// be errno on Unix or GetLastError()/WSAGetLastError() on Windows. Passing</i></td></tr>
+<tr><th id="40">40</th><td><i>// errno on Windows has undefined behavior.</i></td></tr>
+<tr><th id="41">41</th><td><span class="namespace">std::</span><a class="typedef" href="../../../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="decl" id="_ZN7android4base23SystemErrorCodeToStringEi" title='android::base::SystemErrorCodeToString' data-ref="_ZN7android4base23SystemErrorCodeToStringEi">SystemErrorCodeToString</dfn>(<em>int</em> <dfn class="local col1 decl" id="1error_code" title='error_code' data-type='int' data-ref="1error_code">error_code</dfn>);</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td>}  <i>// namespace base</i></td></tr>
+<tr><th id="44">44</th><td>}  <i>// namespace android</i></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><u>#<span data-ppcond="30">endif</span>  // ANDROID_BASE_ERRORS_H</u></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../adb/adb.cpp.html'>codebrowser/system/core/adb/adb.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

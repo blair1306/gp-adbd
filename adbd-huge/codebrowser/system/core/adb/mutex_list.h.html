@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>mutex_list.h source code [codebrowser/system/core/adb/mutex_list.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/adb/mutex_list.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>adb</a>/<a href='mutex_list.h.html'>mutex_list.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* the list of mutexes used by adb */</i></td></tr>
+<tr><th id="2">2</th><td><i>/* #ifndef __MUTEX_LIST_H</i></td></tr>
+<tr><th id="3">3</th><td><i> * Do not use an include-guard. This file is included once to declare the locks</i></td></tr>
+<tr><th id="4">4</th><td><i> * and once in win32 to actually do the runtime initialization.</i></td></tr>
+<tr><th id="5">5</th><td><i> */</i></td></tr>
+<tr><th id="6">6</th><td><u>#<span data-ppcond="6">ifndef</span> <a class="macro" href="sysdeps.h.html#505" data-ref="_M/ADB_MUTEX">ADB_MUTEX</a></u></td></tr>
+<tr><th id="7">7</th><td><u>#error ADB_MUTEX not defined when including this file</u></td></tr>
+<tr><th id="8">8</th><td><u>#<span data-ppcond="6">endif</span></u></td></tr>
+<tr><th id="9">9</th><td><a class="macro" href="sysdeps.h.html#505" title="extern adb_mutex_t basename_lock;" data-ref="_M/ADB_MUTEX">ADB_MUTEX</a>(<dfn class="decl" id="basename_lock" title='basename_lock' data-ref="basename_lock">basename_lock</dfn>)</td></tr>
+<tr><th id="10">10</th><td><a class="macro" href="sysdeps.h.html#505" title="extern adb_mutex_t dirname_lock;" data-ref="_M/ADB_MUTEX">ADB_MUTEX</a>(<dfn class="decl" id="dirname_lock" title='dirname_lock' data-ref="dirname_lock">dirname_lock</dfn>)</td></tr>
+<tr><th id="11">11</th><td><a class="macro" href="sysdeps.h.html#505" title="extern adb_mutex_t socket_list_lock;" data-ref="_M/ADB_MUTEX">ADB_MUTEX</a>(<dfn class="decl" id="socket_list_lock" title='socket_list_lock' data-ref="socket_list_lock">socket_list_lock</dfn>)</td></tr>
+<tr><th id="12">12</th><td><a class="macro" href="sysdeps.h.html#505" title="extern adb_mutex_t transport_lock;" data-ref="_M/ADB_MUTEX">ADB_MUTEX</a>(<dfn class="decl" id="transport_lock" title='transport_lock' data-ref="transport_lock">transport_lock</dfn>)</td></tr>
+<tr><th id="13">13</th><td><u>#<span data-ppcond="13">if</span> <span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="14">14</th><td>ADB_MUTEX(local_transports_lock)</td></tr>
+<tr><th id="15">15</th><td><u>#<span data-ppcond="13">endif</span></u></td></tr>
+<tr><th id="16">16</th><td><a class="macro" href="sysdeps.h.html#505" title="extern adb_mutex_t usb_lock;" data-ref="_M/ADB_MUTEX">ADB_MUTEX</a>(<dfn class="decl" id="usb_lock" title='usb_lock' data-ref="usb_lock">usb_lock</dfn>)</td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><u>#undef <a class="macro" href="sysdeps.h.html#505" data-ref="_M/ADB_MUTEX">ADB_MUTEX</a></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='adb.cpp.html'>codebrowser/system/core/adb/adb.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

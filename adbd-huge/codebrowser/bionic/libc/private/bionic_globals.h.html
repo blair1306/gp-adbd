@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>bionic_globals.h source code [codebrowser/bionic/libc/private/bionic_globals.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="libc_globals "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/private/bionic_globals.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>private</a>/<a href='bionic_globals.h.html'>bionic_globals.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2015 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="29">ifndef</span> <span class="macro" data-ref="_M/_PRIVATE_BIONIC_GLOBALS_H">_PRIVATE_BIONIC_GLOBALS_H</span></u></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/_PRIVATE_BIONIC_GLOBALS_H" data-ref="_M/_PRIVATE_BIONIC_GLOBALS_H">_PRIVATE_BIONIC_GLOBALS_H</dfn></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="bionic_malloc_dispatch.h.html">"private/bionic_malloc_dispatch.h"</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="bionic_vdso.h.html">"private/bionic_vdso.h"</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="WriteProtected.h.html">"private/WriteProtected.h"</a></u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><b>struct</b> <dfn class="type def" id="libc_globals" title='libc_globals' data-ref="libc_globals">libc_globals</dfn> {</td></tr>
+<tr><th id="39">39</th><td>  <a class="type" href="bionic_vdso.h.html#vdso_entry" title='vdso_entry' data-ref="vdso_entry">vdso_entry</a> <dfn class="decl" id="libc_globals::vdso" title='libc_globals::vdso' data-ref="libc_globals::vdso">vdso</dfn>[<a class="enum" href="bionic_vdso.h.html#VDSO_END" title='VDSO_END' data-ref="VDSO_END">VDSO_END</a>];</td></tr>
+<tr><th id="40">40</th><td>  <em>long</em> <dfn class="decl" id="libc_globals::setjmp_cookie" title='libc_globals::setjmp_cookie' data-ref="libc_globals::setjmp_cookie">setjmp_cookie</dfn>;</td></tr>
+<tr><th id="41">41</th><td>  <a class="type" href="bionic_malloc_dispatch.h.html#MallocDispatch" title='MallocDispatch' data-ref="MallocDispatch">MallocDispatch</a> <dfn class="decl" id="libc_globals::malloc_dispatch" title='libc_globals::malloc_dispatch' data-ref="libc_globals::malloc_dispatch">malloc_dispatch</dfn>;</td></tr>
+<tr><th id="42">42</th><td>};</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><a class="macro" href="../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a> <b>extern</b> <a class="type" href="WriteProtected.h.html#WriteProtected" title='WriteProtected' data-ref="WriteProtected">WriteProtected</a>&lt;<a class="type" href="#libc_globals" title='libc_globals' data-ref="libc_globals">libc_globals</a>&gt; <dfn class="decl" id="__libc_globals" title='__libc_globals' data-ref="__libc_globals">__libc_globals</dfn>;</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><b>class</b> <a class="type" href="KernelArgumentBlock.h.html#KernelArgumentBlock" title='KernelArgumentBlock' data-ref="KernelArgumentBlock" id="KernelArgumentBlock">KernelArgumentBlock</a>;</td></tr>
+<tr><th id="47">47</th><td><a class="macro" href="../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a> <em>void</em> <dfn class="decl" id="__libc_init_global_stack_chk_guard" title='__libc_init_global_stack_chk_guard' data-ref="__libc_init_global_stack_chk_guard">__libc_init_global_stack_chk_guard</dfn>(<a class="type" href="KernelArgumentBlock.h.html#KernelArgumentBlock" title='KernelArgumentBlock' data-ref="KernelArgumentBlock">KernelArgumentBlock</a>&amp; <dfn class="local col3 decl" id="3args" title='args' data-type='KernelArgumentBlock &amp;' data-ref="3args">args</dfn>);</td></tr>
+<tr><th id="48">48</th><td><a class="macro" href="../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a> <em>void</em> <dfn class="decl" id="__libc_init_malloc" title='__libc_init_malloc' data-ref="__libc_init_malloc">__libc_init_malloc</dfn>(<a class="type" href="#libc_globals" title='libc_globals' data-ref="libc_globals">libc_globals</a>* <dfn class="local col4 decl" id="4globals" title='globals' data-type='libc_globals *' data-ref="4globals">globals</dfn>);</td></tr>
+<tr><th id="49">49</th><td><a class="macro" href="../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a> <em>void</em> <dfn class="decl" id="__libc_init_setjmp_cookie" title='__libc_init_setjmp_cookie' data-ref="__libc_init_setjmp_cookie">__libc_init_setjmp_cookie</dfn>(<a class="type" href="#libc_globals" title='libc_globals' data-ref="libc_globals">libc_globals</a>* <dfn class="local col5 decl" id="5globals" title='globals' data-type='libc_globals *' data-ref="5globals">globals</dfn>, <a class="type" href="KernelArgumentBlock.h.html#KernelArgumentBlock" title='KernelArgumentBlock' data-ref="KernelArgumentBlock">KernelArgumentBlock</a>&amp; <dfn class="local col6 decl" id="6args" title='args' data-type='KernelArgumentBlock &amp;' data-ref="6args">args</dfn>);</td></tr>
+<tr><th id="50">50</th><td><a class="macro" href="../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a> <em>void</em> <dfn class="decl" id="__libc_init_vdso" title='__libc_init_vdso' data-ref="__libc_init_vdso">__libc_init_vdso</dfn>(<a class="type" href="#libc_globals" title='libc_globals' data-ref="libc_globals">libc_globals</a>* <dfn class="local col7 decl" id="7globals" title='globals' data-type='libc_globals *' data-ref="7globals">globals</dfn>, <a class="type" href="KernelArgumentBlock.h.html#KernelArgumentBlock" title='KernelArgumentBlock' data-ref="KernelArgumentBlock">KernelArgumentBlock</a>&amp; <dfn class="local col8 decl" id="8args" title='args' data-type='KernelArgumentBlock &amp;' data-ref="8args">args</dfn>);</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><u>#<span data-ppcond="52">if</span> defined(<span class="macro" data-ref="_M/__i386__">__i386__</span>)</u></td></tr>
+<tr><th id="53">53</th><td>__LIBC_HIDDEN__ <b>extern</b> <em>void</em>* __libc_sysinfo;</td></tr>
+<tr><th id="54">54</th><td>__LIBC_HIDDEN__ <em>void</em> __libc_init_sysinfo(KernelArgumentBlock&amp; args);</td></tr>
+<tr><th id="55">55</th><td><u>#<span data-ppcond="52">endif</span></u></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#<span data-ppcond="29">endif</span></u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/__libc_init_main_thread.cpp.html'>codebrowser/bionic/libc/bionic/__libc_init_main_thread.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

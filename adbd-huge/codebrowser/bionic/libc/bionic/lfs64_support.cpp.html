@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>lfs64_support.cpp source code [codebrowser/bionic/libc/bionic/lfs64_support.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/lfs64_support.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='lfs64_support.cpp.html'>lfs64_support.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2014 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../include/ftw.h.html">&lt;ftw.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><i>// Delegation will work in these cases because all the transitive dependencies</i></td></tr>
+<tr><th id="21">21</th><td><i>// are already 64-bit ready. In particular, we don't have non-O_LARGEFILE</i></td></tr>
+<tr><th id="22">22</th><td><i>// open (our open is actually open64) and stat and stat64 are the same.</i></td></tr>
+<tr><th id="23">23</th><td><em>int</em> <dfn class="decl def" id="mkstemp64" title='mkstemp64' data-ref="mkstemp64">mkstemp64</dfn>(<em>char</em>* <dfn class="local col1 decl" id="1path" title='path' data-type='char *' data-ref="1path">path</dfn>) {</td></tr>
+<tr><th id="24">24</th><td>  <b>return</b> <a class="ref" href="../include/stdlib.h.html#mkstemp" title='mkstemp' data-ref="mkstemp">mkstemp</a>(<a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a>);</td></tr>
+<tr><th id="25">25</th><td>}</td></tr>
+<tr><th id="26">26</th><td><em>int</em> <dfn class="decl def" id="mkostemp64" title='mkostemp64' data-ref="mkostemp64">mkostemp64</dfn>(<em>char</em>* <dfn class="local col2 decl" id="2path" title='path' data-type='char *' data-ref="2path">path</dfn>, <em>int</em> <dfn class="local col3 decl" id="3flags" title='flags' data-type='int' data-ref="3flags">flags</dfn>) {</td></tr>
+<tr><th id="27">27</th><td>  <b>return</b> <a class="ref" href="../include/stdlib.h.html#mkostemp" title='mkostemp' data-ref="mkostemp">mkostemp</a>(<a class="local col2 ref" href="#2path" title='path' data-ref="2path">path</a>, <a class="local col3 ref" href="#3flags" title='flags' data-ref="3flags">flags</a>);</td></tr>
+<tr><th id="28">28</th><td>}</td></tr>
+<tr><th id="29">29</th><td><em>int</em> <dfn class="decl def" id="mkstemps64" title='mkstemps64' data-ref="mkstemps64">mkstemps64</dfn>(<em>char</em>* <dfn class="local col4 decl" id="4path" title='path' data-type='char *' data-ref="4path">path</dfn>, <em>int</em> <dfn class="local col5 decl" id="5suffix_length" title='suffix_length' data-type='int' data-ref="5suffix_length">suffix_length</dfn>) {</td></tr>
+<tr><th id="30">30</th><td>  <b>return</b> <a class="ref" href="../include/stdlib.h.html#mkstemps" title='mkstemps' data-ref="mkstemps">mkstemps</a>(<a class="local col4 ref" href="#4path" title='path' data-ref="4path">path</a>, <a class="local col5 ref" href="#5suffix_length" title='suffix_length' data-ref="5suffix_length">suffix_length</a>);</td></tr>
+<tr><th id="31">31</th><td>}</td></tr>
+<tr><th id="32">32</th><td><em>int</em> <dfn class="decl def" id="mkostemps64" title='mkostemps64' data-ref="mkostemps64">mkostemps64</dfn>(<em>char</em>* <dfn class="local col6 decl" id="6path" title='path' data-type='char *' data-ref="6path">path</dfn>, <em>int</em> <dfn class="local col7 decl" id="7suffix_length" title='suffix_length' data-type='int' data-ref="7suffix_length">suffix_length</dfn>, <em>int</em> <dfn class="local col8 decl" id="8flags" title='flags' data-type='int' data-ref="8flags">flags</dfn>) {</td></tr>
+<tr><th id="33">33</th><td>  <b>return</b> <a class="ref" href="../include/stdlib.h.html#mkostemps" title='mkostemps' data-ref="mkostemps">mkostemps</a>(<a class="local col6 ref" href="#6path" title='path' data-ref="6path">path</a>, <a class="local col7 ref" href="#7suffix_length" title='suffix_length' data-ref="7suffix_length">suffix_length</a>, <a class="local col8 ref" href="#8flags" title='flags' data-ref="8flags">flags</a>);</td></tr>
+<tr><th id="34">34</th><td>}</td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><b>typedef</b> <em>int</em> (*<dfn class="typedef" id="ftw_fn" title='ftw_fn' data-type='int (*)(const char *, const struct stat *, int)' data-ref="ftw_fn">ftw_fn</dfn>)(<em>const</em> <em>char</em>*, <em>const</em> <b>struct</b> <a class="type" href="../include/sys/stat.h.html#stat" title='stat' data-ref="stat">stat</a>*, <em>int</em>);</td></tr>
+<tr><th id="37">37</th><td><b>typedef</b> <em>int</em> (*<dfn class="typedef" id="nftw_fn" title='nftw_fn' data-type='int (*)(const char *, const struct stat *, int, struct FTW *)' data-ref="nftw_fn">nftw_fn</dfn>)(<em>const</em> <em>char</em>*, <em>const</em> <b>struct</b> <a class="type" href="../include/sys/stat.h.html#stat" title='stat' data-ref="stat">stat</a>*, <em>int</em>, <b>struct</b> <a class="type" href="../include/ftw.h.html#FTW" title='FTW' data-ref="FTW">FTW</a>*);</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><em>int</em> <dfn class="decl def" id="ftw64" title='ftw64' data-ref="ftw64">ftw64</dfn>(<em>const</em> <em>char</em> *<dfn class="local col9 decl" id="9dirpath" title='dirpath' data-type='const char *' data-ref="9dirpath">dirpath</dfn>,</td></tr>
+<tr><th id="40">40</th><td>    <em>int</em> (*<dfn class="local col0 decl" id="10fn" title='fn' data-type='int (*)(const char *, const struct stat64 *, int)' data-ref="10fn">fn</dfn>)(<em>const</em> <em>char</em>*, <em>const</em> <b>struct</b> <a class="type" href="../include/sys/stat.h.html#stat64" title='stat64' data-ref="stat64">stat64</a>*, <em>int</em>), <em>int</em> <dfn class="local col1 decl" id="11nopenfd" title='nopenfd' data-type='int' data-ref="11nopenfd">nopenfd</dfn>) {</td></tr>
+<tr><th id="41">41</th><td>  <b>return</b> <a class="ref" href="../include/ftw.h.html#ftw" title='ftw' data-ref="ftw">ftw</a>(<a class="local col9 ref" href="#9dirpath" title='dirpath' data-ref="9dirpath">dirpath</a>, <b>reinterpret_cast</b>&lt;<a class="typedef" href="#ftw_fn" title='ftw_fn' data-type='int (*)(const char *, const struct stat *, int)' data-ref="ftw_fn">ftw_fn</a>&gt;(<a class="local col0 ref" href="#10fn" title='fn' data-ref="10fn">fn</a>), <a class="local col1 ref" href="#11nopenfd" title='nopenfd' data-ref="11nopenfd">nopenfd</a>);</td></tr>
+<tr><th id="42">42</th><td>}</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><em>int</em> <dfn class="decl def" id="nftw64" title='nftw64' data-ref="nftw64">nftw64</dfn>(<em>const</em> <em>char</em> * <dfn class="local col2 decl" id="12dirpath" title='dirpath' data-type='const char *' data-ref="12dirpath">dirpath</dfn>,</td></tr>
+<tr><th id="45">45</th><td>    <em>int</em> (*<dfn class="local col3 decl" id="13fn" title='fn' data-type='int (*)(const char *, const struct stat64 *, int, struct FTW *)' data-ref="13fn">fn</dfn>)(<em>const</em> <em>char</em>*, <em>const</em> <b>struct</b> <a class="type" href="../include/sys/stat.h.html#stat64" title='stat64' data-ref="stat64">stat64</a>*, <em>int</em>, <b>struct</b> <a class="type" href="../include/ftw.h.html#FTW" title='FTW' data-ref="FTW">FTW</a>*),</td></tr>
+<tr><th id="46">46</th><td>    <em>int</em> <dfn class="local col4 decl" id="14nopenfd" title='nopenfd' data-type='int' data-ref="14nopenfd">nopenfd</dfn>, <em>int</em> <dfn class="local col5 decl" id="15flags" title='flags' data-type='int' data-ref="15flags">flags</dfn>) {</td></tr>
+<tr><th id="47">47</th><td>  <b>return</b> <a class="ref" href="../include/ftw.h.html#nftw" title='nftw' data-ref="nftw">nftw</a>(<a class="local col2 ref" href="#12dirpath" title='dirpath' data-ref="12dirpath">dirpath</a>, <b>reinterpret_cast</b>&lt;<a class="typedef" href="#nftw_fn" title='nftw_fn' data-type='int (*)(const char *, const struct stat *, int, struct FTW *)' data-ref="nftw_fn">nftw_fn</a>&gt;(<a class="local col3 ref" href="#13fn" title='fn' data-ref="13fn">fn</a>), <a class="local col4 ref" href="#14nopenfd" title='nopenfd' data-ref="14nopenfd">nopenfd</a>, <a class="local col5 ref" href="#15flags" title='flags' data-ref="15flags">flags</a>);</td></tr>
+<tr><th id="48">48</th><td>}</td></tr>
+<tr><th id="49">49</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

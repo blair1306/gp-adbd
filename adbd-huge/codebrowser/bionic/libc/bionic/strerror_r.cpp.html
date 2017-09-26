@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>strerror_r.cpp source code [codebrowser/bionic/libc/bionic/strerror_r.cpp] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="Pair "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/strerror_r.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='strerror_r.cpp.html'>strerror_r.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* $OpenBSD: strerror_r.c,v 1.6 2005/08/08 08:05:37 espie Exp $ */</i></td></tr>
+<tr><th id="2">2</th><td><i>/* Public Domain &lt;marc@snafu.org&gt; */</i></td></tr>
+<tr><th id="3">3</th><td><i></i></td></tr>
+<tr><th id="4">4</th><td><i>// G++ automatically defines _GNU_SOURCE, which then means that &lt;string.h&gt;</i></td></tr>
+<tr><th id="5">5</th><td><i>// gives us the GNU variant.</i></td></tr>
+<tr><th id="6">6</th><td><u>#undef <span class="macro" data-ref="_M/_GNU_SOURCE">_GNU_SOURCE</span></u></td></tr>
+<tr><th id="7">7</th><td></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><u>#include <a href="../include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="11">11</th><td><u>#include <a href="../include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="12">12</th><td><u>#include <a href="../include/signal.h.html">&lt;signal.h&gt;</a></u></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="../include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#include <a href="../private/ErrnoRestorer.h.html">"private/ErrnoRestorer.h"</a></u></td></tr>
+<tr><th id="16">16</th><td><u>#include <a href="../private/libc_logging.h.html">"private/libc_logging.h"</a></u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><b>struct</b> <dfn class="type def" id="Pair" title='Pair' data-ref="Pair">Pair</dfn> {</td></tr>
+<tr><th id="19">19</th><td>  <em>int</em> <dfn class="tu decl" id="Pair::code" title='Pair::code' data-type='int' data-ref="Pair::code">code</dfn>;</td></tr>
+<tr><th id="20">20</th><td>  <em>const</em> <em>char</em>* <dfn class="tu decl" id="Pair::msg" title='Pair::msg' data-type='const char *' data-ref="Pair::msg">msg</dfn>;</td></tr>
+<tr><th id="21">21</th><td>};</td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><em>static</em> <em>const</em> <em>char</em>* <dfn class="tu decl def" id="__code_string_lookup" title='__code_string_lookup' data-type='const char * __code_string_lookup(const Pair * strings, int code)' data-ref="__code_string_lookup">__code_string_lookup</dfn>(<em>const</em> <a class="type" href="#Pair" title='Pair' data-ref="Pair">Pair</a>* <dfn class="local col1 decl" id="1strings" title='strings' data-type='const Pair *' data-ref="1strings">strings</dfn>, <em>int</em> <dfn class="local col2 decl" id="2code" title='code' data-type='int' data-ref="2code">code</dfn>) {</td></tr>
+<tr><th id="24">24</th><td>  <b>for</b> (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="3i" title='i' data-type='size_t' data-ref="3i">i</dfn> = <var>0</var>; <a class="local col1 ref" href="#1strings" title='strings' data-ref="1strings">strings</a>[<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>].<a class="tu ref" href="#Pair::msg" title='Pair::msg' data-use='r' data-ref="Pair::msg">msg</a> != <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>; ++<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>) {</td></tr>
+<tr><th id="25">25</th><td>    <b>if</b> (<a class="local col1 ref" href="#1strings" title='strings' data-ref="1strings">strings</a>[<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>].<a class="tu ref" href="#Pair::code" title='Pair::code' data-use='r' data-ref="Pair::code">code</a> == <a class="local col2 ref" href="#2code" title='code' data-ref="2code">code</a>) {</td></tr>
+<tr><th id="26">26</th><td>      <b>return</b> <a class="local col1 ref" href="#1strings" title='strings' data-ref="1strings">strings</a>[<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>].<a class="tu ref" href="#Pair::msg" title='Pair::msg' data-use='r' data-ref="Pair::msg">msg</a>;</td></tr>
+<tr><th id="27">27</th><td>    }</td></tr>
+<tr><th id="28">28</th><td>  }</td></tr>
+<tr><th id="29">29</th><td>  <b>return</b> <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="30">30</th><td>}</td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><em>static</em> <em>const</em> <a class="type" href="#Pair" title='Pair' data-ref="Pair">Pair</a> <dfn class="tu decl def" id="_sys_error_strings" title='_sys_error_strings' data-type='const Pair [131]' data-ref="_sys_error_strings">_sys_error_strings</dfn>[] = {</td></tr>
+<tr><th id="33">33</th><td><u>#define  <dfn class="macro" id="_M/__BIONIC_ERRDEF" data-ref="_M/__BIONIC_ERRDEF">__BIONIC_ERRDEF</dfn>(x,y,z)  { x, z },</u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../include/sys/_errdefs.h.html">&lt;sys/_errdefs.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td>  { <var>0</var>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span> }</td></tr>
+<tr><th id="36">36</th><td>};</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><b>extern</b> <q>"C"</q> <a class="macro" href="../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a> <em>const</em> <em>char</em>* <dfn class="decl def" id="__strerror_lookup" title='__strerror_lookup' data-ref="__strerror_lookup">__strerror_lookup</dfn>(<em>int</em> <dfn class="local col4 decl" id="4error_number" title='error_number' data-type='int' data-ref="4error_number">error_number</dfn>) {</td></tr>
+<tr><th id="39">39</th><td>  <b>return</b> <a class="tu ref" href="#__code_string_lookup" title='__code_string_lookup' data-use='c' data-ref="__code_string_lookup">__code_string_lookup</a>(<a class="tu ref" href="#_sys_error_strings" title='_sys_error_strings' data-use='r' data-ref="_sys_error_strings">_sys_error_strings</a>, <a class="local col4 ref" href="#4error_number" title='error_number' data-ref="4error_number">error_number</a>);</td></tr>
+<tr><th id="40">40</th><td>}</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><em>static</em> <em>const</em> <a class="type" href="#Pair" title='Pair' data-ref="Pair">Pair</a> <dfn class="tu decl def" id="_sys_signal_strings" title='_sys_signal_strings' data-type='const Pair [32]' data-ref="_sys_signal_strings">_sys_signal_strings</dfn>[] = {</td></tr>
+<tr><th id="43">43</th><td><u>#define  <dfn class="macro" id="_M/__BIONIC_SIGDEF" data-ref="_M/__BIONIC_SIGDEF">__BIONIC_SIGDEF</dfn>(signal_number, signal_description)  { signal_number, signal_description },</u></td></tr>
+<tr><th id="44">44</th><td><u>#include <a href="../include/sys/_sigdefs.h.html">&lt;sys/_sigdefs.h&gt;</a></u></td></tr>
+<tr><th id="45">45</th><td>  { <var>0</var>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span> }</td></tr>
+<tr><th id="46">46</th><td>};</td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><b>extern</b> <q>"C"</q> <a class="macro" href="../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a> <em>const</em> <em>char</em>* <dfn class="decl def" id="__strsignal_lookup" title='__strsignal_lookup' data-ref="__strsignal_lookup">__strsignal_lookup</dfn>(<em>int</em> <dfn class="local col5 decl" id="5signal_number" title='signal_number' data-type='int' data-ref="5signal_number">signal_number</dfn>) {</td></tr>
+<tr><th id="49">49</th><td>  <b>return</b> <a class="tu ref" href="#__code_string_lookup" title='__code_string_lookup' data-use='c' data-ref="__code_string_lookup">__code_string_lookup</a>(<a class="tu ref" href="#_sys_signal_strings" title='_sys_signal_strings' data-use='r' data-ref="_sys_signal_strings">_sys_signal_strings</a>, <a class="local col5 ref" href="#5signal_number" title='signal_number' data-ref="5signal_number">signal_number</a>);</td></tr>
+<tr><th id="50">50</th><td>}</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><em>int</em> <dfn class="decl def" id="strerror_r" title='strerror_r' data-ref="strerror_r">strerror_r</dfn>(<em>int</em> <dfn class="local col6 decl" id="6error_number" title='error_number' data-type='int' data-ref="6error_number">error_number</dfn>, <em>char</em>* <dfn class="local col7 decl" id="7buf" title='buf' data-type='char *' data-ref="7buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="8buf_len" title='buf_len' data-type='size_t' data-ref="8buf_len">buf_len</dfn>) {</td></tr>
+<tr><th id="53">53</th><td>  <a class="type" href="../private/ErrnoRestorer.h.html#ErrnoRestorer" title='ErrnoRestorer' data-ref="ErrnoRestorer">ErrnoRestorer</a> <a class="ref fake" href="../private/ErrnoRestorer.h.html#_ZN13ErrnoRestorerC1Ev" title='ErrnoRestorer::ErrnoRestorer' data-ref="_ZN13ErrnoRestorerC1Ev"></a><dfn class="local col9 decl" id="9errno_restorer" title='errno_restorer' data-type='ErrnoRestorer' data-ref="9errno_restorer">errno_restorer</dfn>;</td></tr>
+<tr><th id="54">54</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="10length" title='length' data-type='size_t' data-ref="10length">length</dfn>;</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td>  <em>const</em> <em>char</em>* <dfn class="local col1 decl" id="11error_name" title='error_name' data-type='const char *' data-ref="11error_name">error_name</dfn> = <a class="ref" href="#__strerror_lookup" title='__strerror_lookup' data-ref="__strerror_lookup">__strerror_lookup</a>(<a class="local col6 ref" href="#6error_number" title='error_number' data-ref="6error_number">error_number</a>);</td></tr>
+<tr><th id="57">57</th><td>  <b>if</b> (<a class="local col1 ref" href="#11error_name" title='error_name' data-ref="11error_name">error_name</a> != <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="58">58</th><td>    <a class="local col0 ref" href="#10length" title='length' data-ref="10length">length</a> = <a class="ref" href="../include/string.h.html#strlcpy" title='strlcpy' data-ref="strlcpy">strlcpy</a>(<a class="local col7 ref" href="#7buf" title='buf' data-ref="7buf">buf</a>, <a class="local col1 ref" href="#11error_name" title='error_name' data-ref="11error_name">error_name</a>, <a class="local col8 ref" href="#8buf_len" title='buf_len' data-ref="8buf_len">buf_len</a>);</td></tr>
+<tr><th id="59">59</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="60">60</th><td>    <a class="local col0 ref" href="#10length" title='length' data-ref="10length">length</a> = <a class="ref" href="../private/libc_logging.h.html#__libc_format_buffer" title='__libc_format_buffer' data-ref="__libc_format_buffer">__libc_format_buffer</a>(<a class="local col7 ref" href="#7buf" title='buf' data-ref="7buf">buf</a>, <a class="local col8 ref" href="#8buf_len" title='buf_len' data-ref="8buf_len">buf_len</a>, <q>"Unknown error %d"</q>, <a class="local col6 ref" href="#6error_number" title='error_number' data-ref="6error_number">error_number</a>);</td></tr>
+<tr><th id="61">61</th><td>  }</td></tr>
+<tr><th id="62">62</th><td>  <b>if</b> (<a class="local col0 ref" href="#10length" title='length' data-ref="10length">length</a> &gt;= <a class="local col8 ref" href="#8buf_len" title='buf_len' data-ref="8buf_len">buf_len</a>) {</td></tr>
+<tr><th id="63">63</th><td>    <a class="local col9 ref" href="#9errno_restorer" title='errno_restorer' data-ref="9errno_restorer">errno_restorer</a>.<a class="ref" href="../private/ErrnoRestorer.h.html#_ZN13ErrnoRestorer8overrideEi" title='ErrnoRestorer::override' data-ref="_ZN13ErrnoRestorer8overrideEi">override</a>(<a class="macro" href="../kernel/uapi/asm-generic/errno-base.h.html#62" title="34" data-ref="_M/ERANGE">ERANGE</a>);</td></tr>
+<tr><th id="64">64</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="65">65</th><td>  }</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="68">68</th><td>}</td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><b>extern</b> <q>"C"</q> <em>char</em>* <dfn class="decl def" id="__gnu_strerror_r" title='__gnu_strerror_r' data-ref="__gnu_strerror_r">__gnu_strerror_r</dfn>(<em>int</em> <dfn class="local col2 decl" id="12error_number" title='error_number' data-type='int' data-ref="12error_number">error_number</dfn>, <em>char</em>* <dfn class="local col3 decl" id="13buf" title='buf' data-type='char *' data-ref="13buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="14buf_len" title='buf_len' data-type='size_t' data-ref="14buf_len">buf_len</dfn>) {</td></tr>
+<tr><th id="71">71</th><td>  <a class="type" href="../private/ErrnoRestorer.h.html#ErrnoRestorer" title='ErrnoRestorer' data-ref="ErrnoRestorer">ErrnoRestorer</a> <a class="ref fake" href="../private/ErrnoRestorer.h.html#_ZN13ErrnoRestorerC1Ev" title='ErrnoRestorer::ErrnoRestorer' data-ref="_ZN13ErrnoRestorerC1Ev"></a><dfn class="local col5 decl" id="15errno_restorer" title='errno_restorer' data-type='ErrnoRestorer' data-ref="15errno_restorer">errno_restorer</dfn>; <i>// The glibc strerror_r doesn't set errno if it truncates...</i></td></tr>
+<tr><th id="72">72</th><td>  <a class="ref" href="#strerror_r" title='strerror_r' data-ref="strerror_r">strerror_r</a>(<a class="local col2 ref" href="#12error_number" title='error_number' data-ref="12error_number">error_number</a>, <a class="local col3 ref" href="#13buf" title='buf' data-ref="13buf">buf</a>, <a class="local col4 ref" href="#14buf_len" title='buf_len' data-ref="14buf_len">buf_len</a>);</td></tr>
+<tr><th id="73">73</th><td>  <b>return</b> <a class="local col3 ref" href="#13buf" title='buf' data-ref="13buf">buf</a>; <i>// ...and just returns whatever fit.</i></td></tr>
+<tr><th id="74">74</th><td>}</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><b>extern</b> <q>"C"</q> <a class="macro" href="../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a> <em>const</em> <em>char</em>* <dfn class="decl def" id="__strsignal" title='__strsignal' data-ref="__strsignal">__strsignal</dfn>(<em>int</em> <dfn class="local col6 decl" id="16signal_number" title='signal_number' data-type='int' data-ref="16signal_number">signal_number</dfn>, <em>char</em>* <dfn class="local col7 decl" id="17buf" title='buf' data-type='char *' data-ref="17buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="18buf_len" title='buf_len' data-type='size_t' data-ref="18buf_len">buf_len</dfn>) {</td></tr>
+<tr><th id="77">77</th><td>  <em>const</em> <em>char</em>* <dfn class="local col9 decl" id="19signal_name" title='signal_name' data-type='const char *' data-ref="19signal_name">signal_name</dfn> = <a class="ref" href="#__strsignal_lookup" title='__strsignal_lookup' data-ref="__strsignal_lookup">__strsignal_lookup</a>(<a class="local col6 ref" href="#16signal_number" title='signal_number' data-ref="16signal_number">signal_number</a>);</td></tr>
+<tr><th id="78">78</th><td>  <b>if</b> (<a class="local col9 ref" href="#19signal_name" title='signal_name' data-ref="19signal_name">signal_name</a> != <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="79">79</th><td>    <b>return</b> <a class="local col9 ref" href="#19signal_name" title='signal_name' data-ref="19signal_name">signal_name</a>;</td></tr>
+<tr><th id="80">80</th><td>  }</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td>  <em>const</em> <em>char</em>* <dfn class="local col0 decl" id="20prefix" title='prefix' data-type='const char *' data-ref="20prefix">prefix</dfn> = <q>"Unknown"</q>;</td></tr>
+<tr><th id="83">83</th><td>  <b>if</b> (<a class="local col6 ref" href="#16signal_number" title='signal_number' data-ref="16signal_number">signal_number</a> &gt;= <a class="macro" href="../include/signal.h.html#73" title="(__libc_current_sigrtmin())" data-ref="_M/SIGRTMIN">SIGRTMIN</a> &amp;&amp; <a class="local col6 ref" href="#16signal_number" title='signal_number' data-ref="16signal_number">signal_number</a> &lt;= <a class="macro" href="../include/signal.h.html#74" title="(__libc_current_sigrtmax())" data-ref="_M/SIGRTMAX">SIGRTMAX</a>) {</td></tr>
+<tr><th id="84">84</th><td>    <a class="local col0 ref" href="#20prefix" title='prefix' data-ref="20prefix">prefix</a> = <q>"Real-time"</q>;</td></tr>
+<tr><th id="85">85</th><td>    <a class="local col6 ref" href="#16signal_number" title='signal_number' data-ref="16signal_number">signal_number</a> -= <a class="macro" href="../include/signal.h.html#73" title="(__libc_current_sigrtmin())" data-ref="_M/SIGRTMIN">SIGRTMIN</a>;</td></tr>
+<tr><th id="86">86</th><td>  }</td></tr>
+<tr><th id="87">87</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="21length" title='length' data-type='size_t' data-ref="21length">length</dfn> = <a class="macro" href="../include/stdio.h.html#320" title="__builtin___snprintf_chk(buf, buf_len, 0, __builtin_object_size((buf), 1), &quot;%s signal %d&quot;, prefix, signal_number)" data-ref="_M/snprintf">snprintf</a>(<a class="local col7 ref" href="#17buf" title='buf' data-ref="17buf">buf</a>, <a class="local col8 ref" href="#18buf_len" title='buf_len' data-ref="18buf_len">buf_len</a>, <q>"%s signal %d"</q>, <a class="local col0 ref" href="#20prefix" title='prefix' data-ref="20prefix">prefix</a>, <a class="local col6 ref" href="#16signal_number" title='signal_number' data-ref="16signal_number">signal_number</a>);</td></tr>
+<tr><th id="88">88</th><td>  <b>if</b> (<a class="local col1 ref" href="#21length" title='length' data-ref="21length">length</a> &gt;= <a class="local col8 ref" href="#18buf_len" title='buf_len' data-ref="18buf_len">buf_len</a>) {</td></tr>
+<tr><th id="89">89</th><td>    <b>return</b> <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="90">90</th><td>  }</td></tr>
+<tr><th id="91">91</th><td>  <b>return</b> <a class="local col7 ref" href="#17buf" title='buf' data-ref="17buf">buf</a>;</td></tr>
+<tr><th id="92">92</th><td>}</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

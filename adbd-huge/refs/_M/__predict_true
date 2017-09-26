@@ -1,0 +1,56 @@
+<dec f='codebrowser/bionic/libc/include/sys/cdefs.h' l='207'/>
+<doc f='codebrowser/bionic/libc/include/sys/cdefs.h' l='179'>/*
+ * GNU C version 2.96 adds explicit branch prediction so that
+ * the CPU back-end can hint the processor and also so that
+ * code blocks can be reordered such that the predicted path
+ * sees a more linear flow, thus improving cache behavior, etc.
+ *
+ * The following two macros provide us with a way to use this
+ * compiler feature.  Use __predict_true() if you expect the expression
+ * to evaluate to true, and __predict_false() if you expect the
+ * expression to evaluate to false.
+ *
+ * A few notes about usage:
+ *
+ *	* Generally, __predict_false() error condition checks (unless
+ *	  you have some _strong_ reason to do otherwise, in which case
+ *	  document it), and/or __predict_true() `no-error&apos; condition
+ *	  checks, assuming you want to optimize for the no-error case.
+ *
+ *	* Other than that, if you don&apos;t know the likelihood of a test
+ *	  succeeding from empirical or other `hard&apos; evidence, don&apos;t
+ *	  make predictions.
+ *
+ *	* These are meant to be used in places that are run `a lot&apos;.
+ *	  It is wasteful to make predictions in code that is run
+ *	  seldomly (e.g. at subsystem initialization time) as the
+ *	  basic block reordering that this affects can often generate
+ *	  larger code.
+ */</doc>
+<use f='codebrowser/bionic/libc/private/bionic_lock.h' l='55' u='c'/>
+<use f='codebrowser/bionic/libc/private/bionic_lock.h' l='61' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/getpid.cpp' l='40' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_create.cpp' l='90' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_key.cpp' l='160' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_key.cpp' l='175' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='246' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='281' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='304' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='429' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='451' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='468' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='516' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='517' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='538' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='585' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_mutex.cpp' l='604' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_once.cpp' l='57' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_rwlock.cpp' l='275' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_rwlock.cpp' l='281' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_rwlock.cpp' l='351' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_rwlock.cpp' l='352' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_rwlock.cpp' l='415' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/pthread_rwlock.cpp' l='434' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/vdso.cpp' l='34' u='c'/>
+<use f='codebrowser/bionic/libc/bionic/vdso.cpp' l='43' u='c'/>
+<dec f='codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/cdefs.h' l='324'/>

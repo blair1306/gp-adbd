@@ -1,0 +1,20 @@
+<dec f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/math_private.h' l='424' type='void _scan_nan(uint32_t * __words, int __num_words, const char * __s)'/>
+<doc f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/math_private.h' l='421'>/*
+ * Common routine to process the arguments to nan(), nanf(), and nanl().
+ */</doc>
+<use f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/s_nanl.c' l='42' u='c' c='nanl'/>
+<def f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_nan.c' l='50' ll='76' type='void _scan_nan(uint32_t * words, int num_words, const char * s)'/>
+<use f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_nan.c' l='86' u='c' c='nan'/>
+<use f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_nan.c' l='103' u='c' c='nanf'/>
+<doc f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_nan.c' l='38'>/*
+ * Scan a string of hexadecimal digits (the format nan(3) expects) and
+ * make a bit array (using the local endianness). We stop when we
+ * encounter an invalid character, NUL, etc.  If we overflow, we do
+ * the same as gcc&apos;s __builtin_nan(), namely, discard the high order bits.
+ *
+ * The format this routine accepts needs to be compatible with what is used
+ * in contrib/gdtoa/hexnan.c (for strtod/scanf) and what is used in
+ * __builtin_nan(). In fact, we&apos;re only 100% compatible for strings we
+ * consider valid, so we might be violating the C standard. But it&apos;s
+ * impossible to use nan(3) portably anyway, so this seems good enough.
+ */</doc>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>getfilecon.c source code [codebrowser/external/libselinux/src/getfilecon.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/getfilecon.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='getfilecon.c.html'>getfilecon.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="2">2</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="3">3</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="4">4</th><td><u>#include <a href="selinux_internal.h.html">"selinux_internal.h"</a></u></td></tr>
+<tr><th id="5">5</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="6">6</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../../bionic/libc/include/sys/xattr.h.html">&lt;sys/xattr.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="policy.h.html">"policy.h"</a></u></td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><em>int</em> <dfn class="decl def" id="getfilecon" title='getfilecon' data-ref="getfilecon">getfilecon</dfn>(<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="1path" title='path' data-type='const char *' data-ref="1path">path</dfn>, <em>char</em> ** <dfn class="local col2 decl" id="2context" title='context' data-type='char **' data-ref="2context">context</dfn>)</td></tr>
+<tr><th id="11">11</th><td>{</td></tr>
+<tr><th id="12">12</th><td>	<em>char</em> *<dfn class="local col3 decl" id="3buf" title='buf' data-type='char *' data-ref="3buf">buf</dfn>;</td></tr>
+<tr><th id="13">13</th><td>	<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="local col4 decl" id="4size" title='size' data-type='ssize_t' data-ref="4size">size</dfn>;</td></tr>
+<tr><th id="14">14</th><td>	<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="local col5 decl" id="5ret" title='ret' data-type='ssize_t' data-ref="5ret">ret</dfn>;</td></tr>
+<tr><th id="15">15</th><td></td></tr>
+<tr><th id="16">16</th><td>	<a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a> = <a class="macro" href="policy.h.html#10" title="255" data-ref="_M/INITCONTEXTLEN">INITCONTEXTLEN</a> + <var>1</var>;</td></tr>
+<tr><th id="17">17</th><td>	<a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a> = <a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a>);</td></tr>
+<tr><th id="18">18</th><td>	<b>if</b> (!<a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>)</td></tr>
+<tr><th id="19">19</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="20">20</th><td>	<a class="ref" href="../../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>, <var>0</var>, <a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a>);</td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td>	<a class="local col5 ref" href="#5ret" title='ret' data-ref="5ret">ret</a> = <a class="ref" href="../../../bionic/libc/include/sys/xattr.h.html#getxattr" title='getxattr' data-ref="getxattr">getxattr</a>(<a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a>, <a class="macro" href="policy.h.html#7" title="&quot;security.selinux&quot;" data-ref="_M/XATTR_NAME_SELINUX">XATTR_NAME_SELINUX</a>, <a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>, <a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a> - <var>1</var>);</td></tr>
+<tr><th id="23">23</th><td>	<b>if</b> (<a class="local col5 ref" href="#5ret" title='ret' data-ref="5ret">ret</a> &lt; <var>0</var> &amp;&amp; <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#62" title="34" data-ref="_M/ERANGE">ERANGE</a>) {</td></tr>
+<tr><th id="24">24</th><td>		<em>char</em> *<dfn class="local col6 decl" id="6newbuf" title='newbuf' data-type='char *' data-ref="6newbuf">newbuf</dfn>;</td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td>		<a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a> = <a class="ref" href="../../../bionic/libc/include/sys/xattr.h.html#getxattr" title='getxattr' data-ref="getxattr">getxattr</a>(<a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a>, <a class="macro" href="policy.h.html#7" title="&quot;security.selinux&quot;" data-ref="_M/XATTR_NAME_SELINUX">XATTR_NAME_SELINUX</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <var>0</var>);</td></tr>
+<tr><th id="27">27</th><td>		<b>if</b> (<a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="28">28</th><td>			<b>goto</b> <a class="lbl" href="#7out" data-ref="7out">out</a>;</td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td>		<a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a>++;</td></tr>
+<tr><th id="31">31</th><td>		<a class="local col6 ref" href="#6newbuf" title='newbuf' data-ref="6newbuf">newbuf</a> = <a class="ref" href="../../../bionic/libc/include/malloc.h.html#realloc" title='realloc' data-ref="realloc">realloc</a>(<a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>, <a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a>);</td></tr>
+<tr><th id="32">32</th><td>		<b>if</b> (!<a class="local col6 ref" href="#6newbuf" title='newbuf' data-ref="6newbuf">newbuf</a>)</td></tr>
+<tr><th id="33">33</th><td>			<b>goto</b> <a class="lbl" href="#7out" data-ref="7out">out</a>;</td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td>		<a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a> = <a class="local col6 ref" href="#6newbuf" title='newbuf' data-ref="6newbuf">newbuf</a>;</td></tr>
+<tr><th id="36">36</th><td>		<a class="ref" href="../../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>, <var>0</var>, <a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a>);</td></tr>
+<tr><th id="37">37</th><td>		<a class="local col5 ref" href="#5ret" title='ret' data-ref="5ret">ret</a> = <a class="ref" href="../../../bionic/libc/include/sys/xattr.h.html#getxattr" title='getxattr' data-ref="getxattr">getxattr</a>(<a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a>, <a class="macro" href="policy.h.html#7" title="&quot;security.selinux&quot;" data-ref="_M/XATTR_NAME_SELINUX">XATTR_NAME_SELINUX</a>, <a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>, <a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a> - <var>1</var>);</td></tr>
+<tr><th id="38">38</th><td>	}</td></tr>
+<tr><th id="39">39</th><td>      <dfn class="lbl" id="7out" data-ref="7out">out</dfn>:</td></tr>
+<tr><th id="40">40</th><td>	<b>if</b> (<a class="local col5 ref" href="#5ret" title='ret' data-ref="5ret">ret</a> == <var>0</var>) {</td></tr>
+<tr><th id="41">41</th><td>		<i>/* Re-map empty attribute values to errors. */</i></td></tr>
+<tr><th id="42">42</th><td>		<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno.h.html#97" title="95" data-ref="_M/EOPNOTSUPP">EOPNOTSUPP</a>;</td></tr>
+<tr><th id="43">43</th><td>		<a class="local col5 ref" href="#5ret" title='ret' data-ref="5ret">ret</a> = -<var>1</var>;</td></tr>
+<tr><th id="44">44</th><td>	}</td></tr>
+<tr><th id="45">45</th><td>	<b>if</b> (<a class="local col5 ref" href="#5ret" title='ret' data-ref="5ret">ret</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="46">46</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>);</td></tr>
+<tr><th id="47">47</th><td>	<b>else</b></td></tr>
+<tr><th id="48">48</th><td>		*<a class="local col2 ref" href="#2context" title='context' data-ref="2context">context</a> = <a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>;</td></tr>
+<tr><th id="49">49</th><td>	<b>return</b> <a class="local col5 ref" href="#5ret" title='ret' data-ref="5ret">ret</a>;</td></tr>
+<tr><th id="50">50</th><td>}</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

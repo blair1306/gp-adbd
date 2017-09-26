@@ -1,0 +1,9 @@
+<def f='codebrowser/bionic/libc/bionic/pthread_key.cpp' l='49' ll='52'/>
+<size>16</size>
+<doc f='codebrowser/bionic/libc/bionic/pthread_key.cpp' l='42'>// pthread_key_internal_t records the use of each pthread key slot:
+//   seq records the state of the slot.
+//      bit 0 is 1 when the key is in use, 0 when it is unused. Each time we create or delete the
+//      pthread key in the slot, we increse the seq by 1 (which inverts bit 0). The reason to use
+//      a sequence number instead of a boolean value here is that when the key slot is deleted and
+//      reused for a new key, pthread_getspecific will not return stale data.
+//   key_destructor records the destructor called at thread exit.</doc>

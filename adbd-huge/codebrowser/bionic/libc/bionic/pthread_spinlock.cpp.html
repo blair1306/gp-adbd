@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>pthread_spinlock.cpp source code [codebrowser/bionic/libc/bionic/pthread_spinlock.cpp] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="pthread_spinlock_internal_t "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/pthread_spinlock.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='pthread_spinlock.cpp.html'>pthread_spinlock.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2015 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../private/bionic_lock.h.html">"private/bionic_lock.h"</a></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><i>// User-level spinlocks can be hazardous to battery life on Android.</i></td></tr>
+<tr><th id="33">33</th><td><i>// We implement a simple compromise that behaves mostly like a spinlock,</i></td></tr>
+<tr><th id="34">34</th><td><i>// but prevents excessively long spinning.</i></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><b>struct</b> <dfn class="type def" id="pthread_spinlock_internal_t" title='pthread_spinlock_internal_t' data-ref="pthread_spinlock_internal_t">pthread_spinlock_internal_t</dfn> {</td></tr>
+<tr><th id="37">37</th><td>  <a class="type" href="../private/bionic_lock.h.html#Lock" title='Lock' data-ref="Lock">Lock</a> <dfn class="tu decl" id="pthread_spinlock_internal_t::lock" title='pthread_spinlock_internal_t::lock' data-type='Lock' data-ref="pthread_spinlock_internal_t::lock">lock</dfn>;</td></tr>
+<tr><th id="38">38</th><td>};</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><b>static_assert</b>(<b>sizeof</b>(<a class="typedef" href="../include/pthread.h.html#pthread_spinlock_t" title='pthread_spinlock_t' data-type='struct pthread_spinlock_t' data-ref="pthread_spinlock_t">pthread_spinlock_t</a>) == <b>sizeof</b>(<a class="type" href="#pthread_spinlock_internal_t" title='pthread_spinlock_internal_t' data-ref="pthread_spinlock_internal_t">pthread_spinlock_internal_t</a>),</td></tr>
+<tr><th id="41">41</th><td>              <q>"pthread_spinlock_t should actually be pthread_spinlock_internal_t."</q>);</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><b>static_assert</b>(<b>alignof</b>(<a class="typedef" href="../include/pthread.h.html#pthread_spinlock_t" title='pthread_spinlock_t' data-type='struct pthread_spinlock_t' data-ref="pthread_spinlock_t">pthread_spinlock_t</a>) &gt;= <var>4</var>,</td></tr>
+<tr><th id="44">44</th><td>              <q>"pthread_spinlock_t should fulfill the alignment of pthread_spinlock_internal_t."</q>);</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><em>static</em> <b>inline</b> <a class="type" href="#pthread_spinlock_internal_t" title='pthread_spinlock_internal_t' data-ref="pthread_spinlock_internal_t">pthread_spinlock_internal_t</a>* <dfn class="tu decl def" id="__get_internal_spinlock" title='__get_internal_spinlock' data-type='pthread_spinlock_internal_t * __get_internal_spinlock(pthread_spinlock_t * lock)' data-ref="__get_internal_spinlock">__get_internal_spinlock</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_spinlock_t" title='pthread_spinlock_t' data-type='struct pthread_spinlock_t' data-ref="pthread_spinlock_t">pthread_spinlock_t</a>* <dfn class="local col1 decl" id="1lock" title='lock' data-type='pthread_spinlock_t *' data-ref="1lock">lock</dfn>) {</td></tr>
+<tr><th id="47">47</th><td>  <b>return</b> <b>reinterpret_cast</b>&lt;<a class="type" href="#pthread_spinlock_internal_t" title='pthread_spinlock_internal_t' data-ref="pthread_spinlock_internal_t">pthread_spinlock_internal_t</a>*&gt;(<a class="local col1 ref" href="#1lock" title='lock' data-ref="1lock">lock</a>);</td></tr>
+<tr><th id="48">48</th><td>}</td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td><em>int</em> <dfn class="decl def" id="pthread_spin_init" title='pthread_spin_init' data-ref="pthread_spin_init">pthread_spin_init</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_spinlock_t" title='pthread_spinlock_t' data-type='struct pthread_spinlock_t' data-ref="pthread_spinlock_t">pthread_spinlock_t</a>* <dfn class="local col2 decl" id="2lock_interface" title='lock_interface' data-type='pthread_spinlock_t *' data-ref="2lock_interface">lock_interface</dfn>, <em>int</em> <dfn class="local col3 decl" id="3pshared" title='pshared' data-type='int' data-ref="3pshared">pshared</dfn>) {</td></tr>
+<tr><th id="51">51</th><td>  <a class="type" href="#pthread_spinlock_internal_t" title='pthread_spinlock_internal_t' data-ref="pthread_spinlock_internal_t">pthread_spinlock_internal_t</a>* <dfn class="local col4 decl" id="4lock" title='lock' data-type='pthread_spinlock_internal_t *' data-ref="4lock">lock</dfn> = <a class="tu ref" href="#__get_internal_spinlock" title='__get_internal_spinlock' data-use='c' data-ref="__get_internal_spinlock">__get_internal_spinlock</a>(<a class="local col2 ref" href="#2lock_interface" title='lock_interface' data-ref="2lock_interface">lock_interface</a>);</td></tr>
+<tr><th id="52">52</th><td>  <a class="local col4 ref" href="#4lock" title='lock' data-ref="4lock">lock</a>-&gt;<a class="tu ref" href="#pthread_spinlock_internal_t::lock" title='pthread_spinlock_internal_t::lock' data-use='m' data-ref="pthread_spinlock_internal_t::lock">lock</a>.<a class="ref" href="../private/bionic_lock.h.html#_ZN4Lock4initEb" title='Lock::init' data-ref="_ZN4Lock4initEb">init</a>(<a class="local col3 ref" href="#3pshared" title='pshared' data-ref="3pshared">pshared</a>);</td></tr>
+<tr><th id="53">53</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="54">54</th><td>}</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><em>int</em> <dfn class="decl def" id="pthread_spin_destroy" title='pthread_spin_destroy' data-ref="pthread_spin_destroy">pthread_spin_destroy</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_spinlock_t" title='pthread_spinlock_t' data-type='struct pthread_spinlock_t' data-ref="pthread_spinlock_t">pthread_spinlock_t</a>* <dfn class="local col5 decl" id="5lock_interface" title='lock_interface' data-type='pthread_spinlock_t *' data-ref="5lock_interface">lock_interface</dfn>) {</td></tr>
+<tr><th id="57">57</th><td>  <a class="type" href="#pthread_spinlock_internal_t" title='pthread_spinlock_internal_t' data-ref="pthread_spinlock_internal_t">pthread_spinlock_internal_t</a>* <dfn class="local col6 decl" id="6lock" title='lock' data-type='pthread_spinlock_internal_t *' data-ref="6lock">lock</dfn> = <a class="tu ref" href="#__get_internal_spinlock" title='__get_internal_spinlock' data-use='c' data-ref="__get_internal_spinlock">__get_internal_spinlock</a>(<a class="local col5 ref" href="#5lock_interface" title='lock_interface' data-ref="5lock_interface">lock_interface</a>);</td></tr>
+<tr><th id="58">58</th><td>  <b>return</b> <a class="local col6 ref" href="#6lock" title='lock' data-ref="6lock">lock</a>-&gt;<a class="tu ref" href="#pthread_spinlock_internal_t::lock" title='pthread_spinlock_internal_t::lock' data-use='m' data-ref="pthread_spinlock_internal_t::lock">lock</a>.<a class="ref" href="../private/bionic_lock.h.html#_ZN4Lock7trylockEv" title='Lock::trylock' data-ref="_ZN4Lock7trylockEv">trylock</a>() ? <var>0</var> : <a class="macro" href="../kernel/uapi/asm-generic/errno-base.h.html#40" title="16" data-ref="_M/EBUSY">EBUSY</a>;</td></tr>
+<tr><th id="59">59</th><td>}</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><em>int</em> <dfn class="decl def" id="pthread_spin_trylock" title='pthread_spin_trylock' data-ref="pthread_spin_trylock">pthread_spin_trylock</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_spinlock_t" title='pthread_spinlock_t' data-type='struct pthread_spinlock_t' data-ref="pthread_spinlock_t">pthread_spinlock_t</a>* <dfn class="local col7 decl" id="7lock_interface" title='lock_interface' data-type='pthread_spinlock_t *' data-ref="7lock_interface">lock_interface</dfn>) {</td></tr>
+<tr><th id="62">62</th><td>  <a class="type" href="#pthread_spinlock_internal_t" title='pthread_spinlock_internal_t' data-ref="pthread_spinlock_internal_t">pthread_spinlock_internal_t</a>* <dfn class="local col8 decl" id="8lock" title='lock' data-type='pthread_spinlock_internal_t *' data-ref="8lock">lock</dfn> = <a class="tu ref" href="#__get_internal_spinlock" title='__get_internal_spinlock' data-use='c' data-ref="__get_internal_spinlock">__get_internal_spinlock</a>(<a class="local col7 ref" href="#7lock_interface" title='lock_interface' data-ref="7lock_interface">lock_interface</a>);</td></tr>
+<tr><th id="63">63</th><td>  <b>return</b> <a class="local col8 ref" href="#8lock" title='lock' data-ref="8lock">lock</a>-&gt;<a class="tu ref" href="#pthread_spinlock_internal_t::lock" title='pthread_spinlock_internal_t::lock' data-use='m' data-ref="pthread_spinlock_internal_t::lock">lock</a>.<a class="ref" href="../private/bionic_lock.h.html#_ZN4Lock7trylockEv" title='Lock::trylock' data-ref="_ZN4Lock7trylockEv">trylock</a>() ? <var>0</var> : <a class="macro" href="../kernel/uapi/asm-generic/errno-base.h.html#40" title="16" data-ref="_M/EBUSY">EBUSY</a>;</td></tr>
+<tr><th id="64">64</th><td>}</td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><em>int</em> <dfn class="decl def" id="pthread_spin_lock" title='pthread_spin_lock' data-ref="pthread_spin_lock">pthread_spin_lock</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_spinlock_t" title='pthread_spinlock_t' data-type='struct pthread_spinlock_t' data-ref="pthread_spinlock_t">pthread_spinlock_t</a>* <dfn class="local col9 decl" id="9lock_interface" title='lock_interface' data-type='pthread_spinlock_t *' data-ref="9lock_interface">lock_interface</dfn>) {</td></tr>
+<tr><th id="67">67</th><td>  <a class="type" href="#pthread_spinlock_internal_t" title='pthread_spinlock_internal_t' data-ref="pthread_spinlock_internal_t">pthread_spinlock_internal_t</a>* <dfn class="local col0 decl" id="10lock" title='lock' data-type='pthread_spinlock_internal_t *' data-ref="10lock">lock</dfn> = <a class="tu ref" href="#__get_internal_spinlock" title='__get_internal_spinlock' data-use='c' data-ref="__get_internal_spinlock">__get_internal_spinlock</a>(<a class="local col9 ref" href="#9lock_interface" title='lock_interface' data-ref="9lock_interface">lock_interface</a>);</td></tr>
+<tr><th id="68">68</th><td>  <b>for</b> (<em>int</em> <dfn class="local col1 decl" id="11i" title='i' data-type='int' data-ref="11i">i</dfn> = <var>0</var>; <a class="local col1 ref" href="#11i" title='i' data-ref="11i">i</a> &lt; <var>10000</var>; ++<a class="local col1 ref" href="#11i" title='i' data-ref="11i">i</a>) {</td></tr>
+<tr><th id="69">69</th><td>    <b>if</b> (<a class="local col0 ref" href="#10lock" title='lock' data-ref="10lock">lock</a>-&gt;<a class="tu ref" href="#pthread_spinlock_internal_t::lock" title='pthread_spinlock_internal_t::lock' data-use='m' data-ref="pthread_spinlock_internal_t::lock">lock</a>.<a class="ref" href="../private/bionic_lock.h.html#_ZN4Lock7trylockEv" title='Lock::trylock' data-ref="_ZN4Lock7trylockEv">trylock</a>()) {</td></tr>
+<tr><th id="70">70</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="71">71</th><td>    }</td></tr>
+<tr><th id="72">72</th><td>  }</td></tr>
+<tr><th id="73">73</th><td>  <a class="local col0 ref" href="#10lock" title='lock' data-ref="10lock">lock</a>-&gt;<a class="tu ref" href="#pthread_spinlock_internal_t::lock" title='pthread_spinlock_internal_t::lock' data-use='m' data-ref="pthread_spinlock_internal_t::lock">lock</a>.<a class="ref" href="../private/bionic_lock.h.html#_ZN4Lock4lockEv" title='Lock::lock' data-ref="_ZN4Lock4lockEv">lock</a>();</td></tr>
+<tr><th id="74">74</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="75">75</th><td>}</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><em>int</em> <dfn class="decl def" id="pthread_spin_unlock" title='pthread_spin_unlock' data-ref="pthread_spin_unlock">pthread_spin_unlock</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_spinlock_t" title='pthread_spinlock_t' data-type='struct pthread_spinlock_t' data-ref="pthread_spinlock_t">pthread_spinlock_t</a>* <dfn class="local col2 decl" id="12lock_interface" title='lock_interface' data-type='pthread_spinlock_t *' data-ref="12lock_interface">lock_interface</dfn>) {</td></tr>
+<tr><th id="78">78</th><td>  <a class="type" href="#pthread_spinlock_internal_t" title='pthread_spinlock_internal_t' data-ref="pthread_spinlock_internal_t">pthread_spinlock_internal_t</a>* <dfn class="local col3 decl" id="13lock" title='lock' data-type='pthread_spinlock_internal_t *' data-ref="13lock">lock</dfn> = <a class="tu ref" href="#__get_internal_spinlock" title='__get_internal_spinlock' data-use='c' data-ref="__get_internal_spinlock">__get_internal_spinlock</a>(<a class="local col2 ref" href="#12lock_interface" title='lock_interface' data-ref="12lock_interface">lock_interface</a>);</td></tr>
+<tr><th id="79">79</th><td>  <a class="local col3 ref" href="#13lock" title='lock' data-ref="13lock">lock</a>-&gt;<a class="tu ref" href="#pthread_spinlock_internal_t::lock" title='pthread_spinlock_internal_t::lock' data-use='m' data-ref="pthread_spinlock_internal_t::lock">lock</a>.<a class="ref" href="../private/bionic_lock.h.html#_ZN4Lock6unlockEv" title='Lock::unlock' data-ref="_ZN4Lock6unlockEv">unlock</a>();</td></tr>
+<tr><th id="80">80</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="81">81</th><td>}</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

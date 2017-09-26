@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>key_control.h source code [codebrowser/system/extras/ext4_utils/key_control.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/extras/ext4_utils/key_control.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>extras</a>/<a href='./'>ext4_utils</a>/<a href='key_control.h.html'>key_control.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#include <a href="../../../bionic/libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="2">2</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="3">3</th><td></td></tr>
+<tr><th id="4">4</th><td><a class="macro" href="../../../bionic/libc/include/sys/cdefs.h.html#85" title="extern &quot;C&quot; {" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><i>// ext4enc:TODO - get these keyring standard definitions from proper system file</i></td></tr>
+<tr><th id="7">7</th><td><i>// keyring serial number type</i></td></tr>
+<tr><th id="8">8</th><td><b>typedef</b> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a> <dfn class="typedef" id="key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</dfn>;</td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><i>// special process keyring shortcut IDs</i></td></tr>
+<tr><th id="11">11</th><td><u>#define <dfn class="macro" id="_M/KEY_SPEC_THREAD_KEYRING" data-ref="_M/KEY_SPEC_THREAD_KEYRING">KEY_SPEC_THREAD_KEYRING</dfn>       -1 // key ID for thread-specific keyring</u></td></tr>
+<tr><th id="12">12</th><td><u>#define <dfn class="macro" id="_M/KEY_SPEC_PROCESS_KEYRING" data-ref="_M/KEY_SPEC_PROCESS_KEYRING">KEY_SPEC_PROCESS_KEYRING</dfn>      -2 // key ID for process-specific keyring</u></td></tr>
+<tr><th id="13">13</th><td><u>#define <dfn class="macro" id="_M/KEY_SPEC_SESSION_KEYRING" data-ref="_M/KEY_SPEC_SESSION_KEYRING">KEY_SPEC_SESSION_KEYRING</dfn>      -3 // key ID for session-specific keyring</u></td></tr>
+<tr><th id="14">14</th><td><u>#define <dfn class="macro" id="_M/KEY_SPEC_USER_KEYRING" data-ref="_M/KEY_SPEC_USER_KEYRING">KEY_SPEC_USER_KEYRING</dfn>         -4 // key ID for UID-specific keyring</u></td></tr>
+<tr><th id="15">15</th><td><u>#define <dfn class="macro" id="_M/KEY_SPEC_USER_SESSION_KEYRING" data-ref="_M/KEY_SPEC_USER_SESSION_KEYRING">KEY_SPEC_USER_SESSION_KEYRING</dfn> -5 // key ID for UID-session keyring</u></td></tr>
+<tr><th id="16">16</th><td><u>#define <dfn class="macro" id="_M/KEY_SPEC_GROUP_KEYRING" data-ref="_M/KEY_SPEC_GROUP_KEYRING">KEY_SPEC_GROUP_KEYRING</dfn>        -6 // key ID for GID-specific keyring</u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><a class="typedef" href="#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="decl" id="add_key" title='add_key' data-ref="add_key">add_key</dfn>(<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="1type" title='type' data-type='const char *' data-ref="1type">type</dfn>,</td></tr>
+<tr><th id="19">19</th><td>                     <em>const</em> <em>char</em> *<dfn class="local col2 decl" id="2description" title='description' data-type='const char *' data-ref="2description">description</dfn>,</td></tr>
+<tr><th id="20">20</th><td>                     <em>const</em> <em>void</em> *<dfn class="local col3 decl" id="3payload" title='payload' data-type='const void *' data-ref="3payload">payload</dfn>,</td></tr>
+<tr><th id="21">21</th><td>                     <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="4plen" title='plen' data-type='size_t' data-ref="4plen">plen</dfn>,</td></tr>
+<tr><th id="22">22</th><td>                     <a class="typedef" href="#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col5 decl" id="5ringid" title='ringid' data-type='key_serial_t' data-ref="5ringid">ringid</dfn>);</td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><em>long</em> <dfn class="decl" id="keyctl_revoke" title='keyctl_revoke' data-ref="keyctl_revoke">keyctl_revoke</dfn>(<a class="typedef" href="#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col6 decl" id="6id" title='id' data-type='key_serial_t' data-ref="6id">id</dfn>);</td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><em>long</em> <dfn class="decl" id="keyctl_setperm" title='keyctl_setperm' data-ref="keyctl_setperm">keyctl_setperm</dfn>(<a class="typedef" href="#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col7 decl" id="7id" title='id' data-type='key_serial_t' data-ref="7id">id</dfn>, <em>int</em> <dfn class="local col8 decl" id="8permissions" title='permissions' data-type='int' data-ref="8permissions">permissions</dfn>);</td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><em>long</em> <dfn class="decl" id="keyctl_search" title='keyctl_search' data-ref="keyctl_search">keyctl_search</dfn>(<a class="typedef" href="#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col9 decl" id="9ringid" title='ringid' data-type='key_serial_t' data-ref="9ringid">ringid</dfn>, <em>const</em> <em>char</em> *<dfn class="local col0 decl" id="10type" title='type' data-type='const char *' data-ref="10type">type</dfn>,</td></tr>
+<tr><th id="29">29</th><td>                   <em>const</em> <em>char</em> *<dfn class="local col1 decl" id="11description" title='description' data-type='const char *' data-ref="11description">description</dfn>, <a class="typedef" href="#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col2 decl" id="12destringid" title='destringid' data-type='key_serial_t' data-ref="12destringid">destringid</dfn>);</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><a class="macro" href="../../../bionic/libc/include/sys/cdefs.h.html#86" title="}" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='ext4_crypt_init_extensions.cpp.html'>codebrowser/system/extras/ext4_utils/ext4_crypt_init_extensions.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

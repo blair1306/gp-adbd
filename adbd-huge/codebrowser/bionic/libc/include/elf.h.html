@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>elf.h source code [codebrowser/bionic/libc/include/elf.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/elf.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>include</a>/<a href='elf.h.html'>elf.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><u>#<span data-ppcond="28">ifndef</span> <span class="macro" data-ref="_M/_ELF_H">_ELF_H</span></u></td></tr>
+<tr><th id="29">29</th><td><u>#define <dfn class="macro" id="_M/_ELF_H" data-ref="_M/_ELF_H">_ELF_H</dfn></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../kernel/uapi/linux/auxvec.h.html">&lt;linux/auxvec.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../kernel/uapi/linux/elf.h.html">&lt;linux/elf.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../kernel/uapi/linux/elf-em.h.html">&lt;linux/elf-em.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="../arch-x86_64/include/machine/elf_machdep.h.html">&lt;machine/elf_machdep.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td><u>#define <dfn class="macro" id="_M/ELF32_R_INFO" data-ref="_M/ELF32_R_INFO">ELF32_R_INFO</dfn>(sym, type) ((((Elf32_Word)sym) &lt;&lt; 8) | ((type) &amp; 0xff))</u></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/ELF64_R_INFO" data-ref="_M/ELF64_R_INFO">ELF64_R_INFO</dfn>(sym, type) ((((Elf64_Xword)sym) &lt;&lt; 32) | ((type) &amp; 0xffffffff))</u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><b>typedef</b> <a class="typedef" href="../kernel/uapi/asm-generic/int-ll64.h.html#__s64" title='__s64' data-type='long long' data-ref="__s64">__s64</a> <dfn class="typedef" id="Elf32_Sxword" title='Elf32_Sxword' data-type='__s64' data-ref="Elf32_Sxword">Elf32_Sxword</dfn>;</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="43">43</th><td>  <a class="typedef" href="../kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="(anonymous)::a_type" title='(anonymous struct)::a_type' data-ref="(anonymous)::a_type">a_type</dfn>;</td></tr>
+<tr><th id="44">44</th><td>  <b>union</b> {</td></tr>
+<tr><th id="45">45</th><td>    <a class="typedef" href="../kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="(anonymousstruct)::(anonymous)::a_val" title='(anonymous struct)::(anonymous union)::a_val' data-ref="(anonymousstruct)::(anonymous)::a_val">a_val</dfn>;</td></tr>
+<tr><th id="46">46</th><td>  } <dfn class="decl" id="(anonymous)::a_un" title='(anonymous struct)::a_un' data-ref="(anonymous)::a_un">a_un</dfn>;</td></tr>
+<tr><th id="47">47</th><td>} <dfn class="typedef" id="Elf32_auxv_t" title='Elf32_auxv_t' data-type='struct Elf32_auxv_t' data-ref="Elf32_auxv_t">Elf32_auxv_t</dfn>;</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="50">50</th><td>  <a class="typedef" href="../kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="(anonymous)::a_type" title='(anonymous struct)::a_type' data-ref="(anonymous)::a_type">a_type</dfn>;</td></tr>
+<tr><th id="51">51</th><td>  <b>union</b> {</td></tr>
+<tr><th id="52">52</th><td>    <a class="typedef" href="../kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="(anonymousstruct)::(anonymous)::a_val" title='(anonymous struct)::(anonymous union)::a_val' data-ref="(anonymousstruct)::(anonymous)::a_val">a_val</dfn>;</td></tr>
+<tr><th id="53">53</th><td>  } <dfn class="decl" id="(anonymous)::a_un" title='(anonymous struct)::a_un' data-ref="(anonymous)::a_un">a_un</dfn>;</td></tr>
+<tr><th id="54">54</th><td>} <dfn class="typedef" id="Elf64_auxv_t" title='Elf64_auxv_t' data-type='struct Elf64_auxv_t' data-ref="Elf64_auxv_t">Elf64_auxv_t</dfn>;</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><b>typedef</b> <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Half" title='Elf32_Half' data-type='__u16' data-ref="Elf32_Half">Elf32_Half</a> <dfn class="typedef" id="Elf32_Versym" title='Elf32_Versym' data-type='Elf32_Half' data-ref="Elf32_Versym">Elf32_Versym</dfn>;</td></tr>
+<tr><th id="57">57</th><td><b>typedef</b> <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Half" title='Elf64_Half' data-type='__u16' data-ref="Elf64_Half">Elf64_Half</a> <dfn class="typedef" id="Elf64_Versym" title='Elf64_Versym' data-type='Elf64_Half' data-ref="Elf64_Versym">Elf64_Versym</dfn>;</td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="60">60</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Half" title='Elf32_Half' data-type='__u16' data-ref="Elf32_Half">Elf32_Half</a> <dfn class="decl" id="(anonymous)::vd_version" title='(anonymous struct)::vd_version' data-ref="(anonymous)::vd_version">vd_version</dfn>;</td></tr>
+<tr><th id="61">61</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Half" title='Elf32_Half' data-type='__u16' data-ref="Elf32_Half">Elf32_Half</a> <dfn class="decl" id="(anonymous)::vd_flags" title='(anonymous struct)::vd_flags' data-ref="(anonymous)::vd_flags">vd_flags</dfn>;</td></tr>
+<tr><th id="62">62</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Half" title='Elf32_Half' data-type='__u16' data-ref="Elf32_Half">Elf32_Half</a> <dfn class="decl" id="(anonymous)::vd_ndx" title='(anonymous struct)::vd_ndx' data-ref="(anonymous)::vd_ndx">vd_ndx</dfn>;</td></tr>
+<tr><th id="63">63</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Half" title='Elf32_Half' data-type='__u16' data-ref="Elf32_Half">Elf32_Half</a> <dfn class="decl" id="(anonymous)::vd_cnt" title='(anonymous struct)::vd_cnt' data-ref="(anonymous)::vd_cnt">vd_cnt</dfn>;</td></tr>
+<tr><th id="64">64</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vd_hash" title='(anonymous struct)::vd_hash' data-ref="(anonymous)::vd_hash">vd_hash</dfn>;</td></tr>
+<tr><th id="65">65</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vd_aux" title='(anonymous struct)::vd_aux' data-ref="(anonymous)::vd_aux">vd_aux</dfn>;</td></tr>
+<tr><th id="66">66</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vd_next" title='(anonymous struct)::vd_next' data-ref="(anonymous)::vd_next">vd_next</dfn>;</td></tr>
+<tr><th id="67">67</th><td>} <dfn class="typedef" id="Elf32_Verdef" title='Elf32_Verdef' data-type='struct Elf32_Verdef' data-ref="Elf32_Verdef">Elf32_Verdef</dfn>;</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="70">70</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vda_name" title='(anonymous struct)::vda_name' data-ref="(anonymous)::vda_name">vda_name</dfn>;</td></tr>
+<tr><th id="71">71</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vda_next" title='(anonymous struct)::vda_next' data-ref="(anonymous)::vda_next">vda_next</dfn>;</td></tr>
+<tr><th id="72">72</th><td>} <dfn class="typedef" id="Elf32_Verdaux" title='Elf32_Verdaux' data-type='struct Elf32_Verdaux' data-ref="Elf32_Verdaux">Elf32_Verdaux</dfn>;</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="75">75</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Half" title='Elf64_Half' data-type='__u16' data-ref="Elf64_Half">Elf64_Half</a> <dfn class="decl" id="(anonymous)::vd_version" title='(anonymous struct)::vd_version' data-ref="(anonymous)::vd_version">vd_version</dfn>;</td></tr>
+<tr><th id="76">76</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Half" title='Elf64_Half' data-type='__u16' data-ref="Elf64_Half">Elf64_Half</a> <dfn class="decl" id="(anonymous)::vd_flags" title='(anonymous struct)::vd_flags' data-ref="(anonymous)::vd_flags">vd_flags</dfn>;</td></tr>
+<tr><th id="77">77</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Half" title='Elf64_Half' data-type='__u16' data-ref="Elf64_Half">Elf64_Half</a> <dfn class="decl" id="(anonymous)::vd_ndx" title='(anonymous struct)::vd_ndx' data-ref="(anonymous)::vd_ndx">vd_ndx</dfn>;</td></tr>
+<tr><th id="78">78</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Half" title='Elf64_Half' data-type='__u16' data-ref="Elf64_Half">Elf64_Half</a> <dfn class="decl" id="(anonymous)::vd_cnt" title='(anonymous struct)::vd_cnt' data-ref="(anonymous)::vd_cnt">vd_cnt</dfn>;</td></tr>
+<tr><th id="79">79</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vd_hash" title='(anonymous struct)::vd_hash' data-ref="(anonymous)::vd_hash">vd_hash</dfn>;</td></tr>
+<tr><th id="80">80</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vd_aux" title='(anonymous struct)::vd_aux' data-ref="(anonymous)::vd_aux">vd_aux</dfn>;</td></tr>
+<tr><th id="81">81</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vd_next" title='(anonymous struct)::vd_next' data-ref="(anonymous)::vd_next">vd_next</dfn>;</td></tr>
+<tr><th id="82">82</th><td>} <dfn class="typedef" id="Elf64_Verdef" title='Elf64_Verdef' data-type='struct Elf64_Verdef' data-ref="Elf64_Verdef">Elf64_Verdef</dfn>;</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="85">85</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vda_name" title='(anonymous struct)::vda_name' data-ref="(anonymous)::vda_name">vda_name</dfn>;</td></tr>
+<tr><th id="86">86</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vda_next" title='(anonymous struct)::vda_next' data-ref="(anonymous)::vda_next">vda_next</dfn>;</td></tr>
+<tr><th id="87">87</th><td>} <dfn class="typedef" id="Elf64_Verdaux" title='Elf64_Verdaux' data-type='struct Elf64_Verdaux' data-ref="Elf64_Verdaux">Elf64_Verdaux</dfn>;</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="90">90</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Half" title='Elf32_Half' data-type='__u16' data-ref="Elf32_Half">Elf32_Half</a> <dfn class="decl" id="(anonymous)::vn_version" title='(anonymous struct)::vn_version' data-ref="(anonymous)::vn_version">vn_version</dfn>;</td></tr>
+<tr><th id="91">91</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Half" title='Elf32_Half' data-type='__u16' data-ref="Elf32_Half">Elf32_Half</a> <dfn class="decl" id="(anonymous)::vn_cnt" title='(anonymous struct)::vn_cnt' data-ref="(anonymous)::vn_cnt">vn_cnt</dfn>;</td></tr>
+<tr><th id="92">92</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vn_file" title='(anonymous struct)::vn_file' data-ref="(anonymous)::vn_file">vn_file</dfn>;</td></tr>
+<tr><th id="93">93</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vn_aux" title='(anonymous struct)::vn_aux' data-ref="(anonymous)::vn_aux">vn_aux</dfn>;</td></tr>
+<tr><th id="94">94</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vn_next" title='(anonymous struct)::vn_next' data-ref="(anonymous)::vn_next">vn_next</dfn>;</td></tr>
+<tr><th id="95">95</th><td>} <dfn class="typedef" id="Elf32_Verneed" title='Elf32_Verneed' data-type='struct Elf32_Verneed' data-ref="Elf32_Verneed">Elf32_Verneed</dfn>;</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="98">98</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vna_hash" title='(anonymous struct)::vna_hash' data-ref="(anonymous)::vna_hash">vna_hash</dfn>;</td></tr>
+<tr><th id="99">99</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Half" title='Elf32_Half' data-type='__u16' data-ref="Elf32_Half">Elf32_Half</a> <dfn class="decl" id="(anonymous)::vna_flags" title='(anonymous struct)::vna_flags' data-ref="(anonymous)::vna_flags">vna_flags</dfn>;</td></tr>
+<tr><th id="100">100</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Half" title='Elf32_Half' data-type='__u16' data-ref="Elf32_Half">Elf32_Half</a> <dfn class="decl" id="(anonymous)::vna_other" title='(anonymous struct)::vna_other' data-ref="(anonymous)::vna_other">vna_other</dfn>;</td></tr>
+<tr><th id="101">101</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vna_name" title='(anonymous struct)::vna_name' data-ref="(anonymous)::vna_name">vna_name</dfn>;</td></tr>
+<tr><th id="102">102</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf32_Word" title='Elf32_Word' data-type='__u32' data-ref="Elf32_Word">Elf32_Word</a> <dfn class="decl" id="(anonymous)::vna_next" title='(anonymous struct)::vna_next' data-ref="(anonymous)::vna_next">vna_next</dfn>;</td></tr>
+<tr><th id="103">103</th><td>} <dfn class="typedef" id="Elf32_Vernaux" title='Elf32_Vernaux' data-type='struct Elf32_Vernaux' data-ref="Elf32_Vernaux">Elf32_Vernaux</dfn>;</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="106">106</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Half" title='Elf64_Half' data-type='__u16' data-ref="Elf64_Half">Elf64_Half</a> <dfn class="decl" id="(anonymous)::vn_version" title='(anonymous struct)::vn_version' data-ref="(anonymous)::vn_version">vn_version</dfn>;</td></tr>
+<tr><th id="107">107</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Half" title='Elf64_Half' data-type='__u16' data-ref="Elf64_Half">Elf64_Half</a> <dfn class="decl" id="(anonymous)::vn_cnt" title='(anonymous struct)::vn_cnt' data-ref="(anonymous)::vn_cnt">vn_cnt</dfn>;</td></tr>
+<tr><th id="108">108</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vn_file" title='(anonymous struct)::vn_file' data-ref="(anonymous)::vn_file">vn_file</dfn>;</td></tr>
+<tr><th id="109">109</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vn_aux" title='(anonymous struct)::vn_aux' data-ref="(anonymous)::vn_aux">vn_aux</dfn>;</td></tr>
+<tr><th id="110">110</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vn_next" title='(anonymous struct)::vn_next' data-ref="(anonymous)::vn_next">vn_next</dfn>;</td></tr>
+<tr><th id="111">111</th><td>} <dfn class="typedef" id="Elf64_Verneed" title='Elf64_Verneed' data-type='struct Elf64_Verneed' data-ref="Elf64_Verneed">Elf64_Verneed</dfn>;</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="114">114</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vna_hash" title='(anonymous struct)::vna_hash' data-ref="(anonymous)::vna_hash">vna_hash</dfn>;</td></tr>
+<tr><th id="115">115</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Half" title='Elf64_Half' data-type='__u16' data-ref="Elf64_Half">Elf64_Half</a> <dfn class="decl" id="(anonymous)::vna_flags" title='(anonymous struct)::vna_flags' data-ref="(anonymous)::vna_flags">vna_flags</dfn>;</td></tr>
+<tr><th id="116">116</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Half" title='Elf64_Half' data-type='__u16' data-ref="Elf64_Half">Elf64_Half</a> <dfn class="decl" id="(anonymous)::vna_other" title='(anonymous struct)::vna_other' data-ref="(anonymous)::vna_other">vna_other</dfn>;</td></tr>
+<tr><th id="117">117</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vna_name" title='(anonymous struct)::vna_name' data-ref="(anonymous)::vna_name">vna_name</dfn>;</td></tr>
+<tr><th id="118">118</th><td>  <a class="typedef" href="../kernel/uapi/linux/elf.h.html#Elf64_Word" title='Elf64_Word' data-type='__u32' data-ref="Elf64_Word">Elf64_Word</a> <dfn class="decl" id="(anonymous)::vna_next" title='(anonymous struct)::vna_next' data-ref="(anonymous)::vna_next">vna_next</dfn>;</td></tr>
+<tr><th id="119">119</th><td>} <dfn class="typedef" id="Elf64_Vernaux" title='Elf64_Vernaux' data-type='struct Elf64_Vernaux' data-ref="Elf64_Vernaux">Elf64_Vernaux</dfn>;</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><u>#define <dfn class="macro" id="_M/DF_ORIGIN" data-ref="_M/DF_ORIGIN">DF_ORIGIN</dfn>     0x00000001</u></td></tr>
+<tr><th id="122">122</th><td><u>#define <dfn class="macro" id="_M/DF_SYMBOLIC" data-ref="_M/DF_SYMBOLIC">DF_SYMBOLIC</dfn>   0x00000002</u></td></tr>
+<tr><th id="123">123</th><td><u>#define <dfn class="macro" id="_M/DF_TEXTREL" data-ref="_M/DF_TEXTREL">DF_TEXTREL</dfn>    0x00000004</u></td></tr>
+<tr><th id="124">124</th><td><u>#define <dfn class="macro" id="_M/DF_BIND_NOW" data-ref="_M/DF_BIND_NOW">DF_BIND_NOW</dfn>   0x00000008</u></td></tr>
+<tr><th id="125">125</th><td><u>#define <dfn class="macro" id="_M/DF_STATIC_TLS" data-ref="_M/DF_STATIC_TLS">DF_STATIC_TLS</dfn> 0x00000010</u></td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><u>#define <dfn class="macro" id="_M/DF_1_NOW" data-ref="_M/DF_1_NOW">DF_1_NOW</dfn>        0x00000001 /* Perform complete relocation processing. */</u></td></tr>
+<tr><th id="128">128</th><td><u>#define <dfn class="macro" id="_M/DF_1_GLOBAL" data-ref="_M/DF_1_GLOBAL">DF_1_GLOBAL</dfn>     0x00000002 /* implies RTLD_GLOBAL */</u></td></tr>
+<tr><th id="129">129</th><td><u>#define <dfn class="macro" id="_M/DF_1_GROUP" data-ref="_M/DF_1_GROUP">DF_1_GROUP</dfn>      0x00000004</u></td></tr>
+<tr><th id="130">130</th><td><u>#define <dfn class="macro" id="_M/DF_1_NODELETE" data-ref="_M/DF_1_NODELETE">DF_1_NODELETE</dfn>   0x00000008 /* implies RTLD_NODELETE */</u></td></tr>
+<tr><th id="131">131</th><td><u>#define <dfn class="macro" id="_M/DF_1_LOADFLTR" data-ref="_M/DF_1_LOADFLTR">DF_1_LOADFLTR</dfn>   0x00000010</u></td></tr>
+<tr><th id="132">132</th><td><u>#define <dfn class="macro" id="_M/DF_1_INITFIRST" data-ref="_M/DF_1_INITFIRST">DF_1_INITFIRST</dfn>  0x00000020</u></td></tr>
+<tr><th id="133">133</th><td><u>#define <dfn class="macro" id="_M/DF_1_NOOPEN" data-ref="_M/DF_1_NOOPEN">DF_1_NOOPEN</dfn>     0x00000040 /* Object can not be used with dlopen(3) */</u></td></tr>
+<tr><th id="134">134</th><td><u>#define <dfn class="macro" id="_M/DF_1_ORIGIN" data-ref="_M/DF_1_ORIGIN">DF_1_ORIGIN</dfn>     0x00000080</u></td></tr>
+<tr><th id="135">135</th><td><u>#define <dfn class="macro" id="_M/DF_1_DIRECT" data-ref="_M/DF_1_DIRECT">DF_1_DIRECT</dfn>     0x00000100</u></td></tr>
+<tr><th id="136">136</th><td><u>#define <dfn class="macro" id="_M/DF_1_TRANS" data-ref="_M/DF_1_TRANS">DF_1_TRANS</dfn>      0x00000200</u></td></tr>
+<tr><th id="137">137</th><td><u>#define <dfn class="macro" id="_M/DF_1_INTERPOSE" data-ref="_M/DF_1_INTERPOSE">DF_1_INTERPOSE</dfn>  0x00000400</u></td></tr>
+<tr><th id="138">138</th><td><u>#define <dfn class="macro" id="_M/DF_1_NODEFLIB" data-ref="_M/DF_1_NODEFLIB">DF_1_NODEFLIB</dfn>   0x00000800</u></td></tr>
+<tr><th id="139">139</th><td><u>#define <dfn class="macro" id="_M/DF_1_NODUMP" data-ref="_M/DF_1_NODUMP">DF_1_NODUMP</dfn>     0x00001000 /* Object cannot be dumped with dldump(3) */</u></td></tr>
+<tr><th id="140">140</th><td><u>#define <dfn class="macro" id="_M/DF_1_CONFALT" data-ref="_M/DF_1_CONFALT">DF_1_CONFALT</dfn>    0x00002000</u></td></tr>
+<tr><th id="141">141</th><td><u>#define <dfn class="macro" id="_M/DF_1_ENDFILTEE" data-ref="_M/DF_1_ENDFILTEE">DF_1_ENDFILTEE</dfn>  0x00004000</u></td></tr>
+<tr><th id="142">142</th><td><u>#define <dfn class="macro" id="_M/DF_1_DISPRELDNE" data-ref="_M/DF_1_DISPRELDNE">DF_1_DISPRELDNE</dfn> 0x00008000</u></td></tr>
+<tr><th id="143">143</th><td><u>#define <dfn class="macro" id="_M/DF_1_DISPRELPND" data-ref="_M/DF_1_DISPRELPND">DF_1_DISPRELPND</dfn> 0x00010000</u></td></tr>
+<tr><th id="144">144</th><td><u>#define <dfn class="macro" id="_M/DF_1_NODIRECT" data-ref="_M/DF_1_NODIRECT">DF_1_NODIRECT</dfn>   0x00020000</u></td></tr>
+<tr><th id="145">145</th><td><u>#define <dfn class="macro" id="_M/DF_1_IGNMULDEF" data-ref="_M/DF_1_IGNMULDEF">DF_1_IGNMULDEF</dfn>  0x00040000 /* Internal use */</u></td></tr>
+<tr><th id="146">146</th><td><u>#define <dfn class="macro" id="_M/DF_1_NOKSYMS" data-ref="_M/DF_1_NOKSYMS">DF_1_NOKSYMS</dfn>    0x00080000 /* Internal use */</u></td></tr>
+<tr><th id="147">147</th><td><u>#define <dfn class="macro" id="_M/DF_1_NOHDR" data-ref="_M/DF_1_NOHDR">DF_1_NOHDR</dfn>      0x00100000 /* Internal use */</u></td></tr>
+<tr><th id="148">148</th><td><u>#define <dfn class="macro" id="_M/DF_1_EDITED" data-ref="_M/DF_1_EDITED">DF_1_EDITED</dfn>     0x00200000</u></td></tr>
+<tr><th id="149">149</th><td><u>#define <dfn class="macro" id="_M/DF_1_NORELOC" data-ref="_M/DF_1_NORELOC">DF_1_NORELOC</dfn>    0x00400000 /* Internal use */</u></td></tr>
+<tr><th id="150">150</th><td><u>#define <dfn class="macro" id="_M/DF_1_SYMINTPOSE" data-ref="_M/DF_1_SYMINTPOSE">DF_1_SYMINTPOSE</dfn> 0x00800000</u></td></tr>
+<tr><th id="151">151</th><td><u>#define <dfn class="macro" id="_M/DF_1_GLOBAUDIT" data-ref="_M/DF_1_GLOBAUDIT">DF_1_GLOBAUDIT</dfn>  0x01000000</u></td></tr>
+<tr><th id="152">152</th><td><u>#define <dfn class="macro" id="_M/DF_1_SINGLETON" data-ref="_M/DF_1_SINGLETON">DF_1_SINGLETON</dfn>  0x02000000</u></td></tr>
+<tr><th id="153">153</th><td><u>#define <dfn class="macro" id="_M/DF_1_STUB" data-ref="_M/DF_1_STUB">DF_1_STUB</dfn>       0x04000000</u></td></tr>
+<tr><th id="154">154</th><td><u>#define <dfn class="macro" id="_M/DF_1_PIE" data-ref="_M/DF_1_PIE">DF_1_PIE</dfn>        0x08000000</u></td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td><u>#define <dfn class="macro" id="_M/DT_BIND_NOW" data-ref="_M/DT_BIND_NOW">DT_BIND_NOW</dfn> 24</u></td></tr>
+<tr><th id="157">157</th><td><u>#define <dfn class="macro" id="_M/DT_INIT_ARRAY" data-ref="_M/DT_INIT_ARRAY">DT_INIT_ARRAY</dfn> 25</u></td></tr>
+<tr><th id="158">158</th><td><u>#define <dfn class="macro" id="_M/DT_FINI_ARRAY" data-ref="_M/DT_FINI_ARRAY">DT_FINI_ARRAY</dfn> 26</u></td></tr>
+<tr><th id="159">159</th><td><u>#define <dfn class="macro" id="_M/DT_INIT_ARRAYSZ" data-ref="_M/DT_INIT_ARRAYSZ">DT_INIT_ARRAYSZ</dfn> 27</u></td></tr>
+<tr><th id="160">160</th><td><u>#define <dfn class="macro" id="_M/DT_FINI_ARRAYSZ" data-ref="_M/DT_FINI_ARRAYSZ">DT_FINI_ARRAYSZ</dfn> 28</u></td></tr>
+<tr><th id="161">161</th><td><u>#define <dfn class="macro" id="_M/DT_RUNPATH" data-ref="_M/DT_RUNPATH">DT_RUNPATH</dfn> 29</u></td></tr>
+<tr><th id="162">162</th><td><u>#define <dfn class="macro" id="_M/DT_FLAGS" data-ref="_M/DT_FLAGS">DT_FLAGS</dfn> 30</u></td></tr>
+<tr><th id="163">163</th><td><i>/* glibc and BSD disagree for DT_ENCODING; glibc looks wrong. */</i></td></tr>
+<tr><th id="164">164</th><td><u>#define <dfn class="macro" id="_M/DT_PREINIT_ARRAY" data-ref="_M/DT_PREINIT_ARRAY">DT_PREINIT_ARRAY</dfn> 32</u></td></tr>
+<tr><th id="165">165</th><td><u>#define <dfn class="macro" id="_M/DT_PREINIT_ARRAYSZ" data-ref="_M/DT_PREINIT_ARRAYSZ">DT_PREINIT_ARRAYSZ</dfn> 33</u></td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><i>/* Android compressed rel/rela sections */</i></td></tr>
+<tr><th id="168">168</th><td><u>#define <dfn class="macro" id="_M/DT_ANDROID_REL" data-ref="_M/DT_ANDROID_REL">DT_ANDROID_REL</dfn> (DT_LOOS + 2)</u></td></tr>
+<tr><th id="169">169</th><td><u>#define <dfn class="macro" id="_M/DT_ANDROID_RELSZ" data-ref="_M/DT_ANDROID_RELSZ">DT_ANDROID_RELSZ</dfn> (DT_LOOS + 3)</u></td></tr>
+<tr><th id="170">170</th><td></td></tr>
+<tr><th id="171">171</th><td><u>#define <dfn class="macro" id="_M/DT_ANDROID_RELA" data-ref="_M/DT_ANDROID_RELA">DT_ANDROID_RELA</dfn> (DT_LOOS + 4)</u></td></tr>
+<tr><th id="172">172</th><td><u>#define <dfn class="macro" id="_M/DT_ANDROID_RELASZ" data-ref="_M/DT_ANDROID_RELASZ">DT_ANDROID_RELASZ</dfn> (DT_LOOS + 5)</u></td></tr>
+<tr><th id="173">173</th><td></td></tr>
+<tr><th id="174">174</th><td><i>/* gnu hash entry */</i></td></tr>
+<tr><th id="175">175</th><td><u>#define <dfn class="macro" id="_M/DT_GNU_HASH" data-ref="_M/DT_GNU_HASH">DT_GNU_HASH</dfn> 0x6ffffef5</u></td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td><u>#define <dfn class="macro" id="_M/ELFOSABI_SYSV" data-ref="_M/ELFOSABI_SYSV">ELFOSABI_SYSV</dfn> 0 /* Synonym for ELFOSABI_NONE used by valgrind. */</u></td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td><u>#define <dfn class="macro" id="_M/PT_GNU_RELRO" data-ref="_M/PT_GNU_RELRO">PT_GNU_RELRO</dfn> 0x6474e552</u></td></tr>
+<tr><th id="180">180</th><td></td></tr>
+<tr><th id="181">181</th><td><u>#define <dfn class="macro" id="_M/STB_LOOS" data-ref="_M/STB_LOOS">STB_LOOS</dfn>      10</u></td></tr>
+<tr><th id="182">182</th><td><u>#define <dfn class="macro" id="_M/STB_HIOS" data-ref="_M/STB_HIOS">STB_HIOS</dfn>      12</u></td></tr>
+<tr><th id="183">183</th><td><u>#define <dfn class="macro" id="_M/STB_LOPROC" data-ref="_M/STB_LOPROC">STB_LOPROC</dfn>    13</u></td></tr>
+<tr><th id="184">184</th><td><u>#define <dfn class="macro" id="_M/STB_HIPROC" data-ref="_M/STB_HIPROC">STB_HIPROC</dfn>    15</u></td></tr>
+<tr><th id="185">185</th><td></td></tr>
+<tr><th id="186">186</th><td><u>#define <dfn class="macro" id="_M/SHT_LOOS" data-ref="_M/SHT_LOOS">SHT_LOOS</dfn>    0x60000000</u></td></tr>
+<tr><th id="187">187</th><td><u>#define <dfn class="macro" id="_M/SHT_HIOS" data-ref="_M/SHT_HIOS">SHT_HIOS</dfn>    0x6fffffff</u></td></tr>
+<tr><th id="188">188</th><td></td></tr>
+<tr><th id="189">189</th><td><u>#define <dfn class="macro" id="_M/STT_GNU_IFUNC" data-ref="_M/STT_GNU_IFUNC">STT_GNU_IFUNC</dfn> 10</u></td></tr>
+<tr><th id="190">190</th><td><u>#define <dfn class="macro" id="_M/STT_LOOS" data-ref="_M/STT_LOOS">STT_LOOS</dfn>      10</u></td></tr>
+<tr><th id="191">191</th><td><u>#define <dfn class="macro" id="_M/STT_HIOS" data-ref="_M/STT_HIOS">STT_HIOS</dfn>      12</u></td></tr>
+<tr><th id="192">192</th><td><u>#define <dfn class="macro" id="_M/STT_LOPROC" data-ref="_M/STT_LOPROC">STT_LOPROC</dfn>    13</u></td></tr>
+<tr><th id="193">193</th><td><u>#define <dfn class="macro" id="_M/STT_HIPROC" data-ref="_M/STT_HIPROC">STT_HIPROC</dfn>    15</u></td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><u>#define <dfn class="macro" id="_M/STV_DEFAULT" data-ref="_M/STV_DEFAULT">STV_DEFAULT</dfn>   0</u></td></tr>
+<tr><th id="196">196</th><td><u>#define <dfn class="macro" id="_M/STV_INTERNAL" data-ref="_M/STV_INTERNAL">STV_INTERNAL</dfn>  1</u></td></tr>
+<tr><th id="197">197</th><td><u>#define <dfn class="macro" id="_M/STV_HIDDEN" data-ref="_M/STV_HIDDEN">STV_HIDDEN</dfn>    2</u></td></tr>
+<tr><th id="198">198</th><td><u>#define <dfn class="macro" id="_M/STV_PROTECTED" data-ref="_M/STV_PROTECTED">STV_PROTECTED</dfn> 3</u></td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td><i>/* The kernel uses NT_PRFPREG but glibc also offers NT_FPREGSET */</i></td></tr>
+<tr><th id="201">201</th><td><u>#define <dfn class="macro" id="_M/NT_FPREGSET" data-ref="_M/NT_FPREGSET">NT_FPREGSET</dfn> NT_PRFPREG</u></td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td><u>#define <dfn class="macro" id="_M/ELF_NOTE_GNU" data-ref="_M/ELF_NOTE_GNU">ELF_NOTE_GNU</dfn> "GNU"</u></td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><u>#define <dfn class="macro" id="_M/NT_GNU_BUILD_ID" data-ref="_M/NT_GNU_BUILD_ID">NT_GNU_BUILD_ID</dfn> 3</u></td></tr>
+<tr><th id="206">206</th><td></td></tr>
+<tr><th id="207">207</th><td><u>#define <dfn class="macro" id="_M/VER_FLG_BASE" data-ref="_M/VER_FLG_BASE">VER_FLG_BASE</dfn> 0x1</u></td></tr>
+<tr><th id="208">208</th><td><u>#define <dfn class="macro" id="_M/VER_FLG_WEAK" data-ref="_M/VER_FLG_WEAK">VER_FLG_WEAK</dfn> 0x2</u></td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td><u>#define <dfn class="macro" id="_M/VER_NDX_LOCAL" data-ref="_M/VER_NDX_LOCAL">VER_NDX_LOCAL</dfn>  0</u></td></tr>
+<tr><th id="211">211</th><td><u>#define <dfn class="macro" id="_M/VER_NDX_GLOBAL" data-ref="_M/VER_NDX_GLOBAL">VER_NDX_GLOBAL</dfn> 1</u></td></tr>
+<tr><th id="212">212</th><td></td></tr>
+<tr><th id="213">213</th><td><u>#<span data-ppcond="28">endif</span> /* _ELF_H */</u></td></tr>
+<tr><th id="214">214</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/__libc_init_main_thread.cpp.html'>codebrowser/bionic/libc/bionic/__libc_init_main_thread.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

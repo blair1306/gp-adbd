@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>fs_mgr_slotselect.c source code [codebrowser/system/core/fs_mgr/fs_mgr_slotselect.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/fs_mgr/fs_mgr_slotselect.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>fs_mgr</a>/<a href='fs_mgr_slotselect.c.html'>fs_mgr_slotselect.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2015 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="../../../bionic/libc/include/sys/stat.h.html">&lt;sys/stat.h&gt;</a></u></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../bionic/libc/include/ctype.h.html">&lt;ctype.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../include/cutils/properties.h.html">&lt;cutils/properties.h&gt;</a></u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="include/fs_mgr.h.html">"fs_mgr.h"</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="fs_mgr_priv.h.html">"fs_mgr_priv.h"</a></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../../../bootable/recovery/bootloader.h.html">"bootloader.h"</a></u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><i  data-doc="get_active_slot_suffix_from_misc">// Copies slot_suffix from misc into |out_suffix|. Returns 0 on</i></td></tr>
+<tr><th id="36">36</th><td><i  data-doc="get_active_slot_suffix_from_misc">// success, -1 on error or if there is no non-empty slot_suffix.</i></td></tr>
+<tr><th id="37">37</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="get_active_slot_suffix_from_misc" title='get_active_slot_suffix_from_misc' data-type='int get_active_slot_suffix_from_misc(struct fstab * fstab, char * out_suffix, size_t suffix_len)' data-ref="get_active_slot_suffix_from_misc">get_active_slot_suffix_from_misc</dfn>(<b>struct</b> <a class="type" href="include/fs_mgr.h.html#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col3 decl" id="3fstab" title='fstab' data-type='struct fstab *' data-ref="3fstab">fstab</dfn>,</td></tr>
+<tr><th id="38">38</th><td>                                            <em>char</em> *<dfn class="local col4 decl" id="4out_suffix" title='out_suffix' data-type='char *' data-ref="4out_suffix">out_suffix</dfn>,</td></tr>
+<tr><th id="39">39</th><td>                                            <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="5suffix_len" title='suffix_len' data-type='size_t' data-ref="5suffix_len">suffix_len</dfn>)</td></tr>
+<tr><th id="40">40</th><td>{</td></tr>
+<tr><th id="41">41</th><td>    <em>int</em> <dfn class="local col6 decl" id="6n" title='n' data-type='int' data-ref="6n">n</dfn>;</td></tr>
+<tr><th id="42">42</th><td>    <em>int</em> <dfn class="local col7 decl" id="7misc_fd" title='misc_fd' data-type='int' data-ref="7misc_fd">misc_fd</dfn>;</td></tr>
+<tr><th id="43">43</th><td>    <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="local col8 decl" id="8num_read" title='num_read' data-type='ssize_t' data-ref="8num_read">num_read</dfn>;</td></tr>
+<tr><th id="44">44</th><td>    <b>struct</b> <a class="type" href="../../../bootable/recovery/bootloader.h.html#bootloader_message" title='bootloader_message' data-ref="bootloader_message">bootloader_message</a> <dfn class="local col9 decl" id="9msg" title='msg' data-type='struct bootloader_message' data-ref="9msg">msg</dfn>;</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td>    <a class="local col7 ref" href="#7misc_fd" title='misc_fd' data-ref="7misc_fd">misc_fd</a> = -<var>1</var>;</td></tr>
+<tr><th id="47">47</th><td>    <b>for</b> (<a class="local col6 ref" href="#6n" title='n' data-ref="6n">n</a> = <var>0</var>; <a class="local col6 ref" href="#6n" title='n' data-ref="6n">n</a> &lt; <a class="local col3 ref" href="#3fstab" title='fstab' data-ref="3fstab">fstab</a>-&gt;<a class="ref" href="include/fs_mgr.h.html#fstab::num_entries" title='fstab::num_entries' data-ref="fstab::num_entries">num_entries</a>; <a class="local col6 ref" href="#6n" title='n' data-ref="6n">n</a>++) {</td></tr>
+<tr><th id="48">48</th><td>        <b>if</b> (<a class="ref" href="../../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col3 ref" href="#3fstab" title='fstab' data-ref="3fstab">fstab</a>-&gt;<a class="ref" href="include/fs_mgr.h.html#fstab::recs" title='fstab::recs' data-ref="fstab::recs">recs</a>[<a class="local col6 ref" href="#6n" title='n' data-ref="6n">n</a>].<a class="ref" href="include/fs_mgr.h.html#fstab_rec::mount_point" title='fstab_rec::mount_point' data-ref="fstab_rec::mount_point">mount_point</a>, <q>"/misc"</q>) == <var>0</var>) {</td></tr>
+<tr><th id="49">49</th><td>            <a class="local col7 ref" href="#7misc_fd" title='misc_fd' data-ref="7misc_fd">misc_fd</a> = <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<a class="local col3 ref" href="#3fstab" title='fstab' data-ref="3fstab">fstab</a>-&gt;<a class="ref" href="include/fs_mgr.h.html#fstab::recs" title='fstab::recs' data-ref="fstab::recs">recs</a>[<a class="local col6 ref" href="#6n" title='n' data-ref="6n">n</a>].<a class="ref" href="include/fs_mgr.h.html#fstab_rec::blk_device" title='fstab_rec::blk_device' data-ref="fstab_rec::blk_device">blk_device</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#24" title="00000000" data-ref="_M/O_RDONLY">O_RDONLY</a>);</td></tr>
+<tr><th id="50">50</th><td>            <b>if</b> (<a class="local col7 ref" href="#7misc_fd" title='misc_fd' data-ref="7misc_fd">misc_fd</a> == -<var>1</var>) {</td></tr>
+<tr><th id="51">51</th><td>                <a class="macro" href="fs_mgr_priv.h.html#27" title="klog_write(3, &quot;&lt;3&gt;&quot; &quot;fs_mgr&quot; &quot;: &quot; &quot;Error opening misc partition \&quot;%s\&quot; (%s)\n&quot;, fstab-&gt;recs[n].blk_device, strerror((*__errno())))" data-ref="_M/ERROR">ERROR</a>(<q>"Error opening misc partition \"%s\" (%s)\n"</q>,</td></tr>
+<tr><th id="52">52</th><td>                      <a class="local col3 ref" href="#3fstab" title='fstab' data-ref="3fstab">fstab</a>-&gt;<a class="ref" href="include/fs_mgr.h.html#fstab::recs" title='fstab::recs' data-ref="fstab::recs">recs</a>[<a class="local col6 ref" href="#6n" title='n' data-ref="6n">n</a>].<a class="ref" href="include/fs_mgr.h.html#fstab_rec::blk_device" title='fstab_rec::blk_device' data-ref="fstab_rec::blk_device">blk_device</a>,</td></tr>
+<tr><th id="53">53</th><td>                      <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="54">54</th><td>                <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="55">55</th><td>            } <b>else</b> {</td></tr>
+<tr><th id="56">56</th><td>                <b>break</b>;</td></tr>
+<tr><th id="57">57</th><td>            }</td></tr>
+<tr><th id="58">58</th><td>        }</td></tr>
+<tr><th id="59">59</th><td>    }</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td>    <b>if</b> (<a class="local col7 ref" href="#7misc_fd" title='misc_fd' data-ref="7misc_fd">misc_fd</a> == -<var>1</var>) {</td></tr>
+<tr><th id="62">62</th><td>        <a class="macro" href="fs_mgr_priv.h.html#27" title="klog_write(3, &quot;&lt;3&gt;&quot; &quot;fs_mgr&quot; &quot;: &quot; &quot;Error finding misc partition\n&quot;)" data-ref="_M/ERROR">ERROR</a>(<q>"Error finding misc partition\n"</q>);</td></tr>
+<tr><th id="63">63</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="64">64</th><td>    }</td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td>    <a class="local col8 ref" href="#8num_read" title='num_read' data-ref="8num_read">num_read</a> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(read(misc_fd, &amp;msg, sizeof(msg))) _rc; do { _rc = (read(misc_fd, &amp;msg, sizeof(msg))); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/unistd.h.html#read" title='read' data-ref="read">read</a>(<a class="local col7 ref" href="#7misc_fd" title='misc_fd' data-ref="7misc_fd">misc_fd</a>, &amp;<a class="local col9 ref" href="#9msg" title='msg' data-ref="9msg">msg</a>, <b>sizeof</b>(<a class="local col9 ref" href="#9msg" title='msg' data-ref="9msg">msg</a>)));</td></tr>
+<tr><th id="67">67</th><td>    <i>// Linux will never return partial reads when reading from block</i></td></tr>
+<tr><th id="68">68</th><td><i>    // devices so no need to worry about them.</i></td></tr>
+<tr><th id="69">69</th><td>    <b>if</b> (<a class="local col8 ref" href="#8num_read" title='num_read' data-ref="8num_read">num_read</a> != <b>sizeof</b>(<a class="local col9 ref" href="#9msg" title='msg' data-ref="9msg">msg</a>)) {</td></tr>
+<tr><th id="70">70</th><td>        <a class="macro" href="fs_mgr_priv.h.html#27" title="klog_write(3, &quot;&lt;3&gt;&quot; &quot;fs_mgr&quot; &quot;: &quot; &quot;Error reading bootloader_message (%s)\n&quot;, strerror((*__errno())))" data-ref="_M/ERROR">ERROR</a>(<q>"Error reading bootloader_message (%s)\n"</q>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="71">71</th><td>        <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col7 ref" href="#7misc_fd" title='misc_fd' data-ref="7misc_fd">misc_fd</a>);</td></tr>
+<tr><th id="72">72</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="73">73</th><td>    }</td></tr>
+<tr><th id="74">74</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col7 ref" href="#7misc_fd" title='misc_fd' data-ref="7misc_fd">misc_fd</a>);</td></tr>
+<tr><th id="75">75</th><td>    <b>if</b> (<a class="local col9 ref" href="#9msg" title='msg' data-ref="9msg">msg</a>.<a class="ref" href="../../../bootable/recovery/bootloader.h.html#bootloader_message::slot_suffix" title='bootloader_message::slot_suffix' data-ref="bootloader_message::slot_suffix">slot_suffix</a>[<var>0</var>] == <kbd>'\0'</kbd>)</td></tr>
+<tr><th id="76">76</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="77">77</th><td>    <a class="ref" href="../../../bionic/libc/include/string.h.html#strncpy" title='strncpy' data-ref="strncpy">strncpy</a>(<a class="local col4 ref" href="#4out_suffix" title='out_suffix' data-ref="4out_suffix">out_suffix</a>, <a class="local col9 ref" href="#9msg" title='msg' data-ref="9msg">msg</a>.<a class="ref" href="../../../bootable/recovery/bootloader.h.html#bootloader_message::slot_suffix" title='bootloader_message::slot_suffix' data-ref="bootloader_message::slot_suffix">slot_suffix</a>, <a class="local col5 ref" href="#5suffix_len" title='suffix_len' data-ref="5suffix_len">suffix_len</a>);</td></tr>
+<tr><th id="78">78</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="79">79</th><td>}</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><i  data-doc="get_active_slot_suffix">// Gets slot_suffix from either the kernel cmdline / firmware or the</i></td></tr>
+<tr><th id="82">82</th><td><i  data-doc="get_active_slot_suffix">// misc partition. Sets |out_suffix| on success and returns 0. Returns</i></td></tr>
+<tr><th id="83">83</th><td><i  data-doc="get_active_slot_suffix">// -1 if slot_suffix could not be determined.</i></td></tr>
+<tr><th id="84">84</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="get_active_slot_suffix" title='get_active_slot_suffix' data-type='int get_active_slot_suffix(struct fstab * fstab, char * out_suffix, size_t suffix_len)' data-ref="get_active_slot_suffix">get_active_slot_suffix</dfn>(<b>struct</b> <a class="type" href="include/fs_mgr.h.html#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col0 decl" id="10fstab" title='fstab' data-type='struct fstab *' data-ref="10fstab">fstab</dfn>, <em>char</em> *<dfn class="local col1 decl" id="11out_suffix" title='out_suffix' data-type='char *' data-ref="11out_suffix">out_suffix</dfn>,</td></tr>
+<tr><th id="85">85</th><td>                                  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="12suffix_len" title='suffix_len' data-type='size_t' data-ref="12suffix_len">suffix_len</dfn>)</td></tr>
+<tr><th id="86">86</th><td>{</td></tr>
+<tr><th id="87">87</th><td>    <em>char</em> <dfn class="local col3 decl" id="13propbuf" title='propbuf' data-type='char [92]' data-ref="13propbuf">propbuf</dfn>[<a class="macro" href="../include/cutils/properties.h.html#37" title="92" data-ref="_M/PROPERTY_VALUE_MAX">PROPERTY_VALUE_MAX</a>];</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td>    <i>// Get the suffix from the kernel commandline (note that we don't</i></td></tr>
+<tr><th id="90">90</th><td><i>    // allow the empty suffix). On bootloaders natively supporting A/B</i></td></tr>
+<tr><th id="91">91</th><td><i>    // we'll hit this path every time so don't bother logging it.</i></td></tr>
+<tr><th id="92">92</th><td>    <a class="ref" href="../include/cutils/properties.h.html#property_get" title='property_get' data-ref="property_get">property_get</a>(<q>"ro.boot.slot_suffix"</q>, <a class="local col3 ref" href="#13propbuf" title='propbuf' data-ref="13propbuf">propbuf</a>, <q>""</q>);</td></tr>
+<tr><th id="93">93</th><td>    <b>if</b> (<a class="local col3 ref" href="#13propbuf" title='propbuf' data-ref="13propbuf">propbuf</a>[<var>0</var>] != <kbd>'\0'</kbd>) {</td></tr>
+<tr><th id="94">94</th><td>        <a class="ref" href="../../../bionic/libc/include/string.h.html#strncpy" title='strncpy' data-ref="strncpy">strncpy</a>(<a class="local col1 ref" href="#11out_suffix" title='out_suffix' data-ref="11out_suffix">out_suffix</a>, <a class="local col3 ref" href="#13propbuf" title='propbuf' data-ref="13propbuf">propbuf</a>, <a class="local col2 ref" href="#12suffix_len" title='suffix_len' data-ref="12suffix_len">suffix_len</a>);</td></tr>
+<tr><th id="95">95</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="96">96</th><td>    }</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td>    <i>// If we couldn't get the suffix from the kernel cmdline, try the</i></td></tr>
+<tr><th id="99">99</th><td><i>    // the misc partition.</i></td></tr>
+<tr><th id="100">100</th><td>    <b>if</b> (<a class="tu ref" href="#get_active_slot_suffix_from_misc" title='get_active_slot_suffix_from_misc' data-use='c' data-ref="get_active_slot_suffix_from_misc">get_active_slot_suffix_from_misc</a>(<a class="local col0 ref" href="#10fstab" title='fstab' data-ref="10fstab">fstab</a>, <a class="local col1 ref" href="#11out_suffix" title='out_suffix' data-ref="11out_suffix">out_suffix</a>, <a class="local col2 ref" href="#12suffix_len" title='suffix_len' data-ref="12suffix_len">suffix_len</a>) == <var>0</var>) {</td></tr>
+<tr><th id="101">101</th><td>        <a class="macro" href="fs_mgr_priv.h.html#25" title="klog_write(6, &quot;&lt;6&gt;&quot; &quot;fs_mgr&quot; &quot;: &quot; &quot;Using slot suffix \&quot;%s\&quot; from misc\n&quot;, out_suffix)" data-ref="_M/INFO">INFO</a>(<q>"Using slot suffix \"%s\" from misc\n"</q>, <a class="local col1 ref" href="#11out_suffix" title='out_suffix' data-ref="11out_suffix">out_suffix</a>);</td></tr>
+<tr><th id="102">102</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="103">103</th><td>    }</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td>    <a class="macro" href="fs_mgr_priv.h.html#27" title="klog_write(3, &quot;&lt;3&gt;&quot; &quot;fs_mgr&quot; &quot;: &quot; &quot;Error determining slot_suffix\n&quot;)" data-ref="_M/ERROR">ERROR</a>(<q>"Error determining slot_suffix\n"</q>);</td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="108">108</th><td>}</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><i>// Updates |fstab| for slot_suffix. Returns 0 on success, -1 on error.</i></td></tr>
+<tr><th id="111">111</th><td><em>int</em> <dfn class="decl def" id="fs_mgr_update_for_slotselect" title='fs_mgr_update_for_slotselect' data-ref="fs_mgr_update_for_slotselect">fs_mgr_update_for_slotselect</dfn>(<b>struct</b> <a class="type" href="include/fs_mgr.h.html#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col4 decl" id="14fstab" title='fstab' data-type='struct fstab *' data-ref="14fstab">fstab</dfn>)</td></tr>
+<tr><th id="112">112</th><td>{</td></tr>
+<tr><th id="113">113</th><td>    <em>int</em> <dfn class="local col5 decl" id="15n" title='n' data-type='int' data-ref="15n">n</dfn>;</td></tr>
+<tr><th id="114">114</th><td>    <em>char</em> <dfn class="local col6 decl" id="16suffix" title='suffix' data-type='char [92]' data-ref="16suffix">suffix</dfn>[<a class="macro" href="../include/cutils/properties.h.html#37" title="92" data-ref="_M/PROPERTY_VALUE_MAX">PROPERTY_VALUE_MAX</a>];</td></tr>
+<tr><th id="115">115</th><td>    <em>int</em> <dfn class="local col7 decl" id="17got_suffix" title='got_suffix' data-type='int' data-ref="17got_suffix">got_suffix</dfn> = <var>0</var>;</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td>    <b>for</b> (<a class="local col5 ref" href="#15n" title='n' data-ref="15n">n</a> = <var>0</var>; <a class="local col5 ref" href="#15n" title='n' data-ref="15n">n</a> &lt; <a class="local col4 ref" href="#14fstab" title='fstab' data-ref="14fstab">fstab</a>-&gt;<a class="ref" href="include/fs_mgr.h.html#fstab::num_entries" title='fstab::num_entries' data-ref="fstab::num_entries">num_entries</a>; <a class="local col5 ref" href="#15n" title='n' data-ref="15n">n</a>++) {</td></tr>
+<tr><th id="118">118</th><td>        <b>if</b> (<a class="local col4 ref" href="#14fstab" title='fstab' data-ref="14fstab">fstab</a>-&gt;<a class="ref" href="include/fs_mgr.h.html#fstab::recs" title='fstab::recs' data-ref="fstab::recs">recs</a>[<a class="local col5 ref" href="#15n" title='n' data-ref="15n">n</a>].<a class="ref" href="include/fs_mgr.h.html#fstab_rec::fs_mgr_flags" title='fstab_rec::fs_mgr_flags' data-ref="fstab_rec::fs_mgr_flags">fs_mgr_flags</a> &amp; <a class="macro" href="fs_mgr_priv.h.html#84" title="0x8000" data-ref="_M/MF_SLOTSELECT">MF_SLOTSELECT</a>) {</td></tr>
+<tr><th id="119">119</th><td>            <em>char</em> *<dfn class="local col8 decl" id="18tmp" title='tmp' data-type='char *' data-ref="18tmp">tmp</dfn>;</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td>            <b>if</b> (!<a class="local col7 ref" href="#17got_suffix" title='got_suffix' data-ref="17got_suffix">got_suffix</a>) {</td></tr>
+<tr><th id="122">122</th><td>                <a class="ref" href="../../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col6 ref" href="#16suffix" title='suffix' data-ref="16suffix">suffix</a>, <kbd>'\0'</kbd>, <b>sizeof</b>(<a class="local col6 ref" href="#16suffix" title='suffix' data-ref="16suffix">suffix</a>));</td></tr>
+<tr><th id="123">123</th><td>                <b>if</b> (<a class="tu ref" href="#get_active_slot_suffix" title='get_active_slot_suffix' data-use='c' data-ref="get_active_slot_suffix">get_active_slot_suffix</a>(<a class="local col4 ref" href="#14fstab" title='fstab' data-ref="14fstab">fstab</a>, <a class="local col6 ref" href="#16suffix" title='suffix' data-ref="16suffix">suffix</a>,</td></tr>
+<tr><th id="124">124</th><td>                                           <b>sizeof</b>(<a class="local col6 ref" href="#16suffix" title='suffix' data-ref="16suffix">suffix</a>) - <var>1</var>) != <var>0</var>) {</td></tr>
+<tr><th id="125">125</th><td>                  <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="126">126</th><td>                }</td></tr>
+<tr><th id="127">127</th><td>                <a class="local col7 ref" href="#17got_suffix" title='got_suffix' data-ref="17got_suffix">got_suffix</a> = <var>1</var>;</td></tr>
+<tr><th id="128">128</th><td>            }</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td>            <b>if</b> (<a class="ref" href="../../../bionic/libc/include/stdio.h.html#asprintf" title='asprintf' data-ref="asprintf">asprintf</a>(&amp;<a class="local col8 ref" href="#18tmp" title='tmp' data-ref="18tmp">tmp</a>, <q>"%s%s"</q>, <a class="local col4 ref" href="#14fstab" title='fstab' data-ref="14fstab">fstab</a>-&gt;<a class="ref" href="include/fs_mgr.h.html#fstab::recs" title='fstab::recs' data-ref="fstab::recs">recs</a>[<a class="local col5 ref" href="#15n" title='n' data-ref="15n">n</a>].<a class="ref" href="include/fs_mgr.h.html#fstab_rec::blk_device" title='fstab_rec::blk_device' data-ref="fstab_rec::blk_device">blk_device</a>,</td></tr>
+<tr><th id="131">131</th><td>                         <a class="local col6 ref" href="#16suffix" title='suffix' data-ref="16suffix">suffix</a>) &gt; <var>0</var>) {</td></tr>
+<tr><th id="132">132</th><td>                <a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col4 ref" href="#14fstab" title='fstab' data-ref="14fstab">fstab</a>-&gt;<a class="ref" href="include/fs_mgr.h.html#fstab::recs" title='fstab::recs' data-ref="fstab::recs">recs</a>[<a class="local col5 ref" href="#15n" title='n' data-ref="15n">n</a>].<a class="ref" href="include/fs_mgr.h.html#fstab_rec::blk_device" title='fstab_rec::blk_device' data-ref="fstab_rec::blk_device">blk_device</a>);</td></tr>
+<tr><th id="133">133</th><td>                <a class="local col4 ref" href="#14fstab" title='fstab' data-ref="14fstab">fstab</a>-&gt;<a class="ref" href="include/fs_mgr.h.html#fstab::recs" title='fstab::recs' data-ref="fstab::recs">recs</a>[<a class="local col5 ref" href="#15n" title='n' data-ref="15n">n</a>].<a class="ref" href="include/fs_mgr.h.html#fstab_rec::blk_device" title='fstab_rec::blk_device' data-ref="fstab_rec::blk_device">blk_device</a> = <a class="local col8 ref" href="#18tmp" title='tmp' data-ref="18tmp">tmp</a>;</td></tr>
+<tr><th id="134">134</th><td>            } <b>else</b> {</td></tr>
+<tr><th id="135">135</th><td>                <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="136">136</th><td>            }</td></tr>
+<tr><th id="137">137</th><td>        }</td></tr>
+<tr><th id="138">138</th><td>    }</td></tr>
+<tr><th id="139">139</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="140">140</th><td>}</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>numeric source code [codebrowser/external/libcxx/include/numeric] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libcxx/include/numeric'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libcxx</a>/<a href='./'>include</a>/<a href='numeric.html'>numeric</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>// -*- C++ -*-</i></td></tr>
+<tr><th id="2">2</th><td><i>//===---------------------------- numeric ---------------------------------===//</i></td></tr>
+<tr><th id="3">3</th><td><i>//</i></td></tr>
+<tr><th id="4">4</th><td><i>//                     The LLVM Compiler Infrastructure</i></td></tr>
+<tr><th id="5">5</th><td><i>//</i></td></tr>
+<tr><th id="6">6</th><td><i>// This file is dual licensed under the MIT and the University of Illinois Open</i></td></tr>
+<tr><th id="7">7</th><td><i>// Source Licenses. See LICENSE.TXT for details.</i></td></tr>
+<tr><th id="8">8</th><td><i>//</i></td></tr>
+<tr><th id="9">9</th><td><i>//===----------------------------------------------------------------------===//</i></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><u>#<span data-ppcond="11">ifndef</span> <span class="macro" data-ref="_M/_LIBCPP_NUMERIC">_LIBCPP_NUMERIC</span></u></td></tr>
+<tr><th id="12">12</th><td><u>#define <dfn class="macro" id="_M/_LIBCPP_NUMERIC" data-ref="_M/_LIBCPP_NUMERIC">_LIBCPP_NUMERIC</dfn></u></td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td><i>/*</i></td></tr>
+<tr><th id="15">15</th><td><i>    numeric synopsis</i></td></tr>
+<tr><th id="16">16</th><td><i></i></td></tr>
+<tr><th id="17">17</th><td><i>namespace std</i></td></tr>
+<tr><th id="18">18</th><td><i>{</i></td></tr>
+<tr><th id="19">19</th><td><i></i></td></tr>
+<tr><th id="20">20</th><td><i>template &lt;class InputIterator, class T&gt;</i></td></tr>
+<tr><th id="21">21</th><td><i>    T</i></td></tr>
+<tr><th id="22">22</th><td><i>    accumulate(InputIterator first, InputIterator last, T init);</i></td></tr>
+<tr><th id="23">23</th><td><i></i></td></tr>
+<tr><th id="24">24</th><td><i>template &lt;class InputIterator, class T, class BinaryOperation&gt;</i></td></tr>
+<tr><th id="25">25</th><td><i>    T</i></td></tr>
+<tr><th id="26">26</th><td><i>    accumulate(InputIterator first, InputIterator last, T init, BinaryOperation binary_op);</i></td></tr>
+<tr><th id="27">27</th><td><i></i></td></tr>
+<tr><th id="28">28</th><td><i>template &lt;class InputIterator1, class InputIterator2, class T&gt;</i></td></tr>
+<tr><th id="29">29</th><td><i>    T</i></td></tr>
+<tr><th id="30">30</th><td><i>    inner_product(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, T init);</i></td></tr>
+<tr><th id="31">31</th><td><i></i></td></tr>
+<tr><th id="32">32</th><td><i>template &lt;class InputIterator1, class InputIterator2, class T, class BinaryOperation1, class BinaryOperation2&gt;</i></td></tr>
+<tr><th id="33">33</th><td><i>    T</i></td></tr>
+<tr><th id="34">34</th><td><i>    inner_product(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2,</i></td></tr>
+<tr><th id="35">35</th><td><i>                  T init, BinaryOperation1 binary_op1, BinaryOperation2 binary_op2);</i></td></tr>
+<tr><th id="36">36</th><td><i></i></td></tr>
+<tr><th id="37">37</th><td><i>template &lt;class InputIterator, class OutputIterator&gt;</i></td></tr>
+<tr><th id="38">38</th><td><i>    OutputIterator</i></td></tr>
+<tr><th id="39">39</th><td><i>    partial_sum(InputIterator first, InputIterator last, OutputIterator result);</i></td></tr>
+<tr><th id="40">40</th><td><i></i></td></tr>
+<tr><th id="41">41</th><td><i>template &lt;class InputIterator, class OutputIterator, class BinaryOperation&gt;</i></td></tr>
+<tr><th id="42">42</th><td><i>    OutputIterator</i></td></tr>
+<tr><th id="43">43</th><td><i>    partial_sum(InputIterator first, InputIterator last, OutputIterator result, BinaryOperation binary_op);</i></td></tr>
+<tr><th id="44">44</th><td><i></i></td></tr>
+<tr><th id="45">45</th><td><i>template &lt;class InputIterator, class OutputIterator&gt;</i></td></tr>
+<tr><th id="46">46</th><td><i>    OutputIterator</i></td></tr>
+<tr><th id="47">47</th><td><i>    adjacent_difference(InputIterator first, InputIterator last, OutputIterator result);</i></td></tr>
+<tr><th id="48">48</th><td><i></i></td></tr>
+<tr><th id="49">49</th><td><i>template &lt;class InputIterator, class OutputIterator, class BinaryOperation&gt;</i></td></tr>
+<tr><th id="50">50</th><td><i>    OutputIterator</i></td></tr>
+<tr><th id="51">51</th><td><i>    adjacent_difference(InputIterator first, InputIterator last, OutputIterator result, BinaryOperation binary_op);</i></td></tr>
+<tr><th id="52">52</th><td><i></i></td></tr>
+<tr><th id="53">53</th><td><i>template &lt;class ForwardIterator, class T&gt;</i></td></tr>
+<tr><th id="54">54</th><td><i>    void iota(ForwardIterator first, ForwardIterator last, T value);</i></td></tr>
+<tr><th id="55">55</th><td><i></i></td></tr>
+<tr><th id="56">56</th><td><i>}  // std</i></td></tr>
+<tr><th id="57">57</th><td><i></i></td></tr>
+<tr><th id="58">58</th><td><i>*/</i></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="__config.html">&lt;__config&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="iterator.html">&lt;iterator&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><u>#<span data-ppcond="63">if</span> !defined(<span class="macro" data-ref="_M/_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER">_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER</span>)</u></td></tr>
+<tr><th id="64">64</th><td><u>#pragma GCC system_header</u></td></tr>
+<tr><th id="65">65</th><td><u>#<span data-ppcond="63">endif</span></u></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><a class="macro" href="__config.html#386" title="namespace std {inline namespace __1 {" data-ref="_M/_LIBCPP_BEGIN_NAMESPACE_STD">_LIBCPP_BEGIN_NAMESPACE_STD</a></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><b>template</b> &lt;<b>class</b> _InputIterator, <b>class</b> _Tp&gt;</td></tr>
+<tr><th id="70">70</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a></td></tr>
+<tr><th id="71">71</th><td>_Tp</td></tr>
+<tr><th id="72">72</th><td><dfn class="decl def" id="_ZNSt3__110accumulateET_S0_T0_" title='std::__1::accumulate' data-ref="_ZNSt3__110accumulateET_S0_T0_">accumulate</dfn>(_InputIterator <dfn class="local col7 decl" id="2817__first" title='__first' data-type='_InputIterator' data-ref="2817__first">__first</dfn>, _InputIterator <dfn class="local col8 decl" id="2818__last" title='__last' data-type='_InputIterator' data-ref="2818__last">__last</dfn>, _Tp <dfn class="local col9 decl" id="2819__init" title='__init' data-type='_Tp' data-ref="2819__init">__init</dfn>)</td></tr>
+<tr><th id="73">73</th><td>{</td></tr>
+<tr><th id="74">74</th><td>    <b>for</b> (; <a class="local col7 ref" href="#2817__first" title='__first' data-ref="2817__first">__first</a> != <a class="local col8 ref" href="#2818__last" title='__last' data-ref="2818__last">__last</a>; ++<a class="local col7 ref" href="#2817__first" title='__first' data-ref="2817__first">__first</a>)</td></tr>
+<tr><th id="75">75</th><td>        <a class="local col9 ref" href="#2819__init" title='__init' data-ref="2819__init">__init</a> = <a class="local col9 ref" href="#2819__init" title='__init' data-ref="2819__init">__init</a> + *<a class="local col7 ref" href="#2817__first" title='__first' data-ref="2817__first">__first</a>;</td></tr>
+<tr><th id="76">76</th><td>    <b>return</b> <a class="local col9 ref" href="#2819__init" title='__init' data-ref="2819__init">__init</a>;</td></tr>
+<tr><th id="77">77</th><td>}</td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><b>template</b> &lt;<b>class</b> _InputIterator, <b>class</b> _Tp, <b>class</b> _BinaryOperation&gt;</td></tr>
+<tr><th id="80">80</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a></td></tr>
+<tr><th id="81">81</th><td>_Tp</td></tr>
+<tr><th id="82">82</th><td><dfn class="decl def" id="_ZNSt3__110accumulateET_S0_T0_T1_" title='std::__1::accumulate' data-ref="_ZNSt3__110accumulateET_S0_T0_T1_">accumulate</dfn>(_InputIterator <dfn class="local col0 decl" id="2820__first" title='__first' data-type='_InputIterator' data-ref="2820__first">__first</dfn>, _InputIterator <dfn class="local col1 decl" id="2821__last" title='__last' data-type='_InputIterator' data-ref="2821__last">__last</dfn>, _Tp <dfn class="local col2 decl" id="2822__init" title='__init' data-type='_Tp' data-ref="2822__init">__init</dfn>, _BinaryOperation <dfn class="local col3 decl" id="2823__binary_op" title='__binary_op' data-type='_BinaryOperation' data-ref="2823__binary_op">__binary_op</dfn>)</td></tr>
+<tr><th id="83">83</th><td>{</td></tr>
+<tr><th id="84">84</th><td>    <b>for</b> (; <a class="local col0 ref" href="#2820__first" title='__first' data-ref="2820__first">__first</a> != <a class="local col1 ref" href="#2821__last" title='__last' data-ref="2821__last">__last</a>; ++<a class="local col0 ref" href="#2820__first" title='__first' data-ref="2820__first">__first</a>)</td></tr>
+<tr><th id="85">85</th><td>        <a class="local col2 ref" href="#2822__init" title='__init' data-ref="2822__init">__init</a> = <a class="local col3 ref" href="#2823__binary_op" title='__binary_op' data-ref="2823__binary_op">__binary_op</a>(<a class="local col2 ref" href="#2822__init" title='__init' data-ref="2822__init">__init</a>, *<a class="local col0 ref" href="#2820__first" title='__first' data-ref="2820__first">__first</a>);</td></tr>
+<tr><th id="86">86</th><td>    <b>return</b> <a class="local col2 ref" href="#2822__init" title='__init' data-ref="2822__init">__init</a>;</td></tr>
+<tr><th id="87">87</th><td>}</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><b>template</b> &lt;<b>class</b> _InputIterator1, <b>class</b> _InputIterator2, <b>class</b> _Tp&gt;</td></tr>
+<tr><th id="90">90</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a></td></tr>
+<tr><th id="91">91</th><td>_Tp</td></tr>
+<tr><th id="92">92</th><td><dfn class="decl def" id="_ZNSt3__113inner_productET_S0_T0_T1_" title='std::__1::inner_product' data-ref="_ZNSt3__113inner_productET_S0_T0_T1_">inner_product</dfn>(_InputIterator1 <dfn class="local col4 decl" id="2824__first1" title='__first1' data-type='_InputIterator1' data-ref="2824__first1">__first1</dfn>, _InputIterator1 <dfn class="local col5 decl" id="2825__last1" title='__last1' data-type='_InputIterator1' data-ref="2825__last1">__last1</dfn>, _InputIterator2 <dfn class="local col6 decl" id="2826__first2" title='__first2' data-type='_InputIterator2' data-ref="2826__first2">__first2</dfn>, _Tp <dfn class="local col7 decl" id="2827__init" title='__init' data-type='_Tp' data-ref="2827__init">__init</dfn>)</td></tr>
+<tr><th id="93">93</th><td>{</td></tr>
+<tr><th id="94">94</th><td>    <b>for</b> (; <a class="local col4 ref" href="#2824__first1" title='__first1' data-ref="2824__first1">__first1</a> != <a class="local col5 ref" href="#2825__last1" title='__last1' data-ref="2825__last1">__last1</a>; ++<a class="local col4 ref" href="#2824__first1" title='__first1' data-ref="2824__first1">__first1</a>, (<em>void</em>) ++<a class="local col6 ref" href="#2826__first2" title='__first2' data-ref="2826__first2">__first2</a>)</td></tr>
+<tr><th id="95">95</th><td>        <a class="local col7 ref" href="#2827__init" title='__init' data-ref="2827__init">__init</a> = <a class="local col7 ref" href="#2827__init" title='__init' data-ref="2827__init">__init</a> + *<a class="local col4 ref" href="#2824__first1" title='__first1' data-ref="2824__first1">__first1</a> * *<a class="local col6 ref" href="#2826__first2" title='__first2' data-ref="2826__first2">__first2</a>;</td></tr>
+<tr><th id="96">96</th><td>    <b>return</b> <a class="local col7 ref" href="#2827__init" title='__init' data-ref="2827__init">__init</a>;</td></tr>
+<tr><th id="97">97</th><td>}</td></tr>
+<tr><th id="98">98</th><td></td></tr>
+<tr><th id="99">99</th><td><b>template</b> &lt;<b>class</b> _InputIterator1, <b>class</b> _InputIterator2, <b>class</b> _Tp, <b>class</b> _BinaryOperation1, <b>class</b> _BinaryOperation2&gt;</td></tr>
+<tr><th id="100">100</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a></td></tr>
+<tr><th id="101">101</th><td>_Tp</td></tr>
+<tr><th id="102">102</th><td><dfn class="decl def" id="_ZNSt3__113inner_productET_S0_T0_T1_T2_T3_" title='std::__1::inner_product' data-ref="_ZNSt3__113inner_productET_S0_T0_T1_T2_T3_">inner_product</dfn>(_InputIterator1 <dfn class="local col8 decl" id="2828__first1" title='__first1' data-type='_InputIterator1' data-ref="2828__first1">__first1</dfn>, _InputIterator1 <dfn class="local col9 decl" id="2829__last1" title='__last1' data-type='_InputIterator1' data-ref="2829__last1">__last1</dfn>, _InputIterator2 <dfn class="local col0 decl" id="2830__first2" title='__first2' data-type='_InputIterator2' data-ref="2830__first2">__first2</dfn>,</td></tr>
+<tr><th id="103">103</th><td>              _Tp <dfn class="local col1 decl" id="2831__init" title='__init' data-type='_Tp' data-ref="2831__init">__init</dfn>, _BinaryOperation1 <dfn class="local col2 decl" id="2832__binary_op1" title='__binary_op1' data-type='_BinaryOperation1' data-ref="2832__binary_op1">__binary_op1</dfn>, _BinaryOperation2 <dfn class="local col3 decl" id="2833__binary_op2" title='__binary_op2' data-type='_BinaryOperation2' data-ref="2833__binary_op2">__binary_op2</dfn>)</td></tr>
+<tr><th id="104">104</th><td>{</td></tr>
+<tr><th id="105">105</th><td>    <b>for</b> (; <a class="local col8 ref" href="#2828__first1" title='__first1' data-ref="2828__first1">__first1</a> != <a class="local col9 ref" href="#2829__last1" title='__last1' data-ref="2829__last1">__last1</a>; ++<a class="local col8 ref" href="#2828__first1" title='__first1' data-ref="2828__first1">__first1</a>, (<em>void</em>) ++<a class="local col0 ref" href="#2830__first2" title='__first2' data-ref="2830__first2">__first2</a>)</td></tr>
+<tr><th id="106">106</th><td>        <a class="local col1 ref" href="#2831__init" title='__init' data-ref="2831__init">__init</a> = <a class="local col2 ref" href="#2832__binary_op1" title='__binary_op1' data-ref="2832__binary_op1">__binary_op1</a>(<a class="local col1 ref" href="#2831__init" title='__init' data-ref="2831__init">__init</a>, <a class="local col3 ref" href="#2833__binary_op2" title='__binary_op2' data-ref="2833__binary_op2">__binary_op2</a>(*<a class="local col8 ref" href="#2828__first1" title='__first1' data-ref="2828__first1">__first1</a>, *<a class="local col0 ref" href="#2830__first2" title='__first2' data-ref="2830__first2">__first2</a>));</td></tr>
+<tr><th id="107">107</th><td>    <b>return</b> <a class="local col1 ref" href="#2831__init" title='__init' data-ref="2831__init">__init</a>;</td></tr>
+<tr><th id="108">108</th><td>}</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><b>template</b> &lt;<b>class</b> _InputIterator, <b>class</b> _OutputIterator&gt;</td></tr>
+<tr><th id="111">111</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a></td></tr>
+<tr><th id="112">112</th><td>_OutputIterator</td></tr>
+<tr><th id="113">113</th><td><dfn class="decl def" id="_ZNSt3__111partial_sumET_S0_T0_" title='std::__1::partial_sum' data-ref="_ZNSt3__111partial_sumET_S0_T0_">partial_sum</dfn>(_InputIterator <dfn class="local col4 decl" id="2834__first" title='__first' data-type='_InputIterator' data-ref="2834__first">__first</dfn>, _InputIterator <dfn class="local col5 decl" id="2835__last" title='__last' data-type='_InputIterator' data-ref="2835__last">__last</dfn>, _OutputIterator <dfn class="local col6 decl" id="2836__result" title='__result' data-type='_OutputIterator' data-ref="2836__result">__result</dfn>)</td></tr>
+<tr><th id="114">114</th><td>{</td></tr>
+<tr><th id="115">115</th><td>    <b>if</b> (<a class="local col4 ref" href="#2834__first" title='__first' data-ref="2834__first">__first</a> != <a class="local col5 ref" href="#2835__last" title='__last' data-ref="2835__last">__last</a>)</td></tr>
+<tr><th id="116">116</th><td>    {</td></tr>
+<tr><th id="117">117</th><td>        <b>typename</b> <a class="type" href="iterator.html#std::__1::iterator_traits" title='std::__1::iterator_traits' data-ref="std::__1::iterator_traits">iterator_traits</a>&lt;_InputIterator&gt;::value_type <dfn class="local col7 decl" id="2837__t" title='__t' data-type='typename iterator_traits&lt;_InputIterator&gt;::value_type' data-ref="2837__t">__t</dfn>(*<a class="local col4 ref" href="#2834__first" title='__first' data-ref="2834__first">__first</a>);</td></tr>
+<tr><th id="118">118</th><td>        *<a class="local col6 ref" href="#2836__result" title='__result' data-ref="2836__result">__result</a> = <a class="local col7 ref" href="#2837__t" title='__t' data-ref="2837__t">__t</a>;</td></tr>
+<tr><th id="119">119</th><td>        <b>for</b> (++<a class="local col4 ref" href="#2834__first" title='__first' data-ref="2834__first">__first</a>, (<em>void</em>) ++<a class="local col6 ref" href="#2836__result" title='__result' data-ref="2836__result">__result</a>; <a class="local col4 ref" href="#2834__first" title='__first' data-ref="2834__first">__first</a> != <a class="local col5 ref" href="#2835__last" title='__last' data-ref="2835__last">__last</a>; ++<a class="local col4 ref" href="#2834__first" title='__first' data-ref="2834__first">__first</a>, (<em>void</em>) ++<a class="local col6 ref" href="#2836__result" title='__result' data-ref="2836__result">__result</a>)</td></tr>
+<tr><th id="120">120</th><td>        {</td></tr>
+<tr><th id="121">121</th><td>            <a class="local col7 ref" href="#2837__t" title='__t' data-ref="2837__t">__t</a> = <a class="local col7 ref" href="#2837__t" title='__t' data-ref="2837__t">__t</a> + *<a class="local col4 ref" href="#2834__first" title='__first' data-ref="2834__first">__first</a>;</td></tr>
+<tr><th id="122">122</th><td>            *<a class="local col6 ref" href="#2836__result" title='__result' data-ref="2836__result">__result</a> = <a class="local col7 ref" href="#2837__t" title='__t' data-ref="2837__t">__t</a>;</td></tr>
+<tr><th id="123">123</th><td>        }</td></tr>
+<tr><th id="124">124</th><td>    }</td></tr>
+<tr><th id="125">125</th><td>    <b>return</b> <a class="local col6 ref" href="#2836__result" title='__result' data-ref="2836__result">__result</a>;</td></tr>
+<tr><th id="126">126</th><td>}</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td><b>template</b> &lt;<b>class</b> _InputIterator, <b>class</b> _OutputIterator, <b>class</b> _BinaryOperation&gt;</td></tr>
+<tr><th id="129">129</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a></td></tr>
+<tr><th id="130">130</th><td>_OutputIterator</td></tr>
+<tr><th id="131">131</th><td><dfn class="decl def" id="_ZNSt3__111partial_sumET_S0_T0_T1_" title='std::__1::partial_sum' data-ref="_ZNSt3__111partial_sumET_S0_T0_T1_">partial_sum</dfn>(_InputIterator <dfn class="local col8 decl" id="2838__first" title='__first' data-type='_InputIterator' data-ref="2838__first">__first</dfn>, _InputIterator <dfn class="local col9 decl" id="2839__last" title='__last' data-type='_InputIterator' data-ref="2839__last">__last</dfn>, _OutputIterator <dfn class="local col0 decl" id="2840__result" title='__result' data-type='_OutputIterator' data-ref="2840__result">__result</dfn>,</td></tr>
+<tr><th id="132">132</th><td>              _BinaryOperation <dfn class="local col1 decl" id="2841__binary_op" title='__binary_op' data-type='_BinaryOperation' data-ref="2841__binary_op">__binary_op</dfn>)</td></tr>
+<tr><th id="133">133</th><td>{</td></tr>
+<tr><th id="134">134</th><td>    <b>if</b> (<a class="local col8 ref" href="#2838__first" title='__first' data-ref="2838__first">__first</a> != <a class="local col9 ref" href="#2839__last" title='__last' data-ref="2839__last">__last</a>)</td></tr>
+<tr><th id="135">135</th><td>    {</td></tr>
+<tr><th id="136">136</th><td>        <b>typename</b> <a class="type" href="iterator.html#std::__1::iterator_traits" title='std::__1::iterator_traits' data-ref="std::__1::iterator_traits">iterator_traits</a>&lt;_InputIterator&gt;::value_type <dfn class="local col2 decl" id="2842__t" title='__t' data-type='typename iterator_traits&lt;_InputIterator&gt;::value_type' data-ref="2842__t">__t</dfn>(*<a class="local col8 ref" href="#2838__first" title='__first' data-ref="2838__first">__first</a>);</td></tr>
+<tr><th id="137">137</th><td>        *<a class="local col0 ref" href="#2840__result" title='__result' data-ref="2840__result">__result</a> = <a class="local col2 ref" href="#2842__t" title='__t' data-ref="2842__t">__t</a>;</td></tr>
+<tr><th id="138">138</th><td>        <b>for</b> (++<a class="local col8 ref" href="#2838__first" title='__first' data-ref="2838__first">__first</a>, (<em>void</em>) ++<a class="local col0 ref" href="#2840__result" title='__result' data-ref="2840__result">__result</a>; <a class="local col8 ref" href="#2838__first" title='__first' data-ref="2838__first">__first</a> != <a class="local col9 ref" href="#2839__last" title='__last' data-ref="2839__last">__last</a>; ++<a class="local col8 ref" href="#2838__first" title='__first' data-ref="2838__first">__first</a>, (<em>void</em>) ++<a class="local col0 ref" href="#2840__result" title='__result' data-ref="2840__result">__result</a>)</td></tr>
+<tr><th id="139">139</th><td>        {</td></tr>
+<tr><th id="140">140</th><td>            <a class="local col2 ref" href="#2842__t" title='__t' data-ref="2842__t">__t</a> = <a class="local col1 ref" href="#2841__binary_op" title='__binary_op' data-ref="2841__binary_op">__binary_op</a>(<a class="local col2 ref" href="#2842__t" title='__t' data-ref="2842__t">__t</a>, *<a class="local col8 ref" href="#2838__first" title='__first' data-ref="2838__first">__first</a>);</td></tr>
+<tr><th id="141">141</th><td>            *<a class="local col0 ref" href="#2840__result" title='__result' data-ref="2840__result">__result</a> = <a class="local col2 ref" href="#2842__t" title='__t' data-ref="2842__t">__t</a>;</td></tr>
+<tr><th id="142">142</th><td>        }</td></tr>
+<tr><th id="143">143</th><td>    }</td></tr>
+<tr><th id="144">144</th><td>    <b>return</b> <a class="local col0 ref" href="#2840__result" title='__result' data-ref="2840__result">__result</a>;</td></tr>
+<tr><th id="145">145</th><td>}</td></tr>
+<tr><th id="146">146</th><td></td></tr>
+<tr><th id="147">147</th><td><b>template</b> &lt;<b>class</b> _InputIterator, <b>class</b> _OutputIterator&gt;</td></tr>
+<tr><th id="148">148</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a></td></tr>
+<tr><th id="149">149</th><td>_OutputIterator</td></tr>
+<tr><th id="150">150</th><td><dfn class="decl def" id="_ZNSt3__119adjacent_differenceET_S0_T0_" title='std::__1::adjacent_difference' data-ref="_ZNSt3__119adjacent_differenceET_S0_T0_">adjacent_difference</dfn>(_InputIterator <dfn class="local col3 decl" id="2843__first" title='__first' data-type='_InputIterator' data-ref="2843__first">__first</dfn>, _InputIterator <dfn class="local col4 decl" id="2844__last" title='__last' data-type='_InputIterator' data-ref="2844__last">__last</dfn>, _OutputIterator <dfn class="local col5 decl" id="2845__result" title='__result' data-type='_OutputIterator' data-ref="2845__result">__result</dfn>)</td></tr>
+<tr><th id="151">151</th><td>{</td></tr>
+<tr><th id="152">152</th><td>    <b>if</b> (<a class="local col3 ref" href="#2843__first" title='__first' data-ref="2843__first">__first</a> != <a class="local col4 ref" href="#2844__last" title='__last' data-ref="2844__last">__last</a>)</td></tr>
+<tr><th id="153">153</th><td>    {</td></tr>
+<tr><th id="154">154</th><td>        <b>typename</b> <a class="type" href="iterator.html#std::__1::iterator_traits" title='std::__1::iterator_traits' data-ref="std::__1::iterator_traits">iterator_traits</a>&lt;_InputIterator&gt;::value_type <dfn class="local col6 decl" id="2846__t1" title='__t1' data-type='typename iterator_traits&lt;_InputIterator&gt;::value_type' data-ref="2846__t1">__t1</dfn>(*<a class="local col3 ref" href="#2843__first" title='__first' data-ref="2843__first">__first</a>);</td></tr>
+<tr><th id="155">155</th><td>        *<a class="local col5 ref" href="#2845__result" title='__result' data-ref="2845__result">__result</a> = <a class="local col6 ref" href="#2846__t1" title='__t1' data-ref="2846__t1">__t1</a>;</td></tr>
+<tr><th id="156">156</th><td>        <b>for</b> (++<a class="local col3 ref" href="#2843__first" title='__first' data-ref="2843__first">__first</a>, (<em>void</em>) ++<a class="local col5 ref" href="#2845__result" title='__result' data-ref="2845__result">__result</a>; <a class="local col3 ref" href="#2843__first" title='__first' data-ref="2843__first">__first</a> != <a class="local col4 ref" href="#2844__last" title='__last' data-ref="2844__last">__last</a>; ++<a class="local col3 ref" href="#2843__first" title='__first' data-ref="2843__first">__first</a>, (<em>void</em>) ++<a class="local col5 ref" href="#2845__result" title='__result' data-ref="2845__result">__result</a>)</td></tr>
+<tr><th id="157">157</th><td>        {</td></tr>
+<tr><th id="158">158</th><td>            <b>typename</b> <a class="type" href="iterator.html#std::__1::iterator_traits" title='std::__1::iterator_traits' data-ref="std::__1::iterator_traits">iterator_traits</a>&lt;_InputIterator&gt;::value_type <dfn class="local col7 decl" id="2847__t2" title='__t2' data-type='typename iterator_traits&lt;_InputIterator&gt;::value_type' data-ref="2847__t2">__t2</dfn>(*<a class="local col3 ref" href="#2843__first" title='__first' data-ref="2843__first">__first</a>);</td></tr>
+<tr><th id="159">159</th><td>            *<a class="local col5 ref" href="#2845__result" title='__result' data-ref="2845__result">__result</a> = <a class="local col7 ref" href="#2847__t2" title='__t2' data-ref="2847__t2">__t2</a> - <a class="local col6 ref" href="#2846__t1" title='__t1' data-ref="2846__t1">__t1</a>;</td></tr>
+<tr><th id="160">160</th><td>            <a class="local col6 ref" href="#2846__t1" title='__t1' data-ref="2846__t1">__t1</a> = <a class="macro" href="__config.html#388" title="std::__1" data-ref="_M/_VSTD">_VSTD</a>::move(<a class="local col7 ref" href="#2847__t2" title='__t2' data-ref="2847__t2">__t2</a>);</td></tr>
+<tr><th id="161">161</th><td>        }</td></tr>
+<tr><th id="162">162</th><td>    }</td></tr>
+<tr><th id="163">163</th><td>    <b>return</b> <a class="local col5 ref" href="#2845__result" title='__result' data-ref="2845__result">__result</a>;</td></tr>
+<tr><th id="164">164</th><td>}</td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td><b>template</b> &lt;<b>class</b> _InputIterator, <b>class</b> _OutputIterator, <b>class</b> _BinaryOperation&gt;</td></tr>
+<tr><th id="167">167</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a></td></tr>
+<tr><th id="168">168</th><td>_OutputIterator</td></tr>
+<tr><th id="169">169</th><td><dfn class="decl def" id="_ZNSt3__119adjacent_differenceET_S0_T0_T1_" title='std::__1::adjacent_difference' data-ref="_ZNSt3__119adjacent_differenceET_S0_T0_T1_">adjacent_difference</dfn>(_InputIterator <dfn class="local col8 decl" id="2848__first" title='__first' data-type='_InputIterator' data-ref="2848__first">__first</dfn>, _InputIterator <dfn class="local col9 decl" id="2849__last" title='__last' data-type='_InputIterator' data-ref="2849__last">__last</dfn>, _OutputIterator <dfn class="local col0 decl" id="2850__result" title='__result' data-type='_OutputIterator' data-ref="2850__result">__result</dfn>,</td></tr>
+<tr><th id="170">170</th><td>                      _BinaryOperation <dfn class="local col1 decl" id="2851__binary_op" title='__binary_op' data-type='_BinaryOperation' data-ref="2851__binary_op">__binary_op</dfn>)</td></tr>
+<tr><th id="171">171</th><td>{</td></tr>
+<tr><th id="172">172</th><td>    <b>if</b> (<a class="local col8 ref" href="#2848__first" title='__first' data-ref="2848__first">__first</a> != <a class="local col9 ref" href="#2849__last" title='__last' data-ref="2849__last">__last</a>)</td></tr>
+<tr><th id="173">173</th><td>    {</td></tr>
+<tr><th id="174">174</th><td>        <b>typename</b> <a class="type" href="iterator.html#std::__1::iterator_traits" title='std::__1::iterator_traits' data-ref="std::__1::iterator_traits">iterator_traits</a>&lt;_InputIterator&gt;::value_type <dfn class="local col2 decl" id="2852__t1" title='__t1' data-type='typename iterator_traits&lt;_InputIterator&gt;::value_type' data-ref="2852__t1">__t1</dfn>(*<a class="local col8 ref" href="#2848__first" title='__first' data-ref="2848__first">__first</a>);</td></tr>
+<tr><th id="175">175</th><td>        *<a class="local col0 ref" href="#2850__result" title='__result' data-ref="2850__result">__result</a> = <a class="local col2 ref" href="#2852__t1" title='__t1' data-ref="2852__t1">__t1</a>;</td></tr>
+<tr><th id="176">176</th><td>        <b>for</b> (++<a class="local col8 ref" href="#2848__first" title='__first' data-ref="2848__first">__first</a>, (<em>void</em>) ++<a class="local col0 ref" href="#2850__result" title='__result' data-ref="2850__result">__result</a>; <a class="local col8 ref" href="#2848__first" title='__first' data-ref="2848__first">__first</a> != <a class="local col9 ref" href="#2849__last" title='__last' data-ref="2849__last">__last</a>; ++<a class="local col8 ref" href="#2848__first" title='__first' data-ref="2848__first">__first</a>, (<em>void</em>) ++<a class="local col0 ref" href="#2850__result" title='__result' data-ref="2850__result">__result</a>)</td></tr>
+<tr><th id="177">177</th><td>        {</td></tr>
+<tr><th id="178">178</th><td>            <b>typename</b> <a class="type" href="iterator.html#std::__1::iterator_traits" title='std::__1::iterator_traits' data-ref="std::__1::iterator_traits">iterator_traits</a>&lt;_InputIterator&gt;::value_type <dfn class="local col3 decl" id="2853__t2" title='__t2' data-type='typename iterator_traits&lt;_InputIterator&gt;::value_type' data-ref="2853__t2">__t2</dfn>(*<a class="local col8 ref" href="#2848__first" title='__first' data-ref="2848__first">__first</a>);</td></tr>
+<tr><th id="179">179</th><td>            *<a class="local col0 ref" href="#2850__result" title='__result' data-ref="2850__result">__result</a> = <a class="local col1 ref" href="#2851__binary_op" title='__binary_op' data-ref="2851__binary_op">__binary_op</a>(<a class="local col3 ref" href="#2853__t2" title='__t2' data-ref="2853__t2">__t2</a>, <a class="local col2 ref" href="#2852__t1" title='__t1' data-ref="2852__t1">__t1</a>);</td></tr>
+<tr><th id="180">180</th><td>            <a class="local col2 ref" href="#2852__t1" title='__t1' data-ref="2852__t1">__t1</a> = <a class="macro" href="__config.html#388" title="std::__1" data-ref="_M/_VSTD">_VSTD</a>::move(<a class="local col3 ref" href="#2853__t2" title='__t2' data-ref="2853__t2">__t2</a>);</td></tr>
+<tr><th id="181">181</th><td>        }</td></tr>
+<tr><th id="182">182</th><td>    }</td></tr>
+<tr><th id="183">183</th><td>    <b>return</b> <a class="local col0 ref" href="#2850__result" title='__result' data-ref="2850__result">__result</a>;</td></tr>
+<tr><th id="184">184</th><td>}</td></tr>
+<tr><th id="185">185</th><td></td></tr>
+<tr><th id="186">186</th><td><b>template</b> &lt;<b>class</b> _ForwardIterator, <b>class</b> _Tp&gt;</td></tr>
+<tr><th id="187">187</th><td><b>inline</b> <a class="macro" href="__config.html#217" title="__attribute__ ((__visibility__(&quot;hidden&quot;), __always_inline__))" data-ref="_M/_LIBCPP_INLINE_VISIBILITY">_LIBCPP_INLINE_VISIBILITY</a></td></tr>
+<tr><th id="188">188</th><td><em>void</em></td></tr>
+<tr><th id="189">189</th><td><dfn class="decl def" id="_ZNSt3__14iotaET_S0_T0_" title='std::__1::iota' data-ref="_ZNSt3__14iotaET_S0_T0_">iota</dfn>(_ForwardIterator <dfn class="local col4 decl" id="2854__first" title='__first' data-type='_ForwardIterator' data-ref="2854__first">__first</dfn>, _ForwardIterator <dfn class="local col5 decl" id="2855__last" title='__last' data-type='_ForwardIterator' data-ref="2855__last">__last</dfn>, _Tp <dfn class="local col6 decl" id="2856__value_" title='__value_' data-type='_Tp' data-ref="2856__value_">__value_</dfn>)</td></tr>
+<tr><th id="190">190</th><td>{</td></tr>
+<tr><th id="191">191</th><td>    <b>for</b> (; <a class="local col4 ref" href="#2854__first" title='__first' data-ref="2854__first">__first</a> != <a class="local col5 ref" href="#2855__last" title='__last' data-ref="2855__last">__last</a>; ++<a class="local col4 ref" href="#2854__first" title='__first' data-ref="2854__first">__first</a>, (<em>void</em>) ++<a class="local col6 ref" href="#2856__value_" title='__value_' data-ref="2856__value_">__value_</a>)</td></tr>
+<tr><th id="192">192</th><td>        *<a class="local col4 ref" href="#2854__first" title='__first' data-ref="2854__first">__first</a> = <a class="local col6 ref" href="#2856__value_" title='__value_' data-ref="2856__value_">__value_</a>;</td></tr>
+<tr><th id="193">193</th><td>}</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><a class="macro" href="__config.html#387" title="} }" data-ref="_M/_LIBCPP_END_NAMESPACE_STD">_LIBCPP_END_NAMESPACE_STD</a></td></tr>
+<tr><th id="196">196</th><td></td></tr>
+<tr><th id="197">197</th><td><u>#<span data-ppcond="11">endif</span>  // _LIBCPP_NUMERIC</u></td></tr>
+<tr><th id="198">198</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../src/algorithm.cpp.html'>codebrowser/external/libcxx/src/algorithm.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

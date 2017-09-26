@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>s_sinf.c source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_sinf.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_sinf.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>src</a>/<a href='s_sinf.c.html'>s_sinf.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* s_sinf.c -- float version of s_sin.c.</i></td></tr>
+<tr><th id="2">2</th><td><i> * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.</i></td></tr>
+<tr><th id="3">3</th><td><i> * Optimized by Bruce D. Evans.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><i>/*</i></td></tr>
+<tr><th id="7">7</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="8">8</th><td><i> * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.</i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Developed at SunPro, a Sun Microsystems, Inc. business.</i></td></tr>
+<tr><th id="11">11</th><td><i> * Permission to use, copy, modify, and distribute this</i></td></tr>
+<tr><th id="12">12</th><td><i> * software is freely granted, provided that this notice</i></td></tr>
+<tr><th id="13">13</th><td><i> * is preserved.</i></td></tr>
+<tr><th id="14">14</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD$"</q>);</td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include &lt;float.h&gt;</u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../../../libc/include/math.h.html">"math.h"</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#define	<dfn class="macro" id="_M/INLINE_KERNEL_COSDF" data-ref="_M/INLINE_KERNEL_COSDF">INLINE_KERNEL_COSDF</dfn></u></td></tr>
+<tr><th id="24">24</th><td><u>#define	<dfn class="macro" id="_M/INLINE_KERNEL_SINDF" data-ref="_M/INLINE_KERNEL_SINDF">INLINE_KERNEL_SINDF</dfn></u></td></tr>
+<tr><th id="25">25</th><td><u>#define <dfn class="macro" id="_M/INLINE_REM_PIO2F" data-ref="_M/INLINE_REM_PIO2F">INLINE_REM_PIO2F</dfn></u></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="math_private.h.html">"math_private.h"</a></u></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="e_rem_pio2f.c.html">"e_rem_pio2f.c"</a></u></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="k_cosf.c.html">"k_cosf.c"</a></u></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="k_sinf.c.html">"k_sinf.c"</a></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><i>/* Small multiples of pi/2 rounded to double precision. */</i></td></tr>
+<tr><th id="32">32</th><td><em>static</em> <em>const</em> <em>double</em></td></tr>
+<tr><th id="33">33</th><td><dfn class="tu decl def" id="s1pio2" title='s1pio2' data-type='const double' data-ref="s1pio2">s1pio2</dfn> = <var>1</var>*<a class="macro" href="../../../../../libc/include/math.h.html#99" title="1.57079632679489661923" data-ref="_M/M_PI_2">M_PI_2</a>,			<i>/* 0x3FF921FB, 0x54442D18 */</i></td></tr>
+<tr><th id="34">34</th><td><dfn class="tu decl def" id="s2pio2" title='s2pio2' data-type='const double' data-ref="s2pio2">s2pio2</dfn> = <var>2</var>*<a class="macro" href="../../../../../libc/include/math.h.html#99" title="1.57079632679489661923" data-ref="_M/M_PI_2">M_PI_2</a>,			<i>/* 0x400921FB, 0x54442D18 */</i></td></tr>
+<tr><th id="35">35</th><td><dfn class="tu decl def" id="s3pio2" title='s3pio2' data-type='const double' data-ref="s3pio2">s3pio2</dfn> = <var>3</var>*<a class="macro" href="../../../../../libc/include/math.h.html#99" title="1.57079632679489661923" data-ref="_M/M_PI_2">M_PI_2</a>,			<i>/* 0x4012D97C, 0x7F3321D2 */</i></td></tr>
+<tr><th id="36">36</th><td><dfn class="tu decl def" id="s4pio2" title='s4pio2' data-type='const double' data-ref="s4pio2">s4pio2</dfn> = <var>4</var>*<a class="macro" href="../../../../../libc/include/math.h.html#99" title="1.57079632679489661923" data-ref="_M/M_PI_2">M_PI_2</a>;			<i>/* 0x401921FB, 0x54442D18 */</i></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><em>float</em></td></tr>
+<tr><th id="39">39</th><td><dfn class="decl def" id="sinf" title='sinf' data-ref="sinf">sinf</dfn>(<em>float</em> <dfn class="local col1 decl" id="1x" title='x' data-type='float' data-ref="1x">x</dfn>)</td></tr>
+<tr><th id="40">40</th><td>{</td></tr>
+<tr><th id="41">41</th><td>	<em>double</em> <dfn class="local col2 decl" id="2y" title='y' data-type='double' data-ref="2y">y</dfn>;</td></tr>
+<tr><th id="42">42</th><td>	<a class="typedef" href="../../../../../libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a> <dfn class="local col3 decl" id="3n" title='n' data-type='int32_t' data-ref="3n">n</dfn>, <dfn class="local col4 decl" id="4hx" title='hx' data-type='int32_t' data-ref="4hx">hx</dfn>, <dfn class="local col5 decl" id="5ix" title='ix' data-type='int32_t' data-ref="5ix">ix</dfn>;</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td>	<a class="macro" href="math_private.h.html#175" title="do { ieee_float_shape_type gf_u; gf_u.value = (x); (hx) = gf_u.word; } while (0)" data-ref="_M/GET_FLOAT_WORD">GET_FLOAT_WORD</a>(<a class="local col4 ref" href="#4hx" title='hx' data-ref="4hx">hx</a>,<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>);</td></tr>
+<tr><th id="45">45</th><td>	<a class="local col5 ref" href="#5ix" title='ix' data-ref="5ix">ix</a> = <a class="local col4 ref" href="#4hx" title='hx' data-ref="4hx">hx</a> &amp; <var>0x7fffffff</var>;</td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td>	<b>if</b>(<a class="local col5 ref" href="#5ix" title='ix' data-ref="5ix">ix</a> &lt;= <var>0x3f490fda</var>) {		<i>/* |x| ~&lt;= pi/4 */</i></td></tr>
+<tr><th id="48">48</th><td>	    <b>if</b>(<a class="local col5 ref" href="#5ix" title='ix' data-ref="5ix">ix</a>&lt;<var>0x39800000</var>)		<i>/* |x| &lt; 2**-12 */</i></td></tr>
+<tr><th id="49">49</th><td>		<b>if</b>(((<em>int</em>)<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>)==<var>0</var>) <b>return</b> <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;	<i>/* x with inexact if x != 0 */</i></td></tr>
+<tr><th id="50">50</th><td>	    <b>return</b> <a class="ref" href="k_sinf.c.html#__kernel_sindf" title='__kernel_sindf' data-ref="__kernel_sindf">__kernel_sindf</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>);</td></tr>
+<tr><th id="51">51</th><td>	}</td></tr>
+<tr><th id="52">52</th><td>	<b>if</b>(<a class="local col5 ref" href="#5ix" title='ix' data-ref="5ix">ix</a>&lt;=<var>0x407b53d1</var>) {		<i>/* |x| ~&lt;= 5*pi/4 */</i></td></tr>
+<tr><th id="53">53</th><td>	    <b>if</b>(<a class="local col5 ref" href="#5ix" title='ix' data-ref="5ix">ix</a>&lt;=<var>0x4016cbe3</var>) {	<i>/* |x| ~&lt;= 3pi/4 */</i></td></tr>
+<tr><th id="54">54</th><td>		<b>if</b>(<a class="local col4 ref" href="#4hx" title='hx' data-ref="4hx">hx</a>&gt;<var>0</var>)</td></tr>
+<tr><th id="55">55</th><td>		    <b>return</b> <a class="ref" href="k_cosf.c.html#__kernel_cosdf" title='__kernel_cosdf' data-ref="__kernel_cosdf">__kernel_cosdf</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> - <a class="tu ref" href="#s1pio2" title='s1pio2' data-use='r' data-ref="s1pio2">s1pio2</a>);</td></tr>
+<tr><th id="56">56</th><td>		<b>else</b></td></tr>
+<tr><th id="57">57</th><td>		    <b>return</b> -<a class="ref" href="k_cosf.c.html#__kernel_cosdf" title='__kernel_cosdf' data-ref="__kernel_cosdf">__kernel_cosdf</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> + <a class="tu ref" href="#s1pio2" title='s1pio2' data-use='r' data-ref="s1pio2">s1pio2</a>);</td></tr>
+<tr><th id="58">58</th><td>	    } <b>else</b></td></tr>
+<tr><th id="59">59</th><td>		<b>return</b> <a class="ref" href="k_sinf.c.html#__kernel_sindf" title='__kernel_sindf' data-ref="__kernel_sindf">__kernel_sindf</a>((<a class="local col4 ref" href="#4hx" title='hx' data-ref="4hx">hx</a> &gt; <var>0</var> ? <a class="tu ref" href="#s2pio2" title='s2pio2' data-use='r' data-ref="s2pio2">s2pio2</a> : -<a class="tu ref" href="#s2pio2" title='s2pio2' data-use='r' data-ref="s2pio2">s2pio2</a>) - <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>);</td></tr>
+<tr><th id="60">60</th><td>	}</td></tr>
+<tr><th id="61">61</th><td>	<b>if</b>(<a class="local col5 ref" href="#5ix" title='ix' data-ref="5ix">ix</a>&lt;=<var>0x40e231d5</var>) {		<i>/* |x| ~&lt;= 9*pi/4 */</i></td></tr>
+<tr><th id="62">62</th><td>	    <b>if</b>(<a class="local col5 ref" href="#5ix" title='ix' data-ref="5ix">ix</a>&lt;=<var>0x40afeddf</var>) {	<i>/* |x| ~&lt;= 7*pi/4 */</i></td></tr>
+<tr><th id="63">63</th><td>		<b>if</b>(<a class="local col4 ref" href="#4hx" title='hx' data-ref="4hx">hx</a>&gt;<var>0</var>)</td></tr>
+<tr><th id="64">64</th><td>		    <b>return</b> -<a class="ref" href="k_cosf.c.html#__kernel_cosdf" title='__kernel_cosdf' data-ref="__kernel_cosdf">__kernel_cosdf</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> - <a class="tu ref" href="#s3pio2" title='s3pio2' data-use='r' data-ref="s3pio2">s3pio2</a>);</td></tr>
+<tr><th id="65">65</th><td>		<b>else</b></td></tr>
+<tr><th id="66">66</th><td>		    <b>return</b> <a class="ref" href="k_cosf.c.html#__kernel_cosdf" title='__kernel_cosdf' data-ref="__kernel_cosdf">__kernel_cosdf</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> + <a class="tu ref" href="#s3pio2" title='s3pio2' data-use='r' data-ref="s3pio2">s3pio2</a>);</td></tr>
+<tr><th id="67">67</th><td>	    } <b>else</b></td></tr>
+<tr><th id="68">68</th><td>		<b>return</b> <a class="ref" href="k_sinf.c.html#__kernel_sindf" title='__kernel_sindf' data-ref="__kernel_sindf">__kernel_sindf</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> + (<a class="local col4 ref" href="#4hx" title='hx' data-ref="4hx">hx</a> &gt; <var>0</var> ? -<a class="tu ref" href="#s4pio2" title='s4pio2' data-use='r' data-ref="s4pio2">s4pio2</a> : <a class="tu ref" href="#s4pio2" title='s4pio2' data-use='r' data-ref="s4pio2">s4pio2</a>));</td></tr>
+<tr><th id="69">69</th><td>	}</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td>    <i>/* sin(Inf or NaN) is NaN */</i></td></tr>
+<tr><th id="72">72</th><td>	<b>else</b> <b>if</b> (<a class="local col5 ref" href="#5ix" title='ix' data-ref="5ix">ix</a>&gt;=<var>0x7f800000</var>) <b>return</b> <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>-<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>    <i>/* general argument reduction needed */</i></td></tr>
+<tr><th id="75">75</th><td>	<b>else</b> {</td></tr>
+<tr><th id="76">76</th><td>	    <a class="local col3 ref" href="#3n" title='n' data-ref="3n">n</a> = <a class="ref" href="e_rem_pio2f.c.html#__ieee754_rem_pio2f" title='__ieee754_rem_pio2f' data-ref="__ieee754_rem_pio2f">__ieee754_rem_pio2f</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>,&amp;<a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a>);</td></tr>
+<tr><th id="77">77</th><td>	    <b>switch</b>(<a class="local col3 ref" href="#3n" title='n' data-ref="3n">n</a>&amp;<var>3</var>) {</td></tr>
+<tr><th id="78">78</th><td>		<b>case</b> <var>0</var>: <b>return</b>  <a class="ref" href="k_sinf.c.html#__kernel_sindf" title='__kernel_sindf' data-ref="__kernel_sindf">__kernel_sindf</a>(<a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a>);</td></tr>
+<tr><th id="79">79</th><td>		<b>case</b> <var>1</var>: <b>return</b>  <a class="ref" href="k_cosf.c.html#__kernel_cosdf" title='__kernel_cosdf' data-ref="__kernel_cosdf">__kernel_cosdf</a>(<a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a>);</td></tr>
+<tr><th id="80">80</th><td>		<b>case</b> <var>2</var>: <b>return</b>  <a class="ref" href="k_sinf.c.html#__kernel_sindf" title='__kernel_sindf' data-ref="__kernel_sindf">__kernel_sindf</a>(-<a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a>);</td></tr>
+<tr><th id="81">81</th><td>		<b>default</b>:</td></tr>
+<tr><th id="82">82</th><td>			<b>return</b> -<a class="ref" href="k_cosf.c.html#__kernel_cosdf" title='__kernel_cosdf' data-ref="__kernel_cosdf">__kernel_cosdf</a>(<a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a>);</td></tr>
+<tr><th id="83">83</th><td>	    }</td></tr>
+<tr><th id="84">84</th><td>	}</td></tr>
+<tr><th id="85">85</th><td>}</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

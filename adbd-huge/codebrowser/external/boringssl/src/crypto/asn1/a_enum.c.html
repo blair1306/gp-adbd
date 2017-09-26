@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>a_enum.c source code [codebrowser/external/boringssl/src/crypto/asn1/a_enum.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/asn1/a_enum.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>asn1</a>/<a href='a_enum.c.html'>a_enum.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/asn1.h.html">&lt;openssl/asn1.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><i>/* </i></td></tr>
+<tr><th id="66">66</th><td><i> * Code for ENUMERATED type: identical to INTEGER apart from a different tag.</i></td></tr>
+<tr><th id="67">67</th><td><i> * for comments on encoding see a_int.c</i></td></tr>
+<tr><th id="68">68</th><td><i> */</i></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><em>int</em> <dfn class="decl def" id="ASN1_ENUMERATED_set" title='ASN1_ENUMERATED_set' data-ref="ASN1_ENUMERATED_set">ASN1_ENUMERATED_set</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#ASN1_ENUMERATED" title='ASN1_ENUMERATED' data-type='struct asn1_string_st' data-ref="ASN1_ENUMERATED">ASN1_ENUMERATED</a> *<dfn class="local col1 decl" id="1a" title='a' data-type='ASN1_ENUMERATED *' data-ref="1a">a</dfn>, <em>long</em> <dfn class="local col2 decl" id="2v" title='v' data-type='long' data-ref="2v">v</dfn>)</td></tr>
+<tr><th id="71">71</th><td>	{</td></tr>
+<tr><th id="72">72</th><td>	<em>int</em> <dfn class="local col3 decl" id="3j" title='j' data-type='int' data-ref="3j">j</dfn>,<dfn class="local col4 decl" id="4k" title='k' data-type='int' data-ref="4k">k</dfn>;</td></tr>
+<tr><th id="73">73</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col5 decl" id="5i" title='i' data-type='unsigned int' data-ref="5i">i</dfn>;</td></tr>
+<tr><th id="74">74</th><td>	<em>unsigned</em> <em>char</em> <dfn class="local col6 decl" id="6buf" title='buf' data-type='unsigned char [9]' data-ref="6buf">buf</dfn>[<b>sizeof</b>(<em>long</em>)+<var>1</var>];</td></tr>
+<tr><th id="75">75</th><td>	<em>long</em> <dfn class="local col7 decl" id="7d" title='d' data-type='long' data-ref="7d">d</dfn>;</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td>	<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::type" title='asn1_string_st::type' data-ref="asn1_string_st::type">type</a>=<a class="macro" href="../../include/openssl/asn1.h.html#101" title="10" data-ref="_M/V_ASN1_ENUMERATED">V_ASN1_ENUMERATED</a>;</td></tr>
+<tr><th id="78">78</th><td>	<b>if</b> (<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a> &lt; (<em>int</em>)(<b>sizeof</b>(<em>long</em>)+<var>1</var>))</td></tr>
+<tr><th id="79">79</th><td>		{</td></tr>
+<tr><th id="80">80</th><td>		<b>if</b> (<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="81">81</th><td>			<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>);</td></tr>
+<tr><th id="82">82</th><td>		<b>if</b> ((<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>=(<em>unsigned</em> <em>char</em> *)<a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<b>sizeof</b>(<em>long</em>)+<var>1</var>)) != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="83">83</th><td>			<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>((<em>char</em> *)<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>,<var>0</var>,<b>sizeof</b>(<em>long</em>)+<var>1</var>);</td></tr>
+<tr><th id="84">84</th><td>		}</td></tr>
+<tr><th id="85">85</th><td>	<b>if</b> (<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="86">86</th><td>		{</td></tr>
+<tr><th id="87">87</th><td>		<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_ASN1, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/asn1/a_enum.c&quot;, 87)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(ASN1, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="88">88</th><td>		<b>return</b>(<var>0</var>);</td></tr>
+<tr><th id="89">89</th><td>		}</td></tr>
+<tr><th id="90">90</th><td>	<a class="local col7 ref" href="#7d" title='d' data-ref="7d">d</a>=<a class="local col2 ref" href="#2v" title='v' data-ref="2v">v</a>;</td></tr>
+<tr><th id="91">91</th><td>	<b>if</b> (<a class="local col7 ref" href="#7d" title='d' data-ref="7d">d</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="92">92</th><td>		{</td></tr>
+<tr><th id="93">93</th><td>		<a class="local col7 ref" href="#7d" title='d' data-ref="7d">d</a>= -<a class="local col7 ref" href="#7d" title='d' data-ref="7d">d</a>;</td></tr>
+<tr><th id="94">94</th><td>		<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::type" title='asn1_string_st::type' data-ref="asn1_string_st::type">type</a>=<a class="macro" href="../../include/openssl/asn1.h.html#102" title="(10 | 0x100)" data-ref="_M/V_ASN1_NEG_ENUMERATED">V_ASN1_NEG_ENUMERATED</a>;</td></tr>
+<tr><th id="95">95</th><td>		}</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td>	<b>for</b> (<a class="local col5 ref" href="#5i" title='i' data-ref="5i">i</a>=<var>0</var>; <a class="local col5 ref" href="#5i" title='i' data-ref="5i">i</a>&lt;<b>sizeof</b>(<em>long</em>); <a class="local col5 ref" href="#5i" title='i' data-ref="5i">i</a>++)</td></tr>
+<tr><th id="98">98</th><td>		{</td></tr>
+<tr><th id="99">99</th><td>		<b>if</b> (<a class="local col7 ref" href="#7d" title='d' data-ref="7d">d</a> == <var>0</var>) <b>break</b>;</td></tr>
+<tr><th id="100">100</th><td>		<a class="local col6 ref" href="#6buf" title='buf' data-ref="6buf">buf</a>[<a class="local col5 ref" href="#5i" title='i' data-ref="5i">i</a>]=(<em>int</em>)<a class="local col7 ref" href="#7d" title='d' data-ref="7d">d</a>&amp;<var>0xff</var>;</td></tr>
+<tr><th id="101">101</th><td>		<a class="local col7 ref" href="#7d" title='d' data-ref="7d">d</a>&gt;&gt;=<var>8</var>;</td></tr>
+<tr><th id="102">102</th><td>		}</td></tr>
+<tr><th id="103">103</th><td>	<a class="local col3 ref" href="#3j" title='j' data-ref="3j">j</a>=<var>0</var>;</td></tr>
+<tr><th id="104">104</th><td>	<b>for</b> (<a class="local col4 ref" href="#4k" title='k' data-ref="4k">k</a>=<a class="local col5 ref" href="#5i" title='i' data-ref="5i">i</a>-<var>1</var>; <a class="local col4 ref" href="#4k" title='k' data-ref="4k">k</a> &gt;=<var>0</var>; <a class="local col4 ref" href="#4k" title='k' data-ref="4k">k</a>--)</td></tr>
+<tr><th id="105">105</th><td>		<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>[<a class="local col3 ref" href="#3j" title='j' data-ref="3j">j</a>++]=<a class="local col6 ref" href="#6buf" title='buf' data-ref="6buf">buf</a>[<a class="local col4 ref" href="#4k" title='k' data-ref="4k">k</a>];</td></tr>
+<tr><th id="106">106</th><td>	<a class="local col1 ref" href="#1a" title='a' data-ref="1a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>=<a class="local col3 ref" href="#3j" title='j' data-ref="3j">j</a>;</td></tr>
+<tr><th id="107">107</th><td>	<b>return</b>(<var>1</var>);</td></tr>
+<tr><th id="108">108</th><td>	}</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><em>long</em> <dfn class="decl def" id="ASN1_ENUMERATED_get" title='ASN1_ENUMERATED_get' data-ref="ASN1_ENUMERATED_get">ASN1_ENUMERATED_get</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#ASN1_ENUMERATED" title='ASN1_ENUMERATED' data-type='struct asn1_string_st' data-ref="ASN1_ENUMERATED">ASN1_ENUMERATED</a> *<dfn class="local col8 decl" id="8a" title='a' data-type='ASN1_ENUMERATED *' data-ref="8a">a</dfn>)</td></tr>
+<tr><th id="111">111</th><td>	{</td></tr>
+<tr><th id="112">112</th><td>	<em>int</em> <dfn class="local col9 decl" id="9neg" title='neg' data-type='int' data-ref="9neg">neg</dfn>=<var>0</var>,<dfn class="local col0 decl" id="10i" title='i' data-type='int' data-ref="10i">i</dfn>;</td></tr>
+<tr><th id="113">113</th><td>	<em>long</em> <dfn class="local col1 decl" id="11r" title='r' data-type='long' data-ref="11r">r</dfn>=<var>0</var>;</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td>	<b>if</b> (<a class="local col8 ref" href="#8a" title='a' data-ref="8a">a</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>return</b>(<var>0L</var>);</td></tr>
+<tr><th id="116">116</th><td>	<a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a>=<a class="local col8 ref" href="#8a" title='a' data-ref="8a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::type" title='asn1_string_st::type' data-ref="asn1_string_st::type">type</a>;</td></tr>
+<tr><th id="117">117</th><td>	<b>if</b> (<a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a> == <a class="macro" href="../../include/openssl/asn1.h.html#102" title="(10 | 0x100)" data-ref="_M/V_ASN1_NEG_ENUMERATED">V_ASN1_NEG_ENUMERATED</a>)</td></tr>
+<tr><th id="118">118</th><td>		<a class="local col9 ref" href="#9neg" title='neg' data-ref="9neg">neg</a>=<var>1</var>;</td></tr>
+<tr><th id="119">119</th><td>	<b>else</b> <b>if</b> (<a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a> != <a class="macro" href="../../include/openssl/asn1.h.html#101" title="10" data-ref="_M/V_ASN1_ENUMERATED">V_ASN1_ENUMERATED</a>)</td></tr>
+<tr><th id="120">120</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="121">121</th><td>	</td></tr>
+<tr><th id="122">122</th><td>	<b>if</b> (<a class="local col8 ref" href="#8a" title='a' data-ref="8a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a> &gt; (<em>int</em>)<b>sizeof</b>(<em>long</em>))</td></tr>
+<tr><th id="123">123</th><td>		{</td></tr>
+<tr><th id="124">124</th><td>		<i>/* hmm... a bit ugly */</i></td></tr>
+<tr><th id="125">125</th><td>		<b>return</b>(<var>0xffffffffL</var>);</td></tr>
+<tr><th id="126">126</th><td>		}</td></tr>
+<tr><th id="127">127</th><td>	<b>if</b> (<a class="local col8 ref" href="#8a" title='a' data-ref="8a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="128">128</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td>	<b>for</b> (<a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a>=<var>0</var>; <a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a>&lt;<a class="local col8 ref" href="#8a" title='a' data-ref="8a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>; <a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a>++)</td></tr>
+<tr><th id="131">131</th><td>		{</td></tr>
+<tr><th id="132">132</th><td>		<a class="local col1 ref" href="#11r" title='r' data-ref="11r">r</a>&lt;&lt;=<var>8</var>;</td></tr>
+<tr><th id="133">133</th><td>		<a class="local col1 ref" href="#11r" title='r' data-ref="11r">r</a>|=(<em>unsigned</em> <em>char</em>)<a class="local col8 ref" href="#8a" title='a' data-ref="8a">a</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>[<a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a>];</td></tr>
+<tr><th id="134">134</th><td>		}</td></tr>
+<tr><th id="135">135</th><td>	<b>if</b> (<a class="local col9 ref" href="#9neg" title='neg' data-ref="9neg">neg</a>) <a class="local col1 ref" href="#11r" title='r' data-ref="11r">r</a>= -<a class="local col1 ref" href="#11r" title='r' data-ref="11r">r</a>;</td></tr>
+<tr><th id="136">136</th><td>	<b>return</b>(<a class="local col1 ref" href="#11r" title='r' data-ref="11r">r</a>);</td></tr>
+<tr><th id="137">137</th><td>	}</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td><a class="typedef" href="../../include/openssl/base.h.html#ASN1_ENUMERATED" title='ASN1_ENUMERATED' data-type='struct asn1_string_st' data-ref="ASN1_ENUMERATED">ASN1_ENUMERATED</a> *<dfn class="decl def" id="BN_to_ASN1_ENUMERATED" title='BN_to_ASN1_ENUMERATED' data-ref="BN_to_ASN1_ENUMERATED">BN_to_ASN1_ENUMERATED</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="12bn" title='bn' data-type='BIGNUM *' data-ref="12bn">bn</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ENUMERATED" title='ASN1_ENUMERATED' data-type='struct asn1_string_st' data-ref="ASN1_ENUMERATED">ASN1_ENUMERATED</a> *<dfn class="local col3 decl" id="13ai" title='ai' data-type='ASN1_ENUMERATED *' data-ref="13ai">ai</dfn>)</td></tr>
+<tr><th id="140">140</th><td>	{</td></tr>
+<tr><th id="141">141</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#ASN1_ENUMERATED" title='ASN1_ENUMERATED' data-type='struct asn1_string_st' data-ref="ASN1_ENUMERATED">ASN1_ENUMERATED</a> *<dfn class="local col4 decl" id="14ret" title='ret' data-type='ASN1_ENUMERATED *' data-ref="14ret">ret</dfn>;</td></tr>
+<tr><th id="142">142</th><td>	<em>int</em> <dfn class="local col5 decl" id="15len" title='len' data-type='int' data-ref="15len">len</dfn>,<dfn class="local col6 decl" id="16j" title='j' data-type='int' data-ref="16j">j</dfn>;</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td>	<b>if</b> (<a class="local col3 ref" href="#13ai" title='ai' data-ref="13ai">ai</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="145">145</th><td>		<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>=<a class="macro" href="../../include/openssl/asn1.h.html#557" title="(ASN1_ENUMERATED *) ASN1_STRING_type_new(10)" data-ref="_M/M_ASN1_ENUMERATED_new">M_ASN1_ENUMERATED_new</a>();</td></tr>
+<tr><th id="146">146</th><td>	<b>else</b></td></tr>
+<tr><th id="147">147</th><td>		<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>=<a class="local col3 ref" href="#13ai" title='ai' data-ref="13ai">ai</a>;</td></tr>
+<tr><th id="148">148</th><td>	<b>if</b> (<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="149">149</th><td>		{</td></tr>
+<tr><th id="150">150</th><td>		<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_ASN1, 0, 156, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/asn1/a_enum.c&quot;, 150)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(ASN1, <a class="macro" href="../../include/openssl/asn1.h.html#1135" title="156" data-ref="_M/ASN1_R_NESTED_ASN1_ERROR">ASN1_R_NESTED_ASN1_ERROR</a>);</td></tr>
+<tr><th id="151">151</th><td>		<b>goto</b> <a class="lbl" href="#17err" data-ref="17err">err</a>;</td></tr>
+<tr><th id="152">152</th><td>		}</td></tr>
+<tr><th id="153">153</th><td>	<b>if</b>(<a class="ref" href="../../include/openssl/bn.h.html#BN_is_negative" title='BN_is_negative' data-ref="BN_is_negative">BN_is_negative</a>(<a class="local col2 ref" href="#12bn" title='bn' data-ref="12bn">bn</a>)) <a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::type" title='asn1_string_st::type' data-ref="asn1_string_st::type">type</a> = <a class="macro" href="../../include/openssl/asn1.h.html#102" title="(10 | 0x100)" data-ref="_M/V_ASN1_NEG_ENUMERATED">V_ASN1_NEG_ENUMERATED</a>;</td></tr>
+<tr><th id="154">154</th><td>	<b>else</b> <a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::type" title='asn1_string_st::type' data-ref="asn1_string_st::type">type</a>=<a class="macro" href="../../include/openssl/asn1.h.html#101" title="10" data-ref="_M/V_ASN1_ENUMERATED">V_ASN1_ENUMERATED</a>;</td></tr>
+<tr><th id="155">155</th><td>	<a class="local col6 ref" href="#16j" title='j' data-ref="16j">j</a>=<a class="ref" href="../../include/openssl/bn.h.html#BN_num_bits" title='BN_num_bits' data-ref="BN_num_bits">BN_num_bits</a>(<a class="local col2 ref" href="#12bn" title='bn' data-ref="12bn">bn</a>);</td></tr>
+<tr><th id="156">156</th><td>	<a class="local col5 ref" href="#15len" title='len' data-ref="15len">len</a>=((<a class="local col6 ref" href="#16j" title='j' data-ref="16j">j</a> == <var>0</var>)?<var>0</var>:((<a class="local col6 ref" href="#16j" title='j' data-ref="16j">j</a>/<var>8</var>)+<var>1</var>));</td></tr>
+<tr><th id="157">157</th><td>	<b>if</b> (<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a> &lt; <a class="local col5 ref" href="#15len" title='len' data-ref="15len">len</a>+<var>4</var>)</td></tr>
+<tr><th id="158">158</th><td>		{</td></tr>
+<tr><th id="159">159</th><td>		<em>unsigned</em> <em>char</em> *<dfn class="local col8 decl" id="18new_data" title='new_data' data-type='unsigned char *' data-ref="18new_data">new_data</dfn>=<a class="macro" href="../../include/openssl/mem.h.html#79" title="realloc" data-ref="_M/OPENSSL_realloc">OPENSSL_realloc</a>(<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>, <a class="local col5 ref" href="#15len" title='len' data-ref="15len">len</a>+<var>4</var>);</td></tr>
+<tr><th id="160">160</th><td>		<b>if</b> (!<a class="local col8 ref" href="#18new_data" title='new_data' data-ref="18new_data">new_data</a>)</td></tr>
+<tr><th id="161">161</th><td>			{</td></tr>
+<tr><th id="162">162</th><td>			<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_ASN1, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/asn1/a_enum.c&quot;, 162)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(ASN1, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="163">163</th><td>			<b>goto</b> <a class="lbl" href="#17err" data-ref="17err">err</a>;</td></tr>
+<tr><th id="164">164</th><td>			}</td></tr>
+<tr><th id="165">165</th><td>		<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>=<a class="local col8 ref" href="#18new_data" title='new_data' data-ref="18new_data">new_data</a>;</td></tr>
+<tr><th id="166">166</th><td>		}</td></tr>
+<tr><th id="167">167</th><td></td></tr>
+<tr><th id="168">168</th><td>	<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>=<a class="ref" href="../../include/openssl/bn.h.html#BN_bn2bin" title='BN_bn2bin' data-ref="BN_bn2bin">BN_bn2bin</a>(<a class="local col2 ref" href="#12bn" title='bn' data-ref="12bn">bn</a>,<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>);</td></tr>
+<tr><th id="169">169</th><td>	<b>return</b>(<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>);</td></tr>
+<tr><th id="170">170</th><td><dfn class="lbl" id="17err" data-ref="17err">err</dfn>:</td></tr>
+<tr><th id="171">171</th><td>	<b>if</b> (<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a> != <a class="local col3 ref" href="#13ai" title='ai' data-ref="13ai">ai</a>) <a class="macro" href="../../include/openssl/asn1.h.html#559" title="ASN1_STRING_free((ASN1_STRING *)ret)" data-ref="_M/M_ASN1_ENUMERATED_free">M_ASN1_ENUMERATED_free</a>(<a class="local col4 ref" href="#14ret" title='ret' data-ref="14ret">ret</a>);</td></tr>
+<tr><th id="172">172</th><td>	<b>return</b>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="173">173</th><td>	}</td></tr>
+<tr><th id="174">174</th><td></td></tr>
+<tr><th id="175">175</th><td><a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="decl def" id="ASN1_ENUMERATED_to_BN" title='ASN1_ENUMERATED_to_BN' data-ref="ASN1_ENUMERATED_to_BN">ASN1_ENUMERATED_to_BN</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#ASN1_ENUMERATED" title='ASN1_ENUMERATED' data-type='struct asn1_string_st' data-ref="ASN1_ENUMERATED">ASN1_ENUMERATED</a> *<dfn class="local col9 decl" id="19ai" title='ai' data-type='ASN1_ENUMERATED *' data-ref="19ai">ai</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col0 decl" id="20bn" title='bn' data-type='BIGNUM *' data-ref="20bn">bn</dfn>)</td></tr>
+<tr><th id="176">176</th><td>	{</td></tr>
+<tr><th id="177">177</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="21ret" title='ret' data-type='BIGNUM *' data-ref="21ret">ret</dfn>;</td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td>	<b>if</b> ((<a class="local col1 ref" href="#21ret" title='ret' data-ref="21ret">ret</a>=<a class="ref" href="../../include/openssl/bn.h.html#BN_bin2bn" title='BN_bin2bn' data-ref="BN_bin2bn">BN_bin2bn</a>(<a class="local col9 ref" href="#19ai" title='ai' data-ref="19ai">ai</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>,<a class="local col9 ref" href="#19ai" title='ai' data-ref="19ai">ai</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>,<a class="local col0 ref" href="#20bn" title='bn' data-ref="20bn">bn</a>)) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="180">180</th><td>		<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_ASN1, 0, 105, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/asn1/a_enum.c&quot;, 180)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(ASN1, <a class="macro" href="../../include/openssl/asn1.h.html#1084" title="105" data-ref="_M/ASN1_R_BN_LIB">ASN1_R_BN_LIB</a>);</td></tr>
+<tr><th id="181">181</th><td>	<b>else</b> <b>if</b>(<a class="local col9 ref" href="#19ai" title='ai' data-ref="19ai">ai</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::type" title='asn1_string_st::type' data-ref="asn1_string_st::type">type</a> == <a class="macro" href="../../include/openssl/asn1.h.html#102" title="(10 | 0x100)" data-ref="_M/V_ASN1_NEG_ENUMERATED">V_ASN1_NEG_ENUMERATED</a>) <a class="ref" href="../../include/openssl/bn.h.html#BN_set_negative" title='BN_set_negative' data-ref="BN_set_negative">BN_set_negative</a>(<a class="local col1 ref" href="#21ret" title='ret' data-ref="21ret">ret</a>,<var>1</var>);</td></tr>
+<tr><th id="182">182</th><td>	<b>return</b>(<a class="local col1 ref" href="#21ret" title='ret' data-ref="21ret">ret</a>);</td></tr>
+<tr><th id="183">183</th><td>	}</td></tr>
+<tr><th id="184">184</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

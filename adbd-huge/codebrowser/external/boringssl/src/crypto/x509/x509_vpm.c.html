@@ -1,0 +1,690 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>x509_vpm.c source code [codebrowser/external/boringssl/src/crypto/x509/x509_vpm.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/x509/x509_vpm.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>x509</a>/<a href='x509_vpm.c.html'>x509_vpm.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL</i></td></tr>
+<tr><th id="2">2</th><td><i> * project 2004. */</i></td></tr>
+<tr><th id="3">3</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="4">4</th><td><i> * Copyright (c) 2004 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="5">5</th><td><i> *</i></td></tr>
+<tr><th id="6">6</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="7">7</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="8">8</th><td><i> * are met:</i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer. </i></td></tr>
+<tr><th id="12">12</th><td><i> *</i></td></tr>
+<tr><th id="13">13</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="14">14</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="15">15</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="16">16</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="17">17</th><td><i> *</i></td></tr>
+<tr><th id="18">18</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="19">19</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="20">20</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="21">21</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="22">22</th><td><i> *</i></td></tr>
+<tr><th id="23">23</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="24">24</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="25">25</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="26">26</th><td><i> *    licensing@OpenSSL.org.</i></td></tr>
+<tr><th id="27">27</th><td><i> *</i></td></tr>
+<tr><th id="28">28</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="29">29</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="30">30</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="31">31</th><td><i> *</i></td></tr>
+<tr><th id="32">32</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="33">33</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="34">34</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="35">35</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="36">36</th><td><i> *</i></td></tr>
+<tr><th id="37">37</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="38">38</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="39">39</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="40">40</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="41">41</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="42">42</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="43">43</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="44">44</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="45">45</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="46">46</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="47">47</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="48">48</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="49">49</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="50">50</th><td><i> *</i></td></tr>
+<tr><th id="51">51</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="52">52</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="53">53</th><td><i> * Hudson (tjh@cryptsoft.com). */</i></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/buf.h.html">&lt;openssl/buf.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td><u>#include <a href="../../include/openssl/lhash.h.html">&lt;openssl/lhash.h&gt;</a></u></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="../../include/openssl/obj.h.html">&lt;openssl/obj.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/stack.h.html">&lt;openssl/stack.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/x509.h.html">&lt;openssl/x509.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../include/openssl/x509v3.h.html">&lt;openssl/x509v3.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><u>#include <a href="vpm_int.h.html">"vpm_int.h"</a></u></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><i>/* X509_VERIFY_PARAM functions */</i></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><u>#define <dfn class="macro" id="_M/SET_HOST" data-ref="_M/SET_HOST">SET_HOST</dfn> 0</u></td></tr>
+<tr><th id="71">71</th><td><u>#define <dfn class="macro" id="_M/ADD_HOST" data-ref="_M/ADD_HOST">ADD_HOST</dfn> 1</u></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><em>static</em> <em>char</em> *<dfn class="tu decl def" id="str_copy" title='str_copy' data-type='char * str_copy(char * s)' data-ref="str_copy">str_copy</dfn>(<em>char</em> *<dfn class="local col1 decl" id="1s" title='s' data-type='char *' data-ref="1s">s</dfn>) { <b>return</b> <a class="ref" href="../../include/openssl/mem.h.html#OPENSSL_strdup" title='OPENSSL_strdup' data-ref="OPENSSL_strdup">OPENSSL_strdup</a>(<a class="local col1 ref" href="#1s" title='s' data-ref="1s">s</a>); }</td></tr>
+<tr><th id="74">74</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="str_free" title='str_free' data-type='void str_free(char * s)' data-ref="str_free">str_free</dfn>(<em>char</em> *<dfn class="local col2 decl" id="2s" title='s' data-type='char *' data-ref="2s">s</dfn>) { <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col2 ref" href="#2s" title='s' data-ref="2s">s</a>); }</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><u>#define <dfn class="macro" id="_M/string_stack_free" data-ref="_M/string_stack_free">string_stack_free</dfn>(sk) sk_OPENSSL_STRING_pop_free(sk, <a class="tu ref" href="#str_free" title='str_free' data-use='r' data-ref="str_free">str_free</a>)</u></td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="int_x509_param_set_hosts" title='int_x509_param_set_hosts' data-type='int int_x509_param_set_hosts(X509_VERIFY_PARAM_ID * id, int mode, const char * name, size_t namelen)' data-ref="int_x509_param_set_hosts">int_x509_param_set_hosts</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_ID" title='X509_VERIFY_PARAM_ID' data-type='struct X509_VERIFY_PARAM_ID_st' data-ref="X509_VERIFY_PARAM_ID">X509_VERIFY_PARAM_ID</a> *<dfn class="local col3 decl" id="3id" title='id' data-type='X509_VERIFY_PARAM_ID *' data-ref="3id">id</dfn>, <em>int</em> <dfn class="local col4 decl" id="4mode" title='mode' data-type='int' data-ref="4mode">mode</dfn>,</td></tr>
+<tr><th id="79">79</th><td>				    <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="5name" title='name' data-type='const char *' data-ref="5name">name</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="6namelen" title='namelen' data-type='size_t' data-ref="6namelen">namelen</dfn>)</td></tr>
+<tr><th id="80">80</th><td>	{</td></tr>
+<tr><th id="81">81</th><td>	<em>char</em> *<dfn class="local col7 decl" id="7copy" title='copy' data-type='char *' data-ref="7copy">copy</dfn>;</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td>	<i>/*</i></td></tr>
+<tr><th id="84">84</th><td><i>	 * Refuse names with embedded NUL bytes.</i></td></tr>
+<tr><th id="85">85</th><td><i>	 * XXX: Do we need to push an error onto the error stack?</i></td></tr>
+<tr><th id="86">86</th><td><i>	 */</i></td></tr>
+<tr><th id="87">87</th><td>	<b>if</b> (<a class="local col5 ref" href="#5name" title='name' data-ref="5name">name</a> &amp;&amp; <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memchr" title='memchr' data-ref="memchr">memchr</a>(<a class="local col5 ref" href="#5name" title='name' data-ref="5name">name</a>, <kbd>'\0'</kbd>, <a class="local col6 ref" href="#6namelen" title='namelen' data-ref="6namelen">namelen</a>))</td></tr>
+<tr><th id="88">88</th><td>		 <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td>	<b>if</b> (<a class="local col4 ref" href="#4mode" title='mode' data-ref="4mode">mode</a> == <a class="macro" href="#70" title="0" data-ref="_M/SET_HOST">SET_HOST</a> &amp;&amp; <a class="local col3 ref" href="#3id" title='id' data-ref="3id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>)</td></tr>
+<tr><th id="91">91</th><td>		{</td></tr>
+<tr><th id="92">92</th><td>		<a class="macro" href="#76" title="sk_pop_free( ((_STACK *) (1 ? (id-&gt;hosts) : (struct stack_st_OPENSSL_STRING *)0)), ((void (*)(void *)) (1 ? (str_free) : (void (*)(OPENSSL_STRING))0)))" data-ref="_M/string_stack_free">string_stack_free</a>(<a class="local col3 ref" href="#3id" title='id' data-ref="3id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>);</td></tr>
+<tr><th id="93">93</th><td>		<a class="local col3 ref" href="#3id" title='id' data-ref="3id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="94">94</th><td>		}</td></tr>
+<tr><th id="95">95</th><td>	<b>if</b> (<a class="local col5 ref" href="#5name" title='name' data-ref="5name">name</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || <a class="local col6 ref" href="#6namelen" title='namelen' data-ref="6namelen">namelen</a> == <var>0</var>)</td></tr>
+<tr><th id="96">96</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td>	<a class="local col7 ref" href="#7copy" title='copy' data-ref="7copy">copy</a> = <a class="ref" href="../../include/openssl/buf.h.html#BUF_strndup" title='BUF_strndup' data-ref="BUF_strndup">BUF_strndup</a>(<a class="local col5 ref" href="#5name" title='name' data-ref="5name">name</a>, <a class="local col6 ref" href="#6namelen" title='namelen' data-ref="6namelen">namelen</a>);</td></tr>
+<tr><th id="99">99</th><td>	<b>if</b> (<a class="local col7 ref" href="#7copy" title='copy' data-ref="7copy">copy</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="100">100</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td>	<b>if</b> (<a class="local col3 ref" href="#3id" title='id' data-ref="3id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> &amp;&amp;</td></tr>
+<tr><th id="103">103</th><td>	    (<a class="local col3 ref" href="#3id" title='id' data-ref="3id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#3774" title="((struct stack_st_OPENSSL_STRING *)sk_new_null())" data-ref="_M/sk_OPENSSL_STRING_new_null">sk_OPENSSL_STRING_new_null</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="104">104</th><td>		{</td></tr>
+<tr><th id="105">105</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col7 ref" href="#7copy" title='copy' data-ref="7copy">copy</a>);</td></tr>
+<tr><th id="106">106</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="107">107</th><td>		}</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td>	<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#3820" title="sk_push(((_STACK *) (1 ? (id-&gt;hosts) : (struct stack_st_OPENSSL_STRING *)0)), ((void *) (1 ? (copy) : (OPENSSL_STRING)0)))" data-ref="_M/sk_OPENSSL_STRING_push">sk_OPENSSL_STRING_push</a>(<a class="local col3 ref" href="#3id" title='id' data-ref="3id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>, <a class="local col7 ref" href="#7copy" title='copy' data-ref="7copy">copy</a>))</td></tr>
+<tr><th id="110">110</th><td>		{</td></tr>
+<tr><th id="111">111</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col7 ref" href="#7copy" title='copy' data-ref="7copy">copy</a>);</td></tr>
+<tr><th id="112">112</th><td>		<b>if</b> (<a class="macro" href="../../include/openssl/stack_macros.h.html#3776" title="sk_num(((_STACK *) (1 ? (id-&gt;hosts) : (struct stack_st_OPENSSL_STRING *)0)))" data-ref="_M/sk_OPENSSL_STRING_num">sk_OPENSSL_STRING_num</a>(<a class="local col3 ref" href="#3id" title='id' data-ref="3id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>) == <var>0</var>)</td></tr>
+<tr><th id="113">113</th><td>			{</td></tr>
+<tr><th id="114">114</th><td>			<a class="macro" href="../../include/openssl/stack_macros.h.html#3791" title="sk_free(((_STACK *) (1 ? (id-&gt;hosts) : (struct stack_st_OPENSSL_STRING *)0)))" data-ref="_M/sk_OPENSSL_STRING_free">sk_OPENSSL_STRING_free</a>(<a class="local col3 ref" href="#3id" title='id' data-ref="3id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>);</td></tr>
+<tr><th id="115">115</th><td>			<a class="local col3 ref" href="#3id" title='id' data-ref="3id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="116">116</th><td>			}</td></tr>
+<tr><th id="117">117</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="118">118</th><td>		}</td></tr>
+<tr><th id="119">119</th><td></td></tr>
+<tr><th id="120">120</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="121">121</th><td>	}</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="x509_verify_param_zero" title='x509_verify_param_zero' data-type='void x509_verify_param_zero(X509_VERIFY_PARAM * param)' data-ref="x509_verify_param_zero">x509_verify_param_zero</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col8 decl" id="8param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="8param">param</dfn>)</td></tr>
+<tr><th id="124">124</th><td>	{</td></tr>
+<tr><th id="125">125</th><td>	<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_ID" title='X509_VERIFY_PARAM_ID' data-type='struct X509_VERIFY_PARAM_ID_st' data-ref="X509_VERIFY_PARAM_ID">X509_VERIFY_PARAM_ID</a> *<dfn class="local col9 decl" id="9paramid" title='paramid' data-type='X509_VERIFY_PARAM_ID *' data-ref="9paramid">paramid</dfn>;</td></tr>
+<tr><th id="126">126</th><td>	<b>if</b> (!<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>)</td></tr>
+<tr><th id="127">127</th><td>		<b>return</b>;</td></tr>
+<tr><th id="128">128</th><td>	<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="129">129</th><td>	<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::purpose" title='X509_VERIFY_PARAM_st::purpose' data-ref="X509_VERIFY_PARAM_st::purpose">purpose</a> = <var>0</var>;</td></tr>
+<tr><th id="130">130</th><td>	<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::trust" title='X509_VERIFY_PARAM_st::trust' data-ref="X509_VERIFY_PARAM_st::trust">trust</a> = <var>0</var>;</td></tr>
+<tr><th id="131">131</th><td>	<i>/*param-&gt;inh_flags = X509_VP_FLAG_DEFAULT;*/</i></td></tr>
+<tr><th id="132">132</th><td>	<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::inh_flags" title='X509_VERIFY_PARAM_st::inh_flags' data-ref="X509_VERIFY_PARAM_st::inh_flags">inh_flags</a> = <var>0</var>;</td></tr>
+<tr><th id="133">133</th><td>	<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> = <var>0</var>;</td></tr>
+<tr><th id="134">134</th><td>	<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::depth" title='X509_VERIFY_PARAM_st::depth' data-ref="X509_VERIFY_PARAM_st::depth">depth</a> = -<var>1</var>;</td></tr>
+<tr><th id="135">135</th><td>	<b>if</b> (<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>)</td></tr>
+<tr><th id="136">136</th><td>		{</td></tr>
+<tr><th id="137">137</th><td>		<a class="macro" href="../../include/openssl/stack_macros.h.html#388" title="sk_pop_free( ((_STACK *) (1 ? (param-&gt;policies) : (struct stack_st_ASN1_OBJECT *)0)), ((void (*)(void *)) (1 ? (ASN1_OBJECT_free) : (void (*)(ASN1_OBJECT *))0)))" data-ref="_M/sk_ASN1_OBJECT_pop_free">sk_ASN1_OBJECT_pop_free</a>(<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>, <a class="ref" href="../../include/openssl/asn1.h.html#ASN1_OBJECT_free" title='ASN1_OBJECT_free' data-ref="ASN1_OBJECT_free">ASN1_OBJECT_free</a>);</td></tr>
+<tr><th id="138">138</th><td>		<a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="139">139</th><td>		}</td></tr>
+<tr><th id="140">140</th><td>	<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a> = <a class="local col8 ref" href="#8param" title='param' data-ref="8param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>;</td></tr>
+<tr><th id="141">141</th><td>	<b>if</b> (<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>)</td></tr>
+<tr><th id="142">142</th><td>		{</td></tr>
+<tr><th id="143">143</th><td>		<a class="macro" href="#76" title="sk_pop_free( ((_STACK *) (1 ? (paramid-&gt;hosts) : (struct stack_st_OPENSSL_STRING *)0)), ((void (*)(void *)) (1 ? (str_free) : (void (*)(OPENSSL_STRING))0)))" data-ref="_M/string_stack_free">string_stack_free</a>(<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>);</td></tr>
+<tr><th id="144">144</th><td>		<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="145">145</th><td>		}</td></tr>
+<tr><th id="146">146</th><td>	<b>if</b> (<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::peername" title='X509_VERIFY_PARAM_ID_st::peername' data-ref="X509_VERIFY_PARAM_ID_st::peername">peername</a>)</td></tr>
+<tr><th id="147">147</th><td>		{</td></tr>
+<tr><th id="148">148</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::peername" title='X509_VERIFY_PARAM_ID_st::peername' data-ref="X509_VERIFY_PARAM_ID_st::peername">peername</a>);</td></tr>
+<tr><th id="149">149</th><td>		<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::peername" title='X509_VERIFY_PARAM_ID_st::peername' data-ref="X509_VERIFY_PARAM_ID_st::peername">peername</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="150">150</th><td>		}</td></tr>
+<tr><th id="151">151</th><td>	<b>if</b> (<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::email" title='X509_VERIFY_PARAM_ID_st::email' data-ref="X509_VERIFY_PARAM_ID_st::email">email</a>)</td></tr>
+<tr><th id="152">152</th><td>		{</td></tr>
+<tr><th id="153">153</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::email" title='X509_VERIFY_PARAM_ID_st::email' data-ref="X509_VERIFY_PARAM_ID_st::email">email</a>);</td></tr>
+<tr><th id="154">154</th><td>		<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::email" title='X509_VERIFY_PARAM_ID_st::email' data-ref="X509_VERIFY_PARAM_ID_st::email">email</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="155">155</th><td>		<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::emaillen" title='X509_VERIFY_PARAM_ID_st::emaillen' data-ref="X509_VERIFY_PARAM_ID_st::emaillen">emaillen</a> = <var>0</var>;</td></tr>
+<tr><th id="156">156</th><td>		}</td></tr>
+<tr><th id="157">157</th><td>	<b>if</b> (<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::ip" title='X509_VERIFY_PARAM_ID_st::ip' data-ref="X509_VERIFY_PARAM_ID_st::ip">ip</a>)</td></tr>
+<tr><th id="158">158</th><td>		{</td></tr>
+<tr><th id="159">159</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::ip" title='X509_VERIFY_PARAM_ID_st::ip' data-ref="X509_VERIFY_PARAM_ID_st::ip">ip</a>);</td></tr>
+<tr><th id="160">160</th><td>		<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::ip" title='X509_VERIFY_PARAM_ID_st::ip' data-ref="X509_VERIFY_PARAM_ID_st::ip">ip</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="161">161</th><td>		<a class="local col9 ref" href="#9paramid" title='paramid' data-ref="9paramid">paramid</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::iplen" title='X509_VERIFY_PARAM_ID_st::iplen' data-ref="X509_VERIFY_PARAM_ID_st::iplen">iplen</a> = <var>0</var>;</td></tr>
+<tr><th id="162">162</th><td>		}</td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td>	}</td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td><a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="decl def" id="X509_VERIFY_PARAM_new" title='X509_VERIFY_PARAM_new' data-ref="X509_VERIFY_PARAM_new">X509_VERIFY_PARAM_new</dfn>(<em>void</em>)</td></tr>
+<tr><th id="167">167</th><td>	{</td></tr>
+<tr><th id="168">168</th><td>	<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col0 decl" id="10param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="10param">param</dfn>;</td></tr>
+<tr><th id="169">169</th><td>	<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_ID" title='X509_VERIFY_PARAM_ID' data-type='struct X509_VERIFY_PARAM_ID_st' data-ref="X509_VERIFY_PARAM_ID">X509_VERIFY_PARAM_ID</a> *<dfn class="local col1 decl" id="11paramid" title='paramid' data-type='X509_VERIFY_PARAM_ID *' data-ref="11paramid">paramid</dfn>;</td></tr>
+<tr><th id="170">170</th><td>	<a class="local col0 ref" href="#10param" title='param' data-ref="10param">param</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<b>sizeof</b>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a>));</td></tr>
+<tr><th id="171">171</th><td>	<b>if</b> (!<a class="local col0 ref" href="#10param" title='param' data-ref="10param">param</a>)</td></tr>
+<tr><th id="172">172</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="173">173</th><td>	<a class="local col1 ref" href="#11paramid" title='paramid' data-ref="11paramid">paramid</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<b>sizeof</b>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_ID" title='X509_VERIFY_PARAM_ID' data-type='struct X509_VERIFY_PARAM_ID_st' data-ref="X509_VERIFY_PARAM_ID">X509_VERIFY_PARAM_ID</a>));</td></tr>
+<tr><th id="174">174</th><td>	<b>if</b> (!<a class="local col1 ref" href="#11paramid" title='paramid' data-ref="11paramid">paramid</a>)</td></tr>
+<tr><th id="175">175</th><td>		{</td></tr>
+<tr><th id="176">176</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col0 ref" href="#10param" title='param' data-ref="10param">param</a>);</td></tr>
+<tr><th id="177">177</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="178">178</th><td>		}</td></tr>
+<tr><th id="179">179</th><td>	<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col0 ref" href="#10param" title='param' data-ref="10param">param</a>, <var>0</var>, <b>sizeof</b>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a>));</td></tr>
+<tr><th id="180">180</th><td>	<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col1 ref" href="#11paramid" title='paramid' data-ref="11paramid">paramid</a>, <var>0</var>, <b>sizeof</b>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_ID" title='X509_VERIFY_PARAM_ID' data-type='struct X509_VERIFY_PARAM_ID_st' data-ref="X509_VERIFY_PARAM_ID">X509_VERIFY_PARAM_ID</a>));</td></tr>
+<tr><th id="181">181</th><td>	<a class="local col0 ref" href="#10param" title='param' data-ref="10param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a> = <a class="local col1 ref" href="#11paramid" title='paramid' data-ref="11paramid">paramid</a>;</td></tr>
+<tr><th id="182">182</th><td>	<a class="tu ref" href="#x509_verify_param_zero" title='x509_verify_param_zero' data-use='c' data-ref="x509_verify_param_zero">x509_verify_param_zero</a>(<a class="local col0 ref" href="#10param" title='param' data-ref="10param">param</a>);</td></tr>
+<tr><th id="183">183</th><td>	<b>return</b> <a class="local col0 ref" href="#10param" title='param' data-ref="10param">param</a>;</td></tr>
+<tr><th id="184">184</th><td>	}</td></tr>
+<tr><th id="185">185</th><td></td></tr>
+<tr><th id="186">186</th><td><em>void</em> <dfn class="decl def" id="X509_VERIFY_PARAM_free" title='X509_VERIFY_PARAM_free' data-ref="X509_VERIFY_PARAM_free">X509_VERIFY_PARAM_free</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col2 decl" id="12param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="12param">param</dfn>)</td></tr>
+<tr><th id="187">187</th><td>	{</td></tr>
+<tr><th id="188">188</th><td>	<b>if</b> (<a class="local col2 ref" href="#12param" title='param' data-ref="12param">param</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="189">189</th><td>		<b>return</b>;</td></tr>
+<tr><th id="190">190</th><td>	<a class="tu ref" href="#x509_verify_param_zero" title='x509_verify_param_zero' data-use='c' data-ref="x509_verify_param_zero">x509_verify_param_zero</a>(<a class="local col2 ref" href="#12param" title='param' data-ref="12param">param</a>);</td></tr>
+<tr><th id="191">191</th><td>	<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col2 ref" href="#12param" title='param' data-ref="12param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>);</td></tr>
+<tr><th id="192">192</th><td>	<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col2 ref" href="#12param" title='param' data-ref="12param">param</a>);</td></tr>
+<tr><th id="193">193</th><td>	}</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><i>/* This function determines how parameters are "inherited" from one structure</i></td></tr>
+<tr><th id="196">196</th><td><i> * to another. There are several different ways this can happen.</i></td></tr>
+<tr><th id="197">197</th><td><i> *</i></td></tr>
+<tr><th id="198">198</th><td><i> * 1. If a child structure needs to have its values initialized from a parent</i></td></tr>
+<tr><th id="199">199</th><td><i> *    they are simply copied across. For example SSL_CTX copied to SSL.</i></td></tr>
+<tr><th id="200">200</th><td><i> * 2. If the structure should take on values only if they are currently unset.</i></td></tr>
+<tr><th id="201">201</th><td><i> *    For example the values in an SSL structure will take appropriate value</i></td></tr>
+<tr><th id="202">202</th><td><i> *    for SSL servers or clients but only if the application has not set new</i></td></tr>
+<tr><th id="203">203</th><td><i> *    ones.</i></td></tr>
+<tr><th id="204">204</th><td><i> *</i></td></tr>
+<tr><th id="205">205</th><td><i> * The "inh_flags" field determines how this function behaves. </i></td></tr>
+<tr><th id="206">206</th><td><i> *</i></td></tr>
+<tr><th id="207">207</th><td><i> * Normally any values which are set in the default are not copied from the</i></td></tr>
+<tr><th id="208">208</th><td><i> * destination and verify flags are ORed together.</i></td></tr>
+<tr><th id="209">209</th><td><i> *</i></td></tr>
+<tr><th id="210">210</th><td><i> * If X509_VP_FLAG_DEFAULT is set then anything set in the source is copied</i></td></tr>
+<tr><th id="211">211</th><td><i> * to the destination. Effectively the values in "to" become default values</i></td></tr>
+<tr><th id="212">212</th><td><i> * which will be used only if nothing new is set in "from".</i></td></tr>
+<tr><th id="213">213</th><td><i> *</i></td></tr>
+<tr><th id="214">214</th><td><i> * If X509_VP_FLAG_OVERWRITE is set then all value are copied across whether</i></td></tr>
+<tr><th id="215">215</th><td><i> * they are set or not. Flags is still Ored though.</i></td></tr>
+<tr><th id="216">216</th><td><i> *</i></td></tr>
+<tr><th id="217">217</th><td><i> * If X509_VP_FLAG_RESET_FLAGS is set then the flags value is copied instead</i></td></tr>
+<tr><th id="218">218</th><td><i> * of ORed.</i></td></tr>
+<tr><th id="219">219</th><td><i> *</i></td></tr>
+<tr><th id="220">220</th><td><i> * If X509_VP_FLAG_LOCKED is set then no values are copied.</i></td></tr>
+<tr><th id="221">221</th><td><i> *</i></td></tr>
+<tr><th id="222">222</th><td><i> * If X509_VP_FLAG_ONCE is set then the current inh_flags setting is zeroed</i></td></tr>
+<tr><th id="223">223</th><td><i> * after the next call.</i></td></tr>
+<tr><th id="224">224</th><td><i> */</i></td></tr>
+<tr><th id="225">225</th><td></td></tr>
+<tr><th id="226">226</th><td><i>/* Macro to test if a field should be copied from src to dest */</i></td></tr>
+<tr><th id="227">227</th><td></td></tr>
+<tr><th id="228">228</th><td><u>#define <dfn class="macro" id="_M/test_x509_verify_param_copy" data-ref="_M/test_x509_verify_param_copy">test_x509_verify_param_copy</dfn>(field, def) \</u></td></tr>
+<tr><th id="229">229</th><td><u>	(<a class="local col7 ref" href="#17to_overwrite" title='to_overwrite' data-ref="17to_overwrite">to_overwrite</a> || \</u></td></tr>
+<tr><th id="230">230</th><td><u>		((<a class="local col4 ref" href="#14src" title='src' data-ref="14src">src</a>-&gt;field != def) &amp;&amp; (<a class="local col6 ref" href="#16to_default" title='to_default' data-ref="16to_default">to_default</a> || (<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;field == def))))</u></td></tr>
+<tr><th id="231">231</th><td></td></tr>
+<tr><th id="232">232</th><td><i>/* As above but for ID fields */</i></td></tr>
+<tr><th id="233">233</th><td></td></tr>
+<tr><th id="234">234</th><td><u>#define <dfn class="macro" id="_M/test_x509_verify_param_copy_id" data-ref="_M/test_x509_verify_param_copy_id">test_x509_verify_param_copy_id</dfn>(idf, def) \</u></td></tr>
+<tr><th id="235">235</th><td><u>	test_x509_verify_param_copy(<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;idf, def)</u></td></tr>
+<tr><th id="236">236</th><td></td></tr>
+<tr><th id="237">237</th><td><i>/* Macro to test and copy a field if necessary */</i></td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td><u>#define <dfn class="macro" id="_M/x509_verify_param_copy" data-ref="_M/x509_verify_param_copy">x509_verify_param_copy</dfn>(field, def) \</u></td></tr>
+<tr><th id="240">240</th><td><u>	if (test_x509_verify_param_copy(field, def)) \</u></td></tr>
+<tr><th id="241">241</th><td><u>		<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;field = <a class="local col4 ref" href="#14src" title='src' data-ref="14src">src</a>-&gt;field</u></td></tr>
+<tr><th id="242">242</th><td></td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_inherit" title='X509_VERIFY_PARAM_inherit' data-ref="X509_VERIFY_PARAM_inherit">X509_VERIFY_PARAM_inherit</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col3 decl" id="13dest" title='dest' data-type='X509_VERIFY_PARAM *' data-ref="13dest">dest</dfn>,</td></tr>
+<tr><th id="245">245</th><td>						<em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col4 decl" id="14src" title='src' data-type='const X509_VERIFY_PARAM *' data-ref="14src">src</dfn>)</td></tr>
+<tr><th id="246">246</th><td>	{</td></tr>
+<tr><th id="247">247</th><td>	<em>unsigned</em> <em>long</em> <dfn class="local col5 decl" id="15inh_flags" title='inh_flags' data-type='unsigned long' data-ref="15inh_flags">inh_flags</dfn>;</td></tr>
+<tr><th id="248">248</th><td>	<em>int</em> <dfn class="local col6 decl" id="16to_default" title='to_default' data-type='int' data-ref="16to_default">to_default</dfn>, <dfn class="local col7 decl" id="17to_overwrite" title='to_overwrite' data-type='int' data-ref="17to_overwrite">to_overwrite</dfn>;</td></tr>
+<tr><th id="249">249</th><td>	<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_ID" title='X509_VERIFY_PARAM_ID' data-type='struct X509_VERIFY_PARAM_ID_st' data-ref="X509_VERIFY_PARAM_ID">X509_VERIFY_PARAM_ID</a> *<dfn class="local col8 decl" id="18id" title='id' data-type='X509_VERIFY_PARAM_ID *' data-ref="18id">id</dfn>;</td></tr>
+<tr><th id="250">250</th><td>	<b>if</b> (!<a class="local col4 ref" href="#14src" title='src' data-ref="14src">src</a>)</td></tr>
+<tr><th id="251">251</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="252">252</th><td>	<a class="local col8 ref" href="#18id" title='id' data-ref="18id">id</a> = <a class="local col4 ref" href="#14src" title='src' data-ref="14src">src</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>;</td></tr>
+<tr><th id="253">253</th><td>	<a class="local col5 ref" href="#15inh_flags" title='inh_flags' data-ref="15inh_flags">inh_flags</a> = <a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::inh_flags" title='X509_VERIFY_PARAM_st::inh_flags' data-ref="X509_VERIFY_PARAM_st::inh_flags">inh_flags</a> | <a class="local col4 ref" href="#14src" title='src' data-ref="14src">src</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::inh_flags" title='X509_VERIFY_PARAM_st::inh_flags' data-ref="X509_VERIFY_PARAM_st::inh_flags">inh_flags</a>;</td></tr>
+<tr><th id="254">254</th><td></td></tr>
+<tr><th id="255">255</th><td>	<b>if</b> (<a class="local col5 ref" href="#15inh_flags" title='inh_flags' data-ref="15inh_flags">inh_flags</a> &amp; <a class="macro" href="../../include/openssl/x509_vfy.h.html#419" title="0x10" data-ref="_M/X509_VP_FLAG_ONCE">X509_VP_FLAG_ONCE</a>)</td></tr>
+<tr><th id="256">256</th><td>		<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::inh_flags" title='X509_VERIFY_PARAM_st::inh_flags' data-ref="X509_VERIFY_PARAM_st::inh_flags">inh_flags</a> = <var>0</var>;</td></tr>
+<tr><th id="257">257</th><td></td></tr>
+<tr><th id="258">258</th><td>	<b>if</b> (<a class="local col5 ref" href="#15inh_flags" title='inh_flags' data-ref="15inh_flags">inh_flags</a> &amp; <a class="macro" href="../../include/openssl/x509_vfy.h.html#418" title="0x8" data-ref="_M/X509_VP_FLAG_LOCKED">X509_VP_FLAG_LOCKED</a>)</td></tr>
+<tr><th id="259">259</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="260">260</th><td></td></tr>
+<tr><th id="261">261</th><td>	<b>if</b> (<a class="local col5 ref" href="#15inh_flags" title='inh_flags' data-ref="15inh_flags">inh_flags</a> &amp; <a class="macro" href="../../include/openssl/x509_vfy.h.html#415" title="0x1" data-ref="_M/X509_VP_FLAG_DEFAULT">X509_VP_FLAG_DEFAULT</a>)</td></tr>
+<tr><th id="262">262</th><td>		<a class="local col6 ref" href="#16to_default" title='to_default' data-ref="16to_default">to_default</a> = <var>1</var>;</td></tr>
+<tr><th id="263">263</th><td>	<b>else</b></td></tr>
+<tr><th id="264">264</th><td>		<a class="local col6 ref" href="#16to_default" title='to_default' data-ref="16to_default">to_default</a> = <var>0</var>;</td></tr>
+<tr><th id="265">265</th><td></td></tr>
+<tr><th id="266">266</th><td>	<b>if</b> (<a class="local col5 ref" href="#15inh_flags" title='inh_flags' data-ref="15inh_flags">inh_flags</a> &amp; <a class="macro" href="../../include/openssl/x509_vfy.h.html#416" title="0x2" data-ref="_M/X509_VP_FLAG_OVERWRITE">X509_VP_FLAG_OVERWRITE</a>)</td></tr>
+<tr><th id="267">267</th><td>		<a class="local col7 ref" href="#17to_overwrite" title='to_overwrite' data-ref="17to_overwrite">to_overwrite</a> = <var>1</var>;</td></tr>
+<tr><th id="268">268</th><td>	<b>else</b></td></tr>
+<tr><th id="269">269</th><td>		<a class="local col7 ref" href="#17to_overwrite" title='to_overwrite' data-ref="17to_overwrite">to_overwrite</a> = <var>0</var>;</td></tr>
+<tr><th id="270">270</th><td></td></tr>
+<tr><th id="271">271</th><td>	<a class="macro" href="#239" title="if ((to_overwrite || ((src-&gt;purpose != 0) &amp;&amp; (to_default || (dest-&gt;purpose == 0))))) dest-&gt;purpose = src-&gt;purpose" data-ref="_M/x509_verify_param_copy">x509_verify_param_copy</a>(<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::purpose" title='X509_VERIFY_PARAM_st::purpose' data-ref="X509_VERIFY_PARAM_st::purpose">purpose</a>, <var>0</var>);</td></tr>
+<tr><th id="272">272</th><td>	<a class="macro" href="#239" title="if ((to_overwrite || ((src-&gt;trust != 0) &amp;&amp; (to_default || (dest-&gt;trust == 0))))) dest-&gt;trust = src-&gt;trust" data-ref="_M/x509_verify_param_copy">x509_verify_param_copy</a>(<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::trust" title='X509_VERIFY_PARAM_st::trust' data-ref="X509_VERIFY_PARAM_st::trust">trust</a>, <var>0</var>);</td></tr>
+<tr><th id="273">273</th><td>	<a class="macro" href="#239" title="if ((to_overwrite || ((src-&gt;depth != -1) &amp;&amp; (to_default || (dest-&gt;depth == -1))))) dest-&gt;depth = src-&gt;depth" data-ref="_M/x509_verify_param_copy">x509_verify_param_copy</a>(<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::depth" title='X509_VERIFY_PARAM_st::depth' data-ref="X509_VERIFY_PARAM_st::depth">depth</a>, -<var>1</var>);</td></tr>
+<tr><th id="274">274</th><td></td></tr>
+<tr><th id="275">275</th><td>	<i>/* If overwrite or check time not set, copy across */</i></td></tr>
+<tr><th id="276">276</th><td></td></tr>
+<tr><th id="277">277</th><td>	<b>if</b> (<a class="local col7 ref" href="#17to_overwrite" title='to_overwrite' data-ref="17to_overwrite">to_overwrite</a> || !(<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> &amp; <a class="macro" href="../../include/openssl/x509_vfy.h.html#376" title="0x2" data-ref="_M/X509_V_FLAG_USE_CHECK_TIME">X509_V_FLAG_USE_CHECK_TIME</a>))</td></tr>
+<tr><th id="278">278</th><td>		{</td></tr>
+<tr><th id="279">279</th><td>		<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::check_time" title='X509_VERIFY_PARAM_st::check_time' data-ref="X509_VERIFY_PARAM_st::check_time">check_time</a> = <a class="local col4 ref" href="#14src" title='src' data-ref="14src">src</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::check_time" title='X509_VERIFY_PARAM_st::check_time' data-ref="X509_VERIFY_PARAM_st::check_time">check_time</a>;</td></tr>
+<tr><th id="280">280</th><td>		<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> &amp;= ~<a class="macro" href="../../include/openssl/x509_vfy.h.html#376" title="0x2" data-ref="_M/X509_V_FLAG_USE_CHECK_TIME">X509_V_FLAG_USE_CHECK_TIME</a>;</td></tr>
+<tr><th id="281">281</th><td>		<i>/* Don't need to copy flag: that is done below */</i></td></tr>
+<tr><th id="282">282</th><td>		}</td></tr>
+<tr><th id="283">283</th><td></td></tr>
+<tr><th id="284">284</th><td>	<b>if</b> (<a class="local col5 ref" href="#15inh_flags" title='inh_flags' data-ref="15inh_flags">inh_flags</a> &amp; <a class="macro" href="../../include/openssl/x509_vfy.h.html#417" title="0x4" data-ref="_M/X509_VP_FLAG_RESET_FLAGS">X509_VP_FLAG_RESET_FLAGS</a>)</td></tr>
+<tr><th id="285">285</th><td>		<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> = <var>0</var>;</td></tr>
+<tr><th id="286">286</th><td></td></tr>
+<tr><th id="287">287</th><td>	<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> |= <a class="local col4 ref" href="#14src" title='src' data-ref="14src">src</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a>;</td></tr>
+<tr><th id="288">288</th><td></td></tr>
+<tr><th id="289">289</th><td>	<b>if</b> (<a class="macro" href="#228" title="(to_overwrite || ((src-&gt;policies != ((void*)0)) &amp;&amp; (to_default || (dest-&gt;policies == ((void*)0)))))" data-ref="_M/test_x509_verify_param_copy">test_x509_verify_param_copy</a>(<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>))</td></tr>
+<tr><th id="290">290</th><td>		{</td></tr>
+<tr><th id="291">291</th><td>		<b>if</b> (!<a class="ref" href="#X509_VERIFY_PARAM_set1_policies" title='X509_VERIFY_PARAM_set1_policies' data-ref="X509_VERIFY_PARAM_set1_policies">X509_VERIFY_PARAM_set1_policies</a>(<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>, <a class="local col4 ref" href="#14src" title='src' data-ref="14src">src</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>))</td></tr>
+<tr><th id="292">292</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="293">293</th><td>		}</td></tr>
+<tr><th id="294">294</th><td></td></tr>
+<tr><th id="295">295</th><td>	<i>/* Copy the host flags if and only if we're copying the host list */</i></td></tr>
+<tr><th id="296">296</th><td>	<b>if</b> (<a class="macro" href="#234" title="(to_overwrite || ((src-&gt;id-&gt;hosts != ((void*)0)) &amp;&amp; (to_default || (dest-&gt;id-&gt;hosts == ((void*)0)))))" data-ref="_M/test_x509_verify_param_copy_id">test_x509_verify_param_copy_id</a>(<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>))</td></tr>
+<tr><th id="297">297</th><td>		{</td></tr>
+<tr><th id="298">298</th><td>		<b>if</b> (<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>)</td></tr>
+<tr><th id="299">299</th><td>			{</td></tr>
+<tr><th id="300">300</th><td>			<a class="macro" href="#76" title="sk_pop_free( ((_STACK *) (1 ? (dest-&gt;id-&gt;hosts) : (struct stack_st_OPENSSL_STRING *)0)), ((void (*)(void *)) (1 ? (str_free) : (void (*)(OPENSSL_STRING))0)))" data-ref="_M/string_stack_free">string_stack_free</a>(<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>);</td></tr>
+<tr><th id="301">301</th><td>			<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="302">302</th><td>			}</td></tr>
+<tr><th id="303">303</th><td>		<b>if</b> (<a class="local col8 ref" href="#18id" title='id' data-ref="18id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>)</td></tr>
+<tr><th id="304">304</th><td>			{</td></tr>
+<tr><th id="305">305</th><td>			<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a> =</td></tr>
+<tr><th id="306">306</th><td>			    <a class="macro" href="../../include/openssl/stack_macros.h.html#3846" title="((struct stack_st_OPENSSL_STRING *)sk_deep_copy( ((const _STACK *) (1 ? (id-&gt;hosts) : (const struct stack_st_OPENSSL_STRING *)0)), ((void *(*)(void *)) (1 ? (str_copy) : (OPENSSL_STRING (*)(OPENSSL_STRING))0)), ((void (*)(void *)) (1 ? (str_free) : (void (*)(OPENSSL_STRING))0))))" data-ref="_M/sk_OPENSSL_STRING_deep_copy">sk_OPENSSL_STRING_deep_copy</a>(<a class="local col8 ref" href="#18id" title='id' data-ref="18id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a>,</td></tr>
+<tr><th id="307">307</th><td>							<a class="tu ref" href="#str_copy" title='str_copy' data-use='r' data-ref="str_copy">str_copy</a>, <a class="tu ref" href="#str_free" title='str_free' data-use='r' data-ref="str_free">str_free</a>);</td></tr>
+<tr><th id="308">308</th><td>			<b>if</b> (<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hosts" title='X509_VERIFY_PARAM_ID_st::hosts' data-ref="X509_VERIFY_PARAM_ID_st::hosts">hosts</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="309">309</th><td>				<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="310">310</th><td>			<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hostflags" title='X509_VERIFY_PARAM_ID_st::hostflags' data-ref="X509_VERIFY_PARAM_ID_st::hostflags">hostflags</a> = <a class="local col8 ref" href="#18id" title='id' data-ref="18id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hostflags" title='X509_VERIFY_PARAM_ID_st::hostflags' data-ref="X509_VERIFY_PARAM_ID_st::hostflags">hostflags</a>;</td></tr>
+<tr><th id="311">311</th><td>			}</td></tr>
+<tr><th id="312">312</th><td>		}</td></tr>
+<tr><th id="313">313</th><td></td></tr>
+<tr><th id="314">314</th><td>	<b>if</b> (<a class="macro" href="#234" title="(to_overwrite || ((src-&gt;id-&gt;email != ((void*)0)) &amp;&amp; (to_default || (dest-&gt;id-&gt;email == ((void*)0)))))" data-ref="_M/test_x509_verify_param_copy_id">test_x509_verify_param_copy_id</a>(<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::email" title='X509_VERIFY_PARAM_ID_st::email' data-ref="X509_VERIFY_PARAM_ID_st::email">email</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>))</td></tr>
+<tr><th id="315">315</th><td>		{</td></tr>
+<tr><th id="316">316</th><td>		<b>if</b> (!<a class="ref" href="#X509_VERIFY_PARAM_set1_email" title='X509_VERIFY_PARAM_set1_email' data-ref="X509_VERIFY_PARAM_set1_email">X509_VERIFY_PARAM_set1_email</a>(<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>, <a class="local col8 ref" href="#18id" title='id' data-ref="18id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::email" title='X509_VERIFY_PARAM_ID_st::email' data-ref="X509_VERIFY_PARAM_ID_st::email">email</a>, <a class="local col8 ref" href="#18id" title='id' data-ref="18id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::emaillen" title='X509_VERIFY_PARAM_ID_st::emaillen' data-ref="X509_VERIFY_PARAM_ID_st::emaillen">emaillen</a>))</td></tr>
+<tr><th id="317">317</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="318">318</th><td>		}</td></tr>
+<tr><th id="319">319</th><td></td></tr>
+<tr><th id="320">320</th><td>	<b>if</b> (<a class="macro" href="#234" title="(to_overwrite || ((src-&gt;id-&gt;ip != ((void*)0)) &amp;&amp; (to_default || (dest-&gt;id-&gt;ip == ((void*)0)))))" data-ref="_M/test_x509_verify_param_copy_id">test_x509_verify_param_copy_id</a>(<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::ip" title='X509_VERIFY_PARAM_ID_st::ip' data-ref="X509_VERIFY_PARAM_ID_st::ip">ip</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>))</td></tr>
+<tr><th id="321">321</th><td>		{</td></tr>
+<tr><th id="322">322</th><td>		<b>if</b> (!<a class="ref" href="#X509_VERIFY_PARAM_set1_ip" title='X509_VERIFY_PARAM_set1_ip' data-ref="X509_VERIFY_PARAM_set1_ip">X509_VERIFY_PARAM_set1_ip</a>(<a class="local col3 ref" href="#13dest" title='dest' data-ref="13dest">dest</a>, <a class="local col8 ref" href="#18id" title='id' data-ref="18id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::ip" title='X509_VERIFY_PARAM_ID_st::ip' data-ref="X509_VERIFY_PARAM_ID_st::ip">ip</a>, <a class="local col8 ref" href="#18id" title='id' data-ref="18id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::iplen" title='X509_VERIFY_PARAM_ID_st::iplen' data-ref="X509_VERIFY_PARAM_ID_st::iplen">iplen</a>))</td></tr>
+<tr><th id="323">323</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="324">324</th><td>		}</td></tr>
+<tr><th id="325">325</th><td></td></tr>
+<tr><th id="326">326</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="327">327</th><td>	}</td></tr>
+<tr><th id="328">328</th><td></td></tr>
+<tr><th id="329">329</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set1" title='X509_VERIFY_PARAM_set1' data-ref="X509_VERIFY_PARAM_set1">X509_VERIFY_PARAM_set1</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col9 decl" id="19to" title='to' data-type='X509_VERIFY_PARAM *' data-ref="19to">to</dfn>,</td></tr>
+<tr><th id="330">330</th><td>						<em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col0 decl" id="20from" title='from' data-type='const X509_VERIFY_PARAM *' data-ref="20from">from</dfn>)</td></tr>
+<tr><th id="331">331</th><td>	{</td></tr>
+<tr><th id="332">332</th><td>	<em>unsigned</em> <em>long</em> <dfn class="local col1 decl" id="21save_flags" title='save_flags' data-type='unsigned long' data-ref="21save_flags">save_flags</dfn> = <a class="local col9 ref" href="#19to" title='to' data-ref="19to">to</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::inh_flags" title='X509_VERIFY_PARAM_st::inh_flags' data-ref="X509_VERIFY_PARAM_st::inh_flags">inh_flags</a>;</td></tr>
+<tr><th id="333">333</th><td>	<em>int</em> <dfn class="local col2 decl" id="22ret" title='ret' data-type='int' data-ref="22ret">ret</dfn>;</td></tr>
+<tr><th id="334">334</th><td>	<a class="local col9 ref" href="#19to" title='to' data-ref="19to">to</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::inh_flags" title='X509_VERIFY_PARAM_st::inh_flags' data-ref="X509_VERIFY_PARAM_st::inh_flags">inh_flags</a> |= <a class="macro" href="../../include/openssl/x509_vfy.h.html#415" title="0x1" data-ref="_M/X509_VP_FLAG_DEFAULT">X509_VP_FLAG_DEFAULT</a>;</td></tr>
+<tr><th id="335">335</th><td>	<a class="local col2 ref" href="#22ret" title='ret' data-ref="22ret">ret</a> = <a class="ref" href="#X509_VERIFY_PARAM_inherit" title='X509_VERIFY_PARAM_inherit' data-ref="X509_VERIFY_PARAM_inherit">X509_VERIFY_PARAM_inherit</a>(<a class="local col9 ref" href="#19to" title='to' data-ref="19to">to</a>, <a class="local col0 ref" href="#20from" title='from' data-ref="20from">from</a>);</td></tr>
+<tr><th id="336">336</th><td>	<a class="local col9 ref" href="#19to" title='to' data-ref="19to">to</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::inh_flags" title='X509_VERIFY_PARAM_st::inh_flags' data-ref="X509_VERIFY_PARAM_st::inh_flags">inh_flags</a> = <a class="local col1 ref" href="#21save_flags" title='save_flags' data-ref="21save_flags">save_flags</a>;</td></tr>
+<tr><th id="337">337</th><td>	<b>return</b> <a class="local col2 ref" href="#22ret" title='ret' data-ref="22ret">ret</a>;</td></tr>
+<tr><th id="338">338</th><td>	}</td></tr>
+<tr><th id="339">339</th><td></td></tr>
+<tr><th id="340">340</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="int_x509_param_set1" title='int_x509_param_set1' data-type='int int_x509_param_set1(char ** pdest, size_t * pdestlen, const char * src, size_t srclen)' data-ref="int_x509_param_set1">int_x509_param_set1</dfn>(<em>char</em> **<dfn class="local col3 decl" id="23pdest" title='pdest' data-type='char **' data-ref="23pdest">pdest</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col4 decl" id="24pdestlen" title='pdestlen' data-type='size_t *' data-ref="24pdestlen">pdestlen</dfn>,</td></tr>
+<tr><th id="341">341</th><td>				<em>const</em> <em>char</em> *<dfn class="local col5 decl" id="25src" title='src' data-type='const char *' data-ref="25src">src</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="26srclen" title='srclen' data-type='size_t' data-ref="26srclen">srclen</dfn>)</td></tr>
+<tr><th id="342">342</th><td>	{</td></tr>
+<tr><th id="343">343</th><td>	<em>void</em> *<dfn class="local col7 decl" id="27tmp" title='tmp' data-type='void *' data-ref="27tmp">tmp</dfn>;</td></tr>
+<tr><th id="344">344</th><td>	<b>if</b> (<a class="local col5 ref" href="#25src" title='src' data-ref="25src">src</a>)</td></tr>
+<tr><th id="345">345</th><td>		{</td></tr>
+<tr><th id="346">346</th><td>		<b>if</b> (<a class="local col6 ref" href="#26srclen" title='srclen' data-ref="26srclen">srclen</a> == <var>0</var>)</td></tr>
+<tr><th id="347">347</th><td>			{</td></tr>
+<tr><th id="348">348</th><td>			<a class="local col7 ref" href="#27tmp" title='tmp' data-ref="27tmp">tmp</a> = <a class="ref" href="../../include/openssl/buf.h.html#BUF_strdup" title='BUF_strdup' data-ref="BUF_strdup">BUF_strdup</a>(<a class="local col5 ref" href="#25src" title='src' data-ref="25src">src</a>);</td></tr>
+<tr><th id="349">349</th><td>			<a class="local col6 ref" href="#26srclen" title='srclen' data-ref="26srclen">srclen</a> = <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col5 ref" href="#25src" title='src' data-ref="25src">src</a>);</td></tr>
+<tr><th id="350">350</th><td>			}</td></tr>
+<tr><th id="351">351</th><td>		<b>else</b></td></tr>
+<tr><th id="352">352</th><td>			<a class="local col7 ref" href="#27tmp" title='tmp' data-ref="27tmp">tmp</a> = <a class="ref" href="../../include/openssl/buf.h.html#BUF_memdup" title='BUF_memdup' data-ref="BUF_memdup">BUF_memdup</a>(<a class="local col5 ref" href="#25src" title='src' data-ref="25src">src</a>, <a class="local col6 ref" href="#26srclen" title='srclen' data-ref="26srclen">srclen</a>);</td></tr>
+<tr><th id="353">353</th><td>		<b>if</b> (!<a class="local col7 ref" href="#27tmp" title='tmp' data-ref="27tmp">tmp</a>)</td></tr>
+<tr><th id="354">354</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="355">355</th><td>		}</td></tr>
+<tr><th id="356">356</th><td>	<b>else</b></td></tr>
+<tr><th id="357">357</th><td>		{</td></tr>
+<tr><th id="358">358</th><td>		<a class="local col7 ref" href="#27tmp" title='tmp' data-ref="27tmp">tmp</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="359">359</th><td>		<a class="local col6 ref" href="#26srclen" title='srclen' data-ref="26srclen">srclen</a> = <var>0</var>;</td></tr>
+<tr><th id="360">360</th><td>		}</td></tr>
+<tr><th id="361">361</th><td>	<b>if</b> (*<a class="local col3 ref" href="#23pdest" title='pdest' data-ref="23pdest">pdest</a>)</td></tr>
+<tr><th id="362">362</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(*<a class="local col3 ref" href="#23pdest" title='pdest' data-ref="23pdest">pdest</a>);</td></tr>
+<tr><th id="363">363</th><td>	*<a class="local col3 ref" href="#23pdest" title='pdest' data-ref="23pdest">pdest</a> = <a class="local col7 ref" href="#27tmp" title='tmp' data-ref="27tmp">tmp</a>;</td></tr>
+<tr><th id="364">364</th><td>	<b>if</b> (<a class="local col4 ref" href="#24pdestlen" title='pdestlen' data-ref="24pdestlen">pdestlen</a>)</td></tr>
+<tr><th id="365">365</th><td>		*<a class="local col4 ref" href="#24pdestlen" title='pdestlen' data-ref="24pdestlen">pdestlen</a> = <a class="local col6 ref" href="#26srclen" title='srclen' data-ref="26srclen">srclen</a>;</td></tr>
+<tr><th id="366">366</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="367">367</th><td>	}</td></tr>
+<tr><th id="368">368</th><td></td></tr>
+<tr><th id="369">369</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set1_name" title='X509_VERIFY_PARAM_set1_name' data-ref="X509_VERIFY_PARAM_set1_name">X509_VERIFY_PARAM_set1_name</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col8 decl" id="28param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="28param">param</dfn>, <em>const</em> <em>char</em> *<dfn class="local col9 decl" id="29name" title='name' data-type='const char *' data-ref="29name">name</dfn>)</td></tr>
+<tr><th id="370">370</th><td>	{</td></tr>
+<tr><th id="371">371</th><td>	<b>if</b> (<a class="local col8 ref" href="#28param" title='param' data-ref="28param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a>)</td></tr>
+<tr><th id="372">372</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col8 ref" href="#28param" title='param' data-ref="28param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a>);</td></tr>
+<tr><th id="373">373</th><td>	<a class="local col8 ref" href="#28param" title='param' data-ref="28param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a> = <a class="ref" href="../../include/openssl/buf.h.html#BUF_strdup" title='BUF_strdup' data-ref="BUF_strdup">BUF_strdup</a>(<a class="local col9 ref" href="#29name" title='name' data-ref="29name">name</a>);</td></tr>
+<tr><th id="374">374</th><td>	<b>if</b> (<a class="local col8 ref" href="#28param" title='param' data-ref="28param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a>)</td></tr>
+<tr><th id="375">375</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="376">376</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="377">377</th><td>	}</td></tr>
+<tr><th id="378">378</th><td></td></tr>
+<tr><th id="379">379</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set_flags" title='X509_VERIFY_PARAM_set_flags' data-ref="X509_VERIFY_PARAM_set_flags">X509_VERIFY_PARAM_set_flags</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col0 decl" id="30param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="30param">param</dfn>, <em>unsigned</em> <em>long</em> <dfn class="local col1 decl" id="31flags" title='flags' data-type='unsigned long' data-ref="31flags">flags</dfn>)</td></tr>
+<tr><th id="380">380</th><td>	{</td></tr>
+<tr><th id="381">381</th><td>	<a class="local col0 ref" href="#30param" title='param' data-ref="30param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> |= <a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a>;</td></tr>
+<tr><th id="382">382</th><td>	<b>if</b> (<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> &amp; <a class="macro" href="../../include/openssl/x509_vfy.h.html#422" title="(0x80 | 0x100 | 0x200 | 0x400)" data-ref="_M/X509_V_FLAG_POLICY_MASK">X509_V_FLAG_POLICY_MASK</a>)</td></tr>
+<tr><th id="383">383</th><td>		<a class="local col0 ref" href="#30param" title='param' data-ref="30param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> |= <a class="macro" href="../../include/openssl/x509_vfy.h.html#388" title="0x80" data-ref="_M/X509_V_FLAG_POLICY_CHECK">X509_V_FLAG_POLICY_CHECK</a>;</td></tr>
+<tr><th id="384">384</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="385">385</th><td>	}</td></tr>
+<tr><th id="386">386</th><td></td></tr>
+<tr><th id="387">387</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_clear_flags" title='X509_VERIFY_PARAM_clear_flags' data-ref="X509_VERIFY_PARAM_clear_flags">X509_VERIFY_PARAM_clear_flags</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col2 decl" id="32param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="32param">param</dfn>, <em>unsigned</em> <em>long</em> <dfn class="local col3 decl" id="33flags" title='flags' data-type='unsigned long' data-ref="33flags">flags</dfn>)</td></tr>
+<tr><th id="388">388</th><td>	{</td></tr>
+<tr><th id="389">389</th><td>	<a class="local col2 ref" href="#32param" title='param' data-ref="32param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> &amp;= ~<a class="local col3 ref" href="#33flags" title='flags' data-ref="33flags">flags</a>;</td></tr>
+<tr><th id="390">390</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="391">391</th><td>	}</td></tr>
+<tr><th id="392">392</th><td></td></tr>
+<tr><th id="393">393</th><td><em>unsigned</em> <em>long</em> <dfn class="decl def" id="X509_VERIFY_PARAM_get_flags" title='X509_VERIFY_PARAM_get_flags' data-ref="X509_VERIFY_PARAM_get_flags">X509_VERIFY_PARAM_get_flags</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col4 decl" id="34param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="34param">param</dfn>)</td></tr>
+<tr><th id="394">394</th><td>	{</td></tr>
+<tr><th id="395">395</th><td>	<b>return</b> <a class="local col4 ref" href="#34param" title='param' data-ref="34param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a>;</td></tr>
+<tr><th id="396">396</th><td>	}</td></tr>
+<tr><th id="397">397</th><td></td></tr>
+<tr><th id="398">398</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set_purpose" title='X509_VERIFY_PARAM_set_purpose' data-ref="X509_VERIFY_PARAM_set_purpose">X509_VERIFY_PARAM_set_purpose</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col5 decl" id="35param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="35param">param</dfn>, <em>int</em> <dfn class="local col6 decl" id="36purpose" title='purpose' data-type='int' data-ref="36purpose">purpose</dfn>)</td></tr>
+<tr><th id="399">399</th><td>	{</td></tr>
+<tr><th id="400">400</th><td>	<b>return</b> <a class="ref" href="../../include/openssl/x509v3.h.html#X509_PURPOSE_set" title='X509_PURPOSE_set' data-ref="X509_PURPOSE_set">X509_PURPOSE_set</a>(&amp;<a class="local col5 ref" href="#35param" title='param' data-ref="35param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::purpose" title='X509_VERIFY_PARAM_st::purpose' data-ref="X509_VERIFY_PARAM_st::purpose">purpose</a>, <a class="local col6 ref" href="#36purpose" title='purpose' data-ref="36purpose">purpose</a>);</td></tr>
+<tr><th id="401">401</th><td>	}</td></tr>
+<tr><th id="402">402</th><td></td></tr>
+<tr><th id="403">403</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set_trust" title='X509_VERIFY_PARAM_set_trust' data-ref="X509_VERIFY_PARAM_set_trust">X509_VERIFY_PARAM_set_trust</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col7 decl" id="37param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="37param">param</dfn>, <em>int</em> <dfn class="local col8 decl" id="38trust" title='trust' data-type='int' data-ref="38trust">trust</dfn>)</td></tr>
+<tr><th id="404">404</th><td>	{</td></tr>
+<tr><th id="405">405</th><td>	<b>return</b> <a class="ref" href="../../include/openssl/x509.h.html#X509_TRUST_set" title='X509_TRUST_set' data-ref="X509_TRUST_set">X509_TRUST_set</a>(&amp;<a class="local col7 ref" href="#37param" title='param' data-ref="37param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::trust" title='X509_VERIFY_PARAM_st::trust' data-ref="X509_VERIFY_PARAM_st::trust">trust</a>, <a class="local col8 ref" href="#38trust" title='trust' data-ref="38trust">trust</a>);</td></tr>
+<tr><th id="406">406</th><td>	}</td></tr>
+<tr><th id="407">407</th><td></td></tr>
+<tr><th id="408">408</th><td><em>void</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set_depth" title='X509_VERIFY_PARAM_set_depth' data-ref="X509_VERIFY_PARAM_set_depth">X509_VERIFY_PARAM_set_depth</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col9 decl" id="39param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="39param">param</dfn>, <em>int</em> <dfn class="local col0 decl" id="40depth" title='depth' data-type='int' data-ref="40depth">depth</dfn>)</td></tr>
+<tr><th id="409">409</th><td>	{</td></tr>
+<tr><th id="410">410</th><td>	<a class="local col9 ref" href="#39param" title='param' data-ref="39param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::depth" title='X509_VERIFY_PARAM_st::depth' data-ref="X509_VERIFY_PARAM_st::depth">depth</a> = <a class="local col0 ref" href="#40depth" title='depth' data-ref="40depth">depth</a>;</td></tr>
+<tr><th id="411">411</th><td>	}</td></tr>
+<tr><th id="412">412</th><td></td></tr>
+<tr><th id="413">413</th><td><em>void</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set_time" title='X509_VERIFY_PARAM_set_time' data-ref="X509_VERIFY_PARAM_set_time">X509_VERIFY_PARAM_set_time</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col1 decl" id="41param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="41param">param</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="local col2 decl" id="42t" title='t' data-type='time_t' data-ref="42t">t</dfn>)</td></tr>
+<tr><th id="414">414</th><td>	{</td></tr>
+<tr><th id="415">415</th><td>	<a class="local col1 ref" href="#41param" title='param' data-ref="41param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::check_time" title='X509_VERIFY_PARAM_st::check_time' data-ref="X509_VERIFY_PARAM_st::check_time">check_time</a> = <a class="local col2 ref" href="#42t" title='t' data-ref="42t">t</a>;</td></tr>
+<tr><th id="416">416</th><td>	<a class="local col1 ref" href="#41param" title='param' data-ref="41param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> |= <a class="macro" href="../../include/openssl/x509_vfy.h.html#376" title="0x2" data-ref="_M/X509_V_FLAG_USE_CHECK_TIME">X509_V_FLAG_USE_CHECK_TIME</a>;</td></tr>
+<tr><th id="417">417</th><td>	}</td></tr>
+<tr><th id="418">418</th><td></td></tr>
+<tr><th id="419">419</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_add0_policy" title='X509_VERIFY_PARAM_add0_policy' data-ref="X509_VERIFY_PARAM_add0_policy">X509_VERIFY_PARAM_add0_policy</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col3 decl" id="43param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="43param">param</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#ASN1_OBJECT" title='ASN1_OBJECT' data-type='struct asn1_object_st' data-ref="ASN1_OBJECT">ASN1_OBJECT</a> *<dfn class="local col4 decl" id="44policy" title='policy' data-type='ASN1_OBJECT *' data-ref="44policy">policy</dfn>)</td></tr>
+<tr><th id="420">420</th><td>	{</td></tr>
+<tr><th id="421">421</th><td>	<b>if</b> (!<a class="local col3 ref" href="#43param" title='param' data-ref="43param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>)</td></tr>
+<tr><th id="422">422</th><td>		{</td></tr>
+<tr><th id="423">423</th><td>		<a class="local col3 ref" href="#43param" title='param' data-ref="43param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#369" title="((struct stack_st_ASN1_OBJECT *)sk_new_null())" data-ref="_M/sk_ASN1_OBJECT_new_null">sk_ASN1_OBJECT_new_null</a>();</td></tr>
+<tr><th id="424">424</th><td>		<b>if</b> (!<a class="local col3 ref" href="#43param" title='param' data-ref="43param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>)</td></tr>
+<tr><th id="425">425</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="426">426</th><td>		}</td></tr>
+<tr><th id="427">427</th><td>	<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#413" title="sk_push(((_STACK *) (1 ? (param-&gt;policies) : (struct stack_st_ASN1_OBJECT *)0)), ((void *) (1 ? (policy) : (ASN1_OBJECT *)0)))" data-ref="_M/sk_ASN1_OBJECT_push">sk_ASN1_OBJECT_push</a>(<a class="local col3 ref" href="#43param" title='param' data-ref="43param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>, <a class="local col4 ref" href="#44policy" title='policy' data-ref="44policy">policy</a>))</td></tr>
+<tr><th id="428">428</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="429">429</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="430">430</th><td>	}</td></tr>
+<tr><th id="431">431</th><td></td></tr>
+<tr><th id="432">432</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set1_policies" title='X509_VERIFY_PARAM_set1_policies' data-ref="X509_VERIFY_PARAM_set1_policies">X509_VERIFY_PARAM_set1_policies</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col5 decl" id="45param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="45param">param</dfn>, </td></tr>
+<tr><th id="433">433</th><td>					<a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_ASN1_OBJECT" data-ref="_M/STACK_OF">STACK_OF</a>(ASN1_OBJECT) *<dfn class="local col6 decl" id="46policies" title='policies' data-type='struct stack_st_ASN1_OBJECT *' data-ref="46policies">policies</dfn>)</td></tr>
+<tr><th id="434">434</th><td>	{</td></tr>
+<tr><th id="435">435</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="47i" title='i' data-type='size_t' data-ref="47i">i</dfn>;</td></tr>
+<tr><th id="436">436</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#ASN1_OBJECT" title='ASN1_OBJECT' data-type='struct asn1_object_st' data-ref="ASN1_OBJECT">ASN1_OBJECT</a> *<dfn class="local col8 decl" id="48oid" title='oid' data-type='ASN1_OBJECT *' data-ref="48oid">oid</dfn>, *<dfn class="local col9 decl" id="49doid" title='doid' data-type='ASN1_OBJECT *' data-ref="49doid">doid</dfn>;</td></tr>
+<tr><th id="437">437</th><td>	<b>if</b> (!<a class="local col5 ref" href="#45param" title='param' data-ref="45param">param</a>)</td></tr>
+<tr><th id="438">438</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="439">439</th><td>	<b>if</b> (<a class="local col5 ref" href="#45param" title='param' data-ref="45param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>)</td></tr>
+<tr><th id="440">440</th><td>		<a class="macro" href="../../include/openssl/stack_macros.h.html#388" title="sk_pop_free( ((_STACK *) (1 ? (param-&gt;policies) : (struct stack_st_ASN1_OBJECT *)0)), ((void (*)(void *)) (1 ? (ASN1_OBJECT_free) : (void (*)(ASN1_OBJECT *))0)))" data-ref="_M/sk_ASN1_OBJECT_pop_free">sk_ASN1_OBJECT_pop_free</a>(<a class="local col5 ref" href="#45param" title='param' data-ref="45param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>, <a class="ref" href="../../include/openssl/asn1.h.html#ASN1_OBJECT_free" title='ASN1_OBJECT_free' data-ref="ASN1_OBJECT_free">ASN1_OBJECT_free</a>);</td></tr>
+<tr><th id="441">441</th><td></td></tr>
+<tr><th id="442">442</th><td>	<b>if</b> (!<a class="local col6 ref" href="#46policies" title='policies' data-ref="46policies">policies</a>)</td></tr>
+<tr><th id="443">443</th><td>		{</td></tr>
+<tr><th id="444">444</th><td>		<a class="local col5 ref" href="#45param" title='param' data-ref="45param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="445">445</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="446">446</th><td>		}</td></tr>
+<tr><th id="447">447</th><td></td></tr>
+<tr><th id="448">448</th><td>	<a class="local col5 ref" href="#45param" title='param' data-ref="45param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#369" title="((struct stack_st_ASN1_OBJECT *)sk_new_null())" data-ref="_M/sk_ASN1_OBJECT_new_null">sk_ASN1_OBJECT_new_null</a>();</td></tr>
+<tr><th id="449">449</th><td>	<b>if</b> (!<a class="local col5 ref" href="#45param" title='param' data-ref="45param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>)</td></tr>
+<tr><th id="450">450</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="451">451</th><td></td></tr>
+<tr><th id="452">452</th><td>	<b>for</b> (<a class="local col7 ref" href="#47i" title='i' data-ref="47i">i</a> = <var>0</var>; <a class="local col7 ref" href="#47i" title='i' data-ref="47i">i</a> &lt; <a class="macro" href="../../include/openssl/stack_macros.h.html#371" title="sk_num(((_STACK *) (1 ? (policies) : (struct stack_st_ASN1_OBJECT *)0)))" data-ref="_M/sk_ASN1_OBJECT_num">sk_ASN1_OBJECT_num</a>(<a class="local col6 ref" href="#46policies" title='policies' data-ref="46policies">policies</a>); <a class="local col7 ref" href="#47i" title='i' data-ref="47i">i</a>++)</td></tr>
+<tr><th id="453">453</th><td>		{</td></tr>
+<tr><th id="454">454</th><td>		<a class="local col8 ref" href="#48oid" title='oid' data-ref="48oid">oid</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#377" title="((ASN1_OBJECT *)sk_value( ((_STACK *) (1 ? (policies) : (const struct stack_st_ASN1_OBJECT *)0)), (i)))" data-ref="_M/sk_ASN1_OBJECT_value">sk_ASN1_OBJECT_value</a>(<a class="local col6 ref" href="#46policies" title='policies' data-ref="46policies">policies</a>, <a class="local col7 ref" href="#47i" title='i' data-ref="47i">i</a>);</td></tr>
+<tr><th id="455">455</th><td>		<a class="local col9 ref" href="#49doid" title='doid' data-ref="49doid">doid</a> = <a class="ref" href="../../include/openssl/obj.h.html#OBJ_dup" title='OBJ_dup' data-ref="OBJ_dup">OBJ_dup</a>(<a class="local col8 ref" href="#48oid" title='oid' data-ref="48oid">oid</a>);</td></tr>
+<tr><th id="456">456</th><td>		<b>if</b> (!<a class="local col9 ref" href="#49doid" title='doid' data-ref="49doid">doid</a>)</td></tr>
+<tr><th id="457">457</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="458">458</th><td>		<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#413" title="sk_push(((_STACK *) (1 ? (param-&gt;policies) : (struct stack_st_ASN1_OBJECT *)0)), ((void *) (1 ? (doid) : (ASN1_OBJECT *)0)))" data-ref="_M/sk_ASN1_OBJECT_push">sk_ASN1_OBJECT_push</a>(<a class="local col5 ref" href="#45param" title='param' data-ref="45param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::policies" title='X509_VERIFY_PARAM_st::policies' data-ref="X509_VERIFY_PARAM_st::policies">policies</a>, <a class="local col9 ref" href="#49doid" title='doid' data-ref="49doid">doid</a>))</td></tr>
+<tr><th id="459">459</th><td>			{</td></tr>
+<tr><th id="460">460</th><td>			<a class="ref" href="../../include/openssl/asn1.h.html#ASN1_OBJECT_free" title='ASN1_OBJECT_free' data-ref="ASN1_OBJECT_free">ASN1_OBJECT_free</a>(<a class="local col9 ref" href="#49doid" title='doid' data-ref="49doid">doid</a>);</td></tr>
+<tr><th id="461">461</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="462">462</th><td>			}</td></tr>
+<tr><th id="463">463</th><td>		}</td></tr>
+<tr><th id="464">464</th><td>	<a class="local col5 ref" href="#45param" title='param' data-ref="45param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::flags" title='X509_VERIFY_PARAM_st::flags' data-ref="X509_VERIFY_PARAM_st::flags">flags</a> |= <a class="macro" href="../../include/openssl/x509_vfy.h.html#388" title="0x80" data-ref="_M/X509_V_FLAG_POLICY_CHECK">X509_V_FLAG_POLICY_CHECK</a>;</td></tr>
+<tr><th id="465">465</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="466">466</th><td>	}</td></tr>
+<tr><th id="467">467</th><td></td></tr>
+<tr><th id="468">468</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set1_host" title='X509_VERIFY_PARAM_set1_host' data-ref="X509_VERIFY_PARAM_set1_host">X509_VERIFY_PARAM_set1_host</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col0 decl" id="50param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="50param">param</dfn>,</td></tr>
+<tr><th id="469">469</th><td>				<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="51name" title='name' data-type='const char *' data-ref="51name">name</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="52namelen" title='namelen' data-type='size_t' data-ref="52namelen">namelen</dfn>)</td></tr>
+<tr><th id="470">470</th><td>	{</td></tr>
+<tr><th id="471">471</th><td>	<b>return</b> <a class="tu ref" href="#int_x509_param_set_hosts" title='int_x509_param_set_hosts' data-use='c' data-ref="int_x509_param_set_hosts">int_x509_param_set_hosts</a>(<a class="local col0 ref" href="#50param" title='param' data-ref="50param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>, <a class="macro" href="#70" title="0" data-ref="_M/SET_HOST">SET_HOST</a>, <a class="local col1 ref" href="#51name" title='name' data-ref="51name">name</a>, <a class="local col2 ref" href="#52namelen" title='namelen' data-ref="52namelen">namelen</a>);</td></tr>
+<tr><th id="472">472</th><td>	}</td></tr>
+<tr><th id="473">473</th><td></td></tr>
+<tr><th id="474">474</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_add1_host" title='X509_VERIFY_PARAM_add1_host' data-ref="X509_VERIFY_PARAM_add1_host">X509_VERIFY_PARAM_add1_host</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col3 decl" id="53param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="53param">param</dfn>,</td></tr>
+<tr><th id="475">475</th><td>				<em>const</em> <em>char</em> *<dfn class="local col4 decl" id="54name" title='name' data-type='const char *' data-ref="54name">name</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="55namelen" title='namelen' data-type='size_t' data-ref="55namelen">namelen</dfn>)</td></tr>
+<tr><th id="476">476</th><td>	{</td></tr>
+<tr><th id="477">477</th><td>	<b>return</b> <a class="tu ref" href="#int_x509_param_set_hosts" title='int_x509_param_set_hosts' data-use='c' data-ref="int_x509_param_set_hosts">int_x509_param_set_hosts</a>(<a class="local col3 ref" href="#53param" title='param' data-ref="53param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>, <a class="macro" href="#71" title="1" data-ref="_M/ADD_HOST">ADD_HOST</a>, <a class="local col4 ref" href="#54name" title='name' data-ref="54name">name</a>, <a class="local col5 ref" href="#55namelen" title='namelen' data-ref="55namelen">namelen</a>);</td></tr>
+<tr><th id="478">478</th><td>	}</td></tr>
+<tr><th id="479">479</th><td></td></tr>
+<tr><th id="480">480</th><td><em>void</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set_hostflags" title='X509_VERIFY_PARAM_set_hostflags' data-ref="X509_VERIFY_PARAM_set_hostflags">X509_VERIFY_PARAM_set_hostflags</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col6 decl" id="56param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="56param">param</dfn>,</td></tr>
+<tr><th id="481">481</th><td>					<em>unsigned</em> <em>int</em> <dfn class="local col7 decl" id="57flags" title='flags' data-type='unsigned int' data-ref="57flags">flags</dfn>)</td></tr>
+<tr><th id="482">482</th><td>	{</td></tr>
+<tr><th id="483">483</th><td>	<a class="local col6 ref" href="#56param" title='param' data-ref="56param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::hostflags" title='X509_VERIFY_PARAM_ID_st::hostflags' data-ref="X509_VERIFY_PARAM_ID_st::hostflags">hostflags</a> = <a class="local col7 ref" href="#57flags" title='flags' data-ref="57flags">flags</a>;</td></tr>
+<tr><th id="484">484</th><td>	}</td></tr>
+<tr><th id="485">485</th><td></td></tr>
+<tr><th id="486">486</th><td><em>char</em> *<dfn class="decl def" id="X509_VERIFY_PARAM_get0_peername" title='X509_VERIFY_PARAM_get0_peername' data-ref="X509_VERIFY_PARAM_get0_peername">X509_VERIFY_PARAM_get0_peername</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col8 decl" id="58param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="58param">param</dfn>)</td></tr>
+<tr><th id="487">487</th><td>	{</td></tr>
+<tr><th id="488">488</th><td>	<b>return</b> <a class="local col8 ref" href="#58param" title='param' data-ref="58param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::peername" title='X509_VERIFY_PARAM_ID_st::peername' data-ref="X509_VERIFY_PARAM_ID_st::peername">peername</a>;</td></tr>
+<tr><th id="489">489</th><td>	}</td></tr>
+<tr><th id="490">490</th><td></td></tr>
+<tr><th id="491">491</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set1_email" title='X509_VERIFY_PARAM_set1_email' data-ref="X509_VERIFY_PARAM_set1_email">X509_VERIFY_PARAM_set1_email</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col9 decl" id="59param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="59param">param</dfn>,</td></tr>
+<tr><th id="492">492</th><td>				<em>const</em> <em>char</em> *<dfn class="local col0 decl" id="60email" title='email' data-type='const char *' data-ref="60email">email</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="61emaillen" title='emaillen' data-type='size_t' data-ref="61emaillen">emaillen</dfn>)</td></tr>
+<tr><th id="493">493</th><td>	{</td></tr>
+<tr><th id="494">494</th><td>	<b>return</b> <a class="tu ref" href="#int_x509_param_set1" title='int_x509_param_set1' data-use='c' data-ref="int_x509_param_set1">int_x509_param_set1</a>(&amp;<a class="local col9 ref" href="#59param" title='param' data-ref="59param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::email" title='X509_VERIFY_PARAM_ID_st::email' data-ref="X509_VERIFY_PARAM_ID_st::email">email</a>, &amp;<a class="local col9 ref" href="#59param" title='param' data-ref="59param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::emaillen" title='X509_VERIFY_PARAM_ID_st::emaillen' data-ref="X509_VERIFY_PARAM_ID_st::emaillen">emaillen</a>,</td></tr>
+<tr><th id="495">495</th><td>					<a class="local col0 ref" href="#60email" title='email' data-ref="60email">email</a>, <a class="local col1 ref" href="#61emaillen" title='emaillen' data-ref="61emaillen">emaillen</a>);</td></tr>
+<tr><th id="496">496</th><td>	}</td></tr>
+<tr><th id="497">497</th><td></td></tr>
+<tr><th id="498">498</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set1_ip" title='X509_VERIFY_PARAM_set1_ip' data-ref="X509_VERIFY_PARAM_set1_ip">X509_VERIFY_PARAM_set1_ip</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col2 decl" id="62param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="62param">param</dfn>,</td></tr>
+<tr><th id="499">499</th><td>					<em>const</em> <em>unsigned</em> <em>char</em> *<dfn class="local col3 decl" id="63ip" title='ip' data-type='const unsigned char *' data-ref="63ip">ip</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="64iplen" title='iplen' data-type='size_t' data-ref="64iplen">iplen</dfn>)</td></tr>
+<tr><th id="500">500</th><td>	{</td></tr>
+<tr><th id="501">501</th><td>	<b>if</b> (<a class="local col4 ref" href="#64iplen" title='iplen' data-ref="64iplen">iplen</a> != <var>0</var> &amp;&amp; <a class="local col4 ref" href="#64iplen" title='iplen' data-ref="64iplen">iplen</a> != <var>4</var> &amp;&amp; <a class="local col4 ref" href="#64iplen" title='iplen' data-ref="64iplen">iplen</a> != <var>16</var>)</td></tr>
+<tr><th id="502">502</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="503">503</th><td>	<b>return</b> <a class="tu ref" href="#int_x509_param_set1" title='int_x509_param_set1' data-use='c' data-ref="int_x509_param_set1">int_x509_param_set1</a>((<em>char</em> **)&amp;<a class="local col2 ref" href="#62param" title='param' data-ref="62param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::ip" title='X509_VERIFY_PARAM_ID_st::ip' data-ref="X509_VERIFY_PARAM_ID_st::ip">ip</a>, &amp;<a class="local col2 ref" href="#62param" title='param' data-ref="62param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::id" title='X509_VERIFY_PARAM_st::id' data-ref="X509_VERIFY_PARAM_st::id">id</a>-&gt;<a class="ref" href="vpm_int.h.html#X509_VERIFY_PARAM_ID_st::iplen" title='X509_VERIFY_PARAM_ID_st::iplen' data-ref="X509_VERIFY_PARAM_ID_st::iplen">iplen</a>,</td></tr>
+<tr><th id="504">504</th><td>				   (<em>char</em> *)<a class="local col3 ref" href="#63ip" title='ip' data-ref="63ip">ip</a>, <a class="local col4 ref" href="#64iplen" title='iplen' data-ref="64iplen">iplen</a>);</td></tr>
+<tr><th id="505">505</th><td>	}</td></tr>
+<tr><th id="506">506</th><td></td></tr>
+<tr><th id="507">507</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_set1_ip_asc" title='X509_VERIFY_PARAM_set1_ip_asc' data-ref="X509_VERIFY_PARAM_set1_ip_asc">X509_VERIFY_PARAM_set1_ip_asc</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col5 decl" id="65param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="65param">param</dfn>, <em>const</em> <em>char</em> *<dfn class="local col6 decl" id="66ipasc" title='ipasc' data-type='const char *' data-ref="66ipasc">ipasc</dfn>)</td></tr>
+<tr><th id="508">508</th><td>	{</td></tr>
+<tr><th id="509">509</th><td>	<em>unsigned</em> <em>char</em> <dfn class="local col7 decl" id="67ipout" title='ipout' data-type='unsigned char [16]' data-ref="67ipout">ipout</dfn>[<var>16</var>];</td></tr>
+<tr><th id="510">510</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="68iplen" title='iplen' data-type='size_t' data-ref="68iplen">iplen</dfn>;</td></tr>
+<tr><th id="511">511</th><td></td></tr>
+<tr><th id="512">512</th><td>	<a class="local col8 ref" href="#68iplen" title='iplen' data-ref="68iplen">iplen</a> = (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="ref" href="../../include/openssl/x509v3.h.html#a2i_ipadd" title='a2i_ipadd' data-ref="a2i_ipadd">a2i_ipadd</a>(<a class="local col7 ref" href="#67ipout" title='ipout' data-ref="67ipout">ipout</a>, <a class="local col6 ref" href="#66ipasc" title='ipasc' data-ref="66ipasc">ipasc</a>);</td></tr>
+<tr><th id="513">513</th><td>	<b>if</b> (<a class="local col8 ref" href="#68iplen" title='iplen' data-ref="68iplen">iplen</a> == <var>0</var>)</td></tr>
+<tr><th id="514">514</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="515">515</th><td>	<b>return</b> <a class="ref" href="#X509_VERIFY_PARAM_set1_ip" title='X509_VERIFY_PARAM_set1_ip' data-ref="X509_VERIFY_PARAM_set1_ip">X509_VERIFY_PARAM_set1_ip</a>(<a class="local col5 ref" href="#65param" title='param' data-ref="65param">param</a>, <a class="local col7 ref" href="#67ipout" title='ipout' data-ref="67ipout">ipout</a>, <a class="local col8 ref" href="#68iplen" title='iplen' data-ref="68iplen">iplen</a>);</td></tr>
+<tr><th id="516">516</th><td>	}</td></tr>
+<tr><th id="517">517</th><td></td></tr>
+<tr><th id="518">518</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_get_depth" title='X509_VERIFY_PARAM_get_depth' data-ref="X509_VERIFY_PARAM_get_depth">X509_VERIFY_PARAM_get_depth</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col9 decl" id="69param" title='param' data-type='const X509_VERIFY_PARAM *' data-ref="69param">param</dfn>)</td></tr>
+<tr><th id="519">519</th><td>	{</td></tr>
+<tr><th id="520">520</th><td>	<b>return</b> <a class="local col9 ref" href="#69param" title='param' data-ref="69param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::depth" title='X509_VERIFY_PARAM_st::depth' data-ref="X509_VERIFY_PARAM_st::depth">depth</a>;</td></tr>
+<tr><th id="521">521</th><td>	}</td></tr>
+<tr><th id="522">522</th><td></td></tr>
+<tr><th id="523">523</th><td><em>const</em> <em>char</em> *<dfn class="decl def" id="X509_VERIFY_PARAM_get0_name" title='X509_VERIFY_PARAM_get0_name' data-ref="X509_VERIFY_PARAM_get0_name">X509_VERIFY_PARAM_get0_name</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col0 decl" id="70param" title='param' data-type='const X509_VERIFY_PARAM *' data-ref="70param">param</dfn>)</td></tr>
+<tr><th id="524">524</th><td>	{</td></tr>
+<tr><th id="525">525</th><td>	<b>return</b> <a class="local col0 ref" href="#70param" title='param' data-ref="70param">param</a>-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a>;</td></tr>
+<tr><th id="526">526</th><td>	}</td></tr>
+<tr><th id="527">527</th><td></td></tr>
+<tr><th id="528">528</th><td><em>static</em> <em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_ID" title='X509_VERIFY_PARAM_ID' data-type='struct X509_VERIFY_PARAM_ID_st' data-ref="X509_VERIFY_PARAM_ID">X509_VERIFY_PARAM_ID</a> <dfn class="tu decl def" id="_empty_id" title='_empty_id' data-type='const X509_VERIFY_PARAM_ID' data-ref="_empty_id">_empty_id</dfn> = {<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <var>0U</var>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <var>0</var>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <var>0</var>};</td></tr>
+<tr><th id="529">529</th><td></td></tr>
+<tr><th id="530">530</th><td><u>#define <dfn class="macro" id="_M/vpm_empty_id" data-ref="_M/vpm_empty_id">vpm_empty_id</dfn> (<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_ID" title='X509_VERIFY_PARAM_ID' data-type='struct X509_VERIFY_PARAM_ID_st' data-ref="X509_VERIFY_PARAM_ID">X509_VERIFY_PARAM_ID</a> *)&amp;<a class="tu ref" href="#_empty_id" title='_empty_id' data-use='a' data-ref="_empty_id">_empty_id</a></u></td></tr>
+<tr><th id="531">531</th><td></td></tr>
+<tr><th id="532">532</th><td><i  data-doc="default_table">/* Default verify parameters: these are used for various</i></td></tr>
+<tr><th id="533">533</th><td><i  data-doc="default_table"> * applications and can be overridden by the user specified table.</i></td></tr>
+<tr><th id="534">534</th><td><i  data-doc="default_table"> * NB: the 'name' field *must* be in alphabetical order because it</i></td></tr>
+<tr><th id="535">535</th><td><i  data-doc="default_table"> * will be searched using OBJ_search.</i></td></tr>
+<tr><th id="536">536</th><td><i  data-doc="default_table"> */</i></td></tr>
+<tr><th id="537">537</th><td></td></tr>
+<tr><th id="538">538</th><td><em>static</em> <em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> <dfn class="tu decl def" id="default_table" title='default_table' data-type='const X509_VERIFY_PARAM [5]' data-ref="default_table">default_table</dfn>[] = {</td></tr>
+<tr><th id="539">539</th><td>	{</td></tr>
+<tr><th id="540">540</th><td>	(<em>char</em> *) <q>"default"</q>,	<i>/* X509 default parameters */</i></td></tr>
+<tr><th id="541">541</th><td>	<var>0</var>,		<i>/* Check time */</i></td></tr>
+<tr><th id="542">542</th><td>	<var>0</var>,		<i>/* internal flags */</i></td></tr>
+<tr><th id="543">543</th><td>	<var>0</var>,		<i>/* flags */</i></td></tr>
+<tr><th id="544">544</th><td>	<var>0</var>,		<i>/* purpose */</i></td></tr>
+<tr><th id="545">545</th><td>	<var>0</var>,		<i>/* trust */</i></td></tr>
+<tr><th id="546">546</th><td>	<var>100</var>,		<i>/* depth */</i></td></tr>
+<tr><th id="547">547</th><td>	<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,		<i>/* policies */</i></td></tr>
+<tr><th id="548">548</th><td>	<a class="macro" href="#530" title="(X509_VERIFY_PARAM_ID *)&amp;_empty_id" data-ref="_M/vpm_empty_id">vpm_empty_id</a></td></tr>
+<tr><th id="549">549</th><td>	},</td></tr>
+<tr><th id="550">550</th><td>	{</td></tr>
+<tr><th id="551">551</th><td>	(<em>char</em> *) <q>"pkcs7"</q>,			<i>/* S/MIME sign parameters */</i></td></tr>
+<tr><th id="552">552</th><td>	<var>0</var>,				<i>/* Check time */</i></td></tr>
+<tr><th id="553">553</th><td>	<var>0</var>,				<i>/* internal flags */</i></td></tr>
+<tr><th id="554">554</th><td>	<var>0</var>,				<i>/* flags */</i></td></tr>
+<tr><th id="555">555</th><td>	<a class="macro" href="../../include/openssl/x509v3.h.html#471" title="4" data-ref="_M/X509_PURPOSE_SMIME_SIGN">X509_PURPOSE_SMIME_SIGN</a>,	<i>/* purpose */</i></td></tr>
+<tr><th id="556">556</th><td>	<a class="macro" href="../../include/openssl/x509.h.html#294" title="4" data-ref="_M/X509_TRUST_EMAIL">X509_TRUST_EMAIL</a>,		<i>/* trust */</i></td></tr>
+<tr><th id="557">557</th><td>	-<var>1</var>,				<i>/* depth */</i></td></tr>
+<tr><th id="558">558</th><td>	<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,				<i>/* policies */</i></td></tr>
+<tr><th id="559">559</th><td>	<a class="macro" href="#530" title="(X509_VERIFY_PARAM_ID *)&amp;_empty_id" data-ref="_M/vpm_empty_id">vpm_empty_id</a></td></tr>
+<tr><th id="560">560</th><td>	},</td></tr>
+<tr><th id="561">561</th><td>	{</td></tr>
+<tr><th id="562">562</th><td>	(<em>char</em> *) <q>"smime_sign"</q>,			<i>/* S/MIME sign parameters */</i></td></tr>
+<tr><th id="563">563</th><td>	<var>0</var>,				<i>/* Check time */</i></td></tr>
+<tr><th id="564">564</th><td>	<var>0</var>,				<i>/* internal flags */</i></td></tr>
+<tr><th id="565">565</th><td>	<var>0</var>,				<i>/* flags */</i></td></tr>
+<tr><th id="566">566</th><td>	<a class="macro" href="../../include/openssl/x509v3.h.html#471" title="4" data-ref="_M/X509_PURPOSE_SMIME_SIGN">X509_PURPOSE_SMIME_SIGN</a>,	<i>/* purpose */</i></td></tr>
+<tr><th id="567">567</th><td>	<a class="macro" href="../../include/openssl/x509.h.html#294" title="4" data-ref="_M/X509_TRUST_EMAIL">X509_TRUST_EMAIL</a>,		<i>/* trust */</i></td></tr>
+<tr><th id="568">568</th><td>	-<var>1</var>,				<i>/* depth */</i></td></tr>
+<tr><th id="569">569</th><td>	<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,				<i>/* policies */</i></td></tr>
+<tr><th id="570">570</th><td>	<a class="macro" href="#530" title="(X509_VERIFY_PARAM_ID *)&amp;_empty_id" data-ref="_M/vpm_empty_id">vpm_empty_id</a></td></tr>
+<tr><th id="571">571</th><td>	},</td></tr>
+<tr><th id="572">572</th><td>	{</td></tr>
+<tr><th id="573">573</th><td>	(<em>char</em> *) <q>"ssl_client"</q>,			<i>/* SSL/TLS client parameters */</i></td></tr>
+<tr><th id="574">574</th><td>	<var>0</var>,				<i>/* Check time */</i></td></tr>
+<tr><th id="575">575</th><td>	<var>0</var>,				<i>/* internal flags */</i></td></tr>
+<tr><th id="576">576</th><td>	<var>0</var>,				<i>/* flags */</i></td></tr>
+<tr><th id="577">577</th><td>	<a class="macro" href="../../include/openssl/x509v3.h.html#468" title="1" data-ref="_M/X509_PURPOSE_SSL_CLIENT">X509_PURPOSE_SSL_CLIENT</a>,	<i>/* purpose */</i></td></tr>
+<tr><th id="578">578</th><td>	<a class="macro" href="../../include/openssl/x509.h.html#292" title="2" data-ref="_M/X509_TRUST_SSL_CLIENT">X509_TRUST_SSL_CLIENT</a>,		<i>/* trust */</i></td></tr>
+<tr><th id="579">579</th><td>	-<var>1</var>,				<i>/* depth */</i></td></tr>
+<tr><th id="580">580</th><td>	<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,				<i>/* policies */</i></td></tr>
+<tr><th id="581">581</th><td>	<a class="macro" href="#530" title="(X509_VERIFY_PARAM_ID *)&amp;_empty_id" data-ref="_M/vpm_empty_id">vpm_empty_id</a></td></tr>
+<tr><th id="582">582</th><td>	},</td></tr>
+<tr><th id="583">583</th><td>	{</td></tr>
+<tr><th id="584">584</th><td>	(<em>char</em> *) <q>"ssl_server"</q>,			<i>/* SSL/TLS server parameters */</i></td></tr>
+<tr><th id="585">585</th><td>	<var>0</var>,				<i>/* Check time */</i></td></tr>
+<tr><th id="586">586</th><td>	<var>0</var>,				<i>/* internal flags */</i></td></tr>
+<tr><th id="587">587</th><td>	<var>0</var>,				<i>/* flags */</i></td></tr>
+<tr><th id="588">588</th><td>	<a class="macro" href="../../include/openssl/x509v3.h.html#469" title="2" data-ref="_M/X509_PURPOSE_SSL_SERVER">X509_PURPOSE_SSL_SERVER</a>,	<i>/* purpose */</i></td></tr>
+<tr><th id="589">589</th><td>	<a class="macro" href="../../include/openssl/x509.h.html#293" title="3" data-ref="_M/X509_TRUST_SSL_SERVER">X509_TRUST_SSL_SERVER</a>,		<i>/* trust */</i></td></tr>
+<tr><th id="590">590</th><td>	-<var>1</var>,				<i>/* depth */</i></td></tr>
+<tr><th id="591">591</th><td>	<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,				<i>/* policies */</i></td></tr>
+<tr><th id="592">592</th><td>	<a class="macro" href="#530" title="(X509_VERIFY_PARAM_ID *)&amp;_empty_id" data-ref="_M/vpm_empty_id">vpm_empty_id</a></td></tr>
+<tr><th id="593">593</th><td>	}};</td></tr>
+<tr><th id="594">594</th><td></td></tr>
+<tr><th id="595">595</th><td><em>static</em> <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_VERIFY_PARAM" data-ref="_M/STACK_OF">STACK_OF</a>(X509_VERIFY_PARAM) *<dfn class="tu decl def" id="param_table" title='param_table' data-type='struct stack_st_X509_VERIFY_PARAM *' data-ref="param_table">param_table</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="596">596</th><td></td></tr>
+<tr><th id="597">597</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="param_cmp" title='param_cmp' data-type='int param_cmp(const X509_VERIFY_PARAM ** a, const X509_VERIFY_PARAM ** b)' data-ref="param_cmp">param_cmp</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> **<dfn class="local col1 decl" id="71a" title='a' data-type='const X509_VERIFY_PARAM **' data-ref="71a">a</dfn>,</td></tr>
+<tr><th id="598">598</th><td>			<em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> **<dfn class="local col2 decl" id="72b" title='b' data-type='const X509_VERIFY_PARAM **' data-ref="72b">b</dfn>)</td></tr>
+<tr><th id="599">599</th><td>	{</td></tr>
+<tr><th id="600">600</th><td>	<b>return</b> <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>((*<a class="local col1 ref" href="#71a" title='a' data-ref="71a">a</a>)-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a>, (*<a class="local col2 ref" href="#72b" title='b' data-ref="72b">b</a>)-&gt;<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a>);</td></tr>
+<tr><th id="601">601</th><td>	}</td></tr>
+<tr><th id="602">602</th><td></td></tr>
+<tr><th id="603">603</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_add0_table" title='X509_VERIFY_PARAM_add0_table' data-ref="X509_VERIFY_PARAM_add0_table">X509_VERIFY_PARAM_add0_table</dfn>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col3 decl" id="73param" title='param' data-type='X509_VERIFY_PARAM *' data-ref="73param">param</dfn>)</td></tr>
+<tr><th id="604">604</th><td>	{</td></tr>
+<tr><th id="605">605</th><td>	<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="local col4 decl" id="74ptmp" title='ptmp' data-type='X509_VERIFY_PARAM *' data-ref="74ptmp">ptmp</dfn>;</td></tr>
+<tr><th id="606">606</th><td>	<b>if</b> (!<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>)</td></tr>
+<tr><th id="607">607</th><td>		{</td></tr>
+<tr><th id="608">608</th><td>		<a class="tu ref" href="#param_table" title='param_table' data-use='w' data-ref="param_table">param_table</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#3430" title="((struct stack_st_X509_VERIFY_PARAM *)sk_new(((stack_cmp_func) (1 ? (param_cmp) : (int (*)(const X509_VERIFY_PARAM **a, const X509_VERIFY_PARAM **b))0))))" data-ref="_M/sk_X509_VERIFY_PARAM_new">sk_X509_VERIFY_PARAM_new</a>(<a class="tu ref" href="#param_cmp" title='param_cmp' data-use='r' data-ref="param_cmp">param_cmp</a>);</td></tr>
+<tr><th id="609">609</th><td>		<b>if</b> (!<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>)</td></tr>
+<tr><th id="610">610</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="611">611</th><td>		}</td></tr>
+<tr><th id="612">612</th><td>	<b>else</b></td></tr>
+<tr><th id="613">613</th><td>		{</td></tr>
+<tr><th id="614">614</th><td>		<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="75idx" title='idx' data-type='size_t' data-ref="75idx">idx</dfn>;</td></tr>
+<tr><th id="615">615</th><td></td></tr>
+<tr><th id="616">616</th><td>		<b>if</b> (<a class="macro" href="../../include/openssl/stack_macros.h.html#3475" title="sk_find(((_STACK *) (1 ? (param_table) : (struct stack_st_X509_VERIFY_PARAM *)0)), (&amp;idx), ((void *) (1 ? (param) : (X509_VERIFY_PARAM *)0)))" data-ref="_M/sk_X509_VERIFY_PARAM_find">sk_X509_VERIFY_PARAM_find</a>(<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>, &amp;<a class="local col5 ref" href="#75idx" title='idx' data-ref="75idx">idx</a>, <a class="local col3 ref" href="#73param" title='param' data-ref="73param">param</a>))</td></tr>
+<tr><th id="617">617</th><td>			{</td></tr>
+<tr><th id="618">618</th><td>			<a class="local col4 ref" href="#74ptmp" title='ptmp' data-ref="74ptmp">ptmp</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#3445" title="((X509_VERIFY_PARAM *)sk_value( ((_STACK *) (1 ? (param_table) : (const struct stack_st_X509_VERIFY_PARAM *)0)), (idx)))" data-ref="_M/sk_X509_VERIFY_PARAM_value">sk_X509_VERIFY_PARAM_value</a>(<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>, <a class="local col5 ref" href="#75idx" title='idx' data-ref="75idx">idx</a>);</td></tr>
+<tr><th id="619">619</th><td>			<a class="ref" href="#X509_VERIFY_PARAM_free" title='X509_VERIFY_PARAM_free' data-ref="X509_VERIFY_PARAM_free">X509_VERIFY_PARAM_free</a>(<a class="local col4 ref" href="#74ptmp" title='ptmp' data-ref="74ptmp">ptmp</a>);</td></tr>
+<tr><th id="620">620</th><td>			(<em>void</em>)<a class="macro" href="../../include/openssl/stack_macros.h.html#3466" title="((X509_VERIFY_PARAM *)sk_delete( ((_STACK *) (1 ? (param_table) : (struct stack_st_X509_VERIFY_PARAM *)0)), (idx)))" data-ref="_M/sk_X509_VERIFY_PARAM_delete">sk_X509_VERIFY_PARAM_delete</a>(<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>, <a class="local col5 ref" href="#75idx" title='idx' data-ref="75idx">idx</a>);</td></tr>
+<tr><th id="621">621</th><td>			}</td></tr>
+<tr><th id="622">622</th><td>		}</td></tr>
+<tr><th id="623">623</th><td>	<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#3483" title="sk_push(((_STACK *) (1 ? (param_table) : (struct stack_st_X509_VERIFY_PARAM *)0)), ((void *) (1 ? (param) : (X509_VERIFY_PARAM *)0)))" data-ref="_M/sk_X509_VERIFY_PARAM_push">sk_X509_VERIFY_PARAM_push</a>(<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>, <a class="local col3 ref" href="#73param" title='param' data-ref="73param">param</a>))</td></tr>
+<tr><th id="624">624</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="625">625</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="626">626</th><td>	}</td></tr>
+<tr><th id="627">627</th><td></td></tr>
+<tr><th id="628">628</th><td><em>int</em> <dfn class="decl def" id="X509_VERIFY_PARAM_get_count" title='X509_VERIFY_PARAM_get_count' data-ref="X509_VERIFY_PARAM_get_count">X509_VERIFY_PARAM_get_count</dfn>(<em>void</em>)</td></tr>
+<tr><th id="629">629</th><td>	{</td></tr>
+<tr><th id="630">630</th><td>	<em>int</em> <dfn class="local col6 decl" id="76num" title='num' data-type='int' data-ref="76num">num</dfn> = <b>sizeof</b>(<a class="tu ref" href="#default_table" title='default_table' data-use='r' data-ref="default_table">default_table</a>)/<b>sizeof</b>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a>);</td></tr>
+<tr><th id="631">631</th><td>	<b>if</b> (<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>)</td></tr>
+<tr><th id="632">632</th><td>		<a class="local col6 ref" href="#76num" title='num' data-ref="76num">num</a> += <a class="macro" href="../../include/openssl/stack_macros.h.html#3439" title="sk_num(((_STACK *) (1 ? (param_table) : (struct stack_st_X509_VERIFY_PARAM *)0)))" data-ref="_M/sk_X509_VERIFY_PARAM_num">sk_X509_VERIFY_PARAM_num</a>(<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>);</td></tr>
+<tr><th id="633">633</th><td>	<b>return</b> <a class="local col6 ref" href="#76num" title='num' data-ref="76num">num</a>;</td></tr>
+<tr><th id="634">634</th><td>	}</td></tr>
+<tr><th id="635">635</th><td></td></tr>
+<tr><th id="636">636</th><td><em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="decl def" id="X509_VERIFY_PARAM_get0" title='X509_VERIFY_PARAM_get0' data-ref="X509_VERIFY_PARAM_get0">X509_VERIFY_PARAM_get0</dfn>(<em>int</em> <dfn class="local col7 decl" id="77id" title='id' data-type='int' data-ref="77id">id</dfn>)</td></tr>
+<tr><th id="637">637</th><td>	{</td></tr>
+<tr><th id="638">638</th><td>	<em>int</em> <dfn class="local col8 decl" id="78num" title='num' data-type='int' data-ref="78num">num</dfn> = <b>sizeof</b>(<a class="tu ref" href="#default_table" title='default_table' data-use='r' data-ref="default_table">default_table</a>)/<b>sizeof</b>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a>);</td></tr>
+<tr><th id="639">639</th><td>	<b>if</b> (<a class="local col7 ref" href="#77id" title='id' data-ref="77id">id</a> &lt; <a class="local col8 ref" href="#78num" title='num' data-ref="78num">num</a>)</td></tr>
+<tr><th id="640">640</th><td>		<b>return</b> <a class="tu ref" href="#default_table" title='default_table' data-use='r' data-ref="default_table">default_table</a> + <a class="local col7 ref" href="#77id" title='id' data-ref="77id">id</a>;</td></tr>
+<tr><th id="641">641</th><td>	<b>return</b> <a class="macro" href="../../include/openssl/stack_macros.h.html#3445" title="((X509_VERIFY_PARAM *)sk_value( ((_STACK *) (1 ? (param_table) : (const struct stack_st_X509_VERIFY_PARAM *)0)), (id - num)))" data-ref="_M/sk_X509_VERIFY_PARAM_value">sk_X509_VERIFY_PARAM_value</a>(<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>, <a class="local col7 ref" href="#77id" title='id' data-ref="77id">id</a> - <a class="local col8 ref" href="#78num" title='num' data-ref="78num">num</a>);</td></tr>
+<tr><th id="642">642</th><td>	}</td></tr>
+<tr><th id="643">643</th><td></td></tr>
+<tr><th id="644">644</th><td><em>const</em> <a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> *<dfn class="decl def" id="X509_VERIFY_PARAM_lookup" title='X509_VERIFY_PARAM_lookup' data-ref="X509_VERIFY_PARAM_lookup">X509_VERIFY_PARAM_lookup</dfn>(<em>const</em> <em>char</em> *<dfn class="local col9 decl" id="79name" title='name' data-type='const char *' data-ref="79name">name</dfn>)</td></tr>
+<tr><th id="645">645</th><td>	{</td></tr>
+<tr><th id="646">646</th><td>	<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a> <dfn class="local col0 decl" id="80pm" title='pm' data-type='X509_VERIFY_PARAM' data-ref="80pm">pm</dfn>;</td></tr>
+<tr><th id="647">647</th><td>	<em>unsigned</em> <dfn class="local col1 decl" id="81i" title='i' data-type='unsigned int' data-ref="81i">i</dfn>, <dfn class="local col2 decl" id="82limit" title='limit' data-type='unsigned int' data-ref="82limit">limit</dfn>;</td></tr>
+<tr><th id="648">648</th><td></td></tr>
+<tr><th id="649">649</th><td>	<a class="local col0 ref" href="#80pm" title='pm' data-ref="80pm">pm</a>.<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a> = (<em>char</em> *)<a class="local col9 ref" href="#79name" title='name' data-ref="79name">name</a>;</td></tr>
+<tr><th id="650">650</th><td>	<b>if</b> (<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>)</td></tr>
+<tr><th id="651">651</th><td>		{</td></tr>
+<tr><th id="652">652</th><td>		<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="83idx" title='idx' data-type='size_t' data-ref="83idx">idx</dfn>;</td></tr>
+<tr><th id="653">653</th><td>		<b>if</b> (<a class="macro" href="../../include/openssl/stack_macros.h.html#3475" title="sk_find(((_STACK *) (1 ? (param_table) : (struct stack_st_X509_VERIFY_PARAM *)0)), (&amp;idx), ((void *) (1 ? (&amp;pm) : (X509_VERIFY_PARAM *)0)))" data-ref="_M/sk_X509_VERIFY_PARAM_find">sk_X509_VERIFY_PARAM_find</a>(<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>, &amp;<a class="local col3 ref" href="#83idx" title='idx' data-ref="83idx">idx</a>, &amp;<a class="local col0 ref" href="#80pm" title='pm' data-ref="80pm">pm</a>))</td></tr>
+<tr><th id="654">654</th><td>			<b>return</b> <a class="macro" href="../../include/openssl/stack_macros.h.html#3445" title="((X509_VERIFY_PARAM *)sk_value( ((_STACK *) (1 ? (param_table) : (const struct stack_st_X509_VERIFY_PARAM *)0)), (idx)))" data-ref="_M/sk_X509_VERIFY_PARAM_value">sk_X509_VERIFY_PARAM_value</a>(<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>, <a class="local col3 ref" href="#83idx" title='idx' data-ref="83idx">idx</a>);</td></tr>
+<tr><th id="655">655</th><td>		}</td></tr>
+<tr><th id="656">656</th><td></td></tr>
+<tr><th id="657">657</th><td>	<a class="local col2 ref" href="#82limit" title='limit' data-ref="82limit">limit</a> = <b>sizeof</b>(<a class="tu ref" href="#default_table" title='default_table' data-use='r' data-ref="default_table">default_table</a>)/<b>sizeof</b>(<a class="typedef" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM" title='X509_VERIFY_PARAM' data-type='struct X509_VERIFY_PARAM_st' data-ref="X509_VERIFY_PARAM">X509_VERIFY_PARAM</a>);</td></tr>
+<tr><th id="658">658</th><td>	<b>for</b> (<a class="local col1 ref" href="#81i" title='i' data-ref="81i">i</a> = <var>0</var>; <a class="local col1 ref" href="#81i" title='i' data-ref="81i">i</a> &lt; <a class="local col2 ref" href="#82limit" title='limit' data-ref="82limit">limit</a>; <a class="local col1 ref" href="#81i" title='i' data-ref="81i">i</a>++) {</td></tr>
+<tr><th id="659">659</th><td>		<b>if</b> (<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="tu ref" href="#default_table" title='default_table' data-use='m' data-ref="default_table">default_table</a>[<a class="local col1 ref" href="#81i" title='i' data-ref="81i">i</a>].<a class="ref" href="../../include/openssl/x509_vfy.h.html#X509_VERIFY_PARAM_st::name" title='X509_VERIFY_PARAM_st::name' data-ref="X509_VERIFY_PARAM_st::name">name</a>, <a class="local col9 ref" href="#79name" title='name' data-ref="79name">name</a>) == <var>0</var>) {</td></tr>
+<tr><th id="660">660</th><td>			<b>return</b> &amp;<a class="tu ref" href="#default_table" title='default_table' data-use='a' data-ref="default_table">default_table</a>[<a class="local col1 ref" href="#81i" title='i' data-ref="81i">i</a>];</td></tr>
+<tr><th id="661">661</th><td>		}</td></tr>
+<tr><th id="662">662</th><td>	}</td></tr>
+<tr><th id="663">663</th><td>	<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="664">664</th><td>	}</td></tr>
+<tr><th id="665">665</th><td></td></tr>
+<tr><th id="666">666</th><td><em>void</em> <dfn class="decl def" id="X509_VERIFY_PARAM_table_cleanup" title='X509_VERIFY_PARAM_table_cleanup' data-ref="X509_VERIFY_PARAM_table_cleanup">X509_VERIFY_PARAM_table_cleanup</dfn>(<em>void</em>)</td></tr>
+<tr><th id="667">667</th><td>	{</td></tr>
+<tr><th id="668">668</th><td>	<b>if</b> (<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>)</td></tr>
+<tr><th id="669">669</th><td>		<a class="macro" href="../../include/openssl/stack_macros.h.html#3457" title="sk_pop_free(((_STACK *) (1 ? (param_table) : (struct stack_st_X509_VERIFY_PARAM *)0)), ((void (*)(void *)) (1 ? (X509_VERIFY_PARAM_free) : (void (*)(X509_VERIFY_PARAM *))0)))" data-ref="_M/sk_X509_VERIFY_PARAM_pop_free">sk_X509_VERIFY_PARAM_pop_free</a>(<a class="tu ref" href="#param_table" title='param_table' data-use='r' data-ref="param_table">param_table</a>,</td></tr>
+<tr><th id="670">670</th><td>						<a class="ref" href="#X509_VERIFY_PARAM_free" title='X509_VERIFY_PARAM_free' data-ref="X509_VERIFY_PARAM_free">X509_VERIFY_PARAM_free</a>);</td></tr>
+<tr><th id="671">671</th><td>	<a class="tu ref" href="#param_table" title='param_table' data-use='w' data-ref="param_table">param_table</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="672">672</th><td>	}</td></tr>
+<tr><th id="673">673</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>callbacks.c source code [codebrowser/external/libselinux/src/callbacks.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/callbacks.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='callbacks.c.html'>callbacks.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * User-supplied callbacks and default implementations.</i></td></tr>
+<tr><th id="3">3</th><td><i> * Class and permission mappings.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td><u>#include &lt;stdarg.h&gt;</u></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="10">10</th><td><u>#include <a href="../include/selinux/selinux.h.html">&lt;selinux/selinux.h&gt;</a></u></td></tr>
+<tr><th id="11">11</th><td><u>#include <a href="callbacks.h.html">"callbacks.h"</a></u></td></tr>
+<tr><th id="12">12</th><td></td></tr>
+<tr><th id="13">13</th><td><i  data-doc="default_selinux_log">/* default implementations */</i></td></tr>
+<tr><th id="14">14</th><td><em>static</em> <em>int</em> <b>__attribute__</b> ((format(printf, <var>2</var>, <var>3</var>)))</td></tr>
+<tr><th id="15">15</th><td><dfn class="tu decl def" id="default_selinux_log" title='default_selinux_log' data-type='int default_selinux_log(int type, const char * fmt)' data-ref="default_selinux_log">default_selinux_log</dfn>(<em>int</em> <dfn class="local col1 decl" id="1type" title='type' data-type='int' data-ref="1type">type</dfn> <b>__attribute__</b>((unused)), <em>const</em> <em>char</em> *<dfn class="local col2 decl" id="2fmt" title='fmt' data-type='const char *' data-ref="2fmt">fmt</dfn>, ...)</td></tr>
+<tr><th id="16">16</th><td>{</td></tr>
+<tr><th id="17">17</th><td>	<em>int</em> <dfn class="local col3 decl" id="3rc" title='rc' data-type='int' data-ref="3rc">rc</dfn>;</td></tr>
+<tr><th id="18">18</th><td>	<span class='typedef' title='va_list' data-type='__builtin_va_list' data-ref="va_list">va_list</span> <dfn class="local col4 decl" id="4ap" title='ap' data-type='va_list' data-ref="4ap">ap</dfn>;</td></tr>
+<tr><th id="19">19</th><td>	<span class="macro" title="__builtin_va_start(ap, fmt)" data-ref="_M/va_start">va_start</span>(<a class="local col4 ref" href="#4ap" title='ap' data-ref="4ap">ap</a>, <a class="local col2 ref" href="#2fmt" title='fmt' data-ref="2fmt">fmt</a>);</td></tr>
+<tr><th id="20">20</th><td>	<a class="local col3 ref" href="#3rc" title='rc' data-ref="3rc">rc</a> = <a class="ref" href="../../../bionic/libc/include/stdio.h.html#vfprintf" title='vfprintf' data-ref="vfprintf">vfprintf</a>(<a class="macro" href="../../../bionic/libc/include/stdio.h.html#64" title="stderr" data-ref="_M/stderr">stderr</a>, <a class="local col2 ref" href="#2fmt" title='fmt' data-ref="2fmt">fmt</a>, <a class="local col4 ref" href="#4ap" title='ap' data-ref="4ap">ap</a>);</td></tr>
+<tr><th id="21">21</th><td>	<span class="macro" title="__builtin_va_end(ap)" data-ref="_M/va_end">va_end</span>(<a class="local col4 ref" href="#4ap" title='ap' data-ref="4ap">ap</a>);</td></tr>
+<tr><th id="22">22</th><td>	<b>return</b> <a class="local col3 ref" href="#3rc" title='rc' data-ref="3rc">rc</a>;</td></tr>
+<tr><th id="23">23</th><td>}</td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="26">26</th><td><dfn class="tu decl def" id="default_selinux_audit" title='default_selinux_audit' data-type='int default_selinux_audit(void * ptr, security_class_t cls, char * buf, size_t len)' data-ref="default_selinux_audit">default_selinux_audit</dfn>(<em>void</em> *<dfn class="local col5 decl" id="5ptr" title='ptr' data-type='void *' data-ref="5ptr">ptr</dfn> <b>__attribute__</b>((unused)),</td></tr>
+<tr><th id="27">27</th><td>		      <a class="typedef" href="../include/selinux/selinux.h.html#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col6 decl" id="6cls" title='cls' data-type='security_class_t' data-ref="6cls">cls</dfn> <b>__attribute__</b>((unused)),</td></tr>
+<tr><th id="28">28</th><td>		      <em>char</em> *<dfn class="local col7 decl" id="7buf" title='buf' data-type='char *' data-ref="7buf">buf</dfn> <b>__attribute__</b>((unused)),</td></tr>
+<tr><th id="29">29</th><td>		      <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="8len" title='len' data-type='size_t' data-ref="8len">len</dfn> <b>__attribute__</b>((unused)))</td></tr>
+<tr><th id="30">30</th><td>{</td></tr>
+<tr><th id="31">31</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="32">32</th><td>}</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="35">35</th><td><dfn class="tu decl def" id="default_selinux_validate" title='default_selinux_validate' data-type='int default_selinux_validate(char ** ctx)' data-ref="default_selinux_validate">default_selinux_validate</dfn>(<em>char</em> **<dfn class="local col9 decl" id="9ctx" title='ctx' data-type='char **' data-ref="9ctx">ctx</dfn>)</td></tr>
+<tr><th id="36">36</th><td>{</td></tr>
+<tr><th id="37">37</th><td>	<b>return</b> <a class="ref" href="../include/selinux/selinux.h.html#security_check_context" title='security_check_context' data-ref="security_check_context">security_check_context</a>(*<a class="local col9 ref" href="#9ctx" title='ctx' data-ref="9ctx">ctx</a>);</td></tr>
+<tr><th id="38">38</th><td>}</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="41">41</th><td><dfn class="tu decl def" id="default_selinux_setenforce" title='default_selinux_setenforce' data-type='int default_selinux_setenforce(int enforcing)' data-ref="default_selinux_setenforce">default_selinux_setenforce</dfn>(<em>int</em> <dfn class="local col0 decl" id="10enforcing" title='enforcing' data-type='int' data-ref="10enforcing">enforcing</dfn> <b>__attribute__</b>((unused)))</td></tr>
+<tr><th id="42">42</th><td>{</td></tr>
+<tr><th id="43">43</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="44">44</th><td>}</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="47">47</th><td><dfn class="tu decl def" id="default_selinux_policyload" title='default_selinux_policyload' data-type='int default_selinux_policyload(int seqno)' data-ref="default_selinux_policyload">default_selinux_policyload</dfn>(<em>int</em> <dfn class="local col1 decl" id="11seqno" title='seqno' data-type='int' data-ref="11seqno">seqno</dfn> <b>__attribute__</b>((unused)))</td></tr>
+<tr><th id="48">48</th><td>{</td></tr>
+<tr><th id="49">49</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="50">50</th><td>}</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><i>/* callback pointers */</i></td></tr>
+<tr><th id="53">53</th><td><em>int</em> <b>__attribute__</b> ((format(printf, <var>2</var>, <var>3</var>)))</td></tr>
+<tr><th id="54">54</th><td>(*<dfn class="decl def" id="selinux_log" title='selinux_log' data-ref="selinux_log">selinux_log</dfn>)(<em>int</em>, <em>const</em> <em>char</em> *, ...) =</td></tr>
+<tr><th id="55">55</th><td>	<a class="tu ref" href="#default_selinux_log" title='default_selinux_log' data-use='r' data-ref="default_selinux_log">default_selinux_log</a>;</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><em>int</em></td></tr>
+<tr><th id="58">58</th><td>(*<dfn class="decl def" id="selinux_audit" title='selinux_audit' data-ref="selinux_audit">selinux_audit</dfn>) (<em>void</em> *, <a class="typedef" href="../include/selinux/selinux.h.html#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a>, <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) =</td></tr>
+<tr><th id="59">59</th><td>	<a class="tu ref" href="#default_selinux_audit" title='default_selinux_audit' data-ref="default_selinux_audit">default_selinux_audit</a>;</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><em>int</em></td></tr>
+<tr><th id="62">62</th><td>(*<dfn class="decl def" id="selinux_validate" title='selinux_validate' data-ref="selinux_validate">selinux_validate</dfn>)(<em>char</em> **<dfn class="local col2 decl" id="12ctx" title='ctx' data-type='char **' data-ref="12ctx">ctx</dfn>) =</td></tr>
+<tr><th id="63">63</th><td>	<a class="tu ref" href="#default_selinux_validate" title='default_selinux_validate' data-ref="default_selinux_validate">default_selinux_validate</a>;</td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><em>int</em></td></tr>
+<tr><th id="66">66</th><td>(*<dfn class="decl def" id="selinux_netlink_setenforce" title='selinux_netlink_setenforce' data-ref="selinux_netlink_setenforce">selinux_netlink_setenforce</dfn>) (<em>int</em> <dfn class="local col3 decl" id="13enforcing" title='enforcing' data-type='int' data-ref="13enforcing">enforcing</dfn>) =</td></tr>
+<tr><th id="67">67</th><td>	<a class="tu ref" href="#default_selinux_setenforce" title='default_selinux_setenforce' data-ref="default_selinux_setenforce">default_selinux_setenforce</a>;</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><em>int</em></td></tr>
+<tr><th id="70">70</th><td>(*<dfn class="decl def" id="selinux_netlink_policyload" title='selinux_netlink_policyload' data-ref="selinux_netlink_policyload">selinux_netlink_policyload</dfn>) (<em>int</em> <dfn class="local col4 decl" id="14seqno" title='seqno' data-type='int' data-ref="14seqno">seqno</dfn>) =</td></tr>
+<tr><th id="71">71</th><td>	<a class="tu ref" href="#default_selinux_policyload" title='default_selinux_policyload' data-ref="default_selinux_policyload">default_selinux_policyload</a>;</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><i>/* callback setting function */</i></td></tr>
+<tr><th id="74">74</th><td><em>void</em></td></tr>
+<tr><th id="75">75</th><td><dfn class="decl def" id="selinux_set_callback" title='selinux_set_callback' data-ref="selinux_set_callback">selinux_set_callback</dfn>(<em>int</em> <dfn class="local col5 decl" id="15type" title='type' data-type='int' data-ref="15type">type</dfn>, <b>union</b> <a class="type" href="../include/selinux/selinux.h.html#selinux_callback" title='selinux_callback' data-ref="selinux_callback">selinux_callback</a> <dfn class="local col6 decl" id="16cb" title='cb' data-type='union selinux_callback' data-ref="16cb">cb</dfn>)</td></tr>
+<tr><th id="76">76</th><td>{</td></tr>
+<tr><th id="77">77</th><td>	<b>switch</b> (<a class="local col5 ref" href="#15type" title='type' data-ref="15type">type</a>) {</td></tr>
+<tr><th id="78">78</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#148" title="0" data-ref="_M/SELINUX_CB_LOG">SELINUX_CB_LOG</a>:</td></tr>
+<tr><th id="79">79</th><td>		<a class="ref" href="callbacks.h.html#selinux_log" title='selinux_log' data-ref="selinux_log">selinux_log</a> = <a class="local col6 ref" href="#16cb" title='cb' data-ref="16cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_log" title='selinux_callback::func_log' data-ref="selinux_callback::func_log">func_log</a>;</td></tr>
+<tr><th id="80">80</th><td>		<b>break</b>;</td></tr>
+<tr><th id="81">81</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#149" title="1" data-ref="_M/SELINUX_CB_AUDIT">SELINUX_CB_AUDIT</a>:</td></tr>
+<tr><th id="82">82</th><td>		<a class="ref" href="callbacks.h.html#selinux_audit" title='selinux_audit' data-ref="selinux_audit">selinux_audit</a> = <a class="local col6 ref" href="#16cb" title='cb' data-ref="16cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_audit" title='selinux_callback::func_audit' data-ref="selinux_callback::func_audit">func_audit</a>;</td></tr>
+<tr><th id="83">83</th><td>		<b>break</b>;</td></tr>
+<tr><th id="84">84</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#150" title="2" data-ref="_M/SELINUX_CB_VALIDATE">SELINUX_CB_VALIDATE</a>:</td></tr>
+<tr><th id="85">85</th><td>		<a class="ref" href="callbacks.h.html#selinux_validate" title='selinux_validate' data-ref="selinux_validate">selinux_validate</a> = <a class="local col6 ref" href="#16cb" title='cb' data-ref="16cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_validate" title='selinux_callback::func_validate' data-ref="selinux_callback::func_validate">func_validate</a>;</td></tr>
+<tr><th id="86">86</th><td>		<b>break</b>;</td></tr>
+<tr><th id="87">87</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#151" title="3" data-ref="_M/SELINUX_CB_SETENFORCE">SELINUX_CB_SETENFORCE</a>:</td></tr>
+<tr><th id="88">88</th><td>		<a class="ref" href="callbacks.h.html#selinux_netlink_setenforce" title='selinux_netlink_setenforce' data-ref="selinux_netlink_setenforce">selinux_netlink_setenforce</a> = <a class="local col6 ref" href="#16cb" title='cb' data-ref="16cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_setenforce" title='selinux_callback::func_setenforce' data-ref="selinux_callback::func_setenforce">func_setenforce</a>;</td></tr>
+<tr><th id="89">89</th><td>		<b>break</b>;</td></tr>
+<tr><th id="90">90</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#152" title="4" data-ref="_M/SELINUX_CB_POLICYLOAD">SELINUX_CB_POLICYLOAD</a>:</td></tr>
+<tr><th id="91">91</th><td>		<a class="ref" href="callbacks.h.html#selinux_netlink_policyload" title='selinux_netlink_policyload' data-ref="selinux_netlink_policyload">selinux_netlink_policyload</a> = <a class="local col6 ref" href="#16cb" title='cb' data-ref="16cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_policyload" title='selinux_callback::func_policyload' data-ref="selinux_callback::func_policyload">func_policyload</a>;</td></tr>
+<tr><th id="92">92</th><td>		<b>break</b>;</td></tr>
+<tr><th id="93">93</th><td>	}</td></tr>
+<tr><th id="94">94</th><td>}</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><i>/* callback getting function */</i></td></tr>
+<tr><th id="97">97</th><td><b>union</b> <a class="type" href="../include/selinux/selinux.h.html#selinux_callback" title='selinux_callback' data-ref="selinux_callback">selinux_callback</a></td></tr>
+<tr><th id="98">98</th><td><dfn class="decl def" id="selinux_get_callback" title='selinux_get_callback' data-ref="selinux_get_callback">selinux_get_callback</dfn>(<em>int</em> <dfn class="local col7 decl" id="17type" title='type' data-type='int' data-ref="17type">type</dfn>)</td></tr>
+<tr><th id="99">99</th><td>{</td></tr>
+<tr><th id="100">100</th><td>	<b>union</b> <a class="type" href="../include/selinux/selinux.h.html#selinux_callback" title='selinux_callback' data-ref="selinux_callback">selinux_callback</a> <dfn class="local col8 decl" id="18cb" title='cb' data-type='union selinux_callback' data-ref="18cb">cb</dfn>;</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td>	<b>switch</b> (<a class="local col7 ref" href="#17type" title='type' data-ref="17type">type</a>) {</td></tr>
+<tr><th id="103">103</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#148" title="0" data-ref="_M/SELINUX_CB_LOG">SELINUX_CB_LOG</a>:</td></tr>
+<tr><th id="104">104</th><td>		<a class="local col8 ref" href="#18cb" title='cb' data-ref="18cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_log" title='selinux_callback::func_log' data-ref="selinux_callback::func_log">func_log</a> = <a class="ref" href="callbacks.h.html#selinux_log" title='selinux_log' data-ref="selinux_log">selinux_log</a>;</td></tr>
+<tr><th id="105">105</th><td>		<b>break</b>;</td></tr>
+<tr><th id="106">106</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#149" title="1" data-ref="_M/SELINUX_CB_AUDIT">SELINUX_CB_AUDIT</a>:</td></tr>
+<tr><th id="107">107</th><td>		<a class="local col8 ref" href="#18cb" title='cb' data-ref="18cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_audit" title='selinux_callback::func_audit' data-ref="selinux_callback::func_audit">func_audit</a> = <a class="ref" href="callbacks.h.html#selinux_audit" title='selinux_audit' data-ref="selinux_audit">selinux_audit</a>;</td></tr>
+<tr><th id="108">108</th><td>		<b>break</b>;</td></tr>
+<tr><th id="109">109</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#150" title="2" data-ref="_M/SELINUX_CB_VALIDATE">SELINUX_CB_VALIDATE</a>:</td></tr>
+<tr><th id="110">110</th><td>		<a class="local col8 ref" href="#18cb" title='cb' data-ref="18cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_validate" title='selinux_callback::func_validate' data-ref="selinux_callback::func_validate">func_validate</a> = <a class="ref" href="callbacks.h.html#selinux_validate" title='selinux_validate' data-ref="selinux_validate">selinux_validate</a>;</td></tr>
+<tr><th id="111">111</th><td>		<b>break</b>;</td></tr>
+<tr><th id="112">112</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#151" title="3" data-ref="_M/SELINUX_CB_SETENFORCE">SELINUX_CB_SETENFORCE</a>:</td></tr>
+<tr><th id="113">113</th><td>		<a class="local col8 ref" href="#18cb" title='cb' data-ref="18cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_setenforce" title='selinux_callback::func_setenforce' data-ref="selinux_callback::func_setenforce">func_setenforce</a> = <a class="ref" href="callbacks.h.html#selinux_netlink_setenforce" title='selinux_netlink_setenforce' data-ref="selinux_netlink_setenforce">selinux_netlink_setenforce</a>;</td></tr>
+<tr><th id="114">114</th><td>		<b>break</b>;</td></tr>
+<tr><th id="115">115</th><td>	<b>case</b> <a class="macro" href="../include/selinux/selinux.h.html#152" title="4" data-ref="_M/SELINUX_CB_POLICYLOAD">SELINUX_CB_POLICYLOAD</a>:</td></tr>
+<tr><th id="116">116</th><td>		<a class="local col8 ref" href="#18cb" title='cb' data-ref="18cb">cb</a>.<a class="ref" href="../include/selinux/selinux.h.html#selinux_callback::func_policyload" title='selinux_callback::func_policyload' data-ref="selinux_callback::func_policyload">func_policyload</a> = <a class="ref" href="callbacks.h.html#selinux_netlink_policyload" title='selinux_netlink_policyload' data-ref="selinux_netlink_policyload">selinux_netlink_policyload</a>;</td></tr>
+<tr><th id="117">117</th><td>		<b>break</b>;</td></tr>
+<tr><th id="118">118</th><td>	<b>default</b>:</td></tr>
+<tr><th id="119">119</th><td>		<a class="ref" href="../../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(&amp;<a class="local col8 ref" href="#18cb" title='cb' data-ref="18cb">cb</a>, <var>0</var>, <b>sizeof</b>(<a class="local col8 ref" href="#18cb" title='cb' data-ref="18cb">cb</a>));</td></tr>
+<tr><th id="120">120</th><td>		<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="121">121</th><td>		<b>break</b>;</td></tr>
+<tr><th id="122">122</th><td>	}</td></tr>
+<tr><th id="123">123</th><td>	<b>return</b> <a class="local col8 ref" href="#18cb" title='cb' data-ref="18cb">cb</a>;</td></tr>
+<tr><th id="124">124</th><td>}</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

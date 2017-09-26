@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>t_crl.c source code [codebrowser/external/boringssl/src/crypto/x509/t_crl.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/x509/t_crl.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>x509</a>/<a href='t_crl.c.html'>t_crl.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/asn1.h.html">&lt;openssl/asn1.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="../../include/openssl/obj.h.html">&lt;openssl/obj.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/x509.h.html">&lt;openssl/x509.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/x509v3.h.html">&lt;openssl/x509v3.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><u>#<span data-ppcond="65">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_NO_FP_API">OPENSSL_NO_FP_API</span></u></td></tr>
+<tr><th id="66">66</th><td><em>int</em> <dfn class="decl def" id="X509_CRL_print_fp" title='X509_CRL_print_fp' data-ref="X509_CRL_print_fp">X509_CRL_print_fp</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col1 decl" id="1fp" title='fp' data-type='FILE *' data-ref="1fp">fp</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#X509_CRL" title='X509_CRL' data-type='struct X509_crl_st' data-ref="X509_CRL">X509_CRL</a> *<dfn class="local col2 decl" id="2x" title='x' data-type='X509_CRL *' data-ref="2x">x</dfn>)</td></tr>
+<tr><th id="67">67</th><td>        {</td></tr>
+<tr><th id="68">68</th><td>        <a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col3 decl" id="3b" title='b' data-type='BIO *' data-ref="3b">b</dfn>;</td></tr>
+<tr><th id="69">69</th><td>        <em>int</em> <dfn class="local col4 decl" id="4ret" title='ret' data-type='int' data-ref="4ret">ret</dfn>;</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td>        <b>if</b> ((<a class="local col3 ref" href="#3b" title='b' data-ref="3b">b</a>=<a class="ref" href="../../include/openssl/bio.h.html#BIO_new" title='BIO_new' data-ref="BIO_new">BIO_new</a>(<a class="ref" href="../../include/openssl/bio.h.html#BIO_s_file" title='BIO_s_file' data-ref="BIO_s_file">BIO_s_file</a>())) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="72">72</th><td>		{</td></tr>
+<tr><th id="73">73</th><td>		<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509, 0, ERR_LIB_BUF, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509/t_crl.c&quot;, 73)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509, <a class="macro" href="../../include/openssl/err.h.html#427" title="ERR_LIB_BUF" data-ref="_M/ERR_R_BUF_LIB">ERR_R_BUF_LIB</a>);</td></tr>
+<tr><th id="74">74</th><td>                <b>return</b>(<var>0</var>);</td></tr>
+<tr><th id="75">75</th><td>		}</td></tr>
+<tr><th id="76">76</th><td>        <a class="ref" href="../../include/openssl/bio.h.html#BIO_set_fp" title='BIO_set_fp' data-ref="BIO_set_fp">BIO_set_fp</a>(<a class="local col3 ref" href="#3b" title='b' data-ref="3b">b</a>,<a class="local col1 ref" href="#1fp" title='fp' data-ref="1fp">fp</a>,<a class="macro" href="../../include/openssl/bio.h.html#689" title="0" data-ref="_M/BIO_NOCLOSE">BIO_NOCLOSE</a>);</td></tr>
+<tr><th id="77">77</th><td>        <a class="local col4 ref" href="#4ret" title='ret' data-ref="4ret">ret</a>=<a class="ref" href="#X509_CRL_print" title='X509_CRL_print' data-ref="X509_CRL_print">X509_CRL_print</a>(<a class="local col3 ref" href="#3b" title='b' data-ref="3b">b</a>, <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a>);</td></tr>
+<tr><th id="78">78</th><td>        <a class="ref" href="../../include/openssl/bio.h.html#BIO_free" title='BIO_free' data-ref="BIO_free">BIO_free</a>(<a class="local col3 ref" href="#3b" title='b' data-ref="3b">b</a>);</td></tr>
+<tr><th id="79">79</th><td>        <b>return</b>(<a class="local col4 ref" href="#4ret" title='ret' data-ref="4ret">ret</a>);</td></tr>
+<tr><th id="80">80</th><td>        }</td></tr>
+<tr><th id="81">81</th><td><u>#<span data-ppcond="65">endif</span></u></td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><em>int</em> <dfn class="decl def" id="X509_CRL_print" title='X509_CRL_print' data-ref="X509_CRL_print">X509_CRL_print</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col5 decl" id="5out" title='out' data-type='BIO *' data-ref="5out">out</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#X509_CRL" title='X509_CRL' data-type='struct X509_crl_st' data-ref="X509_CRL">X509_CRL</a> *<dfn class="local col6 decl" id="6x" title='x' data-type='X509_CRL *' data-ref="6x">x</dfn>)</td></tr>
+<tr><th id="84">84</th><td>{</td></tr>
+<tr><th id="85">85</th><td>	<a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_REVOKED" data-ref="_M/STACK_OF">STACK_OF</a>(X509_REVOKED) *<dfn class="local col7 decl" id="7rev" title='rev' data-type='struct stack_st_X509_REVOKED *' data-ref="7rev">rev</dfn>;</td></tr>
+<tr><th id="86">86</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#X509_REVOKED" title='X509_REVOKED' data-type='struct x509_revoked_st' data-ref="X509_REVOKED">X509_REVOKED</a> *<dfn class="local col8 decl" id="8r" title='r' data-type='X509_REVOKED *' data-ref="8r">r</dfn>;</td></tr>
+<tr><th id="87">87</th><td>	<em>long</em> <dfn class="local col9 decl" id="9l" title='l' data-type='long' data-ref="9l">l</dfn>;</td></tr>
+<tr><th id="88">88</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="10i" title='i' data-type='size_t' data-ref="10i">i</dfn>;</td></tr>
+<tr><th id="89">89</th><td>	<em>char</em> *<dfn class="local col1 decl" id="11p" title='p' data-type='char *' data-ref="11p">p</dfn>;</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td>	<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>, <q>"Certificate Revocation List (CRL):\n"</q>);</td></tr>
+<tr><th id="92">92</th><td>	<a class="local col9 ref" href="#9l" title='l' data-ref="9l">l</a> = <a class="macro" href="../../include/openssl/x509.h.html#572" title="ASN1_INTEGER_get((x)-&gt;crl-&gt;version)" data-ref="_M/X509_CRL_get_version">X509_CRL_get_version</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="93">93</th><td>	<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>, <q>"%8sVersion %lu (0x%lx)\n"</q>, <q>""</q>, <a class="local col9 ref" href="#9l" title='l' data-ref="9l">l</a>+<var>1</var>, <a class="local col9 ref" href="#9l" title='l' data-ref="9l">l</a>);</td></tr>
+<tr><th id="94">94</th><td>	<a class="ref" href="../../include/openssl/x509.h.html#X509_signature_print" title='X509_signature_print' data-ref="X509_signature_print">X509_signature_print</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>, <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_crl_st::sig_alg" title='X509_crl_st::sig_alg' data-ref="X509_crl_st::sig_alg">sig_alg</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="95">95</th><td>	<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_NAME_oneline" title='X509_NAME_oneline' data-ref="X509_NAME_oneline">X509_NAME_oneline</a>(<a class="macro" href="../../include/openssl/x509.h.html#575" title="((x)-&gt;crl-&gt;issuer)" data-ref="_M/X509_CRL_get_issuer">X509_CRL_get_issuer</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>),<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,<var>0</var>);</td></tr>
+<tr><th id="96">96</th><td>	<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<q>"%8sIssuer: %s\n"</q>,<q>""</q>,<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>);</td></tr>
+<tr><th id="97">97</th><td>	<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>);</td></tr>
+<tr><th id="98">98</th><td>	<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<q>"%8sLast Update: "</q>,<q>""</q>);</td></tr>
+<tr><th id="99">99</th><td>	<a class="ref" href="../../include/openssl/asn1.h.html#ASN1_TIME_print" title='ASN1_TIME_print' data-ref="ASN1_TIME_print">ASN1_TIME_print</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<a class="macro" href="../../include/openssl/x509.h.html#573" title="((x)-&gt;crl-&gt;lastUpdate)" data-ref="_M/X509_CRL_get_lastUpdate">X509_CRL_get_lastUpdate</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>));</td></tr>
+<tr><th id="100">100</th><td>	<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<q>"\n%8sNext Update: "</q>,<q>""</q>);</td></tr>
+<tr><th id="101">101</th><td>	<b>if</b> (<a class="macro" href="../../include/openssl/x509.h.html#574" title="((x)-&gt;crl-&gt;nextUpdate)" data-ref="_M/X509_CRL_get_nextUpdate">X509_CRL_get_nextUpdate</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>))</td></tr>
+<tr><th id="102">102</th><td>		 <a class="ref" href="../../include/openssl/asn1.h.html#ASN1_TIME_print" title='ASN1_TIME_print' data-ref="ASN1_TIME_print">ASN1_TIME_print</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<a class="macro" href="../../include/openssl/x509.h.html#574" title="((x)-&gt;crl-&gt;nextUpdate)" data-ref="_M/X509_CRL_get_nextUpdate">X509_CRL_get_nextUpdate</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>));</td></tr>
+<tr><th id="103">103</th><td>	<b>else</b> <a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<q>"NONE"</q>);</td></tr>
+<tr><th id="104">104</th><td>	<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<q>"\n"</q>);</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td>	<a class="ref" href="../../include/openssl/x509v3.h.html#X509V3_extensions_print" title='X509V3_extensions_print' data-ref="X509V3_extensions_print">X509V3_extensions_print</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>, <q>"CRL extensions"</q>,</td></tr>
+<tr><th id="107">107</th><td>						<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_crl_st::crl" title='X509_crl_st::crl' data-ref="X509_crl_st::crl">crl</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_crl_info_st::extensions" title='X509_crl_info_st::extensions' data-ref="X509_crl_info_st::extensions">extensions</a>, <var>0</var>, <var>8</var>);</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td>	<a class="local col7 ref" href="#7rev" title='rev' data-ref="7rev">rev</a> = <a class="macro" href="../../include/openssl/x509.h.html#576" title="((x)-&gt;crl-&gt;revoked)" data-ref="_M/X509_CRL_get_REVOKED">X509_CRL_get_REVOKED</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td>	<b>if</b>(<a class="macro" href="../../include/openssl/stack_macros.h.html#3273" title="sk_num(((_STACK *) (1 ? (rev) : (struct stack_st_X509_REVOKED *)0)))" data-ref="_M/sk_X509_REVOKED_num">sk_X509_REVOKED_num</a>(<a class="local col7 ref" href="#7rev" title='rev' data-ref="7rev">rev</a>) &gt; <var>0</var>)</td></tr>
+<tr><th id="112">112</th><td>	    <a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>, <q>"Revoked Certificates:\n"</q>);</td></tr>
+<tr><th id="113">113</th><td>	<b>else</b> <a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>, <q>"No Revoked Certificates.\n"</q>);</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td>	<b>for</b>(<a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a> = <var>0</var>; <a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a> &lt; <a class="macro" href="../../include/openssl/stack_macros.h.html#3273" title="sk_num(((_STACK *) (1 ? (rev) : (struct stack_st_X509_REVOKED *)0)))" data-ref="_M/sk_X509_REVOKED_num">sk_X509_REVOKED_num</a>(<a class="local col7 ref" href="#7rev" title='rev' data-ref="7rev">rev</a>); <a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a>++) {</td></tr>
+<tr><th id="116">116</th><td>		<a class="local col8 ref" href="#8r" title='r' data-ref="8r">r</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#3279" title="((X509_REVOKED *)sk_value( ((_STACK *) (1 ? (rev) : (const struct stack_st_X509_REVOKED *)0)), (i)))" data-ref="_M/sk_X509_REVOKED_value">sk_X509_REVOKED_value</a>(<a class="local col7 ref" href="#7rev" title='rev' data-ref="7rev">rev</a>, <a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a>);</td></tr>
+<tr><th id="117">117</th><td>		<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<q>"    Serial Number: "</q>);</td></tr>
+<tr><th id="118">118</th><td>		<a class="ref" href="../../include/openssl/asn1.h.html#i2a_ASN1_INTEGER" title='i2a_ASN1_INTEGER' data-ref="i2a_ASN1_INTEGER">i2a_ASN1_INTEGER</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<a class="local col8 ref" href="#8r" title='r' data-ref="8r">r</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#x509_revoked_st::serialNumber" title='x509_revoked_st::serialNumber' data-ref="x509_revoked_st::serialNumber">serialNumber</a>);</td></tr>
+<tr><th id="119">119</th><td>		<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<q>"\n        Revocation Date: "</q>);</td></tr>
+<tr><th id="120">120</th><td>		<a class="ref" href="../../include/openssl/asn1.h.html#ASN1_TIME_print" title='ASN1_TIME_print' data-ref="ASN1_TIME_print">ASN1_TIME_print</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<a class="local col8 ref" href="#8r" title='r' data-ref="8r">r</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#x509_revoked_st::revocationDate" title='x509_revoked_st::revocationDate' data-ref="x509_revoked_st::revocationDate">revocationDate</a>);</td></tr>
+<tr><th id="121">121</th><td>		<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>,<q>"\n"</q>);</td></tr>
+<tr><th id="122">122</th><td>		<a class="ref" href="../../include/openssl/x509v3.h.html#X509V3_extensions_print" title='X509V3_extensions_print' data-ref="X509V3_extensions_print">X509V3_extensions_print</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>, <q>"CRL entry extensions"</q>,</td></tr>
+<tr><th id="123">123</th><td>						<a class="local col8 ref" href="#8r" title='r' data-ref="8r">r</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#x509_revoked_st::extensions" title='x509_revoked_st::extensions' data-ref="x509_revoked_st::extensions">extensions</a>, <var>0</var>, <var>8</var>);</td></tr>
+<tr><th id="124">124</th><td>	}</td></tr>
+<tr><th id="125">125</th><td>	<a class="ref" href="../../include/openssl/x509.h.html#X509_signature_print" title='X509_signature_print' data-ref="X509_signature_print">X509_signature_print</a>(<a class="local col5 ref" href="#5out" title='out' data-ref="5out">out</a>, <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_crl_st::sig_alg" title='X509_crl_st::sig_alg' data-ref="X509_crl_st::sig_alg">sig_alg</a>, <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_crl_st::signature" title='X509_crl_st::signature' data-ref="X509_crl_st::signature">signature</a>);</td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td>}</td></tr>
+<tr><th id="130">130</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

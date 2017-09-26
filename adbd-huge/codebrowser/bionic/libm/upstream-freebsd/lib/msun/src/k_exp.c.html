@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>k_exp.c source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_exp.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_exp.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>src</a>/<a href='k_exp.c.html'>k_exp.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*-</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 2011 David Schultz &lt;das@FreeBSD.ORG&gt;</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="12">12</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="13">13</th><td><i> *</i></td></tr>
+<tr><th id="14">14</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND</i></td></tr>
+<tr><th id="15">15</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="16">16</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="17">17</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="19">19</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="20">20</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="21">21</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="22">22</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="23">23</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="24">24</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="25">25</th><td><i> */</i></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD: head/lib/msun/src/k_exp.c 275819 2014-12-16 09:21:56Z ed $"</q>);</td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../../../../../../external/libcxx/include/complex.h.html">&lt;complex.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../../../../../libc/include/math.h.html">"math.h"</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="math_private.h.html">"math_private.h"</a></u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><em>static</em> <em>const</em> <a class="typedef" href="../../../../../libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="tu decl def" id="k" title='k' data-type='const uint32_t' data-ref="k">k</dfn> = <var>1799</var>;		<i  data-doc="k">/* constant for reduction */</i></td></tr>
+<tr><th id="36">36</th><td><em>static</em> <em>const</em> <em>double</em> <dfn class="tu decl def" id="kln2" title='kln2' data-type='const double' data-ref="kln2">kln2</dfn> =  <var>1246.97177782734161156</var>;	<i  data-doc="kln2">/* k * ln2 */</i></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i  data-doc="__frexp_exp">/*</i></td></tr>
+<tr><th id="39">39</th><td><i  data-doc="__frexp_exp"> * Compute exp(x), scaled to avoid spurious overflow.  An exponent is</i></td></tr>
+<tr><th id="40">40</th><td><i  data-doc="__frexp_exp"> * returned separately in 'expt'.</i></td></tr>
+<tr><th id="41">41</th><td><i  data-doc="__frexp_exp"> *</i></td></tr>
+<tr><th id="42">42</th><td><i  data-doc="__frexp_exp"> * Input:  ln(DBL_MAX) &lt;= x &lt; ln(2 * DBL_MAX / DBL_MIN_DENORM) ~= 1454.91</i></td></tr>
+<tr><th id="43">43</th><td><i  data-doc="__frexp_exp"> * Output: 2**1023 &lt;= y &lt; 2**1024</i></td></tr>
+<tr><th id="44">44</th><td><i  data-doc="__frexp_exp"> */</i></td></tr>
+<tr><th id="45">45</th><td><em>static</em> <em>double</em></td></tr>
+<tr><th id="46">46</th><td><dfn class="tu decl def" id="__frexp_exp" title='__frexp_exp' data-type='double __frexp_exp(double x, int * expt)' data-ref="__frexp_exp">__frexp_exp</dfn>(<em>double</em> <dfn class="local col1 decl" id="1x" title='x' data-type='double' data-ref="1x">x</dfn>, <em>int</em> *<dfn class="local col2 decl" id="2expt" title='expt' data-type='int *' data-ref="2expt">expt</dfn>)</td></tr>
+<tr><th id="47">47</th><td>{</td></tr>
+<tr><th id="48">48</th><td>	<em>double</em> <dfn class="local col3 decl" id="3exp_x" title='exp_x' data-type='double' data-ref="3exp_x">exp_x</dfn>;</td></tr>
+<tr><th id="49">49</th><td>	<a class="typedef" href="../../../../../libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col4 decl" id="4hx" title='hx' data-type='uint32_t' data-ref="4hx">hx</dfn>;</td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td>	<i>/*</i></td></tr>
+<tr><th id="52">52</th><td><i>	 * We use exp(x) = exp(x - kln2) * 2**k, carefully chosen to</i></td></tr>
+<tr><th id="53">53</th><td><i>	 * minimize |exp(kln2) - 2**k|.  We also scale the exponent of</i></td></tr>
+<tr><th id="54">54</th><td><i>	 * exp_x to MAX_EXP so that the result can be multiplied by</i></td></tr>
+<tr><th id="55">55</th><td><i>	 * a tiny number without losing accuracy due to denormalization.</i></td></tr>
+<tr><th id="56">56</th><td><i>	 */</i></td></tr>
+<tr><th id="57">57</th><td>	<a class="local col3 ref" href="#3exp_x" title='exp_x' data-ref="3exp_x">exp_x</a> = <a class="ref" href="../../../../../libc/include/math.h.html#exp" title='exp' data-ref="exp">exp</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> - <a class="tu ref" href="#kln2" title='kln2' data-use='r' data-ref="kln2">kln2</a>);</td></tr>
+<tr><th id="58">58</th><td>	<a class="macro" href="math_private.h.html#107" title="do { ieee_double_shape_type gh_u; gh_u.value = (exp_x); (hx) = gh_u.parts.msw; } while (0)" data-ref="_M/GET_HIGH_WORD">GET_HIGH_WORD</a>(<a class="local col4 ref" href="#4hx" title='hx' data-ref="4hx">hx</a>, <a class="local col3 ref" href="#3exp_x" title='exp_x' data-ref="3exp_x">exp_x</a>);</td></tr>
+<tr><th id="59">59</th><td>	*<a class="local col2 ref" href="#2expt" title='expt' data-ref="2expt">expt</a> = (<a class="local col4 ref" href="#4hx" title='hx' data-ref="4hx">hx</a> &gt;&gt; <var>20</var>) - (<var>0x3ff</var> + <var>1023</var>) + <a class="tu ref" href="#k" title='k' data-use='r' data-ref="k">k</a>;</td></tr>
+<tr><th id="60">60</th><td>	<a class="macro" href="math_private.h.html#143" title="do { ieee_double_shape_type sh_u; sh_u.value = (exp_x); sh_u.parts.msw = ((hx &amp; 0xfffff) | ((0x3ff + 1023) &lt;&lt; 20)); (exp_x) = sh_u.value; } while (0)" data-ref="_M/SET_HIGH_WORD">SET_HIGH_WORD</a>(<a class="local col3 ref" href="#3exp_x" title='exp_x' data-ref="3exp_x">exp_x</a>, (<a class="local col4 ref" href="#4hx" title='hx' data-ref="4hx">hx</a> &amp; <var>0xfffff</var>) | ((<var>0x3ff</var> + <var>1023</var>) &lt;&lt; <var>20</var>));</td></tr>
+<tr><th id="61">61</th><td>	<b>return</b> (<a class="local col3 ref" href="#3exp_x" title='exp_x' data-ref="3exp_x">exp_x</a>);</td></tr>
+<tr><th id="62">62</th><td>}</td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><i>/*</i></td></tr>
+<tr><th id="65">65</th><td><i> * __ldexp_exp(x, expt) and __ldexp_cexp(x, expt) compute exp(x) * 2**expt.</i></td></tr>
+<tr><th id="66">66</th><td><i> * They are intended for large arguments (real part &gt;= ln(DBL_MAX))</i></td></tr>
+<tr><th id="67">67</th><td><i> * where care is needed to avoid overflow.</i></td></tr>
+<tr><th id="68">68</th><td><i> *</i></td></tr>
+<tr><th id="69">69</th><td><i> * The present implementation is narrowly tailored for our hyperbolic and</i></td></tr>
+<tr><th id="70">70</th><td><i> * exponential functions.  We assume expt is small (0 or -1), and the caller</i></td></tr>
+<tr><th id="71">71</th><td><i> * has filtered out very large x, for which overflow would be inevitable.</i></td></tr>
+<tr><th id="72">72</th><td><i> */</i></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><em>double</em></td></tr>
+<tr><th id="75">75</th><td><dfn class="decl def" id="__ldexp_exp" title='__ldexp_exp' data-ref="__ldexp_exp">__ldexp_exp</dfn>(<em>double</em> <dfn class="local col5 decl" id="5x" title='x' data-type='double' data-ref="5x">x</dfn>, <em>int</em> <dfn class="local col6 decl" id="6expt" title='expt' data-type='int' data-ref="6expt">expt</dfn>)</td></tr>
+<tr><th id="76">76</th><td>{</td></tr>
+<tr><th id="77">77</th><td>	<em>double</em> <dfn class="local col7 decl" id="7exp_x" title='exp_x' data-type='double' data-ref="7exp_x">exp_x</dfn>, <dfn class="local col8 decl" id="8scale" title='scale' data-type='double' data-ref="8scale">scale</dfn>;</td></tr>
+<tr><th id="78">78</th><td>	<em>int</em> <dfn class="local col9 decl" id="9ex_expt" title='ex_expt' data-type='int' data-ref="9ex_expt">ex_expt</dfn>;</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td>	<a class="local col7 ref" href="#7exp_x" title='exp_x' data-ref="7exp_x">exp_x</a> = <a class="tu ref" href="#__frexp_exp" title='__frexp_exp' data-use='c' data-ref="__frexp_exp">__frexp_exp</a>(<a class="local col5 ref" href="#5x" title='x' data-ref="5x">x</a>, &amp;<a class="local col9 ref" href="#9ex_expt" title='ex_expt' data-ref="9ex_expt">ex_expt</a>);</td></tr>
+<tr><th id="81">81</th><td>	<a class="local col6 ref" href="#6expt" title='expt' data-ref="6expt">expt</a> += <a class="local col9 ref" href="#9ex_expt" title='ex_expt' data-ref="9ex_expt">ex_expt</a>;</td></tr>
+<tr><th id="82">82</th><td>	<a class="macro" href="math_private.h.html#125" title="do { ieee_double_shape_type iw_u; iw_u.parts.msw = ((0x3ff + expt) &lt;&lt; 20); iw_u.parts.lsw = (0); (scale) = iw_u.value; } while (0)" data-ref="_M/INSERT_WORDS">INSERT_WORDS</a>(<a class="local col8 ref" href="#8scale" title='scale' data-ref="8scale">scale</a>, (<var>0x3ff</var> + <a class="local col6 ref" href="#6expt" title='expt' data-ref="6expt">expt</a>) &lt;&lt; <var>20</var>, <var>0</var>);</td></tr>
+<tr><th id="83">83</th><td>	<b>return</b> (<a class="local col7 ref" href="#7exp_x" title='exp_x' data-ref="7exp_x">exp_x</a> * <a class="local col8 ref" href="#8scale" title='scale' data-ref="8scale">scale</a>);</td></tr>
+<tr><th id="84">84</th><td>}</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><em>double</em> <a class="macro" href="../../../../../libc/include/complex.h.html#43" title="_Complex" data-ref="_M/complex">complex</a></td></tr>
+<tr><th id="87">87</th><td><dfn class="decl def" id="__ldexp_cexp" title='__ldexp_cexp' data-ref="__ldexp_cexp">__ldexp_cexp</dfn>(<em>double</em> <a class="macro" href="../../../../../libc/include/complex.h.html#43" title="_Complex" data-ref="_M/complex">complex</a> <dfn class="local col0 decl" id="10z" title='z' data-type='_Complex double' data-ref="10z">z</dfn>, <em>int</em> <dfn class="local col1 decl" id="11expt" title='expt' data-type='int' data-ref="11expt">expt</dfn>)</td></tr>
+<tr><th id="88">88</th><td>{</td></tr>
+<tr><th id="89">89</th><td>	<em>double</em> <dfn class="local col2 decl" id="12x" title='x' data-type='double' data-ref="12x">x</dfn>, <dfn class="local col3 decl" id="13y" title='y' data-type='double' data-ref="13y">y</dfn>, <dfn class="local col4 decl" id="14exp_x" title='exp_x' data-type='double' data-ref="14exp_x">exp_x</dfn>, <dfn class="local col5 decl" id="15scale1" title='scale1' data-type='double' data-ref="15scale1">scale1</dfn>, <dfn class="local col6 decl" id="16scale2" title='scale2' data-type='double' data-ref="16scale2">scale2</dfn>;</td></tr>
+<tr><th id="90">90</th><td>	<em>int</em> <dfn class="local col7 decl" id="17ex_expt" title='ex_expt' data-type='int' data-ref="17ex_expt">ex_expt</dfn>, <dfn class="local col8 decl" id="18half_expt" title='half_expt' data-type='int' data-ref="18half_expt">half_expt</dfn>;</td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td>	<a class="local col2 ref" href="#12x" title='x' data-ref="12x">x</a> = <a class="ref" href="../../../../../libc/include/complex.h.html#creal" title='creal' data-ref="creal">creal</a>(<a class="local col0 ref" href="#10z" title='z' data-ref="10z">z</a>);</td></tr>
+<tr><th id="93">93</th><td>	<a class="local col3 ref" href="#13y" title='y' data-ref="13y">y</a> = <a class="ref" href="../../../../../libc/include/complex.h.html#cimag" title='cimag' data-ref="cimag">cimag</a>(<a class="local col0 ref" href="#10z" title='z' data-ref="10z">z</a>);</td></tr>
+<tr><th id="94">94</th><td>	<a class="local col4 ref" href="#14exp_x" title='exp_x' data-ref="14exp_x">exp_x</a> = <a class="tu ref" href="#__frexp_exp" title='__frexp_exp' data-use='c' data-ref="__frexp_exp">__frexp_exp</a>(<a class="local col2 ref" href="#12x" title='x' data-ref="12x">x</a>, &amp;<a class="local col7 ref" href="#17ex_expt" title='ex_expt' data-ref="17ex_expt">ex_expt</a>);</td></tr>
+<tr><th id="95">95</th><td>	<a class="local col1 ref" href="#11expt" title='expt' data-ref="11expt">expt</a> += <a class="local col7 ref" href="#17ex_expt" title='ex_expt' data-ref="17ex_expt">ex_expt</a>;</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td>	<i>/*</i></td></tr>
+<tr><th id="98">98</th><td><i>	 * Arrange so that scale1 * scale2 == 2**expt.  We use this to</i></td></tr>
+<tr><th id="99">99</th><td><i>	 * compensate for scalbn being horrendously slow.</i></td></tr>
+<tr><th id="100">100</th><td><i>	 */</i></td></tr>
+<tr><th id="101">101</th><td>	<a class="local col8 ref" href="#18half_expt" title='half_expt' data-ref="18half_expt">half_expt</a> = <a class="local col1 ref" href="#11expt" title='expt' data-ref="11expt">expt</a> / <var>2</var>;</td></tr>
+<tr><th id="102">102</th><td>	<a class="macro" href="math_private.h.html#125" title="do { ieee_double_shape_type iw_u; iw_u.parts.msw = ((0x3ff + half_expt) &lt;&lt; 20); iw_u.parts.lsw = (0); (scale1) = iw_u.value; } while (0)" data-ref="_M/INSERT_WORDS">INSERT_WORDS</a>(<a class="local col5 ref" href="#15scale1" title='scale1' data-ref="15scale1">scale1</a>, (<var>0x3ff</var> + <a class="local col8 ref" href="#18half_expt" title='half_expt' data-ref="18half_expt">half_expt</a>) &lt;&lt; <var>20</var>, <var>0</var>);</td></tr>
+<tr><th id="103">103</th><td>	<a class="local col8 ref" href="#18half_expt" title='half_expt' data-ref="18half_expt">half_expt</a> = <a class="local col1 ref" href="#11expt" title='expt' data-ref="11expt">expt</a> - <a class="local col8 ref" href="#18half_expt" title='half_expt' data-ref="18half_expt">half_expt</a>;</td></tr>
+<tr><th id="104">104</th><td>	<a class="macro" href="math_private.h.html#125" title="do { ieee_double_shape_type iw_u; iw_u.parts.msw = ((0x3ff + half_expt) &lt;&lt; 20); iw_u.parts.lsw = (0); (scale2) = iw_u.value; } while (0)" data-ref="_M/INSERT_WORDS">INSERT_WORDS</a>(<a class="local col6 ref" href="#16scale2" title='scale2' data-ref="16scale2">scale2</a>, (<var>0x3ff</var> + <a class="local col8 ref" href="#18half_expt" title='half_expt' data-ref="18half_expt">half_expt</a>) &lt;&lt; <var>20</var>, <var>0</var>);</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td>	<b>return</b> (<a class="ref" href="math_private.h.html#CMPLX" title='CMPLX' data-ref="CMPLX">CMPLX</a>(<a class="ref" href="../../../../../libc/include/math.h.html#cos" title='cos' data-ref="cos">cos</a>(<a class="local col3 ref" href="#13y" title='y' data-ref="13y">y</a>) * <a class="local col4 ref" href="#14exp_x" title='exp_x' data-ref="14exp_x">exp_x</a> * <a class="local col5 ref" href="#15scale1" title='scale1' data-ref="15scale1">scale1</a> * <a class="local col6 ref" href="#16scale2" title='scale2' data-ref="16scale2">scale2</a>,</td></tr>
+<tr><th id="107">107</th><td>	    <a class="ref" href="../../../../../libc/include/math.h.html#sin" title='sin' data-ref="sin">sin</a>(<a class="local col3 ref" href="#13y" title='y' data-ref="13y">y</a>) * <a class="local col4 ref" href="#14exp_x" title='exp_x' data-ref="14exp_x">exp_x</a> * <a class="local col5 ref" href="#15scale1" title='scale1' data-ref="15scale1">scale1</a> * <a class="local col6 ref" href="#16scale2" title='scale2' data-ref="16scale2">scale2</a>));</td></tr>
+<tr><th id="108">108</th><td>}</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,14 @@
+<def f='codebrowser/bionic/libc/bionic/dirent.cpp' l='50' ll='57'/>
+<size>4272</size>
+<doc f='codebrowser/bionic/libc/bionic/dirent.cpp' l='44'>// Apportable decided to copy the data structure from this file
+// and use it in their own code, but they also call into readdir.
+// In order to avoid a lockup, the structure must be maintained in
+// the exact same order as in L and below. New structure members
+// need to be added to the end of this structure.
+// See b/21037208 for more details.</doc>
+<mbr r='DIR::fd_' o='0' t='int'/>
+<mbr r='DIR::available_bytes_' o='64' t='size_t'/>
+<mbr r='DIR::next_' o='128' t='dirent *'/>
+<mbr r='DIR::mutex_' o='192' t='pthread_mutex_t'/>
+<mbr r='DIR::buff_' o='512' t='dirent [15]'/>
+<mbr r='DIR::current_pos_' o='34112' t='long'/>

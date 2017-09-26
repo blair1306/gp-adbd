@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ecdsa.h source code [codebrowser/external/boringssl/src/include/openssl/ecdsa.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ecdsa_sig_st "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/ecdsa.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='ecdsa.h.html'>ecdsa.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 1998-2005 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="5">5</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="6">6</th><td><i> * are met:</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *</i></td></tr>
+<tr><th id="11">11</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="12">12</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="13">13</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="14">14</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="15">15</th><td><i> *</i></td></tr>
+<tr><th id="16">16</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="17">17</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="18">18</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="19">19</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="20">20</th><td><i> *</i></td></tr>
+<tr><th id="21">21</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="22">22</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="23">23</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="24">24</th><td><i> *    openssl-core@OpenSSL.org.</i></td></tr>
+<tr><th id="25">25</th><td><i> *</i></td></tr>
+<tr><th id="26">26</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="27">27</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="28">28</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="29">29</th><td><i> *</i></td></tr>
+<tr><th id="30">30</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="31">31</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="33">33</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *</i></td></tr>
+<tr><th id="35">35</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="36">36</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="37">37</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="38">38</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="39">39</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="40">40</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="41">41</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="42">42</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="43">43</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="44">44</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="45">45</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="46">46</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="47">47</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="48">48</th><td><i> *</i></td></tr>
+<tr><th id="49">49</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="50">50</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="51">51</th><td><i> * Hudson (tjh@cryptsoft.com). */</i></td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><u>#<span data-ppcond="53">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_ECDSA_H">OPENSSL_HEADER_ECDSA_H</span></u></td></tr>
+<tr><th id="54">54</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_ECDSA_H" data-ref="_M/OPENSSL_HEADER_ECDSA_H">OPENSSL_HEADER_ECDSA_H</dfn></u></td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td><u>#include <a href="ec_key.h.html">&lt;openssl/ec_key.h&gt;</a></u></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#<span data-ppcond="60">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="61">61</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="62">62</th><td><u>#<span data-ppcond="60">endif</span></u></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><i>/* ECDSA contains functions for signing and verifying with the Digital Signature</i></td></tr>
+<tr><th id="66">66</th><td><i> * Algorithm over elliptic curves. */</i></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><i>/* Signing and verifing. */</i></td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><i>/* ECDSA_sign signs |digest_len| bytes from |digest| with |key| and writes the</i></td></tr>
+<tr><th id="72">72</th><td><i> * resulting signature to |sig|, which must have |ECDSA_size(key)| bytes of</i></td></tr>
+<tr><th id="73">73</th><td><i> * space. On successful exit, |*sig_len| is set to the actual number of bytes</i></td></tr>
+<tr><th id="74">74</th><td><i> * written. The |type| argument should be zero. It returns one on success and</i></td></tr>
+<tr><th id="75">75</th><td><i> * zero otherwise. */</i></td></tr>
+<tr><th id="76">76</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="ECDSA_sign" title='ECDSA_sign' data-ref="ECDSA_sign">ECDSA_sign</dfn>(<em>int</em> <dfn class="local col4 decl" id="2084type" title='type' data-type='int' data-ref="2084type">type</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="2085digest" title='digest' data-type='const uint8_t *' data-ref="2085digest">digest</dfn>,</td></tr>
+<tr><th id="77">77</th><td>                              <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="2086digest_len" title='digest_len' data-type='size_t' data-ref="2086digest_len">digest_len</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="2087sig" title='sig' data-type='uint8_t *' data-ref="2087sig">sig</dfn>,</td></tr>
+<tr><th id="78">78</th><td>                              <em>unsigned</em> <em>int</em> *<dfn class="local col8 decl" id="2088sig_len" title='sig_len' data-type='unsigned int *' data-ref="2088sig_len">sig_len</dfn>, <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col9 decl" id="2089key" title='key' data-type='EC_KEY *' data-ref="2089key">key</dfn>);</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><i>/* ECDSA_verify verifies that |sig_len| bytes from |sig| constitute a valid</i></td></tr>
+<tr><th id="81">81</th><td><i> * signature by |key| of |digest|. (The |type| argument should be zero.) It</i></td></tr>
+<tr><th id="82">82</th><td><i> * returns one on success or zero if the signature is invalid or an error</i></td></tr>
+<tr><th id="83">83</th><td><i> * occured. */</i></td></tr>
+<tr><th id="84">84</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="ECDSA_verify" title='ECDSA_verify' data-ref="ECDSA_verify">ECDSA_verify</dfn>(<em>int</em> <dfn class="local col0 decl" id="2090type" title='type' data-type='int' data-ref="2090type">type</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="2091digest" title='digest' data-type='const uint8_t *' data-ref="2091digest">digest</dfn>,</td></tr>
+<tr><th id="85">85</th><td>                                <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="2092digest_len" title='digest_len' data-type='size_t' data-ref="2092digest_len">digest_len</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="2093sig" title='sig' data-type='const uint8_t *' data-ref="2093sig">sig</dfn>,</td></tr>
+<tr><th id="86">86</th><td>                                <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="2094sig_len" title='sig_len' data-type='size_t' data-ref="2094sig_len">sig_len</dfn>, <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col5 decl" id="2095key" title='key' data-type='EC_KEY *' data-ref="2095key">key</dfn>);</td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><i>/* ECDSA_size returns the maximum size of an ECDSA signature using |key|. It</i></td></tr>
+<tr><th id="89">89</th><td><i> * returns zero on error. */</i></td></tr>
+<tr><th id="90">90</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="ECDSA_size" title='ECDSA_size' data-ref="ECDSA_size">ECDSA_size</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col6 decl" id="2096key" title='key' data-type='const EC_KEY *' data-ref="2096key">key</dfn>);</td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><i>/* Low-level signing and verification.</i></td></tr>
+<tr><th id="94">94</th><td><i> *</i></td></tr>
+<tr><th id="95">95</th><td><i> * Low-level functions handle signatures as |ECDSA_SIG| structures which allow</i></td></tr>
+<tr><th id="96">96</th><td><i> * the two values in an ECDSA signature to be handled separately. */</i></td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><b>struct</b> <dfn class="type def" id="ecdsa_sig_st" title='ecdsa_sig_st' data-ref="ecdsa_sig_st">ecdsa_sig_st</dfn> {</td></tr>
+<tr><th id="99">99</th><td>  <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="decl" id="ecdsa_sig_st::r" title='ecdsa_sig_st::r' data-ref="ecdsa_sig_st::r">r</dfn>;</td></tr>
+<tr><th id="100">100</th><td>  <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="decl" id="ecdsa_sig_st::s" title='ecdsa_sig_st::s' data-ref="ecdsa_sig_st::s">s</dfn>;</td></tr>
+<tr><th id="101">101</th><td>};</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><i>/* ECDSA_SIG_new returns a fresh |ECDSA_SIG| structure or NULL on error. */</i></td></tr>
+<tr><th id="104">104</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="decl" id="ECDSA_SIG_new" title='ECDSA_SIG_new' data-ref="ECDSA_SIG_new">ECDSA_SIG_new</dfn>(<em>void</em>);</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><i>/* ECDSA_SIG_free frees |sig| its member |BIGNUM|s. */</i></td></tr>
+<tr><th id="107">107</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="ECDSA_SIG_free" title='ECDSA_SIG_free' data-ref="ECDSA_SIG_free">ECDSA_SIG_free</dfn>(<a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="local col7 decl" id="2097sig" title='sig' data-type='ECDSA_SIG *' data-ref="2097sig">sig</dfn>);</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><i>/* ECDSA_do_sign signs |digest_len| bytes from |digest| with |key| and returns</i></td></tr>
+<tr><th id="110">110</th><td><i> * the resulting signature structure, or NULL on error. */</i></td></tr>
+<tr><th id="111">111</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="decl" id="ECDSA_do_sign" title='ECDSA_do_sign' data-ref="ECDSA_do_sign">ECDSA_do_sign</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="2098digest" title='digest' data-type='const uint8_t *' data-ref="2098digest">digest</dfn>,</td></tr>
+<tr><th id="112">112</th><td>                                        <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="2099digest_len" title='digest_len' data-type='size_t' data-ref="2099digest_len">digest_len</dfn>, <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col0 decl" id="2100key" title='key' data-type='EC_KEY *' data-ref="2100key">key</dfn>);</td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><i>/* ECDSA_do_verify verifies that |sig| constitutes a valid signature by |key|</i></td></tr>
+<tr><th id="115">115</th><td><i> * of |digest|. It returns one on success or zero if the signature is invalid</i></td></tr>
+<tr><th id="116">116</th><td><i> * or on error. */</i></td></tr>
+<tr><th id="117">117</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="ECDSA_do_verify" title='ECDSA_do_verify' data-ref="ECDSA_do_verify">ECDSA_do_verify</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="2101digest" title='digest' data-type='const uint8_t *' data-ref="2101digest">digest</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="2102digest_len" title='digest_len' data-type='size_t' data-ref="2102digest_len">digest_len</dfn>,</td></tr>
+<tr><th id="118">118</th><td>                                   <em>const</em> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="local col3 decl" id="2103sig" title='sig' data-type='const ECDSA_SIG *' data-ref="2103sig">sig</dfn>, <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col4 decl" id="2104key" title='key' data-type='EC_KEY *' data-ref="2104key">key</dfn>);</td></tr>
+<tr><th id="119">119</th><td></td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><i>/* Signing with precomputation.</i></td></tr>
+<tr><th id="122">122</th><td><i> *</i></td></tr>
+<tr><th id="123">123</th><td><i> * Parts of the ECDSA signature can be independent of the message to be signed</i></td></tr>
+<tr><th id="124">124</th><td><i> * thus it's possible to precompute them and reduce the signing latency.</i></td></tr>
+<tr><th id="125">125</th><td><i> *</i></td></tr>
+<tr><th id="126">126</th><td><i> * TODO(fork): remove support for this as it cannot support safe-randomness. */</i></td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td><i>/* ECDSA_sign_setup precomputes parts of an ECDSA signing operation. It sets</i></td></tr>
+<tr><th id="129">129</th><td><i> * |*kinv| and |*rp| to the precomputed values and uses the |ctx| argument, if</i></td></tr>
+<tr><th id="130">130</th><td><i> * not NULL. It returns one on success and zero otherwise. */</i></td></tr>
+<tr><th id="131">131</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="ECDSA_sign_setup" title='ECDSA_sign_setup' data-ref="ECDSA_sign_setup">ECDSA_sign_setup</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col5 decl" id="2105eckey" title='eckey' data-type='EC_KEY *' data-ref="2105eckey">eckey</dfn>, <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col6 decl" id="2106ctx" title='ctx' data-type='BN_CTX *' data-ref="2106ctx">ctx</dfn>, <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> **<dfn class="local col7 decl" id="2107kinv" title='kinv' data-type='BIGNUM **' data-ref="2107kinv">kinv</dfn>,</td></tr>
+<tr><th id="132">132</th><td>                                    <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> **<dfn class="local col8 decl" id="2108rp" title='rp' data-type='BIGNUM **' data-ref="2108rp">rp</dfn>);</td></tr>
+<tr><th id="133">133</th><td></td></tr>
+<tr><th id="134">134</th><td><i>/* ECDSA_do_sign_ex is the same as |ECDSA_do_sign| but takes precomputed values</i></td></tr>
+<tr><th id="135">135</th><td><i> * as generated by |ECDSA_sign_setup|. */</i></td></tr>
+<tr><th id="136">136</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="decl" id="ECDSA_do_sign_ex" title='ECDSA_do_sign_ex' data-ref="ECDSA_do_sign_ex">ECDSA_do_sign_ex</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="2109digest" title='digest' data-type='const uint8_t *' data-ref="2109digest">digest</dfn>,</td></tr>
+<tr><th id="137">137</th><td>                                           <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="2110digest_len" title='digest_len' data-type='size_t' data-ref="2110digest_len">digest_len</dfn>,</td></tr>
+<tr><th id="138">138</th><td>                                           <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="2111kinv" title='kinv' data-type='const BIGNUM *' data-ref="2111kinv">kinv</dfn>, <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="2112rp" title='rp' data-type='const BIGNUM *' data-ref="2112rp">rp</dfn>,</td></tr>
+<tr><th id="139">139</th><td>                                           <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col3 decl" id="2113eckey" title='eckey' data-type='EC_KEY *' data-ref="2113eckey">eckey</dfn>);</td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><i>/* ECDSA_sign_ex is the same as |ECDSA_sign| but takes precomputed values as</i></td></tr>
+<tr><th id="142">142</th><td><i> * generated by |ECDSA_sign_setup|. */</i></td></tr>
+<tr><th id="143">143</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="ECDSA_sign_ex" title='ECDSA_sign_ex' data-ref="ECDSA_sign_ex">ECDSA_sign_ex</dfn>(<em>int</em> <dfn class="local col4 decl" id="2114type" title='type' data-type='int' data-ref="2114type">type</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="2115digest" title='digest' data-type='const uint8_t *' data-ref="2115digest">digest</dfn>,</td></tr>
+<tr><th id="144">144</th><td>                                 <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="2116digest_len" title='digest_len' data-type='size_t' data-ref="2116digest_len">digest_len</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="2117sig" title='sig' data-type='uint8_t *' data-ref="2117sig">sig</dfn>,</td></tr>
+<tr><th id="145">145</th><td>                                 <em>unsigned</em> <em>int</em> *<dfn class="local col8 decl" id="2118sig_len" title='sig_len' data-type='unsigned int *' data-ref="2118sig_len">sig_len</dfn>, <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="2119kinv" title='kinv' data-type='const BIGNUM *' data-ref="2119kinv">kinv</dfn>,</td></tr>
+<tr><th id="146">146</th><td>                                 <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col0 decl" id="2120rp" title='rp' data-type='const BIGNUM *' data-ref="2120rp">rp</dfn>, <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col1 decl" id="2121eckey" title='eckey' data-type='EC_KEY *' data-ref="2121eckey">eckey</dfn>);</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td><i>/* ASN.1 functions. */</i></td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><i>/* ECDSA_SIG_parse parses a DER-encoded ECDSA-Sig-Value structure from |cbs| and</i></td></tr>
+<tr><th id="152">152</th><td><i> * advances |cbs|. It returns a newly-allocated |ECDSA_SIG| or NULL on error. */</i></td></tr>
+<tr><th id="153">153</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="decl" id="ECDSA_SIG_parse" title='ECDSA_SIG_parse' data-ref="ECDSA_SIG_parse">ECDSA_SIG_parse</dfn>(<a class="typedef" href="base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> *<dfn class="local col2 decl" id="2122cbs" title='cbs' data-type='CBS *' data-ref="2122cbs">cbs</dfn>);</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td><i>/* ECDSA_SIG_from_bytes parses |in| as a DER-encoded ECDSA-Sig-Value structure.</i></td></tr>
+<tr><th id="156">156</th><td><i> * It returns a newly-allocated |ECDSA_SIG| structure or NULL on error. */</i></td></tr>
+<tr><th id="157">157</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="decl" id="ECDSA_SIG_from_bytes" title='ECDSA_SIG_from_bytes' data-ref="ECDSA_SIG_from_bytes">ECDSA_SIG_from_bytes</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="2123in" title='in' data-type='const uint8_t *' data-ref="2123in">in</dfn>,</td></tr>
+<tr><th id="158">158</th><td>                                               <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="2124in_len" title='in_len' data-type='size_t' data-ref="2124in_len">in_len</dfn>);</td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td><i>/* ECDSA_SIG_marshal marshals |sig| as a DER-encoded ECDSA-Sig-Value and appends</i></td></tr>
+<tr><th id="161">161</th><td><i> * the result to |cbb|. It returns one on success and zero on error. */</i></td></tr>
+<tr><th id="162">162</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="ECDSA_SIG_marshal" title='ECDSA_SIG_marshal' data-ref="ECDSA_SIG_marshal">ECDSA_SIG_marshal</dfn>(<a class="typedef" href="base.h.html#CBB" title='CBB' data-type='struct cbb_st' data-ref="CBB">CBB</a> *<dfn class="local col5 decl" id="2125cbb" title='cbb' data-type='CBB *' data-ref="2125cbb">cbb</dfn>, <em>const</em> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="local col6 decl" id="2126sig" title='sig' data-type='const ECDSA_SIG *' data-ref="2126sig">sig</dfn>);</td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><i>/* ECDSA_SIG_to_bytes marshals |sig| as a DER-encoded ECDSA-Sig-Value and, on</i></td></tr>
+<tr><th id="165">165</th><td><i> * success, sets |*out_bytes| to a newly allocated buffer containing the result</i></td></tr>
+<tr><th id="166">166</th><td><i> * and returns one. Otherwise, it returns zero. The result should be freed with</i></td></tr>
+<tr><th id="167">167</th><td><i> * |OPENSSL_free|. */</i></td></tr>
+<tr><th id="168">168</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="ECDSA_SIG_to_bytes" title='ECDSA_SIG_to_bytes' data-ref="ECDSA_SIG_to_bytes">ECDSA_SIG_to_bytes</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col7 decl" id="2127out_bytes" title='out_bytes' data-type='uint8_t **' data-ref="2127out_bytes">out_bytes</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col8 decl" id="2128out_len" title='out_len' data-type='size_t *' data-ref="2128out_len">out_len</dfn>,</td></tr>
+<tr><th id="169">169</th><td>                                      <em>const</em> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="local col9 decl" id="2129sig" title='sig' data-type='const ECDSA_SIG *' data-ref="2129sig">sig</dfn>);</td></tr>
+<tr><th id="170">170</th><td></td></tr>
+<tr><th id="171">171</th><td><i>/* ECDSA_SIG_max_len returns the maximum length of a DER-encoded ECDSA-Sig-Value</i></td></tr>
+<tr><th id="172">172</th><td><i> * structure for a group whose order is represented in |order_len| bytes, or</i></td></tr>
+<tr><th id="173">173</th><td><i> * zero on overflow. */</i></td></tr>
+<tr><th id="174">174</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="ECDSA_SIG_max_len" title='ECDSA_SIG_max_len' data-ref="ECDSA_SIG_max_len">ECDSA_SIG_max_len</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="2130order_len" title='order_len' data-type='size_t' data-ref="2130order_len">order_len</dfn>);</td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td><i>/* Deprecated functions. */</i></td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td><i>/* d2i_ECDSA_SIG parses an ASN.1, DER-encoded, signature from |len| bytes at</i></td></tr>
+<tr><th id="180">180</th><td><i> * |*inp|. If |out| is not NULL then, on exit, a pointer to the result is in</i></td></tr>
+<tr><th id="181">181</th><td><i> * |*out|. If |*out| is already non-NULL on entry then the result is written</i></td></tr>
+<tr><th id="182">182</th><td><i> * directly into |*out|, otherwise a fresh |ECDSA_SIG| is allocated. On</i></td></tr>
+<tr><th id="183">183</th><td><i> * successful exit, |*inp| is advanced past the DER structure. It returns the</i></td></tr>
+<tr><th id="184">184</th><td><i> * result or NULL on error. */</i></td></tr>
+<tr><th id="185">185</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="decl" id="d2i_ECDSA_SIG" title='d2i_ECDSA_SIG' data-ref="d2i_ECDSA_SIG">d2i_ECDSA_SIG</dfn>(<a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> **<dfn class="local col1 decl" id="2131out" title='out' data-type='ECDSA_SIG **' data-ref="2131out">out</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col2 decl" id="2132inp" title='inp' data-type='const uint8_t **' data-ref="2132inp">inp</dfn>,</td></tr>
+<tr><th id="186">186</th><td>                                        <em>long</em> <dfn class="local col3 decl" id="2133len" title='len' data-type='long' data-ref="2133len">len</dfn>);</td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td><i>/* i2d_ECDSA_SIG marshals a signature from |sig| to an ASN.1, DER</i></td></tr>
+<tr><th id="189">189</th><td><i> * structure. If |outp| is not NULL then the result is written to |*outp| and</i></td></tr>
+<tr><th id="190">190</th><td><i> * |*outp| is advanced just past the output. It returns the number of bytes in</i></td></tr>
+<tr><th id="191">191</th><td><i> * the result, whether written or not, or a negative value on error. */</i></td></tr>
+<tr><th id="192">192</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="i2d_ECDSA_SIG" title='i2d_ECDSA_SIG' data-ref="i2d_ECDSA_SIG">i2d_ECDSA_SIG</dfn>(<em>const</em> <a class="typedef" href="base.h.html#ECDSA_SIG" title='ECDSA_SIG' data-type='struct ecdsa_sig_st' data-ref="ECDSA_SIG">ECDSA_SIG</a> *<dfn class="local col4 decl" id="2134sig" title='sig' data-type='const ECDSA_SIG *' data-ref="2134sig">sig</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col5 decl" id="2135outp" title='outp' data-type='uint8_t **' data-ref="2135outp">outp</dfn>);</td></tr>
+<tr><th id="193">193</th><td></td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><u>#<span data-ppcond="195">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="196">196</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="197">197</th><td><u>#<span data-ppcond="195">endif</span></u></td></tr>
+<tr><th id="198">198</th><td></td></tr>
+<tr><th id="199">199</th><td><u>#define <dfn class="macro" id="_M/ECDSA_R_BAD_SIGNATURE" data-ref="_M/ECDSA_R_BAD_SIGNATURE">ECDSA_R_BAD_SIGNATURE</dfn> 100</u></td></tr>
+<tr><th id="200">200</th><td><u>#define <dfn class="macro" id="_M/ECDSA_R_MISSING_PARAMETERS" data-ref="_M/ECDSA_R_MISSING_PARAMETERS">ECDSA_R_MISSING_PARAMETERS</dfn> 101</u></td></tr>
+<tr><th id="201">201</th><td><u>#define <dfn class="macro" id="_M/ECDSA_R_NEED_NEW_SETUP_VALUES" data-ref="_M/ECDSA_R_NEED_NEW_SETUP_VALUES">ECDSA_R_NEED_NEW_SETUP_VALUES</dfn> 102</u></td></tr>
+<tr><th id="202">202</th><td><u>#define <dfn class="macro" id="_M/ECDSA_R_NOT_IMPLEMENTED" data-ref="_M/ECDSA_R_NOT_IMPLEMENTED">ECDSA_R_NOT_IMPLEMENTED</dfn> 103</u></td></tr>
+<tr><th id="203">203</th><td><u>#define <dfn class="macro" id="_M/ECDSA_R_RANDOM_NUMBER_GENERATION_FAILED" data-ref="_M/ECDSA_R_RANDOM_NUMBER_GENERATION_FAILED">ECDSA_R_RANDOM_NUMBER_GENERATION_FAILED</dfn> 104</u></td></tr>
+<tr><th id="204">204</th><td><u>#define <dfn class="macro" id="_M/ECDSA_R_ENCODE_ERROR" data-ref="_M/ECDSA_R_ENCODE_ERROR">ECDSA_R_ENCODE_ERROR</dfn> 105</u></td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td><u>#<span data-ppcond="53">endif</span>  /* OPENSSL_HEADER_ECDSA_H */</u></td></tr>
+<tr><th id="207">207</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../android_compat_hacks.c.html'>codebrowser/external/boringssl/android_compat_hacks.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

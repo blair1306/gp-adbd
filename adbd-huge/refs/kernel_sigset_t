@@ -1,0 +1,13 @@
+<def f='codebrowser/bionic/libc/private/kernel_sigset_t.h' l='26' ll='52'/>
+<size>8</size>
+<doc f='codebrowser/bionic/libc/private/kernel_sigset_t.h' l='22'>// Our sigset_t is wrong for ARM and x86. It&apos;s 32-bit but the kernel expects 64 bits.
+// This means we can&apos;t support real-time signals correctly until we can change the ABI.
+// In the meantime, we can use this union to pass an appropriately-sized block of memory
+// to the kernel, at the cost of not being able to refer to real-time signals.</doc>
+<fun r='_ZN15kernel_sigset_tC1Ev'/>
+<fun r='_ZN15kernel_sigset_tC1EPKm'/>
+<fun r='_ZN15kernel_sigset_t5clearEv'/>
+<fun r='_ZN15kernel_sigset_t3setEPKm'/>
+<fun r='_ZN15kernel_sigset_t3getEv'/>
+<mbr r='kernel_sigset_t::bionic' o='0' t='sigset_t'/>
+<mbr r='kernel_sigset_t::kernel' o='0' t='uint32_t [2]'/>

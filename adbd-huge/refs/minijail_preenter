@@ -1,0 +1,10 @@
+<dec f='codebrowser/external/minijail/libminijail-private.h' l='84' type='void minijail_preenter(struct minijail * j)'/>
+<def f='codebrowser/external/minijail/libminijail.c' l='164' ll='174' type='void minijail_preenter(struct minijail * j)'/>
+<doc f='codebrowser/external/minijail/libminijail.c' l='159'>/*
+ * Strip out flags meant for the parent.
+ * We keep things that are not inherited across execve(2) (e.g. capabilities),
+ * or are easier to set after execve(2) (e.g. seccomp filters).
+ */</doc>
+<doc f='codebrowser/external/minijail/libminijail-private.h' l='81'>/* minijail_preenter: strips @j of all options handled by minijail_run()
+ * @j jail to strip
+ */</doc>

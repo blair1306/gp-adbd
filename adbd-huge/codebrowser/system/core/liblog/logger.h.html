@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>logger.h source code [codebrowser/system/core/liblog/logger.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="android_log_context,android_log_logger,android_log_logger_list,android_log_transport_context,android_log_transport_read,android_log_transport_write "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/liblog/logger.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>liblog</a>/<a href='logger.h.html'>logger.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2016 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/_LIBLOG_LOGGER_H__">_LIBLOG_LOGGER_H__</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/_LIBLOG_LOGGER_H__" data-ref="_M/_LIBLOG_LOGGER_H__">_LIBLOG_LOGGER_H__</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include &lt;stdbool.h&gt;</u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../include/log/uio.h.html">&lt;log/uio.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../include/cutils/list.h.html">&lt;cutils/list.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../include/log/log.h.html">&lt;log/log.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../include/log/log_read.h.html">&lt;log/log_read.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="../include/log/logger.h.html">&lt;log/logger.h&gt;</a></u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="log_portability.h.html">"log_portability.h"</a></u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><a class="macro" href="../../../bionic/libc/include/sys/cdefs.h.html#89" title="" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><i>/* Union, sock or fd of zero is not allowed unless static initialized */</i></td></tr>
+<tr><th id="33">33</th><td><b>union</b> <dfn class="type def" id="android_log_context" title='android_log_context' data-ref="android_log_context">android_log_context</dfn> {</td></tr>
+<tr><th id="34">34</th><td>  <em>void</em> *<dfn class="decl" id="android_log_context::private" title='android_log_context::private' data-ref="android_log_context::private">private</dfn>;</td></tr>
+<tr><th id="35">35</th><td>  <em>int</em> <dfn class="decl" id="android_log_context::sock" title='android_log_context::sock' data-ref="android_log_context::sock">sock</dfn>;</td></tr>
+<tr><th id="36">36</th><td>  <em>int</em> <dfn class="decl" id="android_log_context::fd" title='android_log_context::fd' data-ref="android_log_context::fd">fd</dfn>;</td></tr>
+<tr><th id="37">37</th><td>  <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> *<dfn class="decl" id="android_log_context::node" title='android_log_context::node' data-ref="android_log_context::node">node</dfn>;</td></tr>
+<tr><th id="38">38</th><td>};</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><b>struct</b> <dfn class="type def" id="android_log_transport_write" title='android_log_transport_write' data-ref="android_log_transport_write">android_log_transport_write</dfn> {</td></tr>
+<tr><th id="41">41</th><td>  <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> <dfn class="decl" id="android_log_transport_write::node" title='android_log_transport_write::node' data-ref="android_log_transport_write::node">node</dfn>;</td></tr>
+<tr><th id="42">42</th><td>  <em>const</em> <em>char</em> *<dfn class="decl" id="android_log_transport_write::name" title='android_log_transport_write::name' data-ref="android_log_transport_write::name">name</dfn>;</td></tr>
+<tr><th id="43">43</th><td>  <em>unsigned</em> <dfn class="decl" id="android_log_transport_write::logMask" title='android_log_transport_write::logMask' data-ref="android_log_transport_write::logMask">logMask</dfn>; <i>/* cache of available success */</i></td></tr>
+<tr><th id="44">44</th><td>  <b>union</b> <a class="type" href="#android_log_context" title='android_log_context' data-ref="android_log_context">android_log_context</a> <dfn class="decl" id="android_log_transport_write::context" title='android_log_transport_write::context' data-ref="android_log_transport_write::context">context</dfn>; <i>/* Initialized by static allocation */</i></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td>  <em>int</em> (*<dfn class="decl" id="android_log_transport_write::available" title='android_log_transport_write::available' data-ref="android_log_transport_write::available">available</dfn>)(<a class="typedef" href="../include/log/log.h.html#log_id_t" title='log_id_t' data-type='enum log_id' data-ref="log_id_t">log_id_t</a> <dfn class="local col4 decl" id="34logId" title='logId' data-type='log_id_t' data-ref="34logId">logId</dfn>);</td></tr>
+<tr><th id="47">47</th><td>  <em>int</em> (*<dfn class="decl" id="android_log_transport_write::open" title='android_log_transport_write::open' data-ref="android_log_transport_write::open">open</dfn>)();</td></tr>
+<tr><th id="48">48</th><td>  <em>void</em> (*<dfn class="decl" id="android_log_transport_write::close" title='android_log_transport_write::close' data-ref="android_log_transport_write::close">close</dfn>)();</td></tr>
+<tr><th id="49">49</th><td>  <em>int</em> (*<dfn class="decl" id="android_log_transport_write::write" title='android_log_transport_write::write' data-ref="android_log_transport_write::write">write</dfn>)(<a class="typedef" href="../include/log/log.h.html#log_id_t" title='log_id_t' data-type='enum log_id' data-ref="log_id_t">log_id_t</a> <dfn class="local col5 decl" id="35logId" title='logId' data-type='log_id_t' data-ref="35logId">logId</dfn>, <b>struct</b> <a class="type" href="../../../bionic/libc/kernel/uapi/linux/time.h.html#timespec" title='timespec' data-ref="timespec">timespec</a> *<dfn class="local col6 decl" id="36ts" title='ts' data-type='struct timespec *' data-ref="36ts">ts</dfn>, <b>struct</b> <a class="type" href="../../../bionic/libc/kernel/uapi/linux/uio.h.html#iovec" title='iovec' data-ref="iovec">iovec</a> *<dfn class="local col7 decl" id="37vec" title='vec' data-type='struct iovec *' data-ref="37vec">vec</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="38nr" title='nr' data-type='size_t' data-ref="38nr">nr</dfn>);</td></tr>
+<tr><th id="50">50</th><td>};</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><b>struct</b> <a class="type" href="#android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</a>;</td></tr>
+<tr><th id="53">53</th><td><b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a>;</td></tr>
+<tr><th id="54">54</th><td><b>struct</b> <a class="type" href="#android_log_logger" title='android_log_logger' data-ref="android_log_logger">android_log_logger</a>;</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><b>struct</b> <dfn class="type def" id="android_log_transport_read" title='android_log_transport_read' data-ref="android_log_transport_read">android_log_transport_read</dfn> {</td></tr>
+<tr><th id="57">57</th><td>  <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> <dfn class="decl" id="android_log_transport_read::node" title='android_log_transport_read::node' data-ref="android_log_transport_read::node">node</dfn>;</td></tr>
+<tr><th id="58">58</th><td>  <em>const</em> <em>char</em> *<dfn class="decl" id="android_log_transport_read::name" title='android_log_transport_read::name' data-ref="android_log_transport_read::name">name</dfn>;</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td>  <em>int</em> (*<dfn class="decl" id="android_log_transport_read::available" title='android_log_transport_read::available' data-ref="android_log_transport_read::available">available</dfn>)(<a class="typedef" href="../include/log/log.h.html#log_id_t" title='log_id_t' data-type='enum log_id' data-ref="log_id_t">log_id_t</a> <dfn class="local col9 decl" id="39logId" title='logId' data-type='log_id_t' data-ref="39logId">logId</dfn>);</td></tr>
+<tr><th id="61">61</th><td>  <em>int</em> (*<dfn class="decl" id="android_log_transport_read::version" title='android_log_transport_read::version' data-ref="android_log_transport_read::version">version</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger" title='android_log_logger' data-ref="android_log_logger">android_log_logger</a> *<dfn class="local col0 decl" id="40logger" title='logger' data-type='struct android_log_logger *' data-ref="40logger">logger</dfn>,</td></tr>
+<tr><th id="62">62</th><td>                 <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col1 decl" id="41transp" title='transp' data-type='struct android_log_transport_context *' data-ref="41transp">transp</dfn>);</td></tr>
+<tr><th id="63">63</th><td>  <em>void</em> (*<dfn class="decl" id="android_log_transport_read::close" title='android_log_transport_read::close' data-ref="android_log_transport_read::close">close</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</a> *<dfn class="local col2 decl" id="42logger_list" title='logger_list' data-type='struct android_log_logger_list *' data-ref="42logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="64">64</th><td>                <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col3 decl" id="43transp" title='transp' data-type='struct android_log_transport_context *' data-ref="43transp">transp</dfn>);</td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td>  <i>/*</i></td></tr>
+<tr><th id="67">67</th><td><i>   * Expect all to instantiate open on any call, so we do not have</i></td></tr>
+<tr><th id="68">68</th><td><i>   * an expicit open call</i></td></tr>
+<tr><th id="69">69</th><td><i>   */</i></td></tr>
+<tr><th id="70">70</th><td>  <em>int</em> (*<dfn class="decl" id="android_log_transport_read::read" title='android_log_transport_read::read' data-ref="android_log_transport_read::read">read</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</a> *<dfn class="local col4 decl" id="44logger_list" title='logger_list' data-type='struct android_log_logger_list *' data-ref="44logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="71">71</th><td>              <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col5 decl" id="45transp" title='transp' data-type='struct android_log_transport_context *' data-ref="45transp">transp</dfn>,</td></tr>
+<tr><th id="72">72</th><td>              <b>struct</b> <a class="type" href="../include/log/logger.h.html#log_msg" title='log_msg' data-ref="log_msg">log_msg</a> *<dfn class="local col6 decl" id="46log_msg" title='log_msg' data-type='struct log_msg *' data-ref="46log_msg">log_msg</dfn>);</td></tr>
+<tr><th id="73">73</th><td>  <i>/* Assumption is only called if not ANDROID_LOG_NONBLOCK */</i></td></tr>
+<tr><th id="74">74</th><td>  <em>int</em> (*<dfn class="decl" id="android_log_transport_read::poll" title='android_log_transport_read::poll' data-ref="android_log_transport_read::poll">poll</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</a> *<dfn class="local col7 decl" id="47logger_list" title='logger_list' data-type='struct android_log_logger_list *' data-ref="47logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="75">75</th><td>              <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col8 decl" id="48transp" title='transp' data-type='struct android_log_transport_context *' data-ref="48transp">transp</dfn>);</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td>  <em>int</em> (*<dfn class="decl" id="android_log_transport_read::clear" title='android_log_transport_read::clear' data-ref="android_log_transport_read::clear">clear</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger" title='android_log_logger' data-ref="android_log_logger">android_log_logger</a> *<dfn class="local col9 decl" id="49logger" title='logger' data-type='struct android_log_logger *' data-ref="49logger">logger</dfn>,</td></tr>
+<tr><th id="78">78</th><td>               <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col0 decl" id="50transp" title='transp' data-type='struct android_log_transport_context *' data-ref="50transp">transp</dfn>);</td></tr>
+<tr><th id="79">79</th><td>  <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> (*<dfn class="decl" id="android_log_transport_read::setSize" title='android_log_transport_read::setSize' data-ref="android_log_transport_read::setSize">setSize</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger" title='android_log_logger' data-ref="android_log_logger">android_log_logger</a> *<dfn class="local col1 decl" id="51logger" title='logger' data-type='struct android_log_logger *' data-ref="51logger">logger</dfn>,</td></tr>
+<tr><th id="80">80</th><td>                     <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col2 decl" id="52transp" title='transp' data-type='struct android_log_transport_context *' data-ref="52transp">transp</dfn>,</td></tr>
+<tr><th id="81">81</th><td>                     <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="53size" title='size' data-type='size_t' data-ref="53size">size</dfn>);</td></tr>
+<tr><th id="82">82</th><td>  <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> (*<dfn class="decl" id="android_log_transport_read::getSize" title='android_log_transport_read::getSize' data-ref="android_log_transport_read::getSize">getSize</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger" title='android_log_logger' data-ref="android_log_logger">android_log_logger</a> *<dfn class="local col4 decl" id="54logger" title='logger' data-type='struct android_log_logger *' data-ref="54logger">logger</dfn>,</td></tr>
+<tr><th id="83">83</th><td>                     <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col5 decl" id="55transp" title='transp' data-type='struct android_log_transport_context *' data-ref="55transp">transp</dfn>);</td></tr>
+<tr><th id="84">84</th><td>  <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> (*<dfn class="decl" id="android_log_transport_read::getReadableSize" title='android_log_transport_read::getReadableSize' data-ref="android_log_transport_read::getReadableSize">getReadableSize</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger" title='android_log_logger' data-ref="android_log_logger">android_log_logger</a> *<dfn class="local col6 decl" id="56logger" title='logger' data-type='struct android_log_logger *' data-ref="56logger">logger</dfn>,</td></tr>
+<tr><th id="85">85</th><td>                             <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col7 decl" id="57transp" title='transp' data-type='struct android_log_transport_context *' data-ref="57transp">transp</dfn>);</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td>  <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> (*<dfn class="decl" id="android_log_transport_read::getPrune" title='android_log_transport_read::getPrune' data-ref="android_log_transport_read::getPrune">getPrune</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</a> *<dfn class="local col8 decl" id="58logger_list" title='logger_list' data-type='struct android_log_logger_list *' data-ref="58logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="88">88</th><td>                      <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col9 decl" id="59transp" title='transp' data-type='struct android_log_transport_context *' data-ref="59transp">transp</dfn>,</td></tr>
+<tr><th id="89">89</th><td>                      <em>char</em> *<dfn class="local col0 decl" id="60buf" title='buf' data-type='char *' data-ref="60buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="61len" title='len' data-type='size_t' data-ref="61len">len</dfn>);</td></tr>
+<tr><th id="90">90</th><td>  <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> (*<dfn class="decl" id="android_log_transport_read::setPrune" title='android_log_transport_read::setPrune' data-ref="android_log_transport_read::setPrune">setPrune</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</a> *<dfn class="local col2 decl" id="62logger_list" title='logger_list' data-type='struct android_log_logger_list *' data-ref="62logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="91">91</th><td>                      <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col3 decl" id="63transp" title='transp' data-type='struct android_log_transport_context *' data-ref="63transp">transp</dfn>,</td></tr>
+<tr><th id="92">92</th><td>                      <em>char</em> *<dfn class="local col4 decl" id="64buf" title='buf' data-type='char *' data-ref="64buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="65len" title='len' data-type='size_t' data-ref="65len">len</dfn>);</td></tr>
+<tr><th id="93">93</th><td>  <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> (*<dfn class="decl" id="android_log_transport_read::getStats" title='android_log_transport_read::getStats' data-ref="android_log_transport_read::getStats">getStats</dfn>)(<b>struct</b> <a class="type" href="#android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</a> *<dfn class="local col6 decl" id="66logger_list" title='logger_list' data-type='struct android_log_logger_list *' data-ref="66logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="94">94</th><td>                      <b>struct</b> <a class="type" href="#android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</a> *<dfn class="local col7 decl" id="67transp" title='transp' data-type='struct android_log_transport_context *' data-ref="67transp">transp</dfn>,</td></tr>
+<tr><th id="95">95</th><td>                      <em>char</em> *<dfn class="local col8 decl" id="68buf" title='buf' data-type='char *' data-ref="68buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="69len" title='len' data-type='size_t' data-ref="69len">len</dfn>);</td></tr>
+<tr><th id="96">96</th><td>};</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><b>struct</b> <dfn class="type def" id="android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</dfn> {</td></tr>
+<tr><th id="99">99</th><td>  <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> <dfn class="decl" id="android_log_logger_list::logger" title='android_log_logger_list::logger' data-ref="android_log_logger_list::logger">logger</dfn>;</td></tr>
+<tr><th id="100">100</th><td>  <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> <dfn class="decl" id="android_log_logger_list::transport" title='android_log_logger_list::transport' data-ref="android_log_logger_list::transport">transport</dfn>;</td></tr>
+<tr><th id="101">101</th><td>  <em>int</em> <dfn class="decl" id="android_log_logger_list::mode" title='android_log_logger_list::mode' data-ref="android_log_logger_list::mode">mode</dfn>;</td></tr>
+<tr><th id="102">102</th><td>  <em>unsigned</em> <em>int</em> <dfn class="decl" id="android_log_logger_list::tail" title='android_log_logger_list::tail' data-ref="android_log_logger_list::tail">tail</dfn>;</td></tr>
+<tr><th id="103">103</th><td>  <a class="typedef" href="../include/log/log_read.h.html#log_time" title='log_time' data-type='struct log_time' data-ref="log_time">log_time</a> <dfn class="decl" id="android_log_logger_list::start" title='android_log_logger_list::start' data-ref="android_log_logger_list::start">start</dfn>;</td></tr>
+<tr><th id="104">104</th><td>  <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="decl" id="android_log_logger_list::pid" title='android_log_logger_list::pid' data-ref="android_log_logger_list::pid">pid</dfn>;</td></tr>
+<tr><th id="105">105</th><td>};</td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><b>struct</b> <dfn class="type def" id="android_log_logger" title='android_log_logger' data-ref="android_log_logger">android_log_logger</dfn> {</td></tr>
+<tr><th id="108">108</th><td>  <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> <dfn class="decl" id="android_log_logger::node" title='android_log_logger::node' data-ref="android_log_logger::node">node</dfn>;</td></tr>
+<tr><th id="109">109</th><td>  <b>struct</b> <a class="type" href="#android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</a> *<dfn class="decl" id="android_log_logger::parent" title='android_log_logger::parent' data-ref="android_log_logger::parent">parent</dfn>;</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td>  <a class="typedef" href="../include/log/log.h.html#log_id_t" title='log_id_t' data-type='enum log_id' data-ref="log_id_t">log_id_t</a> <dfn class="decl" id="android_log_logger::logId" title='android_log_logger::logId' data-ref="android_log_logger::logId">logId</dfn>;</td></tr>
+<tr><th id="112">112</th><td>};</td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><b>struct</b> <dfn class="type def" id="android_log_transport_context" title='android_log_transport_context' data-ref="android_log_transport_context">android_log_transport_context</dfn> {</td></tr>
+<tr><th id="115">115</th><td>  <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> <dfn class="decl" id="android_log_transport_context::node" title='android_log_transport_context::node' data-ref="android_log_transport_context::node">node</dfn>;</td></tr>
+<tr><th id="116">116</th><td>  <b>union</b> <a class="type" href="#android_log_context" title='android_log_context' data-ref="android_log_context">android_log_context</a> <dfn class="decl" id="android_log_transport_context::context" title='android_log_transport_context::context' data-ref="android_log_transport_context::context">context</dfn>; <i>/* zero init per-transport context */</i></td></tr>
+<tr><th id="117">117</th><td>  <b>struct</b> <a class="type" href="#android_log_logger_list" title='android_log_logger_list' data-ref="android_log_logger_list">android_log_logger_list</a> *<dfn class="decl" id="android_log_transport_context::parent" title='android_log_transport_context::parent' data-ref="android_log_transport_context::parent">parent</dfn>;</td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td>  <b>struct</b> <a class="type" href="#android_log_transport_read" title='android_log_transport_read' data-ref="android_log_transport_read">android_log_transport_read</a> *<dfn class="decl" id="android_log_transport_context::transport" title='android_log_transport_context::transport' data-ref="android_log_transport_context::transport">transport</dfn>;</td></tr>
+<tr><th id="120">120</th><td>  <em>unsigned</em> <dfn class="decl" id="android_log_transport_context::logMask" title='android_log_transport_context::logMask' data-ref="android_log_transport_context::logMask">logMask</dfn>;</td></tr>
+<tr><th id="121">121</th><td>  <em>int</em> <dfn class="decl" id="android_log_transport_context::ret" title='android_log_transport_context::ret' data-ref="android_log_transport_context::ret">ret</dfn>;</td></tr>
+<tr><th id="122">122</th><td>  <b>struct</b> <a class="type" href="../include/log/logger.h.html#log_msg" title='log_msg' data-ref="log_msg">log_msg</a> <dfn class="decl" id="android_log_transport_context::logMsg" title='android_log_transport_context::logMsg' data-ref="android_log_transport_context::logMsg">logMsg</dfn>; <i>/* valid is logMsg.len != 0 */</i></td></tr>
+<tr><th id="123">123</th><td>};</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td><i>/* assumes caller has structures read-locked, single threaded, or fenced */</i></td></tr>
+<tr><th id="126">126</th><td><u>#define <dfn class="macro" id="_M/transport_context_for_each" data-ref="_M/transport_context_for_each">transport_context_for_each</dfn>(transp, logger_list)              \</u></td></tr>
+<tr><th id="127">127</th><td><u>  for (transp = node_to_item((logger_list)-&gt;transport.next,          \</u></td></tr>
+<tr><th id="128">128</th><td><u>                             struct android_log_transport_context,   \</u></td></tr>
+<tr><th id="129">129</th><td><u>                             node);                                  \</u></td></tr>
+<tr><th id="130">130</th><td><u>       (transp != node_to_item(&amp;(logger_list)-&gt;transport,            \</u></td></tr>
+<tr><th id="131">131</th><td><u>                               struct android_log_transport_context, \</u></td></tr>
+<tr><th id="132">132</th><td><u>                               node)) &amp;&amp;                             \</u></td></tr>
+<tr><th id="133">133</th><td><u>           (transp-&gt;parent == (logger_list));                        \</u></td></tr>
+<tr><th id="134">134</th><td><u>       transp = node_to_item(transp-&gt;node.next,                      \</u></td></tr>
+<tr><th id="135">135</th><td><u>                             struct android_log_transport_context, node))</u></td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td><u>#define <dfn class="macro" id="_M/logger_for_each" data-ref="_M/logger_for_each">logger_for_each</dfn>(logp, logger_list)                          \</u></td></tr>
+<tr><th id="138">138</th><td><u>    for (logp = node_to_item((logger_list)-&gt;logger.next,            \</u></td></tr>
+<tr><th id="139">139</th><td><u>                             struct android_log_logger, node);      \</u></td></tr>
+<tr><th id="140">140</th><td><u>         (logp != node_to_item(&amp;(logger_list)-&gt;logger,              \</u></td></tr>
+<tr><th id="141">141</th><td><u>                               struct android_log_logger, node)) &amp;&amp; \</u></td></tr>
+<tr><th id="142">142</th><td><u>             (logp-&gt;parent == (logger_list));                       \</u></td></tr>
+<tr><th id="143">143</th><td><u>         logp = node_to_item((logp)-&gt;node.next,                     \</u></td></tr>
+<tr><th id="144">144</th><td><u>                             struct android_log_logger, node))</u></td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td><i>/* OS specific dribs and drabs */</i></td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td><u>#<span data-ppcond="148">if</span> defined(<span class="macro" data-ref="_M/_WIN32">_WIN32</span>)</u></td></tr>
+<tr><th id="149">149</th><td><b>typedef</b> uint32_t uid_t;</td></tr>
+<tr><th id="150">150</th><td><u>#<span data-ppcond="148">endif</span></u></td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><a class="macro" href="log_portability.h.html#29" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/LIBLOG_HIDDEN">LIBLOG_HIDDEN</a> <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> <dfn class="decl" id="__android_log_uid" title='__android_log_uid' data-ref="__android_log_uid">__android_log_uid</dfn>();</td></tr>
+<tr><th id="153">153</th><td><a class="macro" href="log_portability.h.html#29" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/LIBLOG_HIDDEN">LIBLOG_HIDDEN</a> <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="decl" id="__android_log_pid" title='__android_log_pid' data-ref="__android_log_pid">__android_log_pid</dfn>();</td></tr>
+<tr><th id="154">154</th><td><a class="macro" href="log_portability.h.html#29" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/LIBLOG_HIDDEN">LIBLOG_HIDDEN</a> <em>void</em> <dfn class="decl" id="__android_log_lock" title='__android_log_lock' data-ref="__android_log_lock">__android_log_lock</dfn>();</td></tr>
+<tr><th id="155">155</th><td><a class="macro" href="log_portability.h.html#29" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/LIBLOG_HIDDEN">LIBLOG_HIDDEN</a> <em>int</em> <dfn class="decl" id="__android_log_trylock" title='__android_log_trylock' data-ref="__android_log_trylock">__android_log_trylock</dfn>();</td></tr>
+<tr><th id="156">156</th><td><a class="macro" href="log_portability.h.html#29" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/LIBLOG_HIDDEN">LIBLOG_HIDDEN</a> <em>void</em> <dfn class="decl" id="__android_log_unlock" title='__android_log_unlock' data-ref="__android_log_unlock">__android_log_unlock</dfn>();</td></tr>
+<tr><th id="157">157</th><td><a class="macro" href="log_portability.h.html#29" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/LIBLOG_HIDDEN">LIBLOG_HIDDEN</a> <em>int</em> <dfn class="decl" id="__android_log_is_debuggable" title='__android_log_is_debuggable' data-ref="__android_log_is_debuggable">__android_log_is_debuggable</dfn>();</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td><a class="macro" href="../../../bionic/libc/include/sys/cdefs.h.html#90" title="" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td><u>#<span data-ppcond="17">endif</span> /* _LIBLOG_LOGGER_H__ */</u></td></tr>
+<tr><th id="162">162</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='config_read.c.html'>codebrowser/system/core/liblog/config_read.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,26 @@
+<dec f='codebrowser/bionic/libc/include/stdlib.h' l='126' type='char * initstate(unsigned int , char * , size_t )'/>
+<def f='codebrowser/bionic/libc/upstream-netbsd/common/lib/libc/stdlib/random.c' l='336' ll='387' type='char * initstate(unsigned int seed, char * arg_state, size_t n)'/>
+<doc f='codebrowser/bionic/libc/upstream-netbsd/common/lib/libc/stdlib/random.c' l='313'>/*
+ * initstate:
+ *
+ * Initialize the state information in the given array of n bytes for future
+ * random number generation.  Based on the number of bytes we are given, and
+ * the break values for the different R.N.G.&apos;s, we choose the best (largest)
+ * one we can and set things up for it.  srandom() is then called to
+ * initialize the state information.
+ * 
+ * Note that on return from srandom(), we set state[-1] to be the type
+ * multiplexed with the current value of the rear pointer; this is so
+ * successive calls to initstate() won&apos;t lose this information and will be
+ * able to restart with setstate().
+ * 
+ * Note: the first thing we do is save the current state, if any, just like
+ * setstate() so that it doesn&apos;t matter when initstate is called.
+ *
+ * Returns a pointer to the old state.
+ *
+ * Note: The Sparc platform requires that arg_state begin on an int
+ * word boundary; otherwise a bus error will occur. Even so, lint will
+ * complain about mis-alignment, but you should disregard these messages.
+ */</doc>
+<dec f='codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdlib.h' l='118' type='char * initstate(unsigned int , char * , size_t )'/>

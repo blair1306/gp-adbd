@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>bpf.h source code [codebrowser/external/minijail/bpf.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="__bpf_label,bpf_labels,operator,seccomp_data "/>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/minijail/bpf.h'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>minijail</a>/<a href='bpf.h.html'>bpf.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* bpf.h</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 2012 The Chromium OS Authors. All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> * Use of this source code is governed by a BSD-style license that can be</i></td></tr>
+<tr><th id="4">4</th><td><i> * found in the LICENSE file.</i></td></tr>
+<tr><th id="5">5</th><td><i> *</i></td></tr>
+<tr><th id="6">6</th><td><i> * Berkeley Packet Filter functions.</i></td></tr>
+<tr><th id="7">7</th><td><i> */</i></td></tr>
+<tr><th id="8">8</th><td></td></tr>
+<tr><th id="9">9</th><td><u>#<span data-ppcond="9">ifndef</span> <span class="macro" data-ref="_M/BPF_H">BPF_H</span></u></td></tr>
+<tr><th id="10">10</th><td><u>#define <dfn class="macro" id="_M/BPF_H" data-ref="_M/BPF_H">BPF_H</dfn></u></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><u>#include <a href="../../bionic/libc/kernel/uapi/asm-x86/asm/bitsperlong.h.html">&lt;asm/bitsperlong.h&gt;</a>   /* for __BITS_PER_LONG */</u></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="../../bionic/libc/include/endian.h.html">&lt;endian.h&gt;</a></u></td></tr>
+<tr><th id="14">14</th><td><u>#include <a href="../../bionic/libc/kernel/uapi/linux/audit.h.html">&lt;linux/audit.h&gt;</a></u></td></tr>
+<tr><th id="15">15</th><td><u>#include <a href="../../bionic/libc/kernel/uapi/linux/filter.h.html">&lt;linux/filter.h&gt;</a></u></td></tr>
+<tr><th id="16">16</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../../bionic/libc/include/sys/user.h.html">&lt;sys/user.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="arch.h.html">"arch.h"</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#<span data-ppcond="21">if</span> <a class="macro" href="../../bionic/libc/kernel/uapi/asm-x86/asm/bitsperlong.h.html#22" title="64" data-ref="_M/__BITS_PER_LONG">__BITS_PER_LONG</a> == 32 || defined(<span class="macro" data-ref="_M/__ILP32__">__ILP32__</span>)</u></td></tr>
+<tr><th id="22">22</th><td><u>#define BITS32</u></td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="21">elif</span> <a class="macro" href="../../bionic/libc/kernel/uapi/asm-x86/asm/bitsperlong.h.html#22" title="64" data-ref="_M/__BITS_PER_LONG">__BITS_PER_LONG</a> == 64</u></td></tr>
+<tr><th id="24">24</th><td><u>#define <dfn class="macro" id="_M/BITS64" data-ref="_M/BITS64">BITS64</dfn></u></td></tr>
+<tr><th id="25">25</th><td><u>#<span data-ppcond="21">endif</span></u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><i>/* Constants for comparison operators. */</i></td></tr>
+<tr><th id="28">28</th><td><u>#define <dfn class="macro" id="_M/MIN_OPERATOR" data-ref="_M/MIN_OPERATOR">MIN_OPERATOR</dfn> 128</u></td></tr>
+<tr><th id="29">29</th><td><b>enum</b> <dfn class="type def" id="operator" title='operator' data-ref="operator">operator</dfn> {</td></tr>
+<tr><th id="30">30</th><td>	<dfn class="enum" id="operator::EQ" title='operator::EQ' data-ref="operator::EQ">EQ</dfn> = <a class="macro" href="#28" title="128" data-ref="_M/MIN_OPERATOR">MIN_OPERATOR</a>,</td></tr>
+<tr><th id="31">31</th><td>	<dfn class="enum" id="operator::NE" title='operator::NE' data-ref="operator::NE">NE</dfn>,</td></tr>
+<tr><th id="32">32</th><td>	<dfn class="enum" id="operator::LT" title='operator::LT' data-ref="operator::LT">LT</dfn>,</td></tr>
+<tr><th id="33">33</th><td>	<dfn class="enum" id="operator::LE" title='operator::LE' data-ref="operator::LE">LE</dfn>,</td></tr>
+<tr><th id="34">34</th><td>	<dfn class="enum" id="operator::GT" title='operator::GT' data-ref="operator::GT">GT</dfn>,</td></tr>
+<tr><th id="35">35</th><td>	<dfn class="enum" id="operator::GE" title='operator::GE' data-ref="operator::GE">GE</dfn>,</td></tr>
+<tr><th id="36">36</th><td>	<dfn class="enum" id="operator::SET" title='operator::SET' data-ref="operator::SET">SET</dfn></td></tr>
+<tr><th id="37">37</th><td>};</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><i>/*</i></td></tr>
+<tr><th id="40">40</th><td><i> * BPF return values and data structures,</i></td></tr>
+<tr><th id="41">41</th><td><i> * since they're not yet in the kernel.</i></td></tr>
+<tr><th id="42">42</th><td><i> */</i></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/SECCOMP_RET_KILL" data-ref="_M/SECCOMP_RET_KILL">SECCOMP_RET_KILL</dfn>	0x00000000U /* kill the task immediately */</u></td></tr>
+<tr><th id="44">44</th><td><u>#define <dfn class="macro" id="_M/SECCOMP_RET_TRAP" data-ref="_M/SECCOMP_RET_TRAP">SECCOMP_RET_TRAP</dfn>	0x00030000U /* return SIGSYS */</u></td></tr>
+<tr><th id="45">45</th><td><u>#define <dfn class="macro" id="_M/SECCOMP_RET_ERRNO" data-ref="_M/SECCOMP_RET_ERRNO">SECCOMP_RET_ERRNO</dfn>	0x00050000U /* return -1 and set errno */</u></td></tr>
+<tr><th id="46">46</th><td><u>#define <dfn class="macro" id="_M/SECCOMP_RET_ALLOW" data-ref="_M/SECCOMP_RET_ALLOW">SECCOMP_RET_ALLOW</dfn>	0x7fff0000U /* allow */</u></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><u>#define <dfn class="macro" id="_M/SECCOMP_RET_DATA" data-ref="_M/SECCOMP_RET_DATA">SECCOMP_RET_DATA</dfn>	0x0000ffffU /* mask for return value */</u></td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td><b>struct</b> <dfn class="type def" id="seccomp_data" title='seccomp_data' data-ref="seccomp_data">seccomp_data</dfn> {</td></tr>
+<tr><th id="51">51</th><td>	<em>int</em> <dfn class="decl" id="seccomp_data::nr" title='seccomp_data::nr' data-ref="seccomp_data::nr">nr</dfn>;</td></tr>
+<tr><th id="52">52</th><td>	<a class="typedef" href="../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="seccomp_data::arch" title='seccomp_data::arch' data-ref="seccomp_data::arch">arch</dfn>;</td></tr>
+<tr><th id="53">53</th><td>	<a class="typedef" href="../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="seccomp_data::instruction_pointer" title='seccomp_data::instruction_pointer' data-ref="seccomp_data::instruction_pointer">instruction_pointer</dfn>;</td></tr>
+<tr><th id="54">54</th><td>	<a class="typedef" href="../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="seccomp_data::args" title='seccomp_data::args' data-ref="seccomp_data::args">args</dfn>[<var>6</var>];</td></tr>
+<tr><th id="55">55</th><td>};</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#define <dfn class="macro" id="_M/syscall_nr" data-ref="_M/syscall_nr">syscall_nr</dfn> (offsetof(struct seccomp_data, nr))</u></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/arch_nr" data-ref="_M/arch_nr">arch_nr</dfn> (offsetof(struct seccomp_data, arch))</u></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><i>/* Size-dependent defines. */</i></td></tr>
+<tr><th id="61">61</th><td><u>#<span data-ppcond="61">if</span> defined(<span class="macro" data-ref="_M/BITS32">BITS32</span>)</u></td></tr>
+<tr><th id="62">62</th><td><i>/*</i></td></tr>
+<tr><th id="63">63</th><td><i> * On 32 bits, comparisons take 2 instructions: 1 for loading the argument,</i></td></tr>
+<tr><th id="64">64</th><td><i> * 1 for the actual comparison.</i></td></tr>
+<tr><th id="65">65</th><td><i> */</i></td></tr>
+<tr><th id="66">66</th><td><u>#define BPF_LOAD_ARG_LEN	1U</u></td></tr>
+<tr><th id="67">67</th><td><u>#define BPF_COMP_LEN		1U</u></td></tr>
+<tr><th id="68">68</th><td><u>#define BPF_ARG_COMP_LEN (BPF_LOAD_ARG_LEN + BPF_COMP_LEN)</u></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><u>#define bpf_comp_jeq bpf_comp_jeq32</u></td></tr>
+<tr><th id="71">71</th><td><u>#define bpf_comp_jset bpf_comp_jset32</u></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><u>#define LO_ARG(idx) offsetof(struct seccomp_data, args[(idx)])</u></td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><u>#<span data-ppcond="61">elif</span> defined(<a class="macro" href="#24" data-ref="_M/BITS64">BITS64</a>)</u></td></tr>
+<tr><th id="76">76</th><td><i>/*</i></td></tr>
+<tr><th id="77">77</th><td><i> * On 64 bits, comparisons take 7 instructions: 4 for loading the argument,</i></td></tr>
+<tr><th id="78">78</th><td><i> * and 3 for the actual comparison.</i></td></tr>
+<tr><th id="79">79</th><td><i> */</i></td></tr>
+<tr><th id="80">80</th><td><u>#define <dfn class="macro" id="_M/BPF_LOAD_ARG_LEN" data-ref="_M/BPF_LOAD_ARG_LEN">BPF_LOAD_ARG_LEN</dfn>	4U</u></td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/BPF_COMP_LEN" data-ref="_M/BPF_COMP_LEN">BPF_COMP_LEN</dfn>		3U</u></td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/BPF_ARG_COMP_LEN" data-ref="_M/BPF_ARG_COMP_LEN">BPF_ARG_COMP_LEN</dfn> (BPF_LOAD_ARG_LEN + BPF_COMP_LEN)</u></td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><u>#define <dfn class="macro" id="_M/bpf_comp_jeq" data-ref="_M/bpf_comp_jeq">bpf_comp_jeq</dfn> <a class="decl" href="bpf.c.html#bpf_comp_jeq64" title='bpf_comp_jeq64' data-ref="bpf_comp_jeq64" id="bpf_comp_jeq64">bpf_comp_jeq64</a></u></td></tr>
+<tr><th id="85">85</th><td><u>#define <dfn class="macro" id="_M/bpf_comp_jset" data-ref="_M/bpf_comp_jset">bpf_comp_jset</dfn> <a class="decl" href="bpf.c.html#bpf_comp_jset64" title='bpf_comp_jset64' data-ref="bpf_comp_jset64" id="bpf_comp_jset64">bpf_comp_jset64</a></u></td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td><i>/* Ensure that we load the logically correct offset. */</i></td></tr>
+<tr><th id="88">88</th><td><u>#<span data-ppcond="88">if</span> defined(<span class="macro" data-ref="_M/__LITTLE_ENDIAN__">__LITTLE_ENDIAN__</span>) || <a class="macro" href="../../bionic/libc/include/sys/endian.h.html#44" title="1234" data-ref="_M/__BYTE_ORDER">__BYTE_ORDER</a> == <a class="macro" href="../../bionic/libc/include/sys/endian.h.html#39" title="1234" data-ref="_M/__LITTLE_ENDIAN">__LITTLE_ENDIAN</a></u></td></tr>
+<tr><th id="89">89</th><td><u>#define <dfn class="macro" id="_M/LO_ARG" data-ref="_M/LO_ARG">LO_ARG</dfn>(idx) offsetof(struct seccomp_data, args[(idx)])</u></td></tr>
+<tr><th id="90">90</th><td><u>#define <dfn class="macro" id="_M/HI_ARG" data-ref="_M/HI_ARG">HI_ARG</dfn>(idx) offsetof(struct seccomp_data, args[(idx)]) + sizeof(__u32)</u></td></tr>
+<tr><th id="91">91</th><td><u>#<span data-ppcond="88">else</span></u></td></tr>
+<tr><th id="92">92</th><td><u>#error "Unsupported endianness"</u></td></tr>
+<tr><th id="93">93</th><td><u>#<span data-ppcond="88">endif</span></u></td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><u>#<span data-ppcond="61">else</span></u></td></tr>
+<tr><th id="96">96</th><td><u>#error "Unknown bit width"</u></td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><u>#<span data-ppcond="61">endif</span></u></td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><i>/* Common jump targets. */</i></td></tr>
+<tr><th id="101">101</th><td><u>#define <dfn class="macro" id="_M/NEXT" data-ref="_M/NEXT">NEXT</dfn> 0</u></td></tr>
+<tr><th id="102">102</th><td><u>#define <dfn class="macro" id="_M/SKIP" data-ref="_M/SKIP">SKIP</dfn> 1</u></td></tr>
+<tr><th id="103">103</th><td><u>#define <dfn class="macro" id="_M/SKIPN" data-ref="_M/SKIPN">SKIPN</dfn>(_n) (_n)</u></td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><i>/* Support for labels in BPF programs. */</i></td></tr>
+<tr><th id="106">106</th><td><u>#define <dfn class="macro" id="_M/JUMP_JT" data-ref="_M/JUMP_JT">JUMP_JT</dfn> 0xff</u></td></tr>
+<tr><th id="107">107</th><td><u>#define <dfn class="macro" id="_M/JUMP_JF" data-ref="_M/JUMP_JF">JUMP_JF</dfn> 0xff</u></td></tr>
+<tr><th id="108">108</th><td><u>#define <dfn class="macro" id="_M/LABEL_JT" data-ref="_M/LABEL_JT">LABEL_JT</dfn> 0xfe</u></td></tr>
+<tr><th id="109">109</th><td><u>#define <dfn class="macro" id="_M/LABEL_JF" data-ref="_M/LABEL_JF">LABEL_JF</dfn> 0xfe</u></td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><u>#define <dfn class="macro" id="_M/MAX_BPF_LABEL_LEN" data-ref="_M/MAX_BPF_LABEL_LEN">MAX_BPF_LABEL_LEN</dfn> 32</u></td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><u>#define <dfn class="macro" id="_M/BPF_LABELS_MAX" data-ref="_M/BPF_LABELS_MAX">BPF_LABELS_MAX</dfn> 256</u></td></tr>
+<tr><th id="114">114</th><td><b>struct</b> <dfn class="type def" id="bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</dfn> {</td></tr>
+<tr><th id="115">115</th><td>	<em>int</em> <dfn class="decl" id="bpf_labels::count" title='bpf_labels::count' data-ref="bpf_labels::count">count</dfn>;</td></tr>
+<tr><th id="116">116</th><td>	<b>struct</b> <dfn class="type def" id="__bpf_label" title='__bpf_label' data-ref="__bpf_label"><a class="type" href="#__bpf_label" title='__bpf_label' data-ref="__bpf_label">__bpf_label</a></dfn> {</td></tr>
+<tr><th id="117">117</th><td>		<em>const</em> <em>char</em> *<dfn class="decl" id="__bpf_label::label" title='__bpf_label::label' data-ref="__bpf_label::label">label</dfn>;</td></tr>
+<tr><th id="118">118</th><td>		<em>unsigned</em> <em>int</em> <dfn class="decl" id="__bpf_label::location" title='__bpf_label::location' data-ref="__bpf_label::location">location</dfn>;</td></tr>
+<tr><th id="119">119</th><td>	} <dfn class="decl" id="bpf_labels::labels" title='bpf_labels::labels' data-ref="bpf_labels::labels">labels</dfn>[<a class="macro" href="#113" title="256" data-ref="_M/BPF_LABELS_MAX">BPF_LABELS_MAX</a>];</td></tr>
+<tr><th id="120">120</th><td>};</td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td><i>/* BPF instruction manipulation functions and macros. */</i></td></tr>
+<tr><th id="123">123</th><td><em>static</em> <b>inline</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl def" id="set_bpf_instr" title='set_bpf_instr' data-ref="set_bpf_instr">set_bpf_instr</dfn>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col1 decl" id="1instr" title='instr' data-type='struct sock_filter *' data-ref="1instr">instr</dfn>,</td></tr>
+<tr><th id="124">124</th><td>	<em>unsigned</em> <em>short</em> <dfn class="local col2 decl" id="2code" title='code' data-type='unsigned short' data-ref="2code">code</dfn>, <em>unsigned</em> <em>int</em> <dfn class="local col3 decl" id="3k" title='k' data-type='unsigned int' data-ref="3k">k</dfn>,</td></tr>
+<tr><th id="125">125</th><td>	<em>unsigned</em> <em>char</em> <dfn class="local col4 decl" id="4jt" title='jt' data-type='unsigned char' data-ref="4jt">jt</dfn>, <em>unsigned</em> <em>char</em> <dfn class="local col5 decl" id="5jf" title='jf' data-type='unsigned char' data-ref="5jf">jf</dfn>)</td></tr>
+<tr><th id="126">126</th><td>{</td></tr>
+<tr><th id="127">127</th><td>	<a class="local col1 ref" href="#1instr" title='instr' data-ref="1instr">instr</a>-&gt;<a class="ref" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter::code" title='sock_filter::code' data-ref="sock_filter::code">code</a> = <a class="local col2 ref" href="#2code" title='code' data-ref="2code">code</a>;</td></tr>
+<tr><th id="128">128</th><td>	<a class="local col1 ref" href="#1instr" title='instr' data-ref="1instr">instr</a>-&gt;<a class="ref" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter::k" title='sock_filter::k' data-ref="sock_filter::k">k</a> = <a class="local col3 ref" href="#3k" title='k' data-ref="3k">k</a>;</td></tr>
+<tr><th id="129">129</th><td>	<a class="local col1 ref" href="#1instr" title='instr' data-ref="1instr">instr</a>-&gt;<a class="ref" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter::jt" title='sock_filter::jt' data-ref="sock_filter::jt">jt</a> = <a class="local col4 ref" href="#4jt" title='jt' data-ref="4jt">jt</a>;</td></tr>
+<tr><th id="130">130</th><td>	<a class="local col1 ref" href="#1instr" title='instr' data-ref="1instr">instr</a>-&gt;<a class="ref" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter::jf" title='sock_filter::jf' data-ref="sock_filter::jf">jf</a> = <a class="local col5 ref" href="#5jf" title='jf' data-ref="5jf">jf</a>;</td></tr>
+<tr><th id="131">131</th><td>	<b>return</b> <var>1U</var>;</td></tr>
+<tr><th id="132">132</th><td>}</td></tr>
+<tr><th id="133">133</th><td></td></tr>
+<tr><th id="134">134</th><td><u>#define <dfn class="macro" id="_M/set_bpf_stmt" data-ref="_M/set_bpf_stmt">set_bpf_stmt</dfn>(_block, _code, _k) \</u></td></tr>
+<tr><th id="135">135</th><td><u>	set_bpf_instr((_block), (_code), (_k), 0, 0)</u></td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td><u>#define <dfn class="macro" id="_M/set_bpf_jump" data-ref="_M/set_bpf_jump">set_bpf_jump</dfn>(_block, _code, _k, _jt, _jf) \</u></td></tr>
+<tr><th id="138">138</th><td><u>	set_bpf_instr((_block), (_code), (_k), (_jt), (_jf))</u></td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td><u>#define <dfn class="macro" id="_M/set_bpf_lbl" data-ref="_M/set_bpf_lbl">set_bpf_lbl</dfn>(_block, _lbl_id) \</u></td></tr>
+<tr><th id="141">141</th><td><u>	set_bpf_jump((_block), BPF_JMP+BPF_JA, (_lbl_id), \</u></td></tr>
+<tr><th id="142">142</th><td><u>			LABEL_JT, LABEL_JF)</u></td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td><u>#define <dfn class="macro" id="_M/set_bpf_jump_lbl" data-ref="_M/set_bpf_jump_lbl">set_bpf_jump_lbl</dfn>(_block, _lbl_id) \</u></td></tr>
+<tr><th id="145">145</th><td><u>	set_bpf_jump((_block), BPF_JMP+BPF_JA, (_lbl_id), \</u></td></tr>
+<tr><th id="146">146</th><td><u>			JUMP_JT, JUMP_JF)</u></td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td><u>#define <dfn class="macro" id="_M/set_bpf_ret_kill" data-ref="_M/set_bpf_ret_kill">set_bpf_ret_kill</dfn>(_block) \</u></td></tr>
+<tr><th id="149">149</th><td><u>	set_bpf_stmt((_block), BPF_RET+BPF_K, SECCOMP_RET_KILL)</u></td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><u>#define <dfn class="macro" id="_M/set_bpf_ret_trap" data-ref="_M/set_bpf_ret_trap">set_bpf_ret_trap</dfn>(_block) \</u></td></tr>
+<tr><th id="152">152</th><td><u>	set_bpf_stmt((_block), BPF_RET+BPF_K, SECCOMP_RET_TRAP)</u></td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td><u>#define <dfn class="macro" id="_M/set_bpf_ret_errno" data-ref="_M/set_bpf_ret_errno">set_bpf_ret_errno</dfn>(_block, _errno) \</u></td></tr>
+<tr><th id="155">155</th><td><u>	set_bpf_stmt((_block), BPF_RET+BPF_K, \</u></td></tr>
+<tr><th id="156">156</th><td><u>		SECCOMP_RET_ERRNO | ((_errno) &amp; SECCOMP_RET_DATA))</u></td></tr>
+<tr><th id="157">157</th><td></td></tr>
+<tr><th id="158">158</th><td><u>#define <dfn class="macro" id="_M/set_bpf_ret_allow" data-ref="_M/set_bpf_ret_allow">set_bpf_ret_allow</dfn>(_block) \</u></td></tr>
+<tr><th id="159">159</th><td><u>	set_bpf_stmt((_block), BPF_RET+BPF_K, SECCOMP_RET_ALLOW)</u></td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td><u>#define <dfn class="macro" id="_M/bpf_load_syscall_nr" data-ref="_M/bpf_load_syscall_nr">bpf_load_syscall_nr</dfn>(_filter) \</u></td></tr>
+<tr><th id="162">162</th><td><u>	set_bpf_stmt((_filter), BPF_LD+BPF_W+BPF_ABS, syscall_nr)</u></td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><i>/* BPF label functions. */</i></td></tr>
+<tr><th id="165">165</th><td><em>int</em> <a class="decl" href="bpf.c.html#bpf_resolve_jumps" title='bpf_resolve_jumps' data-ref="bpf_resolve_jumps" id="bpf_resolve_jumps">bpf_resolve_jumps</a>(<b>struct</b> <a class="type" href="#bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</a> *<dfn class="local col6 decl" id="6labels" title='labels' data-type='struct bpf_labels *' data-ref="6labels">labels</dfn>,</td></tr>
+<tr><th id="166">166</th><td>		<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col7 decl" id="7filter" title='filter' data-type='struct sock_filter *' data-ref="7filter">filter</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="8count" title='count' data-type='size_t' data-ref="8count">count</dfn>);</td></tr>
+<tr><th id="167">167</th><td><em>int</em> <a class="decl" href="bpf.c.html#bpf_label_id" title='bpf_label_id' data-ref="bpf_label_id" id="bpf_label_id">bpf_label_id</a>(<b>struct</b> <a class="type" href="#bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</a> *<dfn class="local col9 decl" id="9labels" title='labels' data-type='struct bpf_labels *' data-ref="9labels">labels</dfn>, <em>const</em> <em>char</em> *<dfn class="local col0 decl" id="10label" title='label' data-type='const char *' data-ref="10label">label</dfn>);</td></tr>
+<tr><th id="168">168</th><td><em>void</em> <a class="decl" href="bpf.c.html#free_label_strings" title='free_label_strings' data-ref="free_label_strings" id="free_label_strings">free_label_strings</a>(<b>struct</b> <a class="type" href="#bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</a> *<dfn class="local col1 decl" id="11labels" title='labels' data-type='struct bpf_labels *' data-ref="11labels">labels</dfn>);</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td><i>/* BPF helper functions. */</i></td></tr>
+<tr><th id="171">171</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="bpf.c.html#bpf_load_arg" title='bpf_load_arg' data-ref="bpf_load_arg" id="bpf_load_arg">bpf_load_arg</a>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col2 decl" id="12filter" title='filter' data-type='struct sock_filter *' data-ref="12filter">filter</dfn>, <em>int</em> <dfn class="local col3 decl" id="13argidx" title='argidx' data-type='int' data-ref="13argidx">argidx</dfn>);</td></tr>
+<tr><th id="172">172</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="macro" href="#84" title="bpf_comp_jeq64" data-ref="_M/bpf_comp_jeq">bpf_comp_jeq</a>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col4 decl" id="14filter" title='filter' data-type='struct sock_filter *' data-ref="14filter">filter</dfn>, <em>unsigned</em> <em>long</em> <dfn class="local col5 decl" id="15c" title='c' data-type='unsigned long' data-ref="15c">c</dfn>,</td></tr>
+<tr><th id="173">173</th><td>		<em>unsigned</em> <em>char</em> <dfn class="local col6 decl" id="16jt" title='jt' data-type='unsigned char' data-ref="16jt">jt</dfn>, <em>unsigned</em> <em>char</em> <dfn class="local col7 decl" id="17jf" title='jf' data-type='unsigned char' data-ref="17jf">jf</dfn>);</td></tr>
+<tr><th id="174">174</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="macro" href="#85" title="bpf_comp_jset64" data-ref="_M/bpf_comp_jset">bpf_comp_jset</a>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col8 decl" id="18filter" title='filter' data-type='struct sock_filter *' data-ref="18filter">filter</dfn>, <em>unsigned</em> <em>long</em> <dfn class="local col9 decl" id="19mask" title='mask' data-type='unsigned long' data-ref="19mask">mask</dfn>,</td></tr>
+<tr><th id="175">175</th><td>		<em>unsigned</em> <em>char</em> <dfn class="local col0 decl" id="20jt" title='jt' data-type='unsigned char' data-ref="20jt">jt</dfn>, <em>unsigned</em> <em>char</em> <dfn class="local col1 decl" id="21jf" title='jf' data-type='unsigned char' data-ref="21jf">jf</dfn>);</td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td><i>/* Functions called by syscall_filter.c */</i></td></tr>
+<tr><th id="178">178</th><td><u>#define <dfn class="macro" id="_M/ARCH_VALIDATION_LEN" data-ref="_M/ARCH_VALIDATION_LEN">ARCH_VALIDATION_LEN</dfn> 3U</u></td></tr>
+<tr><th id="179">179</th><td><u>#define <dfn class="macro" id="_M/ALLOW_SYSCALL_LEN" data-ref="_M/ALLOW_SYSCALL_LEN">ALLOW_SYSCALL_LEN</dfn> 2U</u></td></tr>
+<tr><th id="180">180</th><td></td></tr>
+<tr><th id="181">181</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="bpf.c.html#bpf_arg_comp" title='bpf_arg_comp' data-ref="bpf_arg_comp" id="bpf_arg_comp">bpf_arg_comp</a>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> **<dfn class="local col2 decl" id="22pfilter" title='pfilter' data-type='struct sock_filter **' data-ref="22pfilter">pfilter</dfn>,</td></tr>
+<tr><th id="182">182</th><td>		<em>int</em> <dfn class="local col3 decl" id="23op" title='op' data-type='int' data-ref="23op">op</dfn>, <em>int</em> <dfn class="local col4 decl" id="24argidx" title='argidx' data-type='int' data-ref="24argidx">argidx</dfn>, <em>unsigned</em> <em>long</em> <dfn class="local col5 decl" id="25c" title='c' data-type='unsigned long' data-ref="25c">c</dfn>, <em>unsigned</em> <em>int</em> <dfn class="local col6 decl" id="26label_id" title='label_id' data-type='unsigned int' data-ref="26label_id">label_id</dfn>);</td></tr>
+<tr><th id="183">183</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="bpf.c.html#bpf_validate_arch" title='bpf_validate_arch' data-ref="bpf_validate_arch" id="bpf_validate_arch">bpf_validate_arch</a>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col7 decl" id="27filter" title='filter' data-type='struct sock_filter *' data-ref="27filter">filter</dfn>);</td></tr>
+<tr><th id="184">184</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="bpf.c.html#bpf_allow_syscall" title='bpf_allow_syscall' data-ref="bpf_allow_syscall" id="bpf_allow_syscall">bpf_allow_syscall</a>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col8 decl" id="28filter" title='filter' data-type='struct sock_filter *' data-ref="28filter">filter</dfn>, <em>int</em> <dfn class="local col9 decl" id="29nr" title='nr' data-type='int' data-ref="29nr">nr</dfn>);</td></tr>
+<tr><th id="185">185</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="bpf.c.html#bpf_allow_syscall_args" title='bpf_allow_syscall_args' data-ref="bpf_allow_syscall_args" id="bpf_allow_syscall_args">bpf_allow_syscall_args</a>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col0 decl" id="30filter" title='filter' data-type='struct sock_filter *' data-ref="30filter">filter</dfn>,</td></tr>
+<tr><th id="186">186</th><td>		<em>int</em> <dfn class="local col1 decl" id="31nr" title='nr' data-type='int' data-ref="31nr">nr</dfn>, <em>unsigned</em> <em>int</em> <dfn class="local col2 decl" id="32id" title='id' data-type='unsigned int' data-ref="32id">id</dfn>);</td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td><i>/* Debug functions. */</i></td></tr>
+<tr><th id="189">189</th><td><em>void</em> <a class="decl" href="bpf.c.html#dump_bpf_prog" title='dump_bpf_prog' data-ref="dump_bpf_prog" id="dump_bpf_prog">dump_bpf_prog</a>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_fprog" title='sock_fprog' data-ref="sock_fprog">sock_fprog</a> *<dfn class="local col3 decl" id="33fprog" title='fprog' data-type='struct sock_fprog *' data-ref="33fprog">fprog</dfn>);</td></tr>
+<tr><th id="190">190</th><td><em>void</em> <a class="decl" href="bpf.c.html#dump_bpf_filter" title='dump_bpf_filter' data-ref="dump_bpf_filter" id="dump_bpf_filter">dump_bpf_filter</a>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col4 decl" id="34filter" title='filter' data-type='struct sock_filter *' data-ref="34filter">filter</dfn>, <em>unsigned</em> <em>short</em> <dfn class="local col5 decl" id="35len" title='len' data-type='unsigned short' data-ref="35len">len</dfn>);</td></tr>
+<tr><th id="191">191</th><td></td></tr>
+<tr><th id="192">192</th><td><u>#<span data-ppcond="9">endif</span> /* BPF_H */</u></td></tr>
+<tr><th id="193">193</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='bpf.c.html'>codebrowser/external/minijail/bpf.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

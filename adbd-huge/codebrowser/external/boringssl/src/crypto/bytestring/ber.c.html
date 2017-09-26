@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ber.c source code [codebrowser/external/boringssl/src/crypto/bytestring/ber.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/bytestring/ber.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>bytestring</a>/<a href='ber.c.html'>ber.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2014, Google Inc.</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Permission to use, copy, modify, and/or distribute this software for any</i></td></tr>
+<tr><th id="4">4</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="5">5</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="8">8</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="9">9</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY</i></td></tr>
+<tr><th id="10">10</th><td><i> * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION</i></td></tr>
+<tr><th id="12">12</th><td><i> * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN</i></td></tr>
+<tr><th id="13">13</th><td><i> * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */</i></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#include <a href="../../include/openssl/bytestring.h.html">&lt;openssl/bytestring.h&gt;</a></u></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="internal.h.html">"internal.h"</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><i  data-doc="kMaxDepth">/* kMaxDepth is a just a sanity limit. The code should be such that the length</i></td></tr>
+<tr><th id="23">23</th><td><i  data-doc="kMaxDepth"> * of the input being processes always decreases. None the less, a very large</i></td></tr>
+<tr><th id="24">24</th><td><i  data-doc="kMaxDepth"> * input could otherwise cause the stack to overflow. */</i></td></tr>
+<tr><th id="25">25</th><td><em>static</em> <em>const</em> <em>unsigned</em> <dfn class="tu decl def" id="kMaxDepth" title='kMaxDepth' data-type='const unsigned int' data-ref="kMaxDepth">kMaxDepth</dfn> = <var>2048</var>;</td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><i  data-doc="cbs_find_ber">/* cbs_find_ber walks an ASN.1 structure in |orig_in| and sets |*ber_found|</i></td></tr>
+<tr><th id="28">28</th><td><i  data-doc="cbs_find_ber"> * depending on whether an indefinite length element was found. The value of</i></td></tr>
+<tr><th id="29">29</th><td><i  data-doc="cbs_find_ber"> * |in| is not changed. It returns one on success (i.e. |*ber_found| was set)</i></td></tr>
+<tr><th id="30">30</th><td><i  data-doc="cbs_find_ber"> * and zero on error. */</i></td></tr>
+<tr><th id="31">31</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="cbs_find_ber" title='cbs_find_ber' data-type='int cbs_find_ber(CBS * orig_in, char * ber_found, unsigned int depth)' data-ref="cbs_find_ber">cbs_find_ber</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> *<dfn class="local col4 decl" id="4orig_in" title='orig_in' data-type='CBS *' data-ref="4orig_in">orig_in</dfn>, <em>char</em> *<dfn class="local col5 decl" id="5ber_found" title='ber_found' data-type='char *' data-ref="5ber_found">ber_found</dfn>, <em>unsigned</em> <dfn class="local col6 decl" id="6depth" title='depth' data-type='unsigned int' data-ref="6depth">depth</dfn>) {</td></tr>
+<tr><th id="32">32</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> <dfn class="local col7 decl" id="7in" title='in' data-type='CBS' data-ref="7in">in</dfn>;</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td>  <b>if</b> (<a class="local col6 ref" href="#6depth" title='depth' data-ref="6depth">depth</a> &gt; <a class="tu ref" href="#kMaxDepth" title='kMaxDepth' data-use='r' data-ref="kMaxDepth">kMaxDepth</a>) {</td></tr>
+<tr><th id="35">35</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="36">36</th><td>  }</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td>  <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_init" title='CBS_init' data-ref="CBS_init">CBS_init</a>(&amp;<a class="local col7 ref" href="#7in" title='in' data-ref="7in">in</a>, <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_data" title='CBS_data' data-ref="CBS_data">CBS_data</a>(<a class="local col4 ref" href="#4orig_in" title='orig_in' data-ref="4orig_in">orig_in</a>), <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(<a class="local col4 ref" href="#4orig_in" title='orig_in' data-ref="4orig_in">orig_in</a>));</td></tr>
+<tr><th id="39">39</th><td>  *<a class="local col5 ref" href="#5ber_found" title='ber_found' data-ref="5ber_found">ber_found</a> = <var>0</var>;</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td>  <b>while</b> (<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(&amp;<a class="local col7 ref" href="#7in" title='in' data-ref="7in">in</a>) &gt; <var>0</var>) {</td></tr>
+<tr><th id="42">42</th><td>    <a class="typedef" href="../../include/openssl/base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> <dfn class="local col8 decl" id="8contents" title='contents' data-type='CBS' data-ref="8contents">contents</dfn>;</td></tr>
+<tr><th id="43">43</th><td>    <em>unsigned</em> <dfn class="local col9 decl" id="9tag" title='tag' data-type='unsigned int' data-ref="9tag">tag</dfn>;</td></tr>
+<tr><th id="44">44</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="10header_len" title='header_len' data-type='size_t' data-ref="10header_len">header_len</dfn>;</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_get_any_ber_asn1_element" title='CBS_get_any_ber_asn1_element' data-ref="CBS_get_any_ber_asn1_element">CBS_get_any_ber_asn1_element</a>(&amp;<a class="local col7 ref" href="#7in" title='in' data-ref="7in">in</a>, &amp;<a class="local col8 ref" href="#8contents" title='contents' data-ref="8contents">contents</a>, &amp;<a class="local col9 ref" href="#9tag" title='tag' data-ref="9tag">tag</a>, &amp;<a class="local col0 ref" href="#10header_len" title='header_len' data-ref="10header_len">header_len</a>)) {</td></tr>
+<tr><th id="47">47</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="48">48</th><td>    }</td></tr>
+<tr><th id="49">49</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(&amp;<a class="local col8 ref" href="#8contents" title='contents' data-ref="8contents">contents</a>) == <a class="local col0 ref" href="#10header_len" title='header_len' data-ref="10header_len">header_len</a> &amp;&amp;</td></tr>
+<tr><th id="50">50</th><td>        <a class="local col0 ref" href="#10header_len" title='header_len' data-ref="10header_len">header_len</a> &gt; <var>0</var> &amp;&amp;</td></tr>
+<tr><th id="51">51</th><td>        <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_data" title='CBS_data' data-ref="CBS_data">CBS_data</a>(&amp;<a class="local col8 ref" href="#8contents" title='contents' data-ref="8contents">contents</a>)[<a class="local col0 ref" href="#10header_len" title='header_len' data-ref="10header_len">header_len</a>-<var>1</var>] == <var>0x80</var>) {</td></tr>
+<tr><th id="52">52</th><td>      *<a class="local col5 ref" href="#5ber_found" title='ber_found' data-ref="5ber_found">ber_found</a> = <var>1</var>;</td></tr>
+<tr><th id="53">53</th><td>      <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="54">54</th><td>    }</td></tr>
+<tr><th id="55">55</th><td>    <b>if</b> (<a class="local col9 ref" href="#9tag" title='tag' data-ref="9tag">tag</a> &amp; <a class="macro" href="../../include/openssl/bytestring.h.html#135" title="0x20" data-ref="_M/CBS_ASN1_CONSTRUCTED">CBS_ASN1_CONSTRUCTED</a>) {</td></tr>
+<tr><th id="56">56</th><td>      <b>if</b> (!<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_skip" title='CBS_skip' data-ref="CBS_skip">CBS_skip</a>(&amp;<a class="local col8 ref" href="#8contents" title='contents' data-ref="8contents">contents</a>, <a class="local col0 ref" href="#10header_len" title='header_len' data-ref="10header_len">header_len</a>) ||</td></tr>
+<tr><th id="57">57</th><td>          !<a class="tu ref" href="#cbs_find_ber" title='cbs_find_ber' data-use='c' data-ref="cbs_find_ber">cbs_find_ber</a>(&amp;<a class="local col8 ref" href="#8contents" title='contents' data-ref="8contents">contents</a>, <a class="local col5 ref" href="#5ber_found" title='ber_found' data-ref="5ber_found">ber_found</a>, <a class="local col6 ref" href="#6depth" title='depth' data-ref="6depth">depth</a> + <var>1</var>)) {</td></tr>
+<tr><th id="58">58</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="59">59</th><td>      }</td></tr>
+<tr><th id="60">60</th><td>    }</td></tr>
+<tr><th id="61">61</th><td>  }</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="64">64</th><td>}</td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><i  data-doc="is_primitive_type">/* is_primitive_type returns true if |tag| likely a primitive type. Normally</i></td></tr>
+<tr><th id="67">67</th><td><i  data-doc="is_primitive_type"> * one can just test the "constructed" bit in the tag but, in BER, even</i></td></tr>
+<tr><th id="68">68</th><td><i  data-doc="is_primitive_type"> * primitive tags can have the constructed bit if they have indefinite</i></td></tr>
+<tr><th id="69">69</th><td><i  data-doc="is_primitive_type"> * length. */</i></td></tr>
+<tr><th id="70">70</th><td><em>static</em> <em>char</em> <dfn class="tu decl def" id="is_primitive_type" title='is_primitive_type' data-type='char is_primitive_type(unsigned int tag)' data-ref="is_primitive_type">is_primitive_type</dfn>(<em>unsigned</em> <dfn class="local col1 decl" id="11tag" title='tag' data-type='unsigned int' data-ref="11tag">tag</dfn>) {</td></tr>
+<tr><th id="71">71</th><td>  <b>return</b> (<a class="local col1 ref" href="#11tag" title='tag' data-ref="11tag">tag</a> &amp; <var>0xc0</var>) == <var>0</var> &amp;&amp;</td></tr>
+<tr><th id="72">72</th><td>         (<a class="local col1 ref" href="#11tag" title='tag' data-ref="11tag">tag</a> &amp; <var>0x1f</var>) != (<a class="macro" href="../../include/openssl/bytestring.h.html#131" title="(0x10 | 0x20)" data-ref="_M/CBS_ASN1_SEQUENCE">CBS_ASN1_SEQUENCE</a> &amp; <var>0x1f</var>) &amp;&amp;</td></tr>
+<tr><th id="73">73</th><td>         (<a class="local col1 ref" href="#11tag" title='tag' data-ref="11tag">tag</a> &amp; <var>0x1f</var>) != (<a class="macro" href="../../include/openssl/bytestring.h.html#132" title="(0x11 | 0x20)" data-ref="_M/CBS_ASN1_SET">CBS_ASN1_SET</a> &amp; <var>0x1f</var>);</td></tr>
+<tr><th id="74">74</th><td>}</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><i  data-doc="is_eoc">/* is_eoc returns true if |header_len| and |contents|, as returned by</i></td></tr>
+<tr><th id="77">77</th><td><i  data-doc="is_eoc"> * |CBS_get_any_ber_asn1_element|, indicate an "end of contents" (EOC) value. */</i></td></tr>
+<tr><th id="78">78</th><td><em>static</em> <em>char</em> <dfn class="tu decl def" id="is_eoc" title='is_eoc' data-type='char is_eoc(size_t header_len, CBS * contents)' data-ref="is_eoc">is_eoc</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="12header_len" title='header_len' data-type='size_t' data-ref="12header_len">header_len</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> *<dfn class="local col3 decl" id="13contents" title='contents' data-type='CBS *' data-ref="13contents">contents</dfn>) {</td></tr>
+<tr><th id="79">79</th><td>  <b>return</b> <a class="local col2 ref" href="#12header_len" title='header_len' data-ref="12header_len">header_len</a> == <var>2</var> &amp;&amp; <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(<a class="local col3 ref" href="#13contents" title='contents' data-ref="13contents">contents</a>) == <var>2</var> &amp;&amp;</td></tr>
+<tr><th id="80">80</th><td>         <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memcmp" title='memcmp' data-ref="memcmp">memcmp</a>(<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_data" title='CBS_data' data-ref="CBS_data">CBS_data</a>(<a class="local col3 ref" href="#13contents" title='contents' data-ref="13contents">contents</a>), <q>"\x00\x00"</q>, <var>2</var>) == <var>0</var>;</td></tr>
+<tr><th id="81">81</th><td>}</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><i  data-doc="cbs_convert_ber">/* cbs_convert_ber reads BER data from |in| and writes DER data to |out|. If</i></td></tr>
+<tr><th id="84">84</th><td><i  data-doc="cbs_convert_ber"> * |squash_header| is set then the top-level of elements from |in| will not</i></td></tr>
+<tr><th id="85">85</th><td><i  data-doc="cbs_convert_ber"> * have their headers written. This is used when concatenating the fragments of</i></td></tr>
+<tr><th id="86">86</th><td><i  data-doc="cbs_convert_ber"> * an indefinite length, primitive value. If |looking_for_eoc| is set then any</i></td></tr>
+<tr><th id="87">87</th><td><i  data-doc="cbs_convert_ber"> * EOC elements found will cause the function to return after consuming it.</i></td></tr>
+<tr><th id="88">88</th><td><i  data-doc="cbs_convert_ber"> * It returns one on success and zero on error. */</i></td></tr>
+<tr><th id="89">89</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="cbs_convert_ber" title='cbs_convert_ber' data-type='int cbs_convert_ber(CBS * in, CBB * out, char squash_header, char looking_for_eoc, unsigned int depth)' data-ref="cbs_convert_ber">cbs_convert_ber</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> *<dfn class="local col4 decl" id="14in" title='in' data-type='CBS *' data-ref="14in">in</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#CBB" title='CBB' data-type='struct cbb_st' data-ref="CBB">CBB</a> *<dfn class="local col5 decl" id="15out" title='out' data-type='CBB *' data-ref="15out">out</dfn>, <em>char</em> <dfn class="local col6 decl" id="16squash_header" title='squash_header' data-type='char' data-ref="16squash_header">squash_header</dfn>,</td></tr>
+<tr><th id="90">90</th><td>                           <em>char</em> <dfn class="local col7 decl" id="17looking_for_eoc" title='looking_for_eoc' data-type='char' data-ref="17looking_for_eoc">looking_for_eoc</dfn>, <em>unsigned</em> <dfn class="local col8 decl" id="18depth" title='depth' data-type='unsigned int' data-ref="18depth">depth</dfn>) {</td></tr>
+<tr><th id="91">91</th><td>  <b>if</b> (<a class="local col8 ref" href="#18depth" title='depth' data-ref="18depth">depth</a> &gt; <a class="tu ref" href="#kMaxDepth" title='kMaxDepth' data-use='r' data-ref="kMaxDepth">kMaxDepth</a>) {</td></tr>
+<tr><th id="92">92</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="93">93</th><td>  }</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td>  <b>while</b> (<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(<a class="local col4 ref" href="#14in" title='in' data-ref="14in">in</a>) &gt; <var>0</var>) {</td></tr>
+<tr><th id="96">96</th><td>    <a class="typedef" href="../../include/openssl/base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> <dfn class="local col9 decl" id="19contents" title='contents' data-type='CBS' data-ref="19contents">contents</dfn>;</td></tr>
+<tr><th id="97">97</th><td>    <em>unsigned</em> <dfn class="local col0 decl" id="20tag" title='tag' data-type='unsigned int' data-ref="20tag">tag</dfn>;</td></tr>
+<tr><th id="98">98</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="21header_len" title='header_len' data-type='size_t' data-ref="21header_len">header_len</dfn>;</td></tr>
+<tr><th id="99">99</th><td>    <a class="typedef" href="../../include/openssl/base.h.html#CBB" title='CBB' data-type='struct cbb_st' data-ref="CBB">CBB</a> *<dfn class="local col2 decl" id="22out_contents" title='out_contents' data-type='CBB *' data-ref="22out_contents">out_contents</dfn>, <dfn class="local col3 decl" id="23out_contents_storage" title='out_contents_storage' data-type='CBB' data-ref="23out_contents_storage">out_contents_storage</dfn>;</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_get_any_ber_asn1_element" title='CBS_get_any_ber_asn1_element' data-ref="CBS_get_any_ber_asn1_element">CBS_get_any_ber_asn1_element</a>(<a class="local col4 ref" href="#14in" title='in' data-ref="14in">in</a>, &amp;<a class="local col9 ref" href="#19contents" title='contents' data-ref="19contents">contents</a>, &amp;<a class="local col0 ref" href="#20tag" title='tag' data-ref="20tag">tag</a>, &amp;<a class="local col1 ref" href="#21header_len" title='header_len' data-ref="21header_len">header_len</a>)) {</td></tr>
+<tr><th id="102">102</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="103">103</th><td>    }</td></tr>
+<tr><th id="104">104</th><td>    <a class="local col2 ref" href="#22out_contents" title='out_contents' data-ref="22out_contents">out_contents</a> = <a class="local col5 ref" href="#15out" title='out' data-ref="15out">out</a>;</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(&amp;<a class="local col9 ref" href="#19contents" title='contents' data-ref="19contents">contents</a>) == <a class="local col1 ref" href="#21header_len" title='header_len' data-ref="21header_len">header_len</a>) {</td></tr>
+<tr><th id="107">107</th><td>      <b>if</b> (<a class="tu ref" href="#is_eoc" title='is_eoc' data-use='c' data-ref="is_eoc">is_eoc</a>(<a class="local col1 ref" href="#21header_len" title='header_len' data-ref="21header_len">header_len</a>, &amp;<a class="local col9 ref" href="#19contents" title='contents' data-ref="19contents">contents</a>)) {</td></tr>
+<tr><th id="108">108</th><td>        <b>return</b> <a class="local col7 ref" href="#17looking_for_eoc" title='looking_for_eoc' data-ref="17looking_for_eoc">looking_for_eoc</a>;</td></tr>
+<tr><th id="109">109</th><td>      }</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td>      <b>if</b> (<a class="local col1 ref" href="#21header_len" title='header_len' data-ref="21header_len">header_len</a> &gt; <var>0</var> &amp;&amp; <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_data" title='CBS_data' data-ref="CBS_data">CBS_data</a>(&amp;<a class="local col9 ref" href="#19contents" title='contents' data-ref="19contents">contents</a>)[<a class="local col1 ref" href="#21header_len" title='header_len' data-ref="21header_len">header_len</a> - <var>1</var>] == <var>0x80</var>) {</td></tr>
+<tr><th id="112">112</th><td>        <i>/* This is an indefinite length element. If it's a SEQUENCE or SET then</i></td></tr>
+<tr><th id="113">113</th><td><i>         * we just need to write the out the contents as normal, but with a</i></td></tr>
+<tr><th id="114">114</th><td><i>         * concrete length prefix.</i></td></tr>
+<tr><th id="115">115</th><td><i>         *</i></td></tr>
+<tr><th id="116">116</th><td><i>         * If it's a something else then the contents will be a series of BER</i></td></tr>
+<tr><th id="117">117</th><td><i>         * elements of the same type which need to be concatenated. */</i></td></tr>
+<tr><th id="118">118</th><td>        <em>const</em> <em>char</em> <dfn class="local col4 decl" id="24context_specific" title='context_specific' data-type='const char' data-ref="24context_specific">context_specific</dfn> = (<a class="local col0 ref" href="#20tag" title='tag' data-ref="20tag">tag</a> &amp; <var>0xc0</var>) == <var>0x80</var>;</td></tr>
+<tr><th id="119">119</th><td>        <em>char</em> <dfn class="local col5 decl" id="25squash_child_headers" title='squash_child_headers' data-type='char' data-ref="25squash_child_headers">squash_child_headers</dfn> = <a class="tu ref" href="#is_primitive_type" title='is_primitive_type' data-use='c' data-ref="is_primitive_type">is_primitive_type</a>(<a class="local col0 ref" href="#20tag" title='tag' data-ref="20tag">tag</a>);</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td>        <i>/* This is a hack, but it sufficies to handle NSS's output. If we find</i></td></tr>
+<tr><th id="122">122</th><td><i>         * an indefinite length, context-specific tag with a definite, primitive</i></td></tr>
+<tr><th id="123">123</th><td><i>         * tag inside it, then we assume that the context-specific tag is</i></td></tr>
+<tr><th id="124">124</th><td><i>         * implicit and the tags within are fragments of a primitive type that</i></td></tr>
+<tr><th id="125">125</th><td><i>         * need to be concatenated. */</i></td></tr>
+<tr><th id="126">126</th><td>        <b>if</b> (<a class="local col4 ref" href="#24context_specific" title='context_specific' data-ref="24context_specific">context_specific</a> &amp;&amp; (<a class="local col0 ref" href="#20tag" title='tag' data-ref="20tag">tag</a> &amp; <a class="macro" href="../../include/openssl/bytestring.h.html#135" title="0x20" data-ref="_M/CBS_ASN1_CONSTRUCTED">CBS_ASN1_CONSTRUCTED</a>)) {</td></tr>
+<tr><th id="127">127</th><td>          <a class="typedef" href="../../include/openssl/base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> <dfn class="local col6 decl" id="26in_copy" title='in_copy' data-type='CBS' data-ref="26in_copy">in_copy</dfn>, <dfn class="local col7 decl" id="27inner_contents" title='inner_contents' data-type='CBS' data-ref="27inner_contents">inner_contents</dfn>;</td></tr>
+<tr><th id="128">128</th><td>          <em>unsigned</em> <dfn class="local col8 decl" id="28inner_tag" title='inner_tag' data-type='unsigned int' data-ref="28inner_tag">inner_tag</dfn>;</td></tr>
+<tr><th id="129">129</th><td>          <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="29inner_header_len" title='inner_header_len' data-type='size_t' data-ref="29inner_header_len">inner_header_len</dfn>;</td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td>          <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_init" title='CBS_init' data-ref="CBS_init">CBS_init</a>(&amp;<a class="local col6 ref" href="#26in_copy" title='in_copy' data-ref="26in_copy">in_copy</a>, <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_data" title='CBS_data' data-ref="CBS_data">CBS_data</a>(<a class="local col4 ref" href="#14in" title='in' data-ref="14in">in</a>), <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(<a class="local col4 ref" href="#14in" title='in' data-ref="14in">in</a>));</td></tr>
+<tr><th id="132">132</th><td>          <b>if</b> (!<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_get_any_ber_asn1_element" title='CBS_get_any_ber_asn1_element' data-ref="CBS_get_any_ber_asn1_element">CBS_get_any_ber_asn1_element</a>(&amp;<a class="local col6 ref" href="#26in_copy" title='in_copy' data-ref="26in_copy">in_copy</a>, &amp;<a class="local col7 ref" href="#27inner_contents" title='inner_contents' data-ref="27inner_contents">inner_contents</a>,</td></tr>
+<tr><th id="133">133</th><td>                                            &amp;<a class="local col8 ref" href="#28inner_tag" title='inner_tag' data-ref="28inner_tag">inner_tag</a>, &amp;<a class="local col9 ref" href="#29inner_header_len" title='inner_header_len' data-ref="29inner_header_len">inner_header_len</a>)) {</td></tr>
+<tr><th id="134">134</th><td>            <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="135">135</th><td>          }</td></tr>
+<tr><th id="136">136</th><td>          <b>if</b> (<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(&amp;<a class="local col7 ref" href="#27inner_contents" title='inner_contents' data-ref="27inner_contents">inner_contents</a>) &gt; <a class="local col9 ref" href="#29inner_header_len" title='inner_header_len' data-ref="29inner_header_len">inner_header_len</a> &amp;&amp;</td></tr>
+<tr><th id="137">137</th><td>              <a class="tu ref" href="#is_primitive_type" title='is_primitive_type' data-use='c' data-ref="is_primitive_type">is_primitive_type</a>(<a class="local col8 ref" href="#28inner_tag" title='inner_tag' data-ref="28inner_tag">inner_tag</a>)) {</td></tr>
+<tr><th id="138">138</th><td>            <a class="local col5 ref" href="#25squash_child_headers" title='squash_child_headers' data-ref="25squash_child_headers">squash_child_headers</a> = <var>1</var>;</td></tr>
+<tr><th id="139">139</th><td>          }</td></tr>
+<tr><th id="140">140</th><td>        }</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td>        <b>if</b> (!<a class="local col6 ref" href="#16squash_header" title='squash_header' data-ref="16squash_header">squash_header</a>) {</td></tr>
+<tr><th id="143">143</th><td>          <em>unsigned</em> <dfn class="local col0 decl" id="30out_tag" title='out_tag' data-type='unsigned int' data-ref="30out_tag">out_tag</dfn> = <a class="local col0 ref" href="#20tag" title='tag' data-ref="20tag">tag</a>;</td></tr>
+<tr><th id="144">144</th><td>          <b>if</b> (<a class="local col5 ref" href="#25squash_child_headers" title='squash_child_headers' data-ref="25squash_child_headers">squash_child_headers</a>) {</td></tr>
+<tr><th id="145">145</th><td>            <a class="local col0 ref" href="#30out_tag" title='out_tag' data-ref="30out_tag">out_tag</a> &amp;= ~<a class="macro" href="../../include/openssl/bytestring.h.html#135" title="0x20" data-ref="_M/CBS_ASN1_CONSTRUCTED">CBS_ASN1_CONSTRUCTED</a>;</td></tr>
+<tr><th id="146">146</th><td>          }</td></tr>
+<tr><th id="147">147</th><td>          <b>if</b> (!<a class="ref" href="../../include/openssl/bytestring.h.html#CBB_add_asn1" title='CBB_add_asn1' data-ref="CBB_add_asn1">CBB_add_asn1</a>(<a class="local col5 ref" href="#15out" title='out' data-ref="15out">out</a>, &amp;<a class="local col3 ref" href="#23out_contents_storage" title='out_contents_storage' data-ref="23out_contents_storage">out_contents_storage</a>, <a class="local col0 ref" href="#30out_tag" title='out_tag' data-ref="30out_tag">out_tag</a>)) {</td></tr>
+<tr><th id="148">148</th><td>            <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="149">149</th><td>          }</td></tr>
+<tr><th id="150">150</th><td>          <a class="local col2 ref" href="#22out_contents" title='out_contents' data-ref="22out_contents">out_contents</a> = &amp;<a class="local col3 ref" href="#23out_contents_storage" title='out_contents_storage' data-ref="23out_contents_storage">out_contents_storage</a>;</td></tr>
+<tr><th id="151">151</th><td>        }</td></tr>
+<tr><th id="152">152</th><td></td></tr>
+<tr><th id="153">153</th><td>        <b>if</b> (!<a class="tu ref" href="#cbs_convert_ber" title='cbs_convert_ber' data-use='c' data-ref="cbs_convert_ber">cbs_convert_ber</a>(<a class="local col4 ref" href="#14in" title='in' data-ref="14in">in</a>, <a class="local col2 ref" href="#22out_contents" title='out_contents' data-ref="22out_contents">out_contents</a>,</td></tr>
+<tr><th id="154">154</th><td>                             <a class="local col5 ref" href="#25squash_child_headers" title='squash_child_headers' data-ref="25squash_child_headers">squash_child_headers</a>,</td></tr>
+<tr><th id="155">155</th><td>                             <var>1</var> <i>/* looking for eoc */</i>, <a class="local col8 ref" href="#18depth" title='depth' data-ref="18depth">depth</a> + <var>1</var>)) {</td></tr>
+<tr><th id="156">156</th><td>          <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="157">157</th><td>        }</td></tr>
+<tr><th id="158">158</th><td>        <b>if</b> (<a class="local col2 ref" href="#22out_contents" title='out_contents' data-ref="22out_contents">out_contents</a> != <a class="local col5 ref" href="#15out" title='out' data-ref="15out">out</a> &amp;&amp; !<a class="ref" href="../../include/openssl/bytestring.h.html#CBB_flush" title='CBB_flush' data-ref="CBB_flush">CBB_flush</a>(<a class="local col5 ref" href="#15out" title='out' data-ref="15out">out</a>)) {</td></tr>
+<tr><th id="159">159</th><td>          <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="160">160</th><td>        }</td></tr>
+<tr><th id="161">161</th><td>        <b>continue</b>;</td></tr>
+<tr><th id="162">162</th><td>      }</td></tr>
+<tr><th id="163">163</th><td>    }</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td>    <b>if</b> (!<a class="local col6 ref" href="#16squash_header" title='squash_header' data-ref="16squash_header">squash_header</a>) {</td></tr>
+<tr><th id="166">166</th><td>      <b>if</b> (!<a class="ref" href="../../include/openssl/bytestring.h.html#CBB_add_asn1" title='CBB_add_asn1' data-ref="CBB_add_asn1">CBB_add_asn1</a>(<a class="local col5 ref" href="#15out" title='out' data-ref="15out">out</a>, &amp;<a class="local col3 ref" href="#23out_contents_storage" title='out_contents_storage' data-ref="23out_contents_storage">out_contents_storage</a>, <a class="local col0 ref" href="#20tag" title='tag' data-ref="20tag">tag</a>)) {</td></tr>
+<tr><th id="167">167</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="168">168</th><td>      }</td></tr>
+<tr><th id="169">169</th><td>      <a class="local col2 ref" href="#22out_contents" title='out_contents' data-ref="22out_contents">out_contents</a> = &amp;<a class="local col3 ref" href="#23out_contents_storage" title='out_contents_storage' data-ref="23out_contents_storage">out_contents_storage</a>;</td></tr>
+<tr><th id="170">170</th><td>    }</td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bytestring.h.html#CBS_skip" title='CBS_skip' data-ref="CBS_skip">CBS_skip</a>(&amp;<a class="local col9 ref" href="#19contents" title='contents' data-ref="19contents">contents</a>, <a class="local col1 ref" href="#21header_len" title='header_len' data-ref="21header_len">header_len</a>)) {</td></tr>
+<tr><th id="173">173</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="174">174</th><td>    }</td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td>    <b>if</b> (<a class="local col0 ref" href="#20tag" title='tag' data-ref="20tag">tag</a> &amp; <a class="macro" href="../../include/openssl/bytestring.h.html#135" title="0x20" data-ref="_M/CBS_ASN1_CONSTRUCTED">CBS_ASN1_CONSTRUCTED</a>) {</td></tr>
+<tr><th id="177">177</th><td>      <b>if</b> (!<a class="tu ref" href="#cbs_convert_ber" title='cbs_convert_ber' data-use='c' data-ref="cbs_convert_ber">cbs_convert_ber</a>(&amp;<a class="local col9 ref" href="#19contents" title='contents' data-ref="19contents">contents</a>, <a class="local col2 ref" href="#22out_contents" title='out_contents' data-ref="22out_contents">out_contents</a>, <var>0</var> <i>/* don't squash header */</i>,</td></tr>
+<tr><th id="178">178</th><td>                           <var>0</var> <i>/* not looking for eoc */</i>, <a class="local col8 ref" href="#18depth" title='depth' data-ref="18depth">depth</a> + <var>1</var>)) {</td></tr>
+<tr><th id="179">179</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="180">180</th><td>      }</td></tr>
+<tr><th id="181">181</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="182">182</th><td>      <b>if</b> (!<a class="ref" href="../../include/openssl/bytestring.h.html#CBB_add_bytes" title='CBB_add_bytes' data-ref="CBB_add_bytes">CBB_add_bytes</a>(<a class="local col2 ref" href="#22out_contents" title='out_contents' data-ref="22out_contents">out_contents</a>, <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_data" title='CBS_data' data-ref="CBS_data">CBS_data</a>(&amp;<a class="local col9 ref" href="#19contents" title='contents' data-ref="19contents">contents</a>),</td></tr>
+<tr><th id="183">183</th><td>                         <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(&amp;<a class="local col9 ref" href="#19contents" title='contents' data-ref="19contents">contents</a>))) {</td></tr>
+<tr><th id="184">184</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="185">185</th><td>      }</td></tr>
+<tr><th id="186">186</th><td>    }</td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td>    <b>if</b> (<a class="local col2 ref" href="#22out_contents" title='out_contents' data-ref="22out_contents">out_contents</a> != <a class="local col5 ref" href="#15out" title='out' data-ref="15out">out</a> &amp;&amp; !<a class="ref" href="../../include/openssl/bytestring.h.html#CBB_flush" title='CBB_flush' data-ref="CBB_flush">CBB_flush</a>(<a class="local col5 ref" href="#15out" title='out' data-ref="15out">out</a>)) {</td></tr>
+<tr><th id="189">189</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="190">190</th><td>    }</td></tr>
+<tr><th id="191">191</th><td>  }</td></tr>
+<tr><th id="192">192</th><td></td></tr>
+<tr><th id="193">193</th><td>  <b>return</b> <a class="local col7 ref" href="#17looking_for_eoc" title='looking_for_eoc' data-ref="17looking_for_eoc">looking_for_eoc</a> == <var>0</var>;</td></tr>
+<tr><th id="194">194</th><td>}</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td><em>int</em> <dfn class="decl def" id="CBS_asn1_ber_to_der" title='CBS_asn1_ber_to_der' data-ref="CBS_asn1_ber_to_der">CBS_asn1_ber_to_der</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> *<dfn class="local col1 decl" id="31in" title='in' data-type='CBS *' data-ref="31in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col2 decl" id="32out" title='out' data-type='uint8_t **' data-ref="32out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col3 decl" id="33out_len" title='out_len' data-type='size_t *' data-ref="33out_len">out_len</dfn>) {</td></tr>
+<tr><th id="197">197</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#CBB" title='CBB' data-type='struct cbb_st' data-ref="CBB">CBB</a> <dfn class="local col4 decl" id="34cbb" title='cbb' data-type='CBB' data-ref="34cbb">cbb</dfn>;</td></tr>
+<tr><th id="198">198</th><td></td></tr>
+<tr><th id="199">199</th><td>  <i>/* First, do a quick walk to find any indefinite-length elements. Most of the</i></td></tr>
+<tr><th id="200">200</th><td><i>   * time we hope that there aren't any and thus we can quickly return. */</i></td></tr>
+<tr><th id="201">201</th><td>  <em>char</em> <dfn class="local col5 decl" id="35conversion_needed" title='conversion_needed' data-type='char' data-ref="35conversion_needed">conversion_needed</dfn>;</td></tr>
+<tr><th id="202">202</th><td>  <b>if</b> (!<a class="tu ref" href="#cbs_find_ber" title='cbs_find_ber' data-use='c' data-ref="cbs_find_ber">cbs_find_ber</a>(<a class="local col1 ref" href="#31in" title='in' data-ref="31in">in</a>, &amp;<a class="local col5 ref" href="#35conversion_needed" title='conversion_needed' data-ref="35conversion_needed">conversion_needed</a>, <var>0</var>)) {</td></tr>
+<tr><th id="203">203</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="204">204</th><td>  }</td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td>  <b>if</b> (!<a class="local col5 ref" href="#35conversion_needed" title='conversion_needed' data-ref="35conversion_needed">conversion_needed</a>) {</td></tr>
+<tr><th id="207">207</th><td>    *<a class="local col2 ref" href="#32out" title='out' data-ref="32out">out</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="208">208</th><td>    *<a class="local col3 ref" href="#33out_len" title='out_len' data-ref="33out_len">out_len</a> = <var>0</var>;</td></tr>
+<tr><th id="209">209</th><td>    <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="210">210</th><td>  }</td></tr>
+<tr><th id="211">211</th><td></td></tr>
+<tr><th id="212">212</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bytestring.h.html#CBB_init" title='CBB_init' data-ref="CBB_init">CBB_init</a>(&amp;<a class="local col4 ref" href="#34cbb" title='cbb' data-ref="34cbb">cbb</a>, <a class="ref" href="../../include/openssl/bytestring.h.html#CBS_len" title='CBS_len' data-ref="CBS_len">CBS_len</a>(<a class="local col1 ref" href="#31in" title='in' data-ref="31in">in</a>))) {</td></tr>
+<tr><th id="213">213</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="214">214</th><td>  }</td></tr>
+<tr><th id="215">215</th><td>  <b>if</b> (!<a class="tu ref" href="#cbs_convert_ber" title='cbs_convert_ber' data-use='c' data-ref="cbs_convert_ber">cbs_convert_ber</a>(<a class="local col1 ref" href="#31in" title='in' data-ref="31in">in</a>, &amp;<a class="local col4 ref" href="#34cbb" title='cbb' data-ref="34cbb">cbb</a>, <var>0</var>, <var>0</var>, <var>0</var>)) {</td></tr>
+<tr><th id="216">216</th><td>    <a class="ref" href="../../include/openssl/bytestring.h.html#CBB_cleanup" title='CBB_cleanup' data-ref="CBB_cleanup">CBB_cleanup</a>(&amp;<a class="local col4 ref" href="#34cbb" title='cbb' data-ref="34cbb">cbb</a>);</td></tr>
+<tr><th id="217">217</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="218">218</th><td>  }</td></tr>
+<tr><th id="219">219</th><td></td></tr>
+<tr><th id="220">220</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/bytestring.h.html#CBB_finish" title='CBB_finish' data-ref="CBB_finish">CBB_finish</a>(&amp;<a class="local col4 ref" href="#34cbb" title='cbb' data-ref="34cbb">cbb</a>, <a class="local col2 ref" href="#32out" title='out' data-ref="32out">out</a>, <a class="local col3 ref" href="#33out_len" title='out_len' data-ref="33out_len">out_len</a>);</td></tr>
+<tr><th id="221">221</th><td>}</td></tr>
+<tr><th id="222">222</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

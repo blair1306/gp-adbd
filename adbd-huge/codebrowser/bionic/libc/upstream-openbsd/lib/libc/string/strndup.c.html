@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>strndup.c source code [codebrowser/bionic/libc/upstream-openbsd/lib/libc/string/strndup.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/upstream-openbsd/lib/libc/string/strndup.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libc</a>/<a href='../../..'>upstream-openbsd</a>/<a href='../..'>lib</a>/<a href='..'>libc</a>/<a href='./'>string</a>/<a href='strndup.c.html'>strndup.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$OpenBSD: strndup.c,v 1.1 2010/05/18 22:24:55 tedu Exp $	*/</i></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><i>/*</i></td></tr>
+<tr><th id="4">4</th><td><i> * Copyright (c) 2010 Todd C. Miller &lt;Todd.Miller@courtesan.com&gt;</i></td></tr>
+<tr><th id="5">5</th><td><i> *</i></td></tr>
+<tr><th id="6">6</th><td><i> * Permission to use, copy, modify, and distribute this software for any</i></td></tr>
+<tr><th id="7">7</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="8">8</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="12">12</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</i></td></tr>
+<tr><th id="13">13</th><td><i> * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="14">14</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</i></td></tr>
+<tr><th id="15">15</th><td><i> * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</i></td></tr>
+<tr><th id="16">16</th><td><i> * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</i></td></tr>
+<tr><th id="17">17</th><td><i> */</i></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="../../../../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><em>char</em> *</td></tr>
+<tr><th id="26">26</th><td><dfn class="decl def" id="strndup" title='strndup' data-ref="strndup">strndup</dfn>(<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="1str" title='str' data-type='const char *' data-ref="1str">str</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="2maxlen" title='maxlen' data-type='size_t' data-ref="2maxlen">maxlen</dfn>)</td></tr>
+<tr><th id="27">27</th><td>{</td></tr>
+<tr><th id="28">28</th><td>	<em>char</em> *<dfn class="local col3 decl" id="3copy" title='copy' data-type='char *' data-ref="3copy">copy</dfn>;</td></tr>
+<tr><th id="29">29</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="4len" title='len' data-type='size_t' data-ref="4len">len</dfn>;</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td>	<a class="local col4 ref" href="#4len" title='len' data-ref="4len">len</a> = <a class="ref" href="../../../../include/string.h.html#strnlen" title='strnlen' data-ref="strnlen">strnlen</a>(<a class="local col1 ref" href="#1str" title='str' data-ref="1str">str</a>, <a class="local col2 ref" href="#2maxlen" title='maxlen' data-ref="2maxlen">maxlen</a>);</td></tr>
+<tr><th id="32">32</th><td>	<a class="local col3 ref" href="#3copy" title='copy' data-ref="3copy">copy</a> = <a class="ref" href="../../../../include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<a class="local col4 ref" href="#4len" title='len' data-ref="4len">len</a> + <var>1</var>);</td></tr>
+<tr><th id="33">33</th><td>	<b>if</b> (<a class="local col3 ref" href="#3copy" title='copy' data-ref="3copy">copy</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="34">34</th><td>		(<em>void</em>)<a class="ref" href="../../../../include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col3 ref" href="#3copy" title='copy' data-ref="3copy">copy</a>, <a class="local col1 ref" href="#1str" title='str' data-ref="1str">str</a>, <a class="local col4 ref" href="#4len" title='len' data-ref="4len">len</a>);</td></tr>
+<tr><th id="35">35</th><td>		<a class="local col3 ref" href="#3copy" title='copy' data-ref="3copy">copy</a>[<a class="local col4 ref" href="#4len" title='len' data-ref="4len">len</a>] = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="36">36</th><td>	}</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td>	<b>return</b> <a class="local col3 ref" href="#3copy" title='copy' data-ref="3copy">copy</a>;</td></tr>
+<tr><th id="39">39</th><td>}</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

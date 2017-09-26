@@ -1,0 +1,25 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/asn1t.h' l='231'/>
+<doc f='codebrowser/external/boringssl/src/include/openssl/asn1t.h' l='209'>/* This pair helps declare a CHOICE type. We can do:
+ *
+ * 	ASN1_CHOICE(chname) = {
+ * 		... CHOICE options ...
+ * 	ASN1_CHOICE_END(chname)
+ *
+ * 	This will produce an ASN1_ITEM called chname_it
+ *	for a structure called chname. The structure
+ *	definition must look like this:
+ *	typedef struct {
+ *		int type;
+ *		union {
+ *			ASN1_SOMETHING *opt1;
+ *			ASN1_SOMEOTHER *opt2;
+ *		} value;
+ *	} chname;
+ *	
+ *	the name of the selector must be &apos;type&apos;.
+ * 	to use an alternative selector name use the
+ *      ASN1_CHOICE_END_selector() version.
+ */</doc>
+<use f='codebrowser/external/boringssl/src/crypto/ec/ec_asn1.c' l='143' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509/x_attrib.c' l='83' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509v3/v3_genn.c' l='81' u='c'/>

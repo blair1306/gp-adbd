@@ -1,0 +1,341 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>cap_file.c source code [codebrowser/external/libcap/libcap/cap_file.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libcap/libcap/cap_file.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libcap</a>/<a href='./'>libcap</a>/<a href='cap_file.c.html'>cap_file.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 1997,2007 Andrew G Morgan &lt;morgan@kernel.org&gt;</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This file deals with setting capabilities on files.</i></td></tr>
+<tr><th id="5">5</th><td><i> */</i></td></tr>
+<tr><th id="6">6</th><td></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="../../../bionic/libc/include/sys/xattr.h.html">&lt;sys/xattr.h&gt;</a></u></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="../../../bionic/libc/include/byteswap.h.html">&lt;byteswap.h&gt;</a></u></td></tr>
+<tr><th id="10">10</th><td><u>#include <a href="../../../bionic/libc/include/sys/stat.h.html">&lt;sys/stat.h&gt;</a></u></td></tr>
+<tr><th id="11">11</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="12">12</th><td></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="../../../bionic/libc/kernel/uapi/linux/xattr.h.html">&lt;linux/xattr.h&gt;</a></u></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#define <dfn class="macro" id="_M/XATTR_SECURITY_PREFIX" data-ref="_M/XATTR_SECURITY_PREFIX">XATTR_SECURITY_PREFIX</dfn> "security."</u></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="libcap.h.html">"libcap.h"</a></u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#<span data-ppcond="19">ifdef</span> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#56" data-ref="_M/VFS_CAP_U32">VFS_CAP_U32</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#<span data-ppcond="21">if</span> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#56" title="2" data-ref="_M/VFS_CAP_U32">VFS_CAP_U32</a> != <a class="macro" href="libcap.h.html#111" title="(2)" data-ref="_M/__CAP_BLKS">__CAP_BLKS</a></u></td></tr>
+<tr><th id="22">22</th><td><u># error VFS representation of capabilities is not the same size as kernel</u></td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="21">endif</span></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><u>#<span data-ppcond="25">if</span> <a class="macro" href="../../../bionic/libc/include/sys/endian.h.html#44" title="1234" data-ref="_M/__BYTE_ORDER">__BYTE_ORDER</a> == <a class="macro" href="../../../bionic/libc/include/sys/endian.h.html#42" title="4321" data-ref="_M/__BIG_ENDIAN">__BIG_ENDIAN</a></u></td></tr>
+<tr><th id="26">26</th><td><u>#define FIXUP_32BITS(x) bswap_32(x)</u></td></tr>
+<tr><th id="27">27</th><td><u>#<span data-ppcond="25">else</span></u></td></tr>
+<tr><th id="28">28</th><td><u>#define <dfn class="macro" id="_M/FIXUP_32BITS" data-ref="_M/FIXUP_32BITS">FIXUP_32BITS</dfn>(x) (x)</u></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="25">endif</span></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><em>static</em> <a class="typedef" href="include/sys/capability.h.html#cap_t" title='cap_t' data-type='struct _cap_struct *' data-ref="cap_t">cap_t</a> <dfn class="tu decl def" id="_fcaps_load" title='_fcaps_load' data-type='cap_t _fcaps_load(struct vfs_cap_data * rawvfscap, cap_t result, int bytes)' data-ref="_fcaps_load">_fcaps_load</dfn>(<b>struct</b> <a class="type" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data" title='vfs_cap_data' data-ref="vfs_cap_data">vfs_cap_data</a> *<dfn class="local col1 decl" id="1rawvfscap" title='rawvfscap' data-type='struct vfs_cap_data *' data-ref="1rawvfscap">rawvfscap</dfn>, <a class="typedef" href="include/sys/capability.h.html#cap_t" title='cap_t' data-type='struct _cap_struct *' data-ref="cap_t">cap_t</a> <dfn class="local col2 decl" id="2result" title='result' data-type='cap_t' data-ref="2result">result</dfn>,</td></tr>
+<tr><th id="32">32</th><td>			 <em>int</em> <dfn class="local col3 decl" id="3bytes" title='bytes' data-type='int' data-ref="3bytes">bytes</dfn>)</td></tr>
+<tr><th id="33">33</th><td>{</td></tr>
+<tr><th id="34">34</th><td>    <a class="macro" href="libcap.h.html#23" title="uint32_t" data-ref="_M/__u32">__u32</a> <dfn class="local col4 decl" id="4magic_etc" title='magic_etc' data-type='uint32_t' data-ref="4magic_etc">magic_etc</dfn>;</td></tr>
+<tr><th id="35">35</th><td>    <em>unsigned</em> <dfn class="local col5 decl" id="5tocopy" title='tocopy' data-type='unsigned int' data-ref="5tocopy">tocopy</dfn>, <dfn class="local col6 decl" id="6i" title='i' data-type='unsigned int' data-ref="6i">i</dfn>;</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td>    <a class="local col4 ref" href="#4magic_etc" title='magic_etc' data-ref="4magic_etc">magic_etc</a> = <a class="macro" href="#28" title="(rawvfscap-&gt;magic_etc)" data-ref="_M/FIXUP_32BITS">FIXUP_32BITS</a>(<a class="local col1 ref" href="#1rawvfscap" title='rawvfscap' data-ref="1rawvfscap">rawvfscap</a>-&gt;<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::magic_etc" title='vfs_cap_data::magic_etc' data-ref="vfs_cap_data::magic_etc">magic_etc</a>);</td></tr>
+<tr><th id="38">38</th><td>    <b>switch</b> (<a class="local col4 ref" href="#4magic_etc" title='magic_etc' data-ref="4magic_etc">magic_etc</a> &amp; <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#42" title="0xFF000000" data-ref="_M/VFS_CAP_REVISION_MASK">VFS_CAP_REVISION_MASK</a>) {</td></tr>
+<tr><th id="39">39</th><td><u>#<span data-ppcond="39">ifdef</span> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#47" data-ref="_M/VFS_CAP_REVISION_1">VFS_CAP_REVISION_1</a></u></td></tr>
+<tr><th id="40">40</th><td>    <b>case</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#47" title="0x01000000" data-ref="_M/VFS_CAP_REVISION_1">VFS_CAP_REVISION_1</a>:</td></tr>
+<tr><th id="41">41</th><td>	<a class="local col5 ref" href="#5tocopy" title='tocopy' data-ref="5tocopy">tocopy</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#49" title="1" data-ref="_M/VFS_CAP_U32_1">VFS_CAP_U32_1</a>;</td></tr>
+<tr><th id="42">42</th><td>	<a class="local col3 ref" href="#3bytes" title='bytes' data-ref="3bytes">bytes</a> -= <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#50" title="(sizeof(__le32) * (1 + 2 * 1))" data-ref="_M/XATTR_CAPS_SZ_1">XATTR_CAPS_SZ_1</a>;</td></tr>
+<tr><th id="43">43</th><td>	<b>break</b>;</td></tr>
+<tr><th id="44">44</th><td><u>#<span data-ppcond="39">endif</span></u></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><u>#<span data-ppcond="46">ifdef</span> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#51" data-ref="_M/VFS_CAP_REVISION_2">VFS_CAP_REVISION_2</a></u></td></tr>
+<tr><th id="47">47</th><td>    <b>case</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#51" title="0x02000000" data-ref="_M/VFS_CAP_REVISION_2">VFS_CAP_REVISION_2</a>:</td></tr>
+<tr><th id="48">48</th><td>	<a class="local col5 ref" href="#5tocopy" title='tocopy' data-ref="5tocopy">tocopy</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#52" title="2" data-ref="_M/VFS_CAP_U32_2">VFS_CAP_U32_2</a>;</td></tr>
+<tr><th id="49">49</th><td>	<a class="local col3 ref" href="#3bytes" title='bytes' data-ref="3bytes">bytes</a> -= <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#54" title="(sizeof(__le32) * (1 + 2 * 2))" data-ref="_M/XATTR_CAPS_SZ_2">XATTR_CAPS_SZ_2</a>;</td></tr>
+<tr><th id="50">50</th><td>	<b>break</b>;</td></tr>
+<tr><th id="51">51</th><td><u>#<span data-ppcond="46">endif</span></u></td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td>    <b>default</b>:</td></tr>
+<tr><th id="54">54</th><td>	<a class="ref" href="include/sys/capability.h.html#cap_free" title='cap_free' data-ref="cap_free">cap_free</a>(<a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>);</td></tr>
+<tr><th id="55">55</th><td>	<a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="56">56</th><td>	<b>return</b> <a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>;</td></tr>
+<tr><th id="57">57</th><td>    }</td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td>    <i>/*</i></td></tr>
+<tr><th id="60">60</th><td><i>     * Verify that we loaded exactly the right number of bytes</i></td></tr>
+<tr><th id="61">61</th><td><i>     */</i></td></tr>
+<tr><th id="62">62</th><td>    <b>if</b> (<a class="local col3 ref" href="#3bytes" title='bytes' data-ref="3bytes">bytes</a> != <var>0</var>) {</td></tr>
+<tr><th id="63">63</th><td>	<a class="ref" href="include/sys/capability.h.html#cap_free" title='cap_free' data-ref="cap_free">cap_free</a>(<a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>);</td></tr>
+<tr><th id="64">64</th><td>	<a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="65">65</th><td>	<b>return</b> <a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>;</td></tr>
+<tr><th id="66">66</th><td>    }</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td>    <b>for</b> (<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>=<var>0</var>; <a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a> &lt; <a class="local col5 ref" href="#5tocopy" title='tocopy' data-ref="5tocopy">tocopy</a>; <a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>++) {</td></tr>
+<tr><th id="69">69</th><td>	<a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_INHERITABLE" title='CAP_INHERITABLE' data-ref="CAP_INHERITABLE">CAP_INHERITABLE</a>]</td></tr>
+<tr><th id="70">70</th><td>	    = <a class="macro" href="#28" title="(rawvfscap-&gt;data[i].inheritable)" data-ref="_M/FIXUP_32BITS">FIXUP_32BITS</a>(<a class="local col1 ref" href="#1rawvfscap" title='rawvfscap' data-ref="1rawvfscap">rawvfscap</a>-&gt;<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::data" title='vfs_cap_data::data' data-ref="vfs_cap_data::data">data</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::(anonymous)::inheritable" title='vfs_cap_data::(anonymous struct)::inheritable' data-ref="vfs_cap_data::(anonymous)::inheritable">inheritable</a>);</td></tr>
+<tr><th id="71">71</th><td>	<a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_PERMITTED" title='CAP_PERMITTED' data-ref="CAP_PERMITTED">CAP_PERMITTED</a>]</td></tr>
+<tr><th id="72">72</th><td>	    = <a class="macro" href="#28" title="(rawvfscap-&gt;data[i].permitted)" data-ref="_M/FIXUP_32BITS">FIXUP_32BITS</a>(<a class="local col1 ref" href="#1rawvfscap" title='rawvfscap' data-ref="1rawvfscap">rawvfscap</a>-&gt;<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::data" title='vfs_cap_data::data' data-ref="vfs_cap_data::data">data</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::(anonymous)::permitted" title='vfs_cap_data::(anonymous struct)::permitted' data-ref="vfs_cap_data::(anonymous)::permitted">permitted</a>);</td></tr>
+<tr><th id="73">73</th><td>	<b>if</b> (<a class="local col4 ref" href="#4magic_etc" title='magic_etc' data-ref="4magic_etc">magic_etc</a> &amp; <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#46" title="0x000001" data-ref="_M/VFS_CAP_FLAGS_EFFECTIVE">VFS_CAP_FLAGS_EFFECTIVE</a>) {</td></tr>
+<tr><th id="74">74</th><td>	    <a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_EFFECTIVE" title='CAP_EFFECTIVE' data-ref="CAP_EFFECTIVE">CAP_EFFECTIVE</a>]</td></tr>
+<tr><th id="75">75</th><td>		= <a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_INHERITABLE" title='CAP_INHERITABLE' data-ref="CAP_INHERITABLE">CAP_INHERITABLE</a>]</td></tr>
+<tr><th id="76">76</th><td>		| <a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_PERMITTED" title='CAP_PERMITTED' data-ref="CAP_PERMITTED">CAP_PERMITTED</a>];</td></tr>
+<tr><th id="77">77</th><td>	}</td></tr>
+<tr><th id="78">78</th><td>    }</td></tr>
+<tr><th id="79">79</th><td>    <b>while</b> (<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a> &lt; <a class="macro" href="libcap.h.html#111" title="(2)" data-ref="_M/__CAP_BLKS">__CAP_BLKS</a>) {</td></tr>
+<tr><th id="80">80</th><td>	<a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_INHERITABLE" title='CAP_INHERITABLE' data-ref="CAP_INHERITABLE">CAP_INHERITABLE</a>]</td></tr>
+<tr><th id="81">81</th><td>	    = <a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_PERMITTED" title='CAP_PERMITTED' data-ref="CAP_PERMITTED">CAP_PERMITTED</a>]</td></tr>
+<tr><th id="82">82</th><td>	    = <a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_EFFECTIVE" title='CAP_EFFECTIVE' data-ref="CAP_EFFECTIVE">CAP_EFFECTIVE</a>] = <var>0</var>;</td></tr>
+<tr><th id="83">83</th><td>	<a class="local col6 ref" href="#6i" title='i' data-ref="6i">i</a>++;</td></tr>
+<tr><th id="84">84</th><td>    }</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td>    <b>return</b> <a class="local col2 ref" href="#2result" title='result' data-ref="2result">result</a>;</td></tr>
+<tr><th id="87">87</th><td>}</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="_fcaps_save" title='_fcaps_save' data-type='int _fcaps_save(struct vfs_cap_data * rawvfscap, cap_t cap_d, int * bytes_p)' data-ref="_fcaps_save">_fcaps_save</dfn>(<b>struct</b> <a class="type" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data" title='vfs_cap_data' data-ref="vfs_cap_data">vfs_cap_data</a> *<dfn class="local col7 decl" id="7rawvfscap" title='rawvfscap' data-type='struct vfs_cap_data *' data-ref="7rawvfscap">rawvfscap</dfn>, <a class="typedef" href="include/sys/capability.h.html#cap_t" title='cap_t' data-type='struct _cap_struct *' data-ref="cap_t">cap_t</a> <dfn class="local col8 decl" id="8cap_d" title='cap_d' data-type='cap_t' data-ref="8cap_d">cap_d</dfn>,</td></tr>
+<tr><th id="90">90</th><td>		       <em>int</em> *<dfn class="local col9 decl" id="9bytes_p" title='bytes_p' data-type='int *' data-ref="9bytes_p">bytes_p</dfn>)</td></tr>
+<tr><th id="91">91</th><td>{</td></tr>
+<tr><th id="92">92</th><td>    <a class="macro" href="libcap.h.html#23" title="uint32_t" data-ref="_M/__u32">__u32</a> <dfn class="local col0 decl" id="10eff_not_zero" title='eff_not_zero' data-type='uint32_t' data-ref="10eff_not_zero">eff_not_zero</dfn>, <dfn class="local col1 decl" id="11magic" title='magic' data-type='uint32_t' data-ref="11magic">magic</dfn>;</td></tr>
+<tr><th id="93">93</th><td>    <em>unsigned</em> <dfn class="local col2 decl" id="12tocopy" title='tocopy' data-type='unsigned int' data-ref="12tocopy">tocopy</dfn>, <dfn class="local col3 decl" id="13i" title='i' data-type='unsigned int' data-ref="13i">i</dfn>;</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td>    <b>if</b> (!<a class="macro" href="libcap.h.html#142" title="((cap_d) &amp;&amp; *(-1+(uint32_t *)(cap_d)) == (0xCA90D0))" data-ref="_M/good_cap_t">good_cap_t</a>(<a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>)) {</td></tr>
+<tr><th id="96">96</th><td>	<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="97">97</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="98">98</th><td>    }</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td>    <b>switch</b> (<a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::head" title='_cap_struct::head' data-ref="_cap_struct::head">head</a>.<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#__user_cap_header_struct::version" title='__user_cap_header_struct::version' data-ref="__user_cap_header_struct::version">version</a>) {</td></tr>
+<tr><th id="101">101</th><td><u>#<span data-ppcond="101">ifdef</span> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#24" data-ref="_M/_LINUX_CAPABILITY_VERSION_1">_LINUX_CAPABILITY_VERSION_1</a></u></td></tr>
+<tr><th id="102">102</th><td>    <b>case</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#24" title="0x19980330" data-ref="_M/_LINUX_CAPABILITY_VERSION_1">_LINUX_CAPABILITY_VERSION_1</a>:</td></tr>
+<tr><th id="103">103</th><td>	<a class="local col1 ref" href="#11magic" title='magic' data-ref="11magic">magic</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#47" title="0x01000000" data-ref="_M/VFS_CAP_REVISION_1">VFS_CAP_REVISION_1</a>;</td></tr>
+<tr><th id="104">104</th><td>	<a class="local col2 ref" href="#12tocopy" title='tocopy' data-ref="12tocopy">tocopy</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#49" title="1" data-ref="_M/VFS_CAP_U32_1">VFS_CAP_U32_1</a>;</td></tr>
+<tr><th id="105">105</th><td>	*<a class="local col9 ref" href="#9bytes_p" title='bytes_p' data-ref="9bytes_p">bytes_p</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#50" title="(sizeof(__le32) * (1 + 2 * 1))" data-ref="_M/XATTR_CAPS_SZ_1">XATTR_CAPS_SZ_1</a>;</td></tr>
+<tr><th id="106">106</th><td>	<b>break</b>;</td></tr>
+<tr><th id="107">107</th><td><u>#<span data-ppcond="101">endif</span></u></td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><u>#<span data-ppcond="109">ifdef</span> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#26" data-ref="_M/_LINUX_CAPABILITY_VERSION_2">_LINUX_CAPABILITY_VERSION_2</a></u></td></tr>
+<tr><th id="110">110</th><td>    <b>case</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#26" title="0x20071026" data-ref="_M/_LINUX_CAPABILITY_VERSION_2">_LINUX_CAPABILITY_VERSION_2</a>:</td></tr>
+<tr><th id="111">111</th><td>	<a class="local col1 ref" href="#11magic" title='magic' data-ref="11magic">magic</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#51" title="0x02000000" data-ref="_M/VFS_CAP_REVISION_2">VFS_CAP_REVISION_2</a>;</td></tr>
+<tr><th id="112">112</th><td>	<a class="local col2 ref" href="#12tocopy" title='tocopy' data-ref="12tocopy">tocopy</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#52" title="2" data-ref="_M/VFS_CAP_U32_2">VFS_CAP_U32_2</a>;</td></tr>
+<tr><th id="113">113</th><td>	*<a class="local col9 ref" href="#9bytes_p" title='bytes_p' data-ref="9bytes_p">bytes_p</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#54" title="(sizeof(__le32) * (1 + 2 * 2))" data-ref="_M/XATTR_CAPS_SZ_2">XATTR_CAPS_SZ_2</a>;</td></tr>
+<tr><th id="114">114</th><td>	<b>break</b>;</td></tr>
+<tr><th id="115">115</th><td><u>#<span data-ppcond="109">endif</span></u></td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><u>#<span data-ppcond="117">ifdef</span> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#29" data-ref="_M/_LINUX_CAPABILITY_VERSION_3">_LINUX_CAPABILITY_VERSION_3</a></u></td></tr>
+<tr><th id="118">118</th><td>    <b>case</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#29" title="0x20080522" data-ref="_M/_LINUX_CAPABILITY_VERSION_3">_LINUX_CAPABILITY_VERSION_3</a>:</td></tr>
+<tr><th id="119">119</th><td>	<a class="local col1 ref" href="#11magic" title='magic' data-ref="11magic">magic</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#51" title="0x02000000" data-ref="_M/VFS_CAP_REVISION_2">VFS_CAP_REVISION_2</a>;</td></tr>
+<tr><th id="120">120</th><td>	<a class="local col2 ref" href="#12tocopy" title='tocopy' data-ref="12tocopy">tocopy</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#52" title="2" data-ref="_M/VFS_CAP_U32_2">VFS_CAP_U32_2</a>;</td></tr>
+<tr><th id="121">121</th><td>	*<a class="local col9 ref" href="#9bytes_p" title='bytes_p' data-ref="9bytes_p">bytes_p</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#54" title="(sizeof(__le32) * (1 + 2 * 2))" data-ref="_M/XATTR_CAPS_SZ_2">XATTR_CAPS_SZ_2</a>;</td></tr>
+<tr><th id="122">122</th><td>	<b>break</b>;</td></tr>
+<tr><th id="123">123</th><td><u>#<span data-ppcond="117">endif</span></u></td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td>    <b>default</b>:</td></tr>
+<tr><th id="126">126</th><td>	<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="127">127</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="128">128</th><td>    }</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td>    <a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"setting named file capabilities"</q>);</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td>    <b>for</b> (<a class="local col0 ref" href="#10eff_not_zero" title='eff_not_zero' data-ref="10eff_not_zero">eff_not_zero</a> = <var>0</var>, <a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a> = <var>0</var>; <a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a> &lt; <a class="local col2 ref" href="#12tocopy" title='tocopy' data-ref="12tocopy">tocopy</a>; <a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>++) {</td></tr>
+<tr><th id="133">133</th><td>	<a class="local col0 ref" href="#10eff_not_zero" title='eff_not_zero' data-ref="10eff_not_zero">eff_not_zero</a> |= <a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_EFFECTIVE" title='CAP_EFFECTIVE' data-ref="CAP_EFFECTIVE">CAP_EFFECTIVE</a>];</td></tr>
+<tr><th id="134">134</th><td>    }</td></tr>
+<tr><th id="135">135</th><td>    <b>while</b> (<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a> &lt; <a class="macro" href="libcap.h.html#111" title="(2)" data-ref="_M/__CAP_BLKS">__CAP_BLKS</a>) {</td></tr>
+<tr><th id="136">136</th><td>	<b>if</b> ((<a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_EFFECTIVE" title='CAP_EFFECTIVE' data-ref="CAP_EFFECTIVE">CAP_EFFECTIVE</a>]</td></tr>
+<tr><th id="137">137</th><td>	     || <a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_INHERITABLE" title='CAP_INHERITABLE' data-ref="CAP_INHERITABLE">CAP_INHERITABLE</a>]</td></tr>
+<tr><th id="138">138</th><td>	     || <a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_PERMITTED" title='CAP_PERMITTED' data-ref="CAP_PERMITTED">CAP_PERMITTED</a>])) {</td></tr>
+<tr><th id="139">139</th><td>	    <i>/*</i></td></tr>
+<tr><th id="140">140</th><td><i>	     * System does not support these capabilities</i></td></tr>
+<tr><th id="141">141</th><td><i>	     */</i></td></tr>
+<tr><th id="142">142</th><td>	    <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="143">143</th><td>	    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="144">144</th><td>	}</td></tr>
+<tr><th id="145">145</th><td>	<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>++;</td></tr>
+<tr><th id="146">146</th><td>    }</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td>    <b>for</b> (<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>=<var>0</var>; <a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a> &lt; <a class="local col2 ref" href="#12tocopy" title='tocopy' data-ref="12tocopy">tocopy</a>; <a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>++) {</td></tr>
+<tr><th id="149">149</th><td>	<a class="local col7 ref" href="#7rawvfscap" title='rawvfscap' data-ref="7rawvfscap">rawvfscap</a>-&gt;<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::data" title='vfs_cap_data::data' data-ref="vfs_cap_data::data">data</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::(anonymous)::permitted" title='vfs_cap_data::(anonymous struct)::permitted' data-ref="vfs_cap_data::(anonymous)::permitted">permitted</a></td></tr>
+<tr><th id="150">150</th><td>	    = <a class="macro" href="#28" title="(cap_d-&gt;u[i].flat[CAP_PERMITTED])" data-ref="_M/FIXUP_32BITS">FIXUP_32BITS</a>(<a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_PERMITTED" title='CAP_PERMITTED' data-ref="CAP_PERMITTED">CAP_PERMITTED</a>]);</td></tr>
+<tr><th id="151">151</th><td>	<a class="local col7 ref" href="#7rawvfscap" title='rawvfscap' data-ref="7rawvfscap">rawvfscap</a>-&gt;<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::data" title='vfs_cap_data::data' data-ref="vfs_cap_data::data">data</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::(anonymous)::inheritable" title='vfs_cap_data::(anonymous struct)::inheritable' data-ref="vfs_cap_data::(anonymous)::inheritable">inheritable</a></td></tr>
+<tr><th id="152">152</th><td>	    = <a class="macro" href="#28" title="(cap_d-&gt;u[i].flat[CAP_INHERITABLE])" data-ref="_M/FIXUP_32BITS">FIXUP_32BITS</a>(<a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_INHERITABLE" title='CAP_INHERITABLE' data-ref="CAP_INHERITABLE">CAP_INHERITABLE</a>]);</td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td>	<b>if</b> (<a class="local col0 ref" href="#10eff_not_zero" title='eff_not_zero' data-ref="10eff_not_zero">eff_not_zero</a></td></tr>
+<tr><th id="155">155</th><td>	    &amp;&amp; ((~(<a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_EFFECTIVE" title='CAP_EFFECTIVE' data-ref="CAP_EFFECTIVE">CAP_EFFECTIVE</a>]))</td></tr>
+<tr><th id="156">156</th><td>		&amp; (<a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_PERMITTED" title='CAP_PERMITTED' data-ref="CAP_PERMITTED">CAP_PERMITTED</a>]</td></tr>
+<tr><th id="157">157</th><td>		   | <a class="local col8 ref" href="#8cap_d" title='cap_d' data-ref="8cap_d">cap_d</a>-&gt;<a class="ref" href="libcap.h.html#_cap_struct::u" title='_cap_struct::u' data-ref="_cap_struct::u">u</a>[<a class="local col3 ref" href="#13i" title='i' data-ref="13i">i</a>].<a class="ref" href="libcap.h.html#_cap_struct::(anonymous)::flat" title='_cap_struct::(anonymous union)::flat' data-ref="_cap_struct::(anonymous)::flat">flat</a>[<a class="enum" href="include/sys/capability.h.html#CAP_INHERITABLE" title='CAP_INHERITABLE' data-ref="CAP_INHERITABLE">CAP_INHERITABLE</a>]))) {</td></tr>
+<tr><th id="158">158</th><td>	    <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="159">159</th><td>	    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="160">160</th><td>	}</td></tr>
+<tr><th id="161">161</th><td>    }</td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td>    <b>if</b> (<a class="local col0 ref" href="#10eff_not_zero" title='eff_not_zero' data-ref="10eff_not_zero">eff_not_zero</a> == <var>0</var>) {</td></tr>
+<tr><th id="164">164</th><td>	<a class="local col7 ref" href="#7rawvfscap" title='rawvfscap' data-ref="7rawvfscap">rawvfscap</a>-&gt;<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::magic_etc" title='vfs_cap_data::magic_etc' data-ref="vfs_cap_data::magic_etc">magic_etc</a> = <a class="macro" href="#28" title="(magic)" data-ref="_M/FIXUP_32BITS">FIXUP_32BITS</a>(<a class="local col1 ref" href="#11magic" title='magic' data-ref="11magic">magic</a>);</td></tr>
+<tr><th id="165">165</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="166">166</th><td>	<a class="local col7 ref" href="#7rawvfscap" title='rawvfscap' data-ref="7rawvfscap">rawvfscap</a>-&gt;<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::magic_etc" title='vfs_cap_data::magic_etc' data-ref="vfs_cap_data::magic_etc">magic_etc</a> = <a class="macro" href="#28" title="(magic|0x000001)" data-ref="_M/FIXUP_32BITS">FIXUP_32BITS</a>(<a class="local col1 ref" href="#11magic" title='magic' data-ref="11magic">magic</a>|<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#46" title="0x000001" data-ref="_M/VFS_CAP_FLAGS_EFFECTIVE">VFS_CAP_FLAGS_EFFECTIVE</a>);</td></tr>
+<tr><th id="167">167</th><td>    }</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td>    <b>return</b> <var>0</var>;      <i>/* success */</i></td></tr>
+<tr><th id="170">170</th><td>}</td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><i>/*</i></td></tr>
+<tr><th id="173">173</th><td><i> * Get the capabilities of an open file, as specified by its file</i></td></tr>
+<tr><th id="174">174</th><td><i> * descriptor.</i></td></tr>
+<tr><th id="175">175</th><td><i> */</i></td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td><a class="typedef" href="include/sys/capability.h.html#cap_t" title='cap_t' data-type='struct _cap_struct *' data-ref="cap_t">cap_t</a> <dfn class="decl def" id="cap_get_fd" title='cap_get_fd' data-ref="cap_get_fd">cap_get_fd</dfn>(<em>int</em> <dfn class="local col4 decl" id="14fildes" title='fildes' data-type='int' data-ref="14fildes">fildes</dfn>)</td></tr>
+<tr><th id="178">178</th><td>{</td></tr>
+<tr><th id="179">179</th><td>    <a class="typedef" href="include/sys/capability.h.html#cap_t" title='cap_t' data-type='struct _cap_struct *' data-ref="cap_t">cap_t</a> <dfn class="local col5 decl" id="15result" title='result' data-type='cap_t' data-ref="15result">result</dfn>;</td></tr>
+<tr><th id="180">180</th><td></td></tr>
+<tr><th id="181">181</th><td>    <i>/* allocate a new capability set */</i></td></tr>
+<tr><th id="182">182</th><td>    <a class="local col5 ref" href="#15result" title='result' data-ref="15result">result</a> = <a class="ref" href="include/sys/capability.h.html#cap_init" title='cap_init' data-ref="cap_init">cap_init</a>();</td></tr>
+<tr><th id="183">183</th><td>    <b>if</b> (<a class="local col5 ref" href="#15result" title='result' data-ref="15result">result</a>) {</td></tr>
+<tr><th id="184">184</th><td>	<b>struct</b> <a class="type" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data" title='vfs_cap_data' data-ref="vfs_cap_data">vfs_cap_data</a> <dfn class="local col6 decl" id="16rawvfscap" title='rawvfscap' data-type='struct vfs_cap_data' data-ref="16rawvfscap">rawvfscap</dfn>;</td></tr>
+<tr><th id="185">185</th><td>	<em>int</em> <dfn class="local col7 decl" id="17sizeofcaps" title='sizeofcaps' data-type='int' data-ref="17sizeofcaps">sizeofcaps</dfn>;</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td>	<a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"getting fildes capabilities"</q>);</td></tr>
+<tr><th id="188">188</th><td></td></tr>
+<tr><th id="189">189</th><td>	<i>/* fill the capability sets via a system call */</i></td></tr>
+<tr><th id="190">190</th><td>	<a class="local col7 ref" href="#17sizeofcaps" title='sizeofcaps' data-ref="17sizeofcaps">sizeofcaps</a> = <a class="ref" href="../../../bionic/libc/include/sys/xattr.h.html#fgetxattr" title='fgetxattr' data-ref="fgetxattr">fgetxattr</a>(<a class="local col4 ref" href="#14fildes" title='fildes' data-ref="14fildes">fildes</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/xattr.h.html#70" title="&quot;security.&quot; &quot;capability&quot;" data-ref="_M/XATTR_NAME_CAPS">XATTR_NAME_CAPS</a>,</td></tr>
+<tr><th id="191">191</th><td>			       &amp;<a class="local col6 ref" href="#16rawvfscap" title='rawvfscap' data-ref="16rawvfscap">rawvfscap</a>, <b>sizeof</b>(<a class="local col6 ref" href="#16rawvfscap" title='rawvfscap' data-ref="16rawvfscap">rawvfscap</a>));</td></tr>
+<tr><th id="192">192</th><td>	<b>if</b> (<a class="local col7 ref" href="#17sizeofcaps" title='sizeofcaps' data-ref="17sizeofcaps">sizeofcaps</a> &lt; <a class="macro" href="libcap.h.html#207" title="((ssize_t) sizeof(rawvfscap.magic_etc))" data-ref="_M/ssizeof">ssizeof</a>(<a class="local col6 ref" href="#16rawvfscap" title='rawvfscap' data-ref="16rawvfscap">rawvfscap</a>.<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::magic_etc" title='vfs_cap_data::magic_etc' data-ref="vfs_cap_data::magic_etc">magic_etc</a>)) {</td></tr>
+<tr><th id="193">193</th><td>	    <a class="ref" href="include/sys/capability.h.html#cap_free" title='cap_free' data-ref="cap_free">cap_free</a>(<a class="local col5 ref" href="#15result" title='result' data-ref="15result">result</a>);</td></tr>
+<tr><th id="194">194</th><td>	    <a class="local col5 ref" href="#15result" title='result' data-ref="15result">result</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="195">195</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="196">196</th><td>	    <a class="local col5 ref" href="#15result" title='result' data-ref="15result">result</a> = <a class="tu ref" href="#_fcaps_load" title='_fcaps_load' data-use='c' data-ref="_fcaps_load">_fcaps_load</a>(&amp;<a class="local col6 ref" href="#16rawvfscap" title='rawvfscap' data-ref="16rawvfscap">rawvfscap</a>, <a class="local col5 ref" href="#15result" title='result' data-ref="15result">result</a>, <a class="local col7 ref" href="#17sizeofcaps" title='sizeofcaps' data-ref="17sizeofcaps">sizeofcaps</a>);</td></tr>
+<tr><th id="197">197</th><td>	}</td></tr>
+<tr><th id="198">198</th><td>    }</td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td>    <b>return</b> <a class="local col5 ref" href="#15result" title='result' data-ref="15result">result</a>;</td></tr>
+<tr><th id="201">201</th><td>}</td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td><i>/*</i></td></tr>
+<tr><th id="204">204</th><td><i> * Get the capabilities from a named file.</i></td></tr>
+<tr><th id="205">205</th><td><i> */</i></td></tr>
+<tr><th id="206">206</th><td></td></tr>
+<tr><th id="207">207</th><td><a class="typedef" href="include/sys/capability.h.html#cap_t" title='cap_t' data-type='struct _cap_struct *' data-ref="cap_t">cap_t</a> <dfn class="decl def" id="cap_get_file" title='cap_get_file' data-ref="cap_get_file">cap_get_file</dfn>(<em>const</em> <em>char</em> *<dfn class="local col8 decl" id="18filename" title='filename' data-type='const char *' data-ref="18filename">filename</dfn>)</td></tr>
+<tr><th id="208">208</th><td>{</td></tr>
+<tr><th id="209">209</th><td>    <a class="typedef" href="include/sys/capability.h.html#cap_t" title='cap_t' data-type='struct _cap_struct *' data-ref="cap_t">cap_t</a> <dfn class="local col9 decl" id="19result" title='result' data-type='cap_t' data-ref="19result">result</dfn>;</td></tr>
+<tr><th id="210">210</th><td></td></tr>
+<tr><th id="211">211</th><td>    <i>/* allocate a new capability set */</i></td></tr>
+<tr><th id="212">212</th><td>    <a class="local col9 ref" href="#19result" title='result' data-ref="19result">result</a> = <a class="ref" href="include/sys/capability.h.html#cap_init" title='cap_init' data-ref="cap_init">cap_init</a>();</td></tr>
+<tr><th id="213">213</th><td>    <b>if</b> (<a class="local col9 ref" href="#19result" title='result' data-ref="19result">result</a>) {</td></tr>
+<tr><th id="214">214</th><td>	<b>struct</b> <a class="type" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data" title='vfs_cap_data' data-ref="vfs_cap_data">vfs_cap_data</a> <dfn class="local col0 decl" id="20rawvfscap" title='rawvfscap' data-type='struct vfs_cap_data' data-ref="20rawvfscap">rawvfscap</dfn>;</td></tr>
+<tr><th id="215">215</th><td>	<em>int</em> <dfn class="local col1 decl" id="21sizeofcaps" title='sizeofcaps' data-type='int' data-ref="21sizeofcaps">sizeofcaps</dfn>;</td></tr>
+<tr><th id="216">216</th><td></td></tr>
+<tr><th id="217">217</th><td>	<a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"getting filename capabilities"</q>);</td></tr>
+<tr><th id="218">218</th><td></td></tr>
+<tr><th id="219">219</th><td>	<i>/* fill the capability sets via a system call */</i></td></tr>
+<tr><th id="220">220</th><td>	<a class="local col1 ref" href="#21sizeofcaps" title='sizeofcaps' data-ref="21sizeofcaps">sizeofcaps</a> = <a class="ref" href="../../../bionic/libc/include/sys/xattr.h.html#getxattr" title='getxattr' data-ref="getxattr">getxattr</a>(<a class="local col8 ref" href="#18filename" title='filename' data-ref="18filename">filename</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/xattr.h.html#70" title="&quot;security.&quot; &quot;capability&quot;" data-ref="_M/XATTR_NAME_CAPS">XATTR_NAME_CAPS</a>,</td></tr>
+<tr><th id="221">221</th><td>			      &amp;<a class="local col0 ref" href="#20rawvfscap" title='rawvfscap' data-ref="20rawvfscap">rawvfscap</a>, <b>sizeof</b>(<a class="local col0 ref" href="#20rawvfscap" title='rawvfscap' data-ref="20rawvfscap">rawvfscap</a>));</td></tr>
+<tr><th id="222">222</th><td>	<b>if</b> (<a class="local col1 ref" href="#21sizeofcaps" title='sizeofcaps' data-ref="21sizeofcaps">sizeofcaps</a> &lt; <a class="macro" href="libcap.h.html#207" title="((ssize_t) sizeof(rawvfscap.magic_etc))" data-ref="_M/ssizeof">ssizeof</a>(<a class="local col0 ref" href="#20rawvfscap" title='rawvfscap' data-ref="20rawvfscap">rawvfscap</a>.<a class="ref" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data::magic_etc" title='vfs_cap_data::magic_etc' data-ref="vfs_cap_data::magic_etc">magic_etc</a>)) {</td></tr>
+<tr><th id="223">223</th><td>	    <a class="ref" href="include/sys/capability.h.html#cap_free" title='cap_free' data-ref="cap_free">cap_free</a>(<a class="local col9 ref" href="#19result" title='result' data-ref="19result">result</a>);</td></tr>
+<tr><th id="224">224</th><td>	    <a class="local col9 ref" href="#19result" title='result' data-ref="19result">result</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="225">225</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="226">226</th><td>	    <a class="local col9 ref" href="#19result" title='result' data-ref="19result">result</a> = <a class="tu ref" href="#_fcaps_load" title='_fcaps_load' data-use='c' data-ref="_fcaps_load">_fcaps_load</a>(&amp;<a class="local col0 ref" href="#20rawvfscap" title='rawvfscap' data-ref="20rawvfscap">rawvfscap</a>, <a class="local col9 ref" href="#19result" title='result' data-ref="19result">result</a>, <a class="local col1 ref" href="#21sizeofcaps" title='sizeofcaps' data-ref="21sizeofcaps">sizeofcaps</a>);</td></tr>
+<tr><th id="227">227</th><td>	}</td></tr>
+<tr><th id="228">228</th><td>    }</td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td>    <b>return</b> <a class="local col9 ref" href="#19result" title='result' data-ref="19result">result</a>;</td></tr>
+<tr><th id="231">231</th><td>}</td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td><i>/*</i></td></tr>
+<tr><th id="234">234</th><td><i> * Set the capabilities of an open file, as specified by its file</i></td></tr>
+<tr><th id="235">235</th><td><i> * descriptor.</i></td></tr>
+<tr><th id="236">236</th><td><i> */</i></td></tr>
+<tr><th id="237">237</th><td></td></tr>
+<tr><th id="238">238</th><td><em>int</em> <dfn class="decl def" id="cap_set_fd" title='cap_set_fd' data-ref="cap_set_fd">cap_set_fd</dfn>(<em>int</em> <dfn class="local col2 decl" id="22fildes" title='fildes' data-type='int' data-ref="22fildes">fildes</dfn>, <a class="typedef" href="include/sys/capability.h.html#cap_t" title='cap_t' data-type='struct _cap_struct *' data-ref="cap_t">cap_t</a> <dfn class="local col3 decl" id="23cap_d" title='cap_d' data-type='cap_t' data-ref="23cap_d">cap_d</dfn>)</td></tr>
+<tr><th id="239">239</th><td>{</td></tr>
+<tr><th id="240">240</th><td>    <b>struct</b> <a class="type" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data" title='vfs_cap_data' data-ref="vfs_cap_data">vfs_cap_data</a> <dfn class="local col4 decl" id="24rawvfscap" title='rawvfscap' data-type='struct vfs_cap_data' data-ref="24rawvfscap">rawvfscap</dfn>;</td></tr>
+<tr><th id="241">241</th><td>    <em>int</em> <dfn class="local col5 decl" id="25sizeofcaps" title='sizeofcaps' data-type='int' data-ref="25sizeofcaps">sizeofcaps</dfn>;</td></tr>
+<tr><th id="242">242</th><td>    <b>struct</b> <a class="type" href="../../../bionic/libc/include/sys/stat.h.html#stat" title='stat' data-ref="stat">stat</a> <dfn class="local col6 decl" id="26buf" title='buf' data-type='struct stat' data-ref="26buf">buf</dfn>;</td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#fstat" title='fstat' data-ref="fstat">fstat</a>(<a class="local col2 ref" href="#22fildes" title='fildes' data-ref="22fildes">fildes</a>, &amp;<a class="local col6 ref" href="#26buf" title='buf' data-ref="26buf">buf</a>) != <var>0</var>) {</td></tr>
+<tr><th id="245">245</th><td>	<a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"unable to stat file descriptor %d"</q>, fildes);</td></tr>
+<tr><th id="246">246</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="247">247</th><td>    }</td></tr>
+<tr><th id="248">248</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#36" title="(((buf.st_mode) &amp; 00170000) == 0120000)" data-ref="_M/S_ISLNK">S_ISLNK</a>(<a class="local col6 ref" href="#26buf" title='buf' data-ref="26buf">buf</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_mode' data-ref="stat::st_mode">st_mode</a>) || !<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#37" title="(((buf.st_mode) &amp; 00170000) == 0100000)" data-ref="_M/S_ISREG">S_ISREG</a>(<a class="local col6 ref" href="#26buf" title='buf' data-ref="26buf">buf</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_mode' data-ref="stat::st_mode">st_mode</a>)) {</td></tr>
+<tr><th id="249">249</th><td>	<a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"file descriptor %d for non-regular file"</q>, fildes);</td></tr>
+<tr><th id="250">250</th><td>	<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="251">251</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="252">252</th><td>    }</td></tr>
+<tr><th id="253">253</th><td></td></tr>
+<tr><th id="254">254</th><td>    <b>if</b> (<a class="local col3 ref" href="#23cap_d" title='cap_d' data-ref="23cap_d">cap_d</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="255">255</th><td>	<a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"deleting fildes capabilities"</q>);</td></tr>
+<tr><th id="256">256</th><td>	<b>return</b> <a class="ref" href="../../../bionic/libc/include/sys/xattr.h.html#fremovexattr" title='fremovexattr' data-ref="fremovexattr">fremovexattr</a>(<a class="local col2 ref" href="#22fildes" title='fildes' data-ref="22fildes">fildes</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/xattr.h.html#70" title="&quot;security.&quot; &quot;capability&quot;" data-ref="_M/XATTR_NAME_CAPS">XATTR_NAME_CAPS</a>);</td></tr>
+<tr><th id="257">257</th><td>    } <b>else</b> <b>if</b> (<a class="tu ref" href="#_fcaps_save" title='_fcaps_save' data-use='c' data-ref="_fcaps_save">_fcaps_save</a>(&amp;<a class="local col4 ref" href="#24rawvfscap" title='rawvfscap' data-ref="24rawvfscap">rawvfscap</a>, <a class="local col3 ref" href="#23cap_d" title='cap_d' data-ref="23cap_d">cap_d</a>, &amp;<a class="local col5 ref" href="#25sizeofcaps" title='sizeofcaps' data-ref="25sizeofcaps">sizeofcaps</a>) != <var>0</var>) {</td></tr>
+<tr><th id="258">258</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="259">259</th><td>    }</td></tr>
+<tr><th id="260">260</th><td></td></tr>
+<tr><th id="261">261</th><td>    <a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"setting fildes capabilities"</q>);</td></tr>
+<tr><th id="262">262</th><td></td></tr>
+<tr><th id="263">263</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/sys/xattr.h.html#fsetxattr" title='fsetxattr' data-ref="fsetxattr">fsetxattr</a>(<a class="local col2 ref" href="#22fildes" title='fildes' data-ref="22fildes">fildes</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/xattr.h.html#70" title="&quot;security.&quot; &quot;capability&quot;" data-ref="_M/XATTR_NAME_CAPS">XATTR_NAME_CAPS</a>, &amp;<a class="local col4 ref" href="#24rawvfscap" title='rawvfscap' data-ref="24rawvfscap">rawvfscap</a>, <a class="local col5 ref" href="#25sizeofcaps" title='sizeofcaps' data-ref="25sizeofcaps">sizeofcaps</a>, <var>0</var>);</td></tr>
+<tr><th id="264">264</th><td>}</td></tr>
+<tr><th id="265">265</th><td></td></tr>
+<tr><th id="266">266</th><td><i>/*</i></td></tr>
+<tr><th id="267">267</th><td><i> * Set the capabilities of a named file.</i></td></tr>
+<tr><th id="268">268</th><td><i> */</i></td></tr>
+<tr><th id="269">269</th><td></td></tr>
+<tr><th id="270">270</th><td><em>int</em> <dfn class="decl def" id="cap_set_file" title='cap_set_file' data-ref="cap_set_file">cap_set_file</dfn>(<em>const</em> <em>char</em> *<dfn class="local col7 decl" id="27filename" title='filename' data-type='const char *' data-ref="27filename">filename</dfn>, <a class="typedef" href="include/sys/capability.h.html#cap_t" title='cap_t' data-type='struct _cap_struct *' data-ref="cap_t">cap_t</a> <dfn class="local col8 decl" id="28cap_d" title='cap_d' data-type='cap_t' data-ref="28cap_d">cap_d</dfn>)</td></tr>
+<tr><th id="271">271</th><td>{</td></tr>
+<tr><th id="272">272</th><td>    <b>struct</b> <a class="type" href="../../../bionic/libc/kernel/uapi/linux/capability.h.html#vfs_cap_data" title='vfs_cap_data' data-ref="vfs_cap_data">vfs_cap_data</a> <dfn class="local col9 decl" id="29rawvfscap" title='rawvfscap' data-type='struct vfs_cap_data' data-ref="29rawvfscap">rawvfscap</dfn>;</td></tr>
+<tr><th id="273">273</th><td>    <em>int</em> <dfn class="local col0 decl" id="30sizeofcaps" title='sizeofcaps' data-type='int' data-ref="30sizeofcaps">sizeofcaps</dfn>;</td></tr>
+<tr><th id="274">274</th><td>    <b>struct</b> <a class="type" href="../../../bionic/libc/include/sys/stat.h.html#stat" title='stat' data-ref="stat">stat</a> <dfn class="local col1 decl" id="31buf" title='buf' data-type='struct stat' data-ref="31buf">buf</dfn>;</td></tr>
+<tr><th id="275">275</th><td></td></tr>
+<tr><th id="276">276</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#lstat" title='lstat' data-ref="lstat">lstat</a>(<a class="local col7 ref" href="#27filename" title='filename' data-ref="27filename">filename</a>, &amp;<a class="local col1 ref" href="#31buf" title='buf' data-ref="31buf">buf</a>) != <var>0</var>) {</td></tr>
+<tr><th id="277">277</th><td>	<a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"unable to stat file [%s]"</q>, filename);</td></tr>
+<tr><th id="278">278</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="279">279</th><td>    }</td></tr>
+<tr><th id="280">280</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#36" title="(((buf.st_mode) &amp; 00170000) == 0120000)" data-ref="_M/S_ISLNK">S_ISLNK</a>(<a class="local col1 ref" href="#31buf" title='buf' data-ref="31buf">buf</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_mode' data-ref="stat::st_mode">st_mode</a>) || !<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#37" title="(((buf.st_mode) &amp; 00170000) == 0100000)" data-ref="_M/S_ISREG">S_ISREG</a>(<a class="local col1 ref" href="#31buf" title='buf' data-ref="31buf">buf</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_mode' data-ref="stat::st_mode">st_mode</a>)) {</td></tr>
+<tr><th id="281">281</th><td>	<a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"file [%s] is not a regular file"</q>, filename);</td></tr>
+<tr><th id="282">282</th><td>	<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="283">283</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="284">284</th><td>    }</td></tr>
+<tr><th id="285">285</th><td></td></tr>
+<tr><th id="286">286</th><td>    <b>if</b> (<a class="local col8 ref" href="#28cap_d" title='cap_d' data-ref="28cap_d">cap_d</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="287">287</th><td>	<a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"removing filename capabilities"</q>);</td></tr>
+<tr><th id="288">288</th><td>	<b>return</b> <a class="ref" href="../../../bionic/libc/include/sys/xattr.h.html#removexattr" title='removexattr' data-ref="removexattr">removexattr</a>(<a class="local col7 ref" href="#27filename" title='filename' data-ref="27filename">filename</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/xattr.h.html#70" title="&quot;security.&quot; &quot;capability&quot;" data-ref="_M/XATTR_NAME_CAPS">XATTR_NAME_CAPS</a>);</td></tr>
+<tr><th id="289">289</th><td>    } <b>else</b> <b>if</b> (<a class="tu ref" href="#_fcaps_save" title='_fcaps_save' data-use='c' data-ref="_fcaps_save">_fcaps_save</a>(&amp;<a class="local col9 ref" href="#29rawvfscap" title='rawvfscap' data-ref="29rawvfscap">rawvfscap</a>, <a class="local col8 ref" href="#28cap_d" title='cap_d' data-ref="28cap_d">cap_d</a>, &amp;<a class="local col0 ref" href="#30sizeofcaps" title='sizeofcaps' data-ref="30sizeofcaps">sizeofcaps</a>) != <var>0</var>) {</td></tr>
+<tr><th id="290">290</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="291">291</th><td>    }</td></tr>
+<tr><th id="292">292</th><td></td></tr>
+<tr><th id="293">293</th><td>    <a class="macro" href="libcap.h.html#175" title="" data-ref="_M/_cap_debug">_cap_debug</a>(<q>"setting filename capabilities"</q>);</td></tr>
+<tr><th id="294">294</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/sys/xattr.h.html#setxattr" title='setxattr' data-ref="setxattr">setxattr</a>(<a class="local col7 ref" href="#27filename" title='filename' data-ref="27filename">filename</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/xattr.h.html#70" title="&quot;security.&quot; &quot;capability&quot;" data-ref="_M/XATTR_NAME_CAPS">XATTR_NAME_CAPS</a>, &amp;<a class="local col9 ref" href="#29rawvfscap" title='rawvfscap' data-ref="29rawvfscap">rawvfscap</a>, <a class="local col0 ref" href="#30sizeofcaps" title='sizeofcaps' data-ref="30sizeofcaps">sizeofcaps</a>, <var>0</var>);</td></tr>
+<tr><th id="295">295</th><td>}</td></tr>
+<tr><th id="296">296</th><td></td></tr>
+<tr><th id="297">297</th><td><u>#<span data-ppcond="19">else</span> /* ie. ndef VFS_CAP_U32 */</u></td></tr>
+<tr><th id="298">298</th><td></td></tr>
+<tr><th id="299">299</th><td>cap_t cap_get_fd(<em>int</em> fildes)</td></tr>
+<tr><th id="300">300</th><td>{</td></tr>
+<tr><th id="301">301</th><td>    errno = EINVAL;</td></tr>
+<tr><th id="302">302</th><td>    <b>return</b> NULL;</td></tr>
+<tr><th id="303">303</th><td>}</td></tr>
+<tr><th id="304">304</th><td></td></tr>
+<tr><th id="305">305</th><td>cap_t cap_get_file(<em>const</em> <em>char</em> *filename)</td></tr>
+<tr><th id="306">306</th><td>{</td></tr>
+<tr><th id="307">307</th><td>    errno = EINVAL;</td></tr>
+<tr><th id="308">308</th><td>    <b>return</b> NULL;</td></tr>
+<tr><th id="309">309</th><td>}</td></tr>
+<tr><th id="310">310</th><td></td></tr>
+<tr><th id="311">311</th><td><em>int</em> cap_set_fd(<em>int</em> fildes, cap_t cap_d)</td></tr>
+<tr><th id="312">312</th><td>{</td></tr>
+<tr><th id="313">313</th><td>    errno = EINVAL;</td></tr>
+<tr><th id="314">314</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="315">315</th><td>}</td></tr>
+<tr><th id="316">316</th><td></td></tr>
+<tr><th id="317">317</th><td><em>int</em> cap_set_file(<em>const</em> <em>char</em> *filename, cap_t cap_d)</td></tr>
+<tr><th id="318">318</th><td>{</td></tr>
+<tr><th id="319">319</th><td>    errno = EINVAL;</td></tr>
+<tr><th id="320">320</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="321">321</th><td>}</td></tr>
+<tr><th id="322">322</th><td></td></tr>
+<tr><th id="323">323</th><td><u>#<span data-ppcond="19">endif</span> /* def VFS_CAP_U32 */</u></td></tr>
+<tr><th id="324">324</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

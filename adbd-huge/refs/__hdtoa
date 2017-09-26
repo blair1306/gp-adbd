@@ -1,0 +1,28 @@
+<def f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/hdtoa.c' l='122' ll='212' type='char * __hdtoa(double d, const char * xdigs, int ndigits, int * decpt, int * sign, char ** rve)'/>
+<doc f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/hdtoa.c' l='98'>/*
+ * This procedure converts a double-precision number in IEEE format
+ * into a string of hexadecimal digits and an exponent of 2.  Its
+ * behavior is bug-for-bug compatible with dtoa() in mode 2, with the
+ * following exceptions:
+ *
+ * - An ndigits &lt; 0 causes it to use as many digits as necessary to
+ *   represent the number exactly.
+ * - The additional xdigs argument should point to either the string
+ *   &quot;0123456789ABCDEF&quot; or the string &quot;0123456789abcdef&quot;, depending on
+ *   which case is desired.
+ * - This routine does not repeat dtoa&apos;s mistake of setting decpt
+ *   to 9999 in the case of an infinity or NaN.  INT_MAX is used
+ *   for this purpose instead.
+ *
+ * Note that the C99 standard does not specify what the leading digit
+ * should be for non-zero numbers.  For instance, 0x1.3p3 is the same
+ * as 0x2.6p2 is the same as 0x4.cp3.  This implementation chooses the
+ * first digit so that subsequent digits are aligned on nibble
+ * boundaries (before rounding).
+ *
+ * Inputs:	d, xdigs, ndigits
+ * Outputs:	decpt, sign, rve
+ */</doc>
+<dec f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/floatio.h' l='56' type='char * __hdtoa(double , const char * , int , int * , int * , char ** )'/>
+<use f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/vfprintf.c' l='706' u='c' c='__vfprintf'/>
+<use f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/vfwprintf.c' l='659' u='c' c='__vfwprintf'/>

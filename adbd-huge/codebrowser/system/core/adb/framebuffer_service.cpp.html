@@ -1,0 +1,204 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>framebuffer_service.cpp source code [codebrowser/system/core/adb/framebuffer_service.cpp] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="fbinfo "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/adb/framebuffer_service.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>adb</a>/<a href='framebuffer_service.cpp.html'>framebuffer_service.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2007 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="../../../bionic/libc/kernel/uapi/linux/fb.h.html">&lt;linux/fb.h&gt;</a></u></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../bionic/libc/include/sys/ioctl.h.html">&lt;sys/ioctl.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../../../bionic/libc/include/sys/mman.h.html">&lt;sys/mman.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="../../../bionic/libc/include/sys/wait.h.html">&lt;sys/wait.h&gt;</a></u></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="sysdeps.h.html">"sysdeps.h"</a></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="adb.h.html">"adb.h"</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="adb_io.h.html">"adb_io.h"</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="fdevent.h.html">"fdevent.h"</a></u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><i>/* TODO:</i></td></tr>
+<tr><th id="36">36</th><td><i>** - sync with vsync to avoid tearing</i></td></tr>
+<tr><th id="37">37</th><td><i>*/</i></td></tr>
+<tr><th id="38">38</th><td><i>/* This version number defines the format of the fbinfo struct.</i></td></tr>
+<tr><th id="39">39</th><td><i>   It must match versioning in ddms where this data is consumed. */</i></td></tr>
+<tr><th id="40">40</th><td><u>#define <dfn class="macro" id="_M/DDMS_RAWIMAGE_VERSION" data-ref="_M/DDMS_RAWIMAGE_VERSION">DDMS_RAWIMAGE_VERSION</dfn> 1</u></td></tr>
+<tr><th id="41">41</th><td><b>struct</b> <dfn class="type def" id="fbinfo" title='fbinfo' data-ref="fbinfo">fbinfo</dfn> {</td></tr>
+<tr><th id="42">42</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::version" title='fbinfo::version' data-type='unsigned int' data-ref="fbinfo::version">version</dfn>;</td></tr>
+<tr><th id="43">43</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::bpp" title='fbinfo::bpp' data-type='unsigned int' data-ref="fbinfo::bpp">bpp</dfn>;</td></tr>
+<tr><th id="44">44</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::size" title='fbinfo::size' data-type='unsigned int' data-ref="fbinfo::size">size</dfn>;</td></tr>
+<tr><th id="45">45</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::width" title='fbinfo::width' data-type='unsigned int' data-ref="fbinfo::width">width</dfn>;</td></tr>
+<tr><th id="46">46</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::height" title='fbinfo::height' data-type='unsigned int' data-ref="fbinfo::height">height</dfn>;</td></tr>
+<tr><th id="47">47</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::red_offset" title='fbinfo::red_offset' data-type='unsigned int' data-ref="fbinfo::red_offset">red_offset</dfn>;</td></tr>
+<tr><th id="48">48</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::red_length" title='fbinfo::red_length' data-type='unsigned int' data-ref="fbinfo::red_length">red_length</dfn>;</td></tr>
+<tr><th id="49">49</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::blue_offset" title='fbinfo::blue_offset' data-type='unsigned int' data-ref="fbinfo::blue_offset">blue_offset</dfn>;</td></tr>
+<tr><th id="50">50</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::blue_length" title='fbinfo::blue_length' data-type='unsigned int' data-ref="fbinfo::blue_length">blue_length</dfn>;</td></tr>
+<tr><th id="51">51</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::green_offset" title='fbinfo::green_offset' data-type='unsigned int' data-ref="fbinfo::green_offset">green_offset</dfn>;</td></tr>
+<tr><th id="52">52</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::green_length" title='fbinfo::green_length' data-type='unsigned int' data-ref="fbinfo::green_length">green_length</dfn>;</td></tr>
+<tr><th id="53">53</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::alpha_offset" title='fbinfo::alpha_offset' data-type='unsigned int' data-ref="fbinfo::alpha_offset">alpha_offset</dfn>;</td></tr>
+<tr><th id="54">54</th><td>    <em>unsigned</em> <em>int</em> <dfn class="tu decl" id="fbinfo::alpha_length" title='fbinfo::alpha_length' data-type='unsigned int' data-ref="fbinfo::alpha_length">alpha_length</dfn>;</td></tr>
+<tr><th id="55">55</th><td>} <b>__attribute__</b>((packed));</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><em>void</em> <dfn class="decl def" id="_Z19framebuffer_serviceiPv" title='framebuffer_service' data-ref="_Z19framebuffer_serviceiPv">framebuffer_service</dfn>(<em>int</em> <dfn class="local col1 decl" id="1fd" title='fd' data-type='int' data-ref="1fd">fd</dfn>, <em>void</em> *<dfn class="local col2 decl" id="2cookie" title='cookie' data-type='void *' data-ref="2cookie">cookie</dfn>)</td></tr>
+<tr><th id="58">58</th><td>{</td></tr>
+<tr><th id="59">59</th><td>    <b>struct</b> <a class="type" href="#fbinfo" title='fbinfo' data-ref="fbinfo">fbinfo</a> <a class="tu ref fake" href="#41" title='fbinfo::fbinfo' data-use='c' data-ref="_ZN6fbinfoC1Ev"></a><dfn class="local col3 decl" id="3fbinfo" title='fbinfo' data-type='struct fbinfo' data-ref="3fbinfo">fbinfo</dfn>;</td></tr>
+<tr><th id="60">60</th><td>    <em>unsigned</em> <em>int</em> <dfn class="local col4 decl" id="4i" title='i' data-type='unsigned int' data-ref="4i">i</dfn>, <dfn class="local col5 decl" id="5bsize" title='bsize' data-type='unsigned int' data-ref="5bsize">bsize</dfn>;</td></tr>
+<tr><th id="61">61</th><td>    <em>char</em> <dfn class="local col6 decl" id="6buf" title='buf' data-type='char [640]' data-ref="6buf">buf</dfn>[<var>640</var>];</td></tr>
+<tr><th id="62">62</th><td>    <em>int</em> <dfn class="local col7 decl" id="7fd_screencap" title='fd_screencap' data-type='int' data-ref="7fd_screencap">fd_screencap</dfn>;</td></tr>
+<tr><th id="63">63</th><td>    <em>int</em> <dfn class="local col8 decl" id="8w" title='w' data-type='int' data-ref="8w">w</dfn>, <dfn class="local col9 decl" id="9h" title='h' data-type='int' data-ref="9h">h</dfn>, <dfn class="local col0 decl" id="10f" title='f' data-type='int' data-ref="10f">f</dfn>;</td></tr>
+<tr><th id="64">64</th><td>    <em>int</em> <dfn class="local col1 decl" id="11fds" title='fds' data-type='int [2]' data-ref="11fds">fds</dfn>[<var>2</var>];</td></tr>
+<tr><th id="65">65</th><td>    <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col2 decl" id="12pid" title='pid' data-type='pid_t' data-ref="12pid">pid</dfn>;</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/unistd.h.html#pipe2" title='pipe2' data-ref="pipe2">pipe2</a>(<a class="local col1 ref" href="#11fds" title='fds' data-ref="11fds">fds</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#77" title="02000000" data-ref="_M/O_CLOEXEC">O_CLOEXEC</a>) &lt; <var>0</var>) <b>goto</b> <a class="lbl" href="#13pipefail" data-ref="13pipefail">pipefail</a>;</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td>    <a class="local col2 ref" href="#12pid" title='pid' data-ref="12pid">pid</a> = <a class="ref" href="../../../bionic/libc/include/unistd.h.html#fork" title='fork' data-ref="fork">fork</a>();</td></tr>
+<tr><th id="70">70</th><td>    <b>if</b> (<a class="local col2 ref" href="#12pid" title='pid' data-ref="12pid">pid</a> &lt; <var>0</var>) <b>goto</b> <a class="lbl" href="#14done" data-ref="14done">done</a>;</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td>    <b>if</b> (<a class="local col2 ref" href="#12pid" title='pid' data-ref="12pid">pid</a> == <var>0</var>) {</td></tr>
+<tr><th id="73">73</th><td>        <a class="ref" href="../../../bionic/libc/include/unistd.h.html#dup2" title='dup2' data-ref="dup2">dup2</a>(<a class="local col1 ref" href="#11fds" title='fds' data-ref="11fds">fds</a>[<var>1</var>], <a class="macro" href="../../../bionic/libc/include/unistd.h.html#44" title="1" data-ref="_M/STDOUT_FILENO">STDOUT_FILENO</a>);</td></tr>
+<tr><th id="74">74</th><td>        <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col1 ref" href="#11fds" title='fds' data-ref="11fds">fds</a>[<var>0</var>]);</td></tr>
+<tr><th id="75">75</th><td>        <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col1 ref" href="#11fds" title='fds' data-ref="11fds">fds</a>[<var>1</var>]);</td></tr>
+<tr><th id="76">76</th><td>        <em>const</em> <em>char</em>* <dfn class="local col5 decl" id="15command" title='command' data-type='const char *' data-ref="15command">command</dfn> = <q>"screencap"</q>;</td></tr>
+<tr><th id="77">77</th><td>        <em>const</em> <em>char</em> *<dfn class="local col6 decl" id="16args" title='args' data-type='const char *[2]' data-ref="16args">args</dfn>[<var>2</var>] = {<a class="local col5 ref" href="#15command" title='command' data-ref="15command">command</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>};</td></tr>
+<tr><th id="78">78</th><td>        <a class="ref" href="../../../bionic/libc/include/unistd.h.html#execvp" title='execvp' data-ref="execvp">execvp</a>(<a class="local col5 ref" href="#15command" title='command' data-ref="15command">command</a>, (<em>char</em>**)<a class="local col6 ref" href="#16args" title='args' data-ref="16args">args</a>);</td></tr>
+<tr><th id="79">79</th><td>        <a class="ref" href="../../../bionic/libc/include/stdlib.h.html#exit" title='exit' data-ref="exit">exit</a>(<var>1</var>);</td></tr>
+<tr><th id="80">80</th><td>    }</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td>    <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col1 ref" href="#11fds" title='fds' data-ref="11fds">fds</a>[<var>1</var>]);</td></tr>
+<tr><th id="83">83</th><td>    <a class="local col7 ref" href="#7fd_screencap" title='fd_screencap' data-ref="7fd_screencap">fd_screencap</a> = <a class="local col1 ref" href="#11fds" title='fds' data-ref="11fds">fds</a>[<var>0</var>];</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td>    <i>/* read w, h &amp; format */</i></td></tr>
+<tr><th id="86">86</th><td>    <b>if</b>(!<a class="ref" href="adb_io.h.html#_Z13ReadFdExactlyiPvm" title='ReadFdExactly' data-ref="_Z13ReadFdExactlyiPvm">ReadFdExactly</a>(<a class="local col7 ref" href="#7fd_screencap" title='fd_screencap' data-ref="7fd_screencap">fd_screencap</a>, &amp;<a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a>, <var>4</var>)) <b>goto</b> <a class="lbl" href="#14done" data-ref="14done">done</a>;</td></tr>
+<tr><th id="87">87</th><td>    <b>if</b>(!<a class="ref" href="adb_io.h.html#_Z13ReadFdExactlyiPvm" title='ReadFdExactly' data-ref="_Z13ReadFdExactlyiPvm">ReadFdExactly</a>(<a class="local col7 ref" href="#7fd_screencap" title='fd_screencap' data-ref="7fd_screencap">fd_screencap</a>, &amp;<a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a>, <var>4</var>)) <b>goto</b> <a class="lbl" href="#14done" data-ref="14done">done</a>;</td></tr>
+<tr><th id="88">88</th><td>    <b>if</b>(!<a class="ref" href="adb_io.h.html#_Z13ReadFdExactlyiPvm" title='ReadFdExactly' data-ref="_Z13ReadFdExactlyiPvm">ReadFdExactly</a>(<a class="local col7 ref" href="#7fd_screencap" title='fd_screencap' data-ref="7fd_screencap">fd_screencap</a>, &amp;<a class="local col0 ref" href="#10f" title='f' data-ref="10f">f</a>, <var>4</var>)) <b>goto</b> <a class="lbl" href="#14done" data-ref="14done">done</a>;</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td>    <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::version" title='fbinfo::version' data-use='w' data-ref="fbinfo::version">version</a> = <a class="macro" href="#40" title="1" data-ref="_M/DDMS_RAWIMAGE_VERSION">DDMS_RAWIMAGE_VERSION</a>;</td></tr>
+<tr><th id="91">91</th><td>    <i>/* see hardware/hardware.h */</i></td></tr>
+<tr><th id="92">92</th><td>    <b>switch</b> (<a class="local col0 ref" href="#10f" title='f' data-ref="10f">f</a>) {</td></tr>
+<tr><th id="93">93</th><td>        <b>case</b> <var>1</var>: <i>/* RGBA_8888 */</i></td></tr>
+<tr><th id="94">94</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::bpp" title='fbinfo::bpp' data-use='w' data-ref="fbinfo::bpp">bpp</a> = <var>32</var>;</td></tr>
+<tr><th id="95">95</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::size" title='fbinfo::size' data-use='w' data-ref="fbinfo::size">size</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a> * <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a> * <var>4</var>;</td></tr>
+<tr><th id="96">96</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::width" title='fbinfo::width' data-use='w' data-ref="fbinfo::width">width</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a>;</td></tr>
+<tr><th id="97">97</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::height" title='fbinfo::height' data-use='w' data-ref="fbinfo::height">height</a> = <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a>;</td></tr>
+<tr><th id="98">98</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_offset" title='fbinfo::red_offset' data-use='w' data-ref="fbinfo::red_offset">red_offset</a> = <var>0</var>;</td></tr>
+<tr><th id="99">99</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_length" title='fbinfo::red_length' data-use='w' data-ref="fbinfo::red_length">red_length</a> = <var>8</var>;</td></tr>
+<tr><th id="100">100</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_offset" title='fbinfo::green_offset' data-use='w' data-ref="fbinfo::green_offset">green_offset</a> = <var>8</var>;</td></tr>
+<tr><th id="101">101</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_length" title='fbinfo::green_length' data-use='w' data-ref="fbinfo::green_length">green_length</a> = <var>8</var>;</td></tr>
+<tr><th id="102">102</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_offset" title='fbinfo::blue_offset' data-use='w' data-ref="fbinfo::blue_offset">blue_offset</a> = <var>16</var>;</td></tr>
+<tr><th id="103">103</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_length" title='fbinfo::blue_length' data-use='w' data-ref="fbinfo::blue_length">blue_length</a> = <var>8</var>;</td></tr>
+<tr><th id="104">104</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_offset" title='fbinfo::alpha_offset' data-use='w' data-ref="fbinfo::alpha_offset">alpha_offset</a> = <var>24</var>;</td></tr>
+<tr><th id="105">105</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_length" title='fbinfo::alpha_length' data-use='w' data-ref="fbinfo::alpha_length">alpha_length</a> = <var>8</var>;</td></tr>
+<tr><th id="106">106</th><td>            <b>break</b>;</td></tr>
+<tr><th id="107">107</th><td>        <b>case</b> <var>2</var>: <i>/* RGBX_8888 */</i></td></tr>
+<tr><th id="108">108</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::bpp" title='fbinfo::bpp' data-use='w' data-ref="fbinfo::bpp">bpp</a> = <var>32</var>;</td></tr>
+<tr><th id="109">109</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::size" title='fbinfo::size' data-use='w' data-ref="fbinfo::size">size</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a> * <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a> * <var>4</var>;</td></tr>
+<tr><th id="110">110</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::width" title='fbinfo::width' data-use='w' data-ref="fbinfo::width">width</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a>;</td></tr>
+<tr><th id="111">111</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::height" title='fbinfo::height' data-use='w' data-ref="fbinfo::height">height</a> = <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a>;</td></tr>
+<tr><th id="112">112</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_offset" title='fbinfo::red_offset' data-use='w' data-ref="fbinfo::red_offset">red_offset</a> = <var>0</var>;</td></tr>
+<tr><th id="113">113</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_length" title='fbinfo::red_length' data-use='w' data-ref="fbinfo::red_length">red_length</a> = <var>8</var>;</td></tr>
+<tr><th id="114">114</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_offset" title='fbinfo::green_offset' data-use='w' data-ref="fbinfo::green_offset">green_offset</a> = <var>8</var>;</td></tr>
+<tr><th id="115">115</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_length" title='fbinfo::green_length' data-use='w' data-ref="fbinfo::green_length">green_length</a> = <var>8</var>;</td></tr>
+<tr><th id="116">116</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_offset" title='fbinfo::blue_offset' data-use='w' data-ref="fbinfo::blue_offset">blue_offset</a> = <var>16</var>;</td></tr>
+<tr><th id="117">117</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_length" title='fbinfo::blue_length' data-use='w' data-ref="fbinfo::blue_length">blue_length</a> = <var>8</var>;</td></tr>
+<tr><th id="118">118</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_offset" title='fbinfo::alpha_offset' data-use='w' data-ref="fbinfo::alpha_offset">alpha_offset</a> = <var>24</var>;</td></tr>
+<tr><th id="119">119</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_length" title='fbinfo::alpha_length' data-use='w' data-ref="fbinfo::alpha_length">alpha_length</a> = <var>0</var>;</td></tr>
+<tr><th id="120">120</th><td>            <b>break</b>;</td></tr>
+<tr><th id="121">121</th><td>        <b>case</b> <var>3</var>: <i>/* RGB_888 */</i></td></tr>
+<tr><th id="122">122</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::bpp" title='fbinfo::bpp' data-use='w' data-ref="fbinfo::bpp">bpp</a> = <var>24</var>;</td></tr>
+<tr><th id="123">123</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::size" title='fbinfo::size' data-use='w' data-ref="fbinfo::size">size</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a> * <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a> * <var>3</var>;</td></tr>
+<tr><th id="124">124</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::width" title='fbinfo::width' data-use='w' data-ref="fbinfo::width">width</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a>;</td></tr>
+<tr><th id="125">125</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::height" title='fbinfo::height' data-use='w' data-ref="fbinfo::height">height</a> = <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a>;</td></tr>
+<tr><th id="126">126</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_offset" title='fbinfo::red_offset' data-use='w' data-ref="fbinfo::red_offset">red_offset</a> = <var>0</var>;</td></tr>
+<tr><th id="127">127</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_length" title='fbinfo::red_length' data-use='w' data-ref="fbinfo::red_length">red_length</a> = <var>8</var>;</td></tr>
+<tr><th id="128">128</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_offset" title='fbinfo::green_offset' data-use='w' data-ref="fbinfo::green_offset">green_offset</a> = <var>8</var>;</td></tr>
+<tr><th id="129">129</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_length" title='fbinfo::green_length' data-use='w' data-ref="fbinfo::green_length">green_length</a> = <var>8</var>;</td></tr>
+<tr><th id="130">130</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_offset" title='fbinfo::blue_offset' data-use='w' data-ref="fbinfo::blue_offset">blue_offset</a> = <var>16</var>;</td></tr>
+<tr><th id="131">131</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_length" title='fbinfo::blue_length' data-use='w' data-ref="fbinfo::blue_length">blue_length</a> = <var>8</var>;</td></tr>
+<tr><th id="132">132</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_offset" title='fbinfo::alpha_offset' data-use='w' data-ref="fbinfo::alpha_offset">alpha_offset</a> = <var>24</var>;</td></tr>
+<tr><th id="133">133</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_length" title='fbinfo::alpha_length' data-use='w' data-ref="fbinfo::alpha_length">alpha_length</a> = <var>0</var>;</td></tr>
+<tr><th id="134">134</th><td>            <b>break</b>;</td></tr>
+<tr><th id="135">135</th><td>        <b>case</b> <var>4</var>: <i>/* RGB_565 */</i></td></tr>
+<tr><th id="136">136</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::bpp" title='fbinfo::bpp' data-use='w' data-ref="fbinfo::bpp">bpp</a> = <var>16</var>;</td></tr>
+<tr><th id="137">137</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::size" title='fbinfo::size' data-use='w' data-ref="fbinfo::size">size</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a> * <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a> * <var>2</var>;</td></tr>
+<tr><th id="138">138</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::width" title='fbinfo::width' data-use='w' data-ref="fbinfo::width">width</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a>;</td></tr>
+<tr><th id="139">139</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::height" title='fbinfo::height' data-use='w' data-ref="fbinfo::height">height</a> = <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a>;</td></tr>
+<tr><th id="140">140</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_offset" title='fbinfo::red_offset' data-use='w' data-ref="fbinfo::red_offset">red_offset</a> = <var>11</var>;</td></tr>
+<tr><th id="141">141</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_length" title='fbinfo::red_length' data-use='w' data-ref="fbinfo::red_length">red_length</a> = <var>5</var>;</td></tr>
+<tr><th id="142">142</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_offset" title='fbinfo::green_offset' data-use='w' data-ref="fbinfo::green_offset">green_offset</a> = <var>5</var>;</td></tr>
+<tr><th id="143">143</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_length" title='fbinfo::green_length' data-use='w' data-ref="fbinfo::green_length">green_length</a> = <var>6</var>;</td></tr>
+<tr><th id="144">144</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_offset" title='fbinfo::blue_offset' data-use='w' data-ref="fbinfo::blue_offset">blue_offset</a> = <var>0</var>;</td></tr>
+<tr><th id="145">145</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_length" title='fbinfo::blue_length' data-use='w' data-ref="fbinfo::blue_length">blue_length</a> = <var>5</var>;</td></tr>
+<tr><th id="146">146</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_offset" title='fbinfo::alpha_offset' data-use='w' data-ref="fbinfo::alpha_offset">alpha_offset</a> = <var>0</var>;</td></tr>
+<tr><th id="147">147</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_length" title='fbinfo::alpha_length' data-use='w' data-ref="fbinfo::alpha_length">alpha_length</a> = <var>0</var>;</td></tr>
+<tr><th id="148">148</th><td>            <b>break</b>;</td></tr>
+<tr><th id="149">149</th><td>        <b>case</b> <var>5</var>: <i>/* BGRA_8888 */</i></td></tr>
+<tr><th id="150">150</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::bpp" title='fbinfo::bpp' data-use='w' data-ref="fbinfo::bpp">bpp</a> = <var>32</var>;</td></tr>
+<tr><th id="151">151</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::size" title='fbinfo::size' data-use='w' data-ref="fbinfo::size">size</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a> * <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a> * <var>4</var>;</td></tr>
+<tr><th id="152">152</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::width" title='fbinfo::width' data-use='w' data-ref="fbinfo::width">width</a> = <a class="local col8 ref" href="#8w" title='w' data-ref="8w">w</a>;</td></tr>
+<tr><th id="153">153</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::height" title='fbinfo::height' data-use='w' data-ref="fbinfo::height">height</a> = <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a>;</td></tr>
+<tr><th id="154">154</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_offset" title='fbinfo::red_offset' data-use='w' data-ref="fbinfo::red_offset">red_offset</a> = <var>16</var>;</td></tr>
+<tr><th id="155">155</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::red_length" title='fbinfo::red_length' data-use='w' data-ref="fbinfo::red_length">red_length</a> = <var>8</var>;</td></tr>
+<tr><th id="156">156</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_offset" title='fbinfo::green_offset' data-use='w' data-ref="fbinfo::green_offset">green_offset</a> = <var>8</var>;</td></tr>
+<tr><th id="157">157</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::green_length" title='fbinfo::green_length' data-use='w' data-ref="fbinfo::green_length">green_length</a> = <var>8</var>;</td></tr>
+<tr><th id="158">158</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_offset" title='fbinfo::blue_offset' data-use='w' data-ref="fbinfo::blue_offset">blue_offset</a> = <var>0</var>;</td></tr>
+<tr><th id="159">159</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::blue_length" title='fbinfo::blue_length' data-use='w' data-ref="fbinfo::blue_length">blue_length</a> = <var>8</var>;</td></tr>
+<tr><th id="160">160</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_offset" title='fbinfo::alpha_offset' data-use='w' data-ref="fbinfo::alpha_offset">alpha_offset</a> = <var>24</var>;</td></tr>
+<tr><th id="161">161</th><td>            <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::alpha_length" title='fbinfo::alpha_length' data-use='w' data-ref="fbinfo::alpha_length">alpha_length</a> = <var>8</var>;</td></tr>
+<tr><th id="162">162</th><td>           <b>break</b>;</td></tr>
+<tr><th id="163">163</th><td>        <b>default</b>:</td></tr>
+<tr><th id="164">164</th><td>            <b>goto</b> <a class="lbl" href="#14done" data-ref="14done">done</a>;</td></tr>
+<tr><th id="165">165</th><td>    }</td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td>    <i>/* write header */</i></td></tr>
+<tr><th id="168">168</th><td>    <b>if</b>(!<a class="ref" href="adb_io.h.html#_Z14WriteFdExactlyiPKvm" title='WriteFdExactly' data-ref="_Z14WriteFdExactlyiPKvm">WriteFdExactly</a>(<a class="local col1 ref" href="#1fd" title='fd' data-ref="1fd">fd</a>, &amp;<a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>, <b>sizeof</b>(<a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>))) <b>goto</b> <a class="lbl" href="#14done" data-ref="14done">done</a>;</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td>    <i>/* write data */</i></td></tr>
+<tr><th id="171">171</th><td>    <b>for</b>(<a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a> = <var>0</var>; <a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a> &lt; <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::size" title='fbinfo::size' data-use='r' data-ref="fbinfo::size">size</a>; <a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a> += <a class="local col5 ref" href="#5bsize" title='bsize' data-ref="5bsize">bsize</a>) {</td></tr>
+<tr><th id="172">172</th><td>      <a class="local col5 ref" href="#5bsize" title='bsize' data-ref="5bsize">bsize</a> = <b>sizeof</b>(<a class="local col6 ref" href="#6buf" title='buf' data-ref="6buf">buf</a>);</td></tr>
+<tr><th id="173">173</th><td>      <b>if</b> (<a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a> + <a class="local col5 ref" href="#5bsize" title='bsize' data-ref="5bsize">bsize</a> &gt; <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::size" title='fbinfo::size' data-use='r' data-ref="fbinfo::size">size</a>)</td></tr>
+<tr><th id="174">174</th><td>        <a class="local col5 ref" href="#5bsize" title='bsize' data-ref="5bsize">bsize</a> = <a class="local col3 ref" href="#3fbinfo" title='fbinfo' data-ref="3fbinfo">fbinfo</a>.<a class="tu ref" href="#fbinfo::size" title='fbinfo::size' data-use='r' data-ref="fbinfo::size">size</a> - <a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a>;</td></tr>
+<tr><th id="175">175</th><td>      <b>if</b>(!<a class="ref" href="adb_io.h.html#_Z13ReadFdExactlyiPvm" title='ReadFdExactly' data-ref="_Z13ReadFdExactlyiPvm">ReadFdExactly</a>(<a class="local col7 ref" href="#7fd_screencap" title='fd_screencap' data-ref="7fd_screencap">fd_screencap</a>, <a class="local col6 ref" href="#6buf" title='buf' data-ref="6buf">buf</a>, <a class="local col5 ref" href="#5bsize" title='bsize' data-ref="5bsize">bsize</a>)) <b>goto</b> <a class="lbl" href="#14done" data-ref="14done">done</a>;</td></tr>
+<tr><th id="176">176</th><td>      <b>if</b>(!<a class="ref" href="adb_io.h.html#_Z14WriteFdExactlyiPKvm" title='WriteFdExactly' data-ref="_Z14WriteFdExactlyiPKvm">WriteFdExactly</a>(<a class="local col1 ref" href="#1fd" title='fd' data-ref="1fd">fd</a>, <a class="local col6 ref" href="#6buf" title='buf' data-ref="6buf">buf</a>, <a class="local col5 ref" href="#5bsize" title='bsize' data-ref="5bsize">bsize</a>)) <b>goto</b> <a class="lbl" href="#14done" data-ref="14done">done</a>;</td></tr>
+<tr><th id="177">177</th><td>    }</td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td><dfn class="lbl" id="14done" data-ref="14done">done</dfn>:</td></tr>
+<tr><th id="180">180</th><td>    <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col1 ref" href="#11fds" title='fds' data-ref="11fds">fds</a>[<var>0</var>]);</td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td>    <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(waitpid(pid, __null, 0)) _rc; do { _rc = (waitpid(pid, __null, 0)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/sys/wait.h.html#waitpid" title='waitpid' data-ref="waitpid">waitpid</a>(<a class="local col2 ref" href="#12pid" title='pid' data-ref="12pid">pid</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>, <var>0</var>));</td></tr>
+<tr><th id="183">183</th><td><dfn class="lbl" id="13pipefail" data-ref="13pipefail">pipefail</dfn>:</td></tr>
+<tr><th id="184">184</th><td>    <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col1 ref" href="#1fd" title='fd' data-ref="1fd">fd</a>);</td></tr>
+<tr><th id="185">185</th><td>}</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

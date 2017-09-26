@@ -1,0 +1,25 @@
+<def f='codebrowser/hardware/libhardware/include/hardware/qemu_pipe.h' l='55' ll='92' type='int qemu_pipe_open(const char * pipeName)'/>
+<use f='codebrowser/system/core/adb/transport_local.cpp' l='239' u='c' c='_ZL18qemu_socket_threadPv'/>
+<use f='codebrowser/system/core/adb/transport_local.cpp' l='271' u='c' c='_ZL18qemu_socket_threadPv'/>
+<doc f='codebrowser/hardware/libhardware/include/hardware/qemu_pipe.h' l='33'>/* Try to open a new Qemu fast-pipe. This function returns a file descriptor
+ * that can be used to communicate with a named service managed by the
+ * emulator.
+ *
+ * This file descriptor can be used as a standard pipe/socket descriptor.
+ *
+ * &apos;pipeName&apos; is the name of the emulator service you want to connect to.
+ * E.g. &apos;opengles&apos; or &apos;camera&apos;.
+ *
+ * On success, return a valid file descriptor
+ * Returns -1 on error, and errno gives the error code, e.g.:
+ *
+ *    EINVAL  -&gt; unknown/unsupported pipeName
+ *    ENOSYS  -&gt; fast pipes not available in this system.
+ *
+ * ENOSYS should never happen, except if you&apos;re trying to run within a
+ * misconfigured emulator.
+ *
+ * You should be able to open several pipes to the same pipe service,
+ * except for a few special cases (e.g. GSM modem), where EBUSY will be
+ * returned if more than one client tries to connect to it.
+ */</doc>

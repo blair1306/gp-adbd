@@ -1,0 +1,32 @@
+<def f='codebrowser/system/core/adb/shell_service.h' l='49' ll='126'/>
+<size>262184</size>
+<doc f='codebrowser/system/core/adb/shell_service.h' l='34'>// Class to send and receive shell protocol packets.
+//
+// To keep things simple and predictable, reads and writes block until an entire
+// packet is complete.
+//
+// Example: read raw data from |fd| and send it in a packet.
+//   ShellProtocol* p = new ShellProtocol(protocol_fd);
+//   int len = adb_read(stdout_fd, p-&gt;data(), p-&gt;data_capacity());
+//   packet-&gt;WritePacket(ShellProtocol::kIdStdout, len);
+//
+// Example: read a packet and print it to |stdout|.
+//   ShellProtocol* p = new ShellProtocol(protocol_fd);
+//   if (p-&gt;ReadPacket() &amp;&amp; p-&gt;id() == kIdStdout) {
+//       fwrite(p-&gt;data(), 1, p-&gt;data_length(), stdout);
+//   }</doc>
+<fun r='_ZN13ShellProtocolC1Ei'/>
+<fun r='_ZN13ShellProtocolD1Ev'/>
+<fun r='_ZNK13ShellProtocol4dataEv'/>
+<fun r='_ZN13ShellProtocol4dataEv'/>
+<fun r='_ZNK13ShellProtocol13data_capacityEv'/>
+<fun r='_ZN13ShellProtocol4ReadEv'/>
+<fun r='_ZNK13ShellProtocol2idEv'/>
+<fun r='_ZNK13ShellProtocol11data_lengthEv'/>
+<fun r='_ZN13ShellProtocol5WriteENS_2IdEm'/>
+<mbr r='ShellProtocol::fd_' o='64' t='int'/>
+<mbr r='ShellProtocol::buffer_' o='96' t='char [262144]'/>
+<mbr r='ShellProtocol::data_length_' o='2097280' t='size_t'/>
+<mbr r='ShellProtocol::bytes_left_' o='2097344' t='size_t'/>
+<mbr r='ShellProtocol::buffer_end_' o='2097408' t='char *'/>
+<fun r='_ZN13ShellProtocolC1ERKS_'/>

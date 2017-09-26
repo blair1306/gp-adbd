@@ -1,0 +1,15 @@
+<dec f='codebrowser/system/core/include/cutils/jstring.h' l='34' type='char * strncpy16to8(char * dest, const char16_t * s, size_t n)'/>
+<def f='codebrowser/system/core/libcutils/strdup16to8.c' l='109' ll='140' type='char * strncpy16to8(char * utf8Str, const char16_t * utf16Str, size_t len)'/>
+<use f='codebrowser/system/core/libcutils/strdup16to8.c' l='168' u='c' c='strndup16to8'/>
+<doc f='codebrowser/system/core/libcutils/strdup16to8.c' l='97'>/**
+ * Convert a Java-Style UTF-16 string + length to a JNI-Style UTF-8 string.
+ *
+ * This basically means: embedded \0&apos;s in the UTF-16 string are encoded
+ * as &quot;0xc0 0x80&quot;
+ *
+ * Make sure you allocate &quot;utf8Str&quot; with the result of strlen16to8() + 1,
+ * not just &quot;len&quot;.
+ *
+ * Please note, a terminated \0 is always added, so your result will always
+ * be &quot;strlen16to8() + 1&quot; bytes long.
+ */</doc>

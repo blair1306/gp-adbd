@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>label.h source code [codebrowser/external/libselinux/include/selinux/label.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="selabel_cmp_result "/>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/include/selinux/label.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>external</a>/<a href='../..'>libselinux</a>/<a href='..'>include</a>/<a href='./'>selinux</a>/<a href='label.h.html'>label.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Labeling interface for userspace object managers and others.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Author : Eamon Walsh &lt;ewalsh@tycho.nsa.gov&gt;</i></td></tr>
+<tr><th id="5">5</th><td><i> */</i></td></tr>
+<tr><th id="6">6</th><td><u>#<span data-ppcond="6">ifndef</span> <span class="macro" data-ref="_M/_SELABEL_H_">_SELABEL_H_</span></u></td></tr>
+<tr><th id="7">7</th><td><u>#define <dfn class="macro" id="_M/_SELABEL_H_" data-ref="_M/_SELABEL_H_">_SELABEL_H_</dfn></u></td></tr>
+<tr><th id="8">8</th><td></td></tr>
+<tr><th id="9">9</th><td><u>#include &lt;stdbool.h&gt;</u></td></tr>
+<tr><th id="10">10</th><td><u>#include <a href="../../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="11">11</th><td><u>#include <a href="selinux.h.html">&lt;selinux/selinux.h&gt;</a></u></td></tr>
+<tr><th id="12">12</th><td></td></tr>
+<tr><th id="13">13</th><td><u>#<span data-ppcond="13">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="14">14</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="15">15</th><td><u>#<span data-ppcond="13">endif</span></u></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><i>/*</i></td></tr>
+<tr><th id="18">18</th><td><i> * Opaque type used for all label handles.</i></td></tr>
+<tr><th id="19">19</th><td><i> */</i></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle" id="selabel_handle">selabel_handle</a>;</td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><i>/* </i></td></tr>
+<tr><th id="24">24</th><td><i> * Available backends.</i></td></tr>
+<tr><th id="25">25</th><td><i> */</i></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><i>/* file contexts */</i></td></tr>
+<tr><th id="28">28</th><td><u>#define <dfn class="macro" id="_M/SELABEL_CTX_FILE" data-ref="_M/SELABEL_CTX_FILE">SELABEL_CTX_FILE</dfn>	0</u></td></tr>
+<tr><th id="29">29</th><td><i>/* media contexts */</i></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/SELABEL_CTX_MEDIA" data-ref="_M/SELABEL_CTX_MEDIA">SELABEL_CTX_MEDIA</dfn>	1</u></td></tr>
+<tr><th id="31">31</th><td><i>/* x contexts */</i></td></tr>
+<tr><th id="32">32</th><td><u>#define <dfn class="macro" id="_M/SELABEL_CTX_X" data-ref="_M/SELABEL_CTX_X">SELABEL_CTX_X</dfn>		2</u></td></tr>
+<tr><th id="33">33</th><td><i>/* db objects */</i></td></tr>
+<tr><th id="34">34</th><td><u>#define <dfn class="macro" id="_M/SELABEL_CTX_DB" data-ref="_M/SELABEL_CTX_DB">SELABEL_CTX_DB</dfn>		3</u></td></tr>
+<tr><th id="35">35</th><td><i>/* Android property service contexts */</i></td></tr>
+<tr><th id="36">36</th><td><u>#define <dfn class="macro" id="_M/SELABEL_CTX_ANDROID_PROP" data-ref="_M/SELABEL_CTX_ANDROID_PROP">SELABEL_CTX_ANDROID_PROP</dfn> 4</u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i>/*</i></td></tr>
+<tr><th id="39">39</th><td><i> * Available options</i></td></tr>
+<tr><th id="40">40</th><td><i> */</i></td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><i>/* no-op option, useful for unused slots in an array of options */</i></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/SELABEL_OPT_UNUSED" data-ref="_M/SELABEL_OPT_UNUSED">SELABEL_OPT_UNUSED</dfn>	0</u></td></tr>
+<tr><th id="44">44</th><td><i>/* validate contexts before returning them (boolean value) */</i></td></tr>
+<tr><th id="45">45</th><td><u>#define <dfn class="macro" id="_M/SELABEL_OPT_VALIDATE" data-ref="_M/SELABEL_OPT_VALIDATE">SELABEL_OPT_VALIDATE</dfn>	1</u></td></tr>
+<tr><th id="46">46</th><td><i>/* don't use local customizations to backend data (boolean value) */</i></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/SELABEL_OPT_BASEONLY" data-ref="_M/SELABEL_OPT_BASEONLY">SELABEL_OPT_BASEONLY</dfn>	2</u></td></tr>
+<tr><th id="48">48</th><td><i>/* specify an alternate path to use when loading backend data */</i></td></tr>
+<tr><th id="49">49</th><td><u>#define <dfn class="macro" id="_M/SELABEL_OPT_PATH" data-ref="_M/SELABEL_OPT_PATH">SELABEL_OPT_PATH</dfn>	3</u></td></tr>
+<tr><th id="50">50</th><td><i>/* select a subset of the search space as an optimization (file backend) */</i></td></tr>
+<tr><th id="51">51</th><td><u>#define <dfn class="macro" id="_M/SELABEL_OPT_SUBSET" data-ref="_M/SELABEL_OPT_SUBSET">SELABEL_OPT_SUBSET</dfn>	4</u></td></tr>
+<tr><th id="52">52</th><td><i>/* total number of options */</i></td></tr>
+<tr><th id="53">53</th><td><u>#define <dfn class="macro" id="_M/SELABEL_NOPT" data-ref="_M/SELABEL_NOPT">SELABEL_NOPT</dfn>		5</u></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><i>/*</i></td></tr>
+<tr><th id="56">56</th><td><i> * Label operations</i></td></tr>
+<tr><th id="57">57</th><td><i> */</i></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="60">60</th><td><i class="doc"> * selabel_open - Create a labeling handle.</i></td></tr>
+<tr><th id="61">61</th><td><i class="doc"> *<span class="command"> @backend</span>: one of the constants specifying a supported labeling backend.</i></td></tr>
+<tr><th id="62">62</th><td><i class="doc"> *<span class="command"> @opts</span>: array of selabel_opt structures specifying label options or NULL.</i></td></tr>
+<tr><th id="63">63</th><td><i class="doc"> *<span class="command"> @nopts</span>: number of elements in opts array or zero for no options.</i></td></tr>
+<tr><th id="64">64</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="65">65</th><td><i class="doc"> * Open a labeling backend for use.  The available backend identifiers are</i></td></tr>
+<tr><th id="66">66</th><td><i class="doc"> * listed above.  Options may be provided via the opts parameter; available</i></td></tr>
+<tr><th id="67">67</th><td><i class="doc"> * options are listed above.  Not all options may be supported by every</i></td></tr>
+<tr><th id="68">68</th><td><i class="doc"> * backend.  Return value is the created handle on success or NULL with</i></td></tr>
+<tr><th id="69">69</th><td><i class="doc"> *<span class="command"> @errno</span> set on failure.</i></td></tr>
+<tr><th id="70">70</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="71">71</th><td><b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="decl" id="selabel_open" title='selabel_open' data-ref="selabel_open">selabel_open</dfn>(<em>unsigned</em> <em>int</em> <dfn class="local col5 decl" id="95backend" title='backend' data-type='unsigned int' data-ref="95backend">backend</dfn>,</td></tr>
+<tr><th id="72">72</th><td>				    <em>const</em> <b>struct</b> <a class="type" href="selinux.h.html#selinux_opt" title='selinux_opt' data-ref="selinux_opt">selinux_opt</a> *<dfn class="local col6 decl" id="96opts" title='opts' data-type='const struct selinux_opt *' data-ref="96opts">opts</dfn>,</td></tr>
+<tr><th id="73">73</th><td>				    <em>unsigned</em> <dfn class="local col7 decl" id="97nopts" title='nopts' data-type='unsigned int' data-ref="97nopts">nopts</dfn>);</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="76">76</th><td><i class="doc"> * selabel_close - Close a labeling handle.</i></td></tr>
+<tr><th id="77">77</th><td><i class="doc"> *<span class="command"> @handle</span>: specifies handle to close</i></td></tr>
+<tr><th id="78">78</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="79">79</th><td><i class="doc"> * Destroy the specified handle, closing files, freeing allocated memory,</i></td></tr>
+<tr><th id="80">80</th><td><i class="doc"> * etc.  The handle may not be further used after it has been closed.</i></td></tr>
+<tr><th id="81">81</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="82">82</th><td><em>void</em> <dfn class="decl" id="selabel_close" title='selabel_close' data-ref="selabel_close">selabel_close</dfn>(<b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col8 decl" id="98handle" title='handle' data-type='struct selabel_handle *' data-ref="98handle">handle</dfn>);</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="85">85</th><td><i class="doc"> * selabel_lookup - Perform labeling lookup operation.</i></td></tr>
+<tr><th id="86">86</th><td><i class="doc"> *<span class="command"> @handle</span>: specifies backend instance to query</i></td></tr>
+<tr><th id="87">87</th><td><i class="doc"> *<span class="command"> @con</span>: returns the appropriate context with which to label the object</i></td></tr>
+<tr><th id="88">88</th><td><i class="doc"> *<span class="command"> @key</span>: string input to lookup operation</i></td></tr>
+<tr><th id="89">89</th><td><i class="doc"> *<span class="command"> @type</span>: numeric input to the lookup operation</i></td></tr>
+<tr><th id="90">90</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="91">91</th><td><i class="doc"> * Perform a labeling lookup operation.  Return %0 on success, -%1 with</i></td></tr>
+<tr><th id="92">92</th><td><i class="doc"> *<span class="command"> @errno</span> set on failure.  The key and type arguments are the inputs to the</i></td></tr>
+<tr><th id="93">93</th><td><i class="doc"> * lookup operation; appropriate values are dictated by the backend in use.</i></td></tr>
+<tr><th id="94">94</th><td><i class="doc"> * The result is returned in the memory pointed to by<span class="command"> @con</span> and must be freed</i></td></tr>
+<tr><th id="95">95</th><td><i class="doc"> * by the user with freecon().</i></td></tr>
+<tr><th id="96">96</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="97">97</th><td><em>int</em> <dfn class="decl" id="selabel_lookup" title='selabel_lookup' data-ref="selabel_lookup">selabel_lookup</dfn>(<b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col9 decl" id="99handle" title='handle' data-type='struct selabel_handle *' data-ref="99handle">handle</dfn>, <em>char</em> **<dfn class="local col0 decl" id="100con" title='con' data-type='char **' data-ref="100con">con</dfn>,</td></tr>
+<tr><th id="98">98</th><td>		   <em>const</em> <em>char</em> *<dfn class="local col1 decl" id="101key" title='key' data-type='const char *' data-ref="101key">key</dfn>, <em>int</em> <dfn class="local col2 decl" id="102type" title='type' data-type='int' data-ref="102type">type</dfn>);</td></tr>
+<tr><th id="99">99</th><td><em>int</em> <dfn class="decl" id="selabel_lookup_raw" title='selabel_lookup_raw' data-ref="selabel_lookup_raw">selabel_lookup_raw</dfn>(<b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col3 decl" id="103handle" title='handle' data-type='struct selabel_handle *' data-ref="103handle">handle</dfn>, <em>char</em> **<dfn class="local col4 decl" id="104con" title='con' data-type='char **' data-ref="104con">con</dfn>,</td></tr>
+<tr><th id="100">100</th><td>		       <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="105key" title='key' data-type='const char *' data-ref="105key">key</dfn>, <em>int</em> <dfn class="local col6 decl" id="106type" title='type' data-type='int' data-ref="106type">type</dfn>);</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td><span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <dfn class="decl" id="selabel_partial_match" title='selabel_partial_match' data-ref="selabel_partial_match">selabel_partial_match</dfn>(<b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col7 decl" id="107handle" title='handle' data-type='struct selabel_handle *' data-ref="107handle">handle</dfn>, <em>const</em> <em>char</em> *<dfn class="local col8 decl" id="108key" title='key' data-type='const char *' data-ref="108key">key</dfn>);</td></tr>
+<tr><th id="103">103</th><td></td></tr>
+<tr><th id="104">104</th><td><em>int</em> <dfn class="decl" id="selabel_lookup_best_match" title='selabel_lookup_best_match' data-ref="selabel_lookup_best_match">selabel_lookup_best_match</dfn>(<b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col9 decl" id="109rec" title='rec' data-type='struct selabel_handle *' data-ref="109rec">rec</dfn>, <em>char</em> **<dfn class="local col0 decl" id="110con" title='con' data-type='char **' data-ref="110con">con</dfn>,</td></tr>
+<tr><th id="105">105</th><td>			      <em>const</em> <em>char</em> *<dfn class="local col1 decl" id="111key" title='key' data-type='const char *' data-ref="111key">key</dfn>, <em>const</em> <em>char</em> **<dfn class="local col2 decl" id="112aliases" title='aliases' data-type='const char **' data-ref="112aliases">aliases</dfn>, <em>int</em> <dfn class="local col3 decl" id="113type" title='type' data-type='int' data-ref="113type">type</dfn>);</td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><b>enum</b> <dfn class="type def" id="selabel_cmp_result" title='selabel_cmp_result' data-ref="selabel_cmp_result">selabel_cmp_result</dfn> {</td></tr>
+<tr><th id="108">108</th><td>	<dfn class="enum" id="selabel_cmp_result::SELABEL_SUBSET" title='selabel_cmp_result::SELABEL_SUBSET' data-ref="selabel_cmp_result::SELABEL_SUBSET">SELABEL_SUBSET</dfn>,</td></tr>
+<tr><th id="109">109</th><td>	<dfn class="enum" id="selabel_cmp_result::SELABEL_EQUAL" title='selabel_cmp_result::SELABEL_EQUAL' data-ref="selabel_cmp_result::SELABEL_EQUAL">SELABEL_EQUAL</dfn>,</td></tr>
+<tr><th id="110">110</th><td>	<dfn class="enum" id="selabel_cmp_result::SELABEL_SUPERSET" title='selabel_cmp_result::SELABEL_SUPERSET' data-ref="selabel_cmp_result::SELABEL_SUPERSET">SELABEL_SUPERSET</dfn>,</td></tr>
+<tr><th id="111">111</th><td>	<dfn class="enum" id="selabel_cmp_result::SELABEL_INCOMPARABLE" title='selabel_cmp_result::SELABEL_INCOMPARABLE' data-ref="selabel_cmp_result::SELABEL_INCOMPARABLE">SELABEL_INCOMPARABLE</dfn></td></tr>
+<tr><th id="112">112</th><td>};</td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="115">115</th><td><i class="doc"> * selabel_cmp - Compare two label configurations.</i></td></tr>
+<tr><th id="116">116</th><td><i class="doc"> *<span class="command"> @h1</span>: handle for the first label configuration</i></td></tr>
+<tr><th id="117">117</th><td><i class="doc"> *<span class="command"> @h2</span>: handle for the first label configuration</i></td></tr>
+<tr><th id="118">118</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="119">119</th><td><i class="doc"> * Compare two label configurations.</i></td></tr>
+<tr><th id="120">120</th><td><i class="doc"> * Return %SELABEL_SUBSET if<span class="command"> @h1</span> is a subset of<span class="command"> @h2</span>, %SELABEL_EQUAL</i></td></tr>
+<tr><th id="121">121</th><td><i class="doc"> * if<span class="command"> @h1</span> is identical to<span class="command"> @h2</span>, %SELABEL_SUPERSET if<span class="command"> @h1</span> is a superset</i></td></tr>
+<tr><th id="122">122</th><td><i class="doc"> * of<span class="command"> @h2</span>, and %SELABEL_INCOMPARABLE if<span class="command"> @h1</span> and<span class="command"> @h2</span> are incomparable.</i></td></tr>
+<tr><th id="123">123</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="124">124</th><td><b>enum</b> <a class="type" href="#selabel_cmp_result" title='selabel_cmp_result' data-ref="selabel_cmp_result">selabel_cmp_result</a> <dfn class="decl" id="selabel_cmp" title='selabel_cmp' data-ref="selabel_cmp">selabel_cmp</dfn>(<b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col4 decl" id="114h1" title='h1' data-type='struct selabel_handle *' data-ref="114h1">h1</dfn>,</td></tr>
+<tr><th id="125">125</th><td>				    <b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col5 decl" id="115h2" title='h2' data-type='struct selabel_handle *' data-ref="115h2">h2</dfn>);</td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="128">128</th><td><i class="doc"> * selabel_stats - log labeling operation statistics.</i></td></tr>
+<tr><th id="129">129</th><td><i class="doc"> *<span class="command"> @handle</span>: specifies backend instance to query</i></td></tr>
+<tr><th id="130">130</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="131">131</th><td><i class="doc"> * Log a message with information about the number of queries performed,</i></td></tr>
+<tr><th id="132">132</th><td><i class="doc"> * number of unused matching entries, or other operational statistics.</i></td></tr>
+<tr><th id="133">133</th><td><i class="doc"> * Message is backend-specific, some backends may not output a message.</i></td></tr>
+<tr><th id="134">134</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="135">135</th><td><em>void</em> <dfn class="decl" id="selabel_stats" title='selabel_stats' data-ref="selabel_stats">selabel_stats</dfn>(<b>struct</b> <a class="type" href="../../src/label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col6 decl" id="116handle" title='handle' data-type='struct selabel_handle *' data-ref="116handle">handle</dfn>);</td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td><i>/*</i></td></tr>
+<tr><th id="138">138</th><td><i> * Type codes used by specific backends</i></td></tr>
+<tr><th id="139">139</th><td><i> */</i></td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><i>/* X backend */</i></td></tr>
+<tr><th id="142">142</th><td><u>#define <dfn class="macro" id="_M/SELABEL_X_PROP" data-ref="_M/SELABEL_X_PROP">SELABEL_X_PROP</dfn>		1</u></td></tr>
+<tr><th id="143">143</th><td><u>#define <dfn class="macro" id="_M/SELABEL_X_EXT" data-ref="_M/SELABEL_X_EXT">SELABEL_X_EXT</dfn>		2</u></td></tr>
+<tr><th id="144">144</th><td><u>#define <dfn class="macro" id="_M/SELABEL_X_CLIENT" data-ref="_M/SELABEL_X_CLIENT">SELABEL_X_CLIENT</dfn>	3</u></td></tr>
+<tr><th id="145">145</th><td><u>#define <dfn class="macro" id="_M/SELABEL_X_EVENT" data-ref="_M/SELABEL_X_EVENT">SELABEL_X_EVENT</dfn>		4</u></td></tr>
+<tr><th id="146">146</th><td><u>#define <dfn class="macro" id="_M/SELABEL_X_SELN" data-ref="_M/SELABEL_X_SELN">SELABEL_X_SELN</dfn>		5</u></td></tr>
+<tr><th id="147">147</th><td><u>#define <dfn class="macro" id="_M/SELABEL_X_POLYPROP" data-ref="_M/SELABEL_X_POLYPROP">SELABEL_X_POLYPROP</dfn>	6</u></td></tr>
+<tr><th id="148">148</th><td><u>#define <dfn class="macro" id="_M/SELABEL_X_POLYSELN" data-ref="_M/SELABEL_X_POLYSELN">SELABEL_X_POLYSELN</dfn>	7</u></td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><i>/* DB backend */</i></td></tr>
+<tr><th id="151">151</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_DATABASE" data-ref="_M/SELABEL_DB_DATABASE">SELABEL_DB_DATABASE</dfn>	1</u></td></tr>
+<tr><th id="152">152</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_SCHEMA" data-ref="_M/SELABEL_DB_SCHEMA">SELABEL_DB_SCHEMA</dfn>	2</u></td></tr>
+<tr><th id="153">153</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_TABLE" data-ref="_M/SELABEL_DB_TABLE">SELABEL_DB_TABLE</dfn>	3</u></td></tr>
+<tr><th id="154">154</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_COLUMN" data-ref="_M/SELABEL_DB_COLUMN">SELABEL_DB_COLUMN</dfn>	4</u></td></tr>
+<tr><th id="155">155</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_SEQUENCE" data-ref="_M/SELABEL_DB_SEQUENCE">SELABEL_DB_SEQUENCE</dfn>	5</u></td></tr>
+<tr><th id="156">156</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_VIEW" data-ref="_M/SELABEL_DB_VIEW">SELABEL_DB_VIEW</dfn>		6</u></td></tr>
+<tr><th id="157">157</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_PROCEDURE" data-ref="_M/SELABEL_DB_PROCEDURE">SELABEL_DB_PROCEDURE</dfn>	7</u></td></tr>
+<tr><th id="158">158</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_BLOB" data-ref="_M/SELABEL_DB_BLOB">SELABEL_DB_BLOB</dfn>		8</u></td></tr>
+<tr><th id="159">159</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_TUPLE" data-ref="_M/SELABEL_DB_TUPLE">SELABEL_DB_TUPLE</dfn>	9</u></td></tr>
+<tr><th id="160">160</th><td><u>#define <dfn class="macro" id="_M/SELABEL_DB_LANGUAGE" data-ref="_M/SELABEL_DB_LANGUAGE">SELABEL_DB_LANGUAGE</dfn>	10</u></td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td><u>#<span data-ppcond="162">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="163">163</th><td>}</td></tr>
+<tr><th id="164">164</th><td><u>#<span data-ppcond="162">endif</span></u></td></tr>
+<tr><th id="165">165</th><td><u>#<span data-ppcond="6">endif</span>	/* _SELABEL_H_ */</u></td></tr>
+<tr><th id="166">166</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../src/android.c.html'>codebrowser/external/libselinux/src/android.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>invtrig.c source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/invtrig.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/invtrig.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>ld128</a>/<a href='invtrig.c.html'>invtrig.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*-</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 2008 David Schultz &lt;das@FreeBSD.ORG&gt;</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="12">12</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="13">13</th><td><i> *</i></td></tr>
+<tr><th id="14">14</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND</i></td></tr>
+<tr><th id="15">15</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="16">16</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="17">17</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="19">19</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="20">20</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="21">21</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="22">22</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="23">23</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="24">24</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="25">25</th><td><i> */</i></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD$"</q>);</td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="invtrig.h.html">"invtrig.h"</a></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><i>/*</i></td></tr>
+<tr><th id="33">33</th><td><i> * asinl() and acosl()</i></td></tr>
+<tr><th id="34">34</th><td><i> */</i></td></tr>
+<tr><th id="35">35</th><td><em>const</em> <em>long</em> <em>double</em></td></tr>
+<tr><th id="36">36</th><td><a class="macro" href="invtrig.h.html#46" title="_ItL_pS0" data-ref="_M/pS0">pS0</a> =  <var>1.66666666666666666666666666666700314e-01L</var>,</td></tr>
+<tr><th id="37">37</th><td><a class="macro" href="invtrig.h.html#47" title="_ItL_pS1" data-ref="_M/pS1">pS1</a> = -<var>7.32816946414566252574527475428622708e-01L</var>,</td></tr>
+<tr><th id="38">38</th><td><a class="macro" href="invtrig.h.html#48" title="_ItL_pS2" data-ref="_M/pS2">pS2</a> =  <var>1.34215708714992334609030036562143589e+00L</var>,</td></tr>
+<tr><th id="39">39</th><td><a class="macro" href="invtrig.h.html#49" title="_ItL_pS3" data-ref="_M/pS3">pS3</a> = -<var>1.32483151677116409805070261790752040e+00L</var>,</td></tr>
+<tr><th id="40">40</th><td><a class="macro" href="invtrig.h.html#50" title="_ItL_pS4" data-ref="_M/pS4">pS4</a> =  <var>7.61206183613632558824485341162121989e-01L</var>,</td></tr>
+<tr><th id="41">41</th><td><a class="macro" href="invtrig.h.html#51" title="_ItL_pS5" data-ref="_M/pS5">pS5</a> = -<var>2.56165783329023486777386833928147375e-01L</var>,</td></tr>
+<tr><th id="42">42</th><td><a class="macro" href="invtrig.h.html#52" title="_ItL_pS6" data-ref="_M/pS6">pS6</a> =  <var>4.80718586374448793411019434585413855e-02L</var>,</td></tr>
+<tr><th id="43">43</th><td><a class="macro" href="invtrig.h.html#53" title="_ItL_pS7" data-ref="_M/pS7">pS7</a> = -<var>4.42523267167024279410230886239774718e-03L</var>,</td></tr>
+<tr><th id="44">44</th><td><a class="macro" href="invtrig.h.html#54" title="_ItL_pS8" data-ref="_M/pS8">pS8</a> =  <var>1.44551535183911458253205638280410064e-04L</var>,</td></tr>
+<tr><th id="45">45</th><td><a class="macro" href="invtrig.h.html#55" title="_ItL_pS9" data-ref="_M/pS9">pS9</a> = -<var>2.10558957916600254061591040482706179e-07L</var>,</td></tr>
+<tr><th id="46">46</th><td><a class="macro" href="invtrig.h.html#56" title="_ItL_qS1" data-ref="_M/qS1">qS1</a> = -<var>4.84690167848739751544716485245697428e+00L</var>,</td></tr>
+<tr><th id="47">47</th><td><a class="macro" href="invtrig.h.html#57" title="_ItL_qS2" data-ref="_M/qS2">qS2</a> =  <var>9.96619113536172610135016921140206980e+00L</var>,</td></tr>
+<tr><th id="48">48</th><td><a class="macro" href="invtrig.h.html#58" title="_ItL_qS3" data-ref="_M/qS3">qS3</a> = -<var>1.13177895428973036660836798461641458e+01L</var>,</td></tr>
+<tr><th id="49">49</th><td><a class="macro" href="invtrig.h.html#59" title="_ItL_qS4" data-ref="_M/qS4">qS4</a> =  <var>7.74004374389488266169304117714658761e+00L</var>,</td></tr>
+<tr><th id="50">50</th><td><a class="macro" href="invtrig.h.html#60" title="_ItL_qS5" data-ref="_M/qS5">qS5</a> = -<var>3.25871986053534084709023539900339905e+00L</var>,</td></tr>
+<tr><th id="51">51</th><td><a class="macro" href="invtrig.h.html#61" title="_ItL_qS6" data-ref="_M/qS6">qS6</a> =  <var>8.27830318881232209752469022352928864e-01L</var>,</td></tr>
+<tr><th id="52">52</th><td><a class="macro" href="invtrig.h.html#62" title="_ItL_qS7" data-ref="_M/qS7">qS7</a> = -<var>1.18768052702942805423330715206348004e-01L</var>,</td></tr>
+<tr><th id="53">53</th><td><a class="macro" href="invtrig.h.html#63" title="_ItL_qS8" data-ref="_M/qS8">qS8</a> =  <var>8.32600764660522313269101537926539470e-03L</var>,</td></tr>
+<tr><th id="54">54</th><td><a class="macro" href="invtrig.h.html#64" title="_ItL_qS9" data-ref="_M/qS9">qS9</a> = -<var>1.99407384882605586705979504567947007e-04L</var>;</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><i>/*</i></td></tr>
+<tr><th id="57">57</th><td><i> * atanl()</i></td></tr>
+<tr><th id="58">58</th><td><i> */</i></td></tr>
+<tr><th id="59">59</th><td><em>const</em> <em>long</em> <em>double</em> <a class="macro" href="invtrig.h.html#65" title="_ItL_atanhi" data-ref="_M/atanhi">atanhi</a>[] = {</td></tr>
+<tr><th id="60">60</th><td>	 <var>4.63647609000806116214256231461214397e-01L</var>,</td></tr>
+<tr><th id="61">61</th><td>	 <var>7.85398163397448309615660845819875699e-01L</var>,       </td></tr>
+<tr><th id="62">62</th><td>	 <var>9.82793723247329067985710611014666038e-01L</var>,       </td></tr>
+<tr><th id="63">63</th><td>	 <var>1.57079632679489661923132169163975140e+00L</var>,</td></tr>
+<tr><th id="64">64</th><td>};</td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><em>const</em> <em>long</em> <em>double</em> <a class="macro" href="invtrig.h.html#66" title="_ItL_atanlo" data-ref="_M/atanlo">atanlo</a>[] = {</td></tr>
+<tr><th id="67">67</th><td>	 <var>4.89509642257333492668618435220297706e-36L</var>,</td></tr>
+<tr><th id="68">68</th><td>	 <var>2.16795253253094525619926100651083806e-35L</var>,</td></tr>
+<tr><th id="69">69</th><td>	-<var>2.31288434538183565909319952098066272e-35L</var>,</td></tr>
+<tr><th id="70">70</th><td>	 <var>4.33590506506189051239852201302167613e-35L</var>,</td></tr>
+<tr><th id="71">71</th><td>};</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><em>const</em> <em>long</em> <em>double</em> <a class="macro" href="invtrig.h.html#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[] = {</td></tr>
+<tr><th id="74">74</th><td>	 <var>3.33333333333333333333333333333333125e-01L</var>,</td></tr>
+<tr><th id="75">75</th><td>	-<var>1.99999999999999999999999999999180430e-01L</var>,</td></tr>
+<tr><th id="76">76</th><td>	 <var>1.42857142857142857142857142125269827e-01L</var>,</td></tr>
+<tr><th id="77">77</th><td>	-<var>1.11111111111111111111110834490810169e-01L</var>,</td></tr>
+<tr><th id="78">78</th><td>	 <var>9.09090909090909090908522355708623681e-02L</var>,</td></tr>
+<tr><th id="79">79</th><td>	-<var>7.69230769230769230696553844935357021e-02L</var>,</td></tr>
+<tr><th id="80">80</th><td>	 <var>6.66666666666666660390096773046256096e-02L</var>,</td></tr>
+<tr><th id="81">81</th><td>	-<var>5.88235294117646671706582985209643694e-02L</var>,</td></tr>
+<tr><th id="82">82</th><td>	 <var>5.26315789473666478515847092020327506e-02L</var>,</td></tr>
+<tr><th id="83">83</th><td>	-<var>4.76190476189855517021024424991436144e-02L</var>,</td></tr>
+<tr><th id="84">84</th><td>	 <var>4.34782608678695085948531993458097026e-02L</var>,</td></tr>
+<tr><th id="85">85</th><td>	-<var>3.99999999632663469330634215991142368e-02L</var>,</td></tr>
+<tr><th id="86">86</th><td>	 <var>3.70370363987423702891250829918659723e-02L</var>,</td></tr>
+<tr><th id="87">87</th><td>	-<var>3.44827496515048090726669907612335954e-02L</var>,</td></tr>
+<tr><th id="88">88</th><td>	 <var>3.22579620681420149871973710852268528e-02L</var>,</td></tr>
+<tr><th id="89">89</th><td>	-<var>3.03020767654269261041647570626778067e-02L</var>,</td></tr>
+<tr><th id="90">90</th><td>	 <var>2.85641979882534783223403715930946138e-02L</var>,</td></tr>
+<tr><th id="91">91</th><td>	-<var>2.69824879726738568189929461383741323e-02L</var>,</td></tr>
+<tr><th id="92">92</th><td>	 <var>2.54194698498808542954187110873675769e-02L</var>,</td></tr>
+<tr><th id="93">93</th><td>	-<var>2.35083879708189059926183138130183215e-02L</var>,</td></tr>
+<tr><th id="94">94</th><td>	 <var>2.04832358998165364349957325067131428e-02L</var>,</td></tr>
+<tr><th id="95">95</th><td>	-<var>1.54489555488544397858507248612362957e-02L</var>,</td></tr>
+<tr><th id="96">96</th><td>	 <var>8.64492360989278761493037861575248038e-03L</var>,</td></tr>
+<tr><th id="97">97</th><td>	-<var>2.58521121597609872727919154569765469e-03L</var>,</td></tr>
+<tr><th id="98">98</th><td>};</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><em>const</em> <em>long</em> <em>double</em> <a class="macro" href="invtrig.h.html#68" title="_ItL_pi_lo" data-ref="_M/pi_lo">pi_lo</a> = <var>8.67181013012378102479704402604335225e-35L</var>;</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

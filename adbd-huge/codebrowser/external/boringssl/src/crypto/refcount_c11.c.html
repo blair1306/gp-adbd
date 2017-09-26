@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>refcount_c11.c source code [codebrowser/external/boringssl/src/crypto/refcount_c11.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/refcount_c11.c'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>external</a>/<a href='../..'>boringssl</a>/<a href='..'>src</a>/<a href='./'>crypto</a>/<a href='refcount_c11.c.html'>refcount_c11.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2015, Google Inc.</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Permission to use, copy, modify, and/or distribute this software for any</i></td></tr>
+<tr><th id="4">4</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="5">5</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="8">8</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="9">9</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY</i></td></tr>
+<tr><th id="10">10</th><td><i> * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION</i></td></tr>
+<tr><th id="12">12</th><td><i> * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN</i></td></tr>
+<tr><th id="13">13</th><td><i> * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */</i></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#include <a href="internal.h.html">"internal.h"</a></u></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><u>#<span data-ppcond="18">if</span> defined(<span class="macro" data-ref="_M/OPENSSL_C11_ATOMIC">OPENSSL_C11_ATOMIC</span>)</u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include &lt;assert.h&gt;</u></td></tr>
+<tr><th id="21">21</th><td><u>#include &lt;stdalign.h&gt;</u></td></tr>
+<tr><th id="22">22</th><td><u>#include &lt;stdatomic.h&gt;</u></td></tr>
+<tr><th id="23">23</th><td><u>#include &lt;stdlib.h&gt;</u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><u>#include &lt;openssl/type_check.h&gt;</u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><i>/* See comment above the typedef of CRYPTO_refcount_t about these tests. */</i></td></tr>
+<tr><th id="29">29</th><td>static_assert(alignof(CRYPTO_refcount_t) == alignof(<b>_Atomic</b> CRYPTO_refcount_t),</td></tr>
+<tr><th id="30">30</th><td>              <q>"_Atomic alters the needed alignment of a reference count"</q>);</td></tr>
+<tr><th id="31">31</th><td>static_assert(<b>sizeof</b>(CRYPTO_refcount_t) == <b>sizeof</b>(<b>_Atomic</b> CRYPTO_refcount_t),</td></tr>
+<tr><th id="32">32</th><td>              <q>"_Atomic alters the size of a reference count"</q>);</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td>static_assert((CRYPTO_refcount_t)-<var>1</var> == CRYPTO_REFCOUNT_MAX,</td></tr>
+<tr><th id="35">35</th><td>              <q>"CRYPTO_REFCOUNT_MAX is incorrect"</q>);</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td><em>void</em> CRYPTO_refcount_inc(CRYPTO_refcount_t *in_count) {</td></tr>
+<tr><th id="38">38</th><td>  <b>_Atomic</b> CRYPTO_refcount_t *count = (<b>_Atomic</b> CRYPTO_refcount_t *) in_count;</td></tr>
+<tr><th id="39">39</th><td>  uint32_t expected = atomic_load(count);</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td>  <b>while</b> (expected != CRYPTO_REFCOUNT_MAX) {</td></tr>
+<tr><th id="42">42</th><td>    uint32_t new_value = expected + <var>1</var>;</td></tr>
+<tr><th id="43">43</th><td>    <b>if</b> (atomic_compare_exchange_weak(count, &amp;expected, new_value)) {</td></tr>
+<tr><th id="44">44</th><td>      <b>break</b>;</td></tr>
+<tr><th id="45">45</th><td>    }</td></tr>
+<tr><th id="46">46</th><td>  }</td></tr>
+<tr><th id="47">47</th><td>}</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><em>int</em> CRYPTO_refcount_dec_and_test_zero(CRYPTO_refcount_t *in_count) {</td></tr>
+<tr><th id="50">50</th><td>  <b>_Atomic</b> CRYPTO_refcount_t *count = (<b>_Atomic</b> CRYPTO_refcount_t *)in_count;</td></tr>
+<tr><th id="51">51</th><td>  uint32_t expected = atomic_load(count);</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td>  <b>for</b> (;;) {</td></tr>
+<tr><th id="54">54</th><td>    <b>if</b> (expected == <var>0</var>) {</td></tr>
+<tr><th id="55">55</th><td>      abort();</td></tr>
+<tr><th id="56">56</th><td>    } <b>else</b> <b>if</b> (expected == CRYPTO_REFCOUNT_MAX) {</td></tr>
+<tr><th id="57">57</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="58">58</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="59">59</th><td>      <em>const</em> uint32_t new_value = expected - <var>1</var>;</td></tr>
+<tr><th id="60">60</th><td>      <b>if</b> (atomic_compare_exchange_weak(count, &amp;expected, new_value)) {</td></tr>
+<tr><th id="61">61</th><td>        <b>return</b> new_value == <var>0</var>;</td></tr>
+<tr><th id="62">62</th><td>      }</td></tr>
+<tr><th id="63">63</th><td>    }</td></tr>
+<tr><th id="64">64</th><td>  }</td></tr>
+<tr><th id="65">65</th><td>}</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><u>#<span data-ppcond="18">endif</span>  /* OPENSSL_C11_ATOMIC */</u></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

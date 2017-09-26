@@ -1,0 +1,452 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>getnameinfo.c source code [codebrowser/bionic/libc/dns/net/getnameinfo.c] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="afd,sockinet "/>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/dns/net/getnameinfo.c'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>bionic</a>/<a href='../..'>libc</a>/<a href='..'>dns</a>/<a href='./'>net</a>/<a href='getnameinfo.c.html'>getnameinfo.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$NetBSD: getnameinfo.c,v 1.53 2012/09/26 23:13:00 christos Exp $	*/</i></td></tr>
+<tr><th id="2">2</th><td><i>/*	$KAME: getnameinfo.c,v 1.45 2000/09/25 22:43:56 itojun Exp $	*/</i></td></tr>
+<tr><th id="3">3</th><td></td></tr>
+<tr><th id="4">4</th><td><i>/*</i></td></tr>
+<tr><th id="5">5</th><td><i> * Copyright (c) 2000 Ben Harris.</i></td></tr>
+<tr><th id="6">6</th><td><i> * Copyright (C) 1995, 1996, 1997, and 1998 WIDE Project.</i></td></tr>
+<tr><th id="7">7</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="8">8</th><td><i> *</i></td></tr>
+<tr><th id="9">9</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="10">10</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="11">11</th><td><i> * are met:</i></td></tr>
+<tr><th id="12">12</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="13">13</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="14">14</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="15">15</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="16">16</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="17">17</th><td><i> * 3. Neither the name of the project nor the names of its contributors</i></td></tr>
+<tr><th id="18">18</th><td><i> *    may be used to endorse or promote products derived from this software</i></td></tr>
+<tr><th id="19">19</th><td><i> *    without specific prior written permission.</i></td></tr>
+<tr><th id="20">20</th><td><i> *</i></td></tr>
+<tr><th id="21">21</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND</i></td></tr>
+<tr><th id="22">22</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="23">23</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="24">24</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="25">25</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="26">26</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="27">27</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="28">28</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="29">29</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="30">30</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="31">31</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="32">32</th><td><i> */</i></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><i>/*</i></td></tr>
+<tr><th id="35">35</th><td><i> * Issues to be discussed:</i></td></tr>
+<tr><th id="36">36</th><td><i> * - Thread safe-ness must be checked</i></td></tr>
+<tr><th id="37">37</th><td><i> * - RFC2553 says that we should raise error on short buffer.  X/Open says</i></td></tr>
+<tr><th id="38">38</th><td><i> *   we need to truncate the result.  We obey RFC2553 (and X/Open should be</i></td></tr>
+<tr><th id="39">39</th><td><i> *   modified).  ipngwg rough consensus seems to follow RFC2553.</i></td></tr>
+<tr><th id="40">40</th><td><i> * - What is "local" in NI_FQDN?</i></td></tr>
+<tr><th id="41">41</th><td><i> * - NI_NAMEREQD and NI_NUMERICHOST conflict with each other.</i></td></tr>
+<tr><th id="42">42</th><td><i> * - (KAME extension) always attach textual scopeid (fe80::1%lo0), if</i></td></tr>
+<tr><th id="43">43</th><td><i> *   sin6_scope_id is filled - standardization status?</i></td></tr>
+<tr><th id="44">44</th><td><i> *   XXX breaks backward compat for code that expects no scopeid.</i></td></tr>
+<tr><th id="45">45</th><td><i> *   beware on merge.</i></td></tr>
+<tr><th id="46">46</th><td><i> */</i></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><u>#include <a href="../../include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="49">49</th><td><u>#<span data-ppcond="49">if</span> defined(<span class="macro" data-ref="_M/LIBC_SCCS">LIBC_SCCS</span>) &amp;&amp; !defined(<span class="macro" data-ref="_M/lint">lint</span>)</u></td></tr>
+<tr><th id="50">50</th><td>__RCSID(<q>"$NetBSD: getnameinfo.c,v 1.53 2012/09/26 23:13:00 christos Exp $"</q>);</td></tr>
+<tr><th id="51">51</th><td><u>#<span data-ppcond="49">endif</span> /* LIBC_SCCS and not lint */</u></td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><u>#include <a href="../../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="54">54</th><td><u>#include <a href="../../include/sys/socket.h.html">&lt;sys/socket.h&gt;</a></u></td></tr>
+<tr><th id="55">55</th><td><u>#include <a href="../../include/sys/un.h.html">&lt;sys/un.h&gt;</a></u></td></tr>
+<tr><th id="56">56</th><td><u>#include <a href="../../include/net/if.h.html">&lt;net/if.h&gt;</a></u></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/net/if_ieee1394.h.html">&lt;net/if_ieee1394.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td><u>#include <a href="../../include/net/if_types.h.html">&lt;net/if_types.h&gt;</a></u></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../include/netinet/in.h.html">&lt;netinet/in.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="../../include/arpa/inet.h.html">&lt;arpa/inet.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/assert.h.html">&lt;assert.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../include/netdb.h.html">&lt;netdb.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td><u>#include <a href="../../include/arpa/nameser.h.html">&lt;arpa/nameser.h&gt;</a></u></td></tr>
+<tr><th id="65">65</th><td><u>#include <a href="../include/resolv_netid.h.html">"resolv_netid.h"</a></u></td></tr>
+<tr><th id="66">66</th><td><u>#include <a href="../include/resolv_private.h.html">"resolv_private.h"</a></u></td></tr>
+<tr><th id="67">67</th><td><u>#include <a href="../../include/sys/system_properties.h.html">&lt;sys/system_properties.h&gt;</a></u></td></tr>
+<tr><th id="68">68</th><td><u>#include <a href="../../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="69">69</th><td><u>#include <a href="../../include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="70">70</th><td><u>#include <a href="../../include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="71">71</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="72">72</th><td><u>#include <a href="../../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><em>static</em> <em>const</em> <b>struct</b> <dfn class="type def" id="afd" title='afd' data-ref="afd"><a class="type" href="#afd" title='afd' data-ref="afd">afd</a></dfn> {</td></tr>
+<tr><th id="75">75</th><td>	<em>int</em>		<dfn class="tu decl" id="afd::a_af" title='afd::a_af' data-type='int' data-ref="afd::a_af">a_af</dfn>;</td></tr>
+<tr><th id="76">76</th><td>	<a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>	<dfn class="tu decl" id="afd::a_addrlen" title='afd::a_addrlen' data-type='socklen_t' data-ref="afd::a_addrlen">a_addrlen</dfn>;</td></tr>
+<tr><th id="77">77</th><td>	<a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>	<dfn class="tu decl" id="afd::a_socklen" title='afd::a_socklen' data-type='socklen_t' data-ref="afd::a_socklen">a_socklen</dfn>;</td></tr>
+<tr><th id="78">78</th><td>	<em>int</em>		<dfn class="tu decl" id="afd::a_off" title='afd::a_off' data-type='int' data-ref="afd::a_off">a_off</dfn>;</td></tr>
+<tr><th id="79">79</th><td>} <dfn class="tu decl def" id="afdl" title='afdl' data-type='const struct afd [3]' data-ref="afdl">afdl</dfn> [] = {</td></tr>
+<tr><th id="80">80</th><td><u>#<span data-ppcond="80">ifdef</span> <span class="macro" data-ref="_M/INET6">INET6</span></u></td></tr>
+<tr><th id="81">81</th><td>	{<a class="macro" href="../../include/sys/socket.h.html#182" title="10" data-ref="_M/PF_INET6">PF_INET6</a>, <b>sizeof</b>(<b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#in6_addr" title='in6_addr' data-ref="in6_addr">in6_addr</a>), <b>sizeof</b>(<b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6" title='sockaddr_in6' data-ref="sockaddr_in6">sockaddr_in6</a>),</td></tr>
+<tr><th id="82">82</th><td>		<span class="macro" title="__builtin_offsetof(struct sockaddr_in6, sin6_addr)" data-ref="_M/offsetof">offsetof</span>(<b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6" title='sockaddr_in6' data-ref="sockaddr_in6">sockaddr_in6</a>, sin6_addr)},</td></tr>
+<tr><th id="83">83</th><td><u>#<span data-ppcond="80">endif</span></u></td></tr>
+<tr><th id="84">84</th><td>	{<a class="macro" href="../../include/sys/socket.h.html#174" title="2" data-ref="_M/PF_INET">PF_INET</a>, <b>sizeof</b>(<b>struct</b> <a class="type" href="../../kernel/uapi/linux/in.h.html#in_addr" title='in_addr' data-ref="in_addr">in_addr</a>), <b>sizeof</b>(<b>struct</b> <a class="type" href="../../kernel/uapi/linux/in.h.html#sockaddr_in" title='sockaddr_in' data-ref="sockaddr_in">sockaddr_in</a>),</td></tr>
+<tr><th id="85">85</th><td>		<span class="macro" title="__builtin_offsetof(struct sockaddr_in, sin_addr)" data-ref="_M/offsetof">offsetof</span>(<b>struct</b> <a class="type" href="../../kernel/uapi/linux/in.h.html#sockaddr_in" title='sockaddr_in' data-ref="sockaddr_in">sockaddr_in</a>, sin_addr)},</td></tr>
+<tr><th id="86">86</th><td>	{<var>0</var>, <var>0</var>, <var>0</var>, <var>0</var>},</td></tr>
+<tr><th id="87">87</th><td>};</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><b>struct</b> <dfn class="type def" id="sockinet" title='sockinet' data-ref="sockinet">sockinet</dfn> {</td></tr>
+<tr><th id="90">90</th><td>	<a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a>	<dfn class="tu decl" id="sockinet::si_len" title='sockinet::si_len' data-type='u_char' data-ref="sockinet::si_len">si_len</dfn>;</td></tr>
+<tr><th id="91">91</th><td>	<a class="typedef" href="../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a>	<dfn class="tu decl" id="sockinet::si_family" title='sockinet::si_family' data-type='u_char' data-ref="sockinet::si_family">si_family</dfn>;</td></tr>
+<tr><th id="92">92</th><td>	<a class="typedef" href="../../include/sys/types.h.html#u_short" title='u_short' data-type='unsigned short' data-ref="u_short">u_short</a>	<dfn class="tu decl" id="sockinet::si_port" title='sockinet::si_port' data-type='u_short' data-ref="sockinet::si_port">si_port</dfn>;</td></tr>
+<tr><th id="93">93</th><td>};</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#getnameinfo_inet" title='getnameinfo_inet' data-type='int getnameinfo_inet(const struct sockaddr * , socklen_t , char * , socklen_t , char * , socklen_t , int , unsigned int , unsigned int )' data-ref="getnameinfo_inet">getnameinfo_inet</a>(<em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a> *, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>, <em>char</em> *,</td></tr>
+<tr><th id="96">96</th><td>    <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>, <em>char</em> *, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>, <em>int</em>, <em>unsigned</em>, <em>unsigned</em>);</td></tr>
+<tr><th id="97">97</th><td><u>#<span data-ppcond="97">ifdef</span> <span class="macro" data-ref="_M/INET6">INET6</span></u></td></tr>
+<tr><th id="98">98</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#ip6_parsenumeric" title='ip6_parsenumeric' data-type='int ip6_parsenumeric(const struct sockaddr * , const char * , char * , socklen_t , int )' data-ref="ip6_parsenumeric">ip6_parsenumeric</a>(<em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a> *, <em>const</em> <em>char</em> *, <em>char</em> *,</td></tr>
+<tr><th id="99">99</th><td>				 <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>, <em>int</em>);</td></tr>
+<tr><th id="100">100</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#ip6_sa2str" title='ip6_sa2str' data-type='int ip6_sa2str(const struct sockaddr_in6 * , char * , size_t , int )' data-ref="ip6_sa2str">ip6_sa2str</a>(<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6" title='sockaddr_in6' data-ref="sockaddr_in6">sockaddr_in6</a> *, <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>int</em>);</td></tr>
+<tr><th id="101">101</th><td><u>#<span data-ppcond="97">endif</span></u></td></tr>
+<tr><th id="102">102</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#getnameinfo_local" title='getnameinfo_local' data-type='int getnameinfo_local(const struct sockaddr * , socklen_t , char * , socklen_t , char * , socklen_t , int )' data-ref="getnameinfo_local">getnameinfo_local</a>(<em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a> *, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>, <em>char</em> *,</td></tr>
+<tr><th id="103">103</th><td>    <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>, <em>char</em> *, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>, <em>int</em>);</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><i>/*</i></td></tr>
+<tr><th id="106">106</th><td><i> * Top-level getnameinfo() code.  Look at the address family, and pick an</i></td></tr>
+<tr><th id="107">107</th><td><i> * appropriate function to call.</i></td></tr>
+<tr><th id="108">108</th><td><i> */</i></td></tr>
+<tr><th id="109">109</th><td><em>int</em> <dfn class="decl def" id="getnameinfo" title='getnameinfo' data-ref="getnameinfo">getnameinfo</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a>* <dfn class="local col1 decl" id="1sa" title='sa' data-type='const struct sockaddr *' data-ref="1sa">sa</dfn>, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a> <dfn class="local col2 decl" id="2salen" title='salen' data-type='socklen_t' data-ref="2salen">salen</dfn>, <em>char</em>* <dfn class="local col3 decl" id="3host" title='host' data-type='char *' data-ref="3host">host</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="4hostlen" title='hostlen' data-type='size_t' data-ref="4hostlen">hostlen</dfn>,</td></tr>
+<tr><th id="110">110</th><td>		<em>char</em>* <dfn class="local col5 decl" id="5serv" title='serv' data-type='char *' data-ref="5serv">serv</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="6servlen" title='servlen' data-type='size_t' data-ref="6servlen">servlen</dfn>, <em>int</em> <dfn class="local col7 decl" id="7flags" title='flags' data-type='int' data-ref="7flags">flags</dfn>)</td></tr>
+<tr><th id="111">111</th><td>{</td></tr>
+<tr><th id="112">112</th><td>	<b>return</b> <a class="ref" href="#android_getnameinfofornet" title='android_getnameinfofornet' data-ref="android_getnameinfofornet">android_getnameinfofornet</a>(<a class="local col1 ref" href="#1sa" title='sa' data-ref="1sa">sa</a>, <a class="local col2 ref" href="#2salen" title='salen' data-ref="2salen">salen</a>, <a class="local col3 ref" href="#3host" title='host' data-ref="3host">host</a>, <a class="local col4 ref" href="#4hostlen" title='hostlen' data-ref="4hostlen">hostlen</a>, <a class="local col5 ref" href="#5serv" title='serv' data-ref="5serv">serv</a>, <a class="local col6 ref" href="#6servlen" title='servlen' data-ref="6servlen">servlen</a>, <a class="local col7 ref" href="#7flags" title='flags' data-ref="7flags">flags</a>,</td></tr>
+<tr><th id="113">113</th><td>			<a class="macro" href="../include/resolv_netid.h.html#43" title="0u" data-ref="_M/NETID_UNSET">NETID_UNSET</a>, <a class="macro" href="../include/resolv_netid.h.html#48" title="0u" data-ref="_M/MARK_UNSET">MARK_UNSET</a>);</td></tr>
+<tr><th id="114">114</th><td>}</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><em>int</em> <dfn class="decl def" id="android_getnameinfofornet" title='android_getnameinfofornet' data-ref="android_getnameinfofornet">android_getnameinfofornet</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a>* <dfn class="local col8 decl" id="8sa" title='sa' data-type='const struct sockaddr *' data-ref="8sa">sa</dfn>, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a> <dfn class="local col9 decl" id="9salen" title='salen' data-type='socklen_t' data-ref="9salen">salen</dfn>, <em>char</em>* <dfn class="local col0 decl" id="10host" title='host' data-type='char *' data-ref="10host">host</dfn>,</td></tr>
+<tr><th id="117">117</th><td>		<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="11hostlen" title='hostlen' data-type='size_t' data-ref="11hostlen">hostlen</dfn>, <em>char</em>* <dfn class="local col2 decl" id="12serv" title='serv' data-type='char *' data-ref="12serv">serv</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="13servlen" title='servlen' data-type='size_t' data-ref="13servlen">servlen</dfn>, <em>int</em> <dfn class="local col4 decl" id="14flags" title='flags' data-type='int' data-ref="14flags">flags</dfn>, <em>unsigned</em> <dfn class="local col5 decl" id="15netid" title='netid' data-type='unsigned int' data-ref="15netid">netid</dfn>,</td></tr>
+<tr><th id="118">118</th><td>		<em>unsigned</em> <dfn class="local col6 decl" id="16mark" title='mark' data-type='unsigned int' data-ref="16mark">mark</dfn>)</td></tr>
+<tr><th id="119">119</th><td>{</td></tr>
+<tr><th id="120">120</th><td>	<b>switch</b> (<a class="local col8 ref" href="#8sa" title='sa' data-ref="8sa">sa</a>-&gt;<a class="ref" href="../../include/sys/socket.h.html#sockaddr::sa_family" title='sockaddr::sa_family' data-ref="sockaddr::sa_family">sa_family</a>) {</td></tr>
+<tr><th id="121">121</th><td>	<b>case</b> <a class="macro" href="../../include/sys/socket.h.html#131" title="2" data-ref="_M/AF_INET">AF_INET</a>:</td></tr>
+<tr><th id="122">122</th><td>	<b>case</b> <a class="macro" href="../../include/sys/socket.h.html#139" title="10" data-ref="_M/AF_INET6">AF_INET6</a>:</td></tr>
+<tr><th id="123">123</th><td>		<b>return</b> <a class="tu ref" href="#getnameinfo_inet" title='getnameinfo_inet' data-use='c' data-ref="getnameinfo_inet">getnameinfo_inet</a>(<a class="local col8 ref" href="#8sa" title='sa' data-ref="8sa">sa</a>, <a class="local col9 ref" href="#9salen" title='salen' data-ref="9salen">salen</a>, <a class="local col0 ref" href="#10host" title='host' data-ref="10host">host</a>, <a class="local col1 ref" href="#11hostlen" title='hostlen' data-ref="11hostlen">hostlen</a>,</td></tr>
+<tr><th id="124">124</th><td>				<a class="local col2 ref" href="#12serv" title='serv' data-ref="12serv">serv</a>, <a class="local col3 ref" href="#13servlen" title='servlen' data-ref="13servlen">servlen</a>, <a class="local col4 ref" href="#14flags" title='flags' data-ref="14flags">flags</a>, <a class="local col5 ref" href="#15netid" title='netid' data-ref="15netid">netid</a>, <a class="local col6 ref" href="#16mark" title='mark' data-ref="16mark">mark</a>);</td></tr>
+<tr><th id="125">125</th><td>	<b>case</b> <a class="macro" href="../../include/sys/socket.h.html#130" title="1" data-ref="_M/AF_LOCAL">AF_LOCAL</a>:</td></tr>
+<tr><th id="126">126</th><td>		<b>return</b> <a class="tu ref" href="#getnameinfo_local" title='getnameinfo_local' data-use='c' data-ref="getnameinfo_local">getnameinfo_local</a>(<a class="local col8 ref" href="#8sa" title='sa' data-ref="8sa">sa</a>, <a class="local col9 ref" href="#9salen" title='salen' data-ref="9salen">salen</a>, <a class="local col0 ref" href="#10host" title='host' data-ref="10host">host</a>, <a class="local col1 ref" href="#11hostlen" title='hostlen' data-ref="11hostlen">hostlen</a>,</td></tr>
+<tr><th id="127">127</th><td>		    <a class="local col2 ref" href="#12serv" title='serv' data-ref="12serv">serv</a>, <a class="local col3 ref" href="#13servlen" title='servlen' data-ref="13servlen">servlen</a>, <a class="local col4 ref" href="#14flags" title='flags' data-ref="14flags">flags</a>);</td></tr>
+<tr><th id="128">128</th><td>	<b>default</b>:</td></tr>
+<tr><th id="129">129</th><td>		<b>return</b> <a class="macro" href="../../include/netdb.h.html#141" title="5" data-ref="_M/EAI_FAMILY">EAI_FAMILY</a>;</td></tr>
+<tr><th id="130">130</th><td>	}</td></tr>
+<tr><th id="131">131</th><td>}</td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td><i>/*</i></td></tr>
+<tr><th id="134">134</th><td><i> * getnameinfo_local():</i></td></tr>
+<tr><th id="135">135</th><td><i> * Format an local address into a printable format.</i></td></tr>
+<tr><th id="136">136</th><td><i> */</i></td></tr>
+<tr><th id="137">137</th><td><i  data-doc="getnameinfo_local">/* ARGSUSED */</i></td></tr>
+<tr><th id="138">138</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="139">139</th><td><dfn class="tu decl def" id="getnameinfo_local" title='getnameinfo_local' data-type='int getnameinfo_local(const struct sockaddr * sa, socklen_t salen, char * host, socklen_t hostlen, char * serv, socklen_t servlen, int flags)' data-ref="getnameinfo_local">getnameinfo_local</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a> *<dfn class="local col7 decl" id="17sa" title='sa' data-type='const struct sockaddr *' data-ref="17sa">sa</dfn>, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a> <dfn class="local col8 decl" id="18salen" title='salen' data-type='socklen_t' data-ref="18salen">salen</dfn>,</td></tr>
+<tr><th id="140">140</th><td>    <em>char</em> *<dfn class="local col9 decl" id="19host" title='host' data-type='char *' data-ref="19host">host</dfn>, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a> <dfn class="local col0 decl" id="20hostlen" title='hostlen' data-type='socklen_t' data-ref="20hostlen">hostlen</dfn>, <em>char</em> *<dfn class="local col1 decl" id="21serv" title='serv' data-type='char *' data-ref="21serv">serv</dfn>, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a> <dfn class="local col2 decl" id="22servlen" title='servlen' data-type='socklen_t' data-ref="22servlen">servlen</dfn>,</td></tr>
+<tr><th id="141">141</th><td>    <em>int</em> <dfn class="local col3 decl" id="23flags" title='flags' data-type='int' data-ref="23flags">flags</dfn> <b>__attribute__</b>((unused)))</td></tr>
+<tr><th id="142">142</th><td>{</td></tr>
+<tr><th id="143">143</th><td>       <em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/un.h.html#sockaddr_un" title='sockaddr_un' data-ref="sockaddr_un">sockaddr_un</a> *<dfn class="local col4 decl" id="24sun" title='sun' data-type='const struct sockaddr_un *' data-ref="24sun">sun</dfn> =</td></tr>
+<tr><th id="144">144</th><td>           (<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/un.h.html#sockaddr_un" title='sockaddr_un' data-ref="sockaddr_un">sockaddr_un</a> *)(<em>const</em> <em>void</em> *)<a class="local col7 ref" href="#17sa" title='sa' data-ref="17sa">sa</a>;</td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td>       <b>if</b> (<a class="local col8 ref" href="#18salen" title='salen' data-ref="18salen">salen</a> &lt; (<a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>) <span class="macro" title="__builtin_offsetof(struct sockaddr_un, sun_path)" data-ref="_M/offsetof">offsetof</span>(<b>struct</b> <a class="type" href="../../kernel/uapi/linux/un.h.html#sockaddr_un" title='sockaddr_un' data-ref="sockaddr_un">sockaddr_un</a>, sun_path)) {</td></tr>
+<tr><th id="147">147</th><td>           <b>return</b> <a class="macro" href="../../include/netdb.h.html#141" title="5" data-ref="_M/EAI_FAMILY">EAI_FAMILY</a>;</td></tr>
+<tr><th id="148">148</th><td>       }</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td>       <b>if</b> (<a class="local col1 ref" href="#21serv" title='serv' data-ref="21serv">serv</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> &amp;&amp; <a class="local col2 ref" href="#22servlen" title='servlen' data-ref="22servlen">servlen</a> &gt; <var>0</var>)</td></tr>
+<tr><th id="151">151</th><td>               <a class="local col1 ref" href="#21serv" title='serv' data-ref="21serv">serv</a>[<var>0</var>] = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="152">152</th><td></td></tr>
+<tr><th id="153">153</th><td>       <b>if</b> (<a class="local col9 ref" href="#19host" title='host' data-ref="19host">host</a> &amp;&amp; <a class="local col0 ref" href="#20hostlen" title='hostlen' data-ref="20hostlen">hostlen</a> &gt; <var>0</var>)</td></tr>
+<tr><th id="154">154</th><td>               <a class="ref" href="../../include/string.h.html#strlcpy" title='strlcpy' data-ref="strlcpy">strlcpy</a>(<a class="local col9 ref" href="#19host" title='host' data-ref="19host">host</a>, <a class="local col4 ref" href="#24sun" title='sun' data-ref="24sun">sun</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/un.h.html#sockaddr_un::sun_path" title='sockaddr_un::sun_path' data-ref="sockaddr_un::sun_path">sun_path</a>,</td></tr>
+<tr><th id="155">155</th><td>                   <a class="macro" href="../../include/sys/param.h.html#47" title="((((socklen_t) sizeof(sun-&gt;sun_path) + 1)&lt;(hostlen))?((socklen_t) sizeof(sun-&gt;sun_path) + 1):(hostlen))" data-ref="_M/MIN">MIN</a>((<a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a>) <b>sizeof</b>(<a class="local col4 ref" href="#24sun" title='sun' data-ref="24sun">sun</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/un.h.html#sockaddr_un::sun_path" title='sockaddr_un::sun_path' data-ref="sockaddr_un::sun_path">sun_path</a>) + <var>1</var>, <a class="local col0 ref" href="#20hostlen" title='hostlen' data-ref="20hostlen">hostlen</a>));</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td>       <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="158">158</th><td>}</td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td><i  data-doc="getnameinfo_inet">/*</i></td></tr>
+<tr><th id="161">161</th><td><i  data-doc="getnameinfo_inet"> * getnameinfo_inet():</i></td></tr>
+<tr><th id="162">162</th><td><i  data-doc="getnameinfo_inet"> * Format an IPv4 or IPv6 sockaddr into a printable string.</i></td></tr>
+<tr><th id="163">163</th><td><i  data-doc="getnameinfo_inet"> */</i></td></tr>
+<tr><th id="164">164</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="165">165</th><td><dfn class="tu decl def" id="getnameinfo_inet" title='getnameinfo_inet' data-type='int getnameinfo_inet(const struct sockaddr * sa, socklen_t salen, char * host, socklen_t hostlen, char * serv, socklen_t servlen, int flags, unsigned int netid, unsigned int mark)' data-ref="getnameinfo_inet">getnameinfo_inet</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a>* <dfn class="local col5 decl" id="25sa" title='sa' data-type='const struct sockaddr *' data-ref="25sa">sa</dfn>, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a> <dfn class="local col6 decl" id="26salen" title='salen' data-type='socklen_t' data-ref="26salen">salen</dfn>,</td></tr>
+<tr><th id="166">166</th><td>       <em>char</em> *<dfn class="local col7 decl" id="27host" title='host' data-type='char *' data-ref="27host">host</dfn>, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a> <dfn class="local col8 decl" id="28hostlen" title='hostlen' data-type='socklen_t' data-ref="28hostlen">hostlen</dfn>,</td></tr>
+<tr><th id="167">167</th><td>       <em>char</em> *<dfn class="local col9 decl" id="29serv" title='serv' data-type='char *' data-ref="29serv">serv</dfn>, <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a> <dfn class="local col0 decl" id="30servlen" title='servlen' data-type='socklen_t' data-ref="30servlen">servlen</dfn>,</td></tr>
+<tr><th id="168">168</th><td>       <em>int</em> <dfn class="local col1 decl" id="31flags" title='flags' data-type='int' data-ref="31flags">flags</dfn>, <em>unsigned</em> <dfn class="local col2 decl" id="32netid" title='netid' data-type='unsigned int' data-ref="32netid">netid</dfn>, <em>unsigned</em> <dfn class="local col3 decl" id="33mark" title='mark' data-type='unsigned int' data-ref="33mark">mark</dfn>)</td></tr>
+<tr><th id="169">169</th><td>{</td></tr>
+<tr><th id="170">170</th><td>	<em>const</em> <b>struct</b> <a class="type" href="#afd" title='afd' data-ref="afd">afd</a> *<dfn class="local col4 decl" id="34afd" title='afd' data-type='const struct afd *' data-ref="34afd">afd</dfn>;</td></tr>
+<tr><th id="171">171</th><td>	<b>struct</b> <a class="type" href="../../include/netdb.h.html#servent" title='servent' data-ref="servent">servent</a> *<dfn class="local col5 decl" id="35sp" title='sp' data-type='struct servent *' data-ref="35sp">sp</dfn>;</td></tr>
+<tr><th id="172">172</th><td>	<b>struct</b> <a class="type" href="../../include/netdb.h.html#hostent" title='hostent' data-ref="hostent">hostent</a> *<dfn class="local col6 decl" id="36hp" title='hp' data-type='struct hostent *' data-ref="36hp">hp</dfn>;</td></tr>
+<tr><th id="173">173</th><td>	<a class="typedef" href="../../include/sys/types.h.html#u_short" title='u_short' data-type='unsigned short' data-ref="u_short">u_short</a> <dfn class="local col7 decl" id="37port" title='port' data-type='u_short' data-ref="37port">port</dfn>;</td></tr>
+<tr><th id="174">174</th><td>	<em>int</em> <dfn class="local col8 decl" id="38family" title='family' data-type='int' data-ref="38family">family</dfn>, <dfn class="local col9 decl" id="39i" title='i' data-type='int' data-ref="39i">i</dfn>;</td></tr>
+<tr><th id="175">175</th><td>	<em>const</em> <em>char</em> *<dfn class="local col0 decl" id="40addr" title='addr' data-type='const char *' data-ref="40addr">addr</dfn>;</td></tr>
+<tr><th id="176">176</th><td>	<a class="typedef" href="../../include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col1 decl" id="41v4a" title='v4a' data-type='uint32_t' data-ref="41v4a">v4a</dfn>;</td></tr>
+<tr><th id="177">177</th><td>	<em>char</em> <dfn class="local col2 decl" id="42numserv" title='numserv' data-type='char [512]' data-ref="42numserv">numserv</dfn>[<var>512</var>];</td></tr>
+<tr><th id="178">178</th><td>	<em>char</em> <dfn class="local col3 decl" id="43numaddr" title='numaddr' data-type='char [512]' data-ref="43numaddr">numaddr</dfn>[<var>512</var>];</td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td>	<i>/* sa is checked below */</i></td></tr>
+<tr><th id="181">181</th><td>	<i>/* host may be NULL */</i></td></tr>
+<tr><th id="182">182</th><td>	<i>/* serv may be NULL */</i></td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td>	<b>if</b> (<a class="local col5 ref" href="#25sa" title='sa' data-ref="25sa">sa</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="185">185</th><td>		<b>return</b> <a class="macro" href="../../include/netdb.h.html#140" title="4" data-ref="_M/EAI_FAIL">EAI_FAIL</a>;</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td>	<a class="local col8 ref" href="#38family" title='family' data-ref="38family">family</a> = <a class="local col5 ref" href="#25sa" title='sa' data-ref="25sa">sa</a>-&gt;<a class="ref" href="../../include/sys/socket.h.html#sockaddr::sa_family" title='sockaddr::sa_family' data-ref="sockaddr::sa_family">sa_family</a>;</td></tr>
+<tr><th id="188">188</th><td>	<b>for</b> (<a class="local col9 ref" href="#39i" title='i' data-ref="39i">i</a> = <var>0</var>; <a class="tu ref" href="#afdl" title='afdl' data-use='m' data-ref="afdl">afdl</a>[<a class="local col9 ref" href="#39i" title='i' data-ref="39i">i</a>].<a class="tu ref" href="#afd::a_af" title='afd::a_af' data-use='r' data-ref="afd::a_af">a_af</a>; <a class="local col9 ref" href="#39i" title='i' data-ref="39i">i</a>++)</td></tr>
+<tr><th id="189">189</th><td>		<b>if</b> (<a class="tu ref" href="#afdl" title='afdl' data-use='m' data-ref="afdl">afdl</a>[<a class="local col9 ref" href="#39i" title='i' data-ref="39i">i</a>].<a class="tu ref" href="#afd::a_af" title='afd::a_af' data-use='r' data-ref="afd::a_af">a_af</a> == <a class="local col8 ref" href="#38family" title='family' data-ref="38family">family</a>) {</td></tr>
+<tr><th id="190">190</th><td>			<a class="local col4 ref" href="#34afd" title='afd' data-ref="34afd">afd</a> = &amp;<a class="tu ref" href="#afdl" title='afdl' data-use='a' data-ref="afdl">afdl</a>[<a class="local col9 ref" href="#39i" title='i' data-ref="39i">i</a>];</td></tr>
+<tr><th id="191">191</th><td>			<b>goto</b> <a class="lbl" href="#44found" data-ref="44found">found</a>;</td></tr>
+<tr><th id="192">192</th><td>		}</td></tr>
+<tr><th id="193">193</th><td>	<b>return</b> <a class="macro" href="../../include/netdb.h.html#141" title="5" data-ref="_M/EAI_FAMILY">EAI_FAMILY</a>;</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td> <dfn class="lbl" id="44found" data-ref="44found">found</dfn>:</td></tr>
+<tr><th id="196">196</th><td>	<i>// <a href="http://b/1889275:">http://b/1889275:</a> callers should be allowed to provide too much</i></td></tr>
+<tr><th id="197">197</th><td><i>	// space, but not too little.</i></td></tr>
+<tr><th id="198">198</th><td>	<b>if</b> (<a class="local col6 ref" href="#26salen" title='salen' data-ref="26salen">salen</a> &lt; <a class="local col4 ref" href="#34afd" title='afd' data-ref="34afd">afd</a>-&gt;<a class="tu ref" href="#afd::a_socklen" title='afd::a_socklen' data-use='r' data-ref="afd::a_socklen">a_socklen</a>) {</td></tr>
+<tr><th id="199">199</th><td>		<b>return</b> <a class="macro" href="../../include/netdb.h.html#141" title="5" data-ref="_M/EAI_FAMILY">EAI_FAMILY</a>;</td></tr>
+<tr><th id="200">200</th><td>	}</td></tr>
+<tr><th id="201">201</th><td></td></tr>
+<tr><th id="202">202</th><td>	<i>/* network byte order */</i></td></tr>
+<tr><th id="203">203</th><td>	<a class="local col7 ref" href="#37port" title='port' data-ref="37port">port</a> = ((<em>const</em> <b>struct</b> <a class="type" href="#sockinet" title='sockinet' data-ref="sockinet">sockinet</a> *)(<em>const</em> <em>void</em> *)<a class="local col5 ref" href="#25sa" title='sa' data-ref="25sa">sa</a>)-&gt;<a class="tu ref" href="#sockinet::si_port" title='sockinet::si_port' data-use='r' data-ref="sockinet::si_port">si_port</a>;</td></tr>
+<tr><th id="204">204</th><td>	<a class="local col0 ref" href="#40addr" title='addr' data-ref="40addr">addr</a> = (<em>const</em> <em>char</em> *)(<em>const</em> <em>void</em> *)<a class="local col5 ref" href="#25sa" title='sa' data-ref="25sa">sa</a> + <a class="local col4 ref" href="#34afd" title='afd' data-ref="34afd">afd</a>-&gt;<a class="tu ref" href="#afd::a_off" title='afd::a_off' data-use='r' data-ref="afd::a_off">a_off</a>;</td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td>	<b>if</b> (<a class="local col9 ref" href="#29serv" title='serv' data-ref="29serv">serv</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || <a class="local col0 ref" href="#30servlen" title='servlen' data-ref="30servlen">servlen</a> == <var>0</var>) {</td></tr>
+<tr><th id="207">207</th><td>		<i>/*</i></td></tr>
+<tr><th id="208">208</th><td><i>		 * do nothing in this case.</i></td></tr>
+<tr><th id="209">209</th><td><i>		 * in case you are wondering if "&amp;&amp;" is more correct than</i></td></tr>
+<tr><th id="210">210</th><td><i>		 * "||" here: rfc2553bis-03 says that serv == NULL OR</i></td></tr>
+<tr><th id="211">211</th><td><i>		 * servlen == 0 means that the caller does not want the result.</i></td></tr>
+<tr><th id="212">212</th><td><i>		 */</i></td></tr>
+<tr><th id="213">213</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="214">214</th><td>		<b>if</b> (<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> &amp; <a class="macro" href="../../include/netdb.h.html#184" title="0x00000008" data-ref="_M/NI_NUMERICSERV">NI_NUMERICSERV</a>)</td></tr>
+<tr><th id="215">215</th><td>			<a class="local col5 ref" href="#35sp" title='sp' data-ref="35sp">sp</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="216">216</th><td>		<b>else</b> {</td></tr>
+<tr><th id="217">217</th><td>			<a class="local col5 ref" href="#35sp" title='sp' data-ref="35sp">sp</a> = <a class="ref" href="../../include/netdb.h.html#getservbyport" title='getservbyport' data-ref="getservbyport">getservbyport</a>(<a class="local col7 ref" href="#37port" title='port' data-ref="37port">port</a>,</td></tr>
+<tr><th id="218">218</th><td>				(<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> &amp; <a class="macro" href="../../include/netdb.h.html#185" title="0x00000010" data-ref="_M/NI_DGRAM">NI_DGRAM</a>) ? <q>"udp"</q> : <q>"tcp"</q>);</td></tr>
+<tr><th id="219">219</th><td>		}</td></tr>
+<tr><th id="220">220</th><td>		<b>if</b> (<a class="local col5 ref" href="#35sp" title='sp' data-ref="35sp">sp</a>) {</td></tr>
+<tr><th id="221">221</th><td>			<b>if</b> (<a class="ref" href="../../include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col5 ref" href="#35sp" title='sp' data-ref="35sp">sp</a>-&gt;<a class="ref" href="../../include/netdb.h.html#servent::s_name" title='servent::s_name' data-ref="servent::s_name">s_name</a>) + <var>1</var> &gt; (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col0 ref" href="#30servlen" title='servlen' data-ref="30servlen">servlen</a>)</td></tr>
+<tr><th id="222">222</th><td>				<b>return</b> <a class="macro" href="../../include/netdb.h.html#142" title="6" data-ref="_M/EAI_MEMORY">EAI_MEMORY</a>;</td></tr>
+<tr><th id="223">223</th><td>			<a class="ref" href="../../include/string.h.html#strlcpy" title='strlcpy' data-ref="strlcpy">strlcpy</a>(<a class="local col9 ref" href="#29serv" title='serv' data-ref="29serv">serv</a>, <a class="local col5 ref" href="#35sp" title='sp' data-ref="35sp">sp</a>-&gt;<a class="ref" href="../../include/netdb.h.html#servent::s_name" title='servent::s_name' data-ref="servent::s_name">s_name</a>, <a class="local col0 ref" href="#30servlen" title='servlen' data-ref="30servlen">servlen</a>);</td></tr>
+<tr><th id="224">224</th><td>		} <b>else</b> {</td></tr>
+<tr><th id="225">225</th><td>			<a class="macro" href="../../include/stdio.h.html#320" title="__builtin___snprintf_chk(numserv, sizeof(numserv), 0, __builtin_object_size((numserv), 1), &quot;%u&quot;, __builtin_bswap16(port))" data-ref="_M/snprintf">snprintf</a>(<a class="local col2 ref" href="#42numserv" title='numserv' data-ref="42numserv">numserv</a>, <b>sizeof</b>(<a class="local col2 ref" href="#42numserv" title='numserv' data-ref="42numserv">numserv</a>), <q>"%u"</q>, <a class="macro" href="../../include/sys/endian.h.html#61" title="__builtin_bswap16(port)" data-ref="_M/ntohs">ntohs</a>(<a class="local col7 ref" href="#37port" title='port' data-ref="37port">port</a>));</td></tr>
+<tr><th id="226">226</th><td>			<b>if</b> (<a class="ref" href="../../include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col2 ref" href="#42numserv" title='numserv' data-ref="42numserv">numserv</a>) + <var>1</var> &gt; (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col0 ref" href="#30servlen" title='servlen' data-ref="30servlen">servlen</a>)</td></tr>
+<tr><th id="227">227</th><td>				<b>return</b> <a class="macro" href="../../include/netdb.h.html#142" title="6" data-ref="_M/EAI_MEMORY">EAI_MEMORY</a>;</td></tr>
+<tr><th id="228">228</th><td>			<a class="ref" href="../../include/string.h.html#strlcpy" title='strlcpy' data-ref="strlcpy">strlcpy</a>(<a class="local col9 ref" href="#29serv" title='serv' data-ref="29serv">serv</a>, <a class="local col2 ref" href="#42numserv" title='numserv' data-ref="42numserv">numserv</a>, <a class="local col0 ref" href="#30servlen" title='servlen' data-ref="30servlen">servlen</a>);</td></tr>
+<tr><th id="229">229</th><td>		}</td></tr>
+<tr><th id="230">230</th><td>	}</td></tr>
+<tr><th id="231">231</th><td></td></tr>
+<tr><th id="232">232</th><td>	<b>switch</b> (<a class="local col5 ref" href="#25sa" title='sa' data-ref="25sa">sa</a>-&gt;<a class="ref" href="../../include/sys/socket.h.html#sockaddr::sa_family" title='sockaddr::sa_family' data-ref="sockaddr::sa_family">sa_family</a>) {</td></tr>
+<tr><th id="233">233</th><td>	<b>case</b> <a class="macro" href="../../include/sys/socket.h.html#131" title="2" data-ref="_M/AF_INET">AF_INET</a>:</td></tr>
+<tr><th id="234">234</th><td>		<a class="local col1 ref" href="#41v4a" title='v4a' data-ref="41v4a">v4a</a> = (<a class="typedef" href="../../include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>)</td></tr>
+<tr><th id="235">235</th><td>		    <a class="macro" href="../../include/sys/endian.h.html#60" title="__builtin_bswap32(((const struct sockaddr_in *) (const void *)sa)-&gt;sin_addr.s_addr)" data-ref="_M/ntohl">ntohl</a>(((<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/in.h.html#sockaddr_in" title='sockaddr_in' data-ref="sockaddr_in">sockaddr_in</a> *)</td></tr>
+<tr><th id="236">236</th><td>		    (<em>const</em> <em>void</em> *)<a class="local col5 ref" href="#25sa" title='sa' data-ref="25sa">sa</a>)-&gt;<a class="ref" href="../../kernel/uapi/linux/in.h.html#sockaddr_in::sin_addr" title='sockaddr_in::sin_addr' data-ref="sockaddr_in::sin_addr">sin_addr</a>.<a class="ref" href="../../kernel/uapi/linux/in.h.html#in_addr::s_addr" title='in_addr::s_addr' data-ref="in_addr::s_addr">s_addr</a>);</td></tr>
+<tr><th id="237">237</th><td>		<b>if</b> (<a class="macro" href="../../kernel/uapi/linux/in.h.html#261" title="((((long int) (v4a)) &amp; 0xf0000000) == 0xe0000000)" data-ref="_M/IN_MULTICAST">IN_MULTICAST</a>(<a class="local col1 ref" href="#41v4a" title='v4a' data-ref="41v4a">v4a</a>) || <a class="macro" href="../../kernel/uapi/linux/in.h.html#264" title="((((long int) (v4a)) &amp; 0xf0000000) == 0xf0000000)" data-ref="_M/IN_EXPERIMENTAL">IN_EXPERIMENTAL</a>(<a class="local col1 ref" href="#41v4a" title='v4a' data-ref="41v4a">v4a</a>))</td></tr>
+<tr><th id="238">238</th><td>			<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> |= <a class="macro" href="../../include/netdb.h.html#182" title="0x00000002" data-ref="_M/NI_NUMERICHOST">NI_NUMERICHOST</a>;</td></tr>
+<tr><th id="239">239</th><td>		<a class="local col1 ref" href="#41v4a" title='v4a' data-ref="41v4a">v4a</a> &gt;&gt;= <a class="macro" href="../../kernel/uapi/linux/in.h.html#245" title="24" data-ref="_M/IN_CLASSA_NSHIFT">IN_CLASSA_NSHIFT</a>;</td></tr>
+<tr><th id="240">240</th><td>		<b>if</b> (<a class="local col1 ref" href="#41v4a" title='v4a' data-ref="41v4a">v4a</a> == <var>0</var>)</td></tr>
+<tr><th id="241">241</th><td>			<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> |= <a class="macro" href="../../include/netdb.h.html#182" title="0x00000002" data-ref="_M/NI_NUMERICHOST">NI_NUMERICHOST</a>;</td></tr>
+<tr><th id="242">242</th><td>		<b>break</b>;</td></tr>
+<tr><th id="243">243</th><td><u>#<span data-ppcond="243">ifdef</span> <span class="macro" data-ref="_M/INET6">INET6</span></u></td></tr>
+<tr><th id="244">244</th><td>	<b>case</b> <a class="macro" href="../../include/sys/socket.h.html#139" title="10" data-ref="_M/AF_INET6">AF_INET6</a>:</td></tr>
+<tr><th id="245">245</th><td>	    {</td></tr>
+<tr><th id="246">246</th><td>		<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6" title='sockaddr_in6' data-ref="sockaddr_in6">sockaddr_in6</a> *<dfn class="local col5 decl" id="45sin6" title='sin6' data-type='const struct sockaddr_in6 *' data-ref="45sin6">sin6</dfn>;</td></tr>
+<tr><th id="247">247</th><td>		<a class="local col5 ref" href="#45sin6" title='sin6' data-ref="45sin6">sin6</a> = (<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6" title='sockaddr_in6' data-ref="sockaddr_in6">sockaddr_in6</a> *)(<em>const</em> <em>void</em> *)<a class="local col5 ref" href="#25sa" title='sa' data-ref="25sa">sa</a>;</td></tr>
+<tr><th id="248">248</th><td>		<b>switch</b> (<a class="local col5 ref" href="#45sin6" title='sin6' data-ref="45sin6">sin6</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6::sin6_addr" title='sockaddr_in6::sin6_addr' data-ref="sockaddr_in6::sin6_addr">sin6_addr</a>.<a class="macro" href="../../kernel/uapi/linux/in6.h.html#35" title="in6_u.u6_addr8" data-ref="_M/s6_addr">s6_addr</a>[<var>0</var>]) {</td></tr>
+<tr><th id="249">249</th><td>		<b>case</b> <var>0x00</var>:</td></tr>
+<tr><th id="250">250</th><td>			<b>if</b> (<a class="macro" href="../../include/netinet/in6.h.html#53" title="((*(const uint32_t*)(&amp;(&amp;sin6-&gt;sin6_addr)-&gt;in6_u.u6_addr8[0]) == 0) &amp;&amp; (*(const uint32_t*)(&amp;(&amp;sin6-&gt;sin6_addr)-&gt;in6_u.u6_addr8[4]) == 0) &amp;&amp; (*(const uint32_t*)(&amp;(&amp;sin6-&gt;sin6_addr)-&gt;in6_u.u6_addr8[8]) == __builtin_bswap32(0x0000ffff)))" data-ref="_M/IN6_IS_ADDR_V4MAPPED">IN6_IS_ADDR_V4MAPPED</a>(&amp;<a class="local col5 ref" href="#45sin6" title='sin6' data-ref="45sin6">sin6</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6::sin6_addr" title='sockaddr_in6::sin6_addr' data-ref="sockaddr_in6::sin6_addr">sin6_addr</a>))</td></tr>
+<tr><th id="251">251</th><td>				;</td></tr>
+<tr><th id="252">252</th><td>			<b>else</b> <b>if</b> (<a class="macro" href="../../include/netinet/in6.h.html#40" title="((*(const uint32_t*)(&amp;(&amp;sin6-&gt;sin6_addr)-&gt;in6_u.u6_addr8[0]) == 0) &amp;&amp; (*(const uint32_t*)(&amp;(&amp;sin6-&gt;sin6_addr)-&gt;in6_u.u6_addr8[4]) == 0) &amp;&amp; (*(const uint32_t*)(&amp;(&amp;sin6-&gt;sin6_addr)-&gt;in6_u.u6_addr8[8]) == 0) &amp;&amp; (*(const uint32_t*)(&amp;(&amp;sin6-&gt;sin6_addr)-&gt;in6_u.u6_addr8[12]) == __builtin_bswap32(1)))" data-ref="_M/IN6_IS_ADDR_LOOPBACK">IN6_IS_ADDR_LOOPBACK</a>(&amp;<a class="local col5 ref" href="#45sin6" title='sin6' data-ref="45sin6">sin6</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6::sin6_addr" title='sockaddr_in6::sin6_addr' data-ref="sockaddr_in6::sin6_addr">sin6_addr</a>))</td></tr>
+<tr><th id="253">253</th><td>				;</td></tr>
+<tr><th id="254">254</th><td>			<b>else</b></td></tr>
+<tr><th id="255">255</th><td>				<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> |= <a class="macro" href="../../include/netdb.h.html#182" title="0x00000002" data-ref="_M/NI_NUMERICHOST">NI_NUMERICHOST</a>;</td></tr>
+<tr><th id="256">256</th><td>			<b>break</b>;</td></tr>
+<tr><th id="257">257</th><td>		<b>default</b>:</td></tr>
+<tr><th id="258">258</th><td>			<b>if</b> (<a class="macro" href="../../include/netinet/in6.h.html#60" title="((((const uint8_t*)(&amp;sin6-&gt;sin6_addr))[0] == 0xfe) &amp;&amp; ((((const uint8_t*)(&amp;sin6-&gt;sin6_addr))[1] &amp; 0xc0) == 0x80))" data-ref="_M/IN6_IS_ADDR_LINKLOCAL">IN6_IS_ADDR_LINKLOCAL</a>(&amp;<a class="local col5 ref" href="#45sin6" title='sin6' data-ref="45sin6">sin6</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6::sin6_addr" title='sockaddr_in6::sin6_addr' data-ref="sockaddr_in6::sin6_addr">sin6_addr</a>)) {</td></tr>
+<tr><th id="259">259</th><td>				<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> |= <a class="macro" href="../../include/netdb.h.html#182" title="0x00000002" data-ref="_M/NI_NUMERICHOST">NI_NUMERICHOST</a>;</td></tr>
+<tr><th id="260">260</th><td>			}</td></tr>
+<tr><th id="261">261</th><td>			<b>else</b> <b>if</b> (<a class="macro" href="../../include/netinet/in6.h.html#66" title="(((const uint8_t*)(&amp;sin6-&gt;sin6_addr))[0] == 0xff)" data-ref="_M/IN6_IS_ADDR_MULTICAST">IN6_IS_ADDR_MULTICAST</a>(&amp;<a class="local col5 ref" href="#45sin6" title='sin6' data-ref="45sin6">sin6</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6::sin6_addr" title='sockaddr_in6::sin6_addr' data-ref="sockaddr_in6::sin6_addr">sin6_addr</a>))</td></tr>
+<tr><th id="262">262</th><td>				<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> |= <a class="macro" href="../../include/netdb.h.html#182" title="0x00000002" data-ref="_M/NI_NUMERICHOST">NI_NUMERICHOST</a>;</td></tr>
+<tr><th id="263">263</th><td>			<b>break</b>;</td></tr>
+<tr><th id="264">264</th><td>		}</td></tr>
+<tr><th id="265">265</th><td>	    }</td></tr>
+<tr><th id="266">266</th><td>		<b>break</b>;</td></tr>
+<tr><th id="267">267</th><td><u>#<span data-ppcond="243">endif</span></u></td></tr>
+<tr><th id="268">268</th><td>	}</td></tr>
+<tr><th id="269">269</th><td>	<b>if</b> (<a class="local col7 ref" href="#27host" title='host' data-ref="27host">host</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || <a class="local col8 ref" href="#28hostlen" title='hostlen' data-ref="28hostlen">hostlen</a> == <var>0</var>) {</td></tr>
+<tr><th id="270">270</th><td>		<i>/*</i></td></tr>
+<tr><th id="271">271</th><td><i>		 * do nothing in this case.</i></td></tr>
+<tr><th id="272">272</th><td><i>		 * in case you are wondering if "&amp;&amp;" is more correct than</i></td></tr>
+<tr><th id="273">273</th><td><i>		 * "||" here: rfc2553bis-03 says that host == NULL or</i></td></tr>
+<tr><th id="274">274</th><td><i>		 * hostlen == 0 means that the caller does not want the result.</i></td></tr>
+<tr><th id="275">275</th><td><i>		 */</i></td></tr>
+<tr><th id="276">276</th><td>	} <b>else</b> <b>if</b> (<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> &amp; <a class="macro" href="../../include/netdb.h.html#182" title="0x00000002" data-ref="_M/NI_NUMERICHOST">NI_NUMERICHOST</a>) {</td></tr>
+<tr><th id="277">277</th><td>		<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="46numaddrlen" title='numaddrlen' data-type='size_t' data-ref="46numaddrlen">numaddrlen</dfn>;</td></tr>
+<tr><th id="278">278</th><td></td></tr>
+<tr><th id="279">279</th><td>		<i>/* NUMERICHOST and NAMEREQD conflicts with each other */</i></td></tr>
+<tr><th id="280">280</th><td>		<b>if</b> (<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> &amp; <a class="macro" href="../../include/netdb.h.html#183" title="0x00000004" data-ref="_M/NI_NAMEREQD">NI_NAMEREQD</a>)</td></tr>
+<tr><th id="281">281</th><td>			<b>return</b> <a class="macro" href="../../include/netdb.h.html#144" title="8" data-ref="_M/EAI_NONAME">EAI_NONAME</a>;</td></tr>
+<tr><th id="282">282</th><td></td></tr>
+<tr><th id="283">283</th><td>		<b>switch</b>(<a class="local col4 ref" href="#34afd" title='afd' data-ref="34afd">afd</a>-&gt;<a class="tu ref" href="#afd::a_af" title='afd::a_af' data-use='r' data-ref="afd::a_af">a_af</a>) {</td></tr>
+<tr><th id="284">284</th><td><u>#<span data-ppcond="284">ifdef</span> <span class="macro" data-ref="_M/INET6">INET6</span></u></td></tr>
+<tr><th id="285">285</th><td>		<b>case</b> <a class="macro" href="../../include/sys/socket.h.html#139" title="10" data-ref="_M/AF_INET6">AF_INET6</a>:</td></tr>
+<tr><th id="286">286</th><td>		{</td></tr>
+<tr><th id="287">287</th><td>			<em>int</em> <dfn class="local col7 decl" id="47error" title='error' data-type='int' data-ref="47error">error</dfn>;</td></tr>
+<tr><th id="288">288</th><td></td></tr>
+<tr><th id="289">289</th><td>			<b>if</b> ((<a class="local col7 ref" href="#47error" title='error' data-ref="47error">error</a> = <a class="tu ref" href="#ip6_parsenumeric" title='ip6_parsenumeric' data-use='c' data-ref="ip6_parsenumeric">ip6_parsenumeric</a>(<a class="local col5 ref" href="#25sa" title='sa' data-ref="25sa">sa</a>, <a class="local col0 ref" href="#40addr" title='addr' data-ref="40addr">addr</a>, <a class="local col7 ref" href="#27host" title='host' data-ref="27host">host</a>,</td></tr>
+<tr><th id="290">290</th><td>						      <a class="local col8 ref" href="#28hostlen" title='hostlen' data-ref="28hostlen">hostlen</a>, <a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a>)) != <var>0</var>)</td></tr>
+<tr><th id="291">291</th><td>				<b>return</b>(<a class="local col7 ref" href="#47error" title='error' data-ref="47error">error</a>);</td></tr>
+<tr><th id="292">292</th><td>			<b>break</b>;</td></tr>
+<tr><th id="293">293</th><td>		}</td></tr>
+<tr><th id="294">294</th><td><u>#<span data-ppcond="284">endif</span></u></td></tr>
+<tr><th id="295">295</th><td>		<b>default</b>:</td></tr>
+<tr><th id="296">296</th><td>			<b>if</b> (<a class="ref" href="../../include/arpa/inet.h.html#inet_ntop" title='inet_ntop' data-ref="inet_ntop">inet_ntop</a>(<a class="local col4 ref" href="#34afd" title='afd' data-ref="34afd">afd</a>-&gt;<a class="tu ref" href="#afd::a_af" title='afd::a_af' data-use='r' data-ref="afd::a_af">a_af</a>, <a class="local col0 ref" href="#40addr" title='addr' data-ref="40addr">addr</a>, <a class="local col3 ref" href="#43numaddr" title='numaddr' data-ref="43numaddr">numaddr</a>, <b>sizeof</b>(<a class="local col3 ref" href="#43numaddr" title='numaddr' data-ref="43numaddr">numaddr</a>))</td></tr>
+<tr><th id="297">297</th><td>			    == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="298">298</th><td>				<b>return</b> <a class="macro" href="../../include/netdb.h.html#147" title="11" data-ref="_M/EAI_SYSTEM">EAI_SYSTEM</a>;</td></tr>
+<tr><th id="299">299</th><td>			<a class="local col6 ref" href="#46numaddrlen" title='numaddrlen' data-ref="46numaddrlen">numaddrlen</a> = <a class="ref" href="../../include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col3 ref" href="#43numaddr" title='numaddr' data-ref="43numaddr">numaddr</a>);</td></tr>
+<tr><th id="300">300</th><td>			<b>if</b> (<a class="local col6 ref" href="#46numaddrlen" title='numaddrlen' data-ref="46numaddrlen">numaddrlen</a> + <var>1</var> &gt; (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col8 ref" href="#28hostlen" title='hostlen' data-ref="28hostlen">hostlen</a>) <i>/* don't forget terminator */</i></td></tr>
+<tr><th id="301">301</th><td>				<b>return</b> <a class="macro" href="../../include/netdb.h.html#142" title="6" data-ref="_M/EAI_MEMORY">EAI_MEMORY</a>;</td></tr>
+<tr><th id="302">302</th><td>			<a class="ref" href="../../include/string.h.html#strlcpy" title='strlcpy' data-ref="strlcpy">strlcpy</a>(<a class="local col7 ref" href="#27host" title='host' data-ref="27host">host</a>, <a class="local col3 ref" href="#43numaddr" title='numaddr' data-ref="43numaddr">numaddr</a>, <a class="local col8 ref" href="#28hostlen" title='hostlen' data-ref="28hostlen">hostlen</a>);</td></tr>
+<tr><th id="303">303</th><td>			<b>break</b>;</td></tr>
+<tr><th id="304">304</th><td>		}</td></tr>
+<tr><th id="305">305</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="306">306</th><td>		<a class="local col6 ref" href="#36hp" title='hp' data-ref="36hp">hp</a> = <a class="ref" href="../include/resolv_netid.h.html#android_gethostbyaddrfornet_proxy" title='android_gethostbyaddrfornet_proxy' data-ref="android_gethostbyaddrfornet_proxy">android_gethostbyaddrfornet_proxy</a>(<a class="local col0 ref" href="#40addr" title='addr' data-ref="40addr">addr</a>, <a class="local col4 ref" href="#34afd" title='afd' data-ref="34afd">afd</a>-&gt;<a class="tu ref" href="#afd::a_addrlen" title='afd::a_addrlen' data-use='r' data-ref="afd::a_addrlen">a_addrlen</a>, <a class="local col4 ref" href="#34afd" title='afd' data-ref="34afd">afd</a>-&gt;<a class="tu ref" href="#afd::a_af" title='afd::a_af' data-use='r' data-ref="afd::a_af">a_af</a>, <a class="local col2 ref" href="#32netid" title='netid' data-ref="32netid">netid</a>, <a class="local col3 ref" href="#33mark" title='mark' data-ref="33mark">mark</a>);</td></tr>
+<tr><th id="307">307</th><td>		<b>if</b> (<a class="local col6 ref" href="#36hp" title='hp' data-ref="36hp">hp</a>) {</td></tr>
+<tr><th id="308">308</th><td><u>#<span data-ppcond="308">if</span> 0</u></td></tr>
+<tr><th id="309">309</th><td>			<i>/*</i></td></tr>
+<tr><th id="310">310</th><td><i>			 * commented out, since "for local host" is not</i></td></tr>
+<tr><th id="311">311</th><td><i>			 * implemented here - see RFC2553 p30</i></td></tr>
+<tr><th id="312">312</th><td><i>			 */</i></td></tr>
+<tr><th id="313">313</th><td>			<b>if</b> (flags &amp; NI_NOFQDN) {</td></tr>
+<tr><th id="314">314</th><td>				<em>char</em> *p;</td></tr>
+<tr><th id="315">315</th><td>				p = strchr(hp-&gt;h_name, <kbd>'.'</kbd>);</td></tr>
+<tr><th id="316">316</th><td>				<b>if</b> (p)</td></tr>
+<tr><th id="317">317</th><td>					TODO: Before uncommenting rewrite to avoid modifying hp.</td></tr>
+<tr><th id="318">318</th><td>					*p = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="319">319</th><td>			}</td></tr>
+<tr><th id="320">320</th><td><u>#<span data-ppcond="308">endif</span></u></td></tr>
+<tr><th id="321">321</th><td>			<b>if</b> (<a class="ref" href="../../include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col6 ref" href="#36hp" title='hp' data-ref="36hp">hp</a>-&gt;<a class="ref" href="../../include/netdb.h.html#hostent::h_name" title='hostent::h_name' data-ref="hostent::h_name">h_name</a>) + <var>1</var> &gt; (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col8 ref" href="#28hostlen" title='hostlen' data-ref="28hostlen">hostlen</a>) {</td></tr>
+<tr><th id="322">322</th><td>				<b>return</b> <a class="macro" href="../../include/netdb.h.html#142" title="6" data-ref="_M/EAI_MEMORY">EAI_MEMORY</a>;</td></tr>
+<tr><th id="323">323</th><td>			}</td></tr>
+<tr><th id="324">324</th><td>			<a class="ref" href="../../include/string.h.html#strlcpy" title='strlcpy' data-ref="strlcpy">strlcpy</a>(<a class="local col7 ref" href="#27host" title='host' data-ref="27host">host</a>, <a class="local col6 ref" href="#36hp" title='hp' data-ref="36hp">hp</a>-&gt;<a class="ref" href="../../include/netdb.h.html#hostent::h_name" title='hostent::h_name' data-ref="hostent::h_name">h_name</a>, <a class="local col8 ref" href="#28hostlen" title='hostlen' data-ref="28hostlen">hostlen</a>);</td></tr>
+<tr><th id="325">325</th><td>		} <b>else</b> {</td></tr>
+<tr><th id="326">326</th><td>			<b>if</b> (<a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a> &amp; <a class="macro" href="../../include/netdb.h.html#183" title="0x00000004" data-ref="_M/NI_NAMEREQD">NI_NAMEREQD</a>)</td></tr>
+<tr><th id="327">327</th><td>				<b>return</b> <a class="macro" href="../../include/netdb.h.html#144" title="8" data-ref="_M/EAI_NONAME">EAI_NONAME</a>;</td></tr>
+<tr><th id="328">328</th><td>			<b>switch</b>(<a class="local col4 ref" href="#34afd" title='afd' data-ref="34afd">afd</a>-&gt;<a class="tu ref" href="#afd::a_af" title='afd::a_af' data-use='r' data-ref="afd::a_af">a_af</a>) {</td></tr>
+<tr><th id="329">329</th><td><u>#<span data-ppcond="329">ifdef</span> <span class="macro" data-ref="_M/INET6">INET6</span></u></td></tr>
+<tr><th id="330">330</th><td>			<b>case</b> <a class="macro" href="../../include/sys/socket.h.html#139" title="10" data-ref="_M/AF_INET6">AF_INET6</a>:</td></tr>
+<tr><th id="331">331</th><td>			{</td></tr>
+<tr><th id="332">332</th><td>				<em>int</em> <dfn class="local col8 decl" id="48error" title='error' data-type='int' data-ref="48error">error</dfn>;</td></tr>
+<tr><th id="333">333</th><td></td></tr>
+<tr><th id="334">334</th><td>				<b>if</b> ((<a class="local col8 ref" href="#48error" title='error' data-ref="48error">error</a> = <a class="tu ref" href="#ip6_parsenumeric" title='ip6_parsenumeric' data-use='c' data-ref="ip6_parsenumeric">ip6_parsenumeric</a>(<a class="local col5 ref" href="#25sa" title='sa' data-ref="25sa">sa</a>, <a class="local col0 ref" href="#40addr" title='addr' data-ref="40addr">addr</a>, <a class="local col7 ref" href="#27host" title='host' data-ref="27host">host</a>,</td></tr>
+<tr><th id="335">335</th><td>							      <a class="local col8 ref" href="#28hostlen" title='hostlen' data-ref="28hostlen">hostlen</a>,</td></tr>
+<tr><th id="336">336</th><td>							      <a class="local col1 ref" href="#31flags" title='flags' data-ref="31flags">flags</a>)) != <var>0</var>)</td></tr>
+<tr><th id="337">337</th><td>					<b>return</b>(<a class="local col8 ref" href="#48error" title='error' data-ref="48error">error</a>);</td></tr>
+<tr><th id="338">338</th><td>				<b>break</b>;</td></tr>
+<tr><th id="339">339</th><td>			}</td></tr>
+<tr><th id="340">340</th><td><u>#<span data-ppcond="329">endif</span></u></td></tr>
+<tr><th id="341">341</th><td>			<b>default</b>:</td></tr>
+<tr><th id="342">342</th><td>				<b>if</b> (<a class="ref" href="../../include/arpa/inet.h.html#inet_ntop" title='inet_ntop' data-ref="inet_ntop">inet_ntop</a>(<a class="local col4 ref" href="#34afd" title='afd' data-ref="34afd">afd</a>-&gt;<a class="tu ref" href="#afd::a_af" title='afd::a_af' data-use='r' data-ref="afd::a_af">a_af</a>, <a class="local col0 ref" href="#40addr" title='addr' data-ref="40addr">addr</a>, <a class="local col7 ref" href="#27host" title='host' data-ref="27host">host</a>,</td></tr>
+<tr><th id="343">343</th><td>				    <a class="local col8 ref" href="#28hostlen" title='hostlen' data-ref="28hostlen">hostlen</a>) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="344">344</th><td>					<b>return</b> <a class="macro" href="../../include/netdb.h.html#147" title="11" data-ref="_M/EAI_SYSTEM">EAI_SYSTEM</a>;</td></tr>
+<tr><th id="345">345</th><td>				<b>break</b>;</td></tr>
+<tr><th id="346">346</th><td>			}</td></tr>
+<tr><th id="347">347</th><td>		}</td></tr>
+<tr><th id="348">348</th><td>	}</td></tr>
+<tr><th id="349">349</th><td>	<b>return</b>(<var>0</var>);</td></tr>
+<tr><th id="350">350</th><td>}</td></tr>
+<tr><th id="351">351</th><td></td></tr>
+<tr><th id="352">352</th><td><u>#<span data-ppcond="352">ifdef</span> <span class="macro" data-ref="_M/INET6">INET6</span></u></td></tr>
+<tr><th id="353">353</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="354">354</th><td><dfn class="tu decl def" id="ip6_parsenumeric" title='ip6_parsenumeric' data-type='int ip6_parsenumeric(const struct sockaddr * sa, const char * addr, char * host, socklen_t hostlen, int flags)' data-ref="ip6_parsenumeric">ip6_parsenumeric</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../../include/sys/socket.h.html#sockaddr" title='sockaddr' data-ref="sockaddr">sockaddr</a> *<dfn class="local col9 decl" id="49sa" title='sa' data-type='const struct sockaddr *' data-ref="49sa">sa</dfn>, <em>const</em> <em>char</em> *<dfn class="local col0 decl" id="50addr" title='addr' data-type='const char *' data-ref="50addr">addr</dfn>, <em>char</em> *<dfn class="local col1 decl" id="51host" title='host' data-type='char *' data-ref="51host">host</dfn>,</td></tr>
+<tr><th id="355">355</th><td>       <a class="typedef" href="../../include/sys/types.h.html#socklen_t" title='socklen_t' data-type='__socklen_t' data-ref="socklen_t">socklen_t</a> <dfn class="local col2 decl" id="52hostlen" title='hostlen' data-type='socklen_t' data-ref="52hostlen">hostlen</dfn>, <em>int</em> <dfn class="local col3 decl" id="53flags" title='flags' data-type='int' data-ref="53flags">flags</dfn>)</td></tr>
+<tr><th id="356">356</th><td>{</td></tr>
+<tr><th id="357">357</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="54numaddrlen" title='numaddrlen' data-type='size_t' data-ref="54numaddrlen">numaddrlen</dfn>;</td></tr>
+<tr><th id="358">358</th><td>	<em>char</em> <dfn class="local col5 decl" id="55numaddr" title='numaddr' data-type='char [512]' data-ref="55numaddr">numaddr</dfn>[<var>512</var>];</td></tr>
+<tr><th id="359">359</th><td></td></tr>
+<tr><th id="360">360</th><td>	<a class="macro" href="../../include/assert.h.html#51" title="((void)0)" data-ref="_M/assert">assert</a>(sa != NULL);</td></tr>
+<tr><th id="361">361</th><td>	<a class="macro" href="../../include/assert.h.html#51" title="((void)0)" data-ref="_M/assert">assert</a>(addr != NULL);</td></tr>
+<tr><th id="362">362</th><td>	<a class="macro" href="../../include/assert.h.html#51" title="((void)0)" data-ref="_M/assert">assert</a>(host != NULL);</td></tr>
+<tr><th id="363">363</th><td></td></tr>
+<tr><th id="364">364</th><td>	<b>if</b> (<a class="ref" href="../../include/arpa/inet.h.html#inet_ntop" title='inet_ntop' data-ref="inet_ntop">inet_ntop</a>(<a class="macro" href="../../include/sys/socket.h.html#139" title="10" data-ref="_M/AF_INET6">AF_INET6</a>, <a class="local col0 ref" href="#50addr" title='addr' data-ref="50addr">addr</a>, <a class="local col5 ref" href="#55numaddr" title='numaddr' data-ref="55numaddr">numaddr</a>, <b>sizeof</b>(<a class="local col5 ref" href="#55numaddr" title='numaddr' data-ref="55numaddr">numaddr</a>)) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="365">365</th><td>		<b>return</b> <a class="macro" href="../../include/netdb.h.html#147" title="11" data-ref="_M/EAI_SYSTEM">EAI_SYSTEM</a>;</td></tr>
+<tr><th id="366">366</th><td></td></tr>
+<tr><th id="367">367</th><td>	<a class="local col4 ref" href="#54numaddrlen" title='numaddrlen' data-ref="54numaddrlen">numaddrlen</a> = <a class="ref" href="../../include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col5 ref" href="#55numaddr" title='numaddr' data-ref="55numaddr">numaddr</a>);</td></tr>
+<tr><th id="368">368</th><td>	<b>if</b> (<a class="local col4 ref" href="#54numaddrlen" title='numaddrlen' data-ref="54numaddrlen">numaddrlen</a> + <var>1</var> &gt; (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col2 ref" href="#52hostlen" title='hostlen' data-ref="52hostlen">hostlen</a>) <i>/* don't forget terminator */</i></td></tr>
+<tr><th id="369">369</th><td>		<b>return</b> <a class="macro" href="../../include/netdb.h.html#150" title="14" data-ref="_M/EAI_OVERFLOW">EAI_OVERFLOW</a>;</td></tr>
+<tr><th id="370">370</th><td>	<a class="ref" href="../../include/string.h.html#strlcpy" title='strlcpy' data-ref="strlcpy">strlcpy</a>(<a class="local col1 ref" href="#51host" title='host' data-ref="51host">host</a>, <a class="local col5 ref" href="#55numaddr" title='numaddr' data-ref="55numaddr">numaddr</a>, <a class="local col2 ref" href="#52hostlen" title='hostlen' data-ref="52hostlen">hostlen</a>);</td></tr>
+<tr><th id="371">371</th><td></td></tr>
+<tr><th id="372">372</th><td>	<b>if</b> (((<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6" title='sockaddr_in6' data-ref="sockaddr_in6">sockaddr_in6</a> *)(<em>const</em> <em>void</em> *)<a class="local col9 ref" href="#49sa" title='sa' data-ref="49sa">sa</a>)-&gt;<a class="ref" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6::sin6_scope_id" title='sockaddr_in6::sin6_scope_id' data-ref="sockaddr_in6::sin6_scope_id">sin6_scope_id</a>) {</td></tr>
+<tr><th id="373">373</th><td>		<em>char</em> <dfn class="local col6 decl" id="56zonebuf" title='zonebuf' data-type='char [256]' data-ref="56zonebuf">zonebuf</dfn>[<a class="macro" href="../include/resolv_private.h.html#74" title="256" data-ref="_M/MAXHOSTNAMELEN">MAXHOSTNAMELEN</a>];</td></tr>
+<tr><th id="374">374</th><td>		<em>int</em> <dfn class="local col7 decl" id="57zonelen" title='zonelen' data-type='int' data-ref="57zonelen">zonelen</dfn>;</td></tr>
+<tr><th id="375">375</th><td></td></tr>
+<tr><th id="376">376</th><td>		<a class="local col7 ref" href="#57zonelen" title='zonelen' data-ref="57zonelen">zonelen</a> = <a class="tu ref" href="#ip6_sa2str" title='ip6_sa2str' data-use='c' data-ref="ip6_sa2str">ip6_sa2str</a>(</td></tr>
+<tr><th id="377">377</th><td>		    (<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6" title='sockaddr_in6' data-ref="sockaddr_in6">sockaddr_in6</a> *)(<em>const</em> <em>void</em> *)<a class="local col9 ref" href="#49sa" title='sa' data-ref="49sa">sa</a>,</td></tr>
+<tr><th id="378">378</th><td>		    <a class="local col6 ref" href="#56zonebuf" title='zonebuf' data-ref="56zonebuf">zonebuf</a>, <b>sizeof</b>(<a class="local col6 ref" href="#56zonebuf" title='zonebuf' data-ref="56zonebuf">zonebuf</a>), <a class="local col3 ref" href="#53flags" title='flags' data-ref="53flags">flags</a>);</td></tr>
+<tr><th id="379">379</th><td>		<b>if</b> (<a class="local col7 ref" href="#57zonelen" title='zonelen' data-ref="57zonelen">zonelen</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="380">380</th><td>			<b>return</b> <a class="macro" href="../../include/netdb.h.html#150" title="14" data-ref="_M/EAI_OVERFLOW">EAI_OVERFLOW</a>;</td></tr>
+<tr><th id="381">381</th><td>		<b>if</b> ((<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="local col7 ref" href="#57zonelen" title='zonelen' data-ref="57zonelen">zonelen</a> + <var>1</var> + <a class="local col4 ref" href="#54numaddrlen" title='numaddrlen' data-ref="54numaddrlen">numaddrlen</a> + <var>1</var> &gt; (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col2 ref" href="#52hostlen" title='hostlen' data-ref="52hostlen">hostlen</a>)</td></tr>
+<tr><th id="382">382</th><td>			<b>return</b> <a class="macro" href="../../include/netdb.h.html#150" title="14" data-ref="_M/EAI_OVERFLOW">EAI_OVERFLOW</a>;</td></tr>
+<tr><th id="383">383</th><td>		<i>/* construct &lt;numeric-addr&gt;&lt;delim&gt;&lt;zoneid&gt; */</i></td></tr>
+<tr><th id="384">384</th><td>		<a class="ref" href="../../include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col1 ref" href="#51host" title='host' data-ref="51host">host</a> + <a class="local col4 ref" href="#54numaddrlen" title='numaddrlen' data-ref="54numaddrlen">numaddrlen</a> + <var>1</var>, <a class="local col6 ref" href="#56zonebuf" title='zonebuf' data-ref="56zonebuf">zonebuf</a>,</td></tr>
+<tr><th id="385">385</th><td>		    (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col7 ref" href="#57zonelen" title='zonelen' data-ref="57zonelen">zonelen</a>);</td></tr>
+<tr><th id="386">386</th><td>		<a class="local col1 ref" href="#51host" title='host' data-ref="51host">host</a>[<a class="local col4 ref" href="#54numaddrlen" title='numaddrlen' data-ref="54numaddrlen">numaddrlen</a>] = <a class="macro" href="../../include/netdb.h.html#193" title="&apos;%&apos;" data-ref="_M/SCOPE_DELIMITER">SCOPE_DELIMITER</a>;</td></tr>
+<tr><th id="387">387</th><td>		<a class="local col1 ref" href="#51host" title='host' data-ref="51host">host</a>[<a class="local col4 ref" href="#54numaddrlen" title='numaddrlen' data-ref="54numaddrlen">numaddrlen</a> + <var>1</var> + <a class="local col7 ref" href="#57zonelen" title='zonelen' data-ref="57zonelen">zonelen</a>] = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="388">388</th><td>	}</td></tr>
+<tr><th id="389">389</th><td></td></tr>
+<tr><th id="390">390</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="391">391</th><td>}</td></tr>
+<tr><th id="392">392</th><td></td></tr>
+<tr><th id="393">393</th><td><i  data-doc="ip6_sa2str">/* ARGSUSED */</i></td></tr>
+<tr><th id="394">394</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="395">395</th><td><dfn class="tu decl def" id="ip6_sa2str" title='ip6_sa2str' data-type='int ip6_sa2str(const struct sockaddr_in6 * sa6, char * buf, size_t bufsiz, int flags)' data-ref="ip6_sa2str">ip6_sa2str</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6" title='sockaddr_in6' data-ref="sockaddr_in6">sockaddr_in6</a> *<dfn class="local col8 decl" id="58sa6" title='sa6' data-type='const struct sockaddr_in6 *' data-ref="58sa6">sa6</dfn>, <em>char</em> *<dfn class="local col9 decl" id="59buf" title='buf' data-type='char *' data-ref="59buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="60bufsiz" title='bufsiz' data-type='size_t' data-ref="60bufsiz">bufsiz</dfn>, <em>int</em> <dfn class="local col1 decl" id="61flags" title='flags' data-type='int' data-ref="61flags">flags</dfn>)</td></tr>
+<tr><th id="396">396</th><td>{</td></tr>
+<tr><th id="397">397</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col2 decl" id="62ifindex" title='ifindex' data-type='unsigned int' data-ref="62ifindex">ifindex</dfn>;</td></tr>
+<tr><th id="398">398</th><td>	<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/in6.h.html#in6_addr" title='in6_addr' data-ref="in6_addr">in6_addr</a> *<dfn class="local col3 decl" id="63a6" title='a6' data-type='const struct in6_addr *' data-ref="63a6">a6</dfn>;</td></tr>
+<tr><th id="399">399</th><td>	<em>int</em> <dfn class="local col4 decl" id="64n" title='n' data-type='int' data-ref="64n">n</dfn>;</td></tr>
+<tr><th id="400">400</th><td></td></tr>
+<tr><th id="401">401</th><td>	<a class="macro" href="../../include/assert.h.html#51" title="((void)0)" data-ref="_M/assert">assert</a>(sa6 != NULL);</td></tr>
+<tr><th id="402">402</th><td>	<a class="macro" href="../../include/assert.h.html#51" title="((void)0)" data-ref="_M/assert">assert</a>(buf != NULL);</td></tr>
+<tr><th id="403">403</th><td></td></tr>
+<tr><th id="404">404</th><td>	<a class="local col2 ref" href="#62ifindex" title='ifindex' data-ref="62ifindex">ifindex</a> = (<em>unsigned</em> <em>int</em>)<a class="local col8 ref" href="#58sa6" title='sa6' data-ref="58sa6">sa6</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6::sin6_scope_id" title='sockaddr_in6::sin6_scope_id' data-ref="sockaddr_in6::sin6_scope_id">sin6_scope_id</a>;</td></tr>
+<tr><th id="405">405</th><td>	<a class="local col3 ref" href="#63a6" title='a6' data-ref="63a6">a6</a> = &amp;<a class="local col8 ref" href="#58sa6" title='sa6' data-ref="58sa6">sa6</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6::sin6_addr" title='sockaddr_in6::sin6_addr' data-ref="sockaddr_in6::sin6_addr">sin6_addr</a>;</td></tr>
+<tr><th id="406">406</th><td></td></tr>
+<tr><th id="407">407</th><td><u>#<span data-ppcond="407">ifdef</span> <span class="macro" data-ref="_M/NI_NUMERICSCOPE">NI_NUMERICSCOPE</span></u></td></tr>
+<tr><th id="408">408</th><td>	<b>if</b> ((flags &amp; NI_NUMERICSCOPE) != <var>0</var>) {</td></tr>
+<tr><th id="409">409</th><td>		n = snprintf(buf, bufsiz, <q>"%u"</q>, sa6-&gt;sin6_scope_id);</td></tr>
+<tr><th id="410">410</th><td>		<b>if</b> (n &lt; <var>0</var> || n &gt;= bufsiz)</td></tr>
+<tr><th id="411">411</th><td>			<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="412">412</th><td>		<b>else</b></td></tr>
+<tr><th id="413">413</th><td>			<b>return</b> n;</td></tr>
+<tr><th id="414">414</th><td>	}</td></tr>
+<tr><th id="415">415</th><td><u>#<span data-ppcond="407">endif</span></u></td></tr>
+<tr><th id="416">416</th><td></td></tr>
+<tr><th id="417">417</th><td>	<i>/* if_indextoname() does not take buffer size.  not a good api... */</i></td></tr>
+<tr><th id="418">418</th><td>	<b>if</b> ((<a class="macro" href="../../include/netinet/in6.h.html#60" title="((((const uint8_t*)(a6))[0] == 0xfe) &amp;&amp; ((((const uint8_t*)(a6))[1] &amp; 0xc0) == 0x80))" data-ref="_M/IN6_IS_ADDR_LINKLOCAL">IN6_IS_ADDR_LINKLOCAL</a>(<a class="local col3 ref" href="#63a6" title='a6' data-ref="63a6">a6</a>) || <a class="macro" href="../../include/netinet/in6.h.html#81" title="((((const uint8_t*)(a6))[0] == 0xff) &amp;&amp; ((((const uint8_t*)(a6))[1] &amp; 0x0f) == 0x02))" data-ref="_M/IN6_IS_ADDR_MC_LINKLOCAL">IN6_IS_ADDR_MC_LINKLOCAL</a>(<a class="local col3 ref" href="#63a6" title='a6' data-ref="63a6">a6</a>)) &amp;&amp;</td></tr>
+<tr><th id="419">419</th><td>	    <a class="local col0 ref" href="#60bufsiz" title='bufsiz' data-ref="60bufsiz">bufsiz</a> &gt;= <a class="macro" href="../../include/net/if.h.html#37" title="16" data-ref="_M/IF_NAMESIZE">IF_NAMESIZE</a>) {</td></tr>
+<tr><th id="420">420</th><td>		<em>char</em> *<dfn class="local col5 decl" id="65p" title='p' data-type='char *' data-ref="65p">p</dfn> = <a class="ref" href="../../include/net/if.h.html#if_indextoname" title='if_indextoname' data-ref="if_indextoname">if_indextoname</a>(<a class="local col2 ref" href="#62ifindex" title='ifindex' data-ref="62ifindex">ifindex</a>, <a class="local col9 ref" href="#59buf" title='buf' data-ref="59buf">buf</a>);</td></tr>
+<tr><th id="421">421</th><td>		<b>if</b> (<a class="local col5 ref" href="#65p" title='p' data-ref="65p">p</a>) {</td></tr>
+<tr><th id="422">422</th><td>			<b>return</b>(<a class="ref" href="../../include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col5 ref" href="#65p" title='p' data-ref="65p">p</a>));</td></tr>
+<tr><th id="423">423</th><td>		}</td></tr>
+<tr><th id="424">424</th><td>	}</td></tr>
+<tr><th id="425">425</th><td></td></tr>
+<tr><th id="426">426</th><td>	<i>/* last resort */</i></td></tr>
+<tr><th id="427">427</th><td>	<a class="local col4 ref" href="#64n" title='n' data-ref="64n">n</a> = <a class="macro" href="../../include/stdio.h.html#320" title="__builtin___snprintf_chk(buf, bufsiz, 0, __builtin_object_size((buf), 1), &quot;%u&quot;, sa6-&gt;sin6_scope_id)" data-ref="_M/snprintf">snprintf</a>(<a class="local col9 ref" href="#59buf" title='buf' data-ref="59buf">buf</a>, <a class="local col0 ref" href="#60bufsiz" title='bufsiz' data-ref="60bufsiz">bufsiz</a>, <q>"%u"</q>, <a class="local col8 ref" href="#58sa6" title='sa6' data-ref="58sa6">sa6</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/in6.h.html#sockaddr_in6::sin6_scope_id" title='sockaddr_in6::sin6_scope_id' data-ref="sockaddr_in6::sin6_scope_id">sin6_scope_id</a>);</td></tr>
+<tr><th id="428">428</th><td>	<b>if</b> (<a class="local col4 ref" href="#64n" title='n' data-ref="64n">n</a> &lt; <var>0</var> || (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="local col4 ref" href="#64n" title='n' data-ref="64n">n</a> &gt;= <a class="local col0 ref" href="#60bufsiz" title='bufsiz' data-ref="60bufsiz">bufsiz</a>)</td></tr>
+<tr><th id="429">429</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="430">430</th><td>	<b>else</b></td></tr>
+<tr><th id="431">431</th><td>		<b>return</b> <a class="local col4 ref" href="#64n" title='n' data-ref="64n">n</a>;</td></tr>
+<tr><th id="432">432</th><td>}</td></tr>
+<tr><th id="433">433</th><td><u>#<span data-ppcond="352">endif</span> /* INET6 */</u></td></tr>
+<tr><th id="434">434</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

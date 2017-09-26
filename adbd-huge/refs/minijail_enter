@@ -1,0 +1,13 @@
+<dec f='codebrowser/external/minijail/libminijail.h' l='163' type='void minijail_enter(const struct minijail * j)'/>
+<def f='codebrowser/external/minijail/libminijail.c' l='1382' ll='1526' type='void minijail_enter(const struct minijail * j)'/>
+<use f='codebrowser/external/minijail/libminijail.c' l='1991' u='c' c='minijail_run_internal'/>
+<doc f='codebrowser/external/minijail/libminijail.h' l='155'>/*
+ * Lock this process into the given minijail. Note that this procedure cannot fail,
+ * since there is no way to undo privilege-dropping; therefore, if any part of
+ * the privilege-drop fails, minijail_enter() will abort the entire process.
+ *
+ * Some restrictions cannot be enabled this way (pid namespaces) and attempting
+ * to do so will cause an abort.
+ */</doc>
+<use f='codebrowser/system/core/adb/daemon/main.cpp' l='130' u='c' c='_ZL15drop_privilegesi'/>
+<use f='codebrowser/system/core/adb/daemon/main.cpp' l='135' u='c' c='_ZL15drop_privilegesi'/>

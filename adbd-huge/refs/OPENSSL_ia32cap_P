@@ -1,0 +1,39 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/cpu.h' l='93' type='uint32_t [4]'/>
+<doc f='codebrowser/external/boringssl/src/include/openssl/cpu.h' l='75'>/* OPENSSL_ia32cap_P contains the Intel CPUID bits when running on an x86 or
+ * x86-64 system.
+ *
+ *   Index 0:
+ *     EDX for CPUID where EAX = 1
+ *     Bit 20 is always zero
+ *     Bit 28 is adjusted to reflect whether the data cache is shared between
+ *       multiple logical cores
+ *     Bit 30 is used to indicate an Intel CPU
+ *   Index 1:
+ *     ECX for CPUID where EAX = 1
+ *     Bit 11 is used to indicate AMD XOP support, not SDBG
+ *   Index 2:
+ *     EBX for CPUID where EAX = 7
+ *   Index 3 is set to zero.
+ *
+ * Note: the CPUID bits are pre-adjusted for the OSXSAVE bit and the YMM and XMM
+ * bits in XCR0, so it is not necessary to check those. */</doc>
+<use f='codebrowser/external/boringssl/src/crypto/cipher/e_aes.c' l='101' u='r' c='vpaes_capable'/>
+<use f='codebrowser/external/boringssl/src/crypto/cipher/e_aes.c' l='828' u='r' c='aesni_capable'/>
+<use f='codebrowser/external/boringssl/src/crypto/cpu-intel.c' l='233' u='w' c='OPENSSL_cpuid_setup'/>
+<use f='codebrowser/external/boringssl/src/crypto/cpu-intel.c' l='234' u='w' c='OPENSSL_cpuid_setup'/>
+<use f='codebrowser/external/boringssl/src/crypto/cpu-intel.c' l='235' u='w' c='OPENSSL_cpuid_setup'/>
+<use f='codebrowser/external/boringssl/src/crypto/cpu-intel.c' l='236' u='w' c='OPENSSL_cpuid_setup'/>
+<use f='codebrowser/external/boringssl/src/crypto/cpu-intel.c' l='254' u='a' c='OPENSSL_cpuid_setup'/>
+<use f='codebrowser/external/boringssl/src/crypto/cpu-intel.c' l='257' u='a' c='OPENSSL_cpuid_setup'/>
+<def f='codebrowser/external/boringssl/src/crypto/crypto.c' l='57' type='uint32_t [4]'/>
+<doc f='codebrowser/external/boringssl/src/crypto/crypto.c' l='50'>/* This value must be explicitly initialised to zero in order to work around a
+ * bug in libtool or the linker on OS X.
+ *
+ * If not initialised then it becomes a &quot;common symbol&quot;. When put into an
+ * archive, linking on OS X will fail to resolve common symbols. By
+ * initialising it to zero, it becomes a &quot;data symbol&quot;, which isn&apos;t so
+ * affected. */</doc>
+<use f='codebrowser/external/boringssl/src/crypto/modes/gcm.c' l='448' u='r' c='CRYPTO_gcm128_init'/>
+<use f='codebrowser/external/boringssl/src/crypto/modes/gcm.c' l='1246' u='r' c='crypto_gcm_clmul_enabled'/>
+<use f='codebrowser/external/boringssl/src/crypto/modes/gcm.c' l='1247' u='r' c='crypto_gcm_clmul_enabled'/>
+<use f='codebrowser/external/boringssl/src/crypto/rand/rand.c' l='82' u='r' c='have_rdrand'/>

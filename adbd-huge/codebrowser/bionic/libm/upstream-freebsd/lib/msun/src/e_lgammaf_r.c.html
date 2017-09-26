@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>e_lgammaf_r.c source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/e_lgammaf_r.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/e_lgammaf_r.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>src</a>/<a href='e_lgammaf_r.c.html'>e_lgammaf_r.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* e_lgammaf_r.c -- float version of e_lgamma_r.c.</i></td></tr>
+<tr><th id="2">2</th><td><i> * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.</i></td></tr>
+<tr><th id="3">3</th><td><i> * Conversion to float fixed By Steven G. Kargl.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><i>/*</i></td></tr>
+<tr><th id="7">7</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="8">8</th><td><i> * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.</i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Developed at SunPro, a Sun Microsystems, Inc. business.</i></td></tr>
+<tr><th id="11">11</th><td><i> * Permission to use, copy, modify, and distribute this</i></td></tr>
+<tr><th id="12">12</th><td><i> * software is freely granted, provided that this notice</i></td></tr>
+<tr><th id="13">13</th><td><i> * is preserved.</i></td></tr>
+<tr><th id="14">14</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD$"</q>);</td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../../../libc/include/math.h.html">"math.h"</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="math_private.h.html">"math_private.h"</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><em>static</em> <em>const</em> <em>volatile</em> <em>float</em> <dfn class="tu decl def" id="vzero" title='vzero' data-type='const volatile float' data-ref="vzero">vzero</dfn> = <var>0</var>;</td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><em>static</em> <em>const</em> <em>float</em></td></tr>
+<tr><th id="26">26</th><td><dfn class="tu decl def" id="zero" title='zero' data-type='const float' data-ref="zero">zero</dfn>=  <var>0</var>,</td></tr>
+<tr><th id="27">27</th><td><dfn class="tu decl def" id="half" title='half' data-type='const float' data-ref="half">half</dfn>=  <var>0.5</var>,</td></tr>
+<tr><th id="28">28</th><td><dfn class="tu decl def" id="one" title='one' data-type='const float' data-ref="one">one</dfn> =  <var>1</var>,</td></tr>
+<tr><th id="29">29</th><td><dfn class="tu decl def" id="pi" title='pi' data-type='const float' data-ref="pi">pi</dfn>  =  <var>3.1415927410e+00</var>, <i>/* 0x40490fdb */</i></td></tr>
+<tr><th id="30">30</th><td><i>/*</i></td></tr>
+<tr><th id="31">31</th><td><i> * Domain y in [0x1p-27, 0.27], range ~[-3.4599e-10, 3.4590e-10]:</i></td></tr>
+<tr><th id="32">32</th><td><i> * |(lgamma(2 - y) + 0.5 * y) / y - a(y)| &lt; 2**-31.4</i></td></tr>
+<tr><th id="33">33</th><td><i> */</i></td></tr>
+<tr><th id="34">34</th><td><dfn class="tu decl def" id="a0" title='a0' data-type='const float' data-ref="a0">a0</dfn>  =  <var>7.72156641e-02</var>, <i>/* 0x3d9e233f */</i></td></tr>
+<tr><th id="35">35</th><td><dfn class="tu decl def" id="a1" title='a1' data-type='const float' data-ref="a1">a1</dfn>  =  <var>3.22467119e-01</var>, <i>/* 0x3ea51a69 */</i></td></tr>
+<tr><th id="36">36</th><td><dfn class="tu decl def" id="a2" title='a2' data-type='const float' data-ref="a2">a2</dfn>  =  <var>6.73484802e-02</var>, <i>/* 0x3d89ee00 */</i></td></tr>
+<tr><th id="37">37</th><td><dfn class="tu decl def" id="a3" title='a3' data-type='const float' data-ref="a3">a3</dfn>  =  <var>2.06395667e-02</var>, <i>/* 0x3ca9144f */</i></td></tr>
+<tr><th id="38">38</th><td><dfn class="tu decl def" id="a4" title='a4' data-type='const float' data-ref="a4">a4</dfn>  =  <var>6.98275631e-03</var>, <i>/* 0x3be4cf9b */</i></td></tr>
+<tr><th id="39">39</th><td><dfn class="tu decl def" id="a5" title='a5' data-type='const float' data-ref="a5">a5</dfn>  =  <var>4.11768444e-03</var>, <i>/* 0x3b86eda4 */</i></td></tr>
+<tr><th id="40">40</th><td><i>/*</i></td></tr>
+<tr><th id="41">41</th><td><i> * Domain x in [tc-0.24, tc+0.28], range ~[-5.6577e-10, 5.5677e-10]:</i></td></tr>
+<tr><th id="42">42</th><td><i> * |(lgamma(x) - tf) - t(x - tc)| &lt; 2**-30.8.</i></td></tr>
+<tr><th id="43">43</th><td><i> */</i></td></tr>
+<tr><th id="44">44</th><td><dfn class="tu decl def" id="tc" title='tc' data-type='const float' data-ref="tc">tc</dfn>  =  <var>1.46163213e+00</var>, <i>/* 0x3fbb16c3 */</i></td></tr>
+<tr><th id="45">45</th><td><dfn class="tu decl def" id="tf" title='tf' data-type='const float' data-ref="tf">tf</dfn>  = -<var>1.21486291e-01</var>, <i>/* 0xbdf8cdce */</i></td></tr>
+<tr><th id="46">46</th><td><dfn class="tu decl def" id="t0" title='t0' data-type='const float' data-ref="t0">t0</dfn>  = -<var>2.94064460e-11</var>, <i>/* 0xae0154b7 */</i></td></tr>
+<tr><th id="47">47</th><td><dfn class="tu decl def" id="t1" title='t1' data-type='const float' data-ref="t1">t1</dfn>  = -<var>2.35939837e-08</var>, <i>/* 0xb2caabb8 */</i></td></tr>
+<tr><th id="48">48</th><td><dfn class="tu decl def" id="t2" title='t2' data-type='const float' data-ref="t2">t2</dfn>  =  <var>4.83836412e-01</var>, <i>/* 0x3ef7b968 */</i></td></tr>
+<tr><th id="49">49</th><td><dfn class="tu decl def" id="t3" title='t3' data-type='const float' data-ref="t3">t3</dfn>  = -<var>1.47586212e-01</var>, <i>/* 0xbe1720d7 */</i></td></tr>
+<tr><th id="50">50</th><td><dfn class="tu decl def" id="t4" title='t4' data-type='const float' data-ref="t4">t4</dfn>  =  <var>6.46013096e-02</var>, <i>/* 0x3d844db1 */</i></td></tr>
+<tr><th id="51">51</th><td><dfn class="tu decl def" id="t5" title='t5' data-type='const float' data-ref="t5">t5</dfn>  = -<var>3.28450352e-02</var>, <i>/* 0xbd068884 */</i></td></tr>
+<tr><th id="52">52</th><td><dfn class="tu decl def" id="t6" title='t6' data-type='const float' data-ref="t6">t6</dfn>  =  <var>1.86483748e-02</var>, <i>/* 0x3c98c47a */</i></td></tr>
+<tr><th id="53">53</th><td><dfn class="tu decl def" id="t7" title='t7' data-type='const float' data-ref="t7">t7</dfn>  = -<var>9.89206228e-03</var>, <i>/* 0xbc221251 */</i></td></tr>
+<tr><th id="54">54</th><td><i>/*</i></td></tr>
+<tr><th id="55">55</th><td><i> * Domain y in [-0.1, 0.232], range ~[-8.4931e-10, 8.7794e-10]:</i></td></tr>
+<tr><th id="56">56</th><td><i> * |(lgamma(1 + y) + 0.5 * y) / y - u(y) / v(y)| &lt; 2**-31.2</i></td></tr>
+<tr><th id="57">57</th><td><i> */</i></td></tr>
+<tr><th id="58">58</th><td><dfn class="tu decl def" id="u0" title='u0' data-type='const float' data-ref="u0">u0</dfn>  = -<var>7.72156641e-02</var>, <i>/* 0xbd9e233f */</i></td></tr>
+<tr><th id="59">59</th><td><dfn class="tu decl def" id="u1" title='u1' data-type='const float' data-ref="u1">u1</dfn>  =  <var>7.36789703e-01</var>, <i>/* 0x3f3c9e40 */</i></td></tr>
+<tr><th id="60">60</th><td><dfn class="tu decl def" id="u2" title='u2' data-type='const float' data-ref="u2">u2</dfn>  =  <var>4.95649040e-01</var>, <i>/* 0x3efdc5b6 */</i></td></tr>
+<tr><th id="61">61</th><td><dfn class="tu decl def" id="v1" title='v1' data-type='const float' data-ref="v1">v1</dfn>  =  <var>1.10958421e+00</var>, <i>/* 0x3f8e06db */</i></td></tr>
+<tr><th id="62">62</th><td><dfn class="tu decl def" id="v2" title='v2' data-type='const float' data-ref="v2">v2</dfn>  =  <var>2.10598111e-01</var>, <i>/* 0x3e57a708 */</i></td></tr>
+<tr><th id="63">63</th><td><dfn class="tu decl def" id="v3" title='v3' data-type='const float' data-ref="v3">v3</dfn>  = -<var>1.02995494e-02</var>, <i>/* 0xbc28bf71 */</i></td></tr>
+<tr><th id="64">64</th><td><i>/*</i></td></tr>
+<tr><th id="65">65</th><td><i> * Domain x in (2, 3], range ~[-5.5189e-11, 5.2317e-11]:</i></td></tr>
+<tr><th id="66">66</th><td><i> * |(lgamma(y+2) - 0.5 * y) / y - s(y)/r(y)| &lt; 2**-35.0</i></td></tr>
+<tr><th id="67">67</th><td><i> * with y = x - 2.</i></td></tr>
+<tr><th id="68">68</th><td><i> */</i></td></tr>
+<tr><th id="69">69</th><td><dfn class="tu decl def" id="s0" title='s0' data-type='const float' data-ref="s0">s0</dfn> = -<var>7.72156641e-02</var>, <i>/* 0xbd9e233f */</i></td></tr>
+<tr><th id="70">70</th><td><dfn class="tu decl def" id="s1" title='s1' data-type='const float' data-ref="s1">s1</dfn> =  <var>2.69987404e-01</var>, <i>/* 0x3e8a3bca */</i></td></tr>
+<tr><th id="71">71</th><td><dfn class="tu decl def" id="s2" title='s2' data-type='const float' data-ref="s2">s2</dfn> =  <var>1.42851010e-01</var>, <i>/* 0x3e124789 */</i></td></tr>
+<tr><th id="72">72</th><td><dfn class="tu decl def" id="s3" title='s3' data-type='const float' data-ref="s3">s3</dfn> =  <var>1.19389519e-02</var>, <i>/* 0x3c439b98 */</i></td></tr>
+<tr><th id="73">73</th><td><dfn class="tu decl def" id="r1" title='r1' data-type='const float' data-ref="r1">r1</dfn> =  <var>6.79650068e-01</var>, <i>/* 0x3f2dfd8c */</i></td></tr>
+<tr><th id="74">74</th><td><dfn class="tu decl def" id="r2" title='r2' data-type='const float' data-ref="r2">r2</dfn> =  <var>1.16058730e-01</var>, <i>/* 0x3dedb033 */</i></td></tr>
+<tr><th id="75">75</th><td><dfn class="tu decl def" id="r3" title='r3' data-type='const float' data-ref="r3">r3</dfn> =  <var>3.75673687e-03</var>, <i>/* 0x3b763396 */</i></td></tr>
+<tr><th id="76">76</th><td><i>/*</i></td></tr>
+<tr><th id="77">77</th><td><i> * Domain z in [8, 0x1p24], range ~[-1.2640e-09, 1.2640e-09]:</i></td></tr>
+<tr><th id="78">78</th><td><i> * |lgamma(x) - (x - 0.5) * (log(x) - 1) - w(1/x)| &lt; 2**-29.6.</i></td></tr>
+<tr><th id="79">79</th><td><i> */</i></td></tr>
+<tr><th id="80">80</th><td><dfn class="tu decl def" id="w0" title='w0' data-type='const float' data-ref="w0">w0</dfn> =  <var>4.18938547e-01</var>, <i>/* 0x3ed67f1d */</i></td></tr>
+<tr><th id="81">81</th><td><dfn class="tu decl def" id="w1" title='w1' data-type='const float' data-ref="w1">w1</dfn> =  <var>8.33332464e-02</var>, <i>/* 0x3daaaa9f */</i></td></tr>
+<tr><th id="82">82</th><td><dfn class="tu decl def" id="w2" title='w2' data-type='const float' data-ref="w2">w2</dfn> = -<var>2.76129087e-03</var>; <i>/* 0xbb34f6c6 */</i></td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><em>static</em> <em>float</em></td></tr>
+<tr><th id="85">85</th><td><dfn class="tu decl def" id="sin_pif" title='sin_pif' data-type='float sin_pif(float x)' data-ref="sin_pif">sin_pif</dfn>(<em>float</em> <dfn class="local col1 decl" id="1x" title='x' data-type='float' data-ref="1x">x</dfn>)</td></tr>
+<tr><th id="86">86</th><td>{</td></tr>
+<tr><th id="87">87</th><td>	<em>volatile</em> <em>float</em> <dfn class="local col2 decl" id="2vz" title='vz' data-type='volatile float' data-ref="2vz">vz</dfn>;</td></tr>
+<tr><th id="88">88</th><td>	<em>float</em> <dfn class="local col3 decl" id="3y" title='y' data-type='float' data-ref="3y">y</dfn>,<dfn class="local col4 decl" id="4z" title='z' data-type='float' data-ref="4z">z</dfn>;</td></tr>
+<tr><th id="89">89</th><td>	<em>int</em> <dfn class="local col5 decl" id="5n" title='n' data-type='int' data-ref="5n">n</dfn>;</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td>	<a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a> = -<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td>	<a class="local col2 ref" href="#2vz" title='vz' data-ref="2vz">vz</a> = <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>+<var>0x1p23F</var>;			<i>/* depend on 0 &lt;= y &lt; 0x1p23 */</i></td></tr>
+<tr><th id="94">94</th><td>	<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> = <a class="local col2 ref" href="#2vz" title='vz' data-ref="2vz">vz</a>-<var>0x1p23F</var>;			<i>/* rintf(y) for the above range */</i></td></tr>
+<tr><th id="95">95</th><td>	<b>if</b> (<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> == <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>)</td></tr>
+<tr><th id="96">96</th><td>	    <b>return</b> <a class="tu ref" href="#zero" title='zero' data-use='r' data-ref="zero">zero</a>;</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td>	<a class="local col2 ref" href="#2vz" title='vz' data-ref="2vz">vz</a> = <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>+<var>0x1p21F</var>;</td></tr>
+<tr><th id="99">99</th><td>	<a class="macro" href="math_private.h.html#175" title="do { ieee_float_shape_type gf_u; gf_u.value = (vz); (n) = gf_u.word; } while (0)" data-ref="_M/GET_FLOAT_WORD">GET_FLOAT_WORD</a>(<a class="local col5 ref" href="#5n" title='n' data-ref="5n">n</a>,<a class="local col2 ref" href="#2vz" title='vz' data-ref="2vz">vz</a>);		<i>/* bits for rounded y (units 0.25) */</i></td></tr>
+<tr><th id="100">100</th><td>	<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> = <a class="local col2 ref" href="#2vz" title='vz' data-ref="2vz">vz</a>-<var>0x1p21F</var>;			<i>/* y rounded to a multiple of 0.25 */</i></td></tr>
+<tr><th id="101">101</th><td>	<b>if</b> (<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> &gt; <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>) {</td></tr>
+<tr><th id="102">102</th><td>	    <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> -= <var>0.25F</var>;			<i>/* adjust to round down */</i></td></tr>
+<tr><th id="103">103</th><td>	    <a class="local col5 ref" href="#5n" title='n' data-ref="5n">n</a>--;</td></tr>
+<tr><th id="104">104</th><td>	}</td></tr>
+<tr><th id="105">105</th><td>	<a class="local col5 ref" href="#5n" title='n' data-ref="5n">n</a> &amp;= <var>7</var>;				<i>/* octant of y mod 2 */</i></td></tr>
+<tr><th id="106">106</th><td>	<a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a> = <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a> - <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> + <a class="local col5 ref" href="#5n" title='n' data-ref="5n">n</a> * <var>0.25F</var>;		<i>/* y mod 2 */</i></td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td>	<b>switch</b> (<a class="local col5 ref" href="#5n" title='n' data-ref="5n">n</a>) {</td></tr>
+<tr><th id="109">109</th><td>	    <b>case</b> <var>0</var>:   <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a> =  <a class="ref" href="math_private.h.html#__kernel_sindf" title='__kernel_sindf' data-ref="__kernel_sindf">__kernel_sindf</a>(<a class="tu ref" href="#pi" title='pi' data-use='r' data-ref="pi">pi</a>*<a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>); <b>break</b>;</td></tr>
+<tr><th id="110">110</th><td>	    <b>case</b> <var>1</var>:</td></tr>
+<tr><th id="111">111</th><td>	    <b>case</b> <var>2</var>:   <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a> =  <a class="ref" href="math_private.h.html#__kernel_cosdf" title='__kernel_cosdf' data-ref="__kernel_cosdf">__kernel_cosdf</a>(<a class="tu ref" href="#pi" title='pi' data-use='r' data-ref="pi">pi</a>*((<em>float</em>)<var>0.5</var>-<a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>)); <b>break</b>;</td></tr>
+<tr><th id="112">112</th><td>	    <b>case</b> <var>3</var>:</td></tr>
+<tr><th id="113">113</th><td>	    <b>case</b> <var>4</var>:   <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a> =  <a class="ref" href="math_private.h.html#__kernel_sindf" title='__kernel_sindf' data-ref="__kernel_sindf">__kernel_sindf</a>(<a class="tu ref" href="#pi" title='pi' data-use='r' data-ref="pi">pi</a>*(<a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>-<a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>)); <b>break</b>;</td></tr>
+<tr><th id="114">114</th><td>	    <b>case</b> <var>5</var>:</td></tr>
+<tr><th id="115">115</th><td>	    <b>case</b> <var>6</var>:   <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a> = -<a class="ref" href="math_private.h.html#__kernel_cosdf" title='__kernel_cosdf' data-ref="__kernel_cosdf">__kernel_cosdf</a>(<a class="tu ref" href="#pi" title='pi' data-use='r' data-ref="pi">pi</a>*(<a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>-(<em>float</em>)<var>1.5</var>)); <b>break</b>;</td></tr>
+<tr><th id="116">116</th><td>	    <b>default</b>:  <a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a> =  <a class="ref" href="math_private.h.html#__kernel_sindf" title='__kernel_sindf' data-ref="__kernel_sindf">__kernel_sindf</a>(<a class="tu ref" href="#pi" title='pi' data-use='r' data-ref="pi">pi</a>*(<a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>-(<em>float</em>)<var>2.0</var>)); <b>break</b>;</td></tr>
+<tr><th id="117">117</th><td>	    }</td></tr>
+<tr><th id="118">118</th><td>	<b>return</b> -<a class="local col3 ref" href="#3y" title='y' data-ref="3y">y</a>;</td></tr>
+<tr><th id="119">119</th><td>}</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td><em>float</em></td></tr>
+<tr><th id="123">123</th><td><a class="macro" href="math_private.h.html#723" title="lgammaf_r" data-ref="_M/__ieee754_lgammaf_r">__ieee754_lgammaf_r</a>(<em>float</em> <dfn class="local col6 decl" id="6x" title='x' data-type='float' data-ref="6x">x</dfn>, <em>int</em> *<dfn class="local col7 decl" id="7signgamp" title='signgamp' data-type='int *' data-ref="7signgamp">signgamp</dfn>)</td></tr>
+<tr><th id="124">124</th><td>{</td></tr>
+<tr><th id="125">125</th><td>	<em>float</em> <dfn class="local col8 decl" id="8nadj" title='nadj' data-type='float' data-ref="8nadj">nadj</dfn>,<dfn class="local col9 decl" id="9p" title='p' data-type='float' data-ref="9p">p</dfn>,<dfn class="local col0 decl" id="10p1" title='p1' data-type='float' data-ref="10p1">p1</dfn>,<dfn class="local col1 decl" id="11p2" title='p2' data-type='float' data-ref="11p2">p2</dfn>,<dfn class="local col2 decl" id="12p3" title='p3' data-type='float' data-ref="12p3">p3</dfn>,<dfn class="local col3 decl" id="13q" title='q' data-type='float' data-ref="13q">q</dfn>,<dfn class="local col4 decl" id="14r" title='r' data-type='float' data-ref="14r">r</dfn>,<dfn class="local col5 decl" id="15t" title='t' data-type='float' data-ref="15t">t</dfn>,<dfn class="local col6 decl" id="16w" title='w' data-type='float' data-ref="16w">w</dfn>,<dfn class="local col7 decl" id="17y" title='y' data-type='float' data-ref="17y">y</dfn>,<dfn class="local col8 decl" id="18z" title='z' data-type='float' data-ref="18z">z</dfn>;</td></tr>
+<tr><th id="126">126</th><td>	<a class="typedef" href="../../../../../libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a> <dfn class="local col9 decl" id="19hx" title='hx' data-type='int32_t' data-ref="19hx">hx</dfn>;</td></tr>
+<tr><th id="127">127</th><td>	<em>int</em> <dfn class="local col0 decl" id="20i" title='i' data-type='int' data-ref="20i">i</dfn>,<dfn class="local col1 decl" id="21ix" title='ix' data-type='int' data-ref="21ix">ix</dfn>;</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td>	<a class="macro" href="math_private.h.html#175" title="do { ieee_float_shape_type gf_u; gf_u.value = (x); (hx) = gf_u.word; } while (0)" data-ref="_M/GET_FLOAT_WORD">GET_FLOAT_WORD</a>(<a class="local col9 ref" href="#19hx" title='hx' data-ref="19hx">hx</a>,<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td>    <i>/* purge +-Inf and NaNs */</i></td></tr>
+<tr><th id="132">132</th><td>	*<a class="local col7 ref" href="#7signgamp" title='signgamp' data-ref="7signgamp">signgamp</a> = <var>1</var>;</td></tr>
+<tr><th id="133">133</th><td>	<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a> = <a class="local col9 ref" href="#19hx" title='hx' data-ref="19hx">hx</a>&amp;<var>0x7fffffff</var>;</td></tr>
+<tr><th id="134">134</th><td>	<b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&gt;=<var>0x7f800000</var>) <b>return</b> <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>*<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>;</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td>    <i>/* purge +-0 and tiny arguments */</i></td></tr>
+<tr><th id="137">137</th><td>	*<a class="local col7 ref" href="#7signgamp" title='signgamp' data-ref="7signgamp">signgamp</a> = <var>1</var>-<var>2</var>*((<a class="typedef" href="../../../../../libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>)<a class="local col9 ref" href="#19hx" title='hx' data-ref="19hx">hx</a>&gt;&gt;<var>31</var>);</td></tr>
+<tr><th id="138">138</th><td>	<b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&lt;<var>0x32000000</var>) {		<i>/* |x|&lt;2**-27, return -log(|x|) */</i></td></tr>
+<tr><th id="139">139</th><td>	    <b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>==<var>0</var>)</td></tr>
+<tr><th id="140">140</th><td>	        <b>return</b> <a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>/<a class="tu ref" href="#vzero" title='vzero' data-use='r' data-ref="vzero">vzero</a>;</td></tr>
+<tr><th id="141">141</th><td>	    <b>return</b> -<a class="macro" href="math_private.h.html#713" title="logf" data-ref="_M/__ieee754_logf">__ieee754_logf</a>(<a class="ref" href="../../../../../libc/include/math.h.html#fabsf" title='fabsf' data-ref="fabsf">fabsf</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>));</td></tr>
+<tr><th id="142">142</th><td>	}</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td>    <i>/* purge negative integers and start evaluation for other x &lt; 0 */</i></td></tr>
+<tr><th id="145">145</th><td>	<b>if</b>(<a class="local col9 ref" href="#19hx" title='hx' data-ref="19hx">hx</a>&lt;<var>0</var>) {</td></tr>
+<tr><th id="146">146</th><td>	    *<a class="local col7 ref" href="#7signgamp" title='signgamp' data-ref="7signgamp">signgamp</a> = <var>1</var>;</td></tr>
+<tr><th id="147">147</th><td>	    <b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&gt;=<var>0x4b000000</var>) 		<i>/* |x|&gt;=2**23, must be -integer */</i></td></tr>
+<tr><th id="148">148</th><td>		<b>return</b> <a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>/<a class="tu ref" href="#vzero" title='vzero' data-use='r' data-ref="vzero">vzero</a>;</td></tr>
+<tr><th id="149">149</th><td>	    <a class="local col5 ref" href="#15t" title='t' data-ref="15t">t</a> = <a class="tu ref" href="#sin_pif" title='sin_pif' data-use='c' data-ref="sin_pif">sin_pif</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="150">150</th><td>	    <b>if</b>(<a class="local col5 ref" href="#15t" title='t' data-ref="15t">t</a>==<a class="tu ref" href="#zero" title='zero' data-use='r' data-ref="zero">zero</a>) <b>return</b> <a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>/<a class="tu ref" href="#vzero" title='vzero' data-use='r' data-ref="vzero">vzero</a>; <i>/* -integer */</i></td></tr>
+<tr><th id="151">151</th><td>	    <a class="local col8 ref" href="#8nadj" title='nadj' data-ref="8nadj">nadj</a> = <a class="macro" href="math_private.h.html#713" title="logf" data-ref="_M/__ieee754_logf">__ieee754_logf</a>(<a class="tu ref" href="#pi" title='pi' data-use='r' data-ref="pi">pi</a>/<a class="ref" href="../../../../../libc/include/math.h.html#fabsf" title='fabsf' data-ref="fabsf">fabsf</a>(<a class="local col5 ref" href="#15t" title='t' data-ref="15t">t</a>*<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>));</td></tr>
+<tr><th id="152">152</th><td>	    <b>if</b>(<a class="local col5 ref" href="#15t" title='t' data-ref="15t">t</a>&lt;<a class="tu ref" href="#zero" title='zero' data-use='r' data-ref="zero">zero</a>) *<a class="local col7 ref" href="#7signgamp" title='signgamp' data-ref="7signgamp">signgamp</a> = -<var>1</var>;</td></tr>
+<tr><th id="153">153</th><td>	    <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a> = -<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>;</td></tr>
+<tr><th id="154">154</th><td>	}</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td>    <i>/* purge 1 and 2 */</i></td></tr>
+<tr><th id="157">157</th><td>	<b>if</b> (<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>==<var>0x3f800000</var>||<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>==<var>0x40000000</var>) <a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> = <var>0</var>;</td></tr>
+<tr><th id="158">158</th><td>    <i>/* for x &lt; 2.0 */</i></td></tr>
+<tr><th id="159">159</th><td>	<b>else</b> <b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&lt;<var>0x40000000</var>) {</td></tr>
+<tr><th id="160">160</th><td>	    <b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&lt;=<var>0x3f666666</var>) { 	<i>/* lgamma(x) = lgamma(x+1)-log(x) */</i></td></tr>
+<tr><th id="161">161</th><td>		<a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> = -<a class="macro" href="math_private.h.html#713" title="logf" data-ref="_M/__ieee754_logf">__ieee754_logf</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="162">162</th><td>		<b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&gt;=<var>0x3f3b4a20</var>) {<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a> = <a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>-<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>; <a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>= <var>0</var>;}</td></tr>
+<tr><th id="163">163</th><td>		<b>else</b> <b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&gt;=<var>0x3e6d3308</var>) {<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>= <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-(<a class="tu ref" href="#tc" title='tc' data-use='r' data-ref="tc">tc</a>-<a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>); <a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>=<var>1</var>;}</td></tr>
+<tr><th id="164">164</th><td>	  	<b>else</b> {<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a> = <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>; <a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>=<var>2</var>;}</td></tr>
+<tr><th id="165">165</th><td>	    } <b>else</b> {</td></tr>
+<tr><th id="166">166</th><td>	  	<a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> = <a class="tu ref" href="#zero" title='zero' data-use='r' data-ref="zero">zero</a>;</td></tr>
+<tr><th id="167">167</th><td>	        <b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&gt;=<var>0x3fdda618</var>) {<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>=<var>2</var>-<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>;<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>=<var>0</var>;} <i>/* [1.7316,2] */</i></td></tr>
+<tr><th id="168">168</th><td>	        <b>else</b> <b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&gt;=<var>0x3F9da620</var>) {<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>=<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-<a class="tu ref" href="#tc" title='tc' data-use='r' data-ref="tc">tc</a>;<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>=<var>1</var>;} <i>/* [1.23,1.73] */</i></td></tr>
+<tr><th id="169">169</th><td>		<b>else</b> {<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>=<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-<a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>;<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>=<var>2</var>;}</td></tr>
+<tr><th id="170">170</th><td>	    }</td></tr>
+<tr><th id="171">171</th><td>	    <b>switch</b>(<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>) {</td></tr>
+<tr><th id="172">172</th><td>	      <b>case</b> <var>0</var>:</td></tr>
+<tr><th id="173">173</th><td>		<a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a> = <a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>;</td></tr>
+<tr><th id="174">174</th><td>		<a class="local col0 ref" href="#10p1" title='p1' data-ref="10p1">p1</a> = <a class="tu ref" href="#a0" title='a0' data-use='r' data-ref="a0">a0</a>+<a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a>*(<a class="tu ref" href="#a2" title='a2' data-use='r' data-ref="a2">a2</a>+<a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a>*<a class="tu ref" href="#a4" title='a4' data-use='r' data-ref="a4">a4</a>);</td></tr>
+<tr><th id="175">175</th><td>		<a class="local col1 ref" href="#11p2" title='p2' data-ref="11p2">p2</a> = <a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a>*(<a class="tu ref" href="#a1" title='a1' data-use='r' data-ref="a1">a1</a>+<a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a>*(<a class="tu ref" href="#a3" title='a3' data-use='r' data-ref="a3">a3</a>+<a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a>*<a class="tu ref" href="#a5" title='a5' data-use='r' data-ref="a5">a5</a>));</td></tr>
+<tr><th id="176">176</th><td>		<a class="local col9 ref" href="#9p" title='p' data-ref="9p">p</a>  = <a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="local col0 ref" href="#10p1" title='p1' data-ref="10p1">p1</a>+<a class="local col1 ref" href="#11p2" title='p2' data-ref="11p2">p2</a>;</td></tr>
+<tr><th id="177">177</th><td>		<a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a>  += <a class="local col9 ref" href="#9p" title='p' data-ref="9p">p</a>-<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>/<var>2</var>; <b>break</b>;</td></tr>
+<tr><th id="178">178</th><td>	      <b>case</b> <var>1</var>:</td></tr>
+<tr><th id="179">179</th><td>		<a class="local col9 ref" href="#9p" title='p' data-ref="9p">p</a> = <a class="tu ref" href="#t0" title='t0' data-use='r' data-ref="t0">t0</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="tu ref" href="#t1" title='t1' data-use='r' data-ref="t1">t1</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#t2" title='t2' data-use='r' data-ref="t2">t2</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#t3" title='t3' data-use='r' data-ref="t3">t3</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#t4" title='t4' data-use='r' data-ref="t4">t4</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#t5" title='t5' data-use='r' data-ref="t5">t5</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#t6" title='t6' data-use='r' data-ref="t6">t6</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="tu ref" href="#t7" title='t7' data-use='r' data-ref="t7">t7</a>)))));</td></tr>
+<tr><th id="180">180</th><td>		<a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> += <a class="tu ref" href="#tf" title='tf' data-use='r' data-ref="tf">tf</a> + <a class="local col9 ref" href="#9p" title='p' data-ref="9p">p</a>; <b>break</b>;</td></tr>
+<tr><th id="181">181</th><td>	      <b>case</b> <var>2</var>:</td></tr>
+<tr><th id="182">182</th><td>		<a class="local col0 ref" href="#10p1" title='p1' data-ref="10p1">p1</a> = <a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#u0" title='u0' data-use='r' data-ref="u0">u0</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#u1" title='u1' data-use='r' data-ref="u1">u1</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="tu ref" href="#u2" title='u2' data-use='r' data-ref="u2">u2</a>));</td></tr>
+<tr><th id="183">183</th><td>		<a class="local col1 ref" href="#11p2" title='p2' data-ref="11p2">p2</a> = <a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#v1" title='v1' data-use='r' data-ref="v1">v1</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#v2" title='v2' data-use='r' data-ref="v2">v2</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="tu ref" href="#v3" title='v3' data-use='r' data-ref="v3">v3</a>));</td></tr>
+<tr><th id="184">184</th><td>		<a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> += <a class="local col0 ref" href="#10p1" title='p1' data-ref="10p1">p1</a>/<a class="local col1 ref" href="#11p2" title='p2' data-ref="11p2">p2</a>-<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>/<var>2</var>;</td></tr>
+<tr><th id="185">185</th><td>	    }</td></tr>
+<tr><th id="186">186</th><td>	}</td></tr>
+<tr><th id="187">187</th><td>    <i>/* x &lt; 8.0 */</i></td></tr>
+<tr><th id="188">188</th><td>	<b>else</b> <b>if</b>(<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a>&lt;<var>0x41000000</var>) {</td></tr>
+<tr><th id="189">189</th><td>	    <a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a> = <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>;</td></tr>
+<tr><th id="190">190</th><td>	    <a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a> = <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>;</td></tr>
+<tr><th id="191">191</th><td>	    <a class="local col9 ref" href="#9p" title='p' data-ref="9p">p</a> = <a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#s0" title='s0' data-use='r' data-ref="s0">s0</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#s1" title='s1' data-use='r' data-ref="s1">s1</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#s2" title='s2' data-use='r' data-ref="s2">s2</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="tu ref" href="#s3" title='s3' data-use='r' data-ref="s3">s3</a>)));</td></tr>
+<tr><th id="192">192</th><td>	    <a class="local col3 ref" href="#13q" title='q' data-ref="13q">q</a> = <a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#r1" title='r1' data-use='r' data-ref="r1">r1</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*(<a class="tu ref" href="#r2" title='r2' data-use='r' data-ref="r2">r2</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="tu ref" href="#r3" title='r3' data-use='r' data-ref="r3">r3</a>));</td></tr>
+<tr><th id="193">193</th><td>	    <a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> = <a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>/<var>2</var>+<a class="local col9 ref" href="#9p" title='p' data-ref="9p">p</a>/<a class="local col3 ref" href="#13q" title='q' data-ref="13q">q</a>;</td></tr>
+<tr><th id="194">194</th><td>	    <a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a> = <a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>;	<i>/* lgamma(1+s) = log(s) + lgamma(s) */</i></td></tr>
+<tr><th id="195">195</th><td>	    <b>switch</b>(<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>) {</td></tr>
+<tr><th id="196">196</th><td>	    <b>case</b> <var>7</var>: <a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a> *= (<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>+<var>6</var>);		<i>/* FALLTHRU */</i></td></tr>
+<tr><th id="197">197</th><td>	    <b>case</b> <var>6</var>: <a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a> *= (<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>+<var>5</var>);		<i>/* FALLTHRU */</i></td></tr>
+<tr><th id="198">198</th><td>	    <b>case</b> <var>5</var>: <a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a> *= (<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>+<var>4</var>);		<i>/* FALLTHRU */</i></td></tr>
+<tr><th id="199">199</th><td>	    <b>case</b> <var>4</var>: <a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a> *= (<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>+<var>3</var>);		<i>/* FALLTHRU */</i></td></tr>
+<tr><th id="200">200</th><td>	    <b>case</b> <var>3</var>: <a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a> *= (<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>+<var>2</var>);		<i>/* FALLTHRU */</i></td></tr>
+<tr><th id="201">201</th><td>		    <a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> += <a class="macro" href="math_private.h.html#713" title="logf" data-ref="_M/__ieee754_logf">__ieee754_logf</a>(<a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a>); <b>break</b>;</td></tr>
+<tr><th id="202">202</th><td>	    }</td></tr>
+<tr><th id="203">203</th><td>    <i>/* 8.0 &lt;= x &lt; 2**27 */</i></td></tr>
+<tr><th id="204">204</th><td>	} <b>else</b> <b>if</b> (<a class="local col1 ref" href="#21ix" title='ix' data-ref="21ix">ix</a> &lt; <var>0x4d000000</var>) {</td></tr>
+<tr><th id="205">205</th><td>	    <a class="local col5 ref" href="#15t" title='t' data-ref="15t">t</a> = <a class="macro" href="math_private.h.html#713" title="logf" data-ref="_M/__ieee754_logf">__ieee754_logf</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="206">206</th><td>	    <a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a> = <a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>/<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>;</td></tr>
+<tr><th id="207">207</th><td>	    <a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a> = <a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a>*<a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a>;</td></tr>
+<tr><th id="208">208</th><td>	    <a class="local col6 ref" href="#16w" title='w' data-ref="16w">w</a> = <a class="tu ref" href="#w0" title='w0' data-use='r' data-ref="w0">w0</a>+<a class="local col8 ref" href="#18z" title='z' data-ref="18z">z</a>*(<a class="tu ref" href="#w1" title='w1' data-use='r' data-ref="w1">w1</a>+<a class="local col7 ref" href="#17y" title='y' data-ref="17y">y</a>*<a class="tu ref" href="#w2" title='w2' data-use='r' data-ref="w2">w2</a>);</td></tr>
+<tr><th id="209">209</th><td>	    <a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> = (<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-<a class="tu ref" href="#half" title='half' data-use='r' data-ref="half">half</a>)*(<a class="local col5 ref" href="#15t" title='t' data-ref="15t">t</a>-<a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>)+<a class="local col6 ref" href="#16w" title='w' data-ref="16w">w</a>;</td></tr>
+<tr><th id="210">210</th><td>	} <b>else</b></td></tr>
+<tr><th id="211">211</th><td>    <i>/* 2**27 &lt;= x &lt;= inf */</i></td></tr>
+<tr><th id="212">212</th><td>	    <a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> =  <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>*(<a class="macro" href="math_private.h.html#713" title="logf" data-ref="_M/__ieee754_logf">__ieee754_logf</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>)-<a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>);</td></tr>
+<tr><th id="213">213</th><td>	<b>if</b>(<a class="local col9 ref" href="#19hx" title='hx' data-ref="19hx">hx</a>&lt;<var>0</var>) <a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a> = <a class="local col8 ref" href="#8nadj" title='nadj' data-ref="8nadj">nadj</a> - <a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a>;</td></tr>
+<tr><th id="214">214</th><td>	<b>return</b> <a class="local col4 ref" href="#14r" title='r' data-ref="14r">r</a>;</td></tr>
+<tr><th id="215">215</th><td>}</td></tr>
+<tr><th id="216">216</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

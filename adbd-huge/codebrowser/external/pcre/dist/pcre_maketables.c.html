@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>pcre_maketables.c source code [codebrowser/external/pcre/dist/pcre_maketables.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/pcre/dist/pcre_maketables.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>pcre</a>/<a href='./'>dist</a>/<a href='pcre_maketables.c.html'>pcre_maketables.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*************************************************</i></td></tr>
+<tr><th id="2">2</th><td><i>*      Perl-Compatible Regular Expressions       *</i></td></tr>
+<tr><th id="3">3</th><td><i>*************************************************/</i></td></tr>
+<tr><th id="4">4</th><td></td></tr>
+<tr><th id="5">5</th><td><i>/* PCRE is a library of functions to support regular expressions whose syntax</i></td></tr>
+<tr><th id="6">6</th><td><i>and semantics are as close as possible to those of the Perl 5 language.</i></td></tr>
+<tr><th id="7">7</th><td><i></i></td></tr>
+<tr><th id="8">8</th><td><i>                       Written by Philip Hazel</i></td></tr>
+<tr><th id="9">9</th><td><i>           Copyright (c) 1997-2012 University of Cambridge</i></td></tr>
+<tr><th id="10">10</th><td><i></i></td></tr>
+<tr><th id="11">11</th><td><i>-----------------------------------------------------------------------------</i></td></tr>
+<tr><th id="12">12</th><td><i>Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="13">13</th><td><i>modification, are permitted provided that the following conditions are met:</i></td></tr>
+<tr><th id="14">14</th><td><i></i></td></tr>
+<tr><th id="15">15</th><td><i>    * Redistributions of source code must retain the above copyright notice,</i></td></tr>
+<tr><th id="16">16</th><td><i>      this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="17">17</th><td><i></i></td></tr>
+<tr><th id="18">18</th><td><i>    * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="19">19</th><td><i>      notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="20">20</th><td><i>      documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="21">21</th><td><i></i></td></tr>
+<tr><th id="22">22</th><td><i>    * Neither the name of the University of Cambridge nor the names of its</i></td></tr>
+<tr><th id="23">23</th><td><i>      contributors may be used to endorse or promote products derived from</i></td></tr>
+<tr><th id="24">24</th><td><i>      this software without specific prior written permission.</i></td></tr>
+<tr><th id="25">25</th><td><i></i></td></tr>
+<tr><th id="26">26</th><td><i>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"</i></td></tr>
+<tr><th id="27">27</th><td><i>AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="28">28</th><td><i>IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="29">29</th><td><i>ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE</i></td></tr>
+<tr><th id="30">30</th><td><i>LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR</i></td></tr>
+<tr><th id="31">31</th><td><i>CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF</i></td></tr>
+<tr><th id="32">32</th><td><i>SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS</i></td></tr>
+<tr><th id="33">33</th><td><i>INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN</i></td></tr>
+<tr><th id="34">34</th><td><i>CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="35">35</th><td><i>ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</i></td></tr>
+<tr><th id="36">36</th><td><i>POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="37">37</th><td><i>-----------------------------------------------------------------------------</i></td></tr>
+<tr><th id="38">38</th><td><i>*/</i></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><i>/* This module contains the external function pcre_maketables(), which builds</i></td></tr>
+<tr><th id="42">42</th><td><i>character tables for PCRE in the current locale. The file is compiled on its</i></td></tr>
+<tr><th id="43">43</th><td><i>own as part of the PCRE library. However, it is also included in the</i></td></tr>
+<tr><th id="44">44</th><td><i>compilation of dftables.c, in which case the macro DFTABLES is defined. */</i></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td><u>#<span data-ppcond="47">ifndef</span> <span class="macro" data-ref="_M/DFTABLES">DFTABLES</span></u></td></tr>
+<tr><th id="48">48</th><td><u>#  <span data-ppcond="48">ifdef</span> <span class="macro" data-ref="_M/HAVE_CONFIG_H">HAVE_CONFIG_H</span></u></td></tr>
+<tr><th id="49">49</th><td><u>#  include <a href="../config.h.html">"config.h"</a></u></td></tr>
+<tr><th id="50">50</th><td><u>#  <span data-ppcond="48">endif</span></u></td></tr>
+<tr><th id="51">51</th><td><u>#  include <a href="pcre_internal.h.html">"pcre_internal.h"</a></u></td></tr>
+<tr><th id="52">52</th><td><u>#<span data-ppcond="47">endif</span></u></td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><i>/*************************************************</i></td></tr>
+<tr><th id="56">56</th><td><i>*           Create PCRE character tables         *</i></td></tr>
+<tr><th id="57">57</th><td><i>*************************************************/</i></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><i>/* This function builds a set of character tables for use by PCRE and returns</i></td></tr>
+<tr><th id="60">60</th><td><i>a pointer to them. They are build using the ctype functions, and consequently</i></td></tr>
+<tr><th id="61">61</th><td><i>their contents will depend upon the current locale setting. When compiled as</i></td></tr>
+<tr><th id="62">62</th><td><i>part of the library, the store is obtained via PUBL(malloc)(), but when</i></td></tr>
+<tr><th id="63">63</th><td><i>compiled inside dftables, use malloc().</i></td></tr>
+<tr><th id="64">64</th><td><i></i></td></tr>
+<tr><th id="65">65</th><td><i>Arguments:   none</i></td></tr>
+<tr><th id="66">66</th><td><i>Returns:     pointer to the contiguous block of data</i></td></tr>
+<tr><th id="67">67</th><td><i>*/</i></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><u>#<span data-ppcond="69">if</span> defined <a class="macro" href="pcre_internal.h.html#58" data-ref="_M/COMPILE_PCRE8">COMPILE_PCRE8</a></u></td></tr>
+<tr><th id="70">70</th><td><em>const</em> <em>unsigned</em> <em>char</em> *</td></tr>
+<tr><th id="71">71</th><td><dfn class="decl def" id="pcre_maketables" title='pcre_maketables' data-ref="pcre_maketables">pcre_maketables</dfn>(<em>void</em>)</td></tr>
+<tr><th id="72">72</th><td><u>#<span data-ppcond="69">elif</span> defined COMPILE_PCRE16</u></td></tr>
+<tr><th id="73">73</th><td><em>const</em> <em>unsigned</em> <em>char</em> *</td></tr>
+<tr><th id="74">74</th><td>pcre16_maketables(<em>void</em>)</td></tr>
+<tr><th id="75">75</th><td><u>#elif defined COMPILE_PCRE32</u></td></tr>
+<tr><th id="76">76</th><td><em>const</em> <em>unsigned</em> <em>char</em> *</td></tr>
+<tr><th id="77">77</th><td>pcre32_maketables(<em>void</em>)</td></tr>
+<tr><th id="78">78</th><td><u>#<span data-ppcond="69">endif</span></u></td></tr>
+<tr><th id="79">79</th><td>{</td></tr>
+<tr><th id="80">80</th><td><em>unsigned</em> <em>char</em> *<dfn class="local col1 decl" id="1yield" title='yield' data-type='unsigned char *' data-ref="1yield">yield</dfn>, *<dfn class="local col2 decl" id="2p" title='p' data-type='unsigned char *' data-ref="2p">p</dfn>;</td></tr>
+<tr><th id="81">81</th><td><em>int</em> <dfn class="local col3 decl" id="3i" title='i' data-type='int' data-ref="3i">i</dfn>;</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><u>#<span data-ppcond="83">ifndef</span> <span class="macro" data-ref="_M/DFTABLES">DFTABLES</span></u></td></tr>
+<tr><th id="84">84</th><td><a class="local col1 ref" href="#1yield" title='yield' data-ref="1yield">yield</a> = (<em>unsigned</em> <em>char</em>*)(<a class="macro" href="pcre_internal.h.html#2621" title="pcre_malloc" data-ref="_M/PUBL">PUBL</a>(malloc))(<a class="macro" href="pcre_internal.h.html#2615" title="((512 + 320) + 256)" data-ref="_M/tables_length">tables_length</a>);</td></tr>
+<tr><th id="85">85</th><td><u>#<span data-ppcond="83">else</span></u></td></tr>
+<tr><th id="86">86</th><td>yield = (<em>unsigned</em> <em>char</em>*)malloc(tables_length);</td></tr>
+<tr><th id="87">87</th><td><u>#<span data-ppcond="83">endif</span></u></td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><b>if</b> (<a class="local col1 ref" href="#1yield" title='yield' data-ref="1yield">yield</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="90">90</th><td><a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a> = <a class="local col1 ref" href="#1yield" title='yield' data-ref="1yield">yield</a>;</td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td><i>/* First comes the lower casing table */</i></td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><b>for</b> (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> = <var>0</var>; <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> &lt; <var>256</var>; <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>++) *<a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>++ = <a class="ref" href="../../../bionic/libc/include/ctype.h.html#tolower" title='tolower' data-ref="tolower">tolower</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>);</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><i>/* Next the case-flipping table */</i></td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><b>for</b> (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> = <var>0</var>; <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> &lt; <var>256</var>; <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>++) *<a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>++ = <a class="ref" href="../../../bionic/libc/include/ctype.h.html#islower" title='islower' data-ref="islower">islower</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)? <a class="ref" href="../../../bionic/libc/include/ctype.h.html#toupper" title='toupper' data-ref="toupper">toupper</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>) : <a class="ref" href="../../../bionic/libc/include/ctype.h.html#tolower" title='tolower' data-ref="tolower">tolower</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>);</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><i>/* Then the character class tables. Don't try to be clever and save effort on</i></td></tr>
+<tr><th id="101">101</th><td><i>exclusive ones - in some locales things may be different.</i></td></tr>
+<tr><th id="102">102</th><td><i></i></td></tr>
+<tr><th id="103">103</th><td><i>Note that the table for "space" includes everything "isspace" gives, including</i></td></tr>
+<tr><th id="104">104</th><td><i>VT in the default locale. This makes it work for the POSIX class [:space:].</i></td></tr>
+<tr><th id="105">105</th><td><i>From release 8.34 is is also correct for Perl space, because Perl added VT at</i></td></tr>
+<tr><th id="106">106</th><td><i>release 5.18.</i></td></tr>
+<tr><th id="107">107</th><td><i></i></td></tr>
+<tr><th id="108">108</th><td><i>Note also that it is possible for a character to be alnum or alpha without</i></td></tr>
+<tr><th id="109">109</th><td><i>being lower or upper, such as "male and female ordinals" (\xAA and \xBA) in the</i></td></tr>
+<tr><th id="110">110</th><td><i>fr_FR locale (at least under Debian Linux's locales as of 12/2005). So we must</i></td></tr>
+<tr><th id="111">111</th><td><i>test for alnum specially. */</i></td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><a class="ref" href="../../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>, <var>0</var>, <a class="macro" href="pcre_internal.h.html#2606" title="320" data-ref="_M/cbit_length">cbit_length</a>);</td></tr>
+<tr><th id="114">114</th><td><b>for</b> (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> = <var>0</var>; <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> &lt; <var>256</var>; <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>++)</td></tr>
+<tr><th id="115">115</th><td>  {</td></tr>
+<tr><th id="116">116</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isdigit" title='isdigit' data-ref="isdigit">isdigit</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2598" title="64" data-ref="_M/cbit_digit">cbit_digit</a>  + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="117">117</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isupper" title='isupper' data-ref="isupper">isupper</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2599" title="96" data-ref="_M/cbit_upper">cbit_upper</a>  + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="118">118</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#islower" title='islower' data-ref="islower">islower</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2600" title="128" data-ref="_M/cbit_lower">cbit_lower</a>  + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="119">119</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isalnum" title='isalnum' data-ref="isalnum">isalnum</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2601" title="160" data-ref="_M/cbit_word">cbit_word</a>   + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="120">120</th><td>  <b>if</b> (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> == <kbd>'_'</kbd>)   <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2601" title="160" data-ref="_M/cbit_word">cbit_word</a>   + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="121">121</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isspace" title='isspace' data-ref="isspace">isspace</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2596" title="0" data-ref="_M/cbit_space">cbit_space</a>  + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="122">122</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isxdigit" title='isxdigit' data-ref="isxdigit">isxdigit</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>))<a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2597" title="32" data-ref="_M/cbit_xdigit">cbit_xdigit</a> + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="123">123</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isgraph" title='isgraph' data-ref="isgraph">isgraph</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2602" title="192" data-ref="_M/cbit_graph">cbit_graph</a>  + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="124">124</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isprint" title='isprint' data-ref="isprint">isprint</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2603" title="224" data-ref="_M/cbit_print">cbit_print</a>  + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="125">125</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#ispunct" title='ispunct' data-ref="ispunct">ispunct</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2604" title="256" data-ref="_M/cbit_punct">cbit_punct</a>  + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="126">126</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#iscntrl" title='iscntrl' data-ref="iscntrl">iscntrl</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>[<a class="macro" href="pcre_internal.h.html#2605" title="288" data-ref="_M/cbit_cntrl">cbit_cntrl</a>  + <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>/<var>8</var>] |= <var>1</var> &lt;&lt; (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>&amp;<var>7</var>);</td></tr>
+<tr><th id="127">127</th><td>  }</td></tr>
+<tr><th id="128">128</th><td><a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a> += <a class="macro" href="pcre_internal.h.html#2606" title="320" data-ref="_M/cbit_length">cbit_length</a>;</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td><i>/* Finally, the character type table. In this, we used to exclude VT from the</i></td></tr>
+<tr><th id="131">131</th><td><i>white space chars, because Perl didn't recognize it as such for \s and for</i></td></tr>
+<tr><th id="132">132</th><td><i>comments within regexes. However, Perl changed at release 5.18, so PCRE changed</i></td></tr>
+<tr><th id="133">133</th><td><i>at release 8.34. */</i></td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td><b>for</b> (<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> = <var>0</var>; <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> &lt; <var>256</var>; <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>++)</td></tr>
+<tr><th id="136">136</th><td>  {</td></tr>
+<tr><th id="137">137</th><td>  <em>int</em> <dfn class="local col4 decl" id="4x" title='x' data-type='int' data-ref="4x">x</dfn> = <var>0</var>;</td></tr>
+<tr><th id="138">138</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isspace" title='isspace' data-ref="isspace">isspace</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> += <a class="macro" href="pcre_internal.h.html#2586" title="0x01" data-ref="_M/ctype_space">ctype_space</a>;</td></tr>
+<tr><th id="139">139</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isalpha" title='isalpha' data-ref="isalpha">isalpha</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> += <a class="macro" href="pcre_internal.h.html#2587" title="0x02" data-ref="_M/ctype_letter">ctype_letter</a>;</td></tr>
+<tr><th id="140">140</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isdigit" title='isdigit' data-ref="isdigit">isdigit</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> += <a class="macro" href="pcre_internal.h.html#2588" title="0x04" data-ref="_M/ctype_digit">ctype_digit</a>;</td></tr>
+<tr><th id="141">141</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isxdigit" title='isxdigit' data-ref="isxdigit">isxdigit</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>)) <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> += <a class="macro" href="pcre_internal.h.html#2589" title="0x08" data-ref="_M/ctype_xdigit">ctype_xdigit</a>;</td></tr>
+<tr><th id="142">142</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/ctype.h.html#isalnum" title='isalnum' data-ref="isalnum">isalnum</a>(<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>) || <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> == <kbd>'_'</kbd>) <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> += <a class="macro" href="pcre_internal.h.html#2590" title="0x10" data-ref="_M/ctype_word">ctype_word</a>;</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td>  <i>/* Note: strchr includes the terminating zero in the characters it considers.</i></td></tr>
+<tr><th id="145">145</th><td><i>  In this instance, that is ok because we want binary zero to be flagged as a</i></td></tr>
+<tr><th id="146">146</th><td><i>  meta-character, which in this sense is any character that terminates a run</i></td></tr>
+<tr><th id="147">147</th><td><i>  of data characters. */</i></td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td>  <b>if</b> (<a class="ref" href="../../../bionic/libc/include/string.h.html#strchr" title='strchr' data-ref="strchr">strchr</a>(<q>"\\*+?{^.$|()["</q>, <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>) != <var>0</var>) <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> += <a class="macro" href="pcre_internal.h.html#2591" title="0x80" data-ref="_M/ctype_meta">ctype_meta</a>;</td></tr>
+<tr><th id="150">150</th><td>  *<a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>++ = <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a>;</td></tr>
+<tr><th id="151">151</th><td>  }</td></tr>
+<tr><th id="152">152</th><td></td></tr>
+<tr><th id="153">153</th><td><b>return</b> <a class="local col1 ref" href="#1yield" title='yield' data-ref="1yield">yield</a>;</td></tr>
+<tr><th id="154">154</th><td>}</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td><i>/* End of pcre_maketables.c */</i></td></tr>
+<tr><th id="157">157</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

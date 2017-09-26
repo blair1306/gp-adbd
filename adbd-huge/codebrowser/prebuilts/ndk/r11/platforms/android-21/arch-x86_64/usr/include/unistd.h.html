@@ -1,0 +1,248 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>unistd.h source code [codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/unistd.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/unistd.h'; var root_path = '../../../../../../../../..'; var data_path = '../../../../../../../../../../data';</script>
+<script src='../../../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../../../..'>codebrowser</a>/<a href='../../../../../../..'>prebuilts</a>/<a href='../../../../../..'>ndk</a>/<a href='../../../../..'>r11</a>/<a href='../../../..'>platforms</a>/<a href='../../..'>android-21</a>/<a href='../..'>arch-x86_64</a>/<a href='..'>usr</a>/<a href='./'>include</a>/<a href='unistd.h.html'>unistd.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><u>#<span data-ppcond="28">ifndef</span> <span class="macro" data-ref="_M/_UNISTD_H_">_UNISTD_H_</span></u></td></tr>
+<tr><th id="29">29</th><td><u>#define <dfn class="macro" id="_M/_UNISTD_H_" data-ref="_M/_UNISTD_H_">_UNISTD_H_</dfn></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="sys/select.h.html">&lt;sys/select.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="sys/sysconf.h.html">&lt;sys/sysconf.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="pathconf.h.html">&lt;pathconf.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><a class="macro" href="sys/cdefs.h.html#84" title="" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><i>/* Standard file descriptor numbers. */</i></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/STDIN_FILENO" data-ref="_M/STDIN_FILENO">STDIN_FILENO</dfn>	0</u></td></tr>
+<tr><th id="42">42</th><td><u>#define <dfn class="macro" id="_M/STDOUT_FILENO" data-ref="_M/STDOUT_FILENO">STDOUT_FILENO</dfn>	1</u></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/STDERR_FILENO" data-ref="_M/STDERR_FILENO">STDERR_FILENO</dfn>	2</u></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><i>/* Values for whence in fseek and lseek */</i></td></tr>
+<tr><th id="46">46</th><td><u>#define <dfn class="macro" id="_M/SEEK_SET" data-ref="_M/SEEK_SET">SEEK_SET</dfn> 0</u></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/SEEK_CUR" data-ref="_M/SEEK_CUR">SEEK_CUR</dfn> 1</u></td></tr>
+<tr><th id="48">48</th><td><u>#define <dfn class="macro" id="_M/SEEK_END" data-ref="_M/SEEK_END">SEEK_END</dfn> 2</u></td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td><b>extern</b> <em>char</em>** <dfn class="decl" id="environ" title='environ' data-ref="environ">environ</dfn>;</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><b>extern</b> <a class="macro" href="sys/cdefs.h.html#332" title="__attribute__((__noreturn__))" data-ref="_M/__noreturn">__noreturn</a> <em>void</em> <a class="decl" href="#_exit" title='_exit' data-ref="_exit">_exit</a>(<em>int</em>);</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>  <dfn class="decl" id="fork" title='fork' data-ref="fork">fork</dfn>(<em>void</em>);</td></tr>
+<tr><th id="55">55</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>  <a class="decl" href="#vfork" title='vfork' data-ref="vfork">vfork</a>(<em>void</em>);</td></tr>
+<tr><th id="56">56</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>  <dfn class="decl" id="getpid" title='getpid' data-ref="getpid">getpid</dfn>(<em>void</em>);</td></tr>
+<tr><th id="57">57</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>  <dfn class="decl" id="gettid" title='gettid' data-ref="gettid">gettid</dfn>(<em>void</em>) <a class="macro" href="sys/cdefs.h.html#198" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="58">58</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>  <dfn class="decl" id="getpgid" title='getpgid' data-ref="getpgid">getpgid</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>);</td></tr>
+<tr><th id="59">59</th><td><b>extern</b> <em>int</em>    <dfn class="decl" id="setpgid" title='setpgid' data-ref="setpgid">setpgid</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>, <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>);</td></tr>
+<tr><th id="60">60</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>  <dfn class="decl" id="getppid" title='getppid' data-ref="getppid">getppid</dfn>(<em>void</em>);</td></tr>
+<tr><th id="61">61</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>  <dfn class="decl" id="getpgrp" title='getpgrp' data-ref="getpgrp">getpgrp</dfn>(<em>void</em>);</td></tr>
+<tr><th id="62">62</th><td><b>extern</b> <em>int</em>    <dfn class="decl" id="setpgrp" title='setpgrp' data-ref="setpgrp">setpgrp</dfn>(<em>void</em>);</td></tr>
+<tr><th id="63">63</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>  <dfn class="decl" id="getsid" title='getsid' data-ref="getsid">getsid</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>);</td></tr>
+<tr><th id="64">64</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>  <dfn class="decl" id="setsid" title='setsid' data-ref="setsid">setsid</dfn>(<em>void</em>);</td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="execv" title='execv' data-ref="execv">execv</dfn>(<em>const</em> <em>char</em> *, <em>char</em> * <em>const</em> *);</td></tr>
+<tr><th id="67">67</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="execvp" title='execvp' data-ref="execvp">execvp</dfn>(<em>const</em> <em>char</em> *, <em>char</em> * <em>const</em> *);</td></tr>
+<tr><th id="68">68</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="execvpe" title='execvpe' data-ref="execvpe">execvpe</dfn>(<em>const</em> <em>char</em> *, <em>char</em> * <em>const</em> *, <em>char</em> * <em>const</em> *);</td></tr>
+<tr><th id="69">69</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="execve" title='execve' data-ref="execve">execve</dfn>(<em>const</em> <em>char</em> *, <em>char</em> * <em>const</em> *, <em>char</em> * <em>const</em> *);</td></tr>
+<tr><th id="70">70</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="execl" title='execl' data-ref="execl">execl</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *, ...);</td></tr>
+<tr><th id="71">71</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="execlp" title='execlp' data-ref="execlp">execlp</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *, ...);</td></tr>
+<tr><th id="72">72</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="execle" title='execle' data-ref="execle">execle</dfn>(<em>const</em> <em>char</em> *, <em>const</em> <em>char</em> *, ...);</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="nice" title='nice' data-ref="nice">nice</dfn>(<em>int</em>);</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setuid" title='setuid' data-ref="setuid">setuid</dfn>(<a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>);</td></tr>
+<tr><th id="77">77</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> <dfn class="decl" id="getuid" title='getuid' data-ref="getuid">getuid</dfn>(<em>void</em>);</td></tr>
+<tr><th id="78">78</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="seteuid" title='seteuid' data-ref="seteuid">seteuid</dfn>(<a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>);</td></tr>
+<tr><th id="79">79</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> <dfn class="decl" id="geteuid" title='geteuid' data-ref="geteuid">geteuid</dfn>(<em>void</em>);</td></tr>
+<tr><th id="80">80</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setgid" title='setgid' data-ref="setgid">setgid</dfn>(<a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>);</td></tr>
+<tr><th id="81">81</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a> <dfn class="decl" id="getgid" title='getgid' data-ref="getgid">getgid</dfn>(<em>void</em>);</td></tr>
+<tr><th id="82">82</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setegid" title='setegid' data-ref="setegid">setegid</dfn>(<a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>);</td></tr>
+<tr><th id="83">83</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a> <dfn class="decl" id="getegid" title='getegid' data-ref="getegid">getegid</dfn>(<em>void</em>);</td></tr>
+<tr><th id="84">84</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getgroups" title='getgroups' data-ref="getgroups">getgroups</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a> *);</td></tr>
+<tr><th id="85">85</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setgroups" title='setgroups' data-ref="setgroups">setgroups</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>const</em> <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a> *);</td></tr>
+<tr><th id="86">86</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setreuid" title='setreuid' data-ref="setreuid">setreuid</dfn>(<a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>, <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>);</td></tr>
+<tr><th id="87">87</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setregid" title='setregid' data-ref="setregid">setregid</dfn>(<a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>);</td></tr>
+<tr><th id="88">88</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setresuid" title='setresuid' data-ref="setresuid">setresuid</dfn>(<a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>, <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>, <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>);</td></tr>
+<tr><th id="89">89</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setresgid" title='setresgid' data-ref="setresgid">setresgid</dfn>(<a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>);</td></tr>
+<tr><th id="90">90</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getresuid" title='getresuid' data-ref="getresuid">getresuid</dfn>(<a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> *<dfn class="local col9 decl" id="19ruid" title='ruid' data-type='uid_t *' data-ref="19ruid">ruid</dfn>, <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> *<dfn class="local col0 decl" id="20euid" title='euid' data-type='uid_t *' data-ref="20euid">euid</dfn>, <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> *<dfn class="local col1 decl" id="21suid" title='suid' data-type='uid_t *' data-ref="21suid">suid</dfn>);</td></tr>
+<tr><th id="91">91</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getresgid" title='getresgid' data-ref="getresgid">getresgid</dfn>(<a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a> *<dfn class="local col2 decl" id="22rgid" title='rgid' data-type='gid_t *' data-ref="22rgid">rgid</dfn>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a> *<dfn class="local col3 decl" id="23egid" title='egid' data-type='gid_t *' data-ref="23egid">egid</dfn>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a> *<dfn class="local col4 decl" id="24sgid" title='sgid' data-type='gid_t *' data-ref="24sgid">sgid</dfn>);</td></tr>
+<tr><th id="92">92</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="getlogin" title='getlogin' data-ref="getlogin">getlogin</dfn>(<em>void</em>);</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><i>/* Macros for access() */</i></td></tr>
+<tr><th id="95">95</th><td><u>#define <dfn class="macro" id="_M/R_OK" data-ref="_M/R_OK">R_OK</dfn>  4  /* Read */</u></td></tr>
+<tr><th id="96">96</th><td><u>#define <dfn class="macro" id="_M/W_OK" data-ref="_M/W_OK">W_OK</dfn>  2  /* Write */</u></td></tr>
+<tr><th id="97">97</th><td><u>#define <dfn class="macro" id="_M/X_OK" data-ref="_M/X_OK">X_OK</dfn>  1  /* Execute */</u></td></tr>
+<tr><th id="98">98</th><td><u>#define <dfn class="macro" id="_M/F_OK" data-ref="_M/F_OK">F_OK</dfn>  0  /* Existence */</u></td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="access" title='access' data-ref="access">access</dfn>(<em>const</em> <em>char</em>*, <em>int</em>);</td></tr>
+<tr><th id="101">101</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="faccessat" title='faccessat' data-ref="faccessat">faccessat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <em>int</em>, <em>int</em>);</td></tr>
+<tr><th id="102">102</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="link" title='link' data-ref="link">link</dfn>(<em>const</em> <em>char</em>*, <em>const</em> <em>char</em>*);</td></tr>
+<tr><th id="103">103</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="linkat" title='linkat' data-ref="linkat">linkat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <em>int</em>, <em>const</em> <em>char</em>*, <em>int</em>);</td></tr>
+<tr><th id="104">104</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="unlink" title='unlink' data-ref="unlink">unlink</dfn>(<em>const</em> <em>char</em>*);</td></tr>
+<tr><th id="105">105</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="unlinkat" title='unlinkat' data-ref="unlinkat">unlinkat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <em>int</em>);</td></tr>
+<tr><th id="106">106</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="chdir" title='chdir' data-ref="chdir">chdir</dfn>(<em>const</em> <em>char</em> *);</td></tr>
+<tr><th id="107">107</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fchdir" title='fchdir' data-ref="fchdir">fchdir</dfn>(<em>int</em>);</td></tr>
+<tr><th id="108">108</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="rmdir" title='rmdir' data-ref="rmdir">rmdir</dfn>(<em>const</em> <em>char</em> *);</td></tr>
+<tr><th id="109">109</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="pipe" title='pipe' data-ref="pipe">pipe</dfn>(<em>int</em> *);</td></tr>
+<tr><th id="110">110</th><td><u>#<span data-ppcond="110">ifdef</span> <span class="macro" data-ref="_M/_GNU_SOURCE">_GNU_SOURCE</span></u></td></tr>
+<tr><th id="111">111</th><td><b>extern</b> <em>int</em> pipe2(<em>int</em> *, <em>int</em>);</td></tr>
+<tr><th id="112">112</th><td><u>#<span data-ppcond="110">endif</span></u></td></tr>
+<tr><th id="113">113</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="chroot" title='chroot' data-ref="chroot">chroot</dfn>(<em>const</em> <em>char</em> *);</td></tr>
+<tr><th id="114">114</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="symlink" title='symlink' data-ref="symlink">symlink</dfn>(<em>const</em> <em>char</em>*, <em>const</em> <em>char</em>*);</td></tr>
+<tr><th id="115">115</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="symlinkat" title='symlinkat' data-ref="symlinkat">symlinkat</dfn>(<em>const</em> <em>char</em>*, <em>int</em>, <em>const</em> <em>char</em>*);</td></tr>
+<tr><th id="116">116</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="readlink" title='readlink' data-ref="readlink">readlink</dfn>(<em>const</em> <em>char</em>*, <em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="117">117</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="readlinkat" title='readlinkat' data-ref="readlinkat">readlinkat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="118">118</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="chown" title='chown' data-ref="chown">chown</dfn>(<em>const</em> <em>char</em> *, <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>);</td></tr>
+<tr><th id="119">119</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fchown" title='fchown' data-ref="fchown">fchown</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>);</td></tr>
+<tr><th id="120">120</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fchownat" title='fchownat' data-ref="fchownat">fchownat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>, <em>int</em>);</td></tr>
+<tr><th id="121">121</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="lchown" title='lchown' data-ref="lchown">lchown</dfn>(<em>const</em> <em>char</em> *, <a class="typedef" href="sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a>, <a class="typedef" href="sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a>);</td></tr>
+<tr><th id="122">122</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="truncate" title='truncate' data-ref="truncate">truncate</dfn>(<em>const</em> <em>char</em> *, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='__kernel_off_t' data-ref="off_t">off_t</a>);</td></tr>
+<tr><th id="123">123</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="truncate64" title='truncate64' data-ref="truncate64">truncate64</dfn>(<em>const</em> <em>char</em> *, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>);</td></tr>
+<tr><th id="124">124</th><td><b>extern</b> <em>char</em> *<dfn class="decl" id="getcwd" title='getcwd' data-ref="getcwd">getcwd</dfn>(<em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sync" title='sync' data-ref="sync">sync</dfn>(<em>void</em>);</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="close" title='close' data-ref="close">close</dfn>(<em>int</em>);</td></tr>
+<tr><th id="129">129</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='__kernel_off_t' data-ref="off_t">off_t</a> <dfn class="decl" id="lseek" title='lseek' data-ref="lseek">lseek</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='__kernel_off_t' data-ref="off_t">off_t</a>, <em>int</em>);</td></tr>
+<tr><th id="130">130</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a> <dfn class="decl" id="lseek64" title='lseek64' data-ref="lseek64">lseek64</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <em>int</em>);</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <a class="decl" href="#read" title='read' data-ref="read">read</a>(<em>int</em>, <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="133">133</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="write" title='write' data-ref="write">write</dfn>(<em>int</em>, <em>const</em> <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="134">134</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="pread" title='pread' data-ref="pread">pread</dfn>(<em>int</em>, <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='__kernel_off_t' data-ref="off_t">off_t</a>);</td></tr>
+<tr><th id="135">135</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="pread64" title='pread64' data-ref="pread64">pread64</dfn>(<em>int</em>, <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>);</td></tr>
+<tr><th id="136">136</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="pwrite" title='pwrite' data-ref="pwrite">pwrite</dfn>(<em>int</em>, <em>const</em> <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='__kernel_off_t' data-ref="off_t">off_t</a>);</td></tr>
+<tr><th id="137">137</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="pwrite64" title='pwrite64' data-ref="pwrite64">pwrite64</dfn>(<em>int</em>, <em>const</em> <em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>);</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="dup" title='dup' data-ref="dup">dup</dfn>(<em>int</em>);</td></tr>
+<tr><th id="140">140</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="dup2" title='dup2' data-ref="dup2">dup2</dfn>(<em>int</em>, <em>int</em>);</td></tr>
+<tr><th id="141">141</th><td><u>#<span data-ppcond="141">ifdef</span> <span class="macro" data-ref="_M/_GNU_SOURCE">_GNU_SOURCE</span></u></td></tr>
+<tr><th id="142">142</th><td><b>extern</b> <em>int</em> dup3(<em>int</em>, <em>int</em>, <em>int</em>);</td></tr>
+<tr><th id="143">143</th><td><u>#<span data-ppcond="141">endif</span></u></td></tr>
+<tr><th id="144">144</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fcntl" title='fcntl' data-ref="fcntl">fcntl</dfn>(<em>int</em>, <em>int</em>, ...);</td></tr>
+<tr><th id="145">145</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="ioctl" title='ioctl' data-ref="ioctl">ioctl</dfn>(<em>int</em>, <em>int</em>, ...);</td></tr>
+<tr><th id="146">146</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="flock" title='flock' data-ref="flock">flock</dfn>(<em>int</em>, <em>int</em>);</td></tr>
+<tr><th id="147">147</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fsync" title='fsync' data-ref="fsync">fsync</dfn>(<em>int</em>);</td></tr>
+<tr><th id="148">148</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fdatasync" title='fdatasync' data-ref="fdatasync">fdatasync</dfn>(<em>int</em>);</td></tr>
+<tr><th id="149">149</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="ftruncate" title='ftruncate' data-ref="ftruncate">ftruncate</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='__kernel_off_t' data-ref="off_t">off_t</a>);</td></tr>
+<tr><th id="150">150</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="ftruncate64" title='ftruncate64' data-ref="ftruncate64">ftruncate64</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>);</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="pause" title='pause' data-ref="pause">pause</dfn>(<em>void</em>);</td></tr>
+<tr><th id="153">153</th><td><b>extern</b> <em>unsigned</em> <em>int</em> <dfn class="decl" id="alarm" title='alarm' data-ref="alarm">alarm</dfn>(<em>unsigned</em> <em>int</em>);</td></tr>
+<tr><th id="154">154</th><td><b>extern</b> <em>unsigned</em> <em>int</em> <dfn class="decl" id="sleep" title='sleep' data-ref="sleep">sleep</dfn>(<em>unsigned</em> <em>int</em>);</td></tr>
+<tr><th id="155">155</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="usleep" title='usleep' data-ref="usleep">usleep</dfn>(<a class="typedef" href="sys/types.h.html#useconds_t" title='useconds_t' data-type='__useconds_t' data-ref="useconds_t">useconds_t</a>);</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="gethostname" title='gethostname' data-ref="gethostname">gethostname</dfn>(<em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td><b>extern</b> <em>void</em> *<dfn class="decl" id="__brk" title='__brk' data-ref="__brk">__brk</dfn>(<em>void</em> *);</td></tr>
+<tr><th id="160">160</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="brk" title='brk' data-ref="brk">brk</dfn>(<em>void</em> *);</td></tr>
+<tr><th id="161">161</th><td><b>extern</b> <em>void</em> *<dfn class="decl" id="sbrk" title='sbrk' data-ref="sbrk">sbrk</dfn>(<span class='typedef' title='ptrdiff_t' data-type='long' data-ref="ptrdiff_t">ptrdiff_t</span>);</td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getopt" title='getopt' data-ref="getopt">getopt</dfn>(<em>int</em>, <em>char</em> * <em>const</em> *, <em>const</em> <em>char</em> *);</td></tr>
+<tr><th id="164">164</th><td><b>extern</b> <em>char</em> *<dfn class="decl" id="optarg" title='optarg' data-ref="optarg">optarg</dfn>;</td></tr>
+<tr><th id="165">165</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="optind" title='optind' data-ref="optind">optind</dfn>, <dfn class="decl" id="opterr" title='opterr' data-ref="opterr">opterr</dfn>, <dfn class="decl" id="optopt" title='optopt' data-ref="optopt">optopt</dfn>;</td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="isatty" title='isatty' data-ref="isatty">isatty</dfn>(<em>int</em>);</td></tr>
+<tr><th id="168">168</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="ttyname" title='ttyname' data-ref="ttyname">ttyname</dfn>(<em>int</em>) <a class="macro" href="sys/cdefs.h.html#358" title="" data-ref="_M/__warnattr">__warnattr</a>(<q>"ttyname is not thread-safe; use ttyname_r instead"</q>);</td></tr>
+<tr><th id="169">169</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="ttyname_r" title='ttyname_r' data-ref="ttyname_r">ttyname_r</dfn>(<em>int</em>, <em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="170">170</th><td></td></tr>
+<tr><th id="171">171</th><td><b>extern</b> <em>int</em>  <dfn class="decl" id="acct" title='acct' data-ref="acct">acct</dfn>(<em>const</em> <em>char</em>*  <dfn class="local col5 decl" id="25filepath" title='filepath' data-type='const char *' data-ref="25filepath">filepath</dfn>);</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td><em>int</em> <dfn class="decl" id="getpagesize" title='getpagesize' data-ref="getpagesize">getpagesize</dfn>(<em>void</em>);</td></tr>
+<tr><th id="174">174</th><td></td></tr>
+<tr><th id="175">175</th><td><em>long</em> <a class="decl" href="sys/sysconf.h.html#sysconf" title='sysconf' data-ref="sysconf" id="sysconf">sysconf</a>(<em>int</em>);</td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="daemon" title='daemon' data-ref="daemon">daemon</dfn>(<em>int</em>, <em>int</em>);</td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td><u>#<span data-ppcond="179">if</span> defined(<span class="macro" data-ref="_M/__arm__">__arm__</span>) || (defined(<span class="macro" data-ref="_M/__mips__">__mips__</span>) &amp;&amp; !defined(<span class="macro" data-ref="_M/__LP64__">__LP64__</span>))</u></td></tr>
+<tr><th id="180">180</th><td><b>extern</b> <em>int</em> cacheflush(<em>long</em>, <em>long</em>, <em>long</em>);</td></tr>
+<tr><th id="181">181</th><td>    <i>/* __attribute__((deprecated("use __builtin___clear_cache instead"))); */</i></td></tr>
+<tr><th id="182">182</th><td><u>#<span data-ppcond="179">endif</span></u></td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="decl" id="tcgetpgrp" title='tcgetpgrp' data-ref="tcgetpgrp">tcgetpgrp</dfn>(<em>int</em> <dfn class="local col6 decl" id="26fd" title='fd' data-type='int' data-ref="26fd">fd</dfn>);</td></tr>
+<tr><th id="185">185</th><td><b>extern</b> <em>int</em>   <dfn class="decl" id="tcsetpgrp" title='tcsetpgrp' data-ref="tcsetpgrp">tcsetpgrp</dfn>(<em>int</em> <dfn class="local col7 decl" id="27fd" title='fd' data-type='int' data-ref="27fd">fd</dfn>, <a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col8 decl" id="28_pid" title='_pid' data-type='pid_t' data-ref="28_pid">_pid</dfn>);</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td><i>/* Used to retry syscalls that can return EINTR. */</i></td></tr>
+<tr><th id="188">188</th><td><u>#define <dfn class="macro" id="_M/TEMP_FAILURE_RETRY" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</dfn>(exp) ({         \</u></td></tr>
+<tr><th id="189">189</th><td><u>    __typeof__(exp) _rc;                   \</u></td></tr>
+<tr><th id="190">190</th><td><u>    do {                                   \</u></td></tr>
+<tr><th id="191">191</th><td><u>        _rc = (exp);                       \</u></td></tr>
+<tr><th id="192">192</th><td><u>    } while (_rc == -1 &amp;&amp; errno == EINTR); \</u></td></tr>
+<tr><th id="193">193</th><td><u>    _rc; })</u></td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><u>#<span data-ppcond="195">if</span> defined(<a class="macro" href="sys/cdefs.h.html#565" data-ref="_M/__BIONIC_FORTIFY">__BIONIC_FORTIFY</a>)</u></td></tr>
+<tr><th id="196">196</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="__read_chk" title='__read_chk' data-ref="__read_chk">__read_chk</dfn>(<em>int</em>, <em>void</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="197">197</th><td><a class="macro" href="sys/cdefs.h.html#357" title="extern void __read_dest_size_error(void)" data-ref="_M/__errordecl">__errordecl</a>(<dfn class="decl" id="__read_dest_size_error" title='__read_dest_size_error' data-ref="__read_dest_size_error">__read_dest_size_error</dfn>, <q>"read called with size bigger than destination"</q>);</td></tr>
+<tr><th id="198">198</th><td><a class="macro" href="sys/cdefs.h.html#357" title="extern void __read_count_toobig_error(void)" data-ref="_M/__errordecl">__errordecl</a>(<dfn class="decl" id="__read_count_toobig_error" title='__read_count_toobig_error' data-ref="__read_count_toobig_error">__read_count_toobig_error</dfn>, <q>"read called with count &gt; SSIZE_MAX"</q>);</td></tr>
+<tr><th id="199">199</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="__read_real" title='__read_real' data-ref="__read_real">__read_real</dfn>(<em>int</em>, <em>void</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)</td></tr>
+<tr><th id="200">200</th><td>    <b>__asm__</b>(<span class="macro" title="" data-ref="_M/__USER_LABEL_PREFIX__">__USER_LABEL_PREFIX__</span> <q>"read"</q>);</td></tr>
+<tr><th id="201">201</th><td></td></tr>
+<tr><th id="202">202</th><td><a class="macro" href="sys/cdefs.h.html#573" title="extern __inline__ __attribute__ ((always_inline)) __attribute__ ((gnu_inline))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="203">203</th><td><a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl def" id="read" title='read' data-ref="read">read</dfn>(<em>int</em> <dfn class="local col9 decl" id="29fd" title='fd' data-type='int' data-ref="29fd">fd</dfn>, <em>void</em>* <dfn class="local col0 decl" id="30buf" title='buf' data-type='void *' data-ref="30buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="31count" title='count' data-type='size_t' data-ref="31count">count</dfn>) {</td></tr>
+<tr><th id="204">204</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="32bos" title='bos' data-type='size_t' data-ref="32bos">bos</dfn> = <a class="macro" href="sys/cdefs.h.html#571" title="__builtin_object_size((buf), 0)" data-ref="_M/__bos0">__bos0</a>(<a class="local col0 ref" href="#30buf" title='buf' data-ref="30buf">buf</a>);</td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td><u>#<span data-ppcond="206">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="207">207</th><td>    <b>if</b> (__builtin_constant_p(count) &amp;&amp; (count &gt; SSIZE_MAX)) {</td></tr>
+<tr><th id="208">208</th><td>        __read_count_toobig_error();</td></tr>
+<tr><th id="209">209</th><td>    }</td></tr>
+<tr><th id="210">210</th><td></td></tr>
+<tr><th id="211">211</th><td>    <b>if</b> (bos == __BIONIC_FORTIFY_UNKNOWN_SIZE) {</td></tr>
+<tr><th id="212">212</th><td>        <b>return</b> __read_real(fd, buf, count);</td></tr>
+<tr><th id="213">213</th><td>    }</td></tr>
+<tr><th id="214">214</th><td></td></tr>
+<tr><th id="215">215</th><td>    <b>if</b> (__builtin_constant_p(count) &amp;&amp; (count &gt; bos)) {</td></tr>
+<tr><th id="216">216</th><td>        __read_dest_size_error();</td></tr>
+<tr><th id="217">217</th><td>    }</td></tr>
+<tr><th id="218">218</th><td></td></tr>
+<tr><th id="219">219</th><td>    <b>if</b> (__builtin_constant_p(count) &amp;&amp; (count &lt;= bos)) {</td></tr>
+<tr><th id="220">220</th><td>        <b>return</b> __read_real(fd, buf, count);</td></tr>
+<tr><th id="221">221</th><td>    }</td></tr>
+<tr><th id="222">222</th><td><u>#<span data-ppcond="206">endif</span></u></td></tr>
+<tr><th id="223">223</th><td></td></tr>
+<tr><th id="224">224</th><td>    <b>return</b> <a class="ref" href="#__read_chk" title='__read_chk' data-ref="__read_chk">__read_chk</a>(<a class="local col9 ref" href="#29fd" title='fd' data-ref="29fd">fd</a>, <a class="local col0 ref" href="#30buf" title='buf' data-ref="30buf">buf</a>, <a class="local col1 ref" href="#31count" title='count' data-ref="31count">count</a>, <a class="local col2 ref" href="#32bos" title='bos' data-ref="32bos">bos</a>);</td></tr>
+<tr><th id="225">225</th><td>}</td></tr>
+<tr><th id="226">226</th><td><u>#<span data-ppcond="195">endif</span> /* defined(__BIONIC_FORTIFY) */</u></td></tr>
+<tr><th id="227">227</th><td></td></tr>
+<tr><th id="228">228</th><td><a class="macro" href="sys/cdefs.h.html#85" title="" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td><u>#<span data-ppcond="28">endif</span> /* _UNISTD_H_ */</u></td></tr>
+<tr><th id="231">231</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../../../../../../external/boringssl/src/crypto/bio/connect.c.html'>codebrowser/external/boringssl/src/crypto/bio/connect.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

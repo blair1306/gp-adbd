@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>pthread_cond.cpp source code [codebrowser/bionic/libc/bionic/pthread_cond.cpp] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="pthread_cond_internal_t "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/pthread_cond.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='pthread_cond.cpp.html'>pthread_cond.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../include/stdatomic.h.html">&lt;stdatomic.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../include/sys/mman.h.html">&lt;sys/mman.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="../include/time.h.html">&lt;time.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="../include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#include <a href="pthread_internal.h.html">"pthread_internal.h"</a></u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><u>#include <a href="../private/bionic_futex.h.html">"private/bionic_futex.h"</a></u></td></tr>
+<tr><th id="41">41</th><td><u>#include <a href="../private/bionic_time_conversions.h.html">"private/bionic_time_conversions.h"</a></u></td></tr>
+<tr><th id="42">42</th><td><u>#include <a href="../private/bionic_tls.h.html">"private/bionic_tls.h"</a></u></td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><i>// XXX *technically* there is a race condition that could allow</i></td></tr>
+<tr><th id="45">45</th><td><i>// XXX a signal to be missed.  If thread A is preempted in _wait()</i></td></tr>
+<tr><th id="46">46</th><td><i>// XXX after unlocking the mutex and before waiting, and if other</i></td></tr>
+<tr><th id="47">47</th><td><i>// XXX threads call signal or broadcast UINT_MAX/2 times (exactly),</i></td></tr>
+<tr><th id="48">48</th><td><i>// XXX before thread A is scheduled again and calls futex_wait(),</i></td></tr>
+<tr><th id="49">49</th><td><i>// XXX then the signal will be lost.</i></td></tr>
+<tr><th id="50">50</th><td><i></i></td></tr>
+<tr><th id="51">51</th><td><i>// We use one bit in pthread_condattr_t (long) values as the 'shared' flag</i></td></tr>
+<tr><th id="52">52</th><td><i>// and one bit for the clock type (CLOCK_REALTIME is ((clockid_t) 1), and</i></td></tr>
+<tr><th id="53">53</th><td><i>// CLOCK_MONOTONIC is ((clockid_t) 0).). The rest of the bits are a counter.</i></td></tr>
+<tr><th id="54">54</th><td><i>//</i></td></tr>
+<tr><th id="55">55</th><td><i>// The 'value' field pthread_cond_t has the same layout.</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#define <dfn class="macro" id="_M/COND_SHARED_MASK" data-ref="_M/COND_SHARED_MASK">COND_SHARED_MASK</dfn> 0x0001</u></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/COND_CLOCK_MASK" data-ref="_M/COND_CLOCK_MASK">COND_CLOCK_MASK</dfn> 0x0002</u></td></tr>
+<tr><th id="59">59</th><td><u>#define <dfn class="macro" id="_M/COND_COUNTER_STEP" data-ref="_M/COND_COUNTER_STEP">COND_COUNTER_STEP</dfn> 0x0004</u></td></tr>
+<tr><th id="60">60</th><td><u>#define <dfn class="macro" id="_M/COND_FLAGS_MASK" data-ref="_M/COND_FLAGS_MASK">COND_FLAGS_MASK</dfn> (COND_SHARED_MASK | COND_CLOCK_MASK)</u></td></tr>
+<tr><th id="61">61</th><td><u>#define <dfn class="macro" id="_M/COND_COUNTER_MASK" data-ref="_M/COND_COUNTER_MASK">COND_COUNTER_MASK</dfn> (~COND_FLAGS_MASK)</u></td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><u>#define <dfn class="macro" id="_M/COND_IS_SHARED" data-ref="_M/COND_IS_SHARED">COND_IS_SHARED</dfn>(c) (((c) &amp; COND_SHARED_MASK) != 0)</u></td></tr>
+<tr><th id="64">64</th><td><u>#define <dfn class="macro" id="_M/COND_GET_CLOCK" data-ref="_M/COND_GET_CLOCK">COND_GET_CLOCK</dfn>(c) (((c) &amp; COND_CLOCK_MASK) &gt;&gt; 1)</u></td></tr>
+<tr><th id="65">65</th><td><u>#define <dfn class="macro" id="_M/COND_SET_CLOCK" data-ref="_M/COND_SET_CLOCK">COND_SET_CLOCK</dfn>(attr, c) ((attr) | (c &lt;&lt; 1))</u></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><em>int</em> <dfn class="decl def" id="pthread_condattr_init" title='pthread_condattr_init' data-ref="pthread_condattr_init">pthread_condattr_init</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_condattr_t" title='pthread_condattr_t' data-type='long' data-ref="pthread_condattr_t">pthread_condattr_t</a>* <dfn class="local col1 decl" id="1attr" title='attr' data-type='pthread_condattr_t *' data-ref="1attr">attr</dfn>) {</td></tr>
+<tr><th id="68">68</th><td>  *<a class="local col1 ref" href="#1attr" title='attr' data-ref="1attr">attr</a> = <var>0</var>;</td></tr>
+<tr><th id="69">69</th><td>  *<a class="local col1 ref" href="#1attr" title='attr' data-ref="1attr">attr</a> |= <a class="macro" href="../include/pthread.h.html#128" title="0" data-ref="_M/PTHREAD_PROCESS_PRIVATE">PTHREAD_PROCESS_PRIVATE</a>;</td></tr>
+<tr><th id="70">70</th><td>  *<a class="local col1 ref" href="#1attr" title='attr' data-ref="1attr">attr</a> |= (<a class="macro" href="../kernel/uapi/linux/time.h.html#55" title="0" data-ref="_M/CLOCK_REALTIME">CLOCK_REALTIME</a> &lt;&lt; <var>1</var>);</td></tr>
+<tr><th id="71">71</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="72">72</th><td>}</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><em>int</em> <dfn class="decl def" id="pthread_condattr_getpshared" title='pthread_condattr_getpshared' data-ref="pthread_condattr_getpshared">pthread_condattr_getpshared</dfn>(<em>const</em> <a class="typedef" href="../include/pthread.h.html#pthread_condattr_t" title='pthread_condattr_t' data-type='long' data-ref="pthread_condattr_t">pthread_condattr_t</a>* <dfn class="local col2 decl" id="2attr" title='attr' data-type='const pthread_condattr_t *' data-ref="2attr">attr</dfn>, <em>int</em>* <dfn class="local col3 decl" id="3pshared" title='pshared' data-type='int *' data-ref="3pshared">pshared</dfn>) {</td></tr>
+<tr><th id="75">75</th><td>  *<a class="local col3 ref" href="#3pshared" title='pshared' data-ref="3pshared">pshared</a> = <b>static_cast</b>&lt;<em>int</em>&gt;(<a class="macro" href="#63" title="(((*attr) &amp; 0x0001) != 0)" data-ref="_M/COND_IS_SHARED">COND_IS_SHARED</a>(*<a class="local col2 ref" href="#2attr" title='attr' data-ref="2attr">attr</a>));</td></tr>
+<tr><th id="76">76</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="77">77</th><td>}</td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><em>int</em> <dfn class="decl def" id="pthread_condattr_setpshared" title='pthread_condattr_setpshared' data-ref="pthread_condattr_setpshared">pthread_condattr_setpshared</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_condattr_t" title='pthread_condattr_t' data-type='long' data-ref="pthread_condattr_t">pthread_condattr_t</a>* <dfn class="local col4 decl" id="4attr" title='attr' data-type='pthread_condattr_t *' data-ref="4attr">attr</dfn>, <em>int</em> <dfn class="local col5 decl" id="5pshared" title='pshared' data-type='int' data-ref="5pshared">pshared</dfn>) {</td></tr>
+<tr><th id="80">80</th><td>  <b>if</b> (<a class="local col5 ref" href="#5pshared" title='pshared' data-ref="5pshared">pshared</a> != <a class="macro" href="../include/pthread.h.html#129" title="1" data-ref="_M/PTHREAD_PROCESS_SHARED">PTHREAD_PROCESS_SHARED</a> &amp;&amp; <a class="local col5 ref" href="#5pshared" title='pshared' data-ref="5pshared">pshared</a> != <a class="macro" href="../include/pthread.h.html#128" title="0" data-ref="_M/PTHREAD_PROCESS_PRIVATE">PTHREAD_PROCESS_PRIVATE</a>) {</td></tr>
+<tr><th id="81">81</th><td>    <b>return</b> <a class="macro" href="../kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="82">82</th><td>  }</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td>  *<a class="local col4 ref" href="#4attr" title='attr' data-ref="4attr">attr</a> |= <a class="local col5 ref" href="#5pshared" title='pshared' data-ref="5pshared">pshared</a>;</td></tr>
+<tr><th id="85">85</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="86">86</th><td>}</td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><em>int</em> <dfn class="decl def" id="pthread_condattr_getclock" title='pthread_condattr_getclock' data-ref="pthread_condattr_getclock">pthread_condattr_getclock</dfn>(<em>const</em> <a class="typedef" href="../include/pthread.h.html#pthread_condattr_t" title='pthread_condattr_t' data-type='long' data-ref="pthread_condattr_t">pthread_condattr_t</a>* <dfn class="local col6 decl" id="6attr" title='attr' data-type='const pthread_condattr_t *' data-ref="6attr">attr</dfn>, <a class="typedef" href="../include/sys/types.h.html#clockid_t" title='clockid_t' data-type='__clockid_t' data-ref="clockid_t">clockid_t</a>* <dfn class="local col7 decl" id="7clock" title='clock' data-type='clockid_t *' data-ref="7clock">clock</dfn>) {</td></tr>
+<tr><th id="89">89</th><td>  *<a class="local col7 ref" href="#7clock" title='clock' data-ref="7clock">clock</a> = <a class="macro" href="#64" title="(((*attr) &amp; 0x0002) &gt;&gt; 1)" data-ref="_M/COND_GET_CLOCK">COND_GET_CLOCK</a>(*<a class="local col6 ref" href="#6attr" title='attr' data-ref="6attr">attr</a>);</td></tr>
+<tr><th id="90">90</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="91">91</th><td>}</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><em>int</em> <dfn class="decl def" id="pthread_condattr_setclock" title='pthread_condattr_setclock' data-ref="pthread_condattr_setclock">pthread_condattr_setclock</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_condattr_t" title='pthread_condattr_t' data-type='long' data-ref="pthread_condattr_t">pthread_condattr_t</a>* <dfn class="local col8 decl" id="8attr" title='attr' data-type='pthread_condattr_t *' data-ref="8attr">attr</dfn>, <a class="typedef" href="../include/sys/types.h.html#clockid_t" title='clockid_t' data-type='__clockid_t' data-ref="clockid_t">clockid_t</a> <dfn class="local col9 decl" id="9clock" title='clock' data-type='clockid_t' data-ref="9clock">clock</dfn>) {</td></tr>
+<tr><th id="94">94</th><td>  <b>if</b> (<a class="local col9 ref" href="#9clock" title='clock' data-ref="9clock">clock</a> != <a class="macro" href="../kernel/uapi/linux/time.h.html#56" title="1" data-ref="_M/CLOCK_MONOTONIC">CLOCK_MONOTONIC</a> &amp;&amp; <a class="local col9 ref" href="#9clock" title='clock' data-ref="9clock">clock</a> != <a class="macro" href="../kernel/uapi/linux/time.h.html#55" title="0" data-ref="_M/CLOCK_REALTIME">CLOCK_REALTIME</a>) {</td></tr>
+<tr><th id="95">95</th><td>    <b>return</b> <a class="macro" href="../kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="96">96</th><td>  }</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td>  *<a class="local col8 ref" href="#8attr" title='attr' data-ref="8attr">attr</a> = <a class="macro" href="#65" title="((*attr) | (clock &lt;&lt; 1))" data-ref="_M/COND_SET_CLOCK">COND_SET_CLOCK</a>(*<a class="local col8 ref" href="#8attr" title='attr' data-ref="8attr">attr</a>, <a class="local col9 ref" href="#9clock" title='clock' data-ref="9clock">clock</a>);</td></tr>
+<tr><th id="99">99</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="100">100</th><td>}</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td><em>int</em> <dfn class="decl def" id="pthread_condattr_destroy" title='pthread_condattr_destroy' data-ref="pthread_condattr_destroy">pthread_condattr_destroy</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_condattr_t" title='pthread_condattr_t' data-type='long' data-ref="pthread_condattr_t">pthread_condattr_t</a>* <dfn class="local col0 decl" id="10attr" title='attr' data-type='pthread_condattr_t *' data-ref="10attr">attr</dfn>) {</td></tr>
+<tr><th id="103">103</th><td>  *<a class="local col0 ref" href="#10attr" title='attr' data-ref="10attr">attr</a> = <var>0xdeada11d</var>;</td></tr>
+<tr><th id="104">104</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="105">105</th><td>}</td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><b>struct</b> <dfn class="type def" id="pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</dfn> {</td></tr>
+<tr><th id="108">108</th><td>  <a class="typedef" href="../include/stdatomic.h.html#atomic_uint" title='atomic_uint' data-type='_Atomic(unsigned int)' data-ref="atomic_uint">atomic_uint</a> <dfn class="tu decl" id="pthread_cond_internal_t::state" title='pthread_cond_internal_t::state' data-type='atomic_uint' data-ref="pthread_cond_internal_t::state">state</dfn>;</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td>  <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="tu decl def" id="_ZN23pthread_cond_internal_t14process_sharedEv" title='pthread_cond_internal_t::process_shared' data-type='bool pthread_cond_internal_t::process_shared()' data-ref="_ZN23pthread_cond_internal_t14process_sharedEv">process_shared</dfn>() {</td></tr>
+<tr><th id="111">111</th><td>    <b>return</b> <a class="macro" href="#63" title="(((__c11_atomic_load(&amp;state, memory_order_relaxed)) &amp; 0x0001) != 0)" data-ref="_M/COND_IS_SHARED">COND_IS_SHARED</a>(<a class="macro" href="../include/stdatomic.h.html#423" title="__c11_atomic_load(&amp;state, memory_order_relaxed)" data-ref="_M/atomic_load_explicit">atomic_load_explicit</a>(&amp;<a class="tu member" href="#pthread_cond_internal_t::state" title='pthread_cond_internal_t::state' data-use='a' data-ref="pthread_cond_internal_t::state">state</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>));</td></tr>
+<tr><th id="112">112</th><td>  }</td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td>  <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="tu decl def" id="_ZN23pthread_cond_internal_t18use_realtime_clockEv" title='pthread_cond_internal_t::use_realtime_clock' data-type='bool pthread_cond_internal_t::use_realtime_clock()' data-ref="_ZN23pthread_cond_internal_t18use_realtime_clockEv">use_realtime_clock</dfn>() {</td></tr>
+<tr><th id="115">115</th><td>    <b>return</b> <a class="macro" href="#64" title="(((__c11_atomic_load(&amp;state, memory_order_relaxed)) &amp; 0x0002) &gt;&gt; 1)" data-ref="_M/COND_GET_CLOCK">COND_GET_CLOCK</a>(<a class="macro" href="../include/stdatomic.h.html#423" title="__c11_atomic_load(&amp;state, memory_order_relaxed)" data-ref="_M/atomic_load_explicit">atomic_load_explicit</a>(&amp;<a class="tu member" href="#pthread_cond_internal_t::state" title='pthread_cond_internal_t::state' data-use='a' data-ref="pthread_cond_internal_t::state">state</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>)) == <a class="macro" href="../kernel/uapi/linux/time.h.html#55" title="0" data-ref="_M/CLOCK_REALTIME">CLOCK_REALTIME</a>;</td></tr>
+<tr><th id="116">116</th><td>  }</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><u>#<span data-ppcond="118">if</span> defined(<span class="macro" data-ref="_M/__LP64__">__LP64__</span>)</u></td></tr>
+<tr><th id="119">119</th><td>  <em>char</em> <dfn class="tu decl" id="pthread_cond_internal_t::__reserved" title='pthread_cond_internal_t::__reserved' data-type='char [44]' data-ref="pthread_cond_internal_t::__reserved">__reserved</dfn>[<var>44</var>];</td></tr>
+<tr><th id="120">120</th><td><u>#<span data-ppcond="118">endif</span></u></td></tr>
+<tr><th id="121">121</th><td>};</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><b>static_assert</b>(<b>sizeof</b>(<a class="typedef" href="../include/pthread.h.html#pthread_cond_t" title='pthread_cond_t' data-type='struct pthread_cond_t' data-ref="pthread_cond_t">pthread_cond_t</a>) == <b>sizeof</b>(<a class="type" href="#pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</a>),</td></tr>
+<tr><th id="124">124</th><td>              <q>"pthread_cond_t should actually be pthread_cond_internal_t in implementation."</q>);</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td><i>// For binary compatibility with old version of pthread_cond_t, we can't use more strict alignment</i></td></tr>
+<tr><th id="127">127</th><td><i>// than 4-byte alignment.</i></td></tr>
+<tr><th id="128">128</th><td><b>static_assert</b>(<b>alignof</b>(<a class="typedef" href="../include/pthread.h.html#pthread_cond_t" title='pthread_cond_t' data-type='struct pthread_cond_t' data-ref="pthread_cond_t">pthread_cond_t</a>) == <var>4</var>,</td></tr>
+<tr><th id="129">129</th><td>              <q>"pthread_cond_t should fulfill the alignment requirement of pthread_cond_internal_t."</q>);</td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td><em>static</em> <a class="type" href="#pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</a>* <dfn class="tu decl def" id="__get_internal_cond" title='__get_internal_cond' data-type='pthread_cond_internal_t * __get_internal_cond(pthread_cond_t * cond_interface)' data-ref="__get_internal_cond">__get_internal_cond</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_cond_t" title='pthread_cond_t' data-type='struct pthread_cond_t' data-ref="pthread_cond_t">pthread_cond_t</a>* <dfn class="local col1 decl" id="11cond_interface" title='cond_interface' data-type='pthread_cond_t *' data-ref="11cond_interface">cond_interface</dfn>) {</td></tr>
+<tr><th id="132">132</th><td>  <b>return</b> <b>reinterpret_cast</b>&lt;<a class="type" href="#pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</a>*&gt;(<a class="local col1 ref" href="#11cond_interface" title='cond_interface' data-ref="11cond_interface">cond_interface</a>);</td></tr>
+<tr><th id="133">133</th><td>}</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td><em>int</em> <dfn class="decl def" id="pthread_cond_init" title='pthread_cond_init' data-ref="pthread_cond_init">pthread_cond_init</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_cond_t" title='pthread_cond_t' data-type='struct pthread_cond_t' data-ref="pthread_cond_t">pthread_cond_t</a>* <dfn class="local col2 decl" id="12cond_interface" title='cond_interface' data-type='pthread_cond_t *' data-ref="12cond_interface">cond_interface</dfn>, <em>const</em> <a class="typedef" href="../include/pthread.h.html#pthread_condattr_t" title='pthread_condattr_t' data-type='long' data-ref="pthread_condattr_t">pthread_condattr_t</a>* <dfn class="local col3 decl" id="13attr" title='attr' data-type='const pthread_condattr_t *' data-ref="13attr">attr</dfn>) {</td></tr>
+<tr><th id="136">136</th><td>  <a class="type" href="#pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</a>* <dfn class="local col4 decl" id="14cond" title='cond' data-type='pthread_cond_internal_t *' data-ref="14cond">cond</dfn> = <a class="tu ref" href="#__get_internal_cond" title='__get_internal_cond' data-use='c' data-ref="__get_internal_cond">__get_internal_cond</a>(<a class="local col2 ref" href="#12cond_interface" title='cond_interface' data-ref="12cond_interface">cond_interface</a>);</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td>  <em>unsigned</em> <em>int</em> <dfn class="local col5 decl" id="15init_state" title='init_state' data-type='unsigned int' data-ref="15init_state">init_state</dfn> = <var>0</var>;</td></tr>
+<tr><th id="139">139</th><td>  <b>if</b> (<a class="local col3 ref" href="#13attr" title='attr' data-ref="13attr">attr</a> != <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="140">140</th><td>    <a class="local col5 ref" href="#15init_state" title='init_state' data-ref="15init_state">init_state</a> = (*<a class="local col3 ref" href="#13attr" title='attr' data-ref="13attr">attr</a> &amp; <a class="macro" href="#60" title="(0x0001 | 0x0002)" data-ref="_M/COND_FLAGS_MASK">COND_FLAGS_MASK</a>);</td></tr>
+<tr><th id="141">141</th><td>  }</td></tr>
+<tr><th id="142">142</th><td>  <a class="macro" href="../include/stdatomic.h.html#240" title="__c11_atomic_init(&amp;cond-&gt;state, init_state)" data-ref="_M/atomic_init">atomic_init</a>(&amp;<a class="local col4 ref" href="#14cond" title='cond' data-ref="14cond">cond</a>-&gt;<a class="tu ref" href="#pthread_cond_internal_t::state" title='pthread_cond_internal_t::state' data-use='a' data-ref="pthread_cond_internal_t::state">state</a>, <a class="local col5 ref" href="#15init_state" title='init_state' data-ref="15init_state">init_state</a>);</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="145">145</th><td>}</td></tr>
+<tr><th id="146">146</th><td></td></tr>
+<tr><th id="147">147</th><td><em>int</em> <dfn class="decl def" id="pthread_cond_destroy" title='pthread_cond_destroy' data-ref="pthread_cond_destroy">pthread_cond_destroy</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_cond_t" title='pthread_cond_t' data-type='struct pthread_cond_t' data-ref="pthread_cond_t">pthread_cond_t</a>* <dfn class="local col6 decl" id="16cond_interface" title='cond_interface' data-type='pthread_cond_t *' data-ref="16cond_interface">cond_interface</dfn>) {</td></tr>
+<tr><th id="148">148</th><td>  <a class="type" href="#pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</a>* <dfn class="local col7 decl" id="17cond" title='cond' data-type='pthread_cond_internal_t *' data-ref="17cond">cond</dfn> = <a class="tu ref" href="#__get_internal_cond" title='__get_internal_cond' data-use='c' data-ref="__get_internal_cond">__get_internal_cond</a>(<a class="local col6 ref" href="#16cond_interface" title='cond_interface' data-ref="16cond_interface">cond_interface</a>);</td></tr>
+<tr><th id="149">149</th><td>  <a class="macro" href="../include/stdatomic.h.html#425" title="__c11_atomic_store(&amp;cond-&gt;state, 0xdeadc04d, memory_order_relaxed)" data-ref="_M/atomic_store_explicit">atomic_store_explicit</a>(&amp;<a class="local col7 ref" href="#17cond" title='cond' data-ref="17cond">cond</a>-&gt;<a class="tu ref" href="#pthread_cond_internal_t::state" title='pthread_cond_internal_t::state' data-use='a' data-ref="pthread_cond_internal_t::state">state</a>, <var>0xdeadc04d</var>, <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>);</td></tr>
+<tr><th id="150">150</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="151">151</th><td>}</td></tr>
+<tr><th id="152">152</th><td></td></tr>
+<tr><th id="153">153</th><td><i  data-doc="__pthread_cond_pulse">// This function is used by pthread_cond_broadcast and</i></td></tr>
+<tr><th id="154">154</th><td><i  data-doc="__pthread_cond_pulse">// pthread_cond_signal to atomically decrement the counter</i></td></tr>
+<tr><th id="155">155</th><td><i  data-doc="__pthread_cond_pulse">// then wake up thread_count threads.</i></td></tr>
+<tr><th id="156">156</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="__pthread_cond_pulse" title='__pthread_cond_pulse' data-type='int __pthread_cond_pulse(pthread_cond_internal_t * cond, int thread_count)' data-ref="__pthread_cond_pulse">__pthread_cond_pulse</dfn>(<a class="type" href="#pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</a>* <dfn class="local col8 decl" id="18cond" title='cond' data-type='pthread_cond_internal_t *' data-ref="18cond">cond</dfn>, <em>int</em> <dfn class="local col9 decl" id="19thread_count" title='thread_count' data-type='int' data-ref="19thread_count">thread_count</dfn>) {</td></tr>
+<tr><th id="157">157</th><td>  <i>// We don't use a release/seq_cst fence here. Because pthread_cond_wait/signal can't be</i></td></tr>
+<tr><th id="158">158</th><td><i>  // used as a method for memory synchronization by itself. It should always be used with</i></td></tr>
+<tr><th id="159">159</th><td><i>  // pthread mutexes. Note that Spurious wakeups from pthread_cond_wait/timedwait may occur,</i></td></tr>
+<tr><th id="160">160</th><td><i>  // so when using condition variables there is always a boolean predicate involving shared</i></td></tr>
+<tr><th id="161">161</th><td><i>  // variables associated with each condition wait that is true if the thread should proceed.</i></td></tr>
+<tr><th id="162">162</th><td><i>  // If the predicate is seen true before a condition wait, pthread_cond_wait/timedwait will</i></td></tr>
+<tr><th id="163">163</th><td><i>  // not be called. That's why pthread_wait/signal pair can't be used as a method for memory</i></td></tr>
+<tr><th id="164">164</th><td><i>  // synchronization. And it doesn't help even if we use any fence here.</i></td></tr>
+<tr><th id="165">165</th><td><i></i></td></tr>
+<tr><th id="166">166</th><td><i>  // The increase of value should leave flags alone, even if the value can overflows.</i></td></tr>
+<tr><th id="167">167</th><td>  <a class="macro" href="../include/stdatomic.h.html#413" title="__c11_atomic_fetch_add(&amp;cond-&gt;state, 0x0004, memory_order_relaxed)" data-ref="_M/atomic_fetch_add_explicit">atomic_fetch_add_explicit</a>(&amp;<a class="local col8 ref" href="#18cond" title='cond' data-ref="18cond">cond</a>-&gt;<a class="tu ref" href="#pthread_cond_internal_t::state" title='pthread_cond_internal_t::state' data-use='a' data-ref="pthread_cond_internal_t::state">state</a>, <a class="macro" href="#59" title="0x0004" data-ref="_M/COND_COUNTER_STEP">COND_COUNTER_STEP</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>);</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td>  <a class="ref" href="../private/bionic_futex.h.html#__futex_wake_ex" title='__futex_wake_ex' data-ref="__futex_wake_ex">__futex_wake_ex</a>(&amp;<a class="local col8 ref" href="#18cond" title='cond' data-ref="18cond">cond</a>-&gt;<a class="tu ref" href="#pthread_cond_internal_t::state" title='pthread_cond_internal_t::state' data-use='a' data-ref="pthread_cond_internal_t::state">state</a>, <a class="local col8 ref" href="#18cond" title='cond' data-ref="18cond">cond</a>-&gt;<a class="tu ref" href="#_ZN23pthread_cond_internal_t14process_sharedEv" title='pthread_cond_internal_t::process_shared' data-use='c' data-ref="_ZN23pthread_cond_internal_t14process_sharedEv">process_shared</a>(), <a class="local col9 ref" href="#19thread_count" title='thread_count' data-ref="19thread_count">thread_count</a>);</td></tr>
+<tr><th id="170">170</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="171">171</th><td>}</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="__pthread_cond_timedwait" title='__pthread_cond_timedwait' data-type='int __pthread_cond_timedwait(pthread_cond_internal_t * cond, pthread_mutex_t * mutex, bool use_realtime_clock, const timespec * abs_timeout_or_null)' data-ref="__pthread_cond_timedwait">__pthread_cond_timedwait</dfn>(<a class="type" href="#pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</a>* <dfn class="local col0 decl" id="20cond" title='cond' data-type='pthread_cond_internal_t *' data-ref="20cond">cond</dfn>, <a class="typedef" href="../include/pthread.h.html#pthread_mutex_t" title='pthread_mutex_t' data-type='struct pthread_mutex_t' data-ref="pthread_mutex_t">pthread_mutex_t</a>* <dfn class="local col1 decl" id="21mutex" title='mutex' data-type='pthread_mutex_t *' data-ref="21mutex">mutex</dfn>,</td></tr>
+<tr><th id="174">174</th><td>                                    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="local col2 decl" id="22use_realtime_clock" title='use_realtime_clock' data-type='bool' data-ref="22use_realtime_clock">use_realtime_clock</dfn>, <em>const</em> <a class="type" href="../include/bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>* <dfn class="local col3 decl" id="23abs_timeout_or_null" title='abs_timeout_or_null' data-type='const timespec *' data-ref="23abs_timeout_or_null">abs_timeout_or_null</dfn>) {</td></tr>
+<tr><th id="175">175</th><td>  <em>int</em> <dfn class="local col4 decl" id="24result" title='result' data-type='int' data-ref="24result">result</dfn> = <a class="ref" href="../private/bionic_time_conversions.h.html#_ZL14check_timespecPK8timespecb" title='check_timespec' data-ref="_ZL14check_timespecPK8timespecb">check_timespec</a>(<a class="local col3 ref" href="#23abs_timeout_or_null" title='abs_timeout_or_null' data-ref="23abs_timeout_or_null">abs_timeout_or_null</a>, <span class="macro" title="true" data-ref="_M/true"><b>true</b></span>);</td></tr>
+<tr><th id="176">176</th><td>  <b>if</b> (<a class="local col4 ref" href="#24result" title='result' data-ref="24result">result</a> != <var>0</var>) {</td></tr>
+<tr><th id="177">177</th><td>    <b>return</b> <a class="local col4 ref" href="#24result" title='result' data-ref="24result">result</a>;</td></tr>
+<tr><th id="178">178</th><td>  }</td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td>  <em>unsigned</em> <em>int</em> <dfn class="local col5 decl" id="25old_state" title='old_state' data-type='unsigned int' data-ref="25old_state">old_state</dfn> = <a class="macro" href="../include/stdatomic.h.html#423" title="__c11_atomic_load(&amp;cond-&gt;state, memory_order_relaxed)" data-ref="_M/atomic_load_explicit">atomic_load_explicit</a>(&amp;<a class="local col0 ref" href="#20cond" title='cond' data-ref="20cond">cond</a>-&gt;<a class="tu ref" href="#pthread_cond_internal_t::state" title='pthread_cond_internal_t::state' data-use='a' data-ref="pthread_cond_internal_t::state">state</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>);</td></tr>
+<tr><th id="181">181</th><td>  <a class="ref" href="../include/pthread.h.html#pthread_mutex_unlock" title='pthread_mutex_unlock' data-ref="pthread_mutex_unlock">pthread_mutex_unlock</a>(<a class="local col1 ref" href="#21mutex" title='mutex' data-ref="21mutex">mutex</a>);</td></tr>
+<tr><th id="182">182</th><td>  <em>int</em> <dfn class="local col6 decl" id="26status" title='status' data-type='int' data-ref="26status">status</dfn> = <a class="ref" href="../private/bionic_futex.h.html#__futex_wait_ex" title='__futex_wait_ex' data-ref="__futex_wait_ex">__futex_wait_ex</a>(&amp;<a class="local col0 ref" href="#20cond" title='cond' data-ref="20cond">cond</a>-&gt;<a class="tu ref" href="#pthread_cond_internal_t::state" title='pthread_cond_internal_t::state' data-use='a' data-ref="pthread_cond_internal_t::state">state</a>, <a class="local col0 ref" href="#20cond" title='cond' data-ref="20cond">cond</a>-&gt;<a class="tu ref" href="#_ZN23pthread_cond_internal_t14process_sharedEv" title='pthread_cond_internal_t::process_shared' data-use='c' data-ref="_ZN23pthread_cond_internal_t14process_sharedEv">process_shared</a>(), <a class="local col5 ref" href="#25old_state" title='old_state' data-ref="25old_state">old_state</a>,</td></tr>
+<tr><th id="183">183</th><td>                               <a class="local col2 ref" href="#22use_realtime_clock" title='use_realtime_clock' data-ref="22use_realtime_clock">use_realtime_clock</a>, <a class="local col3 ref" href="#23abs_timeout_or_null" title='abs_timeout_or_null' data-ref="23abs_timeout_or_null">abs_timeout_or_null</a>);</td></tr>
+<tr><th id="184">184</th><td>  <a class="ref" href="../include/pthread.h.html#pthread_mutex_lock" title='pthread_mutex_lock' data-ref="pthread_mutex_lock">pthread_mutex_lock</a>(<a class="local col1 ref" href="#21mutex" title='mutex' data-ref="21mutex">mutex</a>);</td></tr>
+<tr><th id="185">185</th><td></td></tr>
+<tr><th id="186">186</th><td>  <b>if</b> (<a class="local col6 ref" href="#26status" title='status' data-ref="26status">status</a> == -<a class="macro" href="../kernel/uapi/asm-generic/errno.h.html#116" title="110" data-ref="_M/ETIMEDOUT">ETIMEDOUT</a>) {</td></tr>
+<tr><th id="187">187</th><td>    <b>return</b> <a class="macro" href="../kernel/uapi/asm-generic/errno.h.html#116" title="110" data-ref="_M/ETIMEDOUT">ETIMEDOUT</a>;</td></tr>
+<tr><th id="188">188</th><td>  }</td></tr>
+<tr><th id="189">189</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="190">190</th><td>}</td></tr>
+<tr><th id="191">191</th><td></td></tr>
+<tr><th id="192">192</th><td><em>int</em> <dfn class="decl def" id="pthread_cond_broadcast" title='pthread_cond_broadcast' data-ref="pthread_cond_broadcast">pthread_cond_broadcast</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_cond_t" title='pthread_cond_t' data-type='struct pthread_cond_t' data-ref="pthread_cond_t">pthread_cond_t</a>* <dfn class="local col7 decl" id="27cond_interface" title='cond_interface' data-type='pthread_cond_t *' data-ref="27cond_interface">cond_interface</dfn>) {</td></tr>
+<tr><th id="193">193</th><td>  <b>return</b> <a class="tu ref" href="#__pthread_cond_pulse" title='__pthread_cond_pulse' data-use='c' data-ref="__pthread_cond_pulse">__pthread_cond_pulse</a>(<a class="tu ref" href="#__get_internal_cond" title='__get_internal_cond' data-use='c' data-ref="__get_internal_cond">__get_internal_cond</a>(<a class="local col7 ref" href="#27cond_interface" title='cond_interface' data-ref="27cond_interface">cond_interface</a>), <a class="macro" href="../include/sys/limits.h.html#53" title="0x7fffffff" data-ref="_M/INT_MAX">INT_MAX</a>);</td></tr>
+<tr><th id="194">194</th><td>}</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td><em>int</em> <dfn class="decl def" id="pthread_cond_signal" title='pthread_cond_signal' data-ref="pthread_cond_signal">pthread_cond_signal</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_cond_t" title='pthread_cond_t' data-type='struct pthread_cond_t' data-ref="pthread_cond_t">pthread_cond_t</a>* <dfn class="local col8 decl" id="28cond_interface" title='cond_interface' data-type='pthread_cond_t *' data-ref="28cond_interface">cond_interface</dfn>) {</td></tr>
+<tr><th id="197">197</th><td>  <b>return</b> <a class="tu ref" href="#__pthread_cond_pulse" title='__pthread_cond_pulse' data-use='c' data-ref="__pthread_cond_pulse">__pthread_cond_pulse</a>(<a class="tu ref" href="#__get_internal_cond" title='__get_internal_cond' data-use='c' data-ref="__get_internal_cond">__get_internal_cond</a>(<a class="local col8 ref" href="#28cond_interface" title='cond_interface' data-ref="28cond_interface">cond_interface</a>), <var>1</var>);</td></tr>
+<tr><th id="198">198</th><td>}</td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td><em>int</em> <dfn class="decl def" id="pthread_cond_wait" title='pthread_cond_wait' data-ref="pthread_cond_wait">pthread_cond_wait</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_cond_t" title='pthread_cond_t' data-type='struct pthread_cond_t' data-ref="pthread_cond_t">pthread_cond_t</a>* <dfn class="local col9 decl" id="29cond_interface" title='cond_interface' data-type='pthread_cond_t *' data-ref="29cond_interface">cond_interface</dfn>, <a class="typedef" href="../include/pthread.h.html#pthread_mutex_t" title='pthread_mutex_t' data-type='struct pthread_mutex_t' data-ref="pthread_mutex_t">pthread_mutex_t</a>* <dfn class="local col0 decl" id="30mutex" title='mutex' data-type='pthread_mutex_t *' data-ref="30mutex">mutex</dfn>) {</td></tr>
+<tr><th id="201">201</th><td>  <a class="type" href="#pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</a>* <dfn class="local col1 decl" id="31cond" title='cond' data-type='pthread_cond_internal_t *' data-ref="31cond">cond</dfn> = <a class="tu ref" href="#__get_internal_cond" title='__get_internal_cond' data-use='c' data-ref="__get_internal_cond">__get_internal_cond</a>(<a class="local col9 ref" href="#29cond_interface" title='cond_interface' data-ref="29cond_interface">cond_interface</a>);</td></tr>
+<tr><th id="202">202</th><td>  <b>return</b> <a class="tu ref" href="#__pthread_cond_timedwait" title='__pthread_cond_timedwait' data-use='c' data-ref="__pthread_cond_timedwait">__pthread_cond_timedwait</a>(<a class="local col1 ref" href="#31cond" title='cond' data-ref="31cond">cond</a>, <a class="local col0 ref" href="#30mutex" title='mutex' data-ref="30mutex">mutex</a>, <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>, <b>nullptr</b>);</td></tr>
+<tr><th id="203">203</th><td>}</td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><em>int</em> <dfn class="decl def" id="pthread_cond_timedwait" title='pthread_cond_timedwait' data-ref="pthread_cond_timedwait">pthread_cond_timedwait</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_cond_t" title='pthread_cond_t' data-type='struct pthread_cond_t' data-ref="pthread_cond_t">pthread_cond_t</a> *<dfn class="local col2 decl" id="32cond_interface" title='cond_interface' data-type='pthread_cond_t *' data-ref="32cond_interface">cond_interface</dfn>, <a class="typedef" href="../include/pthread.h.html#pthread_mutex_t" title='pthread_mutex_t' data-type='struct pthread_mutex_t' data-ref="pthread_mutex_t">pthread_mutex_t</a> * <dfn class="local col3 decl" id="33mutex" title='mutex' data-type='pthread_mutex_t *' data-ref="33mutex">mutex</dfn>,</td></tr>
+<tr><th id="206">206</th><td>                           <em>const</em> <a class="type" href="../include/bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a> *<dfn class="local col4 decl" id="34abstime" title='abstime' data-type='const timespec *' data-ref="34abstime">abstime</dfn>) {</td></tr>
+<tr><th id="207">207</th><td></td></tr>
+<tr><th id="208">208</th><td>  <a class="type" href="#pthread_cond_internal_t" title='pthread_cond_internal_t' data-ref="pthread_cond_internal_t">pthread_cond_internal_t</a>* <dfn class="local col5 decl" id="35cond" title='cond' data-type='pthread_cond_internal_t *' data-ref="35cond">cond</dfn> = <a class="tu ref" href="#__get_internal_cond" title='__get_internal_cond' data-use='c' data-ref="__get_internal_cond">__get_internal_cond</a>(<a class="local col2 ref" href="#32cond_interface" title='cond_interface' data-ref="32cond_interface">cond_interface</a>);</td></tr>
+<tr><th id="209">209</th><td>  <b>return</b> <a class="tu ref" href="#__pthread_cond_timedwait" title='__pthread_cond_timedwait' data-use='c' data-ref="__pthread_cond_timedwait">__pthread_cond_timedwait</a>(<a class="local col5 ref" href="#35cond" title='cond' data-ref="35cond">cond</a>, <a class="local col3 ref" href="#33mutex" title='mutex' data-ref="33mutex">mutex</a>, <a class="local col5 ref" href="#35cond" title='cond' data-ref="35cond">cond</a>-&gt;<a class="tu ref" href="#_ZN23pthread_cond_internal_t18use_realtime_clockEv" title='pthread_cond_internal_t::use_realtime_clock' data-use='c' data-ref="_ZN23pthread_cond_internal_t18use_realtime_clockEv">use_realtime_clock</a>(), <a class="local col4 ref" href="#34abstime" title='abstime' data-ref="34abstime">abstime</a>);</td></tr>
+<tr><th id="210">210</th><td>}</td></tr>
+<tr><th id="211">211</th><td></td></tr>
+<tr><th id="212">212</th><td><u>#<span data-ppcond="212">if</span> !defined(<span class="macro" data-ref="_M/__LP64__">__LP64__</span>)</u></td></tr>
+<tr><th id="213">213</th><td><i>// TODO: this exists only for backward binary compatibility on 32 bit platforms.</i></td></tr>
+<tr><th id="214">214</th><td><b>extern</b> <q>"C"</q> <em>int</em> pthread_cond_timedwait_monotonic(pthread_cond_t* cond_interface,</td></tr>
+<tr><th id="215">215</th><td>                                                pthread_mutex_t* mutex,</td></tr>
+<tr><th id="216">216</th><td>                                                <em>const</em> timespec* abs_timeout) {</td></tr>
+<tr><th id="217">217</th><td></td></tr>
+<tr><th id="218">218</th><td>  <b>return</b> __pthread_cond_timedwait(__get_internal_cond(cond_interface), mutex, <b>false</b>, abs_timeout);</td></tr>
+<tr><th id="219">219</th><td>}</td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td><b>extern</b> <q>"C"</q> <em>int</em> pthread_cond_timedwait_monotonic_np(pthread_cond_t* cond_interface,</td></tr>
+<tr><th id="222">222</th><td>                                                   pthread_mutex_t* mutex,</td></tr>
+<tr><th id="223">223</th><td>                                                   <em>const</em> timespec* abs_timeout) {</td></tr>
+<tr><th id="224">224</th><td>  <b>return</b> pthread_cond_timedwait_monotonic(cond_interface, mutex, abs_timeout);</td></tr>
+<tr><th id="225">225</th><td>}</td></tr>
+<tr><th id="226">226</th><td></td></tr>
+<tr><th id="227">227</th><td><b>extern</b> <q>"C"</q> <em>int</em> pthread_cond_timedwait_relative_np(pthread_cond_t* cond_interface,</td></tr>
+<tr><th id="228">228</th><td>                                                  pthread_mutex_t* mutex,</td></tr>
+<tr><th id="229">229</th><td>                                                  <em>const</em> timespec* rel_timeout) {</td></tr>
+<tr><th id="230">230</th><td>  timespec ts;</td></tr>
+<tr><th id="231">231</th><td>  timespec* abs_timeout = <b>nullptr</b>;</td></tr>
+<tr><th id="232">232</th><td>  <b>if</b> (rel_timeout != <b>nullptr</b>) {</td></tr>
+<tr><th id="233">233</th><td>    absolute_timespec_from_timespec(ts, *rel_timeout, CLOCK_REALTIME);</td></tr>
+<tr><th id="234">234</th><td>    abs_timeout = &amp;ts;</td></tr>
+<tr><th id="235">235</th><td>  }</td></tr>
+<tr><th id="236">236</th><td>  <b>return</b> __pthread_cond_timedwait(__get_internal_cond(cond_interface), mutex, <b>true</b>, abs_timeout);</td></tr>
+<tr><th id="237">237</th><td>}</td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td><b>extern</b> <q>"C"</q> <em>int</em> pthread_cond_timeout_np(pthread_cond_t* cond_interface,</td></tr>
+<tr><th id="240">240</th><td>                                       pthread_mutex_t* mutex, <em>unsigned</em> ms) {</td></tr>
+<tr><th id="241">241</th><td>  timespec ts;</td></tr>
+<tr><th id="242">242</th><td>  timespec_from_ms(ts, ms);</td></tr>
+<tr><th id="243">243</th><td>  <b>return</b> pthread_cond_timedwait_relative_np(cond_interface, mutex, &amp;ts);</td></tr>
+<tr><th id="244">244</th><td>}</td></tr>
+<tr><th id="245">245</th><td><u>#<span data-ppcond="212">endif</span> // !defined(__LP64__)</u></td></tr>
+<tr><th id="246">246</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

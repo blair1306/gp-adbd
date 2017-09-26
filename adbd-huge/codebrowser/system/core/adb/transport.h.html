@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>transport.h source code [codebrowser/system/core/adb/transport.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="atransport "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/adb/transport.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>adb</a>/<a href='transport.h.html'>transport.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2011 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/__TRANSPORT_H">__TRANSPORT_H</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/__TRANSPORT_H" data-ref="_M/__TRANSPORT_H">__TRANSPORT_H</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../external/libcxx/include/list.html">&lt;list&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../external/libcxx/include/string.html">&lt;string&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../../../external/libcxx/include/unordered_set.html">&lt;unordered_set&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="adb.h.html">"adb.h"</a></u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><b>typedef</b> <span class="namespace">std::</span><a class="type" href="../../../external/libcxx/include/unordered_set.html#std::__1::unordered_set" title='std::__1::unordered_set' data-ref="std::__1::unordered_set">unordered_set</a>&lt;<span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&gt; <dfn class="typedef" id="FeatureSet" title='FeatureSet' data-type='std::unordered_set&lt;std::string&gt;' data-ref="FeatureSet">FeatureSet</dfn>;</td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><em>const</em> <a class="typedef" href="#FeatureSet" title='FeatureSet' data-type='std::unordered_set&lt;std::string&gt;' data-ref="FeatureSet">FeatureSet</a>&amp; <dfn class="decl" id="_Z18supported_featuresv" title='supported_features' data-ref="_Z18supported_featuresv">supported_features</dfn>();</td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><i>// Encodes and decodes FeatureSet objects into human-readable strings.</i></td></tr>
+<tr><th id="33">33</th><td><span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="decl" id="_Z18FeatureSetToStringRKNSt3__113unordered_setINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEENS_4hashIS6_EENS_8equal_toIS6_EENS4_IS6_EEEE" title='FeatureSetToString' data-ref="_Z18FeatureSetToStringRKNSt3__113unordered_setINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEENS_4hashIS6_EENS_8equal_toIS6_EENS4_IS6_EEEE">FeatureSetToString</dfn>(<em>const</em> <a class="typedef" href="#FeatureSet" title='FeatureSet' data-type='std::unordered_set&lt;std::string&gt;' data-ref="FeatureSet">FeatureSet</a>&amp; <dfn class="local col9 decl" id="1129features" title='features' data-type='const FeatureSet &amp;' data-ref="1129features">features</dfn>);</td></tr>
+<tr><th id="34">34</th><td><a class="typedef" href="#FeatureSet" title='FeatureSet' data-type='std::unordered_set&lt;std::string&gt;' data-ref="FeatureSet">FeatureSet</a> <dfn class="decl" id="_Z18StringToFeatureSetRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='StringToFeatureSet' data-ref="_Z18StringToFeatureSetRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">StringToFeatureSet</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col0 decl" id="1130features_string" title='features_string' data-type='const std::string &amp;' data-ref="1130features_string">features_string</dfn>);</td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><i>// Returns true if both local features and |feature_set| support |feature|.</i></td></tr>
+<tr><th id="37">37</th><td><span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="_Z13CanUseFeatureRKNSt3__113unordered_setINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEENS_4hashIS6_EENS_8equal_toIS6_EENS4_IS6_EEEERKS6_" title='CanUseFeature' data-ref="_Z13CanUseFeatureRKNSt3__113unordered_setINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEENS_4hashIS6_EENS_8equal_toIS6_EENS4_IS6_EEEERKS6_">CanUseFeature</dfn>(<em>const</em> <a class="typedef" href="#FeatureSet" title='FeatureSet' data-type='std::unordered_set&lt;std::string&gt;' data-ref="FeatureSet">FeatureSet</a>&amp; <dfn class="local col1 decl" id="1131feature_set" title='feature_set' data-type='const FeatureSet &amp;' data-ref="1131feature_set">feature_set</dfn>, <em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col2 decl" id="1132feature" title='feature' data-type='const std::string &amp;' data-ref="1132feature">feature</dfn>);</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><i>// Do not use any of [:;=,] in feature strings, they have special meaning</i></td></tr>
+<tr><th id="40">40</th><td><i>// in the connection banner.</i></td></tr>
+<tr><th id="41">41</th><td><b>extern</b> <em>const</em> <em>char</em>* <em>const</em> <dfn class="decl" id="kFeatureShell2" title='kFeatureShell2' data-ref="kFeatureShell2">kFeatureShell2</dfn>;</td></tr>
+<tr><th id="42">42</th><td><i>// The 'cmd' command is available</i></td></tr>
+<tr><th id="43">43</th><td><b>extern</b> <em>const</em> <em>char</em>* <em>const</em> <dfn class="decl" id="kFeatureCmd" title='kFeatureCmd' data-ref="kFeatureCmd">kFeatureCmd</dfn>;</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><b>class</b> <dfn class="type def" id="atransport" title='atransport' data-ref="atransport">atransport</dfn> {</td></tr>
+<tr><th id="46">46</th><td><b>public</b>:</td></tr>
+<tr><th id="47">47</th><td>    <i>// TODO(danalbert): We expose waaaaaaay too much stuff because this was</i></td></tr>
+<tr><th id="48">48</th><td><i>    // historically just a struct, but making the whole thing a more idiomatic</i></td></tr>
+<tr><th id="49">49</th><td><i>    // class in one go is a very large change. Given how bad our testing is,</i></td></tr>
+<tr><th id="50">50</th><td><i>    // it's better to do this piece by piece.</i></td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td>    <dfn class="decl def" id="_ZN10atransportC1Ev" title='atransport::atransport' data-ref="_ZN10atransportC1Ev">atransport</dfn>() {</td></tr>
+<tr><th id="53">53</th><td>        <a class="member" href="#atransport::transport_fde" title='atransport::transport_fde' data-ref="atransport::transport_fde">transport_fde</a> <a class="ref" href="fdevent.h.html#33" title='fdevent::operator=' data-ref="_ZN7fdeventaSEOS_">=</a> {};</td></tr>
+<tr><th id="54">54</th><td>        <a class="member" href="#atransport::protocol_version" title='atransport::protocol_version' data-ref="atransport::protocol_version">protocol_version</a> = <a class="macro" href="adb.h.html#44" title="0x01000000" data-ref="_M/A_VERSION">A_VERSION</a>;</td></tr>
+<tr><th id="55">55</th><td>        <a class="member" href="#atransport::max_payload" title='atransport::max_payload' data-ref="atransport::max_payload">max_payload</a> = <a class="ref" href="adb.h.html#MAX_PAYLOAD" title='MAX_PAYLOAD' data-ref="MAX_PAYLOAD">MAX_PAYLOAD</a>;</td></tr>
+<tr><th id="56">56</th><td>    }</td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td>    <b>virtual</b> <dfn class="virtual decl def" id="_ZN10atransportD1Ev" title='atransport::~atransport' data-ref="_ZN10atransportD1Ev">~atransport</dfn>() {}</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td>    <em>int</em> (*<dfn class="decl" id="atransport::read_from_remote" title='atransport::read_from_remote' data-ref="atransport::read_from_remote">read_from_remote</dfn>)(<a class="type" href="adb.h.html#apacket" title='apacket' data-ref="apacket">apacket</a>* <dfn class="local col3 decl" id="1133p" title='p' data-type='apacket *' data-ref="1133p">p</dfn>, <a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col4 decl" id="1134t" title='t' data-type='atransport *' data-ref="1134t">t</dfn>) = <b>nullptr</b>;</td></tr>
+<tr><th id="61">61</th><td>    <em>int</em> (*<dfn class="decl" id="atransport::write_to_remote" title='atransport::write_to_remote' data-ref="atransport::write_to_remote">write_to_remote</dfn>)(<a class="type" href="adb.h.html#apacket" title='apacket' data-ref="apacket">apacket</a>* <dfn class="local col5 decl" id="1135p" title='p' data-type='apacket *' data-ref="1135p">p</dfn>, <a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col6 decl" id="1136t" title='t' data-type='atransport *' data-ref="1136t">t</dfn>) = <b>nullptr</b>;</td></tr>
+<tr><th id="62">62</th><td>    <em>void</em> (*<a class="macro" href="sysdeps.h.html#583" title="____xxx_close" data-ref="_M/close">close</a>)(<a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col7 decl" id="1137t" title='t' data-type='atransport *' data-ref="1137t">t</dfn>) = <b>nullptr</b>;</td></tr>
+<tr><th id="63">63</th><td>    <em>void</em> (*<dfn class="decl" id="atransport::kick" title='atransport::kick' data-ref="atransport::kick">kick</dfn>)(<a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col8 decl" id="1138t" title='t' data-type='atransport *' data-ref="1138t">t</dfn>) = <b>nullptr</b>;</td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td>    <em>int</em> <dfn class="decl" id="atransport::fd" title='atransport::fd' data-ref="atransport::fd">fd</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="66">66</th><td>    <em>int</em> <dfn class="decl" id="atransport::transport_socket" title='atransport::transport_socket' data-ref="atransport::transport_socket">transport_socket</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="67">67</th><td>    <a class="type" href="fdevent.h.html#fdevent" title='fdevent' data-ref="fdevent">fdevent</a> <dfn class="decl" id="atransport::transport_fde" title='atransport::transport_fde' data-ref="atransport::transport_fde">transport_fde</dfn>;</td></tr>
+<tr><th id="68">68</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="atransport::ref_count" title='atransport::ref_count' data-ref="atransport::ref_count">ref_count</dfn> = <var>0</var>;</td></tr>
+<tr><th id="69">69</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="atransport::sync_token" title='atransport::sync_token' data-ref="atransport::sync_token">sync_token</dfn> = <var>0</var>;</td></tr>
+<tr><th id="70">70</th><td>    <a class="type" href="adb.h.html#ConnectionState" title='ConnectionState' data-ref="ConnectionState">ConnectionState</a> <dfn class="decl" id="atransport::connection_state" title='atransport::connection_state' data-ref="atransport::connection_state">connection_state</dfn> = <a class="enum" href="adb.h.html#ConnectionState::kCsOffline" title='ConnectionState::kCsOffline' data-ref="ConnectionState::kCsOffline">kCsOffline</a>;</td></tr>
+<tr><th id="71">71</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="atransport::online" title='atransport::online' data-ref="atransport::online">online</dfn> = <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="72">72</th><td>    <a class="type" href="adb.h.html#TransportType" title='TransportType' data-ref="TransportType">TransportType</a> <dfn class="decl" id="atransport::type" title='atransport::type' data-ref="atransport::type">type</dfn> = <a class="enum" href="adb.h.html#TransportType::kTransportAny" title='TransportType::kTransportAny' data-ref="TransportType::kTransportAny">kTransportAny</a>;</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>    <i>// USB handle or socket fd as needed.</i></td></tr>
+<tr><th id="75">75</th><td>    <a class="type" href="adb.h.html#usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</a>* <dfn class="decl" id="atransport::usb" title='atransport::usb' data-ref="atransport::usb">usb</dfn> = <b>nullptr</b>;</td></tr>
+<tr><th id="76">76</th><td>    <em>int</em> <dfn class="decl" id="atransport::sfd" title='atransport::sfd' data-ref="atransport::sfd">sfd</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td>    <i>// Used to identify transports for clients.</i></td></tr>
+<tr><th id="79">79</th><td>    <em>char</em>* <dfn class="decl" id="atransport::serial" title='atransport::serial' data-ref="atransport::serial">serial</dfn> = <b>nullptr</b>;</td></tr>
+<tr><th id="80">80</th><td>    <em>char</em>* <dfn class="decl" id="atransport::product" title='atransport::product' data-ref="atransport::product">product</dfn> = <b>nullptr</b>;</td></tr>
+<tr><th id="81">81</th><td>    <em>char</em>* <dfn class="decl" id="atransport::model" title='atransport::model' data-ref="atransport::model">model</dfn> = <b>nullptr</b>;</td></tr>
+<tr><th id="82">82</th><td>    <em>char</em>* <dfn class="decl" id="atransport::device" title='atransport::device' data-ref="atransport::device">device</dfn> = <b>nullptr</b>;</td></tr>
+<tr><th id="83">83</th><td>    <em>char</em>* <dfn class="decl" id="atransport::devpath" title='atransport::devpath' data-ref="atransport::devpath">devpath</dfn> = <b>nullptr</b>;</td></tr>
+<tr><th id="84">84</th><td>    <em>int</em> <dfn class="decl" id="atransport::adb_port" title='atransport::adb_port' data-ref="atransport::adb_port">adb_port</dfn> = -<var>1</var>;  <i>// Use for emulators (local transport)</i></td></tr>
+<tr><th id="85">85</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="atransport::kicked" title='atransport::kicked' data-ref="atransport::kicked">kicked</dfn> = <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td>    <em>void</em>* <dfn class="decl" id="atransport::key" title='atransport::key' data-ref="atransport::key">key</dfn> = <b>nullptr</b>;</td></tr>
+<tr><th id="88">88</th><td>    <em>unsigned</em> <em>char</em> <dfn class="decl" id="atransport::token" title='atransport::token' data-ref="atransport::token">token</dfn>[<a class="macro" href="adb.h.html#105" title="20" data-ref="_M/TOKEN_SIZE">TOKEN_SIZE</a>] = {};</td></tr>
+<tr><th id="89">89</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="atransport::failed_auth_attempts" title='atransport::failed_auth_attempts' data-ref="atransport::failed_auth_attempts">failed_auth_attempts</dfn> = <var>0</var>;</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td>    <em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="decl" id="_ZNK10atransport21connection_state_nameEv" title='atransport::connection_state_name' data-ref="_ZNK10atransport21connection_state_nameEv">connection_state_name</dfn>() <em>const</em>;</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td>    <em>void</em> <dfn class="decl" id="_ZN10atransport14update_versionEim" title='atransport::update_version' data-ref="_ZN10atransport14update_versionEim">update_version</dfn>(<em>int</em> <dfn class="local col9 decl" id="1139version" title='version' data-type='int' data-ref="1139version">version</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="1140payload" title='payload' data-type='size_t' data-ref="1140payload">payload</dfn>);</td></tr>
+<tr><th id="94">94</th><td>    <em>int</em> <dfn class="decl" id="_ZNK10atransport20get_protocol_versionEv" title='atransport::get_protocol_version' data-ref="_ZNK10atransport20get_protocol_versionEv">get_protocol_version</dfn>() <em>const</em>;</td></tr>
+<tr><th id="95">95</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="_ZNK10atransport15get_max_payloadEv" title='atransport::get_max_payload' data-ref="_ZNK10atransport15get_max_payloadEv">get_max_payload</dfn>() <em>const</em>;</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td>    <em>const</em> <a class="typedef" href="#FeatureSet" title='FeatureSet' data-type='std::unordered_set&lt;std::string&gt;' data-ref="FeatureSet">FeatureSet</a>&amp; <dfn class="decl def" id="_ZNK10atransport8featuresEv" title='atransport::features' data-ref="_ZNK10atransport8featuresEv">features</dfn>() <em>const</em> {</td></tr>
+<tr><th id="98">98</th><td>        <b>return</b> <a class="member" href="#atransport::features_" title='atransport::features_' data-ref="atransport::features_">features_</a>;</td></tr>
+<tr><th id="99">99</th><td>    }</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="_ZNK10atransport11has_featureERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE" title='atransport::has_feature' data-ref="_ZNK10atransport11has_featureERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE">has_feature</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col1 decl" id="1141feature" title='feature' data-type='const std::string &amp;' data-ref="1141feature">feature</dfn>) <em>const</em>;</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td>    <i>// Loads the transport's feature set from the given string.</i></td></tr>
+<tr><th id="104">104</th><td>    <em>void</em> <dfn class="decl" id="_ZN10atransport11SetFeaturesERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE" title='atransport::SetFeatures' data-ref="_ZN10atransport11SetFeaturesERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE">SetFeatures</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col2 decl" id="1142features_string" title='features_string' data-type='const std::string &amp;' data-ref="1142features_string">features_string</dfn>);</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td>    <em>void</em> <dfn class="decl" id="_ZN10atransport13AddDisconnectEP11adisconnect" title='atransport::AddDisconnect' data-ref="_ZN10atransport13AddDisconnectEP11adisconnect">AddDisconnect</dfn>(<a class="type" href="adb.h.html#adisconnect" title='adisconnect' data-ref="adisconnect">adisconnect</a>* <dfn class="local col3 decl" id="1143disconnect" title='disconnect' data-type='adisconnect *' data-ref="1143disconnect">disconnect</dfn>);</td></tr>
+<tr><th id="107">107</th><td>    <em>void</em> <dfn class="decl" id="_ZN10atransport16RemoveDisconnectEP11adisconnect" title='atransport::RemoveDisconnect' data-ref="_ZN10atransport16RemoveDisconnectEP11adisconnect">RemoveDisconnect</dfn>(<a class="type" href="adb.h.html#adisconnect" title='adisconnect' data-ref="adisconnect">adisconnect</a>* <dfn class="local col4 decl" id="1144disconnect" title='disconnect' data-type='adisconnect *' data-ref="1144disconnect">disconnect</dfn>);</td></tr>
+<tr><th id="108">108</th><td>    <em>void</em> <dfn class="decl" id="_ZN10atransport14RunDisconnectsEv" title='atransport::RunDisconnects' data-ref="_ZN10atransport14RunDisconnectsEv">RunDisconnects</dfn>();</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td>    <i>// Returns true if |target| matches this transport. A matching |target| can be any of:</i></td></tr>
+<tr><th id="111">111</th><td><i>    //   * &lt;serial&gt;</i></td></tr>
+<tr><th id="112">112</th><td><i>    //   * &lt;devpath&gt;</i></td></tr>
+<tr><th id="113">113</th><td><i>    //   * product:&lt;product&gt;</i></td></tr>
+<tr><th id="114">114</th><td><i>    //   * model:&lt;model&gt;</i></td></tr>
+<tr><th id="115">115</th><td><i>    //   * device:&lt;device&gt;</i></td></tr>
+<tr><th id="116">116</th><td><i>    //</i></td></tr>
+<tr><th id="117">117</th><td><i>    // If this is a local transport, serial will also match [tcp:|udp:]&lt;hostname&gt;[:port] targets.</i></td></tr>
+<tr><th id="118">118</th><td><i>    // For example, serial "100.100.100.100:5555" would match any of:</i></td></tr>
+<tr><th id="119">119</th><td><i>    //   * 100.100.100.100</i></td></tr>
+<tr><th id="120">120</th><td><i>    //   * tcp:100.100.100.100</i></td></tr>
+<tr><th id="121">121</th><td><i>    //   * udp:100.100.100.100:5555</i></td></tr>
+<tr><th id="122">122</th><td><i>    // This is to make it easier to use the same network target for both fastboot and adb.</i></td></tr>
+<tr><th id="123">123</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="_ZNK10atransport13MatchesTargetERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE" title='atransport::MatchesTarget' data-ref="_ZNK10atransport13MatchesTargetERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE">MatchesTarget</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col5 decl" id="1145target" title='target' data-type='const std::string &amp;' data-ref="1145target">target</dfn>) <em>const</em>;</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td><b>private</b>:</td></tr>
+<tr><th id="126">126</th><td>    <i>// A set of features transmitted in the banner with the initial connection.</i></td></tr>
+<tr><th id="127">127</th><td><i>    // This is stored in the banner as 'features=feature0,feature1,etc'.</i></td></tr>
+<tr><th id="128">128</th><td>    <a class="typedef" href="#FeatureSet" title='FeatureSet' data-type='std::unordered_set&lt;std::string&gt;' data-ref="FeatureSet">FeatureSet</a> <dfn class="decl" id="atransport::features_" title='atransport::features_' data-ref="atransport::features_">features_</dfn>;</td></tr>
+<tr><th id="129">129</th><td>    <em>int</em> <dfn class="decl" id="atransport::protocol_version" title='atransport::protocol_version' data-ref="atransport::protocol_version">protocol_version</dfn>;</td></tr>
+<tr><th id="130">130</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="atransport::max_payload" title='atransport::max_payload' data-ref="atransport::max_payload">max_payload</dfn>;</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td>    <i>// A list of adisconnect callbacks called when the transport is kicked.</i></td></tr>
+<tr><th id="133">133</th><td>    <span class="namespace">std::</span><a class="type" href="../../../external/libcxx/include/list.html#std::__1::list" title='std::__1::list' data-ref="std::__1::list">list</a>&lt;<a class="type" href="adb.h.html#adisconnect" title='adisconnect' data-ref="adisconnect">adisconnect</a>*&gt; <dfn class="decl" id="atransport::disconnects_" title='atransport::disconnects_' data-ref="atransport::disconnects_">disconnects_</dfn>;</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td>    <a class="macro" href="../base/include/android-base/macros.h.html#48" title="atransport(const atransport&amp;) = delete; void operator=(const atransport&amp;) = delete" data-ref="_M/DISALLOW_COPY_AND_ASSIGN">DISALLOW_COPY_AND_ASSIGN</a>(<dfn class="decl def" id="_ZN10atransportC1ERKS_" title='atransport::atransport' data-ref="_ZN10atransportC1ERKS_"><a class="type" href="#atransport" title='atransport' data-ref="atransport"><a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a></a></dfn>);</td></tr>
+<tr><th id="136">136</th><td>};</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td><i>/*</i></td></tr>
+<tr><th id="139">139</th><td><i> * Obtain a transport from the available transports.</i></td></tr>
+<tr><th id="140">140</th><td><i> * If serial is non-null then only the device with that serial will be chosen.</i></td></tr>
+<tr><th id="141">141</th><td><i> * If multiple devices/emulators would match, *is_ambiguous (if non-null)</i></td></tr>
+<tr><th id="142">142</th><td><i> * is set to true and nullptr returned.</i></td></tr>
+<tr><th id="143">143</th><td><i> * If no suitable transport is found, error is set and nullptr returned.</i></td></tr>
+<tr><th id="144">144</th><td><i> */</i></td></tr>
+<tr><th id="145">145</th><td><a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="decl" id="_Z21acquire_one_transport13TransportTypePKcPbPNSt3__112basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEE" title='acquire_one_transport' data-ref="_Z21acquire_one_transport13TransportTypePKcPbPNSt3__112basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEE">acquire_one_transport</dfn>(<a class="type" href="adb.h.html#TransportType" title='TransportType' data-ref="TransportType">TransportType</a> <dfn class="local col6 decl" id="1146type" title='type' data-type='TransportType' data-ref="1146type">type</dfn>, <em>const</em> <em>char</em>* <dfn class="local col7 decl" id="1147serial" title='serial' data-type='const char *' data-ref="1147serial">serial</dfn>,</td></tr>
+<tr><th id="146">146</th><td>                                  <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span>* <dfn class="local col8 decl" id="1148is_ambiguous" title='is_ambiguous' data-type='bool *' data-ref="1148is_ambiguous">is_ambiguous</dfn>, <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>* <dfn class="local col9 decl" id="1149error_out" title='error_out' data-type='std::string *' data-ref="1149error_out">error_out</dfn>);</td></tr>
+<tr><th id="147">147</th><td><em>void</em> <dfn class="decl" id="_Z14kick_transportP10atransport" title='kick_transport' data-ref="_Z14kick_transportP10atransport">kick_transport</dfn>(<a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col0 decl" id="1150t" title='t' data-type='atransport *' data-ref="1150t">t</dfn>);</td></tr>
+<tr><th id="148">148</th><td><em>void</em> <dfn class="decl" id="_Z17update_transportsv" title='update_transports' data-ref="_Z17update_transportsv">update_transports</dfn>(<em>void</em>);</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><em>void</em> <dfn class="decl" id="_Z27init_transport_registrationv" title='init_transport_registration' data-ref="_Z27init_transport_registrationv">init_transport_registration</dfn>(<em>void</em>);</td></tr>
+<tr><th id="151">151</th><td><span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="decl" id="_Z15list_transportsb" title='list_transports' data-ref="_Z15list_transportsb">list_transports</dfn>(<span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="local col1 decl" id="1151long_listing" title='long_listing' data-type='bool' data-ref="1151long_listing">long_listing</dfn>);</td></tr>
+<tr><th id="152">152</th><td><a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="decl" id="_Z14find_transportPKc" title='find_transport' data-ref="_Z14find_transportPKc">find_transport</dfn>(<em>const</em> <em>char</em>* <dfn class="local col2 decl" id="1152serial" title='serial' data-type='const char *' data-ref="1152serial">serial</dfn>);</td></tr>
+<tr><th id="153">153</th><td><em>void</em> <dfn class="decl" id="_Z20kick_all_tcp_devicesv" title='kick_all_tcp_devices' data-ref="_Z20kick_all_tcp_devicesv">kick_all_tcp_devices</dfn>();</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td><em>void</em> <dfn class="decl" id="_Z22register_usb_transportP10usb_handlePKcS2_j" title='register_usb_transport' data-ref="_Z22register_usb_transportP10usb_handlePKcS2_j">register_usb_transport</dfn>(<a class="type" href="adb.h.html#usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</a>* <dfn class="local col3 decl" id="1153h" title='h' data-type='usb_handle *' data-ref="1153h">h</dfn>, <em>const</em> <em>char</em>* <dfn class="local col4 decl" id="1154serial" title='serial' data-type='const char *' data-ref="1154serial">serial</dfn>,</td></tr>
+<tr><th id="156">156</th><td>                            <em>const</em> <em>char</em>* <dfn class="local col5 decl" id="1155devpath" title='devpath' data-type='const char *' data-ref="1155devpath">devpath</dfn>, <em>unsigned</em> <dfn class="local col6 decl" id="1156writeable" title='writeable' data-type='unsigned int' data-ref="1156writeable">writeable</dfn>);</td></tr>
+<tr><th id="157">157</th><td></td></tr>
+<tr><th id="158">158</th><td><i>/* cause new transports to be init'd and added to the list */</i></td></tr>
+<tr><th id="159">159</th><td><em>int</em> <dfn class="decl" id="_Z25register_socket_transportiPKcii" title='register_socket_transport' data-ref="_Z25register_socket_transportiPKcii">register_socket_transport</dfn>(<em>int</em> <dfn class="local col7 decl" id="1157s" title='s' data-type='int' data-ref="1157s">s</dfn>, <em>const</em> <em>char</em>* <dfn class="local col8 decl" id="1158serial" title='serial' data-type='const char *' data-ref="1158serial">serial</dfn>, <em>int</em> <dfn class="local col9 decl" id="1159port" title='port' data-type='int' data-ref="1159port">port</dfn>, <em>int</em> <dfn class="local col0 decl" id="1160local" title='local' data-type='int' data-ref="1160local">local</dfn>);</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td><i>// This should only be used for transports with connection_state == kCsNoPerm.</i></td></tr>
+<tr><th id="162">162</th><td><em>void</em> <dfn class="decl" id="_Z24unregister_usb_transportP10usb_handle" title='unregister_usb_transport' data-ref="_Z24unregister_usb_transportP10usb_handle">unregister_usb_transport</dfn>(<a class="type" href="adb.h.html#usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</a>* <dfn class="local col1 decl" id="1161usb" title='usb' data-type='usb_handle *' data-ref="1161usb">usb</dfn>);</td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><em>int</em> <dfn class="decl" id="_Z12check_headerP7apacketP10atransport" title='check_header' data-ref="_Z12check_headerP7apacketP10atransport">check_header</dfn>(<a class="type" href="adb.h.html#apacket" title='apacket' data-ref="apacket">apacket</a>* <dfn class="local col2 decl" id="1162p" title='p' data-type='apacket *' data-ref="1162p">p</dfn>, <a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col3 decl" id="1163t" title='t' data-type='atransport *' data-ref="1163t">t</dfn>);</td></tr>
+<tr><th id="165">165</th><td><em>int</em> <dfn class="decl" id="_Z10check_dataP7apacket" title='check_data' data-ref="_Z10check_dataP7apacket">check_data</dfn>(<a class="type" href="adb.h.html#apacket" title='apacket' data-ref="apacket">apacket</a>* <dfn class="local col4 decl" id="1164p" title='p' data-type='apacket *' data-ref="1164p">p</dfn>);</td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><i>/* for MacOS X cleanup */</i></td></tr>
+<tr><th id="168">168</th><td><em>void</em> <dfn class="decl" id="_Z17close_usb_devicesv" title='close_usb_devices' data-ref="_Z17close_usb_devicesv">close_usb_devices</dfn>();</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td><em>void</em> <dfn class="decl" id="_Z11send_packetP7apacketP10atransport" title='send_packet' data-ref="_Z11send_packetP7apacketP10atransport">send_packet</dfn>(<a class="type" href="adb.h.html#apacket" title='apacket' data-ref="apacket">apacket</a>* <dfn class="local col5 decl" id="1165p" title='p' data-type='apacket *' data-ref="1165p">p</dfn>, <a class="type" href="#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col6 decl" id="1166t" title='t' data-type='atransport *' data-ref="1166t">t</dfn>);</td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><a class="type" href="socket.h.html#asocket" title='asocket' data-ref="asocket">asocket</a>* <dfn class="decl" id="_Z21create_device_trackerv" title='create_device_tracker' data-ref="_Z21create_device_trackerv">create_device_tracker</dfn>(<em>void</em>);</td></tr>
+<tr><th id="173">173</th><td></td></tr>
+<tr><th id="174">174</th><td><u>#<span data-ppcond="17">endif</span>   /* __TRANSPORT_H */</u></td></tr>
+<tr><th id="175">175</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='adb.cpp.html'>codebrowser/system/core/adb/adb.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

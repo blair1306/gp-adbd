@@ -1,0 +1,227 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>x509_txt.c source code [codebrowser/external/boringssl/src/crypto/x509/x509_txt.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/x509/x509_txt.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>x509</a>/<a href='x509_txt.c.html'>x509_txt.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/asn1.h.html">&lt;openssl/asn1.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td><u>#include <a href="../../include/openssl/buf.h.html">&lt;openssl/buf.h&gt;</a></u></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../include/openssl/cipher.h.html">&lt;openssl/cipher.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="../../include/openssl/evp.h.html">&lt;openssl/evp.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/lhash.h.html">&lt;openssl/lhash.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../include/openssl/obj.h.html">&lt;openssl/obj.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td><u>#include <a href="../../include/openssl/x509.h.html">&lt;openssl/x509.h&gt;</a></u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><em>const</em> <em>char</em> *<dfn class="decl def" id="X509_verify_cert_error_string" title='X509_verify_cert_error_string' data-ref="X509_verify_cert_error_string">X509_verify_cert_error_string</dfn>(<em>long</em> <dfn class="local col1 decl" id="1n" title='n' data-type='long' data-ref="1n">n</dfn>)</td></tr>
+<tr><th id="68">68</th><td>	{</td></tr>
+<tr><th id="69">69</th><td>	<em>static</em> <em>char</em> <dfn class="local col2 decl" id="2buf" title='buf' data-type='char [100]' data-ref="2buf">buf</dfn>[<var>100</var>];</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td>	<b>switch</b> ((<em>int</em>)<a class="local col1 ref" href="#1n" title='n' data-ref="1n">n</a>)</td></tr>
+<tr><th id="72">72</th><td>		{</td></tr>
+<tr><th id="73">73</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#294" title="0" data-ref="_M/X509_V_OK">X509_V_OK</a>:</td></tr>
+<tr><th id="74">74</th><td>		<b>return</b>(<q>"ok"</q>);</td></tr>
+<tr><th id="75">75</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#297" title="2" data-ref="_M/X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT">X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT</a>:</td></tr>
+<tr><th id="76">76</th><td>		<b>return</b>(<q>"unable to get issuer certificate"</q>);</td></tr>
+<tr><th id="77">77</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#298" title="3" data-ref="_M/X509_V_ERR_UNABLE_TO_GET_CRL">X509_V_ERR_UNABLE_TO_GET_CRL</a>:</td></tr>
+<tr><th id="78">78</th><td>		<b>return</b>(<q>"unable to get certificate CRL"</q>);</td></tr>
+<tr><th id="79">79</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#299" title="4" data-ref="_M/X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE">X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE</a>:</td></tr>
+<tr><th id="80">80</th><td>		<b>return</b>(<q>"unable to decrypt certificate's signature"</q>);</td></tr>
+<tr><th id="81">81</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#300" title="5" data-ref="_M/X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE">X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE</a>:</td></tr>
+<tr><th id="82">82</th><td>		<b>return</b>(<q>"unable to decrypt CRL's signature"</q>);</td></tr>
+<tr><th id="83">83</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#301" title="6" data-ref="_M/X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY">X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY</a>:</td></tr>
+<tr><th id="84">84</th><td>		<b>return</b>(<q>"unable to decode issuer public key"</q>);</td></tr>
+<tr><th id="85">85</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#302" title="7" data-ref="_M/X509_V_ERR_CERT_SIGNATURE_FAILURE">X509_V_ERR_CERT_SIGNATURE_FAILURE</a>:</td></tr>
+<tr><th id="86">86</th><td>		<b>return</b>(<q>"certificate signature failure"</q>);</td></tr>
+<tr><th id="87">87</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#303" title="8" data-ref="_M/X509_V_ERR_CRL_SIGNATURE_FAILURE">X509_V_ERR_CRL_SIGNATURE_FAILURE</a>:</td></tr>
+<tr><th id="88">88</th><td>		<b>return</b>(<q>"CRL signature failure"</q>);</td></tr>
+<tr><th id="89">89</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#304" title="9" data-ref="_M/X509_V_ERR_CERT_NOT_YET_VALID">X509_V_ERR_CERT_NOT_YET_VALID</a>:</td></tr>
+<tr><th id="90">90</th><td>		<b>return</b>(<q>"certificate is not yet valid"</q>);</td></tr>
+<tr><th id="91">91</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#306" title="11" data-ref="_M/X509_V_ERR_CRL_NOT_YET_VALID">X509_V_ERR_CRL_NOT_YET_VALID</a>:</td></tr>
+<tr><th id="92">92</th><td>		<b>return</b>(<q>"CRL is not yet valid"</q>);</td></tr>
+<tr><th id="93">93</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#305" title="10" data-ref="_M/X509_V_ERR_CERT_HAS_EXPIRED">X509_V_ERR_CERT_HAS_EXPIRED</a>:</td></tr>
+<tr><th id="94">94</th><td>		<b>return</b>(<q>"certificate has expired"</q>);</td></tr>
+<tr><th id="95">95</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#307" title="12" data-ref="_M/X509_V_ERR_CRL_HAS_EXPIRED">X509_V_ERR_CRL_HAS_EXPIRED</a>:</td></tr>
+<tr><th id="96">96</th><td>		<b>return</b>(<q>"CRL has expired"</q>);</td></tr>
+<tr><th id="97">97</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#308" title="13" data-ref="_M/X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD">X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD</a>:</td></tr>
+<tr><th id="98">98</th><td>		<b>return</b>(<q>"format error in certificate's notBefore field"</q>);</td></tr>
+<tr><th id="99">99</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#309" title="14" data-ref="_M/X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD">X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD</a>:</td></tr>
+<tr><th id="100">100</th><td>		<b>return</b>(<q>"format error in certificate's notAfter field"</q>);</td></tr>
+<tr><th id="101">101</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#310" title="15" data-ref="_M/X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD">X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD</a>:</td></tr>
+<tr><th id="102">102</th><td>		<b>return</b>(<q>"format error in CRL's lastUpdate field"</q>);</td></tr>
+<tr><th id="103">103</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#311" title="16" data-ref="_M/X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD">X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD</a>:</td></tr>
+<tr><th id="104">104</th><td>		<b>return</b>(<q>"format error in CRL's nextUpdate field"</q>);</td></tr>
+<tr><th id="105">105</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#312" title="17" data-ref="_M/X509_V_ERR_OUT_OF_MEM">X509_V_ERR_OUT_OF_MEM</a>:</td></tr>
+<tr><th id="106">106</th><td>		<b>return</b>(<q>"out of memory"</q>);</td></tr>
+<tr><th id="107">107</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#313" title="18" data-ref="_M/X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT">X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT</a>:</td></tr>
+<tr><th id="108">108</th><td>		<b>return</b>(<q>"self signed certificate"</q>);</td></tr>
+<tr><th id="109">109</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#314" title="19" data-ref="_M/X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN">X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN</a>:</td></tr>
+<tr><th id="110">110</th><td>		<b>return</b>(<q>"self signed certificate in certificate chain"</q>);</td></tr>
+<tr><th id="111">111</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#315" title="20" data-ref="_M/X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY">X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY</a>:</td></tr>
+<tr><th id="112">112</th><td>		<b>return</b>(<q>"unable to get local issuer certificate"</q>);</td></tr>
+<tr><th id="113">113</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#316" title="21" data-ref="_M/X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE">X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE</a>:</td></tr>
+<tr><th id="114">114</th><td>		<b>return</b>(<q>"unable to verify the first certificate"</q>);</td></tr>
+<tr><th id="115">115</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#317" title="22" data-ref="_M/X509_V_ERR_CERT_CHAIN_TOO_LONG">X509_V_ERR_CERT_CHAIN_TOO_LONG</a>:</td></tr>
+<tr><th id="116">116</th><td>		<b>return</b>(<q>"certificate chain too long"</q>);</td></tr>
+<tr><th id="117">117</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#318" title="23" data-ref="_M/X509_V_ERR_CERT_REVOKED">X509_V_ERR_CERT_REVOKED</a>:</td></tr>
+<tr><th id="118">118</th><td>		<b>return</b>(<q>"certificate revoked"</q>);</td></tr>
+<tr><th id="119">119</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#319" title="24" data-ref="_M/X509_V_ERR_INVALID_CA">X509_V_ERR_INVALID_CA</a>:</td></tr>
+<tr><th id="120">120</th><td>		<b>return</b> (<q>"invalid CA certificate"</q>);</td></tr>
+<tr><th id="121">121</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#334" title="37" data-ref="_M/X509_V_ERR_INVALID_NON_CA">X509_V_ERR_INVALID_NON_CA</a>:</td></tr>
+<tr><th id="122">122</th><td>		<b>return</b> (<q>"invalid non-CA certificate (has CA markings)"</q>);</td></tr>
+<tr><th id="123">123</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#320" title="25" data-ref="_M/X509_V_ERR_PATH_LENGTH_EXCEEDED">X509_V_ERR_PATH_LENGTH_EXCEEDED</a>:</td></tr>
+<tr><th id="124">124</th><td>		<b>return</b> (<q>"path length constraint exceeded"</q>);</td></tr>
+<tr><th id="125">125</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#335" title="38" data-ref="_M/X509_V_ERR_PROXY_PATH_LENGTH_EXCEEDED">X509_V_ERR_PROXY_PATH_LENGTH_EXCEEDED</a>:</td></tr>
+<tr><th id="126">126</th><td>		<b>return</b>(<q>"proxy path length constraint exceeded"</q>);</td></tr>
+<tr><th id="127">127</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#337" title="40" data-ref="_M/X509_V_ERR_PROXY_CERTIFICATES_NOT_ALLOWED">X509_V_ERR_PROXY_CERTIFICATES_NOT_ALLOWED</a>:</td></tr>
+<tr><th id="128">128</th><td>		<b>return</b>(<q>"proxy certificates not allowed, please set the appropriate flag"</q>);</td></tr>
+<tr><th id="129">129</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#321" title="26" data-ref="_M/X509_V_ERR_INVALID_PURPOSE">X509_V_ERR_INVALID_PURPOSE</a>:</td></tr>
+<tr><th id="130">130</th><td>		<b>return</b> (<q>"unsupported certificate purpose"</q>);</td></tr>
+<tr><th id="131">131</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#322" title="27" data-ref="_M/X509_V_ERR_CERT_UNTRUSTED">X509_V_ERR_CERT_UNTRUSTED</a>:</td></tr>
+<tr><th id="132">132</th><td>		<b>return</b> (<q>"certificate not trusted"</q>);</td></tr>
+<tr><th id="133">133</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#323" title="28" data-ref="_M/X509_V_ERR_CERT_REJECTED">X509_V_ERR_CERT_REJECTED</a>:</td></tr>
+<tr><th id="134">134</th><td>		<b>return</b> (<q>"certificate rejected"</q>);</td></tr>
+<tr><th id="135">135</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#369" title="50" data-ref="_M/X509_V_ERR_APPLICATION_VERIFICATION">X509_V_ERR_APPLICATION_VERIFICATION</a>:</td></tr>
+<tr><th id="136">136</th><td>		<b>return</b>(<q>"application verification failure"</q>);</td></tr>
+<tr><th id="137">137</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#325" title="29" data-ref="_M/X509_V_ERR_SUBJECT_ISSUER_MISMATCH">X509_V_ERR_SUBJECT_ISSUER_MISMATCH</a>:</td></tr>
+<tr><th id="138">138</th><td>		<b>return</b>(<q>"subject issuer mismatch"</q>);</td></tr>
+<tr><th id="139">139</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#326" title="30" data-ref="_M/X509_V_ERR_AKID_SKID_MISMATCH">X509_V_ERR_AKID_SKID_MISMATCH</a>:</td></tr>
+<tr><th id="140">140</th><td>		<b>return</b>(<q>"authority and subject key identifier mismatch"</q>);</td></tr>
+<tr><th id="141">141</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#327" title="31" data-ref="_M/X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH">X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH</a>:</td></tr>
+<tr><th id="142">142</th><td>		<b>return</b>(<q>"authority and issuer serial number mismatch"</q>);</td></tr>
+<tr><th id="143">143</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#328" title="32" data-ref="_M/X509_V_ERR_KEYUSAGE_NO_CERTSIGN">X509_V_ERR_KEYUSAGE_NO_CERTSIGN</a>:</td></tr>
+<tr><th id="144">144</th><td>		<b>return</b>(<q>"key usage does not include certificate signing"</q>);</td></tr>
+<tr><th id="145">145</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#330" title="33" data-ref="_M/X509_V_ERR_UNABLE_TO_GET_CRL_ISSUER">X509_V_ERR_UNABLE_TO_GET_CRL_ISSUER</a>:</td></tr>
+<tr><th id="146">146</th><td>		<b>return</b>(<q>"unable to get CRL issuer certificate"</q>);</td></tr>
+<tr><th id="147">147</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#331" title="34" data-ref="_M/X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION">X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION</a>:</td></tr>
+<tr><th id="148">148</th><td>		<b>return</b>(<q>"unhandled critical extension"</q>);</td></tr>
+<tr><th id="149">149</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#332" title="35" data-ref="_M/X509_V_ERR_KEYUSAGE_NO_CRL_SIGN">X509_V_ERR_KEYUSAGE_NO_CRL_SIGN</a>:</td></tr>
+<tr><th id="150">150</th><td>		<b>return</b>(<q>"key usage does not include CRL signing"</q>);</td></tr>
+<tr><th id="151">151</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#336" title="39" data-ref="_M/X509_V_ERR_KEYUSAGE_NO_DIGITAL_SIGNATURE">X509_V_ERR_KEYUSAGE_NO_DIGITAL_SIGNATURE</a>:</td></tr>
+<tr><th id="152">152</th><td>		<b>return</b>(<q>"key usage does not include digital signature"</q>);</td></tr>
+<tr><th id="153">153</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#333" title="36" data-ref="_M/X509_V_ERR_UNHANDLED_CRITICAL_CRL_EXTENSION">X509_V_ERR_UNHANDLED_CRITICAL_CRL_EXTENSION</a>:</td></tr>
+<tr><th id="154">154</th><td>		<b>return</b>(<q>"unhandled critical CRL extension"</q>);</td></tr>
+<tr><th id="155">155</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#339" title="41" data-ref="_M/X509_V_ERR_INVALID_EXTENSION">X509_V_ERR_INVALID_EXTENSION</a>:</td></tr>
+<tr><th id="156">156</th><td>		<b>return</b>(<q>"invalid or inconsistent certificate extension"</q>);</td></tr>
+<tr><th id="157">157</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#340" title="42" data-ref="_M/X509_V_ERR_INVALID_POLICY_EXTENSION">X509_V_ERR_INVALID_POLICY_EXTENSION</a>:</td></tr>
+<tr><th id="158">158</th><td>		<b>return</b>(<q>"invalid or inconsistent certificate policy extension"</q>);</td></tr>
+<tr><th id="159">159</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#341" title="43" data-ref="_M/X509_V_ERR_NO_EXPLICIT_POLICY">X509_V_ERR_NO_EXPLICIT_POLICY</a>:</td></tr>
+<tr><th id="160">160</th><td>		<b>return</b>(<q>"no explicit policy"</q>);</td></tr>
+<tr><th id="161">161</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#342" title="44" data-ref="_M/X509_V_ERR_DIFFERENT_CRL_SCOPE">X509_V_ERR_DIFFERENT_CRL_SCOPE</a>:</td></tr>
+<tr><th id="162">162</th><td>	<b>return</b>(<q>"Different CRL scope"</q>);</td></tr>
+<tr><th id="163">163</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#343" title="45" data-ref="_M/X509_V_ERR_UNSUPPORTED_EXTENSION_FEATURE">X509_V_ERR_UNSUPPORTED_EXTENSION_FEATURE</a>:</td></tr>
+<tr><th id="164">164</th><td>	<b>return</b>(<q>"Unsupported extension feature"</q>);</td></tr>
+<tr><th id="165">165</th><td> 	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#345" title="46" data-ref="_M/X509_V_ERR_UNNESTED_RESOURCE">X509_V_ERR_UNNESTED_RESOURCE</a>:</td></tr>
+<tr><th id="166">166</th><td> 		<b>return</b>(<q>"RFC 3779 resource not subset of parent's resources"</q>);</td></tr>
+<tr><th id="167">167</th><td></td></tr>
+<tr><th id="168">168</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#347" title="47" data-ref="_M/X509_V_ERR_PERMITTED_VIOLATION">X509_V_ERR_PERMITTED_VIOLATION</a>:</td></tr>
+<tr><th id="169">169</th><td>		<b>return</b>(<q>"permitted subtree violation"</q>);</td></tr>
+<tr><th id="170">170</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#348" title="48" data-ref="_M/X509_V_ERR_EXCLUDED_VIOLATION">X509_V_ERR_EXCLUDED_VIOLATION</a>:</td></tr>
+<tr><th id="171">171</th><td>		<b>return</b>(<q>"excluded subtree violation"</q>);</td></tr>
+<tr><th id="172">172</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#349" title="49" data-ref="_M/X509_V_ERR_SUBTREE_MINMAX">X509_V_ERR_SUBTREE_MINMAX</a>:</td></tr>
+<tr><th id="173">173</th><td>		<b>return</b>(<q>"name constraints minimum and maximum not supported"</q>);</td></tr>
+<tr><th id="174">174</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#350" title="51" data-ref="_M/X509_V_ERR_UNSUPPORTED_CONSTRAINT_TYPE">X509_V_ERR_UNSUPPORTED_CONSTRAINT_TYPE</a>:</td></tr>
+<tr><th id="175">175</th><td>		<b>return</b>(<q>"unsupported name constraint type"</q>);</td></tr>
+<tr><th id="176">176</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#351" title="52" data-ref="_M/X509_V_ERR_UNSUPPORTED_CONSTRAINT_SYNTAX">X509_V_ERR_UNSUPPORTED_CONSTRAINT_SYNTAX</a>:</td></tr>
+<tr><th id="177">177</th><td>		<b>return</b>(<q>"unsupported or invalid name constraint syntax"</q>);</td></tr>
+<tr><th id="178">178</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#352" title="53" data-ref="_M/X509_V_ERR_UNSUPPORTED_NAME_SYNTAX">X509_V_ERR_UNSUPPORTED_NAME_SYNTAX</a>:</td></tr>
+<tr><th id="179">179</th><td>		<b>return</b>(<q>"unsupported or invalid name syntax"</q>);</td></tr>
+<tr><th id="180">180</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#353" title="54" data-ref="_M/X509_V_ERR_CRL_PATH_VALIDATION_ERROR">X509_V_ERR_CRL_PATH_VALIDATION_ERROR</a>:</td></tr>
+<tr><th id="181">181</th><td>		<b>return</b>(<q>"CRL path validation error"</q>);</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#356" title="56" data-ref="_M/X509_V_ERR_SUITE_B_INVALID_VERSION">X509_V_ERR_SUITE_B_INVALID_VERSION</a>:</td></tr>
+<tr><th id="184">184</th><td>		<b>return</b>(<q>"Suite B: certificate version invalid"</q>);</td></tr>
+<tr><th id="185">185</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#357" title="57" data-ref="_M/X509_V_ERR_SUITE_B_INVALID_ALGORITHM">X509_V_ERR_SUITE_B_INVALID_ALGORITHM</a>:</td></tr>
+<tr><th id="186">186</th><td>		<b>return</b>(<q>"Suite B: invalid public key algorithm"</q>);</td></tr>
+<tr><th id="187">187</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#358" title="58" data-ref="_M/X509_V_ERR_SUITE_B_INVALID_CURVE">X509_V_ERR_SUITE_B_INVALID_CURVE</a>:</td></tr>
+<tr><th id="188">188</th><td>		<b>return</b>(<q>"Suite B: invalid ECC curve"</q>);</td></tr>
+<tr><th id="189">189</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#359" title="59" data-ref="_M/X509_V_ERR_SUITE_B_INVALID_SIGNATURE_ALGORITHM">X509_V_ERR_SUITE_B_INVALID_SIGNATURE_ALGORITHM</a>:</td></tr>
+<tr><th id="190">190</th><td>		<b>return</b>(<q>"Suite B: invalid signature algorithm"</q>);</td></tr>
+<tr><th id="191">191</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#360" title="60" data-ref="_M/X509_V_ERR_SUITE_B_LOS_NOT_ALLOWED">X509_V_ERR_SUITE_B_LOS_NOT_ALLOWED</a>:</td></tr>
+<tr><th id="192">192</th><td>		<b>return</b>(<q>"Suite B: curve not allowed for this LOS"</q>);</td></tr>
+<tr><th id="193">193</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#361" title="61" data-ref="_M/X509_V_ERR_SUITE_B_CANNOT_SIGN_P_384_WITH_P_256">X509_V_ERR_SUITE_B_CANNOT_SIGN_P_384_WITH_P_256</a>:</td></tr>
+<tr><th id="194">194</th><td>		<b>return</b>(<q>"Suite B: cannot sign P-384 with P-256"</q>);</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#364" title="62" data-ref="_M/X509_V_ERR_HOSTNAME_MISMATCH">X509_V_ERR_HOSTNAME_MISMATCH</a>:</td></tr>
+<tr><th id="197">197</th><td>		<b>return</b>(<q>"Hostname mismatch"</q>);</td></tr>
+<tr><th id="198">198</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#365" title="63" data-ref="_M/X509_V_ERR_EMAIL_MISMATCH">X509_V_ERR_EMAIL_MISMATCH</a>:</td></tr>
+<tr><th id="199">199</th><td>		<b>return</b>(<q>"Email address mismatch"</q>);</td></tr>
+<tr><th id="200">200</th><td>	<b>case</b> <a class="macro" href="../../include/openssl/x509_vfy.h.html#366" title="64" data-ref="_M/X509_V_ERR_IP_ADDRESS_MISMATCH">X509_V_ERR_IP_ADDRESS_MISMATCH</a>:</td></tr>
+<tr><th id="201">201</th><td>		<b>return</b>(<q>"IP address mismatch"</q>);</td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td>	<b>default</b>:</td></tr>
+<tr><th id="204">204</th><td>		<a class="ref" href="../../include/openssl/mem.h.html#BIO_snprintf" title='BIO_snprintf' data-ref="BIO_snprintf">BIO_snprintf</a>(<a class="local col2 ref" href="#2buf" title='buf' data-ref="2buf">buf</a>,<b>sizeof</b> <a class="local col2 ref" href="#2buf" title='buf' data-ref="2buf">buf</a>,<q>"error number %ld"</q>,<a class="local col1 ref" href="#1n" title='n' data-ref="1n">n</a>);</td></tr>
+<tr><th id="205">205</th><td>		<b>return</b>(<a class="local col2 ref" href="#2buf" title='buf' data-ref="2buf">buf</a>);</td></tr>
+<tr><th id="206">206</th><td>		}</td></tr>
+<tr><th id="207">207</th><td>	}</td></tr>
+<tr><th id="208">208</th><td></td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

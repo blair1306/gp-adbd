@@ -1,0 +1,345 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>bio_mem.c source code [codebrowser/external/boringssl/src/crypto/bio/bio_mem.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/bio/bio_mem.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>bio</a>/<a href='bio_mem.c.html'>bio_mem.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/bio.h.html">&lt;openssl/bio.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/buf.h.html">&lt;openssl/buf.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="decl def" id="BIO_new_mem_buf" title='BIO_new_mem_buf' data-ref="BIO_new_mem_buf">BIO_new_mem_buf</dfn>(<em>void</em> *<dfn class="local col1 decl" id="1buf" title='buf' data-type='void *' data-ref="1buf">buf</dfn>, <em>int</em> <dfn class="local col2 decl" id="2len" title='len' data-type='int' data-ref="2len">len</dfn>) {</td></tr>
+<tr><th id="68">68</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col3 decl" id="3ret" title='ret' data-type='BIO *' data-ref="3ret">ret</dfn>;</td></tr>
+<tr><th id="69">69</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *<dfn class="local col4 decl" id="4b" title='b' data-type='BUF_MEM *' data-ref="4b">b</dfn>;</td></tr>
+<tr><th id="70">70</th><td>  <em>const</em> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="5size" title='size' data-type='const size_t' data-ref="5size">size</dfn> = <a class="local col2 ref" href="#2len" title='len' data-ref="2len">len</a> &lt; <var>0</var> ? <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>((<em>char</em> *)<a class="local col1 ref" href="#1buf" title='buf' data-ref="1buf">buf</a>) : (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col2 ref" href="#2len" title='len' data-ref="2len">len</a>;</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td>  <b>if</b> (!<a class="local col1 ref" href="#1buf" title='buf' data-ref="1buf">buf</a> &amp;&amp; <a class="local col2 ref" href="#2len" title='len' data-ref="2len">len</a> != <var>0</var>) {</td></tr>
+<tr><th id="73">73</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BIO, 0, 111, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bio/bio_mem.c&quot;, 73)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BIO, <a class="macro" href="../../include/openssl/bio.h.html#895" title="111" data-ref="_M/BIO_R_NULL_PARAMETER">BIO_R_NULL_PARAMETER</a>);</td></tr>
+<tr><th id="74">74</th><td>    <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="75">75</th><td>  }</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td>  <a class="local col3 ref" href="#3ret" title='ret' data-ref="3ret">ret</a> = <a class="ref" href="../../include/openssl/bio.h.html#BIO_new" title='BIO_new' data-ref="BIO_new">BIO_new</a>(<a class="ref" href="#BIO_s_mem" title='BIO_s_mem' data-ref="BIO_s_mem">BIO_s_mem</a>());</td></tr>
+<tr><th id="78">78</th><td>  <b>if</b> (<a class="local col3 ref" href="#3ret" title='ret' data-ref="3ret">ret</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="79">79</th><td>    <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="80">80</th><td>  }</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td>  <a class="local col4 ref" href="#4b" title='b' data-ref="4b">b</a> = (<a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *)<a class="local col3 ref" href="#3ret" title='ret' data-ref="3ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a>;</td></tr>
+<tr><th id="83">83</th><td>  <a class="local col4 ref" href="#4b" title='b' data-ref="4b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a> = <a class="local col1 ref" href="#1buf" title='buf' data-ref="1buf">buf</a>;</td></tr>
+<tr><th id="84">84</th><td>  <a class="local col4 ref" href="#4b" title='b' data-ref="4b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a> = <a class="local col5 ref" href="#5size" title='size' data-ref="5size">size</a>;</td></tr>
+<tr><th id="85">85</th><td>  <a class="local col4 ref" href="#4b" title='b' data-ref="4b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::max" title='buf_mem_st::max' data-ref="buf_mem_st::max">max</a> = <a class="local col5 ref" href="#5size" title='size' data-ref="5size">size</a>;</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td>  <a class="local col3 ref" href="#3ret" title='ret' data-ref="3ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::flags" title='bio_st::flags' data-ref="bio_st::flags">flags</a> |= <a class="macro" href="../../include/openssl/bio.h.html#752" title="0x200" data-ref="_M/BIO_FLAGS_MEM_RDONLY">BIO_FLAGS_MEM_RDONLY</a>;</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td>  <i>/* |num| is used to store the value that this BIO will return when it runs</i></td></tr>
+<tr><th id="90">90</th><td><i>   * out of data. If it's negative then the retry flags will also be set. Since</i></td></tr>
+<tr><th id="91">91</th><td><i>   * this is static data, retrying wont help */</i></td></tr>
+<tr><th id="92">92</th><td>  <a class="local col3 ref" href="#3ret" title='ret' data-ref="3ret">ret</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::num" title='bio_st::num' data-ref="bio_st::num">num</a> = <var>0</var>;</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td>  <b>return</b> <a class="local col3 ref" href="#3ret" title='ret' data-ref="3ret">ret</a>;</td></tr>
+<tr><th id="95">95</th><td>}</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="mem_new" title='mem_new' data-type='int mem_new(BIO * bio)' data-ref="mem_new">mem_new</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col6 decl" id="6bio" title='bio' data-type='BIO *' data-ref="6bio">bio</dfn>) {</td></tr>
+<tr><th id="98">98</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *<dfn class="local col7 decl" id="7b" title='b' data-type='BUF_MEM *' data-ref="7b">b</dfn>;</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td>  <a class="local col7 ref" href="#7b" title='b' data-ref="7b">b</a> = <a class="ref" href="../../include/openssl/buf.h.html#BUF_MEM_new" title='BUF_MEM_new' data-ref="BUF_MEM_new">BUF_MEM_new</a>();</td></tr>
+<tr><th id="101">101</th><td>  <b>if</b> (<a class="local col7 ref" href="#7b" title='b' data-ref="7b">b</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="102">102</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="103">103</th><td>  }</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td>  <i>/* |shutdown| is used to store the close flag: whether the BIO has ownership</i></td></tr>
+<tr><th id="106">106</th><td><i>   * of the BUF_MEM. */</i></td></tr>
+<tr><th id="107">107</th><td>  <a class="local col6 ref" href="#6bio" title='bio' data-ref="6bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::shutdown" title='bio_st::shutdown' data-ref="bio_st::shutdown">shutdown</a> = <var>1</var>;</td></tr>
+<tr><th id="108">108</th><td>  <a class="local col6 ref" href="#6bio" title='bio' data-ref="6bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::init" title='bio_st::init' data-ref="bio_st::init">init</a> = <var>1</var>;</td></tr>
+<tr><th id="109">109</th><td>  <a class="local col6 ref" href="#6bio" title='bio' data-ref="6bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::num" title='bio_st::num' data-ref="bio_st::num">num</a> = -<var>1</var>;</td></tr>
+<tr><th id="110">110</th><td>  <a class="local col6 ref" href="#6bio" title='bio' data-ref="6bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a> = (<em>char</em> *)<a class="local col7 ref" href="#7b" title='b' data-ref="7b">b</a>;</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="113">113</th><td>}</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="mem_free" title='mem_free' data-type='int mem_free(BIO * bio)' data-ref="mem_free">mem_free</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col8 decl" id="8bio" title='bio' data-type='BIO *' data-ref="8bio">bio</dfn>) {</td></tr>
+<tr><th id="116">116</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *<dfn class="local col9 decl" id="9b" title='b' data-type='BUF_MEM *' data-ref="9b">b</dfn>;</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td>  <b>if</b> (<a class="local col8 ref" href="#8bio" title='bio' data-ref="8bio">bio</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="119">119</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="120">120</th><td>  }</td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td>  <b>if</b> (!<a class="local col8 ref" href="#8bio" title='bio' data-ref="8bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::shutdown" title='bio_st::shutdown' data-ref="bio_st::shutdown">shutdown</a> || !<a class="local col8 ref" href="#8bio" title='bio' data-ref="8bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::init" title='bio_st::init' data-ref="bio_st::init">init</a> || <a class="local col8 ref" href="#8bio" title='bio' data-ref="8bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="123">123</th><td>    <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="124">124</th><td>  }</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td>  <a class="local col9 ref" href="#9b" title='b' data-ref="9b">b</a> = (<a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *)<a class="local col8 ref" href="#8bio" title='bio' data-ref="8bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a>;</td></tr>
+<tr><th id="127">127</th><td>  <b>if</b> (<a class="local col8 ref" href="#8bio" title='bio' data-ref="8bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::flags" title='bio_st::flags' data-ref="bio_st::flags">flags</a> &amp; <a class="macro" href="../../include/openssl/bio.h.html#752" title="0x200" data-ref="_M/BIO_FLAGS_MEM_RDONLY">BIO_FLAGS_MEM_RDONLY</a>) {</td></tr>
+<tr><th id="128">128</th><td>    <a class="local col9 ref" href="#9b" title='b' data-ref="9b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="129">129</th><td>  }</td></tr>
+<tr><th id="130">130</th><td>  <a class="ref" href="../../include/openssl/buf.h.html#BUF_MEM_free" title='BUF_MEM_free' data-ref="BUF_MEM_free">BUF_MEM_free</a>(<a class="local col9 ref" href="#9b" title='b' data-ref="9b">b</a>);</td></tr>
+<tr><th id="131">131</th><td>  <a class="local col8 ref" href="#8bio" title='bio' data-ref="8bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="132">132</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="133">133</th><td>}</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="mem_read" title='mem_read' data-type='int mem_read(BIO * bio, char * out, int outl)' data-ref="mem_read">mem_read</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col0 decl" id="10bio" title='bio' data-type='BIO *' data-ref="10bio">bio</dfn>, <em>char</em> *<dfn class="local col1 decl" id="11out" title='out' data-type='char *' data-ref="11out">out</dfn>, <em>int</em> <dfn class="local col2 decl" id="12outl" title='outl' data-type='int' data-ref="12outl">outl</dfn>) {</td></tr>
+<tr><th id="136">136</th><td>  <em>int</em> <dfn class="local col3 decl" id="13ret" title='ret' data-type='int' data-ref="13ret">ret</dfn>;</td></tr>
+<tr><th id="137">137</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *<dfn class="local col4 decl" id="14b" title='b' data-type='BUF_MEM *' data-ref="14b">b</dfn> = (<a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a>*) <a class="local col0 ref" href="#10bio" title='bio' data-ref="10bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a>;</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td>  <a class="ref" href="../../include/openssl/bio.h.html#BIO_clear_retry_flags" title='BIO_clear_retry_flags' data-ref="BIO_clear_retry_flags">BIO_clear_retry_flags</a>(<a class="local col0 ref" href="#10bio" title='bio' data-ref="10bio">bio</a>);</td></tr>
+<tr><th id="140">140</th><td>  <a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a> = <a class="local col2 ref" href="#12outl" title='outl' data-ref="12outl">outl</a>;</td></tr>
+<tr><th id="141">141</th><td>  <b>if</b> (<a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a> &lt; <a class="macro" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/limits.h.html#53" title="0x7fffffff" data-ref="_M/INT_MAX">INT_MAX</a> &amp;&amp; <a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a> &gt; (<em>int</em>)<a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a>) {</td></tr>
+<tr><th id="142">142</th><td>    <a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a> = <a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a>;</td></tr>
+<tr><th id="143">143</th><td>  }</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td>  <b>if</b> (<a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="146">146</th><td>    <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col1 ref" href="#11out" title='out' data-ref="11out">out</a>, <a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a>, <a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a>);</td></tr>
+<tr><th id="147">147</th><td>    <a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a> -= <a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a>;</td></tr>
+<tr><th id="148">148</th><td>    <b>if</b> (<a class="local col0 ref" href="#10bio" title='bio' data-ref="10bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::flags" title='bio_st::flags' data-ref="bio_st::flags">flags</a> &amp; <a class="macro" href="../../include/openssl/bio.h.html#752" title="0x200" data-ref="_M/BIO_FLAGS_MEM_RDONLY">BIO_FLAGS_MEM_RDONLY</a>) {</td></tr>
+<tr><th id="149">149</th><td>      <a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a> += <a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a>;</td></tr>
+<tr><th id="150">150</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="151">151</th><td>      <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memmove" title='memmove' data-ref="memmove">memmove</a>(<a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a>, &amp;<a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a>[<a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a>], <a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a>);</td></tr>
+<tr><th id="152">152</th><td>    }</td></tr>
+<tr><th id="153">153</th><td>  } <b>else</b> <b>if</b> (<a class="local col4 ref" href="#14b" title='b' data-ref="14b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a> == <var>0</var>) {</td></tr>
+<tr><th id="154">154</th><td>    <a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a> = <a class="local col0 ref" href="#10bio" title='bio' data-ref="10bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::num" title='bio_st::num' data-ref="bio_st::num">num</a>;</td></tr>
+<tr><th id="155">155</th><td>    <b>if</b> (<a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a> != <var>0</var>) {</td></tr>
+<tr><th id="156">156</th><td>      <a class="ref" href="../../include/openssl/bio.h.html#BIO_set_retry_read" title='BIO_set_retry_read' data-ref="BIO_set_retry_read">BIO_set_retry_read</a>(<a class="local col0 ref" href="#10bio" title='bio' data-ref="10bio">bio</a>);</td></tr>
+<tr><th id="157">157</th><td>    }</td></tr>
+<tr><th id="158">158</th><td>  }</td></tr>
+<tr><th id="159">159</th><td>  <b>return</b> <a class="local col3 ref" href="#13ret" title='ret' data-ref="13ret">ret</a>;</td></tr>
+<tr><th id="160">160</th><td>}</td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="mem_write" title='mem_write' data-type='int mem_write(BIO * bio, const char * in, int inl)' data-ref="mem_write">mem_write</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col5 decl" id="15bio" title='bio' data-type='BIO *' data-ref="15bio">bio</dfn>, <em>const</em> <em>char</em> *<dfn class="local col6 decl" id="16in" title='in' data-type='const char *' data-ref="16in">in</dfn>, <em>int</em> <dfn class="local col7 decl" id="17inl" title='inl' data-type='int' data-ref="17inl">inl</dfn>) {</td></tr>
+<tr><th id="163">163</th><td>  <em>int</em> <dfn class="local col8 decl" id="18ret" title='ret' data-type='int' data-ref="18ret">ret</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="164">164</th><td>  <em>int</em> <dfn class="local col9 decl" id="19blen" title='blen' data-type='int' data-ref="19blen">blen</dfn>;</td></tr>
+<tr><th id="165">165</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *<dfn class="local col0 decl" id="20b" title='b' data-type='BUF_MEM *' data-ref="20b">b</dfn>;</td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td>  <a class="local col0 ref" href="#20b" title='b' data-ref="20b">b</a> = (<a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *)<a class="local col5 ref" href="#15bio" title='bio' data-ref="15bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a>;</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td>  <b>if</b> (<a class="local col5 ref" href="#15bio" title='bio' data-ref="15bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::flags" title='bio_st::flags' data-ref="bio_st::flags">flags</a> &amp; <a class="macro" href="../../include/openssl/bio.h.html#752" title="0x200" data-ref="_M/BIO_FLAGS_MEM_RDONLY">BIO_FLAGS_MEM_RDONLY</a>) {</td></tr>
+<tr><th id="170">170</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BIO, 0, 116, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bio/bio_mem.c&quot;, 170)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BIO, <a class="macro" href="../../include/openssl/bio.h.html#900" title="116" data-ref="_M/BIO_R_WRITE_TO_READ_ONLY_BIO">BIO_R_WRITE_TO_READ_ONLY_BIO</a>);</td></tr>
+<tr><th id="171">171</th><td>    <b>goto</b> <a class="lbl" href="#21err" data-ref="21err">err</a>;</td></tr>
+<tr><th id="172">172</th><td>  }</td></tr>
+<tr><th id="173">173</th><td></td></tr>
+<tr><th id="174">174</th><td>  <a class="ref" href="../../include/openssl/bio.h.html#BIO_clear_retry_flags" title='BIO_clear_retry_flags' data-ref="BIO_clear_retry_flags">BIO_clear_retry_flags</a>(<a class="local col5 ref" href="#15bio" title='bio' data-ref="15bio">bio</a>);</td></tr>
+<tr><th id="175">175</th><td>  <a class="local col9 ref" href="#19blen" title='blen' data-ref="19blen">blen</a> = <a class="local col0 ref" href="#20b" title='b' data-ref="20b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a>;</td></tr>
+<tr><th id="176">176</th><td>  <b>if</b> (<a class="macro" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/limits.h.html#53" title="0x7fffffff" data-ref="_M/INT_MAX">INT_MAX</a> - <a class="local col9 ref" href="#19blen" title='blen' data-ref="19blen">blen</a> &lt; <a class="local col7 ref" href="#17inl" title='inl' data-ref="17inl">inl</a>) {</td></tr>
+<tr><th id="177">177</th><td>    <b>goto</b> <a class="lbl" href="#21err" data-ref="21err">err</a>;</td></tr>
+<tr><th id="178">178</th><td>  }</td></tr>
+<tr><th id="179">179</th><td>  <b>if</b> (<a class="ref" href="../../include/openssl/buf.h.html#BUF_MEM_grow_clean" title='BUF_MEM_grow_clean' data-ref="BUF_MEM_grow_clean">BUF_MEM_grow_clean</a>(<a class="local col0 ref" href="#20b" title='b' data-ref="20b">b</a>, <a class="local col9 ref" href="#19blen" title='blen' data-ref="19blen">blen</a> + <a class="local col7 ref" href="#17inl" title='inl' data-ref="17inl">inl</a>) != ((<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>) <a class="local col9 ref" href="#19blen" title='blen' data-ref="19blen">blen</a>) + <a class="local col7 ref" href="#17inl" title='inl' data-ref="17inl">inl</a>) {</td></tr>
+<tr><th id="180">180</th><td>    <b>goto</b> <a class="lbl" href="#21err" data-ref="21err">err</a>;</td></tr>
+<tr><th id="181">181</th><td>  }</td></tr>
+<tr><th id="182">182</th><td>  <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(&amp;<a class="local col0 ref" href="#20b" title='b' data-ref="20b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a>[<a class="local col9 ref" href="#19blen" title='blen' data-ref="19blen">blen</a>], <a class="local col6 ref" href="#16in" title='in' data-ref="16in">in</a>, <a class="local col7 ref" href="#17inl" title='inl' data-ref="17inl">inl</a>);</td></tr>
+<tr><th id="183">183</th><td>  <a class="local col8 ref" href="#18ret" title='ret' data-ref="18ret">ret</a> = <a class="local col7 ref" href="#17inl" title='inl' data-ref="17inl">inl</a>;</td></tr>
+<tr><th id="184">184</th><td></td></tr>
+<tr><th id="185">185</th><td><dfn class="lbl" id="21err" data-ref="21err">err</dfn>:</td></tr>
+<tr><th id="186">186</th><td>  <b>return</b> <a class="local col8 ref" href="#18ret" title='ret' data-ref="18ret">ret</a>;</td></tr>
+<tr><th id="187">187</th><td>}</td></tr>
+<tr><th id="188">188</th><td></td></tr>
+<tr><th id="189">189</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="mem_puts" title='mem_puts' data-type='int mem_puts(BIO * bp, const char * str)' data-ref="mem_puts">mem_puts</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col2 decl" id="22bp" title='bp' data-type='BIO *' data-ref="22bp">bp</dfn>, <em>const</em> <em>char</em> *<dfn class="local col3 decl" id="23str" title='str' data-type='const char *' data-ref="23str">str</dfn>) {</td></tr>
+<tr><th id="190">190</th><td>  <b>return</b> <a class="tu ref" href="#mem_write" title='mem_write' data-use='c' data-ref="mem_write">mem_write</a>(<a class="local col2 ref" href="#22bp" title='bp' data-ref="22bp">bp</a>, <a class="local col3 ref" href="#23str" title='str' data-ref="23str">str</a>, <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col3 ref" href="#23str" title='str' data-ref="23str">str</a>));</td></tr>
+<tr><th id="191">191</th><td>}</td></tr>
+<tr><th id="192">192</th><td></td></tr>
+<tr><th id="193">193</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="mem_gets" title='mem_gets' data-type='int mem_gets(BIO * bio, char * buf, int size)' data-ref="mem_gets">mem_gets</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col4 decl" id="24bio" title='bio' data-type='BIO *' data-ref="24bio">bio</dfn>, <em>char</em> *<dfn class="local col5 decl" id="25buf" title='buf' data-type='char *' data-ref="25buf">buf</dfn>, <em>int</em> <dfn class="local col6 decl" id="26size" title='size' data-type='int' data-ref="26size">size</dfn>) {</td></tr>
+<tr><th id="194">194</th><td>  <em>int</em> <dfn class="local col7 decl" id="27i" title='i' data-type='int' data-ref="27i">i</dfn>, <dfn class="local col8 decl" id="28j" title='j' data-type='int' data-ref="28j">j</dfn>;</td></tr>
+<tr><th id="195">195</th><td>  <em>char</em> *<dfn class="local col9 decl" id="29p" title='p' data-type='char *' data-ref="29p">p</dfn>;</td></tr>
+<tr><th id="196">196</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *<dfn class="local col0 decl" id="30b" title='b' data-type='BUF_MEM *' data-ref="30b">b</dfn> = (<a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *)<a class="local col4 ref" href="#24bio" title='bio' data-ref="24bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a>;</td></tr>
+<tr><th id="197">197</th><td></td></tr>
+<tr><th id="198">198</th><td>  <a class="ref" href="../../include/openssl/bio.h.html#BIO_clear_retry_flags" title='BIO_clear_retry_flags' data-ref="BIO_clear_retry_flags">BIO_clear_retry_flags</a>(<a class="local col4 ref" href="#24bio" title='bio' data-ref="24bio">bio</a>);</td></tr>
+<tr><th id="199">199</th><td>  <a class="local col8 ref" href="#28j" title='j' data-ref="28j">j</a> = <a class="local col0 ref" href="#30b" title='b' data-ref="30b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a>;</td></tr>
+<tr><th id="200">200</th><td>  <b>if</b> (<a class="local col6 ref" href="#26size" title='size' data-ref="26size">size</a> - <var>1</var> &lt; <a class="local col8 ref" href="#28j" title='j' data-ref="28j">j</a>) {</td></tr>
+<tr><th id="201">201</th><td>    <a class="local col8 ref" href="#28j" title='j' data-ref="28j">j</a> = <a class="local col6 ref" href="#26size" title='size' data-ref="26size">size</a> - <var>1</var>;</td></tr>
+<tr><th id="202">202</th><td>  }</td></tr>
+<tr><th id="203">203</th><td>  <b>if</b> (<a class="local col8 ref" href="#28j" title='j' data-ref="28j">j</a> &lt;= <var>0</var>) {</td></tr>
+<tr><th id="204">204</th><td>    <b>if</b> (<a class="local col6 ref" href="#26size" title='size' data-ref="26size">size</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="205">205</th><td>      *<a class="local col5 ref" href="#25buf" title='buf' data-ref="25buf">buf</a> = <var>0</var>;</td></tr>
+<tr><th id="206">206</th><td>    }</td></tr>
+<tr><th id="207">207</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="208">208</th><td>  }</td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td>  <a class="local col9 ref" href="#29p" title='p' data-ref="29p">p</a> = <a class="local col0 ref" href="#30b" title='b' data-ref="30b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a>;</td></tr>
+<tr><th id="211">211</th><td>  <b>for</b> (<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> = <var>0</var>; <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> &lt; <a class="local col8 ref" href="#28j" title='j' data-ref="28j">j</a>; <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>++) {</td></tr>
+<tr><th id="212">212</th><td>    <b>if</b> (<a class="local col9 ref" href="#29p" title='p' data-ref="29p">p</a>[<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>] == <kbd>'\n'</kbd>) {</td></tr>
+<tr><th id="213">213</th><td>      <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>++;</td></tr>
+<tr><th id="214">214</th><td>      <b>break</b>;</td></tr>
+<tr><th id="215">215</th><td>    }</td></tr>
+<tr><th id="216">216</th><td>  }</td></tr>
+<tr><th id="217">217</th><td></td></tr>
+<tr><th id="218">218</th><td>  <i>/* i is now the max num of bytes to copy, either j or up to and including the</i></td></tr>
+<tr><th id="219">219</th><td><i>   * first newline */</i></td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td>  <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> = <a class="tu ref" href="#mem_read" title='mem_read' data-use='c' data-ref="mem_read">mem_read</a>(<a class="local col4 ref" href="#24bio" title='bio' data-ref="24bio">bio</a>, <a class="local col5 ref" href="#25buf" title='buf' data-ref="25buf">buf</a>, <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>);</td></tr>
+<tr><th id="222">222</th><td>  <b>if</b> (<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="223">223</th><td>    <a class="local col5 ref" href="#25buf" title='buf' data-ref="25buf">buf</a>[<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>] = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="224">224</th><td>  }</td></tr>
+<tr><th id="225">225</th><td>  <b>return</b> <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>;</td></tr>
+<tr><th id="226">226</th><td>}</td></tr>
+<tr><th id="227">227</th><td></td></tr>
+<tr><th id="228">228</th><td><em>static</em> <em>long</em> <dfn class="tu decl def" id="mem_ctrl" title='mem_ctrl' data-type='long mem_ctrl(BIO * bio, int cmd, long num, void * ptr)' data-ref="mem_ctrl">mem_ctrl</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col1 decl" id="31bio" title='bio' data-type='BIO *' data-ref="31bio">bio</dfn>, <em>int</em> <dfn class="local col2 decl" id="32cmd" title='cmd' data-type='int' data-ref="32cmd">cmd</dfn>, <em>long</em> <dfn class="local col3 decl" id="33num" title='num' data-type='long' data-ref="33num">num</dfn>, <em>void</em> *<dfn class="local col4 decl" id="34ptr" title='ptr' data-type='void *' data-ref="34ptr">ptr</dfn>) {</td></tr>
+<tr><th id="229">229</th><td>  <em>long</em> <dfn class="local col5 decl" id="35ret" title='ret' data-type='long' data-ref="35ret">ret</dfn> = <var>1</var>;</td></tr>
+<tr><th id="230">230</th><td>  <em>char</em> **<dfn class="local col6 decl" id="36pptr" title='pptr' data-type='char **' data-ref="36pptr">pptr</dfn>;</td></tr>
+<tr><th id="231">231</th><td></td></tr>
+<tr><th id="232">232</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *<dfn class="local col7 decl" id="37b" title='b' data-type='BUF_MEM *' data-ref="37b">b</dfn> = (<a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *)<a class="local col1 ref" href="#31bio" title='bio' data-ref="31bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a>;</td></tr>
+<tr><th id="233">233</th><td></td></tr>
+<tr><th id="234">234</th><td>  <b>switch</b> (<a class="local col2 ref" href="#32cmd" title='cmd' data-ref="32cmd">cmd</a>) {</td></tr>
+<tr><th id="235">235</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#705" title="1" data-ref="_M/BIO_CTRL_RESET">BIO_CTRL_RESET</a>:</td></tr>
+<tr><th id="236">236</th><td>      <b>if</b> (<a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="237">237</th><td>        <i>/* For read only case reset to the start again */</i></td></tr>
+<tr><th id="238">238</th><td>        <b>if</b> (<a class="local col1 ref" href="#31bio" title='bio' data-ref="31bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::flags" title='bio_st::flags' data-ref="bio_st::flags">flags</a> &amp; <a class="macro" href="../../include/openssl/bio.h.html#752" title="0x200" data-ref="_M/BIO_FLAGS_MEM_RDONLY">BIO_FLAGS_MEM_RDONLY</a>) {</td></tr>
+<tr><th id="239">239</th><td>          <a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a> -= <a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::max" title='buf_mem_st::max' data-ref="buf_mem_st::max">max</a> - <a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a>;</td></tr>
+<tr><th id="240">240</th><td>          <a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a> = <a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::max" title='buf_mem_st::max' data-ref="buf_mem_st::max">max</a>;</td></tr>
+<tr><th id="241">241</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="242">242</th><td>          <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a>, <var>0</var>, <a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::max" title='buf_mem_st::max' data-ref="buf_mem_st::max">max</a>);</td></tr>
+<tr><th id="243">243</th><td>          <a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a> = <var>0</var>;</td></tr>
+<tr><th id="244">244</th><td>        }</td></tr>
+<tr><th id="245">245</th><td>      }</td></tr>
+<tr><th id="246">246</th><td>      <b>break</b>;</td></tr>
+<tr><th id="247">247</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#706" title="2" data-ref="_M/BIO_CTRL_EOF">BIO_CTRL_EOF</a>:</td></tr>
+<tr><th id="248">248</th><td>      <a class="local col5 ref" href="#35ret" title='ret' data-ref="35ret">ret</a> = (<em>long</em>)(<a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a> == <var>0</var>);</td></tr>
+<tr><th id="249">249</th><td>      <b>break</b>;</td></tr>
+<tr><th id="250">250</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#852" title="130" data-ref="_M/BIO_C_SET_BUF_MEM_EOF_RETURN">BIO_C_SET_BUF_MEM_EOF_RETURN</a>:</td></tr>
+<tr><th id="251">251</th><td>      <a class="local col1 ref" href="#31bio" title='bio' data-ref="31bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::num" title='bio_st::num' data-ref="bio_st::num">num</a> = (<em>int</em>)<a class="local col3 ref" href="#33num" title='num' data-ref="33num">num</a>;</td></tr>
+<tr><th id="252">252</th><td>      <b>break</b>;</td></tr>
+<tr><th id="253">253</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#707" title="3" data-ref="_M/BIO_CTRL_INFO">BIO_CTRL_INFO</a>:</td></tr>
+<tr><th id="254">254</th><td>      <a class="local col5 ref" href="#35ret" title='ret' data-ref="35ret">ret</a> = (<em>long</em>)<a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a>;</td></tr>
+<tr><th id="255">255</th><td>      <b>if</b> (<a class="local col4 ref" href="#34ptr" title='ptr' data-ref="34ptr">ptr</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="256">256</th><td>        <a class="local col6 ref" href="#36pptr" title='pptr' data-ref="36pptr">pptr</a> = (<em>char</em> **)<a class="local col4 ref" href="#34ptr" title='ptr' data-ref="34ptr">ptr</a>;</td></tr>
+<tr><th id="257">257</th><td>        *<a class="local col6 ref" href="#36pptr" title='pptr' data-ref="36pptr">pptr</a> = (<em>char</em> *)&amp;<a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a>[<var>0</var>];</td></tr>
+<tr><th id="258">258</th><td>      }</td></tr>
+<tr><th id="259">259</th><td>      <b>break</b>;</td></tr>
+<tr><th id="260">260</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#837" title="114" data-ref="_M/BIO_C_SET_BUF_MEM">BIO_C_SET_BUF_MEM</a>:</td></tr>
+<tr><th id="261">261</th><td>      <a class="tu ref" href="#mem_free" title='mem_free' data-use='c' data-ref="mem_free">mem_free</a>(<a class="local col1 ref" href="#31bio" title='bio' data-ref="31bio">bio</a>);</td></tr>
+<tr><th id="262">262</th><td>      <a class="local col1 ref" href="#31bio" title='bio' data-ref="31bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::shutdown" title='bio_st::shutdown' data-ref="bio_st::shutdown">shutdown</a> = (<em>int</em>)<a class="local col3 ref" href="#33num" title='num' data-ref="33num">num</a>;</td></tr>
+<tr><th id="263">263</th><td>      <a class="local col1 ref" href="#31bio" title='bio' data-ref="31bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a> = <a class="local col4 ref" href="#34ptr" title='ptr' data-ref="34ptr">ptr</a>;</td></tr>
+<tr><th id="264">264</th><td>      <b>break</b>;</td></tr>
+<tr><th id="265">265</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#838" title="115" data-ref="_M/BIO_C_GET_BUF_MEM_PTR">BIO_C_GET_BUF_MEM_PTR</a>:</td></tr>
+<tr><th id="266">266</th><td>      <b>if</b> (<a class="local col4 ref" href="#34ptr" title='ptr' data-ref="34ptr">ptr</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="267">267</th><td>        <a class="local col6 ref" href="#36pptr" title='pptr' data-ref="36pptr">pptr</a> = (<em>char</em> **)<a class="local col4 ref" href="#34ptr" title='ptr' data-ref="34ptr">ptr</a>;</td></tr>
+<tr><th id="268">268</th><td>        *<a class="local col6 ref" href="#36pptr" title='pptr' data-ref="36pptr">pptr</a> = (<em>char</em> *)<a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>;</td></tr>
+<tr><th id="269">269</th><td>      }</td></tr>
+<tr><th id="270">270</th><td>      <b>break</b>;</td></tr>
+<tr><th id="271">271</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#710" title="8" data-ref="_M/BIO_CTRL_GET_CLOSE">BIO_CTRL_GET_CLOSE</a>:</td></tr>
+<tr><th id="272">272</th><td>      <a class="local col5 ref" href="#35ret" title='ret' data-ref="35ret">ret</a> = (<em>long</em>)<a class="local col1 ref" href="#31bio" title='bio' data-ref="31bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::shutdown" title='bio_st::shutdown' data-ref="bio_st::shutdown">shutdown</a>;</td></tr>
+<tr><th id="273">273</th><td>      <b>break</b>;</td></tr>
+<tr><th id="274">274</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#711" title="9" data-ref="_M/BIO_CTRL_SET_CLOSE">BIO_CTRL_SET_CLOSE</a>:</td></tr>
+<tr><th id="275">275</th><td>      <a class="local col1 ref" href="#31bio" title='bio' data-ref="31bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::shutdown" title='bio_st::shutdown' data-ref="bio_st::shutdown">shutdown</a> = (<em>int</em>)<a class="local col3 ref" href="#33num" title='num' data-ref="33num">num</a>;</td></tr>
+<tr><th id="276">276</th><td>      <b>break</b>;</td></tr>
+<tr><th id="277">277</th><td></td></tr>
+<tr><th id="278">278</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#714" title="13" data-ref="_M/BIO_CTRL_WPENDING">BIO_CTRL_WPENDING</a>:</td></tr>
+<tr><th id="279">279</th><td>      <a class="local col5 ref" href="#35ret" title='ret' data-ref="35ret">ret</a> = <var>0L</var>;</td></tr>
+<tr><th id="280">280</th><td>      <b>break</b>;</td></tr>
+<tr><th id="281">281</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#712" title="10" data-ref="_M/BIO_CTRL_PENDING">BIO_CTRL_PENDING</a>:</td></tr>
+<tr><th id="282">282</th><td>      <a class="local col5 ref" href="#35ret" title='ret' data-ref="35ret">ret</a> = (<em>long</em>)<a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a>;</td></tr>
+<tr><th id="283">283</th><td>      <b>break</b>;</td></tr>
+<tr><th id="284">284</th><td>    <b>case</b> <a class="macro" href="../../include/openssl/bio.h.html#713" title="11" data-ref="_M/BIO_CTRL_FLUSH">BIO_CTRL_FLUSH</a>:</td></tr>
+<tr><th id="285">285</th><td>      <a class="local col5 ref" href="#35ret" title='ret' data-ref="35ret">ret</a> = <var>1</var>;</td></tr>
+<tr><th id="286">286</th><td>      <b>break</b>;</td></tr>
+<tr><th id="287">287</th><td>    <b>default</b>:</td></tr>
+<tr><th id="288">288</th><td>      <a class="local col5 ref" href="#35ret" title='ret' data-ref="35ret">ret</a> = <var>0</var>;</td></tr>
+<tr><th id="289">289</th><td>      <b>break</b>;</td></tr>
+<tr><th id="290">290</th><td>  }</td></tr>
+<tr><th id="291">291</th><td>  <b>return</b> <a class="local col5 ref" href="#35ret" title='ret' data-ref="35ret">ret</a>;</td></tr>
+<tr><th id="292">292</th><td>}</td></tr>
+<tr><th id="293">293</th><td></td></tr>
+<tr><th id="294">294</th><td><em>static</em> <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIO_METHOD" title='BIO_METHOD' data-type='struct bio_method_st' data-ref="BIO_METHOD">BIO_METHOD</a> <dfn class="tu decl def" id="mem_method" title='mem_method' data-type='const BIO_METHOD' data-ref="mem_method">mem_method</dfn> = {</td></tr>
+<tr><th id="295">295</th><td>    <a class="macro" href="../../include/openssl/bio.h.html#756" title="(1 | 0x0400)" data-ref="_M/BIO_TYPE_MEM">BIO_TYPE_MEM</a>, <q>"memory buffer"</q>, <a class="tu ref" href="#mem_write" title='mem_write' data-use='r' data-ref="mem_write">mem_write</a>, <a class="tu ref" href="#mem_read" title='mem_read' data-use='r' data-ref="mem_read">mem_read</a>, <a class="tu ref" href="#mem_puts" title='mem_puts' data-use='r' data-ref="mem_puts">mem_puts</a>,</td></tr>
+<tr><th id="296">296</th><td>    <a class="tu ref" href="#mem_gets" title='mem_gets' data-use='r' data-ref="mem_gets">mem_gets</a>,     <a class="tu ref" href="#mem_ctrl" title='mem_ctrl' data-use='r' data-ref="mem_ctrl">mem_ctrl</a>,        <a class="tu ref" href="#mem_new" title='mem_new' data-use='r' data-ref="mem_new">mem_new</a>,   <a class="tu ref" href="#mem_free" title='mem_free' data-use='r' data-ref="mem_free">mem_free</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, };</td></tr>
+<tr><th id="297">297</th><td></td></tr>
+<tr><th id="298">298</th><td><em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIO_METHOD" title='BIO_METHOD' data-type='struct bio_method_st' data-ref="BIO_METHOD">BIO_METHOD</a> *<dfn class="decl def" id="BIO_s_mem" title='BIO_s_mem' data-ref="BIO_s_mem">BIO_s_mem</dfn>(<em>void</em>) { <b>return</b> &amp;<a class="tu ref" href="#mem_method" title='mem_method' data-use='a' data-ref="mem_method">mem_method</a>; }</td></tr>
+<tr><th id="299">299</th><td></td></tr>
+<tr><th id="300">300</th><td><em>int</em> <dfn class="decl def" id="BIO_mem_contents" title='BIO_mem_contents' data-ref="BIO_mem_contents">BIO_mem_contents</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col8 decl" id="38bio" title='bio' data-type='const BIO *' data-ref="38bio">bio</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col9 decl" id="39out_contents" title='out_contents' data-type='const uint8_t **' data-ref="39out_contents">out_contents</dfn>,</td></tr>
+<tr><th id="301">301</th><td>                     <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col0 decl" id="40out_len" title='out_len' data-type='size_t *' data-ref="40out_len">out_len</dfn>) {</td></tr>
+<tr><th id="302">302</th><td>  <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *<dfn class="local col1 decl" id="41b" title='b' data-type='const BUF_MEM *' data-ref="41b">b</dfn>;</td></tr>
+<tr><th id="303">303</th><td>  <b>if</b> (<a class="local col8 ref" href="#38bio" title='bio' data-ref="38bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::method" title='bio_st::method' data-ref="bio_st::method">method</a> != &amp;<a class="tu ref" href="#mem_method" title='mem_method' data-use='a' data-ref="mem_method">mem_method</a>) {</td></tr>
+<tr><th id="304">304</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="305">305</th><td>  }</td></tr>
+<tr><th id="306">306</th><td></td></tr>
+<tr><th id="307">307</th><td>  <a class="local col1 ref" href="#41b" title='b' data-ref="41b">b</a> = (<a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *)<a class="local col8 ref" href="#38bio" title='bio' data-ref="38bio">bio</a>-&gt;<a class="ref" href="../../include/openssl/bio.h.html#bio_st::ptr" title='bio_st::ptr' data-ref="bio_st::ptr">ptr</a>;</td></tr>
+<tr><th id="308">308</th><td>  *<a class="local col9 ref" href="#39out_contents" title='out_contents' data-ref="39out_contents">out_contents</a> = (<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *)<a class="local col1 ref" href="#41b" title='b' data-ref="41b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::data" title='buf_mem_st::data' data-ref="buf_mem_st::data">data</a>;</td></tr>
+<tr><th id="309">309</th><td>  *<a class="local col0 ref" href="#40out_len" title='out_len' data-ref="40out_len">out_len</a> = <a class="local col1 ref" href="#41b" title='b' data-ref="41b">b</a>-&gt;<a class="ref" href="../../include/openssl/buf.h.html#buf_mem_st::length" title='buf_mem_st::length' data-ref="buf_mem_st::length">length</a>;</td></tr>
+<tr><th id="310">310</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="311">311</th><td>}</td></tr>
+<tr><th id="312">312</th><td></td></tr>
+<tr><th id="313">313</th><td><em>long</em> <dfn class="decl def" id="BIO_get_mem_data" title='BIO_get_mem_data' data-ref="BIO_get_mem_data">BIO_get_mem_data</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col2 decl" id="42bio" title='bio' data-type='BIO *' data-ref="42bio">bio</dfn>, <em>char</em> **<dfn class="local col3 decl" id="43contents" title='contents' data-type='char **' data-ref="43contents">contents</dfn>) {</td></tr>
+<tr><th id="314">314</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/bio.h.html#BIO_ctrl" title='BIO_ctrl' data-ref="BIO_ctrl">BIO_ctrl</a>(<a class="local col2 ref" href="#42bio" title='bio' data-ref="42bio">bio</a>, <a class="macro" href="../../include/openssl/bio.h.html#707" title="3" data-ref="_M/BIO_CTRL_INFO">BIO_CTRL_INFO</a>, <var>0</var>, (<em>char</em> *) <a class="local col3 ref" href="#43contents" title='contents' data-ref="43contents">contents</a>);</td></tr>
+<tr><th id="315">315</th><td>}</td></tr>
+<tr><th id="316">316</th><td></td></tr>
+<tr><th id="317">317</th><td><em>int</em> <dfn class="decl def" id="BIO_get_mem_ptr" title='BIO_get_mem_ptr' data-ref="BIO_get_mem_ptr">BIO_get_mem_ptr</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col4 decl" id="44bio" title='bio' data-type='BIO *' data-ref="44bio">bio</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> **<dfn class="local col5 decl" id="45out" title='out' data-type='BUF_MEM **' data-ref="45out">out</dfn>) {</td></tr>
+<tr><th id="318">318</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/bio.h.html#BIO_ctrl" title='BIO_ctrl' data-ref="BIO_ctrl">BIO_ctrl</a>(<a class="local col4 ref" href="#44bio" title='bio' data-ref="44bio">bio</a>, <a class="macro" href="../../include/openssl/bio.h.html#838" title="115" data-ref="_M/BIO_C_GET_BUF_MEM_PTR">BIO_C_GET_BUF_MEM_PTR</a>, <var>0</var>, (<em>char</em> *) <a class="local col5 ref" href="#45out" title='out' data-ref="45out">out</a>);</td></tr>
+<tr><th id="319">319</th><td>}</td></tr>
+<tr><th id="320">320</th><td></td></tr>
+<tr><th id="321">321</th><td><em>int</em> <dfn class="decl def" id="BIO_set_mem_buf" title='BIO_set_mem_buf' data-ref="BIO_set_mem_buf">BIO_set_mem_buf</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col6 decl" id="46bio" title='bio' data-type='BIO *' data-ref="46bio">bio</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BUF_MEM" title='BUF_MEM' data-type='struct buf_mem_st' data-ref="BUF_MEM">BUF_MEM</a> *<dfn class="local col7 decl" id="47b" title='b' data-type='BUF_MEM *' data-ref="47b">b</dfn>, <em>int</em> <dfn class="local col8 decl" id="48take_ownership" title='take_ownership' data-type='int' data-ref="48take_ownership">take_ownership</dfn>) {</td></tr>
+<tr><th id="322">322</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/bio.h.html#BIO_ctrl" title='BIO_ctrl' data-ref="BIO_ctrl">BIO_ctrl</a>(<a class="local col6 ref" href="#46bio" title='bio' data-ref="46bio">bio</a>, <a class="macro" href="../../include/openssl/bio.h.html#837" title="114" data-ref="_M/BIO_C_SET_BUF_MEM">BIO_C_SET_BUF_MEM</a>, <a class="local col8 ref" href="#48take_ownership" title='take_ownership' data-ref="48take_ownership">take_ownership</a>, (<em>char</em> *) <a class="local col7 ref" href="#47b" title='b' data-ref="47b">b</a>);</td></tr>
+<tr><th id="323">323</th><td>}</td></tr>
+<tr><th id="324">324</th><td></td></tr>
+<tr><th id="325">325</th><td><em>int</em> <dfn class="decl def" id="BIO_set_mem_eof_return" title='BIO_set_mem_eof_return' data-ref="BIO_set_mem_eof_return">BIO_set_mem_eof_return</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col9 decl" id="49bio" title='bio' data-type='BIO *' data-ref="49bio">bio</dfn>, <em>int</em> <dfn class="local col0 decl" id="50eof_value" title='eof_value' data-type='int' data-ref="50eof_value">eof_value</dfn>) {</td></tr>
+<tr><th id="326">326</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/bio.h.html#BIO_ctrl" title='BIO_ctrl' data-ref="BIO_ctrl">BIO_ctrl</a>(<a class="local col9 ref" href="#49bio" title='bio' data-ref="49bio">bio</a>, <a class="macro" href="../../include/openssl/bio.h.html#852" title="130" data-ref="_M/BIO_C_SET_BUF_MEM_EOF_RETURN">BIO_C_SET_BUF_MEM_EOF_RETURN</a>, <a class="local col0 ref" href="#50eof_value" title='eof_value' data-ref="50eof_value">eof_value</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="327">327</th><td>}</td></tr>
+<tr><th id="328">328</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

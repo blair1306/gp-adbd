@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>threads.h source code [codebrowser/system/core/include/cutils/threads.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/include/cutils/threads.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>system</a>/<a href='../..'>core</a>/<a href='..'>include</a>/<a href='./'>cutils</a>/<a href='threads.h.html'>threads.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2007 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/_LIBS_CUTILS_THREADS_H">_LIBS_CUTILS_THREADS_H</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/_LIBS_CUTILS_THREADS_H" data-ref="_M/_LIBS_CUTILS_THREADS_H">_LIBS_CUTILS_THREADS_H</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include  <a href="../../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><u>#<span data-ppcond="22">if</span> !defined(<span class="macro" data-ref="_M/_WIN32">_WIN32</span>)</u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../../bionic/libc/include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#<span data-ppcond="22">else</span></u></td></tr>
+<tr><th id="25">25</th><td><u>#include &lt;windows.h&gt;</u></td></tr>
+<tr><th id="26">26</th><td><u>#<span data-ppcond="22">endif</span></u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><u>#<span data-ppcond="28">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="29">29</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="30">30</th><td><u>#<span data-ppcond="28">endif</span></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><i>/***********************************************************************/</i></td></tr>
+<tr><th id="33">33</th><td><i>/***********************************************************************/</i></td></tr>
+<tr><th id="34">34</th><td><i>/*****                                                             *****/</i></td></tr>
+<tr><th id="35">35</th><td><i>/*****         local thread storage                                *****/</i></td></tr>
+<tr><th id="36">36</th><td><i>/*****                                                             *****/</i></td></tr>
+<tr><th id="37">37</th><td><i>/***********************************************************************/</i></td></tr>
+<tr><th id="38">38</th><td><i>/***********************************************************************/</i></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><b>extern</b> <a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <a class="decl" href="../../../../bionic/libc/include/unistd.h.html#gettid" title='gettid' data-ref="gettid" id="gettid">gettid</a>();</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><u>#<span data-ppcond="42">if</span> !defined(<span class="macro" data-ref="_M/_WIN32">_WIN32</span>)</u></td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="45">45</th><td>    <a class="typedef" href="../../../../bionic/libc/include/pthread.h.html#pthread_mutex_t" title='pthread_mutex_t' data-type='struct pthread_mutex_t' data-ref="pthread_mutex_t">pthread_mutex_t</a>   <dfn class="decl" id="(anonymous)::lock" title='(anonymous struct)::lock' data-ref="(anonymous)::lock">lock</dfn>;</td></tr>
+<tr><th id="46">46</th><td>    <em>int</em>               <dfn class="decl" id="(anonymous)::has_tls" title='(anonymous struct)::has_tls' data-ref="(anonymous)::has_tls">has_tls</dfn>;</td></tr>
+<tr><th id="47">47</th><td>    <a class="typedef" href="../../../../bionic/libc/include/pthread.h.html#pthread_key_t" title='pthread_key_t' data-type='int' data-ref="pthread_key_t">pthread_key_t</a>     <dfn class="decl" id="(anonymous)::tls" title='(anonymous struct)::tls' data-ref="(anonymous)::tls">tls</dfn>;</td></tr>
+<tr><th id="48">48</th><td>} <dfn class="typedef" id="thread_store_t" title='thread_store_t' data-type='struct thread_store_t' data-ref="thread_store_t">thread_store_t</dfn>;</td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td><u>#define  <dfn class="macro" id="_M/THREAD_STORE_INITIALIZER" data-ref="_M/THREAD_STORE_INITIALIZER">THREAD_STORE_INITIALIZER</dfn>  { PTHREAD_MUTEX_INITIALIZER, 0, 0 }</u></td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><u>#<span data-ppcond="42">else</span> // !defined(_WIN32)</u></td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="55">55</th><td>    <em>int</em>               lock_init;</td></tr>
+<tr><th id="56">56</th><td>    <em>int</em>               has_tls;</td></tr>
+<tr><th id="57">57</th><td>    DWORD             tls;</td></tr>
+<tr><th id="58">58</th><td>    CRITICAL_SECTION  lock;</td></tr>
+<tr><th id="59">59</th><td>} thread_store_t;</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><u>#define  THREAD_STORE_INITIALIZER  { 0, 0, 0, {0, 0, 0, 0, 0, 0} }</u></td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><u>#<span data-ppcond="42">endif</span> // !defined(_WIN32)</u></td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><b>typedef</b> <em>void</em>  (*<dfn class="typedef" id="thread_store_destruct_t" title='thread_store_destruct_t' data-type='void (*)(void *)' data-ref="thread_store_destruct_t">thread_store_destruct_t</dfn>)(<em>void</em>*  <dfn class="local col3 decl" id="43value" title='value' data-type='void *' data-ref="43value">value</dfn>);</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><b>extern</b> <em>void</em>*  <dfn class="decl" id="thread_store_get" title='thread_store_get' data-ref="thread_store_get">thread_store_get</dfn>(<a class="typedef" href="#thread_store_t" title='thread_store_t' data-type='struct thread_store_t' data-ref="thread_store_t">thread_store_t</a>*  <dfn class="local col4 decl" id="44store" title='store' data-type='thread_store_t *' data-ref="44store">store</dfn>);</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><b>extern</b> <em>void</em>   <dfn class="decl" id="thread_store_set" title='thread_store_set' data-ref="thread_store_set">thread_store_set</dfn>(<a class="typedef" href="#thread_store_t" title='thread_store_t' data-type='struct thread_store_t' data-ref="thread_store_t">thread_store_t</a>*          <dfn class="local col5 decl" id="45store" title='store' data-type='thread_store_t *' data-ref="45store">store</dfn>,</td></tr>
+<tr><th id="70">70</th><td>                               <em>void</em>*                    <dfn class="local col6 decl" id="46value" title='value' data-type='void *' data-ref="46value">value</dfn>,</td></tr>
+<tr><th id="71">71</th><td>                               <a class="typedef" href="#thread_store_destruct_t" title='thread_store_destruct_t' data-type='void (*)(void *)' data-ref="thread_store_destruct_t">thread_store_destruct_t</a>  <dfn class="local col7 decl" id="47destroy" title='destroy' data-type='thread_store_destruct_t' data-ref="47destroy">destroy</dfn>);</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><i>/***********************************************************************/</i></td></tr>
+<tr><th id="74">74</th><td><i>/***********************************************************************/</i></td></tr>
+<tr><th id="75">75</th><td><i>/*****                                                             *****/</i></td></tr>
+<tr><th id="76">76</th><td><i>/*****         mutexes                                             *****/</i></td></tr>
+<tr><th id="77">77</th><td><i>/*****                                                             *****/</i></td></tr>
+<tr><th id="78">78</th><td><i>/***********************************************************************/</i></td></tr>
+<tr><th id="79">79</th><td><i>/***********************************************************************/</i></td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><u>#<span data-ppcond="81">if</span> !defined(<span class="macro" data-ref="_M/_WIN32">_WIN32</span>)</u></td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><b>typedef</b> <a class="typedef" href="../../../../bionic/libc/include/pthread.h.html#pthread_mutex_t" title='pthread_mutex_t' data-type='struct pthread_mutex_t' data-ref="pthread_mutex_t">pthread_mutex_t</a>   <dfn class="typedef" id="mutex_t" title='mutex_t' data-type='pthread_mutex_t' data-ref="mutex_t">mutex_t</dfn>;</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><u>#define  <dfn class="macro" id="_M/MUTEX_INITIALIZER" data-ref="_M/MUTEX_INITIALIZER">MUTEX_INITIALIZER</dfn>  PTHREAD_MUTEX_INITIALIZER</u></td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td><em>static</em> <b>__inline__</b> <em>void</em>  <dfn class="decl def" id="_Z10mutex_lockP15pthread_mutex_t" title='mutex_lock' data-ref="_Z10mutex_lockP15pthread_mutex_t">mutex_lock</dfn>(<a class="typedef" href="#mutex_t" title='mutex_t' data-type='pthread_mutex_t' data-ref="mutex_t">mutex_t</a>*  <dfn class="local col8 decl" id="48lock" title='lock' data-type='mutex_t *' data-ref="48lock">lock</dfn>)</td></tr>
+<tr><th id="88">88</th><td>{</td></tr>
+<tr><th id="89">89</th><td>    <a class="ref" href="../../../../bionic/libc/include/pthread.h.html#pthread_mutex_lock" title='pthread_mutex_lock' data-ref="pthread_mutex_lock">pthread_mutex_lock</a>(<a class="local col8 ref" href="#48lock" title='lock' data-ref="48lock">lock</a>);</td></tr>
+<tr><th id="90">90</th><td>}</td></tr>
+<tr><th id="91">91</th><td><em>static</em> <b>__inline__</b> <em>void</em>  <dfn class="decl def" id="_Z12mutex_unlockP15pthread_mutex_t" title='mutex_unlock' data-ref="_Z12mutex_unlockP15pthread_mutex_t">mutex_unlock</dfn>(<a class="typedef" href="#mutex_t" title='mutex_t' data-type='pthread_mutex_t' data-ref="mutex_t">mutex_t</a>*  <dfn class="local col9 decl" id="49lock" title='lock' data-type='mutex_t *' data-ref="49lock">lock</dfn>)</td></tr>
+<tr><th id="92">92</th><td>{</td></tr>
+<tr><th id="93">93</th><td>    <a class="ref" href="../../../../bionic/libc/include/pthread.h.html#pthread_mutex_unlock" title='pthread_mutex_unlock' data-ref="pthread_mutex_unlock">pthread_mutex_unlock</a>(<a class="local col9 ref" href="#49lock" title='lock' data-ref="49lock">lock</a>);</td></tr>
+<tr><th id="94">94</th><td>}</td></tr>
+<tr><th id="95">95</th><td><em>static</em> <b>__inline__</b> <em>int</em>  <dfn class="decl def" id="_Z10mutex_initP15pthread_mutex_t" title='mutex_init' data-ref="_Z10mutex_initP15pthread_mutex_t">mutex_init</dfn>(<a class="typedef" href="#mutex_t" title='mutex_t' data-type='pthread_mutex_t' data-ref="mutex_t">mutex_t</a>*  <dfn class="local col0 decl" id="50lock" title='lock' data-type='mutex_t *' data-ref="50lock">lock</dfn>)</td></tr>
+<tr><th id="96">96</th><td>{</td></tr>
+<tr><th id="97">97</th><td>    <b>return</b> <a class="ref" href="../../../../bionic/libc/include/pthread.h.html#pthread_mutex_init" title='pthread_mutex_init' data-ref="pthread_mutex_init">pthread_mutex_init</a>(<a class="local col0 ref" href="#50lock" title='lock' data-ref="50lock">lock</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="98">98</th><td>}</td></tr>
+<tr><th id="99">99</th><td><em>static</em> <b>__inline__</b> <em>void</em> <dfn class="decl def" id="_Z13mutex_destroyP15pthread_mutex_t" title='mutex_destroy' data-ref="_Z13mutex_destroyP15pthread_mutex_t">mutex_destroy</dfn>(<a class="typedef" href="#mutex_t" title='mutex_t' data-type='pthread_mutex_t' data-ref="mutex_t">mutex_t</a>*  <dfn class="local col1 decl" id="51lock" title='lock' data-type='mutex_t *' data-ref="51lock">lock</dfn>)</td></tr>
+<tr><th id="100">100</th><td>{</td></tr>
+<tr><th id="101">101</th><td>    <a class="ref" href="../../../../bionic/libc/include/pthread.h.html#pthread_mutex_destroy" title='pthread_mutex_destroy' data-ref="pthread_mutex_destroy">pthread_mutex_destroy</a>(<a class="local col1 ref" href="#51lock" title='lock' data-ref="51lock">lock</a>);</td></tr>
+<tr><th id="102">102</th><td>}</td></tr>
+<tr><th id="103">103</th><td></td></tr>
+<tr><th id="104">104</th><td><u>#<span data-ppcond="81">else</span> // !defined(_WIN32)</u></td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="107">107</th><td>    <em>int</em>                init;</td></tr>
+<tr><th id="108">108</th><td>    CRITICAL_SECTION   lock[<var>1</var>];</td></tr>
+<tr><th id="109">109</th><td>} mutex_t;</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><u>#define  MUTEX_INITIALIZER  { 0, {{ NULL, 0, 0, NULL, NULL, 0 }} }</u></td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><em>static</em> <b>__inline__</b> <em>void</em>  mutex_lock(mutex_t*  lock)</td></tr>
+<tr><th id="114">114</th><td>{</td></tr>
+<tr><th id="115">115</th><td>    <b>if</b> (!lock-&gt;init) {</td></tr>
+<tr><th id="116">116</th><td>        lock-&gt;init = <var>1</var>;</td></tr>
+<tr><th id="117">117</th><td>        InitializeCriticalSection( lock-&gt;lock );</td></tr>
+<tr><th id="118">118</th><td>        lock-&gt;init = <var>2</var>;</td></tr>
+<tr><th id="119">119</th><td>    } <b>else</b> <b>while</b> (lock-&gt;init != <var>2</var>)</td></tr>
+<tr><th id="120">120</th><td>        Sleep(<var>10</var>);</td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td>    EnterCriticalSection(lock-&gt;lock);</td></tr>
+<tr><th id="123">123</th><td>}</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td><em>static</em> <b>__inline__</b> <em>void</em>  mutex_unlock(mutex_t*  lock)</td></tr>
+<tr><th id="126">126</th><td>{</td></tr>
+<tr><th id="127">127</th><td>    LeaveCriticalSection(lock-&gt;lock);</td></tr>
+<tr><th id="128">128</th><td>}</td></tr>
+<tr><th id="129">129</th><td><em>static</em> <b>__inline__</b> <em>int</em>  mutex_init(mutex_t*  lock)</td></tr>
+<tr><th id="130">130</th><td>{</td></tr>
+<tr><th id="131">131</th><td>    InitializeCriticalSection(lock-&gt;lock);</td></tr>
+<tr><th id="132">132</th><td>    lock-&gt;init = <var>2</var>;</td></tr>
+<tr><th id="133">133</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="134">134</th><td>}</td></tr>
+<tr><th id="135">135</th><td><em>static</em> <b>__inline__</b> <em>void</em>  mutex_destroy(mutex_t*  lock)</td></tr>
+<tr><th id="136">136</th><td>{</td></tr>
+<tr><th id="137">137</th><td>    <b>if</b> (lock-&gt;init) {</td></tr>
+<tr><th id="138">138</th><td>        lock-&gt;init = <var>0</var>;</td></tr>
+<tr><th id="139">139</th><td>        DeleteCriticalSection(lock-&gt;lock);</td></tr>
+<tr><th id="140">140</th><td>    }</td></tr>
+<tr><th id="141">141</th><td>}</td></tr>
+<tr><th id="142">142</th><td><u>#<span data-ppcond="81">endif</span> // !defined(_WIN32)</u></td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td><u>#<span data-ppcond="144">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="145">145</th><td>}</td></tr>
+<tr><th id="146">146</th><td><u>#<span data-ppcond="144">endif</span></u></td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td><u>#<span data-ppcond="17">endif</span> /* _LIBS_CUTILS_THREADS_H */</u></td></tr>
+<tr><th id="149">149</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../adb/adb.cpp.html'>codebrowser/system/core/adb/adb.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

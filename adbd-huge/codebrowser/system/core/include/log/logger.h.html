@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>logger.h source code [codebrowser/system/core/include/log/logger.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="log_msg,logger_entry,logger_entry_v2,logger_entry_v3,logger_entry_v4 "/>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/include/log/logger.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>system</a>/<a href='../..'>core</a>/<a href='..'>include</a>/<a href='./'>log</a>/<a href='logger.h.html'>logger.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i>**</i></td></tr>
+<tr><th id="3">3</th><td><i>** Copyright 2007-2014, The Android Open Source Project</i></td></tr>
+<tr><th id="4">4</th><td><i>**</i></td></tr>
+<tr><th id="5">5</th><td><i>** This file is dual licensed.  It may be redistributed and/or modified</i></td></tr>
+<tr><th id="6">6</th><td><i>** under the terms of the Apache 2.0 License OR version 2 of the GNU</i></td></tr>
+<tr><th id="7">7</th><td><i>** General Public License.</i></td></tr>
+<tr><th id="8">8</th><td><i>*/</i></td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><u>#<span data-ppcond="10">ifndef</span> <span class="macro" data-ref="_M/_LIBS_LOG_LOGGER_H">_LIBS_LOG_LOGGER_H</span></u></td></tr>
+<tr><th id="11">11</th><td><u>#define <dfn class="macro" id="_M/_LIBS_LOG_LOGGER_H" data-ref="_M/_LIBS_LOG_LOGGER_H">_LIBS_LOG_LOGGER_H</dfn></u></td></tr>
+<tr><th id="12">12</th><td></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="../../../../bionic/libc/include/stdint.h.html">&lt;stdint.h&gt;</a></u></td></tr>
+<tr><th id="14">14</th><td><u>#<span data-ppcond="14">ifdef</span> <span class="macro" data-ref="_M/__linux__">__linux__</span></u></td></tr>
+<tr><th id="15">15</th><td><u>#include <a href="../../../../bionic/libc/include/time.h.html">&lt;time.h&gt;</a> /* clockid_t definition */</u></td></tr>
+<tr><th id="16">16</th><td><u>#<span data-ppcond="14">endif</span></u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="log.h.html">&lt;log/log.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="log_read.h.html">&lt;log/log_read.h&gt;</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#<span data-ppcond="21">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="22">22</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="21">endif</span></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><i>/*</i></td></tr>
+<tr><th id="26">26</th><td><i> * The userspace structure for version 1 of the logger_entry ABI.</i></td></tr>
+<tr><th id="27">27</th><td><i> * This structure is returned to userspace by the kernel logger</i></td></tr>
+<tr><th id="28">28</th><td><i> * driver unless an upgrade to a newer ABI version is requested.</i></td></tr>
+<tr><th id="29">29</th><td><i> */</i></td></tr>
+<tr><th id="30">30</th><td><b>struct</b> <dfn class="type def" id="logger_entry" title='logger_entry' data-ref="logger_entry">logger_entry</dfn> {</td></tr>
+<tr><th id="31">31</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a>    <dfn class="decl" id="logger_entry::len" title='logger_entry::len' data-ref="logger_entry::len">len</dfn>;    <i>/* length of the payload */</i></td></tr>
+<tr><th id="32">32</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a>    <dfn class="decl" id="logger_entry::__pad" title='logger_entry::__pad' data-ref="logger_entry::__pad">__pad</dfn>;  <i>/* no matter what, we get 2 bytes of padding */</i></td></tr>
+<tr><th id="33">33</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry::pid" title='logger_entry::pid' data-ref="logger_entry::pid">pid</dfn>;    <i>/* generating process's pid */</i></td></tr>
+<tr><th id="34">34</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry::tid" title='logger_entry::tid' data-ref="logger_entry::tid">tid</dfn>;    <i>/* generating process's tid */</i></td></tr>
+<tr><th id="35">35</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry::sec" title='logger_entry::sec' data-ref="logger_entry::sec">sec</dfn>;    <i>/* seconds since Epoch */</i></td></tr>
+<tr><th id="36">36</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry::nsec" title='logger_entry::nsec' data-ref="logger_entry::nsec">nsec</dfn>;   <i>/* nanoseconds */</i></td></tr>
+<tr><th id="37">37</th><td>    <em>char</em>        <dfn class="decl" id="logger_entry::msg" title='logger_entry::msg' data-ref="logger_entry::msg">msg</dfn>[<var>0</var>]; <i>/* the entry's payload */</i></td></tr>
+<tr><th id="38">38</th><td>} <b>__attribute__</b>((__packed__));</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><i>/*</i></td></tr>
+<tr><th id="41">41</th><td><i> * The userspace structure for version 2 of the logger_entry ABI.</i></td></tr>
+<tr><th id="42">42</th><td><i> * This structure is returned to userspace if ioctl(LOGGER_SET_VERSION)</i></td></tr>
+<tr><th id="43">43</th><td><i> * is called with version==2; or used with the user space log daemon.</i></td></tr>
+<tr><th id="44">44</th><td><i> */</i></td></tr>
+<tr><th id="45">45</th><td><b>struct</b> <dfn class="type def" id="logger_entry_v2" title='logger_entry_v2' data-ref="logger_entry_v2">logger_entry_v2</dfn> {</td></tr>
+<tr><th id="46">46</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a>    <dfn class="decl" id="logger_entry_v2::len" title='logger_entry_v2::len' data-ref="logger_entry_v2::len">len</dfn>;       <i>/* length of the payload */</i></td></tr>
+<tr><th id="47">47</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a>    <dfn class="decl" id="logger_entry_v2::hdr_size" title='logger_entry_v2::hdr_size' data-ref="logger_entry_v2::hdr_size">hdr_size</dfn>;  <i>/* sizeof(struct logger_entry_v2) */</i></td></tr>
+<tr><th id="48">48</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry_v2::pid" title='logger_entry_v2::pid' data-ref="logger_entry_v2::pid">pid</dfn>;       <i>/* generating process's pid */</i></td></tr>
+<tr><th id="49">49</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry_v2::tid" title='logger_entry_v2::tid' data-ref="logger_entry_v2::tid">tid</dfn>;       <i>/* generating process's tid */</i></td></tr>
+<tr><th id="50">50</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry_v2::sec" title='logger_entry_v2::sec' data-ref="logger_entry_v2::sec">sec</dfn>;       <i>/* seconds since Epoch */</i></td></tr>
+<tr><th id="51">51</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry_v2::nsec" title='logger_entry_v2::nsec' data-ref="logger_entry_v2::nsec">nsec</dfn>;      <i>/* nanoseconds */</i></td></tr>
+<tr><th id="52">52</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>    <dfn class="decl" id="logger_entry_v2::euid" title='logger_entry_v2::euid' data-ref="logger_entry_v2::euid">euid</dfn>;      <i>/* effective UID of logger */</i></td></tr>
+<tr><th id="53">53</th><td>    <em>char</em>        <dfn class="decl" id="logger_entry_v2::msg" title='logger_entry_v2::msg' data-ref="logger_entry_v2::msg">msg</dfn>[<var>0</var>];    <i>/* the entry's payload */</i></td></tr>
+<tr><th id="54">54</th><td>} <b>__attribute__</b>((__packed__));</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><b>struct</b> <dfn class="type def" id="logger_entry_v3" title='logger_entry_v3' data-ref="logger_entry_v3">logger_entry_v3</dfn> {</td></tr>
+<tr><th id="57">57</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a>    <dfn class="decl" id="logger_entry_v3::len" title='logger_entry_v3::len' data-ref="logger_entry_v3::len">len</dfn>;       <i>/* length of the payload */</i></td></tr>
+<tr><th id="58">58</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a>    <dfn class="decl" id="logger_entry_v3::hdr_size" title='logger_entry_v3::hdr_size' data-ref="logger_entry_v3::hdr_size">hdr_size</dfn>;  <i>/* sizeof(struct logger_entry_v3) */</i></td></tr>
+<tr><th id="59">59</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry_v3::pid" title='logger_entry_v3::pid' data-ref="logger_entry_v3::pid">pid</dfn>;       <i>/* generating process's pid */</i></td></tr>
+<tr><th id="60">60</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry_v3::tid" title='logger_entry_v3::tid' data-ref="logger_entry_v3::tid">tid</dfn>;       <i>/* generating process's tid */</i></td></tr>
+<tr><th id="61">61</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry_v3::sec" title='logger_entry_v3::sec' data-ref="logger_entry_v3::sec">sec</dfn>;       <i>/* seconds since Epoch */</i></td></tr>
+<tr><th id="62">62</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry_v3::nsec" title='logger_entry_v3::nsec' data-ref="logger_entry_v3::nsec">nsec</dfn>;      <i>/* nanoseconds */</i></td></tr>
+<tr><th id="63">63</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>    <dfn class="decl" id="logger_entry_v3::lid" title='logger_entry_v3::lid' data-ref="logger_entry_v3::lid">lid</dfn>;       <i>/* log id of the payload */</i></td></tr>
+<tr><th id="64">64</th><td>    <em>char</em>        <dfn class="decl" id="logger_entry_v3::msg" title='logger_entry_v3::msg' data-ref="logger_entry_v3::msg">msg</dfn>[<var>0</var>];    <i>/* the entry's payload */</i></td></tr>
+<tr><th id="65">65</th><td>} <b>__attribute__</b>((__packed__));</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><b>struct</b> <dfn class="type def" id="logger_entry_v4" title='logger_entry_v4' data-ref="logger_entry_v4">logger_entry_v4</dfn> {</td></tr>
+<tr><th id="68">68</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a>    <dfn class="decl" id="logger_entry_v4::len" title='logger_entry_v4::len' data-ref="logger_entry_v4::len">len</dfn>;       <i>/* length of the payload */</i></td></tr>
+<tr><th id="69">69</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a>    <dfn class="decl" id="logger_entry_v4::hdr_size" title='logger_entry_v4::hdr_size' data-ref="logger_entry_v4::hdr_size">hdr_size</dfn>;  <i>/* sizeof(struct logger_entry_v4) */</i></td></tr>
+<tr><th id="70">70</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a>     <dfn class="decl" id="logger_entry_v4::pid" title='logger_entry_v4::pid' data-ref="logger_entry_v4::pid">pid</dfn>;       <i>/* generating process's pid */</i></td></tr>
+<tr><th id="71">71</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>    <dfn class="decl" id="logger_entry_v4::tid" title='logger_entry_v4::tid' data-ref="logger_entry_v4::tid">tid</dfn>;       <i>/* generating process's tid */</i></td></tr>
+<tr><th id="72">72</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>    <dfn class="decl" id="logger_entry_v4::sec" title='logger_entry_v4::sec' data-ref="logger_entry_v4::sec">sec</dfn>;       <i>/* seconds since Epoch */</i></td></tr>
+<tr><th id="73">73</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>    <dfn class="decl" id="logger_entry_v4::nsec" title='logger_entry_v4::nsec' data-ref="logger_entry_v4::nsec">nsec</dfn>;      <i>/* nanoseconds */</i></td></tr>
+<tr><th id="74">74</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>    <dfn class="decl" id="logger_entry_v4::lid" title='logger_entry_v4::lid' data-ref="logger_entry_v4::lid">lid</dfn>;       <i>/* log id of the payload, bottom 4 bits currently */</i></td></tr>
+<tr><th id="75">75</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>    <dfn class="decl" id="logger_entry_v4::uid" title='logger_entry_v4::uid' data-ref="logger_entry_v4::uid">uid</dfn>;       <i>/* generating process's uid */</i></td></tr>
+<tr><th id="76">76</th><td>    <em>char</em>        <dfn class="decl" id="logger_entry_v4::msg" title='logger_entry_v4::msg' data-ref="logger_entry_v4::msg">msg</dfn>[<var>0</var>];    <i>/* the entry's payload */</i></td></tr>
+<tr><th id="77">77</th><td>} <b>__attribute__</b>((__packed__));</td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><i>/*</i></td></tr>
+<tr><th id="80">80</th><td><i> * The maximum size of the log entry payload that can be</i></td></tr>
+<tr><th id="81">81</th><td><i> * written to the logger. An attempt to write more than</i></td></tr>
+<tr><th id="82">82</th><td><i> * this amount will result in a truncated log entry.</i></td></tr>
+<tr><th id="83">83</th><td><i> */</i></td></tr>
+<tr><th id="84">84</th><td><u>#define <dfn class="macro" id="_M/LOGGER_ENTRY_MAX_PAYLOAD" data-ref="_M/LOGGER_ENTRY_MAX_PAYLOAD">LOGGER_ENTRY_MAX_PAYLOAD</dfn>	4068</u></td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><i>/*</i></td></tr>
+<tr><th id="87">87</th><td><i> * The maximum size of a log entry which can be read from the</i></td></tr>
+<tr><th id="88">88</th><td><i> * kernel logger driver. An attempt to read less than this amount</i></td></tr>
+<tr><th id="89">89</th><td><i> * may result in read() returning EINVAL.</i></td></tr>
+<tr><th id="90">90</th><td><i> */</i></td></tr>
+<tr><th id="91">91</th><td><u>#define <dfn class="macro" id="_M/LOGGER_ENTRY_MAX_LEN" data-ref="_M/LOGGER_ENTRY_MAX_LEN">LOGGER_ENTRY_MAX_LEN</dfn>		(5*1024)</u></td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><u>#define <dfn class="macro" id="_M/NS_PER_SEC" data-ref="_M/NS_PER_SEC">NS_PER_SEC</dfn> 1000000000ULL</u></td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><b>struct</b> <dfn class="type def" id="log_msg" title='log_msg' data-ref="log_msg">log_msg</dfn> {</td></tr>
+<tr><th id="96">96</th><td>    <b>union</b> {</td></tr>
+<tr><th id="97">97</th><td>        <em>unsigned</em> <em>char</em> <dfn class="decl" id="log_msg::(anonymous)::buf" title='log_msg::(anonymous union)::buf' data-ref="log_msg::(anonymous)::buf">buf</dfn>[<a class="macro" href="#91" title="(5*1024)" data-ref="_M/LOGGER_ENTRY_MAX_LEN">LOGGER_ENTRY_MAX_LEN</a> + <var>1</var>];</td></tr>
+<tr><th id="98">98</th><td>        <b>struct</b> <a class="type" href="#logger_entry_v4" title='logger_entry_v4' data-ref="logger_entry_v4">logger_entry_v4</a> <dfn class="decl" id="log_msg::(anonymous)::entry" title='log_msg::(anonymous union)::entry' data-ref="log_msg::(anonymous)::entry">entry</dfn>;</td></tr>
+<tr><th id="99">99</th><td>        <b>struct</b> <a class="type" href="#logger_entry_v4" title='logger_entry_v4' data-ref="logger_entry_v4">logger_entry_v4</a> <dfn class="decl" id="log_msg::(anonymous)::entry_v4" title='log_msg::(anonymous union)::entry_v4' data-ref="log_msg::(anonymous)::entry_v4">entry_v4</dfn>;</td></tr>
+<tr><th id="100">100</th><td>        <b>struct</b> <a class="type" href="#logger_entry_v3" title='logger_entry_v3' data-ref="logger_entry_v3">logger_entry_v3</a> <dfn class="decl" id="log_msg::(anonymous)::entry_v3" title='log_msg::(anonymous union)::entry_v3' data-ref="log_msg::(anonymous)::entry_v3">entry_v3</dfn>;</td></tr>
+<tr><th id="101">101</th><td>        <b>struct</b> <a class="type" href="#logger_entry_v2" title='logger_entry_v2' data-ref="logger_entry_v2">logger_entry_v2</a> <dfn class="decl" id="log_msg::(anonymous)::entry_v2" title='log_msg::(anonymous union)::entry_v2' data-ref="log_msg::(anonymous)::entry_v2">entry_v2</dfn>;</td></tr>
+<tr><th id="102">102</th><td>        <b>struct</b> <a class="type" href="#logger_entry" title='logger_entry' data-ref="logger_entry">logger_entry</a>    <dfn class="decl" id="log_msg::(anonymous)::entry_v1" title='log_msg::(anonymous union)::entry_v1' data-ref="log_msg::(anonymous)::entry_v1">entry_v1</dfn>;</td></tr>
+<tr><th id="103">103</th><td>    } <b>__attribute__</b>((aligned(<var>4</var>)));</td></tr>
+<tr><th id="104">104</th><td><u>#<span data-ppcond="104">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="105">105</th><td>    <i>/* Matching log_time operators */</i></td></tr>
+<tr><th id="106">106</th><td>    bool operator== (<em>const</em> log_msg &amp;T) <em>const</em></td></tr>
+<tr><th id="107">107</th><td>    {</td></tr>
+<tr><th id="108">108</th><td>        <b>return</b> (entry.sec == T.entry.sec) &amp;&amp; (entry.nsec == T.entry.nsec);</td></tr>
+<tr><th id="109">109</th><td>    }</td></tr>
+<tr><th id="110">110</th><td>    bool operator!= (<em>const</em> log_msg &amp;T) <em>const</em></td></tr>
+<tr><th id="111">111</th><td>    {</td></tr>
+<tr><th id="112">112</th><td>        <b>return</b> !(*this == T);</td></tr>
+<tr><th id="113">113</th><td>    }</td></tr>
+<tr><th id="114">114</th><td>    bool operator&lt; (<em>const</em> log_msg &amp;T) <em>const</em></td></tr>
+<tr><th id="115">115</th><td>    {</td></tr>
+<tr><th id="116">116</th><td>        <b>return</b> (entry.sec &lt; T.entry.sec)</td></tr>
+<tr><th id="117">117</th><td>            || ((entry.sec == T.entry.sec)</td></tr>
+<tr><th id="118">118</th><td>             &amp;&amp; (entry.nsec &lt; T.entry.nsec));</td></tr>
+<tr><th id="119">119</th><td>    }</td></tr>
+<tr><th id="120">120</th><td>    bool operator&gt;= (<em>const</em> log_msg &amp;T) <em>const</em></td></tr>
+<tr><th id="121">121</th><td>    {</td></tr>
+<tr><th id="122">122</th><td>        <b>return</b> !(*this &lt; T);</td></tr>
+<tr><th id="123">123</th><td>    }</td></tr>
+<tr><th id="124">124</th><td>    bool operator&gt; (<em>const</em> log_msg &amp;T) <em>const</em></td></tr>
+<tr><th id="125">125</th><td>    {</td></tr>
+<tr><th id="126">126</th><td>        <b>return</b> (entry.sec &gt; T.entry.sec)</td></tr>
+<tr><th id="127">127</th><td>            || ((entry.sec == T.entry.sec)</td></tr>
+<tr><th id="128">128</th><td>             &amp;&amp; (entry.nsec &gt; T.entry.nsec));</td></tr>
+<tr><th id="129">129</th><td>    }</td></tr>
+<tr><th id="130">130</th><td>    bool operator&lt;= (<em>const</em> log_msg &amp;T) <em>const</em></td></tr>
+<tr><th id="131">131</th><td>    {</td></tr>
+<tr><th id="132">132</th><td>        <b>return</b> !(*this &gt; T);</td></tr>
+<tr><th id="133">133</th><td>    }</td></tr>
+<tr><th id="134">134</th><td>    uint64_t nsec() <em>const</em></td></tr>
+<tr><th id="135">135</th><td>    {</td></tr>
+<tr><th id="136">136</th><td>        <b>return</b> static_cast&lt;uint64_t&gt;(entry.sec) * NS_PER_SEC + entry.nsec;</td></tr>
+<tr><th id="137">137</th><td>    }</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td>    <i>/* packet methods */</i></td></tr>
+<tr><th id="140">140</th><td>    log_id_t id()</td></tr>
+<tr><th id="141">141</th><td>    {</td></tr>
+<tr><th id="142">142</th><td>        <b>return</b> (log_id_t) entry.lid;</td></tr>
+<tr><th id="143">143</th><td>    }</td></tr>
+<tr><th id="144">144</th><td>    <em>char</em> *msg()</td></tr>
+<tr><th id="145">145</th><td>    {</td></tr>
+<tr><th id="146">146</th><td>        <b>return</b> entry.hdr_size ? (<em>char</em> *) buf + entry.hdr_size : entry_v1.msg;</td></tr>
+<tr><th id="147">147</th><td>    }</td></tr>
+<tr><th id="148">148</th><td>    <em>unsigned</em> <em>int</em> len()</td></tr>
+<tr><th id="149">149</th><td>    {</td></tr>
+<tr><th id="150">150</th><td>        <b>return</b> (entry.hdr_size ? entry.hdr_size : <b>sizeof</b>(entry_v1)) + entry.len;</td></tr>
+<tr><th id="151">151</th><td>    }</td></tr>
+<tr><th id="152">152</th><td><u>#<span data-ppcond="104">endif</span></u></td></tr>
+<tr><th id="153">153</th><td>};</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td><b>struct</b> <dfn class="type" id="logger" title='logger' data-ref="logger">logger</dfn>;</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><a class="typedef" href="log.h.html#log_id_t" title='log_id_t' data-type='enum log_id' data-ref="log_id_t">log_id_t</a> <dfn class="decl" id="android_logger_get_id" title='android_logger_get_id' data-ref="android_logger_get_id">android_logger_get_id</dfn>(<b>struct</b> <a class="type" href="#logger" title='logger' data-ref="logger">logger</a> *<dfn class="local col1 decl" id="1logger" title='logger' data-type='struct logger *' data-ref="1logger">logger</dfn>);</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td><em>int</em> <dfn class="decl" id="android_logger_clear" title='android_logger_clear' data-ref="android_logger_clear">android_logger_clear</dfn>(<b>struct</b> <a class="type" href="#logger" title='logger' data-ref="logger">logger</a> *<dfn class="local col2 decl" id="2logger" title='logger' data-type='struct logger *' data-ref="2logger">logger</dfn>);</td></tr>
+<tr><th id="160">160</th><td><em>long</em> <dfn class="decl" id="android_logger_get_log_size" title='android_logger_get_log_size' data-ref="android_logger_get_log_size">android_logger_get_log_size</dfn>(<b>struct</b> <a class="type" href="#logger" title='logger' data-ref="logger">logger</a> *<dfn class="local col3 decl" id="3logger" title='logger' data-type='struct logger *' data-ref="3logger">logger</dfn>);</td></tr>
+<tr><th id="161">161</th><td><em>int</em> <dfn class="decl" id="android_logger_set_log_size" title='android_logger_set_log_size' data-ref="android_logger_set_log_size">android_logger_set_log_size</dfn>(<b>struct</b> <a class="type" href="#logger" title='logger' data-ref="logger">logger</a> *<dfn class="local col4 decl" id="4logger" title='logger' data-type='struct logger *' data-ref="4logger">logger</dfn>, <em>unsigned</em> <em>long</em> <dfn class="local col5 decl" id="5size" title='size' data-type='unsigned long' data-ref="5size">size</dfn>);</td></tr>
+<tr><th id="162">162</th><td><em>long</em> <dfn class="decl" id="android_logger_get_log_readable_size" title='android_logger_get_log_readable_size' data-ref="android_logger_get_log_readable_size">android_logger_get_log_readable_size</dfn>(<b>struct</b> <a class="type" href="#logger" title='logger' data-ref="logger">logger</a> *<dfn class="local col6 decl" id="6logger" title='logger' data-type='struct logger *' data-ref="6logger">logger</dfn>);</td></tr>
+<tr><th id="163">163</th><td><em>int</em> <dfn class="decl" id="android_logger_get_log_version" title='android_logger_get_log_version' data-ref="android_logger_get_log_version">android_logger_get_log_version</dfn>(<b>struct</b> <a class="type" href="#logger" title='logger' data-ref="logger">logger</a> *<dfn class="local col7 decl" id="7logger" title='logger' data-type='struct logger *' data-ref="7logger">logger</dfn>);</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td><b>struct</b> <dfn class="type" id="logger_list" title='logger_list' data-ref="logger_list">logger_list</dfn>;</td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="android_logger_get_statistics" title='android_logger_get_statistics' data-ref="android_logger_get_statistics">android_logger_get_statistics</dfn>(<b>struct</b> <a class="type" href="#logger_list" title='logger_list' data-ref="logger_list">logger_list</a> *<dfn class="local col8 decl" id="8logger_list" title='logger_list' data-type='struct logger_list *' data-ref="8logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="168">168</th><td>                                      <em>char</em> *<dfn class="local col9 decl" id="9buf" title='buf' data-type='char *' data-ref="9buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="10len" title='len' data-type='size_t' data-ref="10len">len</dfn>);</td></tr>
+<tr><th id="169">169</th><td><a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="android_logger_get_prune_list" title='android_logger_get_prune_list' data-ref="android_logger_get_prune_list">android_logger_get_prune_list</dfn>(<b>struct</b> <a class="type" href="#logger_list" title='logger_list' data-ref="logger_list">logger_list</a> *<dfn class="local col1 decl" id="11logger_list" title='logger_list' data-type='struct logger_list *' data-ref="11logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="170">170</th><td>                                      <em>char</em> *<dfn class="local col2 decl" id="12buf" title='buf' data-type='char *' data-ref="12buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="13len" title='len' data-type='size_t' data-ref="13len">len</dfn>);</td></tr>
+<tr><th id="171">171</th><td><em>int</em> <dfn class="decl" id="android_logger_set_prune_list" title='android_logger_set_prune_list' data-ref="android_logger_set_prune_list">android_logger_set_prune_list</dfn>(<b>struct</b> <a class="type" href="#logger_list" title='logger_list' data-ref="logger_list">logger_list</a> *<dfn class="local col4 decl" id="14logger_list" title='logger_list' data-type='struct logger_list *' data-ref="14logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="172">172</th><td>                                  <em>char</em> *<dfn class="local col5 decl" id="15buf" title='buf' data-type='char *' data-ref="15buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="16len" title='len' data-type='size_t' data-ref="16len">len</dfn>);</td></tr>
+<tr><th id="173">173</th><td></td></tr>
+<tr><th id="174">174</th><td><u>#define <dfn class="macro" id="_M/ANDROID_LOG_RDONLY" data-ref="_M/ANDROID_LOG_RDONLY">ANDROID_LOG_RDONLY</dfn>   O_RDONLY</u></td></tr>
+<tr><th id="175">175</th><td><u>#define <dfn class="macro" id="_M/ANDROID_LOG_WRONLY" data-ref="_M/ANDROID_LOG_WRONLY">ANDROID_LOG_WRONLY</dfn>   O_WRONLY</u></td></tr>
+<tr><th id="176">176</th><td><u>#define <dfn class="macro" id="_M/ANDROID_LOG_RDWR" data-ref="_M/ANDROID_LOG_RDWR">ANDROID_LOG_RDWR</dfn>     O_RDWR</u></td></tr>
+<tr><th id="177">177</th><td><u>#define <dfn class="macro" id="_M/ANDROID_LOG_ACCMODE" data-ref="_M/ANDROID_LOG_ACCMODE">ANDROID_LOG_ACCMODE</dfn>  O_ACCMODE</u></td></tr>
+<tr><th id="178">178</th><td><u>#define <dfn class="macro" id="_M/ANDROID_LOG_NONBLOCK" data-ref="_M/ANDROID_LOG_NONBLOCK">ANDROID_LOG_NONBLOCK</dfn> O_NONBLOCK</u></td></tr>
+<tr><th id="179">179</th><td><u>#define <dfn class="macro" id="_M/ANDROID_LOG_WRAP" data-ref="_M/ANDROID_LOG_WRAP">ANDROID_LOG_WRAP</dfn>     0x40000000 /* Block until buffer about to wrap */</u></td></tr>
+<tr><th id="180">180</th><td><u>#define <dfn class="macro" id="_M/ANDROID_LOG_WRAP_DEFAULT_TIMEOUT" data-ref="_M/ANDROID_LOG_WRAP_DEFAULT_TIMEOUT">ANDROID_LOG_WRAP_DEFAULT_TIMEOUT</dfn> 7200 /* 2 hour default */</u></td></tr>
+<tr><th id="181">181</th><td><u>#define <dfn class="macro" id="_M/ANDROID_LOG_PSTORE" data-ref="_M/ANDROID_LOG_PSTORE">ANDROID_LOG_PSTORE</dfn>   0x80000000</u></td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td><b>struct</b> <a class="type" href="#logger_list" title='logger_list' data-ref="logger_list">logger_list</a> *<dfn class="decl" id="android_logger_list_alloc" title='android_logger_list_alloc' data-ref="android_logger_list_alloc">android_logger_list_alloc</dfn>(<em>int</em> <dfn class="local col7 decl" id="17mode" title='mode' data-type='int' data-ref="17mode">mode</dfn>,</td></tr>
+<tr><th id="184">184</th><td>                                              <em>unsigned</em> <em>int</em> <dfn class="local col8 decl" id="18tail" title='tail' data-type='unsigned int' data-ref="18tail">tail</dfn>,</td></tr>
+<tr><th id="185">185</th><td>                                              <a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col9 decl" id="19pid" title='pid' data-type='pid_t' data-ref="19pid">pid</dfn>);</td></tr>
+<tr><th id="186">186</th><td><b>struct</b> <a class="type" href="#logger_list" title='logger_list' data-ref="logger_list">logger_list</a> *<dfn class="decl" id="android_logger_list_alloc_time" title='android_logger_list_alloc_time' data-ref="android_logger_list_alloc_time">android_logger_list_alloc_time</dfn>(<em>int</em> <dfn class="local col0 decl" id="20mode" title='mode' data-type='int' data-ref="20mode">mode</dfn>,</td></tr>
+<tr><th id="187">187</th><td>                                                   <a class="typedef" href="log_read.h.html#log_time" title='log_time' data-type='struct log_time' data-ref="log_time">log_time</a> <dfn class="local col1 decl" id="21start" title='start' data-type='log_time' data-ref="21start">start</dfn>,</td></tr>
+<tr><th id="188">188</th><td>                                                   <a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col2 decl" id="22pid" title='pid' data-type='pid_t' data-ref="22pid">pid</dfn>);</td></tr>
+<tr><th id="189">189</th><td><em>void</em> <dfn class="decl" id="android_logger_list_free" title='android_logger_list_free' data-ref="android_logger_list_free">android_logger_list_free</dfn>(<b>struct</b> <a class="type" href="#logger_list" title='logger_list' data-ref="logger_list">logger_list</a> *<dfn class="local col3 decl" id="23logger_list" title='logger_list' data-type='struct logger_list *' data-ref="23logger_list">logger_list</dfn>);</td></tr>
+<tr><th id="190">190</th><td><i>/* In the purest sense, the following two are orthogonal interfaces */</i></td></tr>
+<tr><th id="191">191</th><td><em>int</em> <dfn class="decl" id="android_logger_list_read" title='android_logger_list_read' data-ref="android_logger_list_read">android_logger_list_read</dfn>(<b>struct</b> <a class="type" href="#logger_list" title='logger_list' data-ref="logger_list">logger_list</a> *<dfn class="local col4 decl" id="24logger_list" title='logger_list' data-type='struct logger_list *' data-ref="24logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="192">192</th><td>                             <b>struct</b> <a class="type" href="#log_msg" title='log_msg' data-ref="log_msg">log_msg</a> *<dfn class="local col5 decl" id="25log_msg" title='log_msg' data-type='struct log_msg *' data-ref="25log_msg">log_msg</dfn>);</td></tr>
+<tr><th id="193">193</th><td></td></tr>
+<tr><th id="194">194</th><td><i>/* Multiple log_id_t opens */</i></td></tr>
+<tr><th id="195">195</th><td><b>struct</b> <a class="type" href="#logger" title='logger' data-ref="logger">logger</a> *<dfn class="decl" id="android_logger_open" title='android_logger_open' data-ref="android_logger_open">android_logger_open</dfn>(<b>struct</b> <a class="type" href="#logger_list" title='logger_list' data-ref="logger_list">logger_list</a> *<dfn class="local col6 decl" id="26logger_list" title='logger_list' data-type='struct logger_list *' data-ref="26logger_list">logger_list</dfn>,</td></tr>
+<tr><th id="196">196</th><td>                                   <a class="typedef" href="log.h.html#log_id_t" title='log_id_t' data-type='enum log_id' data-ref="log_id_t">log_id_t</a> <dfn class="local col7 decl" id="27id" title='id' data-type='log_id_t' data-ref="27id">id</dfn>);</td></tr>
+<tr><th id="197">197</th><td><u>#define <dfn class="macro" id="_M/android_logger_close" data-ref="_M/android_logger_close">android_logger_close</dfn> android_logger_free</u></td></tr>
+<tr><th id="198">198</th><td><i>/* Single log_id_t open */</i></td></tr>
+<tr><th id="199">199</th><td><b>struct</b> <a class="type" href="#logger_list" title='logger_list' data-ref="logger_list">logger_list</a> *<dfn class="decl" id="android_logger_list_open" title='android_logger_list_open' data-ref="android_logger_list_open">android_logger_list_open</dfn>(<a class="typedef" href="log.h.html#log_id_t" title='log_id_t' data-type='enum log_id' data-ref="log_id_t">log_id_t</a> <dfn class="local col8 decl" id="28id" title='id' data-type='log_id_t' data-ref="28id">id</dfn>,</td></tr>
+<tr><th id="200">200</th><td>                                             <em>int</em> <dfn class="local col9 decl" id="29mode" title='mode' data-type='int' data-ref="29mode">mode</dfn>,</td></tr>
+<tr><th id="201">201</th><td>                                             <em>unsigned</em> <em>int</em> <dfn class="local col0 decl" id="30tail" title='tail' data-type='unsigned int' data-ref="30tail">tail</dfn>,</td></tr>
+<tr><th id="202">202</th><td>                                             <a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col1 decl" id="31pid" title='pid' data-type='pid_t' data-ref="31pid">pid</dfn>);</td></tr>
+<tr><th id="203">203</th><td><u>#define <dfn class="macro" id="_M/android_logger_list_close" data-ref="_M/android_logger_list_close">android_logger_list_close</dfn> android_logger_list_free</u></td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><u>#<span data-ppcond="205">ifdef</span> <span class="macro" data-ref="_M/__linux__">__linux__</span></u></td></tr>
+<tr><th id="206">206</th><td><a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#clockid_t" title='clockid_t' data-type='__clockid_t' data-ref="clockid_t">clockid_t</a> <dfn class="decl" id="android_log_clockid" title='android_log_clockid' data-ref="android_log_clockid">android_log_clockid</dfn>();</td></tr>
+<tr><th id="207">207</th><td><u>#<span data-ppcond="205">endif</span></u></td></tr>
+<tr><th id="208">208</th><td></td></tr>
+<tr><th id="209">209</th><td><i>/*</i></td></tr>
+<tr><th id="210">210</th><td><i> * log_id_t helpers</i></td></tr>
+<tr><th id="211">211</th><td><i> */</i></td></tr>
+<tr><th id="212">212</th><td><a class="typedef" href="log.h.html#log_id_t" title='log_id_t' data-type='enum log_id' data-ref="log_id_t">log_id_t</a> <dfn class="decl" id="android_name_to_log_id" title='android_name_to_log_id' data-ref="android_name_to_log_id">android_name_to_log_id</dfn>(<em>const</em> <em>char</em> *<dfn class="local col2 decl" id="32logName" title='logName' data-type='const char *' data-ref="32logName">logName</dfn>);</td></tr>
+<tr><th id="213">213</th><td><em>const</em> <em>char</em> *<dfn class="decl" id="android_log_id_to_name" title='android_log_id_to_name' data-ref="android_log_id_to_name">android_log_id_to_name</dfn>(<a class="typedef" href="log.h.html#log_id_t" title='log_id_t' data-type='enum log_id' data-ref="log_id_t">log_id_t</a> <dfn class="local col3 decl" id="33log_id" title='log_id' data-type='log_id_t' data-ref="33log_id">log_id</dfn>);</td></tr>
+<tr><th id="214">214</th><td></td></tr>
+<tr><th id="215">215</th><td><u>#<span data-ppcond="215">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="216">216</th><td>}</td></tr>
+<tr><th id="217">217</th><td><u>#<span data-ppcond="215">endif</span></u></td></tr>
+<tr><th id="218">218</th><td></td></tr>
+<tr><th id="219">219</th><td><u>#<span data-ppcond="10">endif</span> /* _LIBS_LOG_LOGGER_H */</u></td></tr>
+<tr><th id="220">220</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../liblog/config_read.c.html'>codebrowser/system/core/liblog/config_read.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

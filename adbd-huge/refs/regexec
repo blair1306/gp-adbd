@@ -1,0 +1,18 @@
+<dec f='codebrowser/bionic/libc/include/regex.h' l='102' type='int regexec(const regex_t * , const char * , size_t , regmatch_t * , int )'/>
+<def f='codebrowser/bionic/libc/upstream-netbsd/lib/libc/regex/regexec.c' l='202' ll='234' type='int regexec(const regex_t * preg, const char * string, size_t nmatch, regmatch_t * pmatch, int eflags)'/>
+<doc f='codebrowser/bionic/libc/upstream-netbsd/lib/libc/regex/regexec.c' l='187'>/*
+ - regexec - interface for matching
+ = extern int regexec(const regex_t *, const char *, size_t, \
+ =					regmatch_t [], int);
+ = #define	REG_NOTBOL	00001
+ = #define	REG_NOTEOL	00002
+ = #define	REG_STARTEND	00004
+ = #define	REG_TRACE	00400	// tracing of execution
+ = #define	REG_LARGE	01000	// force large representation
+ = #define	REG_BACKR	02000	// force use of backref code
+ *
+ * We put this here so we can exploit knowledge of the state representation
+ * when choosing which matcher to call.  Also, by this point the matchers
+ * have been prototyped.
+ */</doc>
+<doc f='codebrowser/bionic/libc/upstream-netbsd/lib/libc/regex/regexec.c' l='202'>/* 0 success, REG_NOMATCH failure */</doc>

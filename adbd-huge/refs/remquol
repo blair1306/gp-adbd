@@ -1,0 +1,17 @@
+<dec f='codebrowser/bionic/libc/include/math.h' l='423' type='long double remquol(long double , long double , int * )'/>
+<use f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/e_remainderl.c' l='37' u='c' c='remainderl'/>
+<def f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_remquol.c' l='67' ll='178' type='long double remquol(long double x, long double y, int * quo)'/>
+<doc f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_remquol.c' l='54'>/*
+ * Return the IEEE remainder and set *quo to the last n bits of the
+ * quotient, rounded to the nearest integer.  We choose n=31 because
+ * we wind up computing all the integer bits of the quotient anyway as
+ * a side-effect of computing the remainder by the shift and subtract
+ * method.  In practice, this is far more bits than are needed to use
+ * remquo in reduction algorithms.
+ *
+ * Assumptions:
+ * - The low part of the mantissa fits in a manl_t exactly.
+ * - The high part of the mantissa fits in an int64_t with enough room
+ *   for an explicit integer bit in front of the fractional bits.
+ */</doc>
+<use f='codebrowser/external/libcxx/include/cmath' l='1531' u='c' c='_ZNSt3__16remquoEggPi'/>

@@ -1,0 +1,29 @@
+<dec f='codebrowser/bionic/libc/include/stdlib.h' l='100' type='void * bsearch(const void * key, const void * base0, size_t nmemb, size_t size, int (*)(const void *, const void *) compar)'/>
+<def f='codebrowser/bionic/libc/upstream-netbsd/lib/libc/stdlib/bsearch.c' l='61' ll='85' type='void * bsearch(const void * key, const void * base0, size_t nmemb, size_t size, int (*)(const void *, const void *) compar)'/>
+<doc f='codebrowser/bionic/libc/upstream-netbsd/lib/libc/stdlib/bsearch.c' l='45'>/*
+ * Perform a binary search.
+ *
+ * The code below is a bit sneaky.  After a comparison fails, we
+ * divide the work in half by moving either left or right. If lim
+ * is odd, moving left simply involves halving lim: e.g., when lim
+ * is 5 we look at item 2, so we change lim to 2 so that we will
+ * look at items 0 &amp; 1.  If lim is even, the same applies.  If lim
+ * is odd, moving right again involes halving lim, this time moving
+ * the base up one item past p: e.g., when lim is 5 we change base
+ * to item 3 and make lim 2 so that we will look at items 3 and 4.
+ * If lim is even, however, we have to shrink it by one before
+ * halving: e.g., when lim is 4, we still looked at item 2, so we
+ * have to make lim 3, then halve, obtaining 1, so that we will only
+ * look at item 3.
+ */</doc>
+<dec f='codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdlib.h' l='93' type='void * bsearch(const void * key, const void * base0, size_t nmemb, size_t size, int (*)(const void *, const void *) compar)'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/a_strnid.c' l='201' u='c' c='ASN1_STRING_TABLE_get'/>
+<use f='codebrowser/external/boringssl/src/crypto/err/err.c' l='457' u='c' c='err_string_lookup'/>
+<use f='codebrowser/external/boringssl/src/crypto/obj/obj.c' l='209' u='c' c='OBJ_obj2nid'/>
+<use f='codebrowser/external/boringssl/src/crypto/obj/obj.c' l='252' u='c' c='OBJ_sn2nid'/>
+<use f='codebrowser/external/boringssl/src/crypto/obj/obj.c' l='286' u='c' c='OBJ_ln2nid'/>
+<use f='codebrowser/external/boringssl/src/crypto/obj/obj_xref.c' l='77' u='c' c='OBJ_find_sigid_algs'/>
+<use f='codebrowser/external/boringssl/src/crypto/obj/obj_xref.c' l='113' u='c' c='OBJ_find_sigid_by_algs'/>
+<use f='codebrowser/external/boringssl/src/crypto/stack/stack.c' l='261' u='c' c='sk_find'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509v3/v3_lib.c' l='109' u='c' c='X509V3_EXT_get_nid'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509v3/v3_purp.c' l='333' u='c' c='X509_supported_extension'/>

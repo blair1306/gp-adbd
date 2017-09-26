@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>atexit.c source code [codebrowser/bionic/libc/stdlib/atexit.c] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="atexit,atexit_fn "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/stdlib/atexit.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>stdlib</a>/<a href='atexit.c.html'>atexit.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$OpenBSD: atexit.c,v 1.20 2014/07/11 09:51:37 kettenis Exp $ */</i></td></tr>
+<tr><th id="2">2</th><td><i>/*</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright (c) 2002 Daniel Hartmeier</i></td></tr>
+<tr><th id="4">4</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="5">5</th><td><i> *</i></td></tr>
+<tr><th id="6">6</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="7">7</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="8">8</th><td><i> * are met:</i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> *    - Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *      notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="12">12</th><td><i> *    - Redistributions in binary form must reproduce the above</i></td></tr>
+<tr><th id="13">13</th><td><i> *      copyright notice, this list of conditions and the following</i></td></tr>
+<tr><th id="14">14</th><td><i> *      disclaimer in the documentation and/or other materials provided</i></td></tr>
+<tr><th id="15">15</th><td><i> *      with the distribution.</i></td></tr>
+<tr><th id="16">16</th><td><i> *</i></td></tr>
+<tr><th id="17">17</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="18">18</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="19">19</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="20">20</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="21">21</th><td><i> * COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="22">22</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="23">23</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="24">24</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER</i></td></tr>
+<tr><th id="25">25</th><td><i> * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="26">26</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN</i></td></tr>
+<tr><th id="27">27</th><td><i> * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</i></td></tr>
+<tr><th id="28">28</th><td><i> * POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="29">29</th><td><i> *</i></td></tr>
+<tr><th id="30">30</th><td><i> */</i></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../include/sys/mman.h.html">&lt;sys/mman.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="../include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td><u>#include <a href="atexit.h.html">"atexit.h"</a></u></td></tr>
+<tr><th id="38">38</th><td><u>#include <a href="../private/thread_private.h.html">"private/thread_private.h"</a></u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><i>/* BEGIN android-changed */</i></td></tr>
+<tr><th id="41">41</th><td><u>#include <a href="../private/bionic_prctl.h.html">"private/bionic_prctl.h"</a></u></td></tr>
+<tr><th id="42">42</th><td><i>/* END android-changed */</i></td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><b>struct</b> <dfn class="type def" id="atexit" title='atexit' data-ref="atexit">atexit</dfn> {</td></tr>
+<tr><th id="45">45</th><td>	<b>struct</b> <a class="type" href="#atexit" title='atexit' data-ref="atexit">atexit</a> *<dfn class="tu decl" id="atexit::next" title='atexit::next' data-type='struct atexit *' data-ref="atexit::next">next</dfn>;		<i  data-doc="atexit::next">/* next in list */</i></td></tr>
+<tr><th id="46">46</th><td>	<em>int</em> <dfn class="tu decl" id="atexit::ind" title='atexit::ind' data-type='int' data-ref="atexit::ind">ind</dfn>;			<i  data-doc="atexit::ind">/* next index in this table */</i></td></tr>
+<tr><th id="47">47</th><td>	<em>int</em> <dfn class="tu decl" id="atexit::max" title='atexit::max' data-type='int' data-ref="atexit::max">max</dfn>;			<i  data-doc="atexit::max">/* max entries &gt;= ATEXIT_SIZE */</i></td></tr>
+<tr><th id="48">48</th><td>	<b>struct</b> <dfn class="type def" id="atexit_fn" title='atexit_fn' data-ref="atexit_fn"><a class="type" href="#atexit_fn" title='atexit_fn' data-ref="atexit_fn">atexit_fn</a></dfn> {</td></tr>
+<tr><th id="49">49</th><td>		<em>void</em> (*<dfn class="tu decl" id="atexit_fn::fn_ptr" title='atexit_fn::fn_ptr' data-type='void (*)(void *)' data-ref="atexit_fn::fn_ptr">fn_ptr</dfn>)(<em>void</em> *);</td></tr>
+<tr><th id="50">50</th><td>		<em>void</em> *<dfn class="tu decl" id="atexit_fn::fn_arg" title='atexit_fn::fn_arg' data-type='void *' data-ref="atexit_fn::fn_arg">fn_arg</dfn>;		<i  data-doc="atexit_fn::fn_arg">/* argument for CXA callback */</i></td></tr>
+<tr><th id="51">51</th><td>		<em>void</em> *<dfn class="tu decl" id="atexit_fn::fn_dso" title='atexit_fn::fn_dso' data-type='void *' data-ref="atexit_fn::fn_dso">fn_dso</dfn>;		<i  data-doc="atexit_fn::fn_dso">/* shared module handle */</i></td></tr>
+<tr><th id="52">52</th><td>	} <dfn class="tu decl" id="atexit::fns" title='atexit::fns' data-type='struct atexit_fn [1]' data-ref="atexit::fns">fns</dfn>[<var>1</var>];			<i>/* the table itself */</i></td></tr>
+<tr><th id="53">53</th><td>};</td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><em>static</em> <b>struct</b> <a class="type" href="#atexit" title='atexit' data-ref="atexit">atexit</a> *<dfn class="tu decl def" id="__atexit" title='__atexit' data-type='struct atexit *' data-ref="__atexit">__atexit</dfn>;</td></tr>
+<tr><th id="56">56</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="restartloop" title='restartloop' data-type='int' data-ref="restartloop">restartloop</dfn>;</td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td><i>/* BEGIN android-changed: __unregister_atfork is used by __cxa_finalize */</i></td></tr>
+<tr><th id="59">59</th><td><b>extern</b> <em>void</em> <dfn class="decl" id="__unregister_atfork" title='__unregister_atfork' data-ref="__unregister_atfork">__unregister_atfork</dfn>(<em>void</em>* <dfn class="local col1 decl" id="1dso" title='dso' data-type='void *' data-ref="1dso">dso</dfn>);</td></tr>
+<tr><th id="60">60</th><td><i>/* END android-changed */</i></td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><i>/*</i></td></tr>
+<tr><th id="63">63</th><td><i> * Function pointers are stored in a linked list of pages. The list</i></td></tr>
+<tr><th id="64">64</th><td><i> * is initially empty, and pages are allocated on demand. The first</i></td></tr>
+<tr><th id="65">65</th><td><i> * function pointer in the first allocated page (the last one in</i></td></tr>
+<tr><th id="66">66</th><td><i> * the linked list) is reserved for the cleanup function.</i></td></tr>
+<tr><th id="67">67</th><td><i> *</i></td></tr>
+<tr><th id="68">68</th><td><i> * Outside the following functions, all pages are mprotect()'ed</i></td></tr>
+<tr><th id="69">69</th><td><i> * to prevent unintentional/malicious corruption.</i></td></tr>
+<tr><th id="70">70</th><td><i> */</i></td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><i>/*</i></td></tr>
+<tr><th id="73">73</th><td><i> * Register a function to be performed at exit or when a shared object</i></td></tr>
+<tr><th id="74">74</th><td><i> * with the given dso handle is unloaded dynamically.  Also used as</i></td></tr>
+<tr><th id="75">75</th><td><i> * the backend for atexit().  For more info on this API, see:</i></td></tr>
+<tr><th id="76">76</th><td><i> *</i></td></tr>
+<tr><th id="77">77</th><td><i> *	<a href="http://www.codesourcery.com/cxx-abi/abi.html#dso-dtor">http://www.codesourcery.com/cxx-abi/abi.html#dso-dtor</a></i></td></tr>
+<tr><th id="78">78</th><td><i> */</i></td></tr>
+<tr><th id="79">79</th><td><em>int</em></td></tr>
+<tr><th id="80">80</th><td><dfn class="decl def" id="__cxa_atexit" title='__cxa_atexit' data-ref="__cxa_atexit">__cxa_atexit</dfn>(<em>void</em> (*<dfn class="local col2 decl" id="2func" title='func' data-type='void (*)(void *)' data-ref="2func">func</dfn>)(<em>void</em> *), <em>void</em> *<dfn class="local col3 decl" id="3arg" title='arg' data-type='void *' data-ref="3arg">arg</dfn>, <em>void</em> *<dfn class="local col4 decl" id="4dso" title='dso' data-type='void *' data-ref="4dso">dso</dfn>)</td></tr>
+<tr><th id="81">81</th><td>{</td></tr>
+<tr><th id="82">82</th><td>	<b>struct</b> <a class="type" href="#atexit" title='atexit' data-ref="atexit">atexit</a> *<dfn class="local col5 decl" id="5p" title='p' data-type='struct atexit *' data-ref="5p">p</dfn> = <a class="tu ref" href="#__atexit" title='__atexit' data-use='r' data-ref="__atexit">__atexit</a>;</td></tr>
+<tr><th id="83">83</th><td>	<b>struct</b> <a class="type" href="#atexit_fn" title='atexit_fn' data-ref="atexit_fn">atexit_fn</a> *<dfn class="local col6 decl" id="6fnp" title='fnp' data-type='struct atexit_fn *' data-ref="6fnp">fnp</dfn>;</td></tr>
+<tr><th id="84">84</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="7pgsize" title='pgsize' data-type='size_t' data-ref="7pgsize">pgsize</dfn> = <a class="ref" href="../include/unistd.h.html#getpagesize" title='getpagesize' data-ref="getpagesize">getpagesize</a>();</td></tr>
+<tr><th id="85">85</th><td>	<em>int</em> <dfn class="local col8 decl" id="8ret" title='ret' data-type='int' data-ref="8ret">ret</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td>	<b>if</b> (<a class="local col7 ref" href="#7pgsize" title='pgsize' data-ref="7pgsize">pgsize</a> &lt; <b>sizeof</b>(*<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>))</td></tr>
+<tr><th id="88">88</th><td>		<b>return</b> (-<var>1</var>);</td></tr>
+<tr><th id="89">89</th><td>	<a class="macro" href="../private/thread_private.h.html#43" title="_thread_atexit_lock()" data-ref="_M/_ATEXIT_LOCK">_ATEXIT_LOCK</a>();</td></tr>
+<tr><th id="90">90</th><td>	<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a> = <a class="tu ref" href="#__atexit" title='__atexit' data-use='r' data-ref="__atexit">__atexit</a>;</td></tr>
+<tr><th id="91">91</th><td>	<b>if</b> (<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="92">92</th><td>		<b>if</b> (<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::ind" title='atexit::ind' data-use='r' data-ref="atexit::ind">ind</a> + <var>1</var> &gt;= <a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::max" title='atexit::max' data-use='r' data-ref="atexit::max">max</a>)</td></tr>
+<tr><th id="93">93</th><td>			<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="94">94</th><td>		<b>else</b> <b>if</b> (<a class="ref" href="../include/sys/mman.h.html#mprotect" title='mprotect' data-ref="mprotect">mprotect</a>(<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>, <a class="local col7 ref" href="#7pgsize" title='pgsize' data-ref="7pgsize">pgsize</a>, <a class="macro" href="../kernel/uapi/asm-generic/mman-common.h.html#21" title="0x1" data-ref="_M/PROT_READ">PROT_READ</a> | <a class="macro" href="../kernel/uapi/asm-generic/mman-common.h.html#22" title="0x2" data-ref="_M/PROT_WRITE">PROT_WRITE</a>))</td></tr>
+<tr><th id="95">95</th><td>			<b>goto</b> <a class="lbl" href="#9unlock" data-ref="9unlock">unlock</a>;</td></tr>
+<tr><th id="96">96</th><td>	}</td></tr>
+<tr><th id="97">97</th><td>	<b>if</b> (<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="98">98</th><td>		<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a> = <a class="ref" href="../include/sys/mman.h.html#mmap" title='mmap' data-ref="mmap">mmap</a>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <a class="local col7 ref" href="#7pgsize" title='pgsize' data-ref="7pgsize">pgsize</a>, <a class="macro" href="../kernel/uapi/asm-generic/mman-common.h.html#21" title="0x1" data-ref="_M/PROT_READ">PROT_READ</a> | <a class="macro" href="../kernel/uapi/asm-generic/mman-common.h.html#22" title="0x2" data-ref="_M/PROT_WRITE">PROT_WRITE</a>,</td></tr>
+<tr><th id="99">99</th><td>		    <a class="macro" href="../include/sys/mman.h.html#38" title="0x20" data-ref="_M/MAP_ANON">MAP_ANON</a> | <a class="macro" href="../kernel/uapi/asm-generic/mman-common.h.html#31" title="0x02" data-ref="_M/MAP_PRIVATE">MAP_PRIVATE</a>, -<var>1</var>, <var>0</var>);</td></tr>
+<tr><th id="100">100</th><td>		<b>if</b> (<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a> == <a class="macro" href="../include/sys/mman.h.html#41" title="((void *)-1)" data-ref="_M/MAP_FAILED">MAP_FAILED</a>)</td></tr>
+<tr><th id="101">101</th><td>			<b>goto</b> <a class="lbl" href="#9unlock" data-ref="9unlock">unlock</a>;</td></tr>
+<tr><th id="102">102</th><td><i>/* BEGIN android-changed */</i></td></tr>
+<tr><th id="103">103</th><td>		<a class="ref" href="../include/sys/prctl.h.html#prctl" title='prctl' data-ref="prctl">prctl</a>(<a class="macro" href="../private/bionic_prctl.h.html#23" title="0x53564d41" data-ref="_M/PR_SET_VMA">PR_SET_VMA</a>, <a class="macro" href="../private/bionic_prctl.h.html#24" title="0" data-ref="_M/PR_SET_VMA_ANON_NAME">PR_SET_VMA_ANON_NAME</a>, <a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>, <a class="local col7 ref" href="#7pgsize" title='pgsize' data-ref="7pgsize">pgsize</a>,</td></tr>
+<tr><th id="104">104</th><td>		    <q>"atexit handlers"</q>);</td></tr>
+<tr><th id="105">105</th><td><i>/* END android-changed */</i></td></tr>
+<tr><th id="106">106</th><td>		<b>if</b> (<a class="tu ref" href="#__atexit" title='__atexit' data-use='r' data-ref="__atexit">__atexit</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="107">107</th><td>			<a class="ref" href="../include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(&amp;<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::fns" title='atexit::fns' data-use='a' data-ref="atexit::fns">fns</a>[<var>0</var>], <var>0</var>, <b>sizeof</b>(<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::fns" title='atexit::fns' data-use='r' data-ref="atexit::fns">fns</a>[<var>0</var>]));</td></tr>
+<tr><th id="108">108</th><td>			<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::ind" title='atexit::ind' data-use='w' data-ref="atexit::ind">ind</a> = <var>1</var>;</td></tr>
+<tr><th id="109">109</th><td>		} <b>else</b></td></tr>
+<tr><th id="110">110</th><td>			<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::ind" title='atexit::ind' data-use='w' data-ref="atexit::ind">ind</a> = <var>0</var>;</td></tr>
+<tr><th id="111">111</th><td>		<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::max" title='atexit::max' data-use='w' data-ref="atexit::max">max</a> = (<a class="local col7 ref" href="#7pgsize" title='pgsize' data-ref="7pgsize">pgsize</a> - ((<em>char</em> *)&amp;<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::fns" title='atexit::fns' data-use='a' data-ref="atexit::fns">fns</a>[<var>0</var>] - (<em>char</em> *)<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>)) /</td></tr>
+<tr><th id="112">112</th><td>		    <b>sizeof</b>(<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::fns" title='atexit::fns' data-use='r' data-ref="atexit::fns">fns</a>[<var>0</var>]);</td></tr>
+<tr><th id="113">113</th><td>		<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::next" title='atexit::next' data-use='w' data-ref="atexit::next">next</a> = <a class="tu ref" href="#__atexit" title='__atexit' data-use='r' data-ref="__atexit">__atexit</a>;</td></tr>
+<tr><th id="114">114</th><td>		<a class="tu ref" href="#__atexit" title='__atexit' data-use='w' data-ref="__atexit">__atexit</a> = <a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>;</td></tr>
+<tr><th id="115">115</th><td>	}</td></tr>
+<tr><th id="116">116</th><td>	<a class="local col6 ref" href="#6fnp" title='fnp' data-ref="6fnp">fnp</a> = &amp;<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::fns" title='atexit::fns' data-use='a' data-ref="atexit::fns">fns</a>[<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>-&gt;<a class="tu ref" href="#atexit::ind" title='atexit::ind' data-use='w' data-ref="atexit::ind">ind</a>++];</td></tr>
+<tr><th id="117">117</th><td>	<a class="local col6 ref" href="#6fnp" title='fnp' data-ref="6fnp">fnp</a>-&gt;<a class="tu ref" href="#atexit_fn::fn_ptr" title='atexit_fn::fn_ptr' data-use='w' data-ref="atexit_fn::fn_ptr">fn_ptr</a> = <a class="local col2 ref" href="#2func" title='func' data-ref="2func">func</a>;</td></tr>
+<tr><th id="118">118</th><td>	<a class="local col6 ref" href="#6fnp" title='fnp' data-ref="6fnp">fnp</a>-&gt;<a class="tu ref" href="#atexit_fn::fn_arg" title='atexit_fn::fn_arg' data-use='w' data-ref="atexit_fn::fn_arg">fn_arg</a> = <a class="local col3 ref" href="#3arg" title='arg' data-ref="3arg">arg</a>;</td></tr>
+<tr><th id="119">119</th><td>	<a class="local col6 ref" href="#6fnp" title='fnp' data-ref="6fnp">fnp</a>-&gt;<a class="tu ref" href="#atexit_fn::fn_dso" title='atexit_fn::fn_dso' data-use='w' data-ref="atexit_fn::fn_dso">fn_dso</a> = <a class="local col4 ref" href="#4dso" title='dso' data-ref="4dso">dso</a>;</td></tr>
+<tr><th id="120">120</th><td>	<b>if</b> (<a class="ref" href="../include/sys/mman.h.html#mprotect" title='mprotect' data-ref="mprotect">mprotect</a>(<a class="local col5 ref" href="#5p" title='p' data-ref="5p">p</a>, <a class="local col7 ref" href="#7pgsize" title='pgsize' data-ref="7pgsize">pgsize</a>, <a class="macro" href="../kernel/uapi/asm-generic/mman-common.h.html#21" title="0x1" data-ref="_M/PROT_READ">PROT_READ</a>))</td></tr>
+<tr><th id="121">121</th><td>		<b>goto</b> <a class="lbl" href="#9unlock" data-ref="9unlock">unlock</a>;</td></tr>
+<tr><th id="122">122</th><td>	<a class="tu ref" href="#restartloop" title='restartloop' data-use='w' data-ref="restartloop">restartloop</a> = <var>1</var>;</td></tr>
+<tr><th id="123">123</th><td>	<a class="local col8 ref" href="#8ret" title='ret' data-ref="8ret">ret</a> = <var>0</var>;</td></tr>
+<tr><th id="124">124</th><td><dfn class="lbl" id="9unlock" data-ref="9unlock">unlock</dfn>:</td></tr>
+<tr><th id="125">125</th><td>	<a class="macro" href="../private/thread_private.h.html#44" title="_thread_atexit_unlock()" data-ref="_M/_ATEXIT_UNLOCK">_ATEXIT_UNLOCK</a>();</td></tr>
+<tr><th id="126">126</th><td>	<b>return</b> (<a class="local col8 ref" href="#8ret" title='ret' data-ref="8ret">ret</a>);</td></tr>
+<tr><th id="127">127</th><td>}</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td><i>/*</i></td></tr>
+<tr><th id="130">130</th><td><i> * Call all handlers registered with __cxa_atexit() for the shared</i></td></tr>
+<tr><th id="131">131</th><td><i> * object owning 'dso'.</i></td></tr>
+<tr><th id="132">132</th><td><i> * Note: if 'dso' is NULL, then all remaining handlers are called.</i></td></tr>
+<tr><th id="133">133</th><td><i> */</i></td></tr>
+<tr><th id="134">134</th><td><em>void</em></td></tr>
+<tr><th id="135">135</th><td><dfn class="decl def" id="__cxa_finalize" title='__cxa_finalize' data-ref="__cxa_finalize">__cxa_finalize</dfn>(<em>void</em> *<dfn class="local col0 decl" id="10dso" title='dso' data-type='void *' data-ref="10dso">dso</dfn>)</td></tr>
+<tr><th id="136">136</th><td>{</td></tr>
+<tr><th id="137">137</th><td>	<b>struct</b> <a class="type" href="#atexit" title='atexit' data-ref="atexit">atexit</a> *<dfn class="local col1 decl" id="11p" title='p' data-type='struct atexit *' data-ref="11p">p</dfn>, *<dfn class="local col2 decl" id="12q" title='q' data-type='struct atexit *' data-ref="12q">q</dfn>;</td></tr>
+<tr><th id="138">138</th><td>	<b>struct</b> <a class="type" href="#atexit_fn" title='atexit_fn' data-ref="atexit_fn">atexit_fn</a> <dfn class="local col3 decl" id="13fn" title='fn' data-type='struct atexit_fn' data-ref="13fn">fn</dfn>;</td></tr>
+<tr><th id="139">139</th><td>	<em>int</em> <dfn class="local col4 decl" id="14n" title='n' data-type='int' data-ref="14n">n</dfn>, <dfn class="local col5 decl" id="15pgsize" title='pgsize' data-type='int' data-ref="15pgsize">pgsize</dfn> = <a class="ref" href="../include/unistd.h.html#getpagesize" title='getpagesize' data-ref="getpagesize">getpagesize</a>();</td></tr>
+<tr><th id="140">140</th><td>	<em>static</em> <em>int</em> <dfn class="local col6 decl" id="16call_depth" title='call_depth' data-type='int' data-ref="16call_depth">call_depth</dfn>;</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td>	<a class="macro" href="../private/thread_private.h.html#43" title="_thread_atexit_lock()" data-ref="_M/_ATEXIT_LOCK">_ATEXIT_LOCK</a>();</td></tr>
+<tr><th id="143">143</th><td>	<a class="local col6 ref" href="#16call_depth" title='call_depth' data-ref="16call_depth">call_depth</a>++;</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><dfn class="lbl" id="17restart" data-ref="17restart">restart</dfn>:</td></tr>
+<tr><th id="146">146</th><td>	<a class="tu ref" href="#restartloop" title='restartloop' data-use='w' data-ref="restartloop">restartloop</a> = <var>0</var>;</td></tr>
+<tr><th id="147">147</th><td>	<b>for</b> (<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a> = <a class="tu ref" href="#__atexit" title='__atexit' data-use='r' data-ref="__atexit">__atexit</a>; <a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>; <a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a> = <a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>-&gt;<a class="tu ref" href="#atexit::next" title='atexit::next' data-use='r' data-ref="atexit::next">next</a>) {</td></tr>
+<tr><th id="148">148</th><td>		<b>for</b> (<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a> = <a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>-&gt;<a class="tu ref" href="#atexit::ind" title='atexit::ind' data-use='r' data-ref="atexit::ind">ind</a>; --<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a> &gt;= <var>0</var>;) {</td></tr>
+<tr><th id="149">149</th><td>			<b>if</b> (<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>-&gt;<a class="tu ref" href="#atexit::fns" title='atexit::fns' data-use='m' data-ref="atexit::fns">fns</a>[<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>].<a class="tu ref" href="#atexit_fn::fn_ptr" title='atexit_fn::fn_ptr' data-use='r' data-ref="atexit_fn::fn_ptr">fn_ptr</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="150">150</th><td>				<b>continue</b>;	<i>/* already called */</i></td></tr>
+<tr><th id="151">151</th><td>			<b>if</b> (<a class="local col0 ref" href="#10dso" title='dso' data-ref="10dso">dso</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> &amp;&amp; <a class="local col0 ref" href="#10dso" title='dso' data-ref="10dso">dso</a> != <a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>-&gt;<a class="tu ref" href="#atexit::fns" title='atexit::fns' data-use='m' data-ref="atexit::fns">fns</a>[<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>].<a class="tu ref" href="#atexit_fn::fn_dso" title='atexit_fn::fn_dso' data-use='r' data-ref="atexit_fn::fn_dso">fn_dso</a>)</td></tr>
+<tr><th id="152">152</th><td>				<b>continue</b>;	<i>/* wrong DSO */</i></td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td>			<i>/*</i></td></tr>
+<tr><th id="155">155</th><td><i>			 * Mark handler as having been already called to avoid</i></td></tr>
+<tr><th id="156">156</th><td><i>			 * dupes and loops, then call the appropriate function.</i></td></tr>
+<tr><th id="157">157</th><td><i>			 */</i></td></tr>
+<tr><th id="158">158</th><td>			<a class="local col3 ref" href="#13fn" title='fn' data-ref="13fn">fn</a> = <a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>-&gt;<a class="tu ref" href="#atexit::fns" title='atexit::fns' data-use='r' data-ref="atexit::fns">fns</a>[<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>];</td></tr>
+<tr><th id="159">159</th><td>			<b>if</b> (<a class="ref" href="../include/sys/mman.h.html#mprotect" title='mprotect' data-ref="mprotect">mprotect</a>(<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>, <a class="local col5 ref" href="#15pgsize" title='pgsize' data-ref="15pgsize">pgsize</a>, <a class="macro" href="../kernel/uapi/asm-generic/mman-common.h.html#21" title="0x1" data-ref="_M/PROT_READ">PROT_READ</a> | <a class="macro" href="../kernel/uapi/asm-generic/mman-common.h.html#22" title="0x2" data-ref="_M/PROT_WRITE">PROT_WRITE</a>) == <var>0</var>) {</td></tr>
+<tr><th id="160">160</th><td>				<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>-&gt;<a class="tu ref" href="#atexit::fns" title='atexit::fns' data-use='m' data-ref="atexit::fns">fns</a>[<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>].<a class="tu ref" href="#atexit_fn::fn_ptr" title='atexit_fn::fn_ptr' data-use='w' data-ref="atexit_fn::fn_ptr">fn_ptr</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="161">161</th><td>				<a class="ref" href="../include/sys/mman.h.html#mprotect" title='mprotect' data-ref="mprotect">mprotect</a>(<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>, <a class="local col5 ref" href="#15pgsize" title='pgsize' data-ref="15pgsize">pgsize</a>, <a class="macro" href="../kernel/uapi/asm-generic/mman-common.h.html#21" title="0x1" data-ref="_M/PROT_READ">PROT_READ</a>);</td></tr>
+<tr><th id="162">162</th><td>			}</td></tr>
+<tr><th id="163">163</th><td>			<a class="macro" href="../private/thread_private.h.html#44" title="_thread_atexit_unlock()" data-ref="_M/_ATEXIT_UNLOCK">_ATEXIT_UNLOCK</a>();</td></tr>
+<tr><th id="164">164</th><td>			(*<a class="local col3 ref" href="#13fn" title='fn' data-ref="13fn">fn</a>.<a class="tu ref" href="#atexit_fn::fn_ptr" title='atexit_fn::fn_ptr' data-use='r' data-ref="atexit_fn::fn_ptr">fn_ptr</a>)(<a class="local col3 ref" href="#13fn" title='fn' data-ref="13fn">fn</a>.<a class="tu ref" href="#atexit_fn::fn_arg" title='atexit_fn::fn_arg' data-use='r' data-ref="atexit_fn::fn_arg">fn_arg</a>);</td></tr>
+<tr><th id="165">165</th><td>			<a class="macro" href="../private/thread_private.h.html#43" title="_thread_atexit_lock()" data-ref="_M/_ATEXIT_LOCK">_ATEXIT_LOCK</a>();</td></tr>
+<tr><th id="166">166</th><td>			<b>if</b> (<a class="tu ref" href="#restartloop" title='restartloop' data-use='r' data-ref="restartloop">restartloop</a>)</td></tr>
+<tr><th id="167">167</th><td>				<b>goto</b> <a class="lbl" href="#17restart" data-ref="17restart">restart</a>;</td></tr>
+<tr><th id="168">168</th><td>		}</td></tr>
+<tr><th id="169">169</th><td>	}</td></tr>
+<tr><th id="170">170</th><td></td></tr>
+<tr><th id="171">171</th><td>	<a class="local col6 ref" href="#16call_depth" title='call_depth' data-ref="16call_depth">call_depth</a>--;</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td>	<i>/*</i></td></tr>
+<tr><th id="174">174</th><td><i>	 * If called via exit(), unmap the pages since we have now run</i></td></tr>
+<tr><th id="175">175</th><td><i>	 * all the handlers.  We defer this until calldepth == 0 so that</i></td></tr>
+<tr><th id="176">176</th><td><i>	 * we don't unmap things prematurely if called recursively.</i></td></tr>
+<tr><th id="177">177</th><td><i>	 */</i></td></tr>
+<tr><th id="178">178</th><td>	<b>if</b> (<a class="local col0 ref" href="#10dso" title='dso' data-ref="10dso">dso</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> &amp;&amp; <a class="local col6 ref" href="#16call_depth" title='call_depth' data-ref="16call_depth">call_depth</a> == <var>0</var>) {</td></tr>
+<tr><th id="179">179</th><td>		<b>for</b> (<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a> = <a class="tu ref" href="#__atexit" title='__atexit' data-use='r' data-ref="__atexit">__atexit</a>; <a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>; ) {</td></tr>
+<tr><th id="180">180</th><td>			<a class="local col2 ref" href="#12q" title='q' data-ref="12q">q</a> = <a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>;</td></tr>
+<tr><th id="181">181</th><td>			<a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a> = <a class="local col1 ref" href="#11p" title='p' data-ref="11p">p</a>-&gt;<a class="tu ref" href="#atexit::next" title='atexit::next' data-use='r' data-ref="atexit::next">next</a>;</td></tr>
+<tr><th id="182">182</th><td>			<a class="ref" href="../include/sys/mman.h.html#munmap" title='munmap' data-ref="munmap">munmap</a>(<a class="local col2 ref" href="#12q" title='q' data-ref="12q">q</a>, <a class="local col5 ref" href="#15pgsize" title='pgsize' data-ref="15pgsize">pgsize</a>);</td></tr>
+<tr><th id="183">183</th><td>		}</td></tr>
+<tr><th id="184">184</th><td>		<a class="tu ref" href="#__atexit" title='__atexit' data-use='w' data-ref="__atexit">__atexit</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="185">185</th><td>	}</td></tr>
+<tr><th id="186">186</th><td>	<a class="macro" href="../private/thread_private.h.html#44" title="_thread_atexit_unlock()" data-ref="_M/_ATEXIT_UNLOCK">_ATEXIT_UNLOCK</a>();</td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td>  <b>extern</b> <em>void</em> <dfn class="decl" id="__libc_stdio_cleanup" title='__libc_stdio_cleanup' data-ref="__libc_stdio_cleanup">__libc_stdio_cleanup</dfn>(<em>void</em>);</td></tr>
+<tr><th id="189">189</th><td>  <a class="ref" href="#__libc_stdio_cleanup" title='__libc_stdio_cleanup' data-ref="__libc_stdio_cleanup">__libc_stdio_cleanup</a>();</td></tr>
+<tr><th id="190">190</th><td></td></tr>
+<tr><th id="191">191</th><td>  <i>/* BEGIN android-changed: call __unregister_atfork if dso is not null */</i></td></tr>
+<tr><th id="192">192</th><td>  <b>if</b> (<a class="local col0 ref" href="#10dso" title='dso' data-ref="10dso">dso</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="193">193</th><td>    <a class="ref" href="#__unregister_atfork" title='__unregister_atfork' data-ref="__unregister_atfork">__unregister_atfork</a>(<a class="local col0 ref" href="#10dso" title='dso' data-ref="10dso">dso</a>);</td></tr>
+<tr><th id="194">194</th><td>  }</td></tr>
+<tr><th id="195">195</th><td>  <i>/* END android-changed */</i></td></tr>
+<tr><th id="196">196</th><td>}</td></tr>
+<tr><th id="197">197</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

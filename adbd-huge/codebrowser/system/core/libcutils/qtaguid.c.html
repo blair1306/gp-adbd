@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>qtaguid.c source code [codebrowser/system/core/libcutils/qtaguid.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/libcutils/qtaguid.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>libcutils</a>/<a href='qtaguid.c.html'>qtaguid.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i>** Copyright 2011, The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i>**</i></td></tr>
+<tr><th id="4">4</th><td><i>** Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i>** you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i>** You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i>**</i></td></tr>
+<tr><th id="8">8</th><td><i>**     <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i>**</i></td></tr>
+<tr><th id="10">10</th><td><i>** Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i>** distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i>** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i>** See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i>** limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i>*/</i></td></tr>
+<tr><th id="16">16</th><td><i></i></td></tr>
+<tr><th id="17">17</th><td><i>// #define LOG_NDEBUG 0</i></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#define <dfn class="macro" id="_M/LOG_TAG" data-ref="_M/LOG_TAG">LOG_TAG</dfn> "qtaguid"</u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../bionic/libc/include/inttypes.h.html">&lt;inttypes.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../../../bionic/libc/include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../include/cutils/qtaguid.h.html">&lt;cutils/qtaguid.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../include/log/log.h.html">&lt;log/log.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><em>static</em> <em>const</em> <em>char</em>* <dfn class="tu decl def" id="CTRL_PROCPATH" title='CTRL_PROCPATH' data-type='const char *' data-ref="CTRL_PROCPATH">CTRL_PROCPATH</dfn> = <q>"/proc/net/xt_qtaguid/ctrl"</q>;</td></tr>
+<tr><th id="33">33</th><td><em>static</em> <em>const</em> <em>int</em> <dfn class="tu decl def" id="CTRL_MAX_INPUT_LEN" title='CTRL_MAX_INPUT_LEN' data-type='const int' data-ref="CTRL_MAX_INPUT_LEN">CTRL_MAX_INPUT_LEN</dfn> = <var>128</var>;</td></tr>
+<tr><th id="34">34</th><td><em>static</em> <em>const</em> <em>char</em> *<dfn class="tu decl def" id="GLOBAL_PACIFIER_PARAM" title='GLOBAL_PACIFIER_PARAM' data-type='const char *' data-ref="GLOBAL_PACIFIER_PARAM">GLOBAL_PACIFIER_PARAM</dfn> = <q>"/sys/module/xt_qtaguid/parameters/passive"</q>;</td></tr>
+<tr><th id="35">35</th><td><em>static</em> <em>const</em> <em>char</em> *<dfn class="tu decl def" id="TAG_PACIFIER_PARAM" title='TAG_PACIFIER_PARAM' data-type='const char *' data-ref="TAG_PACIFIER_PARAM">TAG_PACIFIER_PARAM</dfn> = <q>"/sys/module/xt_qtaguid/parameters/tag_tracking_passive"</q>;</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td><i  data-doc="resTrackFd">/*</i></td></tr>
+<tr><th id="38">38</th><td><i  data-doc="resTrackFd"> * One per proccess.</i></td></tr>
+<tr><th id="39">39</th><td><i  data-doc="resTrackFd"> * Once the device is open, this process will have its socket tags tracked.</i></td></tr>
+<tr><th id="40">40</th><td><i  data-doc="resTrackFd"> * And on exit or untimely death, all socket tags will be removed.</i></td></tr>
+<tr><th id="41">41</th><td><i  data-doc="resTrackFd"> * A process can only open /dev/xt_qtaguid once.</i></td></tr>
+<tr><th id="42">42</th><td><i  data-doc="resTrackFd"> * It should not close it unless it is really done with all the socket tags.</i></td></tr>
+<tr><th id="43">43</th><td><i  data-doc="resTrackFd"> * Failure to open it will be visible when socket tagging will be attempted.</i></td></tr>
+<tr><th id="44">44</th><td><i  data-doc="resTrackFd"> */</i></td></tr>
+<tr><th id="45">45</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="resTrackFd" title='resTrackFd' data-type='int' data-ref="resTrackFd">resTrackFd</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="46">46</th><td><a class="typedef" href="../../../bionic/libc/include/pthread.h.html#pthread_once_t" title='pthread_once_t' data-type='int' data-ref="pthread_once_t">pthread_once_t</a> <dfn class="decl def" id="resTrackInitDone" title='resTrackInitDone' data-ref="resTrackInitDone">resTrackInitDone</dfn> = <a class="macro" href="../../../bionic/libc/include/pthread.h.html#97" title="0" data-ref="_M/PTHREAD_ONCE_INIT">PTHREAD_ONCE_INIT</a>;</td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><i>/* Only call once per process. */</i></td></tr>
+<tr><th id="49">49</th><td><em>void</em> <dfn class="decl def" id="qtaguid_resTrack" title='qtaguid_resTrack' data-ref="qtaguid_resTrack">qtaguid_resTrack</dfn>(<em>void</em>) {</td></tr>
+<tr><th id="50">50</th><td>    <a class="tu ref" href="#resTrackFd" title='resTrackFd' data-use='w' data-ref="resTrackFd">resTrackFd</a> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(open(&quot;/dev/xt_qtaguid&quot;, 00000000 | 02000000)) _rc; do { _rc = (open(&quot;/dev/xt_qtaguid&quot;, 00000000 | 02000000)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<q>"/dev/xt_qtaguid"</q>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#24" title="00000000" data-ref="_M/O_RDONLY">O_RDONLY</a> | <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#77" title="02000000" data-ref="_M/O_CLOEXEC">O_CLOEXEC</a>));</td></tr>
+<tr><th id="51">51</th><td>}</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><i  data-doc="write_ctrl">/*</i></td></tr>
+<tr><th id="54">54</th><td><i  data-doc="write_ctrl"> * Returns:</i></td></tr>
+<tr><th id="55">55</th><td><i  data-doc="write_ctrl"> *   0 on success.</i></td></tr>
+<tr><th id="56">56</th><td><i  data-doc="write_ctrl"> *   -errno on failure.</i></td></tr>
+<tr><th id="57">57</th><td><i  data-doc="write_ctrl"> */</i></td></tr>
+<tr><th id="58">58</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="write_ctrl" title='write_ctrl' data-type='int write_ctrl(const char * cmd)' data-ref="write_ctrl">write_ctrl</dfn>(<em>const</em> <em>char</em> *<dfn class="local col0 decl" id="10cmd" title='cmd' data-type='const char *' data-ref="10cmd">cmd</dfn>) {</td></tr>
+<tr><th id="59">59</th><td>    <em>int</em> <dfn class="local col1 decl" id="11fd" title='fd' data-type='int' data-ref="11fd">fd</dfn>, <dfn class="local col2 decl" id="12res" title='res' data-type='int' data-ref="12res">res</dfn>, <dfn class="local col3 decl" id="13savedErrno" title='savedErrno' data-type='int' data-ref="13savedErrno">savedErrno</dfn>;</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td>    <a class="macro" href="../include/log/log.h.html#93" title="do { if (0) { ((void)__android_log_print(ANDROID_LOG_VERBOSE, &quot;qtaguid&quot;, &quot;write_ctrl(%s)&quot;, cmd)); } } while (0)" data-ref="_M/ALOGV">ALOGV</a>(<q>"write_ctrl(%s)"</q>, <a class="local col0 ref" href="#10cmd" title='cmd' data-ref="10cmd">cmd</a>);</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td>    <a class="local col1 ref" href="#11fd" title='fd' data-ref="11fd">fd</a> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(open(CTRL_PROCPATH, 00000001 | 02000000)) _rc; do { _rc = (open(CTRL_PROCPATH, 00000001 | 02000000)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<a class="tu ref" href="#CTRL_PROCPATH" title='CTRL_PROCPATH' data-use='r' data-ref="CTRL_PROCPATH">CTRL_PROCPATH</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#25" title="00000001" data-ref="_M/O_WRONLY">O_WRONLY</a> | <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#77" title="02000000" data-ref="_M/O_CLOEXEC">O_CLOEXEC</a>));</td></tr>
+<tr><th id="64">64</th><td>    <b>if</b> (<a class="local col1 ref" href="#11fd" title='fd' data-ref="11fd">fd</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="65">65</th><td>        <b>return</b> -<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="66">66</th><td>    }</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td>    <a class="local col2 ref" href="#12res" title='res' data-ref="12res">res</a> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(write(fd, cmd, strlen(cmd))) _rc; do { _rc = (write(fd, cmd, strlen(cmd))); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/unistd.h.html#write" title='write' data-ref="write">write</a>(<a class="local col1 ref" href="#11fd" title='fd' data-ref="11fd">fd</a>, <a class="local col0 ref" href="#10cmd" title='cmd' data-ref="10cmd">cmd</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col0 ref" href="#10cmd" title='cmd' data-ref="10cmd">cmd</a>)));</td></tr>
+<tr><th id="69">69</th><td>    <b>if</b> (<a class="local col2 ref" href="#12res" title='res' data-ref="12res">res</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="70">70</th><td>        <a class="local col3 ref" href="#13savedErrno" title='savedErrno' data-ref="13savedErrno">savedErrno</a> = <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="71">71</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="72">72</th><td>        <a class="local col3 ref" href="#13savedErrno" title='savedErrno' data-ref="13savedErrno">savedErrno</a> = <var>0</var>;</td></tr>
+<tr><th id="73">73</th><td>    }</td></tr>
+<tr><th id="74">74</th><td>    <b>if</b> (<a class="local col2 ref" href="#12res" title='res' data-ref="12res">res</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="75">75</th><td>        <a class="macro" href="../include/log/log.h.html#128" title="((void)__android_log_print(ANDROID_LOG_INFO, &quot;qtaguid&quot;, &quot;Failed write_ctrl(%s) res=%d errno=%d&quot;, cmd, res, savedErrno))" data-ref="_M/ALOGI">ALOGI</a>(<q>"Failed write_ctrl(%s) res=%d errno=%d"</q>, <a class="local col0 ref" href="#10cmd" title='cmd' data-ref="10cmd">cmd</a>, <a class="local col2 ref" href="#12res" title='res' data-ref="12res">res</a>, <a class="local col3 ref" href="#13savedErrno" title='savedErrno' data-ref="13savedErrno">savedErrno</a>);</td></tr>
+<tr><th id="76">76</th><td>    }</td></tr>
+<tr><th id="77">77</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col1 ref" href="#11fd" title='fd' data-ref="11fd">fd</a>);</td></tr>
+<tr><th id="78">78</th><td>    <b>return</b> -<a class="local col3 ref" href="#13savedErrno" title='savedErrno' data-ref="13savedErrno">savedErrno</a>;</td></tr>
+<tr><th id="79">79</th><td>}</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="write_param" title='write_param' data-type='int write_param(const char * param_path, const char * value)' data-ref="write_param">write_param</dfn>(<em>const</em> <em>char</em> *<dfn class="local col4 decl" id="14param_path" title='param_path' data-type='const char *' data-ref="14param_path">param_path</dfn>, <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="15value" title='value' data-type='const char *' data-ref="15value">value</dfn>) {</td></tr>
+<tr><th id="82">82</th><td>    <em>int</em> <dfn class="local col6 decl" id="16param_fd" title='param_fd' data-type='int' data-ref="16param_fd">param_fd</dfn>;</td></tr>
+<tr><th id="83">83</th><td>    <em>int</em> <dfn class="local col7 decl" id="17res" title='res' data-type='int' data-ref="17res">res</dfn>;</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td>    <a class="local col6 ref" href="#16param_fd" title='param_fd' data-ref="16param_fd">param_fd</a> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(open(param_path, 00000001 | 02000000)) _rc; do { _rc = (open(param_path, 00000001 | 02000000)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<a class="local col4 ref" href="#14param_path" title='param_path' data-ref="14param_path">param_path</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#25" title="00000001" data-ref="_M/O_WRONLY">O_WRONLY</a> | <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#77" title="02000000" data-ref="_M/O_CLOEXEC">O_CLOEXEC</a>));</td></tr>
+<tr><th id="86">86</th><td>    <b>if</b> (<a class="local col6 ref" href="#16param_fd" title='param_fd' data-ref="16param_fd">param_fd</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="87">87</th><td>        <b>return</b> -<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="88">88</th><td>    }</td></tr>
+<tr><th id="89">89</th><td>    <a class="local col7 ref" href="#17res" title='res' data-ref="17res">res</a> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(write(param_fd, value, strlen(value))) _rc; do { _rc = (write(param_fd, value, strlen(value))); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/unistd.h.html#write" title='write' data-ref="write">write</a>(<a class="local col6 ref" href="#16param_fd" title='param_fd' data-ref="16param_fd">param_fd</a>, <a class="local col5 ref" href="#15value" title='value' data-ref="15value">value</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col5 ref" href="#15value" title='value' data-ref="15value">value</a>)));</td></tr>
+<tr><th id="90">90</th><td>    <b>if</b> (<a class="local col7 ref" href="#17res" title='res' data-ref="17res">res</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="91">91</th><td>        <b>return</b> -<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="92">92</th><td>    }</td></tr>
+<tr><th id="93">93</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col6 ref" href="#16param_fd" title='param_fd' data-ref="16param_fd">param_fd</a>);</td></tr>
+<tr><th id="94">94</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="95">95</th><td>}</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><em>int</em> <dfn class="decl def" id="qtaguid_tagSocket" title='qtaguid_tagSocket' data-ref="qtaguid_tagSocket">qtaguid_tagSocket</dfn>(<em>int</em> <dfn class="local col8 decl" id="18sockfd" title='sockfd' data-type='int' data-ref="18sockfd">sockfd</dfn>, <em>int</em> <dfn class="local col9 decl" id="19tag" title='tag' data-type='int' data-ref="19tag">tag</dfn>, <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> <dfn class="local col0 decl" id="20uid" title='uid' data-type='uid_t' data-ref="20uid">uid</dfn>) {</td></tr>
+<tr><th id="98">98</th><td>    <em>char</em> <dfn class="local col1 decl" id="21lineBuf" title='lineBuf' data-type='char [128]' data-ref="21lineBuf">lineBuf</dfn>[<a class="tu ref" href="#CTRL_MAX_INPUT_LEN" title='CTRL_MAX_INPUT_LEN' data-ref="CTRL_MAX_INPUT_LEN">CTRL_MAX_INPUT_LEN</a>];</td></tr>
+<tr><th id="99">99</th><td>    <em>int</em> <dfn class="local col2 decl" id="22res" title='res' data-type='int' data-ref="22res">res</dfn>;</td></tr>
+<tr><th id="100">100</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col3 decl" id="23kTag" title='kTag' data-type='uint64_t' data-ref="23kTag">kTag</dfn> = ((<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>)<a class="local col9 ref" href="#19tag" title='tag' data-ref="19tag">tag</a> &lt;&lt; <var>32</var>);</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td>    <a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_once" title='pthread_once' data-ref="pthread_once">pthread_once</a>(&amp;<a class="ref" href="#resTrackInitDone" title='resTrackInitDone' data-ref="resTrackInitDone">resTrackInitDone</a>, <a class="ref" href="#qtaguid_resTrack" title='qtaguid_resTrack' data-ref="qtaguid_resTrack">qtaguid_resTrack</a>);</td></tr>
+<tr><th id="103">103</th><td></td></tr>
+<tr><th id="104">104</th><td>    <a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(lineBuf, sizeof(lineBuf), 0, __builtin_object_size((lineBuf), 1), &quot;t %d %&quot; &quot;l&quot;&quot;u&quot; &quot; %d&quot;, sockfd, kTag, uid)" data-ref="_M/snprintf">snprintf</a>(<a class="local col1 ref" href="#21lineBuf" title='lineBuf' data-ref="21lineBuf">lineBuf</a>, <b>sizeof</b>(<a class="local col1 ref" href="#21lineBuf" title='lineBuf' data-ref="21lineBuf">lineBuf</a>), <q>"t %d %"</q> <a class="macro" href="../../../bionic/libc/include/inttypes.h.html#108" title="&quot;l&quot;&quot;u&quot;" data-ref="_M/PRIu64">PRIu64</a> <q>" %d"</q>, <a class="local col8 ref" href="#18sockfd" title='sockfd' data-ref="18sockfd">sockfd</a>, <a class="local col3 ref" href="#23kTag" title='kTag' data-ref="23kTag">kTag</a>, <a class="local col0 ref" href="#20uid" title='uid' data-ref="20uid">uid</a>);</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td>    <a class="macro" href="../include/log/log.h.html#93" title="do { if (0) { ((void)__android_log_print(ANDROID_LOG_VERBOSE, &quot;qtaguid&quot;, &quot;Tagging socket %d with tag %&quot; &quot;l&quot;&quot;x&quot; &quot;{%u,0} for uid %d&quot;, sockfd, kTag, tag, uid)); } } while (0)" data-ref="_M/ALOGV">ALOGV</a>(<q>"Tagging socket %d with tag %"</q> <a class="macro" href="../../../bionic/libc/include/inttypes.h.html#126" title="&quot;l&quot;&quot;x&quot;" data-ref="_M/PRIx64">PRIx64</a> <q>"{%u,0} for uid %d"</q>, <a class="local col8 ref" href="#18sockfd" title='sockfd' data-ref="18sockfd">sockfd</a>, <a class="local col3 ref" href="#23kTag" title='kTag' data-ref="23kTag">kTag</a>, <a class="local col9 ref" href="#19tag" title='tag' data-ref="19tag">tag</a>, <a class="local col0 ref" href="#20uid" title='uid' data-ref="20uid">uid</a>);</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td>    <a class="local col2 ref" href="#22res" title='res' data-ref="22res">res</a> = <a class="tu ref" href="#write_ctrl" title='write_ctrl' data-use='c' data-ref="write_ctrl">write_ctrl</a>(<a class="local col1 ref" href="#21lineBuf" title='lineBuf' data-ref="21lineBuf">lineBuf</a>);</td></tr>
+<tr><th id="109">109</th><td>    <b>if</b> (<a class="local col2 ref" href="#22res" title='res' data-ref="22res">res</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="110">110</th><td>        <a class="macro" href="../include/log/log.h.html#128" title="((void)__android_log_print(ANDROID_LOG_INFO, &quot;qtaguid&quot;, &quot;Tagging socket %d with tag %&quot; &quot;l&quot;&quot;x&quot; &quot;(%d) for uid %d failed errno=%d&quot;, sockfd, kTag, tag, uid, res))" data-ref="_M/ALOGI">ALOGI</a>(<q>"Tagging socket %d with tag %"</q> <a class="macro" href="../../../bionic/libc/include/inttypes.h.html#126" title="&quot;l&quot;&quot;x&quot;" data-ref="_M/PRIx64">PRIx64</a> <q>"(%d) for uid %d failed errno=%d"</q>,</td></tr>
+<tr><th id="111">111</th><td>             <a class="local col8 ref" href="#18sockfd" title='sockfd' data-ref="18sockfd">sockfd</a>, <a class="local col3 ref" href="#23kTag" title='kTag' data-ref="23kTag">kTag</a>, <a class="local col9 ref" href="#19tag" title='tag' data-ref="19tag">tag</a>, <a class="local col0 ref" href="#20uid" title='uid' data-ref="20uid">uid</a>, <a class="local col2 ref" href="#22res" title='res' data-ref="22res">res</a>);</td></tr>
+<tr><th id="112">112</th><td>    }</td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td>    <b>return</b> <a class="local col2 ref" href="#22res" title='res' data-ref="22res">res</a>;</td></tr>
+<tr><th id="115">115</th><td>}</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><em>int</em> <dfn class="decl def" id="qtaguid_untagSocket" title='qtaguid_untagSocket' data-ref="qtaguid_untagSocket">qtaguid_untagSocket</dfn>(<em>int</em> <dfn class="local col4 decl" id="24sockfd" title='sockfd' data-type='int' data-ref="24sockfd">sockfd</dfn>) {</td></tr>
+<tr><th id="118">118</th><td>    <em>char</em> <dfn class="local col5 decl" id="25lineBuf" title='lineBuf' data-type='char [128]' data-ref="25lineBuf">lineBuf</dfn>[<a class="tu ref" href="#CTRL_MAX_INPUT_LEN" title='CTRL_MAX_INPUT_LEN' data-ref="CTRL_MAX_INPUT_LEN">CTRL_MAX_INPUT_LEN</a>];</td></tr>
+<tr><th id="119">119</th><td>    <em>int</em> <dfn class="local col6 decl" id="26res" title='res' data-type='int' data-ref="26res">res</dfn>;</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td>    <a class="macro" href="../include/log/log.h.html#93" title="do { if (0) { ((void)__android_log_print(ANDROID_LOG_VERBOSE, &quot;qtaguid&quot;, &quot;Untagging socket %d&quot;, sockfd)); } } while (0)" data-ref="_M/ALOGV">ALOGV</a>(<q>"Untagging socket %d"</q>, <a class="local col4 ref" href="#24sockfd" title='sockfd' data-ref="24sockfd">sockfd</a>);</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td>    <a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(lineBuf, sizeof(lineBuf), 0, __builtin_object_size((lineBuf), 1), &quot;u %d&quot;, sockfd)" data-ref="_M/snprintf">snprintf</a>(<a class="local col5 ref" href="#25lineBuf" title='lineBuf' data-ref="25lineBuf">lineBuf</a>, <b>sizeof</b>(<a class="local col5 ref" href="#25lineBuf" title='lineBuf' data-ref="25lineBuf">lineBuf</a>), <q>"u %d"</q>, <a class="local col4 ref" href="#24sockfd" title='sockfd' data-ref="24sockfd">sockfd</a>);</td></tr>
+<tr><th id="124">124</th><td>    <a class="local col6 ref" href="#26res" title='res' data-ref="26res">res</a> = <a class="tu ref" href="#write_ctrl" title='write_ctrl' data-use='c' data-ref="write_ctrl">write_ctrl</a>(<a class="local col5 ref" href="#25lineBuf" title='lineBuf' data-ref="25lineBuf">lineBuf</a>);</td></tr>
+<tr><th id="125">125</th><td>    <b>if</b> (<a class="local col6 ref" href="#26res" title='res' data-ref="26res">res</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="126">126</th><td>        <a class="macro" href="../include/log/log.h.html#128" title="((void)__android_log_print(ANDROID_LOG_INFO, &quot;qtaguid&quot;, &quot;Untagging socket %d failed errno=%d&quot;, sockfd, res))" data-ref="_M/ALOGI">ALOGI</a>(<q>"Untagging socket %d failed errno=%d"</q>, <a class="local col4 ref" href="#24sockfd" title='sockfd' data-ref="24sockfd">sockfd</a>, <a class="local col6 ref" href="#26res" title='res' data-ref="26res">res</a>);</td></tr>
+<tr><th id="127">127</th><td>    }</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td>    <b>return</b> <a class="local col6 ref" href="#26res" title='res' data-ref="26res">res</a>;</td></tr>
+<tr><th id="130">130</th><td>}</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><em>int</em> <dfn class="decl def" id="qtaguid_setCounterSet" title='qtaguid_setCounterSet' data-ref="qtaguid_setCounterSet">qtaguid_setCounterSet</dfn>(<em>int</em> <dfn class="local col7 decl" id="27counterSetNum" title='counterSetNum' data-type='int' data-ref="27counterSetNum">counterSetNum</dfn>, <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> <dfn class="local col8 decl" id="28uid" title='uid' data-type='uid_t' data-ref="28uid">uid</dfn>) {</td></tr>
+<tr><th id="133">133</th><td>    <em>char</em> <dfn class="local col9 decl" id="29lineBuf" title='lineBuf' data-type='char [128]' data-ref="29lineBuf">lineBuf</dfn>[<a class="tu ref" href="#CTRL_MAX_INPUT_LEN" title='CTRL_MAX_INPUT_LEN' data-ref="CTRL_MAX_INPUT_LEN">CTRL_MAX_INPUT_LEN</a>];</td></tr>
+<tr><th id="134">134</th><td>    <em>int</em> <dfn class="local col0 decl" id="30res" title='res' data-type='int' data-ref="30res">res</dfn>;</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td>    <a class="macro" href="../include/log/log.h.html#93" title="do { if (0) { ((void)__android_log_print(ANDROID_LOG_VERBOSE, &quot;qtaguid&quot;, &quot;Setting counters to set %d for uid %d&quot;, counterSetNum, uid)); } } while (0)" data-ref="_M/ALOGV">ALOGV</a>(<q>"Setting counters to set %d for uid %d"</q>, <a class="local col7 ref" href="#27counterSetNum" title='counterSetNum' data-ref="27counterSetNum">counterSetNum</a>, <a class="local col8 ref" href="#28uid" title='uid' data-ref="28uid">uid</a>);</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td>    <a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(lineBuf, sizeof(lineBuf), 0, __builtin_object_size((lineBuf), 1), &quot;s %d %d&quot;, counterSetNum, uid)" data-ref="_M/snprintf">snprintf</a>(<a class="local col9 ref" href="#29lineBuf" title='lineBuf' data-ref="29lineBuf">lineBuf</a>, <b>sizeof</b>(<a class="local col9 ref" href="#29lineBuf" title='lineBuf' data-ref="29lineBuf">lineBuf</a>), <q>"s %d %d"</q>, <a class="local col7 ref" href="#27counterSetNum" title='counterSetNum' data-ref="27counterSetNum">counterSetNum</a>, <a class="local col8 ref" href="#28uid" title='uid' data-ref="28uid">uid</a>);</td></tr>
+<tr><th id="139">139</th><td>    <a class="local col0 ref" href="#30res" title='res' data-ref="30res">res</a> = <a class="tu ref" href="#write_ctrl" title='write_ctrl' data-use='c' data-ref="write_ctrl">write_ctrl</a>(<a class="local col9 ref" href="#29lineBuf" title='lineBuf' data-ref="29lineBuf">lineBuf</a>);</td></tr>
+<tr><th id="140">140</th><td>    <b>return</b> <a class="local col0 ref" href="#30res" title='res' data-ref="30res">res</a>;</td></tr>
+<tr><th id="141">141</th><td>}</td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td><em>int</em> <dfn class="decl def" id="qtaguid_deleteTagData" title='qtaguid_deleteTagData' data-ref="qtaguid_deleteTagData">qtaguid_deleteTagData</dfn>(<em>int</em> <dfn class="local col1 decl" id="31tag" title='tag' data-type='int' data-ref="31tag">tag</dfn>, <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> <dfn class="local col2 decl" id="32uid" title='uid' data-type='uid_t' data-ref="32uid">uid</dfn>) {</td></tr>
+<tr><th id="144">144</th><td>    <em>char</em> <dfn class="local col3 decl" id="33lineBuf" title='lineBuf' data-type='char [128]' data-ref="33lineBuf">lineBuf</dfn>[<a class="tu ref" href="#CTRL_MAX_INPUT_LEN" title='CTRL_MAX_INPUT_LEN' data-ref="CTRL_MAX_INPUT_LEN">CTRL_MAX_INPUT_LEN</a>];</td></tr>
+<tr><th id="145">145</th><td>    <em>int</em> <dfn class="local col4 decl" id="34cnt" title='cnt' data-type='int' data-ref="34cnt">cnt</dfn> = <var>0</var>, <dfn class="local col5 decl" id="35res" title='res' data-type='int' data-ref="35res">res</dfn> = <var>0</var>;</td></tr>
+<tr><th id="146">146</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col6 decl" id="36kTag" title='kTag' data-type='uint64_t' data-ref="36kTag">kTag</dfn> = (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>)<a class="local col1 ref" href="#31tag" title='tag' data-ref="31tag">tag</a> &lt;&lt; <var>32</var>;</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td>    <a class="macro" href="../include/log/log.h.html#93" title="do { if (0) { ((void)__android_log_print(ANDROID_LOG_VERBOSE, &quot;qtaguid&quot;, &quot;Deleting tag data with tag %&quot; &quot;l&quot;&quot;x&quot; &quot;{%d,0} for uid %d&quot;, kTag, tag, uid)); } } while (0)" data-ref="_M/ALOGV">ALOGV</a>(<q>"Deleting tag data with tag %"</q> <a class="macro" href="../../../bionic/libc/include/inttypes.h.html#126" title="&quot;l&quot;&quot;x&quot;" data-ref="_M/PRIx64">PRIx64</a> <q>"{%d,0} for uid %d"</q>, <a class="local col6 ref" href="#36kTag" title='kTag' data-ref="36kTag">kTag</a>, <a class="local col1 ref" href="#31tag" title='tag' data-ref="31tag">tag</a>, <a class="local col2 ref" href="#32uid" title='uid' data-ref="32uid">uid</a>);</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td>    <a class="ref" href="../../../bionic/libc/include/pthread.h.html#pthread_once" title='pthread_once' data-ref="pthread_once">pthread_once</a>(&amp;<a class="ref" href="#resTrackInitDone" title='resTrackInitDone' data-ref="resTrackInitDone">resTrackInitDone</a>, <a class="ref" href="#qtaguid_resTrack" title='qtaguid_resTrack' data-ref="qtaguid_resTrack">qtaguid_resTrack</a>);</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td>    <a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(lineBuf, sizeof(lineBuf), 0, __builtin_object_size((lineBuf), 1), &quot;d %&quot; &quot;l&quot;&quot;u&quot; &quot; %d&quot;, kTag, uid)" data-ref="_M/snprintf">snprintf</a>(<a class="local col3 ref" href="#33lineBuf" title='lineBuf' data-ref="33lineBuf">lineBuf</a>, <b>sizeof</b>(<a class="local col3 ref" href="#33lineBuf" title='lineBuf' data-ref="33lineBuf">lineBuf</a>), <q>"d %"</q> <a class="macro" href="../../../bionic/libc/include/inttypes.h.html#108" title="&quot;l&quot;&quot;u&quot;" data-ref="_M/PRIu64">PRIu64</a> <q>" %d"</q>, <a class="local col6 ref" href="#36kTag" title='kTag' data-ref="36kTag">kTag</a>, <a class="local col2 ref" href="#32uid" title='uid' data-ref="32uid">uid</a>);</td></tr>
+<tr><th id="153">153</th><td>    <a class="local col5 ref" href="#35res" title='res' data-ref="35res">res</a> = <a class="tu ref" href="#write_ctrl" title='write_ctrl' data-use='c' data-ref="write_ctrl">write_ctrl</a>(<a class="local col3 ref" href="#33lineBuf" title='lineBuf' data-ref="33lineBuf">lineBuf</a>);</td></tr>
+<tr><th id="154">154</th><td>    <b>if</b> (<a class="local col5 ref" href="#35res" title='res' data-ref="35res">res</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="155">155</th><td>        <a class="macro" href="../include/log/log.h.html#128" title="((void)__android_log_print(ANDROID_LOG_INFO, &quot;qtaguid&quot;, &quot;Deleting tag data with tag %&quot; &quot;l&quot;&quot;x&quot; &quot;/%d for uid %d failed with cnt=%d errno=%d&quot;, kTag, tag, uid, cnt, (*__errno())))" data-ref="_M/ALOGI">ALOGI</a>(<q>"Deleting tag data with tag %"</q> <a class="macro" href="../../../bionic/libc/include/inttypes.h.html#126" title="&quot;l&quot;&quot;x&quot;" data-ref="_M/PRIx64">PRIx64</a> <q>"/%d for uid %d failed with cnt=%d errno=%d"</q>,</td></tr>
+<tr><th id="156">156</th><td>             <a class="local col6 ref" href="#36kTag" title='kTag' data-ref="36kTag">kTag</a>, <a class="local col1 ref" href="#31tag" title='tag' data-ref="31tag">tag</a>, <a class="local col2 ref" href="#32uid" title='uid' data-ref="32uid">uid</a>, <a class="local col4 ref" href="#34cnt" title='cnt' data-ref="34cnt">cnt</a>, <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>);</td></tr>
+<tr><th id="157">157</th><td>    }</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td>    <b>return</b> <a class="local col5 ref" href="#35res" title='res' data-ref="35res">res</a>;</td></tr>
+<tr><th id="160">160</th><td>}</td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td><em>int</em> <dfn class="decl def" id="qtaguid_setPacifier" title='qtaguid_setPacifier' data-ref="qtaguid_setPacifier">qtaguid_setPacifier</dfn>(<em>int</em> <dfn class="local col7 decl" id="37on" title='on' data-type='int' data-ref="37on">on</dfn>) {</td></tr>
+<tr><th id="163">163</th><td>    <em>const</em> <em>char</em> *<dfn class="local col8 decl" id="38value" title='value' data-type='const char *' data-ref="38value">value</dfn>;</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td>    <a class="local col8 ref" href="#38value" title='value' data-ref="38value">value</a> = <a class="local col7 ref" href="#37on" title='on' data-ref="37on">on</a> ? <q>"Y"</q> : <q>"N"</q>;</td></tr>
+<tr><th id="166">166</th><td>    <b>if</b> (<a class="tu ref" href="#write_param" title='write_param' data-use='c' data-ref="write_param">write_param</a>(<a class="tu ref" href="#GLOBAL_PACIFIER_PARAM" title='GLOBAL_PACIFIER_PARAM' data-use='r' data-ref="GLOBAL_PACIFIER_PARAM">GLOBAL_PACIFIER_PARAM</a>, <a class="local col8 ref" href="#38value" title='value' data-ref="38value">value</a>) &lt; <var>0</var>) {</td></tr>
+<tr><th id="167">167</th><td>        <b>return</b> -<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="168">168</th><td>    }</td></tr>
+<tr><th id="169">169</th><td>    <b>if</b> (<a class="tu ref" href="#write_param" title='write_param' data-use='c' data-ref="write_param">write_param</a>(<a class="tu ref" href="#TAG_PACIFIER_PARAM" title='TAG_PACIFIER_PARAM' data-use='r' data-ref="TAG_PACIFIER_PARAM">TAG_PACIFIER_PARAM</a>, <a class="local col8 ref" href="#38value" title='value' data-ref="38value">value</a>) &lt; <var>0</var>) {</td></tr>
+<tr><th id="170">170</th><td>        <b>return</b> -<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="171">171</th><td>    }</td></tr>
+<tr><th id="172">172</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="173">173</th><td>}</td></tr>
+<tr><th id="174">174</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

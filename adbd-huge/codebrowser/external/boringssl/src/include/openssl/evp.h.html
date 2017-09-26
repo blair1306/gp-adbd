@@ -1,0 +1,769 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>evp.h source code [codebrowser/external/boringssl/src/include/openssl/evp.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="evp_pkey_st "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/evp.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='evp.h.html'>evp.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#<span data-ppcond="57">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_EVP_H">OPENSSL_HEADER_EVP_H</span></u></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_EVP_H" data-ref="_M/OPENSSL_HEADER_EVP_H">OPENSSL_HEADER_EVP_H</dfn></u></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="thread.h.html">&lt;openssl/thread.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><i>/* OpenSSL included digest and cipher functions in this header so we include</i></td></tr>
+<tr><th id="65">65</th><td><i> * them for users that still expect that.</i></td></tr>
+<tr><th id="66">66</th><td><i> *</i></td></tr>
+<tr><th id="67">67</th><td><i> * TODO(fork): clean up callers so that they include what they use. */</i></td></tr>
+<tr><th id="68">68</th><td><u>#include <a href="aead.h.html">&lt;openssl/aead.h&gt;</a></u></td></tr>
+<tr><th id="69">69</th><td><u>#include <a href="base64.h.html">&lt;openssl/base64.h&gt;</a></u></td></tr>
+<tr><th id="70">70</th><td><u>#include <a href="cipher.h.html">&lt;openssl/cipher.h&gt;</a></u></td></tr>
+<tr><th id="71">71</th><td><u>#include <a href="digest.h.html">&lt;openssl/digest.h&gt;</a></u></td></tr>
+<tr><th id="72">72</th><td><u>#include <a href="obj.h.html">&lt;openssl/obj.h&gt;</a></u></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><u>#<span data-ppcond="74">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="75">75</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="76">76</th><td><u>#<span data-ppcond="74">endif</span></u></td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><i>/* EVP abstracts over public/private key algorithms. */</i></td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><i>/* Public key objects. */</i></td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><i>/* EVP_PKEY_new creates a new, empty public-key object and returns it or NULL</i></td></tr>
+<tr><th id="85">85</th><td><i> * on allocation failure. */</i></td></tr>
+<tr><th id="86">86</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="decl" id="EVP_PKEY_new" title='EVP_PKEY_new' data-ref="EVP_PKEY_new">EVP_PKEY_new</dfn>(<em>void</em>);</td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><i>/* EVP_PKEY_free frees all data referenced by |pkey| and then frees |pkey|</i></td></tr>
+<tr><th id="89">89</th><td><i> * itself. */</i></td></tr>
+<tr><th id="90">90</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EVP_PKEY_free" title='EVP_PKEY_free' data-ref="EVP_PKEY_free">EVP_PKEY_free</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col3 decl" id="1033pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1033pkey">pkey</dfn>);</td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td><i>/* EVP_PKEY_up_ref increments the reference count of |pkey| and returns it. */</i></td></tr>
+<tr><th id="93">93</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="decl" id="EVP_PKEY_up_ref" title='EVP_PKEY_up_ref' data-ref="EVP_PKEY_up_ref">EVP_PKEY_up_ref</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col4 decl" id="1034pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1034pkey">pkey</dfn>);</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><i>/* EVP_PKEY_is_opaque returns one if |pkey| is opaque. Opaque keys are backed by</i></td></tr>
+<tr><th id="96">96</th><td><i> * custom implementations which do not expose key material and parameters. It is</i></td></tr>
+<tr><th id="97">97</th><td><i> * an error to attempt to duplicate, export, or compare an opaque key. */</i></td></tr>
+<tr><th id="98">98</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_is_opaque" title='EVP_PKEY_is_opaque' data-ref="EVP_PKEY_is_opaque">EVP_PKEY_is_opaque</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col5 decl" id="1035pkey" title='pkey' data-type='const EVP_PKEY *' data-ref="1035pkey">pkey</dfn>);</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><i>/* EVP_PKEY_supports_digest returns one if |pkey| supports digests of</i></td></tr>
+<tr><th id="101">101</th><td><i> * type |md|. This is intended for use with EVP_PKEYs backing custom</i></td></tr>
+<tr><th id="102">102</th><td><i> * implementations which can't sign all digests. */</i></td></tr>
+<tr><th id="103">103</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_supports_digest" title='EVP_PKEY_supports_digest' data-ref="EVP_PKEY_supports_digest">EVP_PKEY_supports_digest</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col6 decl" id="1036pkey" title='pkey' data-type='const EVP_PKEY *' data-ref="1036pkey">pkey</dfn>,</td></tr>
+<tr><th id="104">104</th><td>                                            <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col7 decl" id="1037md" title='md' data-type='const EVP_MD *' data-ref="1037md">md</dfn>);</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><i>/* EVP_PKEY_cmp compares |a| and |b| and returns one if they are equal, zero if</i></td></tr>
+<tr><th id="107">107</th><td><i> * not and a negative number on error.</i></td></tr>
+<tr><th id="108">108</th><td><i> *</i></td></tr>
+<tr><th id="109">109</th><td><i> * WARNING: this differs from the traditional return value of a "cmp"</i></td></tr>
+<tr><th id="110">110</th><td><i> * function. */</i></td></tr>
+<tr><th id="111">111</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_cmp" title='EVP_PKEY_cmp' data-ref="EVP_PKEY_cmp">EVP_PKEY_cmp</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col8 decl" id="1038a" title='a' data-type='const EVP_PKEY *' data-ref="1038a">a</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col9 decl" id="1039b" title='b' data-type='const EVP_PKEY *' data-ref="1039b">b</dfn>);</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><i>/* EVP_PKEY_copy_parameters sets the parameters of |to| to equal the parameters</i></td></tr>
+<tr><th id="114">114</th><td><i> * of |from|. It returns one on success and zero on error. */</i></td></tr>
+<tr><th id="115">115</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_copy_parameters" title='EVP_PKEY_copy_parameters' data-ref="EVP_PKEY_copy_parameters">EVP_PKEY_copy_parameters</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col0 decl" id="1040to" title='to' data-type='EVP_PKEY *' data-ref="1040to">to</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col1 decl" id="1041from" title='from' data-type='const EVP_PKEY *' data-ref="1041from">from</dfn>);</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><i>/* EVP_PKEY_missing_parameters returns one if |pkey| is missing needed</i></td></tr>
+<tr><th id="118">118</th><td><i> * parameters or zero if not, or if the algorithm doesn't take parameters. */</i></td></tr>
+<tr><th id="119">119</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_missing_parameters" title='EVP_PKEY_missing_parameters' data-ref="EVP_PKEY_missing_parameters">EVP_PKEY_missing_parameters</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col2 decl" id="1042pkey" title='pkey' data-type='const EVP_PKEY *' data-ref="1042pkey">pkey</dfn>);</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><i>/* EVP_PKEY_size returns the maximum size, in bytes, of a signature signed by</i></td></tr>
+<tr><th id="122">122</th><td><i> * |pkey|. For an RSA key, this returns the number of bytes needed to represent</i></td></tr>
+<tr><th id="123">123</th><td><i> * the modulus. For an EC key, this returns the maximum size of a DER-encoded</i></td></tr>
+<tr><th id="124">124</th><td><i> * ECDSA signature. */</i></td></tr>
+<tr><th id="125">125</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_size" title='EVP_PKEY_size' data-ref="EVP_PKEY_size">EVP_PKEY_size</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col3 decl" id="1043pkey" title='pkey' data-type='const EVP_PKEY *' data-ref="1043pkey">pkey</dfn>);</td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><i>/* EVP_PKEY_bits returns the "size", in bits, of |pkey|. For an RSA key, this</i></td></tr>
+<tr><th id="128">128</th><td><i> * returns the bit length of the modulus. For an EC key, this returns the bit</i></td></tr>
+<tr><th id="129">129</th><td><i> * length of the group order. */</i></td></tr>
+<tr><th id="130">130</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_bits" title='EVP_PKEY_bits' data-ref="EVP_PKEY_bits">EVP_PKEY_bits</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col4 decl" id="1044pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1044pkey">pkey</dfn>);</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><i>/* EVP_PKEY_id returns the type of |pkey|, which is one of the |EVP_PKEY_*|</i></td></tr>
+<tr><th id="133">133</th><td><i> * values. */</i></td></tr>
+<tr><th id="134">134</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_id" title='EVP_PKEY_id' data-ref="EVP_PKEY_id">EVP_PKEY_id</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col5 decl" id="1045pkey" title='pkey' data-type='const EVP_PKEY *' data-ref="1045pkey">pkey</dfn>);</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td><i>/* EVP_PKEY_type returns a canonicalised form of |NID|. For example,</i></td></tr>
+<tr><th id="137">137</th><td><i> * |EVP_PKEY_RSA2| will be turned into |EVP_PKEY_RSA|. */</i></td></tr>
+<tr><th id="138">138</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_type" title='EVP_PKEY_type' data-ref="EVP_PKEY_type">EVP_PKEY_type</dfn>(<em>int</em> <dfn class="local col6 decl" id="1046nid" title='nid' data-type='int' data-ref="1046nid">nid</dfn>);</td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><i>/* Getting and setting concrete public key types.</i></td></tr>
+<tr><th id="142">142</th><td><i> *</i></td></tr>
+<tr><th id="143">143</th><td><i> * The following functions get and set the underlying public key in an</i></td></tr>
+<tr><th id="144">144</th><td><i> * |EVP_PKEY| object. The |set1| functions take an additional reference to the</i></td></tr>
+<tr><th id="145">145</th><td><i> * underlying key and return one on success or zero on error. The |assign|</i></td></tr>
+<tr><th id="146">146</th><td><i> * functions adopt the caller's reference. The |get1| functions return a fresh</i></td></tr>
+<tr><th id="147">147</th><td><i> * reference to the underlying object or NULL if |pkey| is not of the correct</i></td></tr>
+<tr><th id="148">148</th><td><i> * type. The |get0| functions behave the same but return a non-owning</i></td></tr>
+<tr><th id="149">149</th><td><i> * pointer. */</i></td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_set1_RSA" title='EVP_PKEY_set1_RSA' data-ref="EVP_PKEY_set1_RSA">EVP_PKEY_set1_RSA</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col7 decl" id="1047pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1047pkey">pkey</dfn>, <a class="typedef" href="base.h.html#RSA" title='RSA' data-type='struct rsa_st' data-ref="RSA">RSA</a> *<dfn class="local col8 decl" id="1048key" title='key' data-type='RSA *' data-ref="1048key">key</dfn>);</td></tr>
+<tr><th id="152">152</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_assign_RSA" title='EVP_PKEY_assign_RSA' data-ref="EVP_PKEY_assign_RSA">EVP_PKEY_assign_RSA</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col9 decl" id="1049pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1049pkey">pkey</dfn>, <a class="typedef" href="base.h.html#RSA" title='RSA' data-type='struct rsa_st' data-ref="RSA">RSA</a> *<dfn class="local col0 decl" id="1050key" title='key' data-type='RSA *' data-ref="1050key">key</dfn>);</td></tr>
+<tr><th id="153">153</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#RSA" title='RSA' data-type='struct rsa_st' data-ref="RSA">RSA</a> *<dfn class="decl" id="EVP_PKEY_get0_RSA" title='EVP_PKEY_get0_RSA' data-ref="EVP_PKEY_get0_RSA">EVP_PKEY_get0_RSA</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col1 decl" id="1051pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1051pkey">pkey</dfn>);</td></tr>
+<tr><th id="154">154</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#RSA" title='RSA' data-type='struct rsa_st' data-ref="RSA">RSA</a> *<dfn class="decl" id="EVP_PKEY_get1_RSA" title='EVP_PKEY_get1_RSA' data-ref="EVP_PKEY_get1_RSA">EVP_PKEY_get1_RSA</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col2 decl" id="1052pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1052pkey">pkey</dfn>);</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_set1_DSA" title='EVP_PKEY_set1_DSA' data-ref="EVP_PKEY_set1_DSA">EVP_PKEY_set1_DSA</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col3 decl" id="1053pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1053pkey">pkey</dfn>, <a class="typedef" href="base.h.html#DSA" title='DSA' data-type='struct dsa_st' data-ref="DSA">DSA</a> *<dfn class="local col4 decl" id="1054key" title='key' data-type='DSA *' data-ref="1054key">key</dfn>);</td></tr>
+<tr><th id="157">157</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_assign_DSA" title='EVP_PKEY_assign_DSA' data-ref="EVP_PKEY_assign_DSA">EVP_PKEY_assign_DSA</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col5 decl" id="1055pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1055pkey">pkey</dfn>, <a class="typedef" href="base.h.html#DSA" title='DSA' data-type='struct dsa_st' data-ref="DSA">DSA</a> *<dfn class="local col6 decl" id="1056key" title='key' data-type='DSA *' data-ref="1056key">key</dfn>);</td></tr>
+<tr><th id="158">158</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#DSA" title='DSA' data-type='struct dsa_st' data-ref="DSA">DSA</a> *<dfn class="decl" id="EVP_PKEY_get0_DSA" title='EVP_PKEY_get0_DSA' data-ref="EVP_PKEY_get0_DSA">EVP_PKEY_get0_DSA</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col7 decl" id="1057pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1057pkey">pkey</dfn>);</td></tr>
+<tr><th id="159">159</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#DSA" title='DSA' data-type='struct dsa_st' data-ref="DSA">DSA</a> *<dfn class="decl" id="EVP_PKEY_get1_DSA" title='EVP_PKEY_get1_DSA' data-ref="EVP_PKEY_get1_DSA">EVP_PKEY_get1_DSA</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col8 decl" id="1058pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1058pkey">pkey</dfn>);</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_set1_EC_KEY" title='EVP_PKEY_set1_EC_KEY' data-ref="EVP_PKEY_set1_EC_KEY">EVP_PKEY_set1_EC_KEY</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col9 decl" id="1059pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1059pkey">pkey</dfn>, <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col0 decl" id="1060key" title='key' data-type='EC_KEY *' data-ref="1060key">key</dfn>);</td></tr>
+<tr><th id="162">162</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_assign_EC_KEY" title='EVP_PKEY_assign_EC_KEY' data-ref="EVP_PKEY_assign_EC_KEY">EVP_PKEY_assign_EC_KEY</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col1 decl" id="1061pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1061pkey">pkey</dfn>, <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col2 decl" id="1062key" title='key' data-type='EC_KEY *' data-ref="1062key">key</dfn>);</td></tr>
+<tr><th id="163">163</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="EVP_PKEY_get0_EC_KEY" title='EVP_PKEY_get0_EC_KEY' data-ref="EVP_PKEY_get0_EC_KEY">EVP_PKEY_get0_EC_KEY</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col3 decl" id="1063pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1063pkey">pkey</dfn>);</td></tr>
+<tr><th id="164">164</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="EVP_PKEY_get1_EC_KEY" title='EVP_PKEY_get1_EC_KEY' data-ref="EVP_PKEY_get1_EC_KEY">EVP_PKEY_get1_EC_KEY</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col4 decl" id="1064pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1064pkey">pkey</dfn>);</td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td><u>#define <dfn class="macro" id="_M/EVP_PKEY_NONE" data-ref="_M/EVP_PKEY_NONE">EVP_PKEY_NONE</dfn> NID_undef</u></td></tr>
+<tr><th id="167">167</th><td><u>#define <dfn class="macro" id="_M/EVP_PKEY_RSA" data-ref="_M/EVP_PKEY_RSA">EVP_PKEY_RSA</dfn> NID_rsaEncryption</u></td></tr>
+<tr><th id="168">168</th><td><u>#define <dfn class="macro" id="_M/EVP_PKEY_RSA2" data-ref="_M/EVP_PKEY_RSA2">EVP_PKEY_RSA2</dfn> NID_rsa</u></td></tr>
+<tr><th id="169">169</th><td><u>#define <dfn class="macro" id="_M/EVP_PKEY_DSA" data-ref="_M/EVP_PKEY_DSA">EVP_PKEY_DSA</dfn> NID_dsa</u></td></tr>
+<tr><th id="170">170</th><td><u>#define <dfn class="macro" id="_M/EVP_PKEY_EC" data-ref="_M/EVP_PKEY_EC">EVP_PKEY_EC</dfn> NID_X9_62_id_ecPublicKey</u></td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><i>/* EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of</i></td></tr>
+<tr><th id="173">173</th><td><i> * the given type. The |type| argument should be one of the |EVP_PKEY_*|</i></td></tr>
+<tr><th id="174">174</th><td><i> * values. */</i></td></tr>
+<tr><th id="175">175</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_assign" title='EVP_PKEY_assign' data-ref="EVP_PKEY_assign">EVP_PKEY_assign</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col5 decl" id="1065pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1065pkey">pkey</dfn>, <em>int</em> <dfn class="local col6 decl" id="1066type" title='type' data-type='int' data-ref="1066type">type</dfn>, <em>void</em> *<dfn class="local col7 decl" id="1067key" title='key' data-type='void *' data-ref="1067key">key</dfn>);</td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td><i>/* EVP_PKEY_set_type sets the type of |pkey| to |type|, which should be one of</i></td></tr>
+<tr><th id="178">178</th><td><i> * the |EVP_PKEY_*| values. It returns one if sucessful or zero otherwise. If</i></td></tr>
+<tr><th id="179">179</th><td><i> * |pkey| is NULL, it simply reports whether the type is known. */</i></td></tr>
+<tr><th id="180">180</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_set_type" title='EVP_PKEY_set_type' data-ref="EVP_PKEY_set_type">EVP_PKEY_set_type</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col8 decl" id="1068pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1068pkey">pkey</dfn>, <em>int</em> <dfn class="local col9 decl" id="1069type" title='type' data-type='int' data-ref="1069type">type</dfn>);</td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td><i>/* EVP_PKEY_cmp_parameters compares the parameters of |a| and |b|. It returns</i></td></tr>
+<tr><th id="183">183</th><td><i> * one if they match, zero if not, or a negative number of on error.</i></td></tr>
+<tr><th id="184">184</th><td><i> *</i></td></tr>
+<tr><th id="185">185</th><td><i> * WARNING: the return value differs from the usual return value convention. */</i></td></tr>
+<tr><th id="186">186</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_cmp_parameters" title='EVP_PKEY_cmp_parameters' data-ref="EVP_PKEY_cmp_parameters">EVP_PKEY_cmp_parameters</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col0 decl" id="1070a" title='a' data-type='const EVP_PKEY *' data-ref="1070a">a</dfn>,</td></tr>
+<tr><th id="187">187</th><td>                                           <em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col1 decl" id="1071b" title='b' data-type='const EVP_PKEY *' data-ref="1071b">b</dfn>);</td></tr>
+<tr><th id="188">188</th><td></td></tr>
+<tr><th id="189">189</th><td></td></tr>
+<tr><th id="190">190</th><td><i>/* ASN.1 functions */</i></td></tr>
+<tr><th id="191">191</th><td></td></tr>
+<tr><th id="192">192</th><td><i>/* d2i_PrivateKey parses an ASN.1, DER-encoded, private key from |len| bytes at</i></td></tr>
+<tr><th id="193">193</th><td><i> * |*inp|. If |out| is not NULL then, on exit, a pointer to the result is in</i></td></tr>
+<tr><th id="194">194</th><td><i> * |*out|. If |*out| is already non-NULL on entry then the result is written</i></td></tr>
+<tr><th id="195">195</th><td><i> * directly into |*out|, otherwise a fresh |EVP_PKEY| is allocated. On</i></td></tr>
+<tr><th id="196">196</th><td><i> * successful exit, |*inp| is advanced past the DER structure. It returns the</i></td></tr>
+<tr><th id="197">197</th><td><i> * result or NULL on error. */</i></td></tr>
+<tr><th id="198">198</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="decl" id="d2i_PrivateKey" title='d2i_PrivateKey' data-ref="d2i_PrivateKey">d2i_PrivateKey</dfn>(<em>int</em> <dfn class="local col2 decl" id="1072type" title='type' data-type='int' data-ref="1072type">type</dfn>, <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> **<dfn class="local col3 decl" id="1073out" title='out' data-type='EVP_PKEY **' data-ref="1073out">out</dfn>,</td></tr>
+<tr><th id="199">199</th><td>                                        <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col4 decl" id="1074inp" title='inp' data-type='const uint8_t **' data-ref="1074inp">inp</dfn>, <em>long</em> <dfn class="local col5 decl" id="1075len" title='len' data-type='long' data-ref="1075len">len</dfn>);</td></tr>
+<tr><th id="200">200</th><td></td></tr>
+<tr><th id="201">201</th><td><i>/* d2i_AutoPrivateKey acts the same as |d2i_PrivateKey|, but detects the type</i></td></tr>
+<tr><th id="202">202</th><td><i> * of the private key. */</i></td></tr>
+<tr><th id="203">203</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="decl" id="d2i_AutoPrivateKey" title='d2i_AutoPrivateKey' data-ref="d2i_AutoPrivateKey">d2i_AutoPrivateKey</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> **<dfn class="local col6 decl" id="1076out" title='out' data-type='EVP_PKEY **' data-ref="1076out">out</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col7 decl" id="1077inp" title='inp' data-type='const uint8_t **' data-ref="1077inp">inp</dfn>,</td></tr>
+<tr><th id="204">204</th><td>                                            <em>long</em> <dfn class="local col8 decl" id="1078len" title='len' data-type='long' data-ref="1078len">len</dfn>);</td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td><i>/* i2d_PrivateKey marshals a private key from |key| to an ASN.1, DER</i></td></tr>
+<tr><th id="207">207</th><td><i> * structure. If |outp| is not NULL then the result is written to |*outp| and</i></td></tr>
+<tr><th id="208">208</th><td><i> * |*outp| is advanced just past the output. It returns the number of bytes in</i></td></tr>
+<tr><th id="209">209</th><td><i> * the result, whether written or not, or a negative value on error. */</i></td></tr>
+<tr><th id="210">210</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="i2d_PrivateKey" title='i2d_PrivateKey' data-ref="i2d_PrivateKey">i2d_PrivateKey</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col9 decl" id="1079key" title='key' data-type='const EVP_PKEY *' data-ref="1079key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col0 decl" id="1080outp" title='outp' data-type='uint8_t **' data-ref="1080outp">outp</dfn>);</td></tr>
+<tr><th id="211">211</th><td></td></tr>
+<tr><th id="212">212</th><td><i>/* i2d_PublicKey marshals a public key from |key| to a type-specific format.</i></td></tr>
+<tr><th id="213">213</th><td><i> * If |outp| is not NULL then the result is written to |*outp| and</i></td></tr>
+<tr><th id="214">214</th><td><i> * |*outp| is advanced just past the output. It returns the number of bytes in</i></td></tr>
+<tr><th id="215">215</th><td><i> * the result, whether written or not, or a negative value on error.</i></td></tr>
+<tr><th id="216">216</th><td><i> *</i></td></tr>
+<tr><th id="217">217</th><td><i> * RSA keys are serialized as a DER-encoded RSAPublicKey (RFC 3447) structure.</i></td></tr>
+<tr><th id="218">218</th><td><i> * EC keys are serialized as an EC point per SEC 1. */</i></td></tr>
+<tr><th id="219">219</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="i2d_PublicKey" title='i2d_PublicKey' data-ref="i2d_PublicKey">i2d_PublicKey</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col1 decl" id="1081key" title='key' data-type='EVP_PKEY *' data-ref="1081key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col2 decl" id="1082outp" title='outp' data-type='uint8_t **' data-ref="1082outp">outp</dfn>);</td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td></td></tr>
+<tr><th id="222">222</th><td><i>/* Signing */</i></td></tr>
+<tr><th id="223">223</th><td></td></tr>
+<tr><th id="224">224</th><td><i>/* EVP_DigestSignInit sets up |ctx| for a signing operation with |type| and</i></td></tr>
+<tr><th id="225">225</th><td><i> * |pkey|. The |ctx| argument must have been initialised with</i></td></tr>
+<tr><th id="226">226</th><td><i> * |EVP_MD_CTX_init|. If |pctx| is not NULL, the |EVP_PKEY_CTX| of the signing</i></td></tr>
+<tr><th id="227">227</th><td><i> * operation will be written to |*pctx|; this can be used to set alternative</i></td></tr>
+<tr><th id="228">228</th><td><i> * signing options.</i></td></tr>
+<tr><th id="229">229</th><td><i> *</i></td></tr>
+<tr><th id="230">230</th><td><i> * It returns one on success, or zero on error. */</i></td></tr>
+<tr><th id="231">231</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DigestSignInit" title='EVP_DigestSignInit' data-ref="EVP_DigestSignInit">EVP_DigestSignInit</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col3 decl" id="1083ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1083ctx">ctx</dfn>, <a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> **<dfn class="local col4 decl" id="1084pctx" title='pctx' data-type='EVP_PKEY_CTX **' data-ref="1084pctx">pctx</dfn>,</td></tr>
+<tr><th id="232">232</th><td>                                      <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col5 decl" id="1085type" title='type' data-type='const EVP_MD *' data-ref="1085type">type</dfn>, <a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> *<dfn class="local col6 decl" id="1086e" title='e' data-type='ENGINE *' data-ref="1086e">e</dfn>,</td></tr>
+<tr><th id="233">233</th><td>                                      <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col7 decl" id="1087pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1087pkey">pkey</dfn>);</td></tr>
+<tr><th id="234">234</th><td></td></tr>
+<tr><th id="235">235</th><td><i>/* EVP_DigestSignUpdate appends |len| bytes from |data| to the data which will</i></td></tr>
+<tr><th id="236">236</th><td><i> * be signed in |EVP_DigestSignFinal|. It returns one. */</i></td></tr>
+<tr><th id="237">237</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DigestSignUpdate" title='EVP_DigestSignUpdate' data-ref="EVP_DigestSignUpdate">EVP_DigestSignUpdate</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col8 decl" id="1088ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1088ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col9 decl" id="1089data" title='data' data-type='const void *' data-ref="1089data">data</dfn>,</td></tr>
+<tr><th id="238">238</th><td>                                        <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="1090len" title='len' data-type='size_t' data-ref="1090len">len</dfn>);</td></tr>
+<tr><th id="239">239</th><td></td></tr>
+<tr><th id="240">240</th><td><i>/* EVP_DigestSignFinal signs the data that has been included by one or more</i></td></tr>
+<tr><th id="241">241</th><td><i> * calls to |EVP_DigestSignUpdate|. If |out_sig| is NULL then |*out_sig_len| is</i></td></tr>
+<tr><th id="242">242</th><td><i> * set to the maximum number of output bytes. Otherwise, on entry,</i></td></tr>
+<tr><th id="243">243</th><td><i> * |*out_sig_len| must contain the length of the |out_sig| buffer. If the call</i></td></tr>
+<tr><th id="244">244</th><td><i> * is successful, the signature is written to |out_sig| and |*out_sig_len| is</i></td></tr>
+<tr><th id="245">245</th><td><i> * set to its length.</i></td></tr>
+<tr><th id="246">246</th><td><i> *</i></td></tr>
+<tr><th id="247">247</th><td><i> * It returns one on success, or zero on error. */</i></td></tr>
+<tr><th id="248">248</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DigestSignFinal" title='EVP_DigestSignFinal' data-ref="EVP_DigestSignFinal">EVP_DigestSignFinal</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col1 decl" id="1091ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1091ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col2 decl" id="1092out_sig" title='out_sig' data-type='uint8_t *' data-ref="1092out_sig">out_sig</dfn>,</td></tr>
+<tr><th id="249">249</th><td>                                       <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col3 decl" id="1093out_sig_len" title='out_sig_len' data-type='size_t *' data-ref="1093out_sig_len">out_sig_len</dfn>);</td></tr>
+<tr><th id="250">250</th><td></td></tr>
+<tr><th id="251">251</th><td><i>/* EVP_DigestSignAlgorithm encodes the signing parameters of |ctx| as an</i></td></tr>
+<tr><th id="252">252</th><td><i> * AlgorithmIdentifer and saves the result in |algor|.</i></td></tr>
+<tr><th id="253">253</th><td><i> *</i></td></tr>
+<tr><th id="254">254</th><td><i> * It returns one on success, or zero on error.</i></td></tr>
+<tr><th id="255">255</th><td><i> *</i></td></tr>
+<tr><th id="256">256</th><td><i> * TODO(davidben): This API should eventually lose the dependency on</i></td></tr>
+<tr><th id="257">257</th><td><i> * crypto/asn1/. */</i></td></tr>
+<tr><th id="258">258</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DigestSignAlgorithm" title='EVP_DigestSignAlgorithm' data-ref="EVP_DigestSignAlgorithm">EVP_DigestSignAlgorithm</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col4 decl" id="1094ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1094ctx">ctx</dfn>, <a class="typedef" href="base.h.html#X509_ALGOR" title='X509_ALGOR' data-type='struct X509_algor_st' data-ref="X509_ALGOR">X509_ALGOR</a> *<dfn class="local col5 decl" id="1095algor" title='algor' data-type='X509_ALGOR *' data-ref="1095algor">algor</dfn>);</td></tr>
+<tr><th id="259">259</th><td></td></tr>
+<tr><th id="260">260</th><td></td></tr>
+<tr><th id="261">261</th><td><i>/* Verifying */</i></td></tr>
+<tr><th id="262">262</th><td></td></tr>
+<tr><th id="263">263</th><td><i>/* EVP_DigestVerifyInit sets up |ctx| for a signature verification operation</i></td></tr>
+<tr><th id="264">264</th><td><i> * with |type| and |pkey|. The |ctx| argument must have been initialised with</i></td></tr>
+<tr><th id="265">265</th><td><i> * |EVP_MD_CTX_init|. If |pctx| is not NULL, the |EVP_PKEY_CTX| of the signing</i></td></tr>
+<tr><th id="266">266</th><td><i> * operation will be written to |*pctx|; this can be used to set alternative</i></td></tr>
+<tr><th id="267">267</th><td><i> * signing options.</i></td></tr>
+<tr><th id="268">268</th><td><i> *</i></td></tr>
+<tr><th id="269">269</th><td><i> * It returns one on success, or zero on error. */</i></td></tr>
+<tr><th id="270">270</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DigestVerifyInit" title='EVP_DigestVerifyInit' data-ref="EVP_DigestVerifyInit">EVP_DigestVerifyInit</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col6 decl" id="1096ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1096ctx">ctx</dfn>, <a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> **<dfn class="local col7 decl" id="1097pctx" title='pctx' data-type='EVP_PKEY_CTX **' data-ref="1097pctx">pctx</dfn>,</td></tr>
+<tr><th id="271">271</th><td>                                        <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col8 decl" id="1098type" title='type' data-type='const EVP_MD *' data-ref="1098type">type</dfn>, <a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> *<dfn class="local col9 decl" id="1099e" title='e' data-type='ENGINE *' data-ref="1099e">e</dfn>,</td></tr>
+<tr><th id="272">272</th><td>                                        <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col0 decl" id="1100pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1100pkey">pkey</dfn>);</td></tr>
+<tr><th id="273">273</th><td></td></tr>
+<tr><th id="274">274</th><td><i>/* EVP_DigestVerifyInitFromAlgorithm sets up |ctx| for a signature verification</i></td></tr>
+<tr><th id="275">275</th><td><i> * operation with public key |pkey| and parameters from |algor|. The |ctx|</i></td></tr>
+<tr><th id="276">276</th><td><i> * argument must have been initialised with |EVP_MD_CTX_init|.</i></td></tr>
+<tr><th id="277">277</th><td><i> *</i></td></tr>
+<tr><th id="278">278</th><td><i> * It returns one on success, or zero on error.</i></td></tr>
+<tr><th id="279">279</th><td><i> *</i></td></tr>
+<tr><th id="280">280</th><td><i> * TODO(davidben): This API should eventually lose the dependency on</i></td></tr>
+<tr><th id="281">281</th><td><i> * crypto/asn1/. */</i></td></tr>
+<tr><th id="282">282</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DigestVerifyInitFromAlgorithm" title='EVP_DigestVerifyInitFromAlgorithm' data-ref="EVP_DigestVerifyInitFromAlgorithm">EVP_DigestVerifyInitFromAlgorithm</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col1 decl" id="1101ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1101ctx">ctx</dfn>,</td></tr>
+<tr><th id="283">283</th><td>                                                     <a class="typedef" href="base.h.html#X509_ALGOR" title='X509_ALGOR' data-type='struct X509_algor_st' data-ref="X509_ALGOR">X509_ALGOR</a> *<dfn class="local col2 decl" id="1102algor" title='algor' data-type='X509_ALGOR *' data-ref="1102algor">algor</dfn>,</td></tr>
+<tr><th id="284">284</th><td>                                                     <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col3 decl" id="1103pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1103pkey">pkey</dfn>);</td></tr>
+<tr><th id="285">285</th><td></td></tr>
+<tr><th id="286">286</th><td><i>/* EVP_DigestVerifyUpdate appends |len| bytes from |data| to the data which</i></td></tr>
+<tr><th id="287">287</th><td><i> * will be verified by |EVP_DigestVerifyFinal|. It returns one. */</i></td></tr>
+<tr><th id="288">288</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DigestVerifyUpdate" title='EVP_DigestVerifyUpdate' data-ref="EVP_DigestVerifyUpdate">EVP_DigestVerifyUpdate</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col4 decl" id="1104ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1104ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col5 decl" id="1105data" title='data' data-type='const void *' data-ref="1105data">data</dfn>,</td></tr>
+<tr><th id="289">289</th><td>                                          <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="1106len" title='len' data-type='size_t' data-ref="1106len">len</dfn>);</td></tr>
+<tr><th id="290">290</th><td></td></tr>
+<tr><th id="291">291</th><td><i>/* EVP_DigestVerifyFinal verifies that |sig_len| bytes of |sig| are a valid</i></td></tr>
+<tr><th id="292">292</th><td><i> * signature for the data that has been included by one or more calls to</i></td></tr>
+<tr><th id="293">293</th><td><i> * |EVP_DigestVerifyUpdate|. It returns one on success and zero otherwise. */</i></td></tr>
+<tr><th id="294">294</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DigestVerifyFinal" title='EVP_DigestVerifyFinal' data-ref="EVP_DigestVerifyFinal">EVP_DigestVerifyFinal</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col7 decl" id="1107ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1107ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="1108sig" title='sig' data-type='const uint8_t *' data-ref="1108sig">sig</dfn>,</td></tr>
+<tr><th id="295">295</th><td>                                         <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="1109sig_len" title='sig_len' data-type='size_t' data-ref="1109sig_len">sig_len</dfn>);</td></tr>
+<tr><th id="296">296</th><td></td></tr>
+<tr><th id="297">297</th><td></td></tr>
+<tr><th id="298">298</th><td><i>/* Signing (old functions) */</i></td></tr>
+<tr><th id="299">299</th><td></td></tr>
+<tr><th id="300">300</th><td><i>/* EVP_SignInit_ex configures |ctx|, which must already have been initialised,</i></td></tr>
+<tr><th id="301">301</th><td><i> * for a fresh signing operation using the hash function |type|. It returns one</i></td></tr>
+<tr><th id="302">302</th><td><i> * on success and zero otherwise.</i></td></tr>
+<tr><th id="303">303</th><td><i> *</i></td></tr>
+<tr><th id="304">304</th><td><i> * (In order to initialise |ctx|, either obtain it initialised with</i></td></tr>
+<tr><th id="305">305</th><td><i> * |EVP_MD_CTX_create|, or use |EVP_MD_CTX_init|.) */</i></td></tr>
+<tr><th id="306">306</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_SignInit_ex" title='EVP_SignInit_ex' data-ref="EVP_SignInit_ex">EVP_SignInit_ex</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col0 decl" id="1110ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1110ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col1 decl" id="1111type" title='type' data-type='const EVP_MD *' data-ref="1111type">type</dfn>,</td></tr>
+<tr><th id="307">307</th><td>                                   <a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> *<dfn class="local col2 decl" id="1112impl" title='impl' data-type='ENGINE *' data-ref="1112impl">impl</dfn>);</td></tr>
+<tr><th id="308">308</th><td></td></tr>
+<tr><th id="309">309</th><td><i>/* EVP_SignInit is a deprecated version of |EVP_SignInit_ex|.</i></td></tr>
+<tr><th id="310">310</th><td><i> *</i></td></tr>
+<tr><th id="311">311</th><td><i> * TODO(fork): remove. */</i></td></tr>
+<tr><th id="312">312</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_SignInit" title='EVP_SignInit' data-ref="EVP_SignInit">EVP_SignInit</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col3 decl" id="1113ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1113ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col4 decl" id="1114type" title='type' data-type='const EVP_MD *' data-ref="1114type">type</dfn>);</td></tr>
+<tr><th id="313">313</th><td></td></tr>
+<tr><th id="314">314</th><td><i>/* EVP_SignUpdate appends |len| bytes from |data| to the data which will be</i></td></tr>
+<tr><th id="315">315</th><td><i> * signed in |EVP_SignFinal|. */</i></td></tr>
+<tr><th id="316">316</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_SignUpdate" title='EVP_SignUpdate' data-ref="EVP_SignUpdate">EVP_SignUpdate</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col5 decl" id="1115ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1115ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col6 decl" id="1116data" title='data' data-type='const void *' data-ref="1116data">data</dfn>,</td></tr>
+<tr><th id="317">317</th><td>                                  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="1117len" title='len' data-type='size_t' data-ref="1117len">len</dfn>);</td></tr>
+<tr><th id="318">318</th><td></td></tr>
+<tr><th id="319">319</th><td><i>/* EVP_SignFinal signs the data that has been included by one or more calls to</i></td></tr>
+<tr><th id="320">320</th><td><i> * |EVP_SignUpdate|, using the key |pkey|, and writes it to |sig|. On entry,</i></td></tr>
+<tr><th id="321">321</th><td><i> * |sig| must point to at least |EVP_PKEY_size(pkey)| bytes of space. The</i></td></tr>
+<tr><th id="322">322</th><td><i> * actual size of the signature is written to |*out_sig_len|.</i></td></tr>
+<tr><th id="323">323</th><td><i> *</i></td></tr>
+<tr><th id="324">324</th><td><i> * It returns one on success and zero otherwise.</i></td></tr>
+<tr><th id="325">325</th><td><i> *</i></td></tr>
+<tr><th id="326">326</th><td><i> * It does not modify |ctx|, thus it's possible to continue to use |ctx| in</i></td></tr>
+<tr><th id="327">327</th><td><i> * order to sign a longer message. */</i></td></tr>
+<tr><th id="328">328</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_SignFinal" title='EVP_SignFinal' data-ref="EVP_SignFinal">EVP_SignFinal</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col8 decl" id="1118ctx" title='ctx' data-type='const EVP_MD_CTX *' data-ref="1118ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="1119sig" title='sig' data-type='uint8_t *' data-ref="1119sig">sig</dfn>,</td></tr>
+<tr><th id="329">329</th><td>                                 <em>unsigned</em> <em>int</em> *<dfn class="local col0 decl" id="1120out_sig_len" title='out_sig_len' data-type='unsigned int *' data-ref="1120out_sig_len">out_sig_len</dfn>, <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col1 decl" id="1121pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1121pkey">pkey</dfn>);</td></tr>
+<tr><th id="330">330</th><td></td></tr>
+<tr><th id="331">331</th><td></td></tr>
+<tr><th id="332">332</th><td><i>/* Verifying (old functions) */</i></td></tr>
+<tr><th id="333">333</th><td></td></tr>
+<tr><th id="334">334</th><td><i>/* EVP_VerifyInit_ex configures |ctx|, which must already have been</i></td></tr>
+<tr><th id="335">335</th><td><i> * initialised, for a fresh signature verification operation using the hash</i></td></tr>
+<tr><th id="336">336</th><td><i> * function |type|. It returns one on success and zero otherwise.</i></td></tr>
+<tr><th id="337">337</th><td><i> *</i></td></tr>
+<tr><th id="338">338</th><td><i> * (In order to initialise |ctx|, either obtain it initialised with</i></td></tr>
+<tr><th id="339">339</th><td><i> * |EVP_MD_CTX_create|, or use |EVP_MD_CTX_init|.) */</i></td></tr>
+<tr><th id="340">340</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_VerifyInit_ex" title='EVP_VerifyInit_ex' data-ref="EVP_VerifyInit_ex">EVP_VerifyInit_ex</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col2 decl" id="1122ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1122ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col3 decl" id="1123type" title='type' data-type='const EVP_MD *' data-ref="1123type">type</dfn>,</td></tr>
+<tr><th id="341">341</th><td>                                     <a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> *<dfn class="local col4 decl" id="1124impl" title='impl' data-type='ENGINE *' data-ref="1124impl">impl</dfn>);</td></tr>
+<tr><th id="342">342</th><td></td></tr>
+<tr><th id="343">343</th><td><i>/* EVP_VerifyInit is a deprecated version of |EVP_VerifyInit_ex|.</i></td></tr>
+<tr><th id="344">344</th><td><i> *</i></td></tr>
+<tr><th id="345">345</th><td><i> * TODO(fork): remove. */</i></td></tr>
+<tr><th id="346">346</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_VerifyInit" title='EVP_VerifyInit' data-ref="EVP_VerifyInit">EVP_VerifyInit</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col5 decl" id="1125ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1125ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col6 decl" id="1126type" title='type' data-type='const EVP_MD *' data-ref="1126type">type</dfn>);</td></tr>
+<tr><th id="347">347</th><td></td></tr>
+<tr><th id="348">348</th><td><i>/* EVP_VerifyUpdate appends |len| bytes from |data| to the data which will be</i></td></tr>
+<tr><th id="349">349</th><td><i> * signed in |EVP_VerifyFinal|. */</i></td></tr>
+<tr><th id="350">350</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_VerifyUpdate" title='EVP_VerifyUpdate' data-ref="EVP_VerifyUpdate">EVP_VerifyUpdate</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col7 decl" id="1127ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1127ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col8 decl" id="1128data" title='data' data-type='const void *' data-ref="1128data">data</dfn>,</td></tr>
+<tr><th id="351">351</th><td>                                    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="1129len" title='len' data-type='size_t' data-ref="1129len">len</dfn>);</td></tr>
+<tr><th id="352">352</th><td></td></tr>
+<tr><th id="353">353</th><td><i>/* EVP_VerifyFinal verifies that |sig_len| bytes of |sig| are a valid</i></td></tr>
+<tr><th id="354">354</th><td><i> * signature, by |pkey|, for the data that has been included by one or more</i></td></tr>
+<tr><th id="355">355</th><td><i> * calls to |EVP_VerifyUpdate|.</i></td></tr>
+<tr><th id="356">356</th><td><i> *</i></td></tr>
+<tr><th id="357">357</th><td><i> * It returns one on success and zero otherwise.</i></td></tr>
+<tr><th id="358">358</th><td><i> *</i></td></tr>
+<tr><th id="359">359</th><td><i> * It does not modify |ctx|, thus it's possible to continue to use |ctx| in</i></td></tr>
+<tr><th id="360">360</th><td><i> * order to sign a longer message. */</i></td></tr>
+<tr><th id="361">361</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_VerifyFinal" title='EVP_VerifyFinal' data-ref="EVP_VerifyFinal">EVP_VerifyFinal</dfn>(<a class="typedef" href="base.h.html#EVP_MD_CTX" title='EVP_MD_CTX' data-type='struct env_md_ctx_st' data-ref="EVP_MD_CTX">EVP_MD_CTX</a> *<dfn class="local col0 decl" id="1130ctx" title='ctx' data-type='EVP_MD_CTX *' data-ref="1130ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="1131sig" title='sig' data-type='const uint8_t *' data-ref="1131sig">sig</dfn>,</td></tr>
+<tr><th id="362">362</th><td>                                   <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="1132sig_len" title='sig_len' data-type='size_t' data-ref="1132sig_len">sig_len</dfn>, <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col3 decl" id="1133pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1133pkey">pkey</dfn>);</td></tr>
+<tr><th id="363">363</th><td></td></tr>
+<tr><th id="364">364</th><td></td></tr>
+<tr><th id="365">365</th><td><i>/* Printing */</i></td></tr>
+<tr><th id="366">366</th><td></td></tr>
+<tr><th id="367">367</th><td><i>/* EVP_PKEY_print_public prints a textual representation of the public key in</i></td></tr>
+<tr><th id="368">368</th><td><i> * |pkey| to |out|. Returns one on success or zero otherwise. */</i></td></tr>
+<tr><th id="369">369</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_print_public" title='EVP_PKEY_print_public' data-ref="EVP_PKEY_print_public">EVP_PKEY_print_public</dfn>(<a class="typedef" href="base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col4 decl" id="1134out" title='out' data-type='BIO *' data-ref="1134out">out</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col5 decl" id="1135pkey" title='pkey' data-type='const EVP_PKEY *' data-ref="1135pkey">pkey</dfn>,</td></tr>
+<tr><th id="370">370</th><td>                                         <em>int</em> <dfn class="local col6 decl" id="1136indent" title='indent' data-type='int' data-ref="1136indent">indent</dfn>, <a class="typedef" href="base.h.html#ASN1_PCTX" title='ASN1_PCTX' data-type='struct asn1_pctx_st' data-ref="ASN1_PCTX">ASN1_PCTX</a> *<dfn class="local col7 decl" id="1137pctx" title='pctx' data-type='ASN1_PCTX *' data-ref="1137pctx">pctx</dfn>);</td></tr>
+<tr><th id="371">371</th><td></td></tr>
+<tr><th id="372">372</th><td><i>/* EVP_PKEY_print_private prints a textual representation of the private key in</i></td></tr>
+<tr><th id="373">373</th><td><i> * |pkey| to |out|. Returns one on success or zero otherwise. */</i></td></tr>
+<tr><th id="374">374</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_print_private" title='EVP_PKEY_print_private' data-ref="EVP_PKEY_print_private">EVP_PKEY_print_private</dfn>(<a class="typedef" href="base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col8 decl" id="1138out" title='out' data-type='BIO *' data-ref="1138out">out</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col9 decl" id="1139pkey" title='pkey' data-type='const EVP_PKEY *' data-ref="1139pkey">pkey</dfn>,</td></tr>
+<tr><th id="375">375</th><td>                                          <em>int</em> <dfn class="local col0 decl" id="1140indent" title='indent' data-type='int' data-ref="1140indent">indent</dfn>, <a class="typedef" href="base.h.html#ASN1_PCTX" title='ASN1_PCTX' data-type='struct asn1_pctx_st' data-ref="ASN1_PCTX">ASN1_PCTX</a> *<dfn class="local col1 decl" id="1141pctx" title='pctx' data-type='ASN1_PCTX *' data-ref="1141pctx">pctx</dfn>);</td></tr>
+<tr><th id="376">376</th><td></td></tr>
+<tr><th id="377">377</th><td><i>/* EVP_PKEY_print_params prints a textual representation of the parameters in</i></td></tr>
+<tr><th id="378">378</th><td><i> * |pkey| to |out|. Returns one on success or zero otherwise. */</i></td></tr>
+<tr><th id="379">379</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_print_params" title='EVP_PKEY_print_params' data-ref="EVP_PKEY_print_params">EVP_PKEY_print_params</dfn>(<a class="typedef" href="base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col2 decl" id="1142out" title='out' data-type='BIO *' data-ref="1142out">out</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col3 decl" id="1143pkey" title='pkey' data-type='const EVP_PKEY *' data-ref="1143pkey">pkey</dfn>,</td></tr>
+<tr><th id="380">380</th><td>                                         <em>int</em> <dfn class="local col4 decl" id="1144indent" title='indent' data-type='int' data-ref="1144indent">indent</dfn>, <a class="typedef" href="base.h.html#ASN1_PCTX" title='ASN1_PCTX' data-type='struct asn1_pctx_st' data-ref="ASN1_PCTX">ASN1_PCTX</a> *<dfn class="local col5 decl" id="1145pctx" title='pctx' data-type='ASN1_PCTX *' data-ref="1145pctx">pctx</dfn>);</td></tr>
+<tr><th id="381">381</th><td></td></tr>
+<tr><th id="382">382</th><td></td></tr>
+<tr><th id="383">383</th><td><i>/* Password stretching.</i></td></tr>
+<tr><th id="384">384</th><td><i> *</i></td></tr>
+<tr><th id="385">385</th><td><i> * Password stretching functions take a low-entropy password and apply a slow</i></td></tr>
+<tr><th id="386">386</th><td><i> * function that results in a key suitable for use in symmetric</i></td></tr>
+<tr><th id="387">387</th><td><i> * cryptography. */</i></td></tr>
+<tr><th id="388">388</th><td></td></tr>
+<tr><th id="389">389</th><td><i>/* PKCS5_PBKDF2_HMAC computes |iterations| iterations of PBKDF2 of |password|</i></td></tr>
+<tr><th id="390">390</th><td><i> * and |salt|, using |digest|, and outputs |key_len| bytes to |out_key|. It</i></td></tr>
+<tr><th id="391">391</th><td><i> * returns one on success and zero on error. */</i></td></tr>
+<tr><th id="392">392</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="PKCS5_PBKDF2_HMAC" title='PKCS5_PBKDF2_HMAC' data-ref="PKCS5_PBKDF2_HMAC">PKCS5_PBKDF2_HMAC</dfn>(<em>const</em> <em>char</em> *<dfn class="local col6 decl" id="1146password" title='password' data-type='const char *' data-ref="1146password">password</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="1147password_len" title='password_len' data-type='size_t' data-ref="1147password_len">password_len</dfn>,</td></tr>
+<tr><th id="393">393</th><td>                                     <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="1148salt" title='salt' data-type='const uint8_t *' data-ref="1148salt">salt</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="1149salt_len" title='salt_len' data-type='size_t' data-ref="1149salt_len">salt_len</dfn>,</td></tr>
+<tr><th id="394">394</th><td>                                     <em>unsigned</em> <dfn class="local col0 decl" id="1150iterations" title='iterations' data-type='unsigned int' data-ref="1150iterations">iterations</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col1 decl" id="1151digest" title='digest' data-type='const EVP_MD *' data-ref="1151digest">digest</dfn>,</td></tr>
+<tr><th id="395">395</th><td>                                     <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="1152key_len" title='key_len' data-type='size_t' data-ref="1152key_len">key_len</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="1153out_key" title='out_key' data-type='uint8_t *' data-ref="1153out_key">out_key</dfn>);</td></tr>
+<tr><th id="396">396</th><td></td></tr>
+<tr><th id="397">397</th><td><i>/* PKCS5_PBKDF2_HMAC_SHA1 is the same as PKCS5_PBKDF2_HMAC, but with |digest|</i></td></tr>
+<tr><th id="398">398</th><td><i> * fixed to |EVP_sha1|. */</i></td></tr>
+<tr><th id="399">399</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="PKCS5_PBKDF2_HMAC_SHA1" title='PKCS5_PBKDF2_HMAC_SHA1' data-ref="PKCS5_PBKDF2_HMAC_SHA1">PKCS5_PBKDF2_HMAC_SHA1</dfn>(<em>const</em> <em>char</em> *<dfn class="local col4 decl" id="1154password" title='password' data-type='const char *' data-ref="1154password">password</dfn>,</td></tr>
+<tr><th id="400">400</th><td>                                          <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="1155password_len" title='password_len' data-type='size_t' data-ref="1155password_len">password_len</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="1156salt" title='salt' data-type='const uint8_t *' data-ref="1156salt">salt</dfn>,</td></tr>
+<tr><th id="401">401</th><td>                                          <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="1157salt_len" title='salt_len' data-type='size_t' data-ref="1157salt_len">salt_len</dfn>, <em>unsigned</em> <dfn class="local col8 decl" id="1158iterations" title='iterations' data-type='unsigned int' data-ref="1158iterations">iterations</dfn>,</td></tr>
+<tr><th id="402">402</th><td>                                          <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="1159key_len" title='key_len' data-type='size_t' data-ref="1159key_len">key_len</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col0 decl" id="1160out_key" title='out_key' data-type='uint8_t *' data-ref="1160out_key">out_key</dfn>);</td></tr>
+<tr><th id="403">403</th><td></td></tr>
+<tr><th id="404">404</th><td></td></tr>
+<tr><th id="405">405</th><td><i>/* Public key contexts.</i></td></tr>
+<tr><th id="406">406</th><td><i> *</i></td></tr>
+<tr><th id="407">407</th><td><i> * |EVP_PKEY_CTX| objects hold the context of an operation (e.g. signing or</i></td></tr>
+<tr><th id="408">408</th><td><i> * encrypting) that uses a public key. */</i></td></tr>
+<tr><th id="409">409</th><td></td></tr>
+<tr><th id="410">410</th><td><i>/* EVP_PKEY_CTX_new allocates a fresh |EVP_PKEY_CTX| for use with |pkey|. It</i></td></tr>
+<tr><th id="411">411</th><td><i> * returns the context or NULL on error. */</i></td></tr>
+<tr><th id="412">412</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="decl" id="EVP_PKEY_CTX_new" title='EVP_PKEY_CTX_new' data-ref="EVP_PKEY_CTX_new">EVP_PKEY_CTX_new</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col1 decl" id="1161pkey" title='pkey' data-type='EVP_PKEY *' data-ref="1161pkey">pkey</dfn>, <a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> *<dfn class="local col2 decl" id="1162e" title='e' data-type='ENGINE *' data-ref="1162e">e</dfn>);</td></tr>
+<tr><th id="413">413</th><td></td></tr>
+<tr><th id="414">414</th><td><i>/* EVP_PKEY_CTX_new_id allocates a fresh |EVP_PKEY_CTX| for a key of type |id|</i></td></tr>
+<tr><th id="415">415</th><td><i> * (e.g. |EVP_PKEY_HMAC|). This can be used for key generation where</i></td></tr>
+<tr><th id="416">416</th><td><i> * |EVP_PKEY_CTX_new| can't be used because there isn't an |EVP_PKEY| to pass</i></td></tr>
+<tr><th id="417">417</th><td><i> * it. It returns the context or NULL on error. */</i></td></tr>
+<tr><th id="418">418</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="decl" id="EVP_PKEY_CTX_new_id" title='EVP_PKEY_CTX_new_id' data-ref="EVP_PKEY_CTX_new_id">EVP_PKEY_CTX_new_id</dfn>(<em>int</em> <dfn class="local col3 decl" id="1163id" title='id' data-type='int' data-ref="1163id">id</dfn>, <a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> *<dfn class="local col4 decl" id="1164e" title='e' data-type='ENGINE *' data-ref="1164e">e</dfn>);</td></tr>
+<tr><th id="419">419</th><td></td></tr>
+<tr><th id="420">420</th><td><i>/* EVP_PKEY_CTX_free frees |ctx| and the data it owns. */</i></td></tr>
+<tr><th id="421">421</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EVP_PKEY_CTX_free" title='EVP_PKEY_CTX_free' data-ref="EVP_PKEY_CTX_free">EVP_PKEY_CTX_free</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col5 decl" id="1165ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1165ctx">ctx</dfn>);</td></tr>
+<tr><th id="422">422</th><td></td></tr>
+<tr><th id="423">423</th><td><i>/* EVP_PKEY_CTX_dup allocates a fresh |EVP_PKEY_CTX| and sets it equal to the</i></td></tr>
+<tr><th id="424">424</th><td><i> * state of |ctx|. It returns the fresh |EVP_PKEY_CTX| or NULL on error. */</i></td></tr>
+<tr><th id="425">425</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="decl" id="EVP_PKEY_CTX_dup" title='EVP_PKEY_CTX_dup' data-ref="EVP_PKEY_CTX_dup">EVP_PKEY_CTX_dup</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col6 decl" id="1166ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1166ctx">ctx</dfn>);</td></tr>
+<tr><th id="426">426</th><td></td></tr>
+<tr><th id="427">427</th><td><i>/* EVP_PKEY_CTX_get0_pkey returns the |EVP_PKEY| associated with |ctx|. */</i></td></tr>
+<tr><th id="428">428</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="decl" id="EVP_PKEY_CTX_get0_pkey" title='EVP_PKEY_CTX_get0_pkey' data-ref="EVP_PKEY_CTX_get0_pkey">EVP_PKEY_CTX_get0_pkey</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col7 decl" id="1167ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1167ctx">ctx</dfn>);</td></tr>
+<tr><th id="429">429</th><td></td></tr>
+<tr><th id="430">430</th><td><i>/* EVP_PKEY_CTX_set_app_data sets an opaque pointer on |ctx|. */</i></td></tr>
+<tr><th id="431">431</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EVP_PKEY_CTX_set_app_data" title='EVP_PKEY_CTX_set_app_data' data-ref="EVP_PKEY_CTX_set_app_data">EVP_PKEY_CTX_set_app_data</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col8 decl" id="1168ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1168ctx">ctx</dfn>, <em>void</em> *<dfn class="local col9 decl" id="1169data" title='data' data-type='void *' data-ref="1169data">data</dfn>);</td></tr>
+<tr><th id="432">432</th><td></td></tr>
+<tr><th id="433">433</th><td><i>/* EVP_PKEY_CTX_get_app_data returns the opaque pointer from |ctx| that was</i></td></tr>
+<tr><th id="434">434</th><td><i> * previously set with |EVP_PKEY_CTX_set_app_data|, or NULL if none has been</i></td></tr>
+<tr><th id="435">435</th><td><i> * set. */</i></td></tr>
+<tr><th id="436">436</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> *<dfn class="decl" id="EVP_PKEY_CTX_get_app_data" title='EVP_PKEY_CTX_get_app_data' data-ref="EVP_PKEY_CTX_get_app_data">EVP_PKEY_CTX_get_app_data</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col0 decl" id="1170ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1170ctx">ctx</dfn>);</td></tr>
+<tr><th id="437">437</th><td></td></tr>
+<tr><th id="438">438</th><td><i>/* EVP_PKEY_sign_init initialises an |EVP_PKEY_CTX| for a signing operation. It</i></td></tr>
+<tr><th id="439">439</th><td><i> * should be called before |EVP_PKEY_sign|.</i></td></tr>
+<tr><th id="440">440</th><td><i> *</i></td></tr>
+<tr><th id="441">441</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="442">442</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_sign_init" title='EVP_PKEY_sign_init' data-ref="EVP_PKEY_sign_init">EVP_PKEY_sign_init</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col1 decl" id="1171ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1171ctx">ctx</dfn>);</td></tr>
+<tr><th id="443">443</th><td></td></tr>
+<tr><th id="444">444</th><td><i>/* EVP_PKEY_sign signs |data_len| bytes from |data| using |ctx|. If |sig| is</i></td></tr>
+<tr><th id="445">445</th><td><i> * NULL, the maximum size of the signature is written to</i></td></tr>
+<tr><th id="446">446</th><td><i> * |out_sig_len|. Otherwise, |*sig_len| must contain the number of bytes of</i></td></tr>
+<tr><th id="447">447</th><td><i> * space available at |sig|. If sufficient, the signature will be written to</i></td></tr>
+<tr><th id="448">448</th><td><i> * |sig| and |*sig_len| updated with the true length.</i></td></tr>
+<tr><th id="449">449</th><td><i> *</i></td></tr>
+<tr><th id="450">450</th><td><i> * WARNING: Setting |sig| to NULL only gives the maximum size of the</i></td></tr>
+<tr><th id="451">451</th><td><i> * signature. The actual signature may be smaller.</i></td></tr>
+<tr><th id="452">452</th><td><i> *</i></td></tr>
+<tr><th id="453">453</th><td><i> * It returns one on success or zero on error. (Note: this differs from</i></td></tr>
+<tr><th id="454">454</th><td><i> * OpenSSL, which can also return negative values to indicate an error. ) */</i></td></tr>
+<tr><th id="455">455</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_sign" title='EVP_PKEY_sign' data-ref="EVP_PKEY_sign">EVP_PKEY_sign</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col2 decl" id="1172ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1172ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="1173sig" title='sig' data-type='uint8_t *' data-ref="1173sig">sig</dfn>,</td></tr>
+<tr><th id="456">456</th><td>                                 <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col4 decl" id="1174sig_len" title='sig_len' data-type='size_t *' data-ref="1174sig_len">sig_len</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="1175data" title='data' data-type='const uint8_t *' data-ref="1175data">data</dfn>,</td></tr>
+<tr><th id="457">457</th><td>                                 <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="1176data_len" title='data_len' data-type='size_t' data-ref="1176data_len">data_len</dfn>);</td></tr>
+<tr><th id="458">458</th><td></td></tr>
+<tr><th id="459">459</th><td><i>/* EVP_PKEY_verify_init initialises an |EVP_PKEY_CTX| for a signature</i></td></tr>
+<tr><th id="460">460</th><td><i> * verification operation. It should be called before |EVP_PKEY_verify|.</i></td></tr>
+<tr><th id="461">461</th><td><i> *</i></td></tr>
+<tr><th id="462">462</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="463">463</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_verify_init" title='EVP_PKEY_verify_init' data-ref="EVP_PKEY_verify_init">EVP_PKEY_verify_init</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col7 decl" id="1177ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1177ctx">ctx</dfn>);</td></tr>
+<tr><th id="464">464</th><td></td></tr>
+<tr><th id="465">465</th><td><i>/* EVP_PKEY_verify verifies that |sig_len| bytes from |sig| are a valid signature</i></td></tr>
+<tr><th id="466">466</th><td><i> * for |data|.</i></td></tr>
+<tr><th id="467">467</th><td><i> *</i></td></tr>
+<tr><th id="468">468</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="469">469</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_verify" title='EVP_PKEY_verify' data-ref="EVP_PKEY_verify">EVP_PKEY_verify</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col8 decl" id="1178ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1178ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="1179sig" title='sig' data-type='const uint8_t *' data-ref="1179sig">sig</dfn>,</td></tr>
+<tr><th id="470">470</th><td>                                   <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="1180sig_len" title='sig_len' data-type='size_t' data-ref="1180sig_len">sig_len</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="1181data" title='data' data-type='const uint8_t *' data-ref="1181data">data</dfn>,</td></tr>
+<tr><th id="471">471</th><td>                                   <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="1182data_len" title='data_len' data-type='size_t' data-ref="1182data_len">data_len</dfn>);</td></tr>
+<tr><th id="472">472</th><td></td></tr>
+<tr><th id="473">473</th><td><i>/* EVP_PKEY_encrypt_init initialises an |EVP_PKEY_CTX| for an encryption</i></td></tr>
+<tr><th id="474">474</th><td><i> * operation. It should be called before |EVP_PKEY_encrypt|.</i></td></tr>
+<tr><th id="475">475</th><td><i> *</i></td></tr>
+<tr><th id="476">476</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="477">477</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_encrypt_init" title='EVP_PKEY_encrypt_init' data-ref="EVP_PKEY_encrypt_init">EVP_PKEY_encrypt_init</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col3 decl" id="1183ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1183ctx">ctx</dfn>);</td></tr>
+<tr><th id="478">478</th><td></td></tr>
+<tr><th id="479">479</th><td><i>/* EVP_PKEY_encrypt encrypts |in_len| bytes from |in|. If |out| is NULL, the</i></td></tr>
+<tr><th id="480">480</th><td><i> * maximum size of the ciphertext is written to |out_len|. Otherwise, |*out_len|</i></td></tr>
+<tr><th id="481">481</th><td><i> * must contain the number of bytes of space available at |out|. If sufficient,</i></td></tr>
+<tr><th id="482">482</th><td><i> * the ciphertext will be written to |out| and |*out_len| updated with the true</i></td></tr>
+<tr><th id="483">483</th><td><i> * length.</i></td></tr>
+<tr><th id="484">484</th><td><i> *</i></td></tr>
+<tr><th id="485">485</th><td><i> * WARNING: Setting |out| to NULL only gives the maximum size of the</i></td></tr>
+<tr><th id="486">486</th><td><i> * ciphertext. The actual ciphertext may be smaller.</i></td></tr>
+<tr><th id="487">487</th><td><i> *</i></td></tr>
+<tr><th id="488">488</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="489">489</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_encrypt" title='EVP_PKEY_encrypt' data-ref="EVP_PKEY_encrypt">EVP_PKEY_encrypt</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col4 decl" id="1184ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1184ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="1185out" title='out' data-type='uint8_t *' data-ref="1185out">out</dfn>,</td></tr>
+<tr><th id="490">490</th><td>                                    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col6 decl" id="1186out_len" title='out_len' data-type='size_t *' data-ref="1186out_len">out_len</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="1187in" title='in' data-type='const uint8_t *' data-ref="1187in">in</dfn>,</td></tr>
+<tr><th id="491">491</th><td>                                    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="1188in_len" title='in_len' data-type='size_t' data-ref="1188in_len">in_len</dfn>);</td></tr>
+<tr><th id="492">492</th><td></td></tr>
+<tr><th id="493">493</th><td><i>/* EVP_PKEY_decrypt_init initialises an |EVP_PKEY_CTX| for a decryption</i></td></tr>
+<tr><th id="494">494</th><td><i> * operation. It should be called before |EVP_PKEY_decrypt|.</i></td></tr>
+<tr><th id="495">495</th><td><i> *</i></td></tr>
+<tr><th id="496">496</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="497">497</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_decrypt_init" title='EVP_PKEY_decrypt_init' data-ref="EVP_PKEY_decrypt_init">EVP_PKEY_decrypt_init</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col9 decl" id="1189ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1189ctx">ctx</dfn>);</td></tr>
+<tr><th id="498">498</th><td></td></tr>
+<tr><th id="499">499</th><td><i>/* EVP_PKEY_decrypt decrypts |in_len| bytes from |in|. If |out| is NULL, the</i></td></tr>
+<tr><th id="500">500</th><td><i> * maximum size of the plaintext is written to |out_len|. Otherwise, |*out_len|</i></td></tr>
+<tr><th id="501">501</th><td><i> * must contain the number of bytes of space available at |out|. If sufficient,</i></td></tr>
+<tr><th id="502">502</th><td><i> * the ciphertext will be written to |out| and |*out_len| updated with the true</i></td></tr>
+<tr><th id="503">503</th><td><i> * length.</i></td></tr>
+<tr><th id="504">504</th><td><i> *</i></td></tr>
+<tr><th id="505">505</th><td><i> * WARNING: Setting |out| to NULL only gives the maximum size of the</i></td></tr>
+<tr><th id="506">506</th><td><i> * plaintext. The actual plaintext may be smaller.</i></td></tr>
+<tr><th id="507">507</th><td><i> *</i></td></tr>
+<tr><th id="508">508</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="509">509</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_decrypt" title='EVP_PKEY_decrypt' data-ref="EVP_PKEY_decrypt">EVP_PKEY_decrypt</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col0 decl" id="1190ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1190ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="1191out" title='out' data-type='uint8_t *' data-ref="1191out">out</dfn>,</td></tr>
+<tr><th id="510">510</th><td>                                    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col2 decl" id="1192out_len" title='out_len' data-type='size_t *' data-ref="1192out_len">out_len</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="1193in" title='in' data-type='const uint8_t *' data-ref="1193in">in</dfn>,</td></tr>
+<tr><th id="511">511</th><td>                                    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="1194in_len" title='in_len' data-type='size_t' data-ref="1194in_len">in_len</dfn>);</td></tr>
+<tr><th id="512">512</th><td></td></tr>
+<tr><th id="513">513</th><td><i>/* EVP_PKEY_derive_init initialises an |EVP_PKEY_CTX| for a key derivation</i></td></tr>
+<tr><th id="514">514</th><td><i> * operation. It should be called before |EVP_PKEY_derive_set_peer| and</i></td></tr>
+<tr><th id="515">515</th><td><i> * |EVP_PKEY_derive|.</i></td></tr>
+<tr><th id="516">516</th><td><i> *</i></td></tr>
+<tr><th id="517">517</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="518">518</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_derive_init" title='EVP_PKEY_derive_init' data-ref="EVP_PKEY_derive_init">EVP_PKEY_derive_init</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col5 decl" id="1195ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1195ctx">ctx</dfn>);</td></tr>
+<tr><th id="519">519</th><td></td></tr>
+<tr><th id="520">520</th><td><i>/* EVP_PKEY_derive_set_peer sets the peer's key to be used for key derivation</i></td></tr>
+<tr><th id="521">521</th><td><i> * by |ctx| to |peer|. It should be called after |EVP_PKEY_derive_init|. (For</i></td></tr>
+<tr><th id="522">522</th><td><i> * example, this is used to set the peer's key in (EC)DH.) It returns one on</i></td></tr>
+<tr><th id="523">523</th><td><i> * success and zero on error. */</i></td></tr>
+<tr><th id="524">524</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_derive_set_peer" title='EVP_PKEY_derive_set_peer' data-ref="EVP_PKEY_derive_set_peer">EVP_PKEY_derive_set_peer</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col6 decl" id="1196ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1196ctx">ctx</dfn>, <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col7 decl" id="1197peer" title='peer' data-type='EVP_PKEY *' data-ref="1197peer">peer</dfn>);</td></tr>
+<tr><th id="525">525</th><td></td></tr>
+<tr><th id="526">526</th><td><i>/* EVP_PKEY_derive derives a shared key between the two keys configured in</i></td></tr>
+<tr><th id="527">527</th><td><i> * |ctx|. If |key| is non-NULL then, on entry, |out_key_len| must contain the</i></td></tr>
+<tr><th id="528">528</th><td><i> * amount of space at |key|. If sufficient then the shared key will be written</i></td></tr>
+<tr><th id="529">529</th><td><i> * to |key| and |*out_key_len| will be set to the length. If |key| is NULL then</i></td></tr>
+<tr><th id="530">530</th><td><i> * |out_key_len| will be set to the maximum length.</i></td></tr>
+<tr><th id="531">531</th><td><i> *</i></td></tr>
+<tr><th id="532">532</th><td><i> * WARNING: Setting |out| to NULL only gives the maximum size of the key. The</i></td></tr>
+<tr><th id="533">533</th><td><i> * actual key may be smaller.</i></td></tr>
+<tr><th id="534">534</th><td><i> *</i></td></tr>
+<tr><th id="535">535</th><td><i> * It returns one on success and zero on error. */</i></td></tr>
+<tr><th id="536">536</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_derive" title='EVP_PKEY_derive' data-ref="EVP_PKEY_derive">EVP_PKEY_derive</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col8 decl" id="1198ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1198ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="1199key" title='key' data-type='uint8_t *' data-ref="1199key">key</dfn>,</td></tr>
+<tr><th id="537">537</th><td>                                   <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col0 decl" id="1200out_key_len" title='out_key_len' data-type='size_t *' data-ref="1200out_key_len">out_key_len</dfn>);</td></tr>
+<tr><th id="538">538</th><td></td></tr>
+<tr><th id="539">539</th><td><i>/* EVP_PKEY_keygen_init initialises an |EVP_PKEY_CTX| for a key generation</i></td></tr>
+<tr><th id="540">540</th><td><i> * operation. It should be called before |EVP_PKEY_keygen|.</i></td></tr>
+<tr><th id="541">541</th><td><i> *</i></td></tr>
+<tr><th id="542">542</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="543">543</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_keygen_init" title='EVP_PKEY_keygen_init' data-ref="EVP_PKEY_keygen_init">EVP_PKEY_keygen_init</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col1 decl" id="1201ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1201ctx">ctx</dfn>);</td></tr>
+<tr><th id="544">544</th><td></td></tr>
+<tr><th id="545">545</th><td><i>/* EVP_PKEY_keygen performs a key generation operation using the values from</i></td></tr>
+<tr><th id="546">546</th><td><i> * |ctx| and sets |*ppkey| to a fresh |EVP_PKEY| containing the resulting key.</i></td></tr>
+<tr><th id="547">547</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="548">548</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_keygen" title='EVP_PKEY_keygen' data-ref="EVP_PKEY_keygen">EVP_PKEY_keygen</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col2 decl" id="1202ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1202ctx">ctx</dfn>, <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> **<dfn class="local col3 decl" id="1203ppkey" title='ppkey' data-type='EVP_PKEY **' data-ref="1203ppkey">ppkey</dfn>);</td></tr>
+<tr><th id="549">549</th><td></td></tr>
+<tr><th id="550">550</th><td></td></tr>
+<tr><th id="551">551</th><td><i>/* Generic control functions. */</i></td></tr>
+<tr><th id="552">552</th><td></td></tr>
+<tr><th id="553">553</th><td><i>/* EVP_PKEY_CTX_set_signature_md sets |md| as the digest to be used in a</i></td></tr>
+<tr><th id="554">554</th><td><i> * signature operation. It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="555">555</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_set_signature_md" title='EVP_PKEY_CTX_set_signature_md' data-ref="EVP_PKEY_CTX_set_signature_md">EVP_PKEY_CTX_set_signature_md</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col4 decl" id="1204ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1204ctx">ctx</dfn>,</td></tr>
+<tr><th id="556">556</th><td>                                                 <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col5 decl" id="1205md" title='md' data-type='const EVP_MD *' data-ref="1205md">md</dfn>);</td></tr>
+<tr><th id="557">557</th><td></td></tr>
+<tr><th id="558">558</th><td><i>/* EVP_PKEY_CTX_get_signature_md sets |*out_md| to the digest to be used in a</i></td></tr>
+<tr><th id="559">559</th><td><i> * signature operation. It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="560">560</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_get_signature_md" title='EVP_PKEY_CTX_get_signature_md' data-ref="EVP_PKEY_CTX_get_signature_md">EVP_PKEY_CTX_get_signature_md</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col6 decl" id="1206ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1206ctx">ctx</dfn>,</td></tr>
+<tr><th id="561">561</th><td>                                                 <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> **<dfn class="local col7 decl" id="1207out_md" title='out_md' data-type='const EVP_MD **' data-ref="1207out_md">out_md</dfn>);</td></tr>
+<tr><th id="562">562</th><td></td></tr>
+<tr><th id="563">563</th><td></td></tr>
+<tr><th id="564">564</th><td><i>/* RSA specific control functions. */</i></td></tr>
+<tr><th id="565">565</th><td></td></tr>
+<tr><th id="566">566</th><td><i>/* EVP_PKEY_CTX_set_rsa_padding sets the padding type to use. It should be one</i></td></tr>
+<tr><th id="567">567</th><td><i> * of the |RSA_*_PADDING| values. Returns one on success or zero on error. */</i></td></tr>
+<tr><th id="568">568</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_set_rsa_padding" title='EVP_PKEY_CTX_set_rsa_padding' data-ref="EVP_PKEY_CTX_set_rsa_padding">EVP_PKEY_CTX_set_rsa_padding</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col8 decl" id="1208ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1208ctx">ctx</dfn>, <em>int</em> <dfn class="local col9 decl" id="1209padding" title='padding' data-type='int' data-ref="1209padding">padding</dfn>);</td></tr>
+<tr><th id="569">569</th><td></td></tr>
+<tr><th id="570">570</th><td><i>/* EVP_PKEY_CTX_get_rsa_padding sets |*out_padding| to the current padding</i></td></tr>
+<tr><th id="571">571</th><td><i> * value, which is one of the |RSA_*_PADDING| values. Returns one on success or</i></td></tr>
+<tr><th id="572">572</th><td><i> * zero on error. */</i></td></tr>
+<tr><th id="573">573</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_get_rsa_padding" title='EVP_PKEY_CTX_get_rsa_padding' data-ref="EVP_PKEY_CTX_get_rsa_padding">EVP_PKEY_CTX_get_rsa_padding</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col0 decl" id="1210ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1210ctx">ctx</dfn>,</td></tr>
+<tr><th id="574">574</th><td>                                                <em>int</em> *<dfn class="local col1 decl" id="1211out_padding" title='out_padding' data-type='int *' data-ref="1211out_padding">out_padding</dfn>);</td></tr>
+<tr><th id="575">575</th><td></td></tr>
+<tr><th id="576">576</th><td><i>/* EVP_PKEY_CTX_set_rsa_pss_saltlen sets the length of the salt in a PSS-padded</i></td></tr>
+<tr><th id="577">577</th><td><i> * signature. A value of -1 cause the salt to be the same length as the digest</i></td></tr>
+<tr><th id="578">578</th><td><i> * in the signature. A value of -2 causes the salt to be the maximum length</i></td></tr>
+<tr><th id="579">579</th><td><i> * that will fit. Otherwise the value gives the size of the salt in bytes.</i></td></tr>
+<tr><th id="580">580</th><td><i> *</i></td></tr>
+<tr><th id="581">581</th><td><i> * Returns one on success or zero on error. */</i></td></tr>
+<tr><th id="582">582</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_set_rsa_pss_saltlen" title='EVP_PKEY_CTX_set_rsa_pss_saltlen' data-ref="EVP_PKEY_CTX_set_rsa_pss_saltlen">EVP_PKEY_CTX_set_rsa_pss_saltlen</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col2 decl" id="1212ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1212ctx">ctx</dfn>,</td></tr>
+<tr><th id="583">583</th><td>                                                    <em>int</em> <dfn class="local col3 decl" id="1213salt_len" title='salt_len' data-type='int' data-ref="1213salt_len">salt_len</dfn>);</td></tr>
+<tr><th id="584">584</th><td></td></tr>
+<tr><th id="585">585</th><td><i>/* EVP_PKEY_CTX_get_rsa_pss_saltlen sets |*out_salt_len| to the salt length of</i></td></tr>
+<tr><th id="586">586</th><td><i> * a PSS-padded signature. See the documentation for</i></td></tr>
+<tr><th id="587">587</th><td><i> * |EVP_PKEY_CTX_set_rsa_pss_saltlen| for details of the special values that it</i></td></tr>
+<tr><th id="588">588</th><td><i> * can take.</i></td></tr>
+<tr><th id="589">589</th><td><i> *</i></td></tr>
+<tr><th id="590">590</th><td><i> * Returns one on success or zero on error. */</i></td></tr>
+<tr><th id="591">591</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_get_rsa_pss_saltlen" title='EVP_PKEY_CTX_get_rsa_pss_saltlen' data-ref="EVP_PKEY_CTX_get_rsa_pss_saltlen">EVP_PKEY_CTX_get_rsa_pss_saltlen</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col4 decl" id="1214ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1214ctx">ctx</dfn>,</td></tr>
+<tr><th id="592">592</th><td>                                                    <em>int</em> *<dfn class="local col5 decl" id="1215out_salt_len" title='out_salt_len' data-type='int *' data-ref="1215out_salt_len">out_salt_len</dfn>);</td></tr>
+<tr><th id="593">593</th><td></td></tr>
+<tr><th id="594">594</th><td><i>/* EVP_PKEY_CTX_set_rsa_keygen_bits sets the size of the desired RSA modulus,</i></td></tr>
+<tr><th id="595">595</th><td><i> * in bits, for key generation. Returns one on success or zero on</i></td></tr>
+<tr><th id="596">596</th><td><i> * error. */</i></td></tr>
+<tr><th id="597">597</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_set_rsa_keygen_bits" title='EVP_PKEY_CTX_set_rsa_keygen_bits' data-ref="EVP_PKEY_CTX_set_rsa_keygen_bits">EVP_PKEY_CTX_set_rsa_keygen_bits</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col6 decl" id="1216ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1216ctx">ctx</dfn>,</td></tr>
+<tr><th id="598">598</th><td>                                                    <em>int</em> <dfn class="local col7 decl" id="1217bits" title='bits' data-type='int' data-ref="1217bits">bits</dfn>);</td></tr>
+<tr><th id="599">599</th><td></td></tr>
+<tr><th id="600">600</th><td><i>/* EVP_PKEY_CTX_set_rsa_keygen_pubexp sets |e| as the public exponent for key</i></td></tr>
+<tr><th id="601">601</th><td><i> * generation. Returns one on success or zero on error. */</i></td></tr>
+<tr><th id="602">602</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_set_rsa_keygen_pubexp" title='EVP_PKEY_CTX_set_rsa_keygen_pubexp' data-ref="EVP_PKEY_CTX_set_rsa_keygen_pubexp">EVP_PKEY_CTX_set_rsa_keygen_pubexp</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col8 decl" id="1218ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1218ctx">ctx</dfn>,</td></tr>
+<tr><th id="603">603</th><td>                                                      <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="1219e" title='e' data-type='BIGNUM *' data-ref="1219e">e</dfn>);</td></tr>
+<tr><th id="604">604</th><td></td></tr>
+<tr><th id="605">605</th><td><i>/* EVP_PKEY_CTX_set_rsa_oaep_md sets |md| as the digest used in OAEP padding.</i></td></tr>
+<tr><th id="606">606</th><td><i> * Returns one on success or zero on error. */</i></td></tr>
+<tr><th id="607">607</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_set_rsa_oaep_md" title='EVP_PKEY_CTX_set_rsa_oaep_md' data-ref="EVP_PKEY_CTX_set_rsa_oaep_md">EVP_PKEY_CTX_set_rsa_oaep_md</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col0 decl" id="1220ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1220ctx">ctx</dfn>,</td></tr>
+<tr><th id="608">608</th><td>                                                <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col1 decl" id="1221md" title='md' data-type='const EVP_MD *' data-ref="1221md">md</dfn>);</td></tr>
+<tr><th id="609">609</th><td></td></tr>
+<tr><th id="610">610</th><td><i>/* EVP_PKEY_CTX_get_rsa_oaep_md sets |*out_md| to the digest function used in</i></td></tr>
+<tr><th id="611">611</th><td><i> * OAEP padding. Returns one on success or zero on error. */</i></td></tr>
+<tr><th id="612">612</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_get_rsa_oaep_md" title='EVP_PKEY_CTX_get_rsa_oaep_md' data-ref="EVP_PKEY_CTX_get_rsa_oaep_md">EVP_PKEY_CTX_get_rsa_oaep_md</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col2 decl" id="1222ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1222ctx">ctx</dfn>,</td></tr>
+<tr><th id="613">613</th><td>                                                <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> **<dfn class="local col3 decl" id="1223out_md" title='out_md' data-type='const EVP_MD **' data-ref="1223out_md">out_md</dfn>);</td></tr>
+<tr><th id="614">614</th><td></td></tr>
+<tr><th id="615">615</th><td><i>/* EVP_PKEY_CTX_set_rsa_mgf1_md sets |md| as the digest used in MGF1. Returns</i></td></tr>
+<tr><th id="616">616</th><td><i> * one on success or zero on error. */</i></td></tr>
+<tr><th id="617">617</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_set_rsa_mgf1_md" title='EVP_PKEY_CTX_set_rsa_mgf1_md' data-ref="EVP_PKEY_CTX_set_rsa_mgf1_md">EVP_PKEY_CTX_set_rsa_mgf1_md</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col4 decl" id="1224ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1224ctx">ctx</dfn>,</td></tr>
+<tr><th id="618">618</th><td>                                                <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> *<dfn class="local col5 decl" id="1225md" title='md' data-type='const EVP_MD *' data-ref="1225md">md</dfn>);</td></tr>
+<tr><th id="619">619</th><td></td></tr>
+<tr><th id="620">620</th><td><i>/* EVP_PKEY_CTX_get_rsa_mgf1_md sets |*out_md| to the digest function used in</i></td></tr>
+<tr><th id="621">621</th><td><i> * MGF1. Returns one on success or zero on error. */</i></td></tr>
+<tr><th id="622">622</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_get_rsa_mgf1_md" title='EVP_PKEY_CTX_get_rsa_mgf1_md' data-ref="EVP_PKEY_CTX_get_rsa_mgf1_md">EVP_PKEY_CTX_get_rsa_mgf1_md</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col6 decl" id="1226ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1226ctx">ctx</dfn>,</td></tr>
+<tr><th id="623">623</th><td>                                                <em>const</em> <a class="typedef" href="base.h.html#EVP_MD" title='EVP_MD' data-type='struct env_md_st' data-ref="EVP_MD">EVP_MD</a> **<dfn class="local col7 decl" id="1227out_md" title='out_md' data-type='const EVP_MD **' data-ref="1227out_md">out_md</dfn>);</td></tr>
+<tr><th id="624">624</th><td></td></tr>
+<tr><th id="625">625</th><td><i>/* EVP_PKEY_CTX_set0_rsa_oaep_label sets |label_len| bytes from |label| as the</i></td></tr>
+<tr><th id="626">626</th><td><i> * label used in OAEP. DANGER: On success, this call takes ownership of |label|</i></td></tr>
+<tr><th id="627">627</th><td><i> * and will call |OPENSSL_free| on it when |ctx| is destroyed.</i></td></tr>
+<tr><th id="628">628</th><td><i> *</i></td></tr>
+<tr><th id="629">629</th><td><i> * Returns one on success or zero on error. */</i></td></tr>
+<tr><th id="630">630</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_set0_rsa_oaep_label" title='EVP_PKEY_CTX_set0_rsa_oaep_label' data-ref="EVP_PKEY_CTX_set0_rsa_oaep_label">EVP_PKEY_CTX_set0_rsa_oaep_label</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col8 decl" id="1228ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1228ctx">ctx</dfn>,</td></tr>
+<tr><th id="631">631</th><td>                                                    <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="1229label" title='label' data-type='const uint8_t *' data-ref="1229label">label</dfn>,</td></tr>
+<tr><th id="632">632</th><td>                                                    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="1230label_len" title='label_len' data-type='size_t' data-ref="1230label_len">label_len</dfn>);</td></tr>
+<tr><th id="633">633</th><td></td></tr>
+<tr><th id="634">634</th><td><i>/* EVP_PKEY_CTX_get0_rsa_oaep_label sets |*out_label| to point to the internal</i></td></tr>
+<tr><th id="635">635</th><td><i> * buffer containing the OAEP label (which may be NULL) and returns the length</i></td></tr>
+<tr><th id="636">636</th><td><i> * of the label or a negative value on error.</i></td></tr>
+<tr><th id="637">637</th><td><i> *</i></td></tr>
+<tr><th id="638">638</th><td><i> * WARNING: the return value differs from the usual return value convention. */</i></td></tr>
+<tr><th id="639">639</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_PKEY_CTX_get0_rsa_oaep_label" title='EVP_PKEY_CTX_get0_rsa_oaep_label' data-ref="EVP_PKEY_CTX_get0_rsa_oaep_label">EVP_PKEY_CTX_get0_rsa_oaep_label</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY_CTX" title='EVP_PKEY_CTX' data-type='struct evp_pkey_ctx_st' data-ref="EVP_PKEY_CTX">EVP_PKEY_CTX</a> *<dfn class="local col1 decl" id="1231ctx" title='ctx' data-type='EVP_PKEY_CTX *' data-ref="1231ctx">ctx</dfn>,</td></tr>
+<tr><th id="640">640</th><td>                                                    <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col2 decl" id="1232out_label" title='out_label' data-type='const uint8_t **' data-ref="1232out_label">out_label</dfn>);</td></tr>
+<tr><th id="641">641</th><td></td></tr>
+<tr><th id="642">642</th><td></td></tr>
+<tr><th id="643">643</th><td><i>/* Deprecated functions. */</i></td></tr>
+<tr><th id="644">644</th><td></td></tr>
+<tr><th id="645">645</th><td><i>/* EVP_PKEY_DH is defined for compatibility, but it is impossible to create an</i></td></tr>
+<tr><th id="646">646</th><td><i> * |EVP_PKEY| of that type. */</i></td></tr>
+<tr><th id="647">647</th><td><u>#define <dfn class="macro" id="_M/EVP_PKEY_DH" data-ref="_M/EVP_PKEY_DH">EVP_PKEY_DH</dfn> NID_dhKeyAgreement</u></td></tr>
+<tr><th id="648">648</th><td></td></tr>
+<tr><th id="649">649</th><td><i>/* OpenSSL_add_all_algorithms does nothing. */</i></td></tr>
+<tr><th id="650">650</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="OpenSSL_add_all_algorithms" title='OpenSSL_add_all_algorithms' data-ref="OpenSSL_add_all_algorithms">OpenSSL_add_all_algorithms</dfn>(<em>void</em>);</td></tr>
+<tr><th id="651">651</th><td></td></tr>
+<tr><th id="652">652</th><td><i>/* OpenSSL_add_all_ciphers does nothing. */</i></td></tr>
+<tr><th id="653">653</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="OpenSSL_add_all_ciphers" title='OpenSSL_add_all_ciphers' data-ref="OpenSSL_add_all_ciphers">OpenSSL_add_all_ciphers</dfn>(<em>void</em>);</td></tr>
+<tr><th id="654">654</th><td></td></tr>
+<tr><th id="655">655</th><td><i>/* OpenSSL_add_all_digests does nothing. */</i></td></tr>
+<tr><th id="656">656</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="OpenSSL_add_all_digests" title='OpenSSL_add_all_digests' data-ref="OpenSSL_add_all_digests">OpenSSL_add_all_digests</dfn>(<em>void</em>);</td></tr>
+<tr><th id="657">657</th><td></td></tr>
+<tr><th id="658">658</th><td><i>/* EVP_cleanup does nothing. */</i></td></tr>
+<tr><th id="659">659</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EVP_cleanup" title='EVP_cleanup' data-ref="EVP_cleanup">EVP_cleanup</dfn>(<em>void</em>);</td></tr>
+<tr><th id="660">660</th><td></td></tr>
+<tr><th id="661">661</th><td></td></tr>
+<tr><th id="662">662</th><td><i>/* Private functions */</i></td></tr>
+<tr><th id="663">663</th><td></td></tr>
+<tr><th id="664">664</th><td><i>/* EVP_PKEY_asn1_find returns the ASN.1 method table for the given |nid|, which</i></td></tr>
+<tr><th id="665">665</th><td><i> * should be one of the |EVP_PKEY_*| values. It returns NULL if |nid| is</i></td></tr>
+<tr><th id="666">666</th><td><i> * unknown. */</i></td></tr>
+<tr><th id="667">667</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY_ASN1_METHOD" title='EVP_PKEY_ASN1_METHOD' data-type='struct evp_pkey_asn1_method_st' data-ref="EVP_PKEY_ASN1_METHOD">EVP_PKEY_ASN1_METHOD</a> *<dfn class="decl" id="EVP_PKEY_asn1_find" title='EVP_PKEY_asn1_find' data-ref="EVP_PKEY_asn1_find">EVP_PKEY_asn1_find</dfn>(<a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> **<dfn class="local col3 decl" id="1233pengine" title='pengine' data-type='ENGINE **' data-ref="1233pengine">pengine</dfn>,</td></tr>
+<tr><th id="668">668</th><td>                                                              <em>int</em> <dfn class="local col4 decl" id="1234nid" title='nid' data-type='int' data-ref="1234nid">nid</dfn>);</td></tr>
+<tr><th id="669">669</th><td></td></tr>
+<tr><th id="670">670</th><td><i>/* EVP_PKEY_asn1_find_str returns an |EVP_PKEY_ASN1_METHOD| by matching values</i></td></tr>
+<tr><th id="671">671</th><td><i> * of the |len| bytes at |name|. For example, if name equals "EC" then it will</i></td></tr>
+<tr><th id="672">672</th><td><i> * return an ECC method. The |pengine| argument is ignored.</i></td></tr>
+<tr><th id="673">673</th><td><i> *</i></td></tr>
+<tr><th id="674">674</th><td><i> * TODO(fork): move to PEM? */</i></td></tr>
+<tr><th id="675">675</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY_ASN1_METHOD" title='EVP_PKEY_ASN1_METHOD' data-type='struct evp_pkey_asn1_method_st' data-ref="EVP_PKEY_ASN1_METHOD">EVP_PKEY_ASN1_METHOD</a> *<dfn class="decl" id="EVP_PKEY_asn1_find_str" title='EVP_PKEY_asn1_find_str' data-ref="EVP_PKEY_asn1_find_str">EVP_PKEY_asn1_find_str</dfn>(</td></tr>
+<tr><th id="676">676</th><td>    <a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> **<dfn class="local col5 decl" id="1235pengine" title='pengine' data-type='ENGINE **' data-ref="1235pengine">pengine</dfn>, <em>const</em> <em>char</em> *<dfn class="local col6 decl" id="1236name" title='name' data-type='const char *' data-ref="1236name">name</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="1237len" title='len' data-type='size_t' data-ref="1237len">len</dfn>);</td></tr>
+<tr><th id="677">677</th><td></td></tr>
+<tr><th id="678">678</th><td><b>struct</b> <dfn class="type def" id="evp_pkey_st" title='evp_pkey_st' data-ref="evp_pkey_st">evp_pkey_st</dfn> {</td></tr>
+<tr><th id="679">679</th><td>  <a class="typedef" href="thread.h.html#CRYPTO_refcount_t" title='CRYPTO_refcount_t' data-type='uint32_t' data-ref="CRYPTO_refcount_t">CRYPTO_refcount_t</a> <dfn class="decl" id="evp_pkey_st::references" title='evp_pkey_st::references' data-ref="evp_pkey_st::references">references</dfn>;</td></tr>
+<tr><th id="680">680</th><td></td></tr>
+<tr><th id="681">681</th><td>  <i>/* type contains one of the EVP_PKEY_* values or NID_undef and determines</i></td></tr>
+<tr><th id="682">682</th><td><i>   * which element (if any) of the |pkey| union is valid. */</i></td></tr>
+<tr><th id="683">683</th><td>  <em>int</em> <dfn class="decl" id="evp_pkey_st::type" title='evp_pkey_st::type' data-ref="evp_pkey_st::type">type</dfn>;</td></tr>
+<tr><th id="684">684</th><td></td></tr>
+<tr><th id="685">685</th><td>  <b>union</b> {</td></tr>
+<tr><th id="686">686</th><td>    <em>char</em> *<dfn class="decl" id="evp_pkey_st::(anonymous)::ptr" title='evp_pkey_st::(anonymous union)::ptr' data-ref="evp_pkey_st::(anonymous)::ptr">ptr</dfn>;</td></tr>
+<tr><th id="687">687</th><td>    <a class="typedef" href="base.h.html#RSA" title='RSA' data-type='struct rsa_st' data-ref="RSA">RSA</a> *<dfn class="decl" id="evp_pkey_st::(anonymous)::rsa" title='evp_pkey_st::(anonymous union)::rsa' data-ref="evp_pkey_st::(anonymous)::rsa">rsa</dfn>;</td></tr>
+<tr><th id="688">688</th><td>    <a class="typedef" href="base.h.html#DSA" title='DSA' data-type='struct dsa_st' data-ref="DSA">DSA</a> *<dfn class="decl" id="evp_pkey_st::(anonymous)::dsa" title='evp_pkey_st::(anonymous union)::dsa' data-ref="evp_pkey_st::(anonymous)::dsa">dsa</dfn>;</td></tr>
+<tr><th id="689">689</th><td>    <a class="typedef" href="base.h.html#DH" title='DH' data-type='struct dh_st' data-ref="DH">DH</a> *<dfn class="decl" id="evp_pkey_st::(anonymous)::dh" title='evp_pkey_st::(anonymous union)::dh' data-ref="evp_pkey_st::(anonymous)::dh">dh</dfn>;</td></tr>
+<tr><th id="690">690</th><td>    <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="evp_pkey_st::(anonymous)::ec" title='evp_pkey_st::(anonymous union)::ec' data-ref="evp_pkey_st::(anonymous)::ec">ec</dfn>;</td></tr>
+<tr><th id="691">691</th><td>  } <dfn class="decl" id="evp_pkey_st::pkey" title='evp_pkey_st::pkey' data-ref="evp_pkey_st::pkey">pkey</dfn>;</td></tr>
+<tr><th id="692">692</th><td></td></tr>
+<tr><th id="693">693</th><td>  <i>/* ameth contains a pointer to a method table that contains many ASN.1</i></td></tr>
+<tr><th id="694">694</th><td><i>   * methods for the key type. */</i></td></tr>
+<tr><th id="695">695</th><td>  <em>const</em> <a class="typedef" href="base.h.html#EVP_PKEY_ASN1_METHOD" title='EVP_PKEY_ASN1_METHOD' data-type='struct evp_pkey_asn1_method_st' data-ref="EVP_PKEY_ASN1_METHOD">EVP_PKEY_ASN1_METHOD</a> *<dfn class="decl" id="evp_pkey_st::ameth" title='evp_pkey_st::ameth' data-ref="evp_pkey_st::ameth">ameth</dfn>;</td></tr>
+<tr><th id="696">696</th><td>} <i>/* EVP_PKEY */</i>;</td></tr>
+<tr><th id="697">697</th><td></td></tr>
+<tr><th id="698">698</th><td></td></tr>
+<tr><th id="699">699</th><td><u>#<span data-ppcond="699">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="700">700</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="701">701</th><td><u>#<span data-ppcond="699">endif</span></u></td></tr>
+<tr><th id="702">702</th><td></td></tr>
+<tr><th id="703">703</th><td><u>#define <dfn class="macro" id="_M/EVP_R_BUFFER_TOO_SMALL" data-ref="_M/EVP_R_BUFFER_TOO_SMALL">EVP_R_BUFFER_TOO_SMALL</dfn> 100</u></td></tr>
+<tr><th id="704">704</th><td><u>#define <dfn class="macro" id="_M/EVP_R_COMMAND_NOT_SUPPORTED" data-ref="_M/EVP_R_COMMAND_NOT_SUPPORTED">EVP_R_COMMAND_NOT_SUPPORTED</dfn> 101</u></td></tr>
+<tr><th id="705">705</th><td><u>#define <dfn class="macro" id="_M/EVP_R_DIFFERENT_KEY_TYPES" data-ref="_M/EVP_R_DIFFERENT_KEY_TYPES">EVP_R_DIFFERENT_KEY_TYPES</dfn> 104</u></td></tr>
+<tr><th id="706">706</th><td><u>#define <dfn class="macro" id="_M/EVP_R_DIFFERENT_PARAMETERS" data-ref="_M/EVP_R_DIFFERENT_PARAMETERS">EVP_R_DIFFERENT_PARAMETERS</dfn> 105</u></td></tr>
+<tr><th id="707">707</th><td><u>#define <dfn class="macro" id="_M/EVP_R_EXPECTING_AN_EC_KEY_KEY" data-ref="_M/EVP_R_EXPECTING_AN_EC_KEY_KEY">EVP_R_EXPECTING_AN_EC_KEY_KEY</dfn> 107</u></td></tr>
+<tr><th id="708">708</th><td><u>#define <dfn class="macro" id="_M/EVP_R_EXPECTING_A_DH_KEY" data-ref="_M/EVP_R_EXPECTING_A_DH_KEY">EVP_R_EXPECTING_A_DH_KEY</dfn> 109</u></td></tr>
+<tr><th id="709">709</th><td><u>#define <dfn class="macro" id="_M/EVP_R_EXPECTING_A_DSA_KEY" data-ref="_M/EVP_R_EXPECTING_A_DSA_KEY">EVP_R_EXPECTING_A_DSA_KEY</dfn> 110</u></td></tr>
+<tr><th id="710">710</th><td><u>#define <dfn class="macro" id="_M/EVP_R_ILLEGAL_OR_UNSUPPORTED_PADDING_MODE" data-ref="_M/EVP_R_ILLEGAL_OR_UNSUPPORTED_PADDING_MODE">EVP_R_ILLEGAL_OR_UNSUPPORTED_PADDING_MODE</dfn> 111</u></td></tr>
+<tr><th id="711">711</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_CURVE" data-ref="_M/EVP_R_INVALID_CURVE">EVP_R_INVALID_CURVE</dfn> 112</u></td></tr>
+<tr><th id="712">712</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_DIGEST_LENGTH" data-ref="_M/EVP_R_INVALID_DIGEST_LENGTH">EVP_R_INVALID_DIGEST_LENGTH</dfn> 113</u></td></tr>
+<tr><th id="713">713</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_DIGEST_TYPE" data-ref="_M/EVP_R_INVALID_DIGEST_TYPE">EVP_R_INVALID_DIGEST_TYPE</dfn> 114</u></td></tr>
+<tr><th id="714">714</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_KEYBITS" data-ref="_M/EVP_R_INVALID_KEYBITS">EVP_R_INVALID_KEYBITS</dfn> 115</u></td></tr>
+<tr><th id="715">715</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_MGF1_MD" data-ref="_M/EVP_R_INVALID_MGF1_MD">EVP_R_INVALID_MGF1_MD</dfn> 116</u></td></tr>
+<tr><th id="716">716</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_PADDING_MODE" data-ref="_M/EVP_R_INVALID_PADDING_MODE">EVP_R_INVALID_PADDING_MODE</dfn> 118</u></td></tr>
+<tr><th id="717">717</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_PSS_PARAMETERS" data-ref="_M/EVP_R_INVALID_PSS_PARAMETERS">EVP_R_INVALID_PSS_PARAMETERS</dfn> 119</u></td></tr>
+<tr><th id="718">718</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_SALT_LENGTH" data-ref="_M/EVP_R_INVALID_SALT_LENGTH">EVP_R_INVALID_SALT_LENGTH</dfn> 121</u></td></tr>
+<tr><th id="719">719</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_TRAILER" data-ref="_M/EVP_R_INVALID_TRAILER">EVP_R_INVALID_TRAILER</dfn> 122</u></td></tr>
+<tr><th id="720">720</th><td><u>#define <dfn class="macro" id="_M/EVP_R_KEYS_NOT_SET" data-ref="_M/EVP_R_KEYS_NOT_SET">EVP_R_KEYS_NOT_SET</dfn> 123</u></td></tr>
+<tr><th id="721">721</th><td><u>#define <dfn class="macro" id="_M/EVP_R_MISSING_PARAMETERS" data-ref="_M/EVP_R_MISSING_PARAMETERS">EVP_R_MISSING_PARAMETERS</dfn> 124</u></td></tr>
+<tr><th id="722">722</th><td><u>#define <dfn class="macro" id="_M/EVP_R_NO_DEFAULT_DIGEST" data-ref="_M/EVP_R_NO_DEFAULT_DIGEST">EVP_R_NO_DEFAULT_DIGEST</dfn> 125</u></td></tr>
+<tr><th id="723">723</th><td><u>#define <dfn class="macro" id="_M/EVP_R_NO_KEY_SET" data-ref="_M/EVP_R_NO_KEY_SET">EVP_R_NO_KEY_SET</dfn> 126</u></td></tr>
+<tr><th id="724">724</th><td><u>#define <dfn class="macro" id="_M/EVP_R_NO_MDC2_SUPPORT" data-ref="_M/EVP_R_NO_MDC2_SUPPORT">EVP_R_NO_MDC2_SUPPORT</dfn> 127</u></td></tr>
+<tr><th id="725">725</th><td><u>#define <dfn class="macro" id="_M/EVP_R_NO_NID_FOR_CURVE" data-ref="_M/EVP_R_NO_NID_FOR_CURVE">EVP_R_NO_NID_FOR_CURVE</dfn> 128</u></td></tr>
+<tr><th id="726">726</th><td><u>#define <dfn class="macro" id="_M/EVP_R_NO_OPERATION_SET" data-ref="_M/EVP_R_NO_OPERATION_SET">EVP_R_NO_OPERATION_SET</dfn> 129</u></td></tr>
+<tr><th id="727">727</th><td><u>#define <dfn class="macro" id="_M/EVP_R_NO_PARAMETERS_SET" data-ref="_M/EVP_R_NO_PARAMETERS_SET">EVP_R_NO_PARAMETERS_SET</dfn> 130</u></td></tr>
+<tr><th id="728">728</th><td><u>#define <dfn class="macro" id="_M/EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE" data-ref="_M/EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE">EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE</dfn> 131</u></td></tr>
+<tr><th id="729">729</th><td><u>#define <dfn class="macro" id="_M/EVP_R_OPERATON_NOT_INITIALIZED" data-ref="_M/EVP_R_OPERATON_NOT_INITIALIZED">EVP_R_OPERATON_NOT_INITIALIZED</dfn> 132</u></td></tr>
+<tr><th id="730">730</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNKNOWN_DIGEST" data-ref="_M/EVP_R_UNKNOWN_DIGEST">EVP_R_UNKNOWN_DIGEST</dfn> 133</u></td></tr>
+<tr><th id="731">731</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNKNOWN_MASK_DIGEST" data-ref="_M/EVP_R_UNKNOWN_MASK_DIGEST">EVP_R_UNKNOWN_MASK_DIGEST</dfn> 134</u></td></tr>
+<tr><th id="732">732</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNSUPPORTED_ALGORITHM" data-ref="_M/EVP_R_UNSUPPORTED_ALGORITHM">EVP_R_UNSUPPORTED_ALGORITHM</dfn> 138</u></td></tr>
+<tr><th id="733">733</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNSUPPORTED_MASK_ALGORITHM" data-ref="_M/EVP_R_UNSUPPORTED_MASK_ALGORITHM">EVP_R_UNSUPPORTED_MASK_ALGORITHM</dfn> 139</u></td></tr>
+<tr><th id="734">734</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNSUPPORTED_MASK_PARAMETER" data-ref="_M/EVP_R_UNSUPPORTED_MASK_PARAMETER">EVP_R_UNSUPPORTED_MASK_PARAMETER</dfn> 140</u></td></tr>
+<tr><th id="735">735</th><td><u>#define <dfn class="macro" id="_M/EVP_R_EXPECTING_AN_RSA_KEY" data-ref="_M/EVP_R_EXPECTING_AN_RSA_KEY">EVP_R_EXPECTING_AN_RSA_KEY</dfn> 141</u></td></tr>
+<tr><th id="736">736</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_OPERATION" data-ref="_M/EVP_R_INVALID_OPERATION">EVP_R_INVALID_OPERATION</dfn> 142</u></td></tr>
+<tr><th id="737">737</th><td><u>#define <dfn class="macro" id="_M/EVP_R_DECODE_ERROR" data-ref="_M/EVP_R_DECODE_ERROR">EVP_R_DECODE_ERROR</dfn> 143</u></td></tr>
+<tr><th id="738">738</th><td><u>#define <dfn class="macro" id="_M/EVP_R_INVALID_PSS_SALTLEN" data-ref="_M/EVP_R_INVALID_PSS_SALTLEN">EVP_R_INVALID_PSS_SALTLEN</dfn> 144</u></td></tr>
+<tr><th id="739">739</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNKNOWN_PUBLIC_KEY_TYPE" data-ref="_M/EVP_R_UNKNOWN_PUBLIC_KEY_TYPE">EVP_R_UNKNOWN_PUBLIC_KEY_TYPE</dfn> 145</u></td></tr>
+<tr><th id="740">740</th><td><u>#define <dfn class="macro" id="_M/EVP_R_CONTEXT_NOT_INITIALISED" data-ref="_M/EVP_R_CONTEXT_NOT_INITIALISED">EVP_R_CONTEXT_NOT_INITIALISED</dfn> 146</u></td></tr>
+<tr><th id="741">741</th><td><u>#define <dfn class="macro" id="_M/EVP_R_DIGEST_AND_KEY_TYPE_NOT_SUPPORTED" data-ref="_M/EVP_R_DIGEST_AND_KEY_TYPE_NOT_SUPPORTED">EVP_R_DIGEST_AND_KEY_TYPE_NOT_SUPPORTED</dfn> 147</u></td></tr>
+<tr><th id="742">742</th><td><u>#define <dfn class="macro" id="_M/EVP_R_WRONG_PUBLIC_KEY_TYPE" data-ref="_M/EVP_R_WRONG_PUBLIC_KEY_TYPE">EVP_R_WRONG_PUBLIC_KEY_TYPE</dfn> 148</u></td></tr>
+<tr><th id="743">743</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNKNOWN_SIGNATURE_ALGORITHM" data-ref="_M/EVP_R_UNKNOWN_SIGNATURE_ALGORITHM">EVP_R_UNKNOWN_SIGNATURE_ALGORITHM</dfn> 149</u></td></tr>
+<tr><th id="744">744</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNKNOWN_MESSAGE_DIGEST_ALGORITHM" data-ref="_M/EVP_R_UNKNOWN_MESSAGE_DIGEST_ALGORITHM">EVP_R_UNKNOWN_MESSAGE_DIGEST_ALGORITHM</dfn> 150</u></td></tr>
+<tr><th id="745">745</th><td><u>#define <dfn class="macro" id="_M/EVP_R_BN_DECODE_ERROR" data-ref="_M/EVP_R_BN_DECODE_ERROR">EVP_R_BN_DECODE_ERROR</dfn> 151</u></td></tr>
+<tr><th id="746">746</th><td><u>#define <dfn class="macro" id="_M/EVP_R_PARAMETER_ENCODING_ERROR" data-ref="_M/EVP_R_PARAMETER_ENCODING_ERROR">EVP_R_PARAMETER_ENCODING_ERROR</dfn> 152</u></td></tr>
+<tr><th id="747">747</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE" data-ref="_M/EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE">EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE</dfn> 153</u></td></tr>
+<tr><th id="748">748</th><td><u>#define <dfn class="macro" id="_M/EVP_R_UNSUPPORTED_SIGNATURE_TYPE" data-ref="_M/EVP_R_UNSUPPORTED_SIGNATURE_TYPE">EVP_R_UNSUPPORTED_SIGNATURE_TYPE</dfn> 154</u></td></tr>
+<tr><th id="749">749</th><td></td></tr>
+<tr><th id="750">750</th><td><u>#<span data-ppcond="57">endif</span>  /* OPENSSL_HEADER_EVP_H */</u></td></tr>
+<tr><th id="751">751</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../android_compat_hacks.c.html'>codebrowser/external/boringssl/android_compat_hacks.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

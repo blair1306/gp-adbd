@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>bitmap.c source code [codebrowser/external/jemalloc/src/bitmap.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/jemalloc/src/bitmap.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>jemalloc</a>/<a href='./'>src</a>/<a href='bitmap.c.html'>bitmap.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#define	<dfn class="macro" id="_M/JEMALLOC_BITMAP_C_" data-ref="_M/JEMALLOC_BITMAP_C_">JEMALLOC_BITMAP_C_</dfn></u></td></tr>
+<tr><th id="2">2</th><td><u>#include <a href="../include/jemalloc/internal/jemalloc_internal.h.html">"jemalloc/internal/jemalloc_internal.h"</a></u></td></tr>
+<tr><th id="3">3</th><td></td></tr>
+<tr><th id="4">4</th><td><i>/******************************************************************************/</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><u>#<span data-ppcond="6">ifdef</span> <span class="macro" data-ref="_M/USE_TREE">USE_TREE</span></u></td></tr>
+<tr><th id="7">7</th><td></td></tr>
+<tr><th id="8">8</th><td><em>void</em></td></tr>
+<tr><th id="9">9</th><td>bitmap_info_init(bitmap_info_t *binfo, size_t nbits)</td></tr>
+<tr><th id="10">10</th><td>{</td></tr>
+<tr><th id="11">11</th><td>	<em>unsigned</em> i;</td></tr>
+<tr><th id="12">12</th><td>	size_t group_count;</td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td>	assert(nbits &gt; <var>0</var>);</td></tr>
+<tr><th id="15">15</th><td>	assert(nbits &lt;= (ZU(<var>1</var>) &lt;&lt; LG_BITMAP_MAXBITS));</td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td>	<i>/*</i></td></tr>
+<tr><th id="18">18</th><td><i>	 * Compute the number of groups necessary to store nbits bits, and</i></td></tr>
+<tr><th id="19">19</th><td><i>	 * progressively work upward through the levels until reaching a level</i></td></tr>
+<tr><th id="20">20</th><td><i>	 * that requires only one group.</i></td></tr>
+<tr><th id="21">21</th><td><i>	 */</i></td></tr>
+<tr><th id="22">22</th><td>	binfo-&gt;levels[<var>0</var>].group_offset = <var>0</var>;</td></tr>
+<tr><th id="23">23</th><td>	group_count = BITMAP_BITS2GROUPS(nbits);</td></tr>
+<tr><th id="24">24</th><td>	<b>for</b> (i = <var>1</var>; group_count &gt; <var>1</var>; i++) {</td></tr>
+<tr><th id="25">25</th><td>		assert(i &lt; BITMAP_MAX_LEVELS);</td></tr>
+<tr><th id="26">26</th><td>		binfo-&gt;levels[i].group_offset = binfo-&gt;levels[i-<var>1</var>].group_offset</td></tr>
+<tr><th id="27">27</th><td>		    + group_count;</td></tr>
+<tr><th id="28">28</th><td>		group_count = BITMAP_BITS2GROUPS(group_count);</td></tr>
+<tr><th id="29">29</th><td>	}</td></tr>
+<tr><th id="30">30</th><td>	binfo-&gt;levels[i].group_offset = binfo-&gt;levels[i-<var>1</var>].group_offset</td></tr>
+<tr><th id="31">31</th><td>	    + group_count;</td></tr>
+<tr><th id="32">32</th><td>	assert(binfo-&gt;levels[i].group_offset &lt;= BITMAP_GROUPS_MAX);</td></tr>
+<tr><th id="33">33</th><td>	binfo-&gt;nlevels = i;</td></tr>
+<tr><th id="34">34</th><td>	binfo-&gt;nbits = nbits;</td></tr>
+<tr><th id="35">35</th><td>}</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td><em>static</em> size_t</td></tr>
+<tr><th id="38">38</th><td>bitmap_info_ngroups(<em>const</em> bitmap_info_t *binfo)</td></tr>
+<tr><th id="39">39</th><td>{</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td>	<b>return</b> (binfo-&gt;levels[binfo-&gt;nlevels].group_offset);</td></tr>
+<tr><th id="42">42</th><td>}</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><em>void</em></td></tr>
+<tr><th id="45">45</th><td>bitmap_init(bitmap_t *bitmap, <em>const</em> bitmap_info_t *binfo)</td></tr>
+<tr><th id="46">46</th><td>{</td></tr>
+<tr><th id="47">47</th><td>	size_t extra;</td></tr>
+<tr><th id="48">48</th><td>	<em>unsigned</em> i;</td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td>	<i>/*</i></td></tr>
+<tr><th id="51">51</th><td><i>	 * Bits are actually inverted with regard to the external bitmap</i></td></tr>
+<tr><th id="52">52</th><td><i>	 * interface, so the bitmap starts out with all 1 bits, except for</i></td></tr>
+<tr><th id="53">53</th><td><i>	 * trailing unused bits (if any).  Note that each group uses bit 0 to</i></td></tr>
+<tr><th id="54">54</th><td><i>	 * correspond to the first logical bit in the group, so extra bits</i></td></tr>
+<tr><th id="55">55</th><td><i>	 * are the most significant bits of the last group.</i></td></tr>
+<tr><th id="56">56</th><td><i>	 */</i></td></tr>
+<tr><th id="57">57</th><td>	memset(bitmap, <var>0xffU</var>, bitmap_size(binfo));</td></tr>
+<tr><th id="58">58</th><td>	extra = (BITMAP_GROUP_NBITS - (binfo-&gt;nbits &amp; BITMAP_GROUP_NBITS_MASK))</td></tr>
+<tr><th id="59">59</th><td>	    &amp; BITMAP_GROUP_NBITS_MASK;</td></tr>
+<tr><th id="60">60</th><td>	<b>if</b> (extra != <var>0</var>)</td></tr>
+<tr><th id="61">61</th><td>		bitmap[binfo-&gt;levels[<var>1</var>].group_offset - <var>1</var>] &gt;&gt;= extra;</td></tr>
+<tr><th id="62">62</th><td>	<b>for</b> (i = <var>1</var>; i &lt; binfo-&gt;nlevels; i++) {</td></tr>
+<tr><th id="63">63</th><td>		size_t group_count = binfo-&gt;levels[i].group_offset -</td></tr>
+<tr><th id="64">64</th><td>		    binfo-&gt;levels[i-<var>1</var>].group_offset;</td></tr>
+<tr><th id="65">65</th><td>		extra = (BITMAP_GROUP_NBITS - (group_count &amp;</td></tr>
+<tr><th id="66">66</th><td>		    BITMAP_GROUP_NBITS_MASK)) &amp; BITMAP_GROUP_NBITS_MASK;</td></tr>
+<tr><th id="67">67</th><td>		<b>if</b> (extra != <var>0</var>)</td></tr>
+<tr><th id="68">68</th><td>			bitmap[binfo-&gt;levels[i+<var>1</var>].group_offset - <var>1</var>] &gt;&gt;= extra;</td></tr>
+<tr><th id="69">69</th><td>	}</td></tr>
+<tr><th id="70">70</th><td>}</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><u>#<span data-ppcond="6">else</span> /* USE_TREE */</u></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><em>void</em></td></tr>
+<tr><th id="75">75</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#134" title="je_bitmap_info_init" data-ref="_M/bitmap_info_init">bitmap_info_init</a>(<a class="typedef" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_t" title='bitmap_info_t' data-type='struct bitmap_info_s' data-ref="bitmap_info_t">bitmap_info_t</a> *<dfn class="local col1 decl" id="1binfo" title='binfo' data-type='bitmap_info_t *' data-ref="1binfo">binfo</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="2nbits" title='nbits' data-type='size_t' data-ref="2nbits">nbits</dfn>)</td></tr>
+<tr><th id="76">76</th><td>{</td></tr>
+<tr><th id="77">77</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="3i" title='i' data-type='size_t' data-ref="3i">i</dfn>;</td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td>	<a class="macro" href="../include/jemalloc/internal/assert.h.html#6" title="do { if (__builtin_expect(!!(config_debug &amp;&amp; !(nbits &gt; 0)), 0)) { je_malloc_printf( &quot;&lt;jemalloc&gt;: %s:%d: Failed assertion: \&quot;%s\&quot;\n&quot;, &quot;/home/jon/workspace/vandroid/external/jemalloc/src/bitmap.c&quot;, 79, &quot;nbits &gt; 0&quot;); abort(); } } while (0)" data-ref="_M/assert">assert</a>(<a class="local col2 ref" href="#2nbits" title='nbits' data-ref="2nbits">nbits</a> &gt; <var>0</var>);</td></tr>
+<tr><th id="80">80</th><td>	<a class="macro" href="../include/jemalloc/internal/assert.h.html#6" title="do { if (__builtin_expect(!!(config_debug &amp;&amp; !(nbits &lt;= (((size_t)1) &lt;&lt; (12 - 3)))), 0)) { je_malloc_printf( &quot;&lt;jemalloc&gt;: %s:%d: Failed assertion: \&quot;%s\&quot;\n&quot;, &quot;/home/jon/workspace/vandroid/external/jemalloc/src/bitmap.c&quot;, 80, &quot;nbits &lt;= (ZU(1) &lt;&lt; LG_BITMAP_MAXBITS)&quot;); abort(); } } while (0)" data-ref="_M/assert">assert</a>(<a class="local col2 ref" href="#2nbits" title='nbits' data-ref="2nbits">nbits</a> &lt;= (<a class="macro" href="../include/jemalloc/internal/jemalloc_internal_macros.h.html#41" title="((size_t)1)" data-ref="_M/ZU">ZU</a>(<var>1</var>) &lt;&lt; <a class="macro" href="../include/jemalloc/internal/bitmap.h.html#5" title="(12 - 3)" data-ref="_M/LG_BITMAP_MAXBITS">LG_BITMAP_MAXBITS</a>));</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td>	<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a> = <a class="local col2 ref" href="#2nbits" title='nbits' data-ref="2nbits">nbits</a> &gt;&gt; <a class="macro" href="../include/jemalloc/internal/bitmap.h.html#14" title="(3 + 3)" data-ref="_M/LG_BITMAP_GROUP_NBITS">LG_BITMAP_GROUP_NBITS</a>;</td></tr>
+<tr><th id="83">83</th><td>	<b>if</b> (<a class="local col2 ref" href="#2nbits" title='nbits' data-ref="2nbits">nbits</a> % <a class="macro" href="../include/jemalloc/internal/bitmap.h.html#15" title="(((size_t)1) &lt;&lt; (3 + 3))" data-ref="_M/BITMAP_GROUP_NBITS">BITMAP_GROUP_NBITS</a> != <var>0</var>)</td></tr>
+<tr><th id="84">84</th><td>		<a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>++;</td></tr>
+<tr><th id="85">85</th><td>	<a class="local col1 ref" href="#1binfo" title='binfo' data-ref="1binfo">binfo</a>-&gt;<a class="ref" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_s::ngroups" title='bitmap_info_s::ngroups' data-ref="bitmap_info_s::ngroups">ngroups</a> = <a class="local col3 ref" href="#3i" title='i' data-ref="3i">i</a>;</td></tr>
+<tr><th id="86">86</th><td>	<a class="local col1 ref" href="#1binfo" title='binfo' data-ref="1binfo">binfo</a>-&gt;<a class="ref" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_s::nbits" title='bitmap_info_s::nbits' data-ref="bitmap_info_s::nbits">nbits</a> = <a class="local col2 ref" href="#2nbits" title='nbits' data-ref="2nbits">nbits</a>;</td></tr>
+<tr><th id="87">87</th><td>}</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><em>static</em> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span></td></tr>
+<tr><th id="90">90</th><td><dfn class="tu decl def" id="bitmap_info_ngroups" title='bitmap_info_ngroups' data-type='size_t bitmap_info_ngroups(const bitmap_info_t * binfo)' data-ref="bitmap_info_ngroups">bitmap_info_ngroups</dfn>(<em>const</em> <a class="typedef" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_t" title='bitmap_info_t' data-type='struct bitmap_info_s' data-ref="bitmap_info_t">bitmap_info_t</a> *<dfn class="local col4 decl" id="4binfo" title='binfo' data-type='const bitmap_info_t *' data-ref="4binfo">binfo</dfn>)</td></tr>
+<tr><th id="91">91</th><td>{</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td>	<b>return</b> (<a class="local col4 ref" href="#4binfo" title='binfo' data-ref="4binfo">binfo</a>-&gt;<a class="ref" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_s::ngroups" title='bitmap_info_s::ngroups' data-ref="bitmap_info_s::ngroups">ngroups</a>);</td></tr>
+<tr><th id="94">94</th><td>}</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><em>void</em></td></tr>
+<tr><th id="97">97</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#135" title="je_bitmap_init" data-ref="_M/bitmap_init">bitmap_init</a>(<a class="typedef" href="../include/jemalloc/internal/bitmap.h.html#bitmap_t" title='bitmap_t' data-type='unsigned long' data-ref="bitmap_t">bitmap_t</a> *<dfn class="local col5 decl" id="5bitmap" title='bitmap' data-type='bitmap_t *' data-ref="5bitmap">bitmap</dfn>, <em>const</em> <a class="typedef" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_t" title='bitmap_info_t' data-type='struct bitmap_info_s' data-ref="bitmap_info_t">bitmap_info_t</a> *<dfn class="local col6 decl" id="6binfo" title='binfo' data-type='const bitmap_info_t *' data-ref="6binfo">binfo</dfn>)</td></tr>
+<tr><th id="98">98</th><td>{</td></tr>
+<tr><th id="99">99</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="7extra" title='extra' data-type='size_t' data-ref="7extra">extra</dfn>;</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td>	<a class="ref" href="../../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col5 ref" href="#5bitmap" title='bitmap' data-ref="5bitmap">bitmap</a>, <var>0xffU</var>, <a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#138" title="je_bitmap_size" data-ref="_M/bitmap_size">bitmap_size</a>(<a class="local col6 ref" href="#6binfo" title='binfo' data-ref="6binfo">binfo</a>));</td></tr>
+<tr><th id="102">102</th><td>	<a class="local col7 ref" href="#7extra" title='extra' data-ref="7extra">extra</a> = (<a class="local col6 ref" href="#6binfo" title='binfo' data-ref="6binfo">binfo</a>-&gt;<a class="ref" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_s::nbits" title='bitmap_info_s::nbits' data-ref="bitmap_info_s::nbits">nbits</a> % (<a class="local col6 ref" href="#6binfo" title='binfo' data-ref="6binfo">binfo</a>-&gt;<a class="ref" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_s::ngroups" title='bitmap_info_s::ngroups' data-ref="bitmap_info_s::ngroups">ngroups</a> * <a class="macro" href="../include/jemalloc/internal/bitmap.h.html#15" title="(((size_t)1) &lt;&lt; (3 + 3))" data-ref="_M/BITMAP_GROUP_NBITS">BITMAP_GROUP_NBITS</a>));</td></tr>
+<tr><th id="103">103</th><td>	<b>if</b> (<a class="local col7 ref" href="#7extra" title='extra' data-ref="7extra">extra</a> != <var>0</var>)</td></tr>
+<tr><th id="104">104</th><td>		<a class="local col5 ref" href="#5bitmap" title='bitmap' data-ref="5bitmap">bitmap</a>[<a class="local col6 ref" href="#6binfo" title='binfo' data-ref="6binfo">binfo</a>-&gt;<a class="ref" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_s::ngroups" title='bitmap_info_s::ngroups' data-ref="bitmap_info_s::ngroups">ngroups</a> - <var>1</var>] &gt;&gt;= (<a class="macro" href="../include/jemalloc/internal/bitmap.h.html#15" title="(((size_t)1) &lt;&lt; (3 + 3))" data-ref="_M/BITMAP_GROUP_NBITS">BITMAP_GROUP_NBITS</a> - <a class="local col7 ref" href="#7extra" title='extra' data-ref="7extra">extra</a>);</td></tr>
+<tr><th id="105">105</th><td>}</td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><u>#<span data-ppcond="6">endif</span> /* USE_TREE */</u></td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span></td></tr>
+<tr><th id="110">110</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#138" title="je_bitmap_size" data-ref="_M/bitmap_size">bitmap_size</a>(<em>const</em> <a class="typedef" href="../include/jemalloc/internal/bitmap.h.html#bitmap_info_t" title='bitmap_info_t' data-type='struct bitmap_info_s' data-ref="bitmap_info_t">bitmap_info_t</a> *<dfn class="local col8 decl" id="8binfo" title='binfo' data-type='const bitmap_info_t *' data-ref="8binfo">binfo</dfn>)</td></tr>
+<tr><th id="111">111</th><td>{</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td>	<b>return</b> (<a class="tu ref" href="#bitmap_info_ngroups" title='bitmap_info_ngroups' data-use='c' data-ref="bitmap_info_ngroups">bitmap_info_ngroups</a>(<a class="local col8 ref" href="#8binfo" title='binfo' data-ref="8binfo">binfo</a>) &lt;&lt; <a class="macro" href="../include/jemalloc/internal/bitmap.h.html#11" title="3" data-ref="_M/LG_SIZEOF_BITMAP">LG_SIZEOF_BITMAP</a>);</td></tr>
+<tr><th id="114">114</th><td>}</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,79 @@
+<def f='codebrowser/external/boringssl/src/include/openssl/ssl.h' l='3466' ll='3709'/>
+<size>656</size>
+<mbr r='ssl_ctx_st::method' o='0' t='const SSL_PROTOCOL_METHOD *'/>
+<mbr r='ssl_ctx_st::lock' o='64' t='CRYPTO_MUTEX'/>
+<mbr r='ssl_ctx_st::max_version' o='512' t='uint16_t'/>
+<mbr r='ssl_ctx_st::min_version' o='528' t='uint16_t'/>
+<mbr r='ssl_ctx_st::cipher_list' o='576' t='struct ssl_cipher_preference_list_st *'/>
+<mbr r='ssl_ctx_st::cipher_list_by_id' o='640' t='struct stack_st_SSL_CIPHER *'/>
+<mbr r='ssl_ctx_st::cipher_list_tls10' o='704' t='struct ssl_cipher_preference_list_st *'/>
+<mbr r='ssl_ctx_st::cipher_list_tls11' o='768' t='struct ssl_cipher_preference_list_st *'/>
+<mbr r='ssl_ctx_st::cert_store' o='832' t='X509_STORE *'/>
+<mbr r='ssl_ctx_st::sessions' o='896' t='struct lhash_st_SSL_SESSION *'/>
+<mbr r='ssl_ctx_st::session_cache_size' o='960' t='unsigned long'/>
+<mbr r='ssl_ctx_st::session_cache_head' o='1024' t='SSL_SESSION *'/>
+<mbr r='ssl_ctx_st::session_cache_tail' o='1088' t='SSL_SESSION *'/>
+<mbr r='ssl_ctx_st::handshakes_since_cache_flush' o='1152' t='int'/>
+<mbr r='ssl_ctx_st::session_cache_mode' o='1184' t='int'/>
+<mbr r='ssl_ctx_st::session_timeout' o='1216' t='long'/>
+<mbr r='ssl_ctx_st::new_session_cb' o='1280' t='int (*)(SSL *, SSL_SESSION *)'/>
+<mbr r='ssl_ctx_st::remove_session_cb' o='1344' t='void (*)(SSL_CTX *, SSL_SESSION *)'/>
+<mbr r='ssl_ctx_st::get_session_cb' o='1408' t='SSL_SESSION *(*)(SSL *, uint8_t *, int, int *)'/>
+<mbr r='ssl_ctx_st::references' o='1472' t='CRYPTO_refcount_t'/>
+<mbr r='ssl_ctx_st::app_verify_callback' o='1536' t='int (*)(X509_STORE_CTX *, void *)'/>
+<mbr r='ssl_ctx_st::app_verify_arg' o='1600' t='void *'/>
+<mbr r='ssl_ctx_st::default_passwd_callback' o='1664' t='pem_password_cb *'/>
+<mbr r='ssl_ctx_st::default_passwd_callback_userdata' o='1728' t='void *'/>
+<mbr r='ssl_ctx_st::client_cert_cb' o='1792' t='int (*)(SSL *, X509 **, EVP_PKEY **)'/>
+<mbr r='ssl_ctx_st::channel_id_cb' o='1856' t='void (*)(SSL *, EVP_PKEY **)'/>
+<mbr r='ssl_ctx_st::ex_data' o='1920' t='CRYPTO_EX_DATA'/>
+<mbr r='ssl_ctx_st::client_custom_extensions' o='1984' t='struct stack_st_SSL_CUSTOM_EXTENSION *'/>
+<mbr r='ssl_ctx_st::server_custom_extensions' o='2048' t='struct stack_st_SSL_CUSTOM_EXTENSION *'/>
+<mbr r='ssl_ctx_st::info_callback' o='2112' t='void (*)(const SSL *, int, int)'/>
+<mbr r='ssl_ctx_st::client_CA' o='2176' t='struct stack_st_X509_NAME *'/>
+<mbr r='ssl_ctx_st::options' o='2240' t='uint32_t'/>
+<mbr r='ssl_ctx_st::mode' o='2272' t='uint32_t'/>
+<mbr r='ssl_ctx_st::max_cert_list' o='2304' t='uint32_t'/>
+<mbr r='ssl_ctx_st::cert' o='2368' t='struct cert_st *'/>
+<mbr r='ssl_ctx_st::msg_callback' o='2432' t='void (*)(int, int, int, const void *, size_t, SSL *, void *)'/>
+<mbr r='ssl_ctx_st::msg_callback_arg' o='2496' t='void *'/>
+<mbr r='ssl_ctx_st::verify_mode' o='2560' t='int'/>
+<mbr r='ssl_ctx_st::sid_ctx_length' o='2592' t='unsigned int'/>
+<mbr r='ssl_ctx_st::sid_ctx' o='2624' t='uint8_t [32]'/>
+<mbr r='ssl_ctx_st::default_verify_callback' o='2880' t='int (*)(int, X509_STORE_CTX *)'/>
+<mbr r='ssl_ctx_st::param' o='2944' t='X509_VERIFY_PARAM *'/>
+<mbr r='ssl_ctx_st::select_certificate_cb' o='3008' t='int (*)(const struct ssl_early_callback_ctx *)'/>
+<mbr r='ssl_ctx_st::dos_protection_cb' o='3072' t='int (*)(const struct ssl_early_callback_ctx *)'/>
+<mbr r='ssl_ctx_st::max_send_fragment' o='3136' t='uint16_t'/>
+<mbr r='ssl_ctx_st::tlsext_servername_callback' o='3200' t='int (*)(SSL *, int *, void *)'/>
+<mbr r='ssl_ctx_st::tlsext_servername_arg' o='3264' t='void *'/>
+<mbr r='ssl_ctx_st::tlsext_tick_key_name' o='3328' t='uint8_t [16]'/>
+<mbr r='ssl_ctx_st::tlsext_tick_hmac_key' o='3456' t='uint8_t [16]'/>
+<mbr r='ssl_ctx_st::tlsext_tick_aes_key' o='3584' t='uint8_t [16]'/>
+<mbr r='ssl_ctx_st::tlsext_ticket_key_cb' o='3712' t='int (*)(SSL *, uint8_t *, uint8_t *, EVP_CIPHER_CTX *, HMAC_CTX *, int)'/>
+<mbr r='ssl_ctx_st::psk_identity_hint' o='3776' t='char *'/>
+<mbr r='ssl_ctx_st::psk_client_callback' o='3840' t='unsigned int (*)(SSL *, const char *, char *, unsigned int, uint8_t *, unsigned int)'/>
+<mbr r='ssl_ctx_st::psk_server_callback' o='3904' t='unsigned int (*)(SSL *, const char *, uint8_t *, unsigned int)'/>
+<mbr r='ssl_ctx_st::retain_only_sha256_of_client_certs' o='3968' t='char'/>
+<mbr r='ssl_ctx_st::next_protos_advertised_cb' o='4032' t='int (*)(SSL *, const uint8_t **, unsigned int *, void *)'/>
+<mbr r='ssl_ctx_st::next_protos_advertised_cb_arg' o='4096' t='void *'/>
+<mbr r='ssl_ctx_st::next_proto_select_cb' o='4160' t='int (*)(SSL *, uint8_t **, uint8_t *, const uint8_t *, unsigned int, void *)'/>
+<mbr r='ssl_ctx_st::next_proto_select_cb_arg' o='4224' t='void *'/>
+<mbr r='ssl_ctx_st::alpn_select_cb' o='4288' t='int (*)(SSL *, const uint8_t **, uint8_t *, const uint8_t *, unsigned int, void *)'/>
+<mbr r='ssl_ctx_st::alpn_select_cb_arg' o='4352' t='void *'/>
+<mbr r='ssl_ctx_st::alpn_client_proto_list' o='4416' t='uint8_t *'/>
+<mbr r='ssl_ctx_st::alpn_client_proto_list_len' o='4480' t='unsigned int'/>
+<mbr r='ssl_ctx_st::srtp_profiles' o='4544' t='struct stack_st_SRTP_PROTECTION_PROFILE *'/>
+<mbr r='ssl_ctx_st::tlsext_ellipticcurvelist_length' o='4608' t='size_t'/>
+<mbr r='ssl_ctx_st::tlsext_ellipticcurvelist' o='4672' t='uint16_t *'/>
+<mbr r='ssl_ctx_st::tlsext_channel_id_private' o='4736' t='EVP_PKEY *'/>
+<mbr r='ssl_ctx_st::signed_cert_timestamp_list' o='4800' t='uint8_t *'/>
+<mbr r='ssl_ctx_st::signed_cert_timestamp_list_length' o='4864' t='size_t'/>
+<mbr r='ssl_ctx_st::ocsp_response' o='4928' t='uint8_t *'/>
+<mbr r='ssl_ctx_st::ocsp_response_length' o='4992' t='size_t'/>
+<mbr r='ssl_ctx_st::keylog_callback' o='5056' t='void (*)(const SSL *, const char *)'/>
+<mbr r='ssl_ctx_st::current_time_cb' o='5120' t='void (*)(const SSL *, struct timeval *)'/>
+<mbr r='ssl_ctx_st::quiet_shutdown' o='5184' t='unsigned int'/>
+<mbr r='ssl_ctx_st::ocsp_stapling_enabled' o='5185' t='unsigned int'/>
+<mbr r='ssl_ctx_st::signed_cert_timestamps_enabled' o='5186' t='unsigned int'/>
+<mbr r='ssl_ctx_st::tlsext_channel_id_enabled' o='5187' t='unsigned int'/>

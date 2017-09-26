@@ -1,0 +1,11 @@
+<dec f='codebrowser/system/core/include/cutils/sockets.h' l='173' type='bool socket_peer_is_trusted(int fd)'/>
+<doc f='codebrowser/system/core/include/cutils/sockets.h' l='164'>/*
+ * socket_peer_is_trusted - Takes a socket which is presumed to be a
+ * connected local socket (e.g. AF_LOCAL) and returns whether the peer
+ * (the userid that owns the process on the other end of that socket)
+ * is one of the two trusted userids, root or shell.
+ *
+ * Note: This only works as advertised on the Android OS and always
+ * just returns true when called on other operating systems.
+ */</doc>
+<def f='codebrowser/system/core/libcutils/sockets_unix.cpp' l='31' ll='49' macro='1' type='bool socket_peer_is_trusted(int fd)'/>

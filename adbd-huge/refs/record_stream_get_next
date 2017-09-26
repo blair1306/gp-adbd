@@ -1,0 +1,15 @@
+<dec f='codebrowser/system/core/include/cutils/record_stream.h' l='34' type='int record_stream_get_next(RecordStream * p_rs, void ** p_outRecord, size_t * p_outRecordLen)'/>
+<def f='codebrowser/system/core/libcutils/record_stream.c' l='127' ll='186' type='int record_stream_get_next(RecordStream * p_rs, void ** p_outRecord, size_t * p_outRecordLen)'/>
+<doc f='codebrowser/system/core/libcutils/record_stream.c' l='114'>/**
+ * Reads the next record from stream fd
+ * Records are prefixed by a 16-bit big endian length value
+ * Records may not be larger than maxRecordLen
+ *
+ * Doesn&apos;t guard against EINTR
+ *
+ * p_outRecord and p_outRecordLen may not be NULL
+ *
+ * Return 0 on success, -1 on fail
+ * Returns 0 with *p_outRecord set to NULL on end of stream
+ * Returns -1 / errno = EAGAIN if it needs to read again
+ */</doc>

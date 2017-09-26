@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>config_read.c source code [codebrowser/system/core/liblog/config_read.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/liblog/config_read.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>liblog</a>/<a href='config_read.c.html'>config_read.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2016 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="config_read.h.html">"config_read.h"</a></u></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="logger.h.html">"logger.h"</a></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><a class="macro" href="log_portability.h.html#29" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/LIBLOG_HIDDEN">LIBLOG_HIDDEN</a> <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> <dfn class="decl def" id="__android_log_transport_read" title='__android_log_transport_read' data-ref="__android_log_transport_read">__android_log_transport_read</dfn> =</td></tr>
+<tr><th id="21">21</th><td>    { &amp;<a class="ref" href="config_read.h.html#__android_log_transport_read" title='__android_log_transport_read' data-ref="__android_log_transport_read">__android_log_transport_read</a>, &amp;<a class="ref" href="config_read.h.html#__android_log_transport_read" title='__android_log_transport_read' data-ref="__android_log_transport_read">__android_log_transport_read</a> };</td></tr>
+<tr><th id="22">22</th><td><a class="macro" href="log_portability.h.html#29" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/LIBLOG_HIDDEN">LIBLOG_HIDDEN</a> <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> <dfn class="decl def" id="__android_log_persist_read" title='__android_log_persist_read' data-ref="__android_log_persist_read">__android_log_persist_read</dfn> =</td></tr>
+<tr><th id="23">23</th><td>    { &amp;<a class="ref" href="config_read.h.html#__android_log_persist_read" title='__android_log_persist_read' data-ref="__android_log_persist_read">__android_log_persist_read</a>, &amp;<a class="ref" href="config_read.h.html#__android_log_persist_read" title='__android_log_persist_read' data-ref="__android_log_persist_read">__android_log_persist_read</a> };</td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="__android_log_add_transport" title='__android_log_add_transport' data-type='void __android_log_add_transport(struct listnode * list, struct android_log_transport_read * transport)' data-ref="__android_log_add_transport">__android_log_add_transport</dfn>(</td></tr>
+<tr><th id="26">26</th><td>        <b>struct</b> <a class="type" href="../include/cutils/list.h.html#listnode" title='listnode' data-ref="listnode">listnode</a> *<dfn class="local col0 decl" id="70list" title='list' data-type='struct listnode *' data-ref="70list">list</dfn>, <b>struct</b> <a class="type" href="logger.h.html#android_log_transport_read" title='android_log_transport_read' data-ref="android_log_transport_read">android_log_transport_read</a> *<dfn class="local col1 decl" id="71transport" title='transport' data-type='struct android_log_transport_read *' data-ref="71transport">transport</dfn>) {</td></tr>
+<tr><th id="27">27</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="72i" title='i' data-type='size_t' data-ref="72i">i</dfn>;</td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td>    <i>/* Try to keep one functioning transport for each log buffer id */</i></td></tr>
+<tr><th id="30">30</th><td>    <b>for</b> (<a class="local col2 ref" href="#72i" title='i' data-ref="72i">i</a> = <a class="enum" href="../include/log/log.h.html#log_id::LOG_ID_MIN" title='log_id::LOG_ID_MIN' data-ref="log_id::LOG_ID_MIN">LOG_ID_MIN</a>; <a class="local col2 ref" href="#72i" title='i' data-ref="72i">i</a> &lt; <a class="enum" href="../include/log/log.h.html#log_id::LOG_ID_MAX" title='log_id::LOG_ID_MAX' data-ref="log_id::LOG_ID_MAX">LOG_ID_MAX</a>; <a class="local col2 ref" href="#72i" title='i' data-ref="72i">i</a>++) {</td></tr>
+<tr><th id="31">31</th><td>        <b>struct</b> <a class="type" href="logger.h.html#android_log_transport_read" title='android_log_transport_read' data-ref="android_log_transport_read">android_log_transport_read</a> *<dfn class="local col3 decl" id="73transp" title='transp' data-type='struct android_log_transport_read *' data-ref="73transp">transp</dfn>;</td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td>        <b>if</b> (<a class="macro" href="../include/cutils/list.h.html#80" title="((list) == (list)-&gt;next)" data-ref="_M/list_empty">list_empty</a>(<a class="local col0 ref" href="#70list" title='list' data-ref="70list">list</a>)) {</td></tr>
+<tr><th id="34">34</th><td>            <b>if</b> (!<a class="local col1 ref" href="#71transport" title='transport' data-ref="71transport">transport</a>-&gt;<a class="ref" href="logger.h.html#android_log_transport_read::available" title='android_log_transport_read::available' data-ref="android_log_transport_read::available">available</a> || ((*<a class="local col1 ref" href="#71transport" title='transport' data-ref="71transport">transport</a>-&gt;<a class="ref" href="logger.h.html#android_log_transport_read::available" title='android_log_transport_read::available' data-ref="android_log_transport_read::available">available</a>)(<a class="local col2 ref" href="#72i" title='i' data-ref="72i">i</a>) &gt;= <var>0</var>)) {</td></tr>
+<tr><th id="35">35</th><td>                <a class="ref" href="../include/cutils/list.h.html#list_add_tail" title='list_add_tail' data-ref="list_add_tail">list_add_tail</a>(<a class="local col0 ref" href="#70list" title='list' data-ref="70list">list</a>, &amp;<a class="local col1 ref" href="#71transport" title='transport' data-ref="71transport">transport</a>-&gt;<a class="ref" href="logger.h.html#android_log_transport_read::node" title='android_log_transport_read::node' data-ref="android_log_transport_read::node">node</a>);</td></tr>
+<tr><th id="36">36</th><td>                <b>return</b>;</td></tr>
+<tr><th id="37">37</th><td>            }</td></tr>
+<tr><th id="38">38</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="39">39</th><td>            <a class="macro" href="config_read.h.html#29" title="for (transp = (struct android_log_transport_read *) (((char*) ((list)-&gt;next)) - __builtin_offsetof(struct android_log_transport_read, node)); (transp != (struct android_log_transport_read *) (((char*) (list)) - __builtin_offsetof(struct android_log_transport_read, node))); transp = (struct android_log_transport_read *) (((char*) (transp-&gt;node.next)) - __builtin_offsetof(struct android_log_transport_read, node)))" data-ref="_M/read_transport_for_each">read_transport_for_each</a>(<a class="local col3 ref" href="#73transp" title='transp' data-ref="73transp">transp</a>, <a class="local col0 ref" href="#70list" title='list' data-ref="70list">list</a>) {</td></tr>
+<tr><th id="40">40</th><td>                <b>if</b> (!<a class="local col3 ref" href="#73transp" title='transp' data-ref="73transp">transp</a>-&gt;<a class="ref" href="logger.h.html#android_log_transport_read::available" title='android_log_transport_read::available' data-ref="android_log_transport_read::available">available</a>) {</td></tr>
+<tr><th id="41">41</th><td>                    <b>return</b>;</td></tr>
+<tr><th id="42">42</th><td>                }</td></tr>
+<tr><th id="43">43</th><td>                <b>if</b> (((*<a class="local col3 ref" href="#73transp" title='transp' data-ref="73transp">transp</a>-&gt;<a class="ref" href="logger.h.html#android_log_transport_read::available" title='android_log_transport_read::available' data-ref="android_log_transport_read::available">available</a>)(<a class="local col2 ref" href="#72i" title='i' data-ref="72i">i</a>) &lt; <var>0</var>) &amp;&amp;</td></tr>
+<tr><th id="44">44</th><td>                        (!<a class="local col1 ref" href="#71transport" title='transport' data-ref="71transport">transport</a>-&gt;<a class="ref" href="logger.h.html#android_log_transport_read::available" title='android_log_transport_read::available' data-ref="android_log_transport_read::available">available</a> ||</td></tr>
+<tr><th id="45">45</th><td>                            ((*<a class="local col1 ref" href="#71transport" title='transport' data-ref="71transport">transport</a>-&gt;<a class="ref" href="logger.h.html#android_log_transport_read::available" title='android_log_transport_read::available' data-ref="android_log_transport_read::available">available</a>)(<a class="local col2 ref" href="#72i" title='i' data-ref="72i">i</a>) &gt;= <var>0</var>))) {</td></tr>
+<tr><th id="46">46</th><td>                    <a class="ref" href="../include/cutils/list.h.html#list_add_tail" title='list_add_tail' data-ref="list_add_tail">list_add_tail</a>(<a class="local col0 ref" href="#70list" title='list' data-ref="70list">list</a>, &amp;<a class="local col1 ref" href="#71transport" title='transport' data-ref="71transport">transport</a>-&gt;<a class="ref" href="logger.h.html#android_log_transport_read::node" title='android_log_transport_read::node' data-ref="android_log_transport_read::node">node</a>);</td></tr>
+<tr><th id="47">47</th><td>                    <b>return</b>;</td></tr>
+<tr><th id="48">48</th><td>                }</td></tr>
+<tr><th id="49">49</th><td>            }</td></tr>
+<tr><th id="50">50</th><td>        }</td></tr>
+<tr><th id="51">51</th><td>    }</td></tr>
+<tr><th id="52">52</th><td>}</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><a class="macro" href="log_portability.h.html#29" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/LIBLOG_HIDDEN">LIBLOG_HIDDEN</a> <em>void</em> <dfn class="decl def" id="__android_log_config_read" title='__android_log_config_read' data-ref="__android_log_config_read">__android_log_config_read</dfn>() {</td></tr>
+<tr><th id="55">55</th><td><u>#<span data-ppcond="55">if</span> (FAKE_LOG_DEVICE == 0)</u></td></tr>
+<tr><th id="56">56</th><td>    <b>extern</b> <b>struct</b> <a class="type" href="logger.h.html#android_log_transport_read" title='android_log_transport_read' data-ref="android_log_transport_read">android_log_transport_read</a> <dfn class="decl" id="logdLoggerRead" title='logdLoggerRead' data-ref="logdLoggerRead">logdLoggerRead</dfn>;</td></tr>
+<tr><th id="57">57</th><td>    <b>extern</b> <b>struct</b> <a class="type" href="logger.h.html#android_log_transport_read" title='android_log_transport_read' data-ref="android_log_transport_read">android_log_transport_read</a> <dfn class="decl" id="pmsgLoggerRead" title='pmsgLoggerRead' data-ref="pmsgLoggerRead">pmsgLoggerRead</dfn>;</td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td>    <a class="tu ref" href="#__android_log_add_transport" title='__android_log_add_transport' data-use='c' data-ref="__android_log_add_transport">__android_log_add_transport</a>(&amp;<a class="ref" href="config_read.h.html#__android_log_transport_read" title='__android_log_transport_read' data-ref="__android_log_transport_read">__android_log_transport_read</a>, &amp;<a class="ref" href="#logdLoggerRead" title='logdLoggerRead' data-ref="logdLoggerRead">logdLoggerRead</a>);</td></tr>
+<tr><th id="60">60</th><td>    <a class="tu ref" href="#__android_log_add_transport" title='__android_log_add_transport' data-use='c' data-ref="__android_log_add_transport">__android_log_add_transport</a>(&amp;<a class="ref" href="config_read.h.html#__android_log_persist_read" title='__android_log_persist_read' data-ref="__android_log_persist_read">__android_log_persist_read</a>, &amp;<a class="ref" href="#pmsgLoggerRead" title='pmsgLoggerRead' data-ref="pmsgLoggerRead">pmsgLoggerRead</a>);</td></tr>
+<tr><th id="61">61</th><td><u>#<span data-ppcond="55">endif</span></u></td></tr>
+<tr><th id="62">62</th><td>}</td></tr>
+<tr><th id="63">63</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

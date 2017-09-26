@@ -1,0 +1,20 @@
+<dec f='codebrowser/external/jemalloc/include/jemalloc/internal/prng.h' l='22'/>
+<use f='codebrowser/external/jemalloc/include/jemalloc/internal/prng.h' l='51' u='c'/>
+<doc f='codebrowser/external/jemalloc/include/jemalloc/internal/prng.h' l='4'>/*
+ * Simple linear congruential pseudo-random number generator:
+ *
+ *   prng(y) = (a*x + c) % m
+ *
+ * where the following constants ensure maximal period:
+ *
+ *   a == Odd number (relatively prime to 2^n), and (a-1) is a multiple of 4.
+ *   c == Odd number (relatively prime to 2^n).
+ *   m == 2^32
+ *
+ * See Knuth&apos;s TAOCP 3rd Ed., Vol. 2, pg. 17 for details on these constraints.
+ *
+ * This choice of m has the disadvantage that the quality of the bits is
+ * proportional to bit position.  For example, the lowest bit has a cycle of 2,
+ * the next has a cycle of 4, etc.  For this reason, we prefer to use the upper
+ * bits.
+ */</doc>

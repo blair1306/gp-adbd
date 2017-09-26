@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>res_stats.c source code [codebrowser/bionic/libc/dns/resolv/res_stats.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/dns/resolv/res_stats.c'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>bionic</a>/<a href='../..'>libc</a>/<a href='..'>dns</a>/<a href='./'>resolv</a>/<a href='res_stats.c.html'>res_stats.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2016 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include &lt;stdbool.h&gt;</u></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="../../include/arpa/nameser.h.html">&lt;arpa/nameser.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="../../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../include/resolv_stats.h.html">"resolv_stats.h"</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../private/libc_logging.h.html">"private/libc_logging.h"</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../upstream-netbsd/lib/libc/include/isc/eventlib.h.html">"isc/eventlib.h"</a></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><u>#define <dfn class="macro" id="_M/DBG" data-ref="_M/DBG">DBG</dfn> 1</u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><i>/* Calculate the round-trip-time from start time t0 and end time t1. */</i></td></tr>
+<tr><th id="28">28</th><td><em>int</em></td></tr>
+<tr><th id="29">29</th><td><dfn class="decl def" id="_res_stats_calculate_rtt" title='_res_stats_calculate_rtt' data-ref="_res_stats_calculate_rtt">_res_stats_calculate_rtt</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/time.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>* <dfn class="local col1 decl" id="1t1" title='t1' data-type='const struct timespec *' data-ref="1t1">t1</dfn>, <em>const</em> <b>struct</b> <a class="type" href="../../kernel/uapi/linux/time.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>* <dfn class="local col2 decl" id="2t0" title='t0' data-type='const struct timespec *' data-ref="2t0">t0</dfn>) {</td></tr>
+<tr><th id="30">30</th><td>    <i>// Divide ns by one million to get ms, multiply s by thousand to get ms (obvious)</i></td></tr>
+<tr><th id="31">31</th><td>    <em>long</em> <dfn class="local col3 decl" id="3ms0" title='ms0' data-type='long' data-ref="3ms0">ms0</dfn> = <a class="local col2 ref" href="#2t0" title='t0' data-ref="2t0">t0</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/time.h.html#timespec::tv_sec" title='timespec::tv_sec' data-ref="timespec::tv_sec">tv_sec</a> * <var>1000</var> + <a class="local col2 ref" href="#2t0" title='t0' data-ref="2t0">t0</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/time.h.html#timespec::tv_nsec" title='timespec::tv_nsec' data-ref="timespec::tv_nsec">tv_nsec</a> / <var>1000000</var>;</td></tr>
+<tr><th id="32">32</th><td>    <em>long</em> <dfn class="local col4 decl" id="4ms1" title='ms1' data-type='long' data-ref="4ms1">ms1</dfn> = <a class="local col1 ref" href="#1t1" title='t1' data-ref="1t1">t1</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/time.h.html#timespec::tv_sec" title='timespec::tv_sec' data-ref="timespec::tv_sec">tv_sec</a> * <var>1000</var> + <a class="local col1 ref" href="#1t1" title='t1' data-ref="1t1">t1</a>-&gt;<a class="ref" href="../../kernel/uapi/linux/time.h.html#timespec::tv_nsec" title='timespec::tv_nsec' data-ref="timespec::tv_nsec">tv_nsec</a> / <var>1000000</var>;</td></tr>
+<tr><th id="33">33</th><td>    <b>return</b> (<em>int</em>) (<a class="local col4 ref" href="#4ms1" title='ms1' data-ref="4ms1">ms1</a> - <a class="local col3 ref" href="#3ms0" title='ms0' data-ref="3ms0">ms0</a>);</td></tr>
+<tr><th id="34">34</th><td>}</td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><i>/* Create a sample for calculating server reachability statistics. */</i></td></tr>
+<tr><th id="37">37</th><td><em>void</em></td></tr>
+<tr><th id="38">38</th><td><dfn class="decl def" id="_res_stats_set_sample" title='_res_stats_set_sample' data-ref="_res_stats_set_sample">_res_stats_set_sample</dfn>(<b>struct</b> <a class="type" href="../include/resolv_stats.h.html#__res_sample" title='__res_sample' data-ref="__res_sample">__res_sample</a>* <dfn class="local col5 decl" id="5sample" title='sample' data-type='struct __res_sample *' data-ref="5sample">sample</dfn>, <a class="typedef" href="../../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="local col6 decl" id="6now" title='now' data-type='time_t' data-ref="6now">now</dfn>, <em>int</em> <dfn class="local col7 decl" id="7rcode" title='rcode' data-type='int' data-ref="7rcode">rcode</dfn>, <em>int</em> <dfn class="local col8 decl" id="8rtt" title='rtt' data-type='int' data-ref="8rtt">rtt</dfn>)</td></tr>
+<tr><th id="39">39</th><td>{</td></tr>
+<tr><th id="40">40</th><td>    <b>if</b> (<a class="macro" href="#25" title="1" data-ref="_M/DBG">DBG</a>) {</td></tr>
+<tr><th id="41">41</th><td>        <a class="ref" href="../../private/libc_logging.h.html#__libc_format_log" title='__libc_format_log' data-ref="__libc_format_log">__libc_format_log</a>(<a class="enum" href="../../private/libc_logging.h.html#ANDROID_LOG_INFO" title='ANDROID_LOG_INFO' data-ref="ANDROID_LOG_INFO">ANDROID_LOG_INFO</a>, <q>"libc"</q>, <q>"rcode = %d, sec = %d"</q>, <a class="local col7 ref" href="#7rcode" title='rcode' data-ref="7rcode">rcode</a>, <a class="local col8 ref" href="#8rtt" title='rtt' data-ref="8rtt">rtt</a>);</td></tr>
+<tr><th id="42">42</th><td>    }</td></tr>
+<tr><th id="43">43</th><td>    <a class="local col5 ref" href="#5sample" title='sample' data-ref="5sample">sample</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_sample::at" title='__res_sample::at' data-ref="__res_sample::at">at</a> = <a class="local col6 ref" href="#6now" title='now' data-ref="6now">now</a>;</td></tr>
+<tr><th id="44">44</th><td>    <a class="local col5 ref" href="#5sample" title='sample' data-ref="5sample">sample</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_sample::rcode" title='__res_sample::rcode' data-ref="__res_sample::rcode">rcode</a> = <a class="local col7 ref" href="#7rcode" title='rcode' data-ref="7rcode">rcode</a>;</td></tr>
+<tr><th id="45">45</th><td>    <a class="local col5 ref" href="#5sample" title='sample' data-ref="5sample">sample</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_sample::rtt" title='__res_sample::rtt' data-ref="__res_sample::rtt">rtt</a> = <a class="local col8 ref" href="#8rtt" title='rtt' data-ref="8rtt">rtt</a>;</td></tr>
+<tr><th id="46">46</th><td>}</td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><i>/* Clears all stored samples for the given server. */</i></td></tr>
+<tr><th id="49">49</th><td><em>void</em></td></tr>
+<tr><th id="50">50</th><td><dfn class="decl def" id="_res_stats_clear_samples" title='_res_stats_clear_samples' data-ref="_res_stats_clear_samples">_res_stats_clear_samples</dfn>(<b>struct</b> <a class="type" href="../include/resolv_stats.h.html#__res_stats" title='__res_stats' data-ref="__res_stats">__res_stats</a>* <dfn class="local col9 decl" id="9stats" title='stats' data-type='struct __res_stats *' data-ref="9stats">stats</dfn>)</td></tr>
+<tr><th id="51">51</th><td>{</td></tr>
+<tr><th id="52">52</th><td>    <a class="local col9 ref" href="#9stats" title='stats' data-ref="9stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::sample_count" title='__res_stats::sample_count' data-ref="__res_stats::sample_count">sample_count</a> = <a class="local col9 ref" href="#9stats" title='stats' data-ref="9stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::sample_next" title='__res_stats::sample_next' data-ref="__res_stats::sample_next">sample_next</a> = <var>0</var>;</td></tr>
+<tr><th id="53">53</th><td>}</td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><i>/* Aggregates the reachability statistics for the given server based on on the stored samples. */</i></td></tr>
+<tr><th id="56">56</th><td><em>void</em></td></tr>
+<tr><th id="57">57</th><td><dfn class="decl def" id="_res_stats_aggregate" title='_res_stats_aggregate' data-ref="_res_stats_aggregate">_res_stats_aggregate</dfn>(<b>struct</b> <a class="type" href="../include/resolv_stats.h.html#__res_stats" title='__res_stats' data-ref="__res_stats">__res_stats</a>* <dfn class="local col0 decl" id="10stats" title='stats' data-type='struct __res_stats *' data-ref="10stats">stats</dfn>, <em>int</em>* <dfn class="local col1 decl" id="11successes" title='successes' data-type='int *' data-ref="11successes">successes</dfn>, <em>int</em>* <dfn class="local col2 decl" id="12errors" title='errors' data-type='int *' data-ref="12errors">errors</dfn>, <em>int</em>* <dfn class="local col3 decl" id="13timeouts" title='timeouts' data-type='int *' data-ref="13timeouts">timeouts</dfn>,</td></tr>
+<tr><th id="58">58</th><td>             <em>int</em>* <dfn class="local col4 decl" id="14internal_errors" title='internal_errors' data-type='int *' data-ref="14internal_errors">internal_errors</dfn>, <em>int</em>* <dfn class="local col5 decl" id="15rtt_avg" title='rtt_avg' data-type='int *' data-ref="15rtt_avg">rtt_avg</dfn>, <a class="typedef" href="../../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>* <dfn class="local col6 decl" id="16last_sample_time" title='last_sample_time' data-type='time_t *' data-ref="16last_sample_time">last_sample_time</dfn>)</td></tr>
+<tr><th id="59">59</th><td>{</td></tr>
+<tr><th id="60">60</th><td>    <em>int</em> <dfn class="local col7 decl" id="17s" title='s' data-type='int' data-ref="17s">s</dfn> = <var>0</var>;   <i>// successes</i></td></tr>
+<tr><th id="61">61</th><td>    <em>int</em> <dfn class="local col8 decl" id="18e" title='e' data-type='int' data-ref="18e">e</dfn> = <var>0</var>;   <i>// errors</i></td></tr>
+<tr><th id="62">62</th><td>    <em>int</em> <dfn class="local col9 decl" id="19t" title='t' data-type='int' data-ref="19t">t</dfn> = <var>0</var>;   <i>// timouts</i></td></tr>
+<tr><th id="63">63</th><td>    <em>int</em> <dfn class="local col0 decl" id="20ie" title='ie' data-type='int' data-ref="20ie">ie</dfn> = <var>0</var>;  <i>// internal errors</i></td></tr>
+<tr><th id="64">64</th><td>    <em>long</em> <dfn class="local col1 decl" id="21rtt_sum" title='rtt_sum' data-type='long' data-ref="21rtt_sum">rtt_sum</dfn> = <var>0</var>;</td></tr>
+<tr><th id="65">65</th><td>    <a class="typedef" href="../../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="local col2 decl" id="22last" title='last' data-type='time_t' data-ref="22last">last</dfn> = <var>0</var>;</td></tr>
+<tr><th id="66">66</th><td>    <em>int</em> <dfn class="local col3 decl" id="23rtt_count" title='rtt_count' data-type='int' data-ref="23rtt_count">rtt_count</dfn> = <var>0</var>;</td></tr>
+<tr><th id="67">67</th><td>    <b>for</b> (<em>int</em> <dfn class="local col4 decl" id="24i" title='i' data-type='int' data-ref="24i">i</dfn> = <var>0</var> ; <a class="local col4 ref" href="#24i" title='i' data-ref="24i">i</a> &lt; <a class="local col0 ref" href="#10stats" title='stats' data-ref="10stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::sample_count" title='__res_stats::sample_count' data-ref="__res_stats::sample_count">sample_count</a> ; ++<a class="local col4 ref" href="#24i" title='i' data-ref="24i">i</a>) {</td></tr>
+<tr><th id="68">68</th><td>        <i>// Treat everything as an error that the code in send_dg() already considers a</i></td></tr>
+<tr><th id="69">69</th><td><i>        // rejection by the server, i.e. SERVFAIL, NOTIMP and REFUSED. Assume that NXDOMAIN</i></td></tr>
+<tr><th id="70">70</th><td><i>        // and NOTAUTH can actually occur for user queries. NOERROR with empty answer section</i></td></tr>
+<tr><th id="71">71</th><td><i>        // is not treated as an error here either. FORMERR seems to sometimes be returned by</i></td></tr>
+<tr><th id="72">72</th><td><i>        // some versions of BIND in response to DNSSEC or EDNS0. Whether to treat such responses</i></td></tr>
+<tr><th id="73">73</th><td><i>        // as an indication of a broken server is unclear, though. For now treat such responses,</i></td></tr>
+<tr><th id="74">74</th><td><i>        // as well as unknown codes as errors.</i></td></tr>
+<tr><th id="75">75</th><td>        <b>switch</b> (<a class="local col0 ref" href="#10stats" title='stats' data-ref="10stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::samples" title='__res_stats::samples' data-ref="__res_stats::samples">samples</a>[<a class="local col4 ref" href="#24i" title='i' data-ref="24i">i</a>].<a class="ref" href="../include/resolv_stats.h.html#__res_sample::rcode" title='__res_sample::rcode' data-ref="__res_sample::rcode">rcode</a>) {</td></tr>
+<tr><th id="76">76</th><td>        <b>case</b> <a class="macro" href="../../include/arpa/nameser_compat.h.html#117" title="ns_r_noerror" data-ref="_M/NOERROR">NOERROR</a>:</td></tr>
+<tr><th id="77">77</th><td>        <b>case</b> <a class="macro" href="../../include/arpa/nameser_compat.h.html#126" title="ns_r_notauth" data-ref="_M/NOTAUTH">NOTAUTH</a>:</td></tr>
+<tr><th id="78">78</th><td>        <b>case</b> <a class="macro" href="../../include/arpa/nameser_compat.h.html#120" title="ns_r_nxdomain" data-ref="_M/NXDOMAIN">NXDOMAIN</a>:</td></tr>
+<tr><th id="79">79</th><td>            ++<a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a>;</td></tr>
+<tr><th id="80">80</th><td>            <a class="local col1 ref" href="#21rtt_sum" title='rtt_sum' data-ref="21rtt_sum">rtt_sum</a> += <a class="local col0 ref" href="#10stats" title='stats' data-ref="10stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::samples" title='__res_stats::samples' data-ref="__res_stats::samples">samples</a>[<a class="local col4 ref" href="#24i" title='i' data-ref="24i">i</a>].<a class="ref" href="../include/resolv_stats.h.html#__res_sample::rtt" title='__res_sample::rtt' data-ref="__res_sample::rtt">rtt</a>;</td></tr>
+<tr><th id="81">81</th><td>            ++<a class="local col3 ref" href="#23rtt_count" title='rtt_count' data-ref="23rtt_count">rtt_count</a>;</td></tr>
+<tr><th id="82">82</th><td>            <b>break</b>;</td></tr>
+<tr><th id="83">83</th><td>        <b>case</b> <a class="macro" href="../include/resolv_stats.h.html#27" title="255" data-ref="_M/RCODE_TIMEOUT">RCODE_TIMEOUT</a>:</td></tr>
+<tr><th id="84">84</th><td>            ++<a class="local col9 ref" href="#19t" title='t' data-ref="19t">t</a>;</td></tr>
+<tr><th id="85">85</th><td>            <b>break</b>;</td></tr>
+<tr><th id="86">86</th><td>        <b>case</b> <a class="macro" href="../include/resolv_stats.h.html#26" title="254" data-ref="_M/RCODE_INTERNAL_ERROR">RCODE_INTERNAL_ERROR</a>:</td></tr>
+<tr><th id="87">87</th><td>            ++<a class="local col0 ref" href="#20ie" title='ie' data-ref="20ie">ie</a>;</td></tr>
+<tr><th id="88">88</th><td>            <b>break</b>;</td></tr>
+<tr><th id="89">89</th><td>        <b>case</b> <a class="macro" href="../../include/arpa/nameser_compat.h.html#119" title="ns_r_servfail" data-ref="_M/SERVFAIL">SERVFAIL</a>:</td></tr>
+<tr><th id="90">90</th><td>        <b>case</b> <a class="macro" href="../../include/arpa/nameser_compat.h.html#121" title="ns_r_notimpl" data-ref="_M/NOTIMP">NOTIMP</a>:</td></tr>
+<tr><th id="91">91</th><td>        <b>case</b> <a class="macro" href="../../include/arpa/nameser_compat.h.html#122" title="ns_r_refused" data-ref="_M/REFUSED">REFUSED</a>:</td></tr>
+<tr><th id="92">92</th><td>        <b>default</b>:</td></tr>
+<tr><th id="93">93</th><td>            ++<a class="local col8 ref" href="#18e" title='e' data-ref="18e">e</a>;</td></tr>
+<tr><th id="94">94</th><td>            <b>break</b>;</td></tr>
+<tr><th id="95">95</th><td>        }</td></tr>
+<tr><th id="96">96</th><td>    }</td></tr>
+<tr><th id="97">97</th><td>    *<a class="local col1 ref" href="#11successes" title='successes' data-ref="11successes">successes</a> = <a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a>;</td></tr>
+<tr><th id="98">98</th><td>    *<a class="local col2 ref" href="#12errors" title='errors' data-ref="12errors">errors</a> = <a class="local col8 ref" href="#18e" title='e' data-ref="18e">e</a>;</td></tr>
+<tr><th id="99">99</th><td>    *<a class="local col3 ref" href="#13timeouts" title='timeouts' data-ref="13timeouts">timeouts</a> = <a class="local col9 ref" href="#19t" title='t' data-ref="19t">t</a>;</td></tr>
+<tr><th id="100">100</th><td>    *<a class="local col4 ref" href="#14internal_errors" title='internal_errors' data-ref="14internal_errors">internal_errors</a> = <a class="local col0 ref" href="#20ie" title='ie' data-ref="20ie">ie</a>;</td></tr>
+<tr><th id="101">101</th><td>    <i>/* If there was at least one successful sample, calculate average RTT. */</i></td></tr>
+<tr><th id="102">102</th><td>    <b>if</b> (<a class="local col3 ref" href="#23rtt_count" title='rtt_count' data-ref="23rtt_count">rtt_count</a>) {</td></tr>
+<tr><th id="103">103</th><td>        *<a class="local col5 ref" href="#15rtt_avg" title='rtt_avg' data-ref="15rtt_avg">rtt_avg</a> = <a class="local col1 ref" href="#21rtt_sum" title='rtt_sum' data-ref="21rtt_sum">rtt_sum</a> / <a class="local col3 ref" href="#23rtt_count" title='rtt_count' data-ref="23rtt_count">rtt_count</a>;</td></tr>
+<tr><th id="104">104</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="105">105</th><td>        *<a class="local col5 ref" href="#15rtt_avg" title='rtt_avg' data-ref="15rtt_avg">rtt_avg</a> = -<var>1</var>;</td></tr>
+<tr><th id="106">106</th><td>    }</td></tr>
+<tr><th id="107">107</th><td>    <i>/* If we had at least one sample, populate last sample time. */</i></td></tr>
+<tr><th id="108">108</th><td>    <b>if</b> (<a class="local col0 ref" href="#10stats" title='stats' data-ref="10stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::sample_count" title='__res_stats::sample_count' data-ref="__res_stats::sample_count">sample_count</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="109">109</th><td>        <b>if</b> (<a class="local col0 ref" href="#10stats" title='stats' data-ref="10stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::sample_next" title='__res_stats::sample_next' data-ref="__res_stats::sample_next">sample_next</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="110">110</th><td>            <a class="local col2 ref" href="#22last" title='last' data-ref="22last">last</a> = <a class="local col0 ref" href="#10stats" title='stats' data-ref="10stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::samples" title='__res_stats::samples' data-ref="__res_stats::samples">samples</a>[<a class="local col0 ref" href="#10stats" title='stats' data-ref="10stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::sample_next" title='__res_stats::sample_next' data-ref="__res_stats::sample_next">sample_next</a> - <var>1</var>].<a class="ref" href="../include/resolv_stats.h.html#__res_sample::at" title='__res_sample::at' data-ref="__res_sample::at">at</a>;</td></tr>
+<tr><th id="111">111</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="112">112</th><td>            <a class="local col2 ref" href="#22last" title='last' data-ref="22last">last</a> = <a class="local col0 ref" href="#10stats" title='stats' data-ref="10stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::samples" title='__res_stats::samples' data-ref="__res_stats::samples">samples</a>[<a class="local col0 ref" href="#10stats" title='stats' data-ref="10stats">stats</a>-&gt;<a class="ref" href="../include/resolv_stats.h.html#__res_stats::sample_count" title='__res_stats::sample_count' data-ref="__res_stats::sample_count">sample_count</a> - <var>1</var>].<a class="ref" href="../include/resolv_stats.h.html#__res_sample::at" title='__res_sample::at' data-ref="__res_sample::at">at</a>;</td></tr>
+<tr><th id="113">113</th><td>        }</td></tr>
+<tr><th id="114">114</th><td>    }</td></tr>
+<tr><th id="115">115</th><td>    *<a class="local col6 ref" href="#16last_sample_time" title='last_sample_time' data-ref="16last_sample_time">last_sample_time</a> = <a class="local col2 ref" href="#22last" title='last' data-ref="22last">last</a>;</td></tr>
+<tr><th id="116">116</th><td>}</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><span class="macro" title="_Bool" data-ref="_M/bool">bool</span></td></tr>
+<tr><th id="119">119</th><td><dfn class="decl def" id="_res_stats_usable_server" title='_res_stats_usable_server' data-ref="_res_stats_usable_server">_res_stats_usable_server</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../include/resolv_params.h.html#__res_params" title='__res_params' data-ref="__res_params">__res_params</a>* <dfn class="local col5 decl" id="25params" title='params' data-type='const struct __res_params *' data-ref="25params">params</dfn>, <b>struct</b> <a class="type" href="../include/resolv_stats.h.html#__res_stats" title='__res_stats' data-ref="__res_stats">__res_stats</a>* <dfn class="local col6 decl" id="26stats" title='stats' data-type='struct __res_stats *' data-ref="26stats">stats</dfn>) {</td></tr>
+<tr><th id="120">120</th><td>    <em>int</em> <dfn class="local col7 decl" id="27successes" title='successes' data-type='int' data-ref="27successes">successes</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="121">121</th><td>    <em>int</em> <dfn class="local col8 decl" id="28errors" title='errors' data-type='int' data-ref="28errors">errors</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="122">122</th><td>    <em>int</em> <dfn class="local col9 decl" id="29timeouts" title='timeouts' data-type='int' data-ref="29timeouts">timeouts</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="123">123</th><td>    <em>int</em> <dfn class="local col0 decl" id="30internal_errors" title='internal_errors' data-type='int' data-ref="30internal_errors">internal_errors</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="124">124</th><td>    <em>int</em> <dfn class="local col1 decl" id="31rtt_avg" title='rtt_avg' data-type='int' data-ref="31rtt_avg">rtt_avg</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="125">125</th><td>    <a class="typedef" href="../../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="local col2 decl" id="32last_sample_time" title='last_sample_time' data-type='time_t' data-ref="32last_sample_time">last_sample_time</dfn> = <var>0</var>;</td></tr>
+<tr><th id="126">126</th><td>    <a class="ref" href="#_res_stats_aggregate" title='_res_stats_aggregate' data-ref="_res_stats_aggregate">_res_stats_aggregate</a>(<a class="local col6 ref" href="#26stats" title='stats' data-ref="26stats">stats</a>, &amp;<a class="local col7 ref" href="#27successes" title='successes' data-ref="27successes">successes</a>, &amp;<a class="local col8 ref" href="#28errors" title='errors' data-ref="28errors">errors</a>, &amp;<a class="local col9 ref" href="#29timeouts" title='timeouts' data-ref="29timeouts">timeouts</a>, &amp;<a class="local col0 ref" href="#30internal_errors" title='internal_errors' data-ref="30internal_errors">internal_errors</a>, &amp;<a class="local col1 ref" href="#31rtt_avg" title='rtt_avg' data-ref="31rtt_avg">rtt_avg</a>,</td></tr>
+<tr><th id="127">127</th><td>            &amp;<a class="local col2 ref" href="#32last_sample_time" title='last_sample_time' data-ref="32last_sample_time">last_sample_time</a>);</td></tr>
+<tr><th id="128">128</th><td>    <b>if</b> (<a class="local col7 ref" href="#27successes" title='successes' data-ref="27successes">successes</a> &gt;= <var>0</var> &amp;&amp; <a class="local col8 ref" href="#28errors" title='errors' data-ref="28errors">errors</a> &gt;= <var>0</var> &amp;&amp; <a class="local col9 ref" href="#29timeouts" title='timeouts' data-ref="29timeouts">timeouts</a> &gt;= <var>0</var>) {</td></tr>
+<tr><th id="129">129</th><td>        <em>int</em> <dfn class="local col3 decl" id="33total" title='total' data-type='int' data-ref="33total">total</dfn> = <a class="local col7 ref" href="#27successes" title='successes' data-ref="27successes">successes</a> + <a class="local col8 ref" href="#28errors" title='errors' data-ref="28errors">errors</a> + <a class="local col9 ref" href="#29timeouts" title='timeouts' data-ref="29timeouts">timeouts</a>;</td></tr>
+<tr><th id="130">130</th><td>        <b>if</b> (<a class="macro" href="#25" title="1" data-ref="_M/DBG">DBG</a>) {</td></tr>
+<tr><th id="131">131</th><td>            <a class="ref" href="../../private/libc_logging.h.html#__libc_format_log" title='__libc_format_log' data-ref="__libc_format_log">__libc_format_log</a>(<a class="enum" href="../../private/libc_logging.h.html#ANDROID_LOG_DEBUG" title='ANDROID_LOG_DEBUG' data-ref="ANDROID_LOG_DEBUG">ANDROID_LOG_DEBUG</a>, <q>"libc"</q>, <q>"NS stats: S %d + E %d + T %d + I %d "</q></td></tr>
+<tr><th id="132">132</th><td>                 <q>"= %d, rtt = %d, min_samples = %d\n"</q>, <a class="local col7 ref" href="#27successes" title='successes' data-ref="27successes">successes</a>, <a class="local col8 ref" href="#28errors" title='errors' data-ref="28errors">errors</a>, <a class="local col9 ref" href="#29timeouts" title='timeouts' data-ref="29timeouts">timeouts</a>, <a class="local col0 ref" href="#30internal_errors" title='internal_errors' data-ref="30internal_errors">internal_errors</a>,</td></tr>
+<tr><th id="133">133</th><td>                 <a class="local col3 ref" href="#33total" title='total' data-ref="33total">total</a>, <a class="local col1 ref" href="#31rtt_avg" title='rtt_avg' data-ref="31rtt_avg">rtt_avg</a>, <a class="local col5 ref" href="#25params" title='params' data-ref="25params">params</a>-&gt;<a class="ref" href="../include/resolv_params.h.html#__res_params::min_samples" title='__res_params::min_samples' data-ref="__res_params::min_samples">min_samples</a>);</td></tr>
+<tr><th id="134">134</th><td>        }</td></tr>
+<tr><th id="135">135</th><td>        <b>if</b> (<a class="local col3 ref" href="#33total" title='total' data-ref="33total">total</a> &gt;= <a class="local col5 ref" href="#25params" title='params' data-ref="25params">params</a>-&gt;<a class="ref" href="../include/resolv_params.h.html#__res_params::min_samples" title='__res_params::min_samples' data-ref="__res_params::min_samples">min_samples</a> &amp;&amp; (<a class="local col8 ref" href="#28errors" title='errors' data-ref="28errors">errors</a> &gt; <var>0</var> || <a class="local col9 ref" href="#29timeouts" title='timeouts' data-ref="29timeouts">timeouts</a> &gt; <var>0</var>)) {</td></tr>
+<tr><th id="136">136</th><td>            <em>int</em> <dfn class="local col4 decl" id="34success_rate" title='success_rate' data-type='int' data-ref="34success_rate">success_rate</dfn> = <a class="local col7 ref" href="#27successes" title='successes' data-ref="27successes">successes</a> * <var>100</var> / <a class="local col3 ref" href="#33total" title='total' data-ref="33total">total</a>;</td></tr>
+<tr><th id="137">137</th><td>            <b>if</b> (<a class="macro" href="#25" title="1" data-ref="_M/DBG">DBG</a>) {</td></tr>
+<tr><th id="138">138</th><td>                <a class="ref" href="../../private/libc_logging.h.html#__libc_format_log" title='__libc_format_log' data-ref="__libc_format_log">__libc_format_log</a>(<a class="enum" href="../../private/libc_logging.h.html#ANDROID_LOG_DEBUG" title='ANDROID_LOG_DEBUG' data-ref="ANDROID_LOG_DEBUG">ANDROID_LOG_DEBUG</a>, <q>"libc"</q>, <q>"success rate %d%%\n"</q>, <a class="local col4 ref" href="#34success_rate" title='success_rate' data-ref="34success_rate">success_rate</a>);</td></tr>
+<tr><th id="139">139</th><td>            }</td></tr>
+<tr><th id="140">140</th><td>            <b>if</b> (<a class="local col4 ref" href="#34success_rate" title='success_rate' data-ref="34success_rate">success_rate</a> &lt; <a class="local col5 ref" href="#25params" title='params' data-ref="25params">params</a>-&gt;<a class="ref" href="../include/resolv_params.h.html#__res_params::success_threshold" title='__res_params::success_threshold' data-ref="__res_params::success_threshold">success_threshold</a>) {</td></tr>
+<tr><th id="141">141</th><td>                <i>// evNowTime() is used here instead of time() to stay consistent with the rest of</i></td></tr>
+<tr><th id="142">142</th><td><i>                // the code base</i></td></tr>
+<tr><th id="143">143</th><td>                <a class="typedef" href="../../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="local col5 decl" id="35now" title='now' data-type='time_t' data-ref="35now">now</dfn> = <a class="macro" href="../../upstream-netbsd/lib/libc/include/isc/eventlib.h.html#154" title="__evNowTime" data-ref="_M/evNowTime">evNowTime</a>().<a class="ref" href="../../kernel/uapi/linux/time.h.html#timespec::tv_sec" title='timespec::tv_sec' data-ref="timespec::tv_sec">tv_sec</a>;</td></tr>
+<tr><th id="144">144</th><td>                <b>if</b> (<a class="local col5 ref" href="#35now" title='now' data-ref="35now">now</a> - <a class="local col2 ref" href="#32last_sample_time" title='last_sample_time' data-ref="32last_sample_time">last_sample_time</a> &gt; <a class="local col5 ref" href="#25params" title='params' data-ref="25params">params</a>-&gt;<a class="ref" href="../include/resolv_params.h.html#__res_params::sample_validity" title='__res_params::sample_validity' data-ref="__res_params::sample_validity">sample_validity</a>) {</td></tr>
+<tr><th id="145">145</th><td>                    <i>// Note: It might be worth considering to expire old servers after their expiry</i></td></tr>
+<tr><th id="146">146</th><td><i>                    // date has been reached, however the code for returning the ring buffer to its</i></td></tr>
+<tr><th id="147">147</th><td><i>                    // previous non-circular state would induce additional complexity.</i></td></tr>
+<tr><th id="148">148</th><td>                    <b>if</b> (<a class="macro" href="#25" title="1" data-ref="_M/DBG">DBG</a>) {</td></tr>
+<tr><th id="149">149</th><td>                        <a class="ref" href="../../private/libc_logging.h.html#__libc_format_log" title='__libc_format_log' data-ref="__libc_format_log">__libc_format_log</a>(<a class="enum" href="../../private/libc_logging.h.html#ANDROID_LOG_INFO" title='ANDROID_LOG_INFO' data-ref="ANDROID_LOG_INFO">ANDROID_LOG_INFO</a>, <q>"libc"</q>,</td></tr>
+<tr><th id="150">150</th><td>                            <q>"samples stale, retrying server\n"</q>);</td></tr>
+<tr><th id="151">151</th><td>                    }</td></tr>
+<tr><th id="152">152</th><td>                    <a class="ref" href="#_res_stats_clear_samples" title='_res_stats_clear_samples' data-ref="_res_stats_clear_samples">_res_stats_clear_samples</a>(<a class="local col6 ref" href="#26stats" title='stats' data-ref="26stats">stats</a>);</td></tr>
+<tr><th id="153">153</th><td>                } <b>else</b> {</td></tr>
+<tr><th id="154">154</th><td>                    <b>if</b> (<a class="macro" href="#25" title="1" data-ref="_M/DBG">DBG</a>) {</td></tr>
+<tr><th id="155">155</th><td>                        <a class="ref" href="../../private/libc_logging.h.html#__libc_format_log" title='__libc_format_log' data-ref="__libc_format_log">__libc_format_log</a>(<a class="enum" href="../../private/libc_logging.h.html#ANDROID_LOG_INFO" title='ANDROID_LOG_INFO' data-ref="ANDROID_LOG_INFO">ANDROID_LOG_INFO</a>, <q>"libc"</q>,</td></tr>
+<tr><th id="156">156</th><td>                            <q>"too many resolution errors, ignoring server\n"</q>);</td></tr>
+<tr><th id="157">157</th><td>                    }</td></tr>
+<tr><th id="158">158</th><td>                    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="159">159</th><td>                }</td></tr>
+<tr><th id="160">160</th><td>            }</td></tr>
+<tr><th id="161">161</th><td>        }</td></tr>
+<tr><th id="162">162</th><td>    }</td></tr>
+<tr><th id="163">163</th><td>    <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="164">164</th><td>}</td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td><em>void</em></td></tr>
+<tr><th id="167">167</th><td><dfn class="decl def" id="_res_stats_get_usable_servers" title='_res_stats_get_usable_servers' data-ref="_res_stats_get_usable_servers">_res_stats_get_usable_servers</dfn>(<em>const</em> <b>struct</b> <a class="type" href="../include/resolv_params.h.html#__res_params" title='__res_params' data-ref="__res_params">__res_params</a>* <dfn class="local col6 decl" id="36params" title='params' data-type='const struct __res_params *' data-ref="36params">params</dfn>, <b>struct</b> <a class="type" href="../include/resolv_stats.h.html#__res_stats" title='__res_stats' data-ref="__res_stats">__res_stats</a> <dfn class="local col7 decl" id="37stats" title='stats' data-type='struct __res_stats *' data-ref="37stats">stats</dfn>[],</td></tr>
+<tr><th id="168">168</th><td>        <em>int</em> <dfn class="local col8 decl" id="38nscount" title='nscount' data-type='int' data-ref="38nscount">nscount</dfn>, <span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <dfn class="local col9 decl" id="39usable_servers" title='usable_servers' data-type='_Bool *' data-ref="39usable_servers">usable_servers</dfn>[]) {</td></tr>
+<tr><th id="169">169</th><td>    <em>unsigned</em> <dfn class="local col0 decl" id="40usable_servers_found" title='usable_servers_found' data-type='unsigned int' data-ref="40usable_servers_found">usable_servers_found</dfn> = <var>0</var>;</td></tr>
+<tr><th id="170">170</th><td>    <b>for</b> (<em>int</em> <dfn class="local col1 decl" id="41ns" title='ns' data-type='int' data-ref="41ns">ns</dfn> = <var>0</var>; <a class="local col1 ref" href="#41ns" title='ns' data-ref="41ns">ns</a> &lt; <a class="local col8 ref" href="#38nscount" title='nscount' data-ref="38nscount">nscount</a>; <a class="local col1 ref" href="#41ns" title='ns' data-ref="41ns">ns</a>++) {</td></tr>
+<tr><th id="171">171</th><td>        <span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <dfn class="local col2 decl" id="42usable" title='usable' data-type='_Bool' data-ref="42usable">usable</dfn> = <a class="ref" href="#_res_stats_usable_server" title='_res_stats_usable_server' data-ref="_res_stats_usable_server">_res_stats_usable_server</a>(<a class="local col6 ref" href="#36params" title='params' data-ref="36params">params</a>, &amp;<a class="local col7 ref" href="#37stats" title='stats' data-ref="37stats">stats</a>[<a class="local col1 ref" href="#41ns" title='ns' data-ref="41ns">ns</a>]);</td></tr>
+<tr><th id="172">172</th><td>        <b>if</b> (<a class="local col2 ref" href="#42usable" title='usable' data-ref="42usable">usable</a>) {</td></tr>
+<tr><th id="173">173</th><td>            ++<a class="local col0 ref" href="#40usable_servers_found" title='usable_servers_found' data-ref="40usable_servers_found">usable_servers_found</a>;</td></tr>
+<tr><th id="174">174</th><td>        }</td></tr>
+<tr><th id="175">175</th><td>        <a class="local col9 ref" href="#39usable_servers" title='usable_servers' data-ref="39usable_servers">usable_servers</a>[<a class="local col1 ref" href="#41ns" title='ns' data-ref="41ns">ns</a>] = <a class="local col2 ref" href="#42usable" title='usable' data-ref="42usable">usable</a>;</td></tr>
+<tr><th id="176">176</th><td>    }</td></tr>
+<tr><th id="177">177</th><td>    <i>// If there are no usable servers, consider all of them usable.</i></td></tr>
+<tr><th id="178">178</th><td><i>    // TODO: Explore other possibilities, such as enabling only the best N servers, etc.</i></td></tr>
+<tr><th id="179">179</th><td>    <b>if</b> (<a class="local col0 ref" href="#40usable_servers_found" title='usable_servers_found' data-ref="40usable_servers_found">usable_servers_found</a> == <var>0</var>) {</td></tr>
+<tr><th id="180">180</th><td>        <b>for</b> (<em>int</em> <dfn class="local col3 decl" id="43ns" title='ns' data-type='int' data-ref="43ns">ns</dfn> = <var>0</var>; <a class="local col3 ref" href="#43ns" title='ns' data-ref="43ns">ns</a> &lt; <a class="local col8 ref" href="#38nscount" title='nscount' data-ref="38nscount">nscount</a>; <a class="local col3 ref" href="#43ns" title='ns' data-ref="43ns">ns</a>++) {</td></tr>
+<tr><th id="181">181</th><td>            <a class="local col9 ref" href="#39usable_servers" title='usable_servers' data-ref="39usable_servers">usable_servers</a>[<a class="local col3 ref" href="#43ns" title='ns' data-ref="43ns">ns</a>] = <span class="macro" title="1" data-ref="_M/true">true</span>;</td></tr>
+<tr><th id="182">182</th><td>        }</td></tr>
+<tr><th id="183">183</th><td>    }</td></tr>
+<tr><th id="184">184</th><td>}</td></tr>
+<tr><th id="185">185</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

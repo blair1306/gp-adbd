@@ -1,0 +1,15 @@
+<dec f='codebrowser/bionic/libc/private/bionic_tls.h' l='120' type='void __libc_init_main_thread(KernelArgumentBlock &amp; )'/>
+<def f='codebrowser/bionic/libc/bionic/__libc_init_main_thread.cpp' l='52' ll='92' type='void __libc_init_main_thread(KernelArgumentBlock &amp; args)'/>
+<doc f='codebrowser/bionic/libc/bionic/__libc_init_main_thread.cpp' l='39'>// Setup for the main thread. For dynamic executables, this is called by the
+// linker _before_ libc is mapped in memory. This means that all writes to
+// globals from this function will apply to linker-private copies and will not
+// be visible from libc later on.
+//
+// Note: this function creates a pthread_internal_t for the initial thread and
+// stores the pointer in TLS, but does not add it to pthread&apos;s thread list. This
+// has to be done later from libc itself (see __libc_init_common).
+//
+// This is in a file by itself because it needs to be built with
+// -fno-stack-protector because it&apos;s responsible for setting up the main
+// thread&apos;s TLS (which stack protector relies on).</doc>
+<use f='codebrowser/bionic/libc/bionic/libc_init_static.cpp' l='85' u='c' c='__libc_init'/>

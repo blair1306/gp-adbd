@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>syslog.h source code [codebrowser/bionic/libc/include/syslog.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/syslog.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>include</a>/<a href='syslog.h.html'>syslog.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="29">ifndef</span> <span class="macro" data-ref="_M/_SYSLOG_H">_SYSLOG_H</span></u></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/_SYSLOG_H" data-ref="_M/_SYSLOG_H">_SYSLOG_H</dfn></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include &lt;stdarg.h&gt;</u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><a class="macro" href="sys/cdefs.h.html#85" title="extern &quot;C&quot; {" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i>/* Priorities are translated to Android log priorities as shown. */</i></td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/LOG_EMERG" data-ref="_M/LOG_EMERG">LOG_EMERG</dfn>   0 /* ERROR */</u></td></tr>
+<tr><th id="40">40</th><td><u>#define <dfn class="macro" id="_M/LOG_ALERT" data-ref="_M/LOG_ALERT">LOG_ALERT</dfn>   1 /* ERROR */</u></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/LOG_CRIT" data-ref="_M/LOG_CRIT">LOG_CRIT</dfn>    2 /* ERROR */</u></td></tr>
+<tr><th id="42">42</th><td><u>#define <dfn class="macro" id="_M/LOG_ERR" data-ref="_M/LOG_ERR">LOG_ERR</dfn>     3 /* ERROR */</u></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/LOG_WARNING" data-ref="_M/LOG_WARNING">LOG_WARNING</dfn> 4 /* WARN */</u></td></tr>
+<tr><th id="44">44</th><td><u>#define <dfn class="macro" id="_M/LOG_NOTICE" data-ref="_M/LOG_NOTICE">LOG_NOTICE</dfn>  5 /* INFO */</u></td></tr>
+<tr><th id="45">45</th><td><u>#define <dfn class="macro" id="_M/LOG_INFO" data-ref="_M/LOG_INFO">LOG_INFO</dfn>    6 /* INFO */</u></td></tr>
+<tr><th id="46">46</th><td><u>#define <dfn class="macro" id="_M/LOG_DEBUG" data-ref="_M/LOG_DEBUG">LOG_DEBUG</dfn>   7 /* DEBUG */</u></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><u>#define <dfn class="macro" id="_M/LOG_PRIMASK" data-ref="_M/LOG_PRIMASK">LOG_PRIMASK</dfn> 7</u></td></tr>
+<tr><th id="49">49</th><td><u>#define <dfn class="macro" id="_M/LOG_PRI" data-ref="_M/LOG_PRI">LOG_PRI</dfn>(x) ((x) &amp; LOG_PRIMASK)</u></td></tr>
+<tr><th id="50">50</th><td><u>#define <dfn class="macro" id="_M/LOG_MAKEPRI" data-ref="_M/LOG_MAKEPRI">LOG_MAKEPRI</dfn>(fac, pri) ((fac) | (pri))</u></td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><i>/* Facilities are currently ignored on Android. */</i></td></tr>
+<tr><th id="53">53</th><td><u>#define <dfn class="macro" id="_M/LOG_KERN" data-ref="_M/LOG_KERN">LOG_KERN</dfn>     0000</u></td></tr>
+<tr><th id="54">54</th><td><u>#define <dfn class="macro" id="_M/LOG_USER" data-ref="_M/LOG_USER">LOG_USER</dfn>     0010</u></td></tr>
+<tr><th id="55">55</th><td><u>#define <dfn class="macro" id="_M/LOG_MAIL" data-ref="_M/LOG_MAIL">LOG_MAIL</dfn>     0020</u></td></tr>
+<tr><th id="56">56</th><td><u>#define <dfn class="macro" id="_M/LOG_DAEMON" data-ref="_M/LOG_DAEMON">LOG_DAEMON</dfn>   0030</u></td></tr>
+<tr><th id="57">57</th><td><u>#define <dfn class="macro" id="_M/LOG_AUTH" data-ref="_M/LOG_AUTH">LOG_AUTH</dfn>     0040</u></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/LOG_SYSLOG" data-ref="_M/LOG_SYSLOG">LOG_SYSLOG</dfn>   0050</u></td></tr>
+<tr><th id="59">59</th><td><u>#define <dfn class="macro" id="_M/LOG_LPR" data-ref="_M/LOG_LPR">LOG_LPR</dfn>      0060</u></td></tr>
+<tr><th id="60">60</th><td><u>#define <dfn class="macro" id="_M/LOG_NEWS" data-ref="_M/LOG_NEWS">LOG_NEWS</dfn>     0070</u></td></tr>
+<tr><th id="61">61</th><td><u>#define <dfn class="macro" id="_M/LOG_UUCP" data-ref="_M/LOG_UUCP">LOG_UUCP</dfn>     0100</u></td></tr>
+<tr><th id="62">62</th><td><u>#define <dfn class="macro" id="_M/LOG_CRON" data-ref="_M/LOG_CRON">LOG_CRON</dfn>     0110</u></td></tr>
+<tr><th id="63">63</th><td><u>#define <dfn class="macro" id="_M/LOG_AUTHPRIV" data-ref="_M/LOG_AUTHPRIV">LOG_AUTHPRIV</dfn> 0120</u></td></tr>
+<tr><th id="64">64</th><td><u>#define <dfn class="macro" id="_M/LOG_FTP" data-ref="_M/LOG_FTP">LOG_FTP</dfn>      0130</u></td></tr>
+<tr><th id="65">65</th><td><u>#define <dfn class="macro" id="_M/LOG_LOCAL0" data-ref="_M/LOG_LOCAL0">LOG_LOCAL0</dfn>   0200</u></td></tr>
+<tr><th id="66">66</th><td><u>#define <dfn class="macro" id="_M/LOG_LOCAL1" data-ref="_M/LOG_LOCAL1">LOG_LOCAL1</dfn>   0210</u></td></tr>
+<tr><th id="67">67</th><td><u>#define <dfn class="macro" id="_M/LOG_LOCAL2" data-ref="_M/LOG_LOCAL2">LOG_LOCAL2</dfn>   0220</u></td></tr>
+<tr><th id="68">68</th><td><u>#define <dfn class="macro" id="_M/LOG_LOCAL3" data-ref="_M/LOG_LOCAL3">LOG_LOCAL3</dfn>   0230</u></td></tr>
+<tr><th id="69">69</th><td><u>#define <dfn class="macro" id="_M/LOG_LOCAL4" data-ref="_M/LOG_LOCAL4">LOG_LOCAL4</dfn>   0240</u></td></tr>
+<tr><th id="70">70</th><td><u>#define <dfn class="macro" id="_M/LOG_LOCAL5" data-ref="_M/LOG_LOCAL5">LOG_LOCAL5</dfn>   0250</u></td></tr>
+<tr><th id="71">71</th><td><u>#define <dfn class="macro" id="_M/LOG_LOCAL6" data-ref="_M/LOG_LOCAL6">LOG_LOCAL6</dfn>   0260</u></td></tr>
+<tr><th id="72">72</th><td><u>#define <dfn class="macro" id="_M/LOG_LOCAL7" data-ref="_M/LOG_LOCAL7">LOG_LOCAL7</dfn>   0270</u></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><u>#define <dfn class="macro" id="_M/LOG_FACMASK" data-ref="_M/LOG_FACMASK">LOG_FACMASK</dfn> 01770</u></td></tr>
+<tr><th id="75">75</th><td><u>#define <dfn class="macro" id="_M/LOG_FAC" data-ref="_M/LOG_FAC">LOG_FAC</dfn>(x) (((x) &gt;&gt; 3) &amp; (LOG_FACMASK &gt;&gt; 3))</u></td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><u>#define <dfn class="macro" id="_M/LOG_MASK" data-ref="_M/LOG_MASK">LOG_MASK</dfn>(pri) (1 &lt;&lt; (pri))</u></td></tr>
+<tr><th id="78">78</th><td><u>#define <dfn class="macro" id="_M/LOG_UPTO" data-ref="_M/LOG_UPTO">LOG_UPTO</dfn>(pri) ((1 &lt;&lt; ((pri)+1)) - 1)</u></td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><i>/* openlog(3) flags are currently ignored on Android. */</i></td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/LOG_PID" data-ref="_M/LOG_PID">LOG_PID</dfn>    0x01</u></td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/LOG_CONS" data-ref="_M/LOG_CONS">LOG_CONS</dfn>   0x02</u></td></tr>
+<tr><th id="83">83</th><td><u>#define <dfn class="macro" id="_M/LOG_ODELAY" data-ref="_M/LOG_ODELAY">LOG_ODELAY</dfn> 0x04</u></td></tr>
+<tr><th id="84">84</th><td><u>#define <dfn class="macro" id="_M/LOG_NDELAY" data-ref="_M/LOG_NDELAY">LOG_NDELAY</dfn> 0x08</u></td></tr>
+<tr><th id="85">85</th><td><u>#define <dfn class="macro" id="_M/LOG_NOWAIT" data-ref="_M/LOG_NOWAIT">LOG_NOWAIT</dfn> 0x10</u></td></tr>
+<tr><th id="86">86</th><td><u>#define <dfn class="macro" id="_M/LOG_PERROR" data-ref="_M/LOG_PERROR">LOG_PERROR</dfn> 0x20</u></td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><em>void</em> <a class="decl" href="../bionic/syslog.cpp.html#closelog" title='closelog' data-ref="closelog" id="closelog">closelog</a>(<em>void</em>);</td></tr>
+<tr><th id="89">89</th><td><em>void</em> <a class="decl" href="../bionic/syslog.cpp.html#openlog" title='openlog' data-ref="openlog" id="openlog">openlog</a>(<em>const</em> <em>char</em>*, <em>int</em>, <em>int</em>);</td></tr>
+<tr><th id="90">90</th><td><em>int</em> <a class="decl" href="../bionic/syslog.cpp.html#setlogmask" title='setlogmask' data-ref="setlogmask" id="setlogmask">setlogmask</a>(<em>int</em>);</td></tr>
+<tr><th id="91">91</th><td><em>void</em> <a class="decl" href="../bionic/syslog.cpp.html#syslog" title='syslog' data-ref="syslog" id="syslog">syslog</a>(<em>int</em>, <em>const</em> <em>char</em>*, ...) <a class="macro" href="sys/cdefs.h.html#162" title="__attribute__((__format__(printf, 2, 3))) __attribute__((__nonnull__ (2)))" data-ref="_M/__printflike">__printflike</a>(<var>2</var>, <var>3</var>);</td></tr>
+<tr><th id="92">92</th><td><em>void</em> <a class="decl" href="../bionic/syslog.cpp.html#vsyslog" title='vsyslog' data-ref="vsyslog" id="vsyslog">vsyslog</a>(<em>int</em>, <em>const</em> <em>char</em>*, <span class='typedef' title='va_list' data-type='__builtin_va_list' data-ref="va_list">va_list</span>) <a class="macro" href="sys/cdefs.h.html#162" title="__attribute__((__format__(printf, 2, 0))) __attribute__((__nonnull__ (2)))" data-ref="_M/__printflike">__printflike</a>(<var>2</var>, <var>0</var>);</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><a class="macro" href="sys/cdefs.h.html#86" title="}" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><u>#<span data-ppcond="29">endif</span> /* _SYSLOG_H */</u></td></tr>
+<tr><th id="97">97</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/syslog.cpp.html'>codebrowser/bionic/libc/bionic/syslog.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>mapping.h source code [codebrowser/external/libselinux/src/mapping.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/mapping.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='mapping.h.html'>mapping.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * This file describes the class and permission mappings used to </i></td></tr>
+<tr><th id="3">3</th><td><i> * hide the kernel numbers from userspace by allowing userspace object</i></td></tr>
+<tr><th id="4">4</th><td><i> * managers to specify a list of classes and permissions.</i></td></tr>
+<tr><th id="5">5</th><td><i> */</i></td></tr>
+<tr><th id="6">6</th><td><u>#<span data-ppcond="6">ifndef</span> <span class="macro" data-ref="_M/_SELINUX_MAPPING_H_">_SELINUX_MAPPING_H_</span></u></td></tr>
+<tr><th id="7">7</th><td><u>#define <dfn class="macro" id="_M/_SELINUX_MAPPING_H_" data-ref="_M/_SELINUX_MAPPING_H_">_SELINUX_MAPPING_H_</dfn></u></td></tr>
+<tr><th id="8">8</th><td></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="../include/selinux/selinux.h.html">&lt;selinux/selinux.h&gt;</a></u></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><i>/*</i></td></tr>
+<tr><th id="12">12</th><td><i> * Get real, kernel values from mapped values</i></td></tr>
+<tr><th id="13">13</th><td><i> */</i></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><b>extern</b> <a class="typedef" href="../include/selinux/selinux.h.html#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a></td></tr>
+<tr><th id="16">16</th><td><dfn class="decl" id="unmap_class" title='unmap_class' data-ref="unmap_class">unmap_class</dfn>(<a class="typedef" href="../include/selinux/selinux.h.html#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col1 decl" id="1tclass" title='tclass' data-type='security_class_t' data-ref="1tclass">tclass</dfn>);</td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><b>extern</b> <a class="typedef" href="../include/selinux/selinux.h.html#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a></td></tr>
+<tr><th id="19">19</th><td><dfn class="decl" id="unmap_perm" title='unmap_perm' data-ref="unmap_perm">unmap_perm</dfn>(<a class="typedef" href="../include/selinux/selinux.h.html#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col2 decl" id="2tclass" title='tclass' data-type='security_class_t' data-ref="2tclass">tclass</dfn>, <a class="typedef" href="../include/selinux/selinux.h.html#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="local col3 decl" id="3tperm" title='tperm' data-type='access_vector_t' data-ref="3tperm">tperm</dfn>);</td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><i>/*</i></td></tr>
+<tr><th id="22">22</th><td><i> * Get mapped values from real, kernel values</i></td></tr>
+<tr><th id="23">23</th><td><i> */</i></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><b>extern</b> <a class="typedef" href="../include/selinux/selinux.h.html#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a></td></tr>
+<tr><th id="26">26</th><td><dfn class="decl" id="map_class" title='map_class' data-ref="map_class">map_class</dfn>(<a class="typedef" href="../include/selinux/selinux.h.html#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col4 decl" id="4kclass" title='kclass' data-type='security_class_t' data-ref="4kclass">kclass</dfn>);</td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><b>extern</b> <a class="typedef" href="../include/selinux/selinux.h.html#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a></td></tr>
+<tr><th id="29">29</th><td><dfn class="decl" id="map_perm" title='map_perm' data-ref="map_perm">map_perm</dfn>(<a class="typedef" href="../include/selinux/selinux.h.html#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col5 decl" id="5tclass" title='tclass' data-type='security_class_t' data-ref="5tclass">tclass</dfn>, <a class="typedef" href="../include/selinux/selinux.h.html#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="local col6 decl" id="6kperm" title='kperm' data-type='access_vector_t' data-ref="6kperm">kperm</dfn>);</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><b>extern</b> <em>void</em></td></tr>
+<tr><th id="32">32</th><td><dfn class="decl" id="map_decision" title='map_decision' data-ref="map_decision">map_decision</dfn>(<a class="typedef" href="../include/selinux/selinux.h.html#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col7 decl" id="7tclass" title='tclass' data-type='security_class_t' data-ref="7tclass">tclass</dfn>, <b>struct</b> <a class="type" href="../include/selinux/selinux.h.html#av_decision" title='av_decision' data-ref="av_decision">av_decision</a> *<dfn class="local col8 decl" id="8avd" title='avd' data-type='struct av_decision *' data-ref="8avd">avd</dfn>);</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><i>/*mapping is not used for embedded build*/</i></td></tr>
+<tr><th id="35">35</th><td><u>#<span data-ppcond="35">ifdef</span> <span class="macro" data-ref="_M/DISABLE_AVC">DISABLE_AVC</span></u> </td></tr>
+<tr><th id="36">36</th><td><u>#define unmap_perm(x,y) y</u></td></tr>
+<tr><th id="37">37</th><td><u>#define unmap_class(x) x</u></td></tr>
+<tr><th id="38">38</th><td><u>#define map_decision(x,y)</u> </td></tr>
+<tr><th id="39">39</th><td><u>#<span data-ppcond="35">endif</span></u></td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><u>#<span data-ppcond="6">endif</span>				/* _SELINUX_MAPPING_H_ */</u></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='compute_av.c.html'>codebrowser/external/libselinux/src/compute_av.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

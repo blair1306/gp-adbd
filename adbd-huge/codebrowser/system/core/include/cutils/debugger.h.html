@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>debugger.h source code [codebrowser/system/core/include/cutils/debugger.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/include/cutils/debugger.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>system</a>/<a href='../..'>core</a>/<a href='..'>include</a>/<a href='./'>cutils</a>/<a href='debugger.h.html'>debugger.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2012 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/__CUTILS_DEBUGGER_H">__CUTILS_DEBUGGER_H</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/__CUTILS_DEBUGGER_H" data-ref="_M/__CUTILS_DEBUGGER_H">__CUTILS_DEBUGGER_H</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../../bionic/libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><a class="macro" href="../../../../bionic/libc/include/sys/cdefs.h.html#89" title="" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><u>#define <dfn class="macro" id="_M/DEBUGGER_SOCKET_NAME" data-ref="_M/DEBUGGER_SOCKET_NAME">DEBUGGER_SOCKET_NAME</dfn> "android:debuggerd"</u></td></tr>
+<tr><th id="26">26</th><td><u>#define <dfn class="macro" id="_M/DEBUGGER32_SOCKET_NAME" data-ref="_M/DEBUGGER32_SOCKET_NAME">DEBUGGER32_SOCKET_NAME</dfn> "android:debuggerd32"</u></td></tr>
+<tr><th id="27">27</th><td><u>#define <dfn class="macro" id="_M/DEBUGGER64_SOCKET_NAME" data-ref="_M/DEBUGGER64_SOCKET_NAME">DEBUGGER64_SOCKET_NAME</dfn> DEBUGGER_SOCKET_NAME</u></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><b>typedef</b> <b>enum</b> {</td></tr>
+<tr><th id="30">30</th><td>    <i>// dump a crash</i></td></tr>
+<tr><th id="31">31</th><td>    <dfn class="enum" id="DEBUGGER_ACTION_CRASH" title='DEBUGGER_ACTION_CRASH' data-ref="DEBUGGER_ACTION_CRASH">DEBUGGER_ACTION_CRASH</dfn>,</td></tr>
+<tr><th id="32">32</th><td>    <i>// dump a tombstone file</i></td></tr>
+<tr><th id="33">33</th><td>    <dfn class="enum" id="DEBUGGER_ACTION_DUMP_TOMBSTONE" title='DEBUGGER_ACTION_DUMP_TOMBSTONE' data-ref="DEBUGGER_ACTION_DUMP_TOMBSTONE">DEBUGGER_ACTION_DUMP_TOMBSTONE</dfn>,</td></tr>
+<tr><th id="34">34</th><td>    <i>// dump a backtrace only back to the socket</i></td></tr>
+<tr><th id="35">35</th><td>    <dfn class="enum" id="DEBUGGER_ACTION_DUMP_BACKTRACE" title='DEBUGGER_ACTION_DUMP_BACKTRACE' data-ref="DEBUGGER_ACTION_DUMP_BACKTRACE">DEBUGGER_ACTION_DUMP_BACKTRACE</dfn>,</td></tr>
+<tr><th id="36">36</th><td>} <dfn class="typedef" id="debugger_action_t" title='debugger_action_t' data-type='enum debugger_action_t' data-ref="debugger_action_t">debugger_action_t</dfn>;</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i>// Make sure that all values have a fixed size so that this structure</i></td></tr>
+<tr><th id="39">39</th><td><i>// is the same for 32 bit and 64 bit processes.</i></td></tr>
+<tr><th id="40">40</th><td><i>// NOTE: Any changes to this structure must also be reflected in</i></td></tr>
+<tr><th id="41">41</th><td><i>//       bionic/linker/debugger.cpp.</i></td></tr>
+<tr><th id="42">42</th><td><b>typedef</b> <b>struct</b> <b>__attribute__</b>((packed)) {</td></tr>
+<tr><th id="43">43</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a> <dfn class="decl" id="(anonymous)::action" title='(anonymous struct)::action' data-ref="(anonymous)::action">action</dfn>;</td></tr>
+<tr><th id="44">44</th><td>    <a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="decl" id="(anonymous)::tid" title='(anonymous struct)::tid' data-ref="(anonymous)::tid">tid</dfn>;</td></tr>
+<tr><th id="45">45</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="(anonymous)::abort_msg_address" title='(anonymous struct)::abort_msg_address' data-ref="(anonymous)::abort_msg_address">abort_msg_address</dfn>;</td></tr>
+<tr><th id="46">46</th><td>    <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a> <dfn class="decl" id="(anonymous)::original_si_code" title='(anonymous struct)::original_si_code' data-ref="(anonymous)::original_si_code">original_si_code</dfn>;</td></tr>
+<tr><th id="47">47</th><td>} <dfn class="typedef" id="debugger_msg_t" title='debugger_msg_t' data-type='struct debugger_msg_t' data-ref="debugger_msg_t">debugger_msg_t</dfn>;</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><i>/* Dumps a process backtrace, registers, and stack to a tombstone file (requires root).</i></td></tr>
+<tr><th id="50">50</th><td><i> * Stores the tombstone path in the provided buffer.</i></td></tr>
+<tr><th id="51">51</th><td><i> * Returns 0 on success, -1 on error.</i></td></tr>
+<tr><th id="52">52</th><td><i> */</i></td></tr>
+<tr><th id="53">53</th><td><em>int</em> <a class="decl" href="../../libcutils/debugger.c.html#dump_tombstone" title='dump_tombstone' data-ref="dump_tombstone" id="dump_tombstone">dump_tombstone</a>(<a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col1 decl" id="1tid" title='tid' data-type='pid_t' data-ref="1tid">tid</dfn>, <em>char</em>* <dfn class="local col2 decl" id="2pathbuf" title='pathbuf' data-type='char *' data-ref="2pathbuf">pathbuf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="3pathlen" title='pathlen' data-type='size_t' data-ref="3pathlen">pathlen</dfn>);</td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><i>/* Dumps a process backtrace, registers, and stack to a tombstone file (requires root).</i></td></tr>
+<tr><th id="56">56</th><td><i> * Stores the tombstone path in the provided buffer.</i></td></tr>
+<tr><th id="57">57</th><td><i> * If reading debugger data from debuggerd ever takes longer than timeout_secs</i></td></tr>
+<tr><th id="58">58</th><td><i> * seconds, then stop and return an error.</i></td></tr>
+<tr><th id="59">59</th><td><i> * Returns 0 on success, -1 on error.</i></td></tr>
+<tr><th id="60">60</th><td><i> */</i></td></tr>
+<tr><th id="61">61</th><td><em>int</em> <a class="decl" href="../../libcutils/debugger.c.html#dump_tombstone_timeout" title='dump_tombstone_timeout' data-ref="dump_tombstone_timeout" id="dump_tombstone_timeout">dump_tombstone_timeout</a>(<a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col4 decl" id="4tid" title='tid' data-type='pid_t' data-ref="4tid">tid</dfn>, <em>char</em>* <dfn class="local col5 decl" id="5pathbuf" title='pathbuf' data-type='char *' data-ref="5pathbuf">pathbuf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="6pathlen" title='pathlen' data-type='size_t' data-ref="6pathlen">pathlen</dfn>, <em>int</em> <dfn class="local col7 decl" id="7timeout_secs" title='timeout_secs' data-type='int' data-ref="7timeout_secs">timeout_secs</dfn>);</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><i>/* Dumps a process backtrace only to the specified file (requires root).</i></td></tr>
+<tr><th id="64">64</th><td><i> * Returns 0 on success, -1 on error.</i></td></tr>
+<tr><th id="65">65</th><td><i> */</i></td></tr>
+<tr><th id="66">66</th><td><em>int</em> <a class="decl" href="../../libcutils/debugger.c.html#dump_backtrace_to_file" title='dump_backtrace_to_file' data-ref="dump_backtrace_to_file" id="dump_backtrace_to_file">dump_backtrace_to_file</a>(<a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col8 decl" id="8tid" title='tid' data-type='pid_t' data-ref="8tid">tid</dfn>, <em>int</em> <dfn class="local col9 decl" id="9fd" title='fd' data-type='int' data-ref="9fd">fd</dfn>);</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><i>/* Dumps a process backtrace only to the specified file (requires root).</i></td></tr>
+<tr><th id="69">69</th><td><i> * If reading debugger data from debuggerd ever takes longer than timeout_secs</i></td></tr>
+<tr><th id="70">70</th><td><i> * seconds, then stop and return an error.</i></td></tr>
+<tr><th id="71">71</th><td><i> * Returns 0 on success, -1 on error.</i></td></tr>
+<tr><th id="72">72</th><td><i> */</i></td></tr>
+<tr><th id="73">73</th><td><em>int</em> <a class="decl" href="../../libcutils/debugger.c.html#dump_backtrace_to_file_timeout" title='dump_backtrace_to_file_timeout' data-ref="dump_backtrace_to_file_timeout" id="dump_backtrace_to_file_timeout">dump_backtrace_to_file_timeout</a>(<a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col0 decl" id="10tid" title='tid' data-type='pid_t' data-ref="10tid">tid</dfn>, <em>int</em> <dfn class="local col1 decl" id="11fd" title='fd' data-type='int' data-ref="11fd">fd</dfn>, <em>int</em> <dfn class="local col2 decl" id="12timeout_secs" title='timeout_secs' data-type='int' data-ref="12timeout_secs">timeout_secs</dfn>);</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><a class="macro" href="../../../../bionic/libc/include/sys/cdefs.h.html#90" title="" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><u>#<span data-ppcond="17">endif</span> /* __CUTILS_DEBUGGER_H */</u></td></tr>
+<tr><th id="78">78</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../libcutils/debugger.c.html'>codebrowser/system/core/libcutils/debugger.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,512 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>label_file.h source code [codebrowser/external/libselinux/src/label_file.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="mmap_area,saved_data,spec,stem "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/label_file.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='label_file.h.html'>label_file.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#<span data-ppcond="1">ifndef</span> <span class="macro" data-ref="_M/_SELABEL_FILE_H_">_SELABEL_FILE_H_</span></u></td></tr>
+<tr><th id="2">2</th><td><u>#define <dfn class="macro" id="_M/_SELABEL_FILE_H_" data-ref="_M/_SELABEL_FILE_H_">_SELABEL_FILE_H_</dfn></u></td></tr>
+<tr><th id="3">3</th><td></td></tr>
+<tr><th id="4">4</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="5">5</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="6">6</th><td></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../../bionic/libc/include/sys/stat.h.html">&lt;sys/stat.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="callbacks.h.html">"callbacks.h"</a></u></td></tr>
+<tr><th id="10">10</th><td><u>#include <a href="label_internal.h.html">"label_internal.h"</a></u></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><u>#define <dfn class="macro" id="_M/SELINUX_MAGIC_COMPILED_FCONTEXT" data-ref="_M/SELINUX_MAGIC_COMPILED_FCONTEXT">SELINUX_MAGIC_COMPILED_FCONTEXT</dfn>	0xf97cff8a</u></td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td><i>/* Version specific changes */</i></td></tr>
+<tr><th id="15">15</th><td><u>#define <dfn class="macro" id="_M/SELINUX_COMPILED_FCONTEXT_NOPCRE_VERS" data-ref="_M/SELINUX_COMPILED_FCONTEXT_NOPCRE_VERS">SELINUX_COMPILED_FCONTEXT_NOPCRE_VERS</dfn>	1</u></td></tr>
+<tr><th id="16">16</th><td><u>#define <dfn class="macro" id="_M/SELINUX_COMPILED_FCONTEXT_PCRE_VERS" data-ref="_M/SELINUX_COMPILED_FCONTEXT_PCRE_VERS">SELINUX_COMPILED_FCONTEXT_PCRE_VERS</dfn>	2</u></td></tr>
+<tr><th id="17">17</th><td><u>#define <dfn class="macro" id="_M/SELINUX_COMPILED_FCONTEXT_MODE" data-ref="_M/SELINUX_COMPILED_FCONTEXT_MODE">SELINUX_COMPILED_FCONTEXT_MODE</dfn>		3</u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/SELINUX_COMPILED_FCONTEXT_PREFIX_LEN" data-ref="_M/SELINUX_COMPILED_FCONTEXT_PREFIX_LEN">SELINUX_COMPILED_FCONTEXT_PREFIX_LEN</dfn>	4</u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#define <dfn class="macro" id="_M/SELINUX_COMPILED_FCONTEXT_MAX_VERS" data-ref="_M/SELINUX_COMPILED_FCONTEXT_MAX_VERS">SELINUX_COMPILED_FCONTEXT_MAX_VERS</dfn>     SELINUX_COMPILED_FCONTEXT_PREFIX_LEN</u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><i>/* Prior to version 8.20, libpcre did not have pcre_free_study() */</i></td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="23">if</span> (<a class="macro" href="../../pcre/pcre.h.html#44" title="8" data-ref="_M/PCRE_MAJOR">PCRE_MAJOR</a> &lt; 8 || (<a class="macro" href="../../pcre/pcre.h.html#44" title="8" data-ref="_M/PCRE_MAJOR">PCRE_MAJOR</a> == 8 &amp;&amp; <a class="macro" href="../../pcre/pcre.h.html#45" title="38" data-ref="_M/PCRE_MINOR">PCRE_MINOR</a> &lt; 20))</u></td></tr>
+<tr><th id="24">24</th><td><u>#define pcre_free_study  pcre_free</u></td></tr>
+<tr><th id="25">25</th><td><u>#<span data-ppcond="23">endif</span></u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><i>/* A file security context specification. */</i></td></tr>
+<tr><th id="28">28</th><td><b>struct</b> <dfn class="type def" id="spec" title='spec' data-ref="spec">spec</dfn> {</td></tr>
+<tr><th id="29">29</th><td>	<b>struct</b> <a class="type" href="label_internal.h.html#selabel_lookup_rec" title='selabel_lookup_rec' data-ref="selabel_lookup_rec">selabel_lookup_rec</a> <dfn class="decl" id="spec::lr" title='spec::lr' data-ref="spec::lr">lr</dfn>;	<i>/* holds contexts for lookup result */</i></td></tr>
+<tr><th id="30">30</th><td>	<em>char</em> *<dfn class="decl" id="spec::regex_str" title='spec::regex_str' data-ref="spec::regex_str">regex_str</dfn>;	<i>/* regular expession string for diagnostics */</i></td></tr>
+<tr><th id="31">31</th><td>	<em>char</em> *<dfn class="decl" id="spec::type_str" title='spec::type_str' data-ref="spec::type_str">type_str</dfn>;		<i>/* type string for diagnostic messages */</i></td></tr>
+<tr><th id="32">32</th><td>	<a class="typedef" href="../../pcre/pcre.h.html#pcre" title='pcre' data-type='struct real_pcre' data-ref="pcre">pcre</a> *<dfn class="decl" id="spec::regex" title='spec::regex' data-ref="spec::regex">regex</dfn>;		<i>/* compiled regular expression */</i></td></tr>
+<tr><th id="33">33</th><td>	<b>union</b> {</td></tr>
+<tr><th id="34">34</th><td>		<a class="typedef" href="../../pcre/pcre.h.html#pcre_extra" title='pcre_extra' data-type='struct pcre_extra' data-ref="pcre_extra">pcre_extra</a> *<dfn class="decl" id="spec::(anonymous)::sd" title='spec::(anonymous union)::sd' data-ref="spec::(anonymous)::sd">sd</dfn>;	<i>/* pointer to extra compiled stuff */</i></td></tr>
+<tr><th id="35">35</th><td>		<a class="typedef" href="../../pcre/pcre.h.html#pcre_extra" title='pcre_extra' data-type='struct pcre_extra' data-ref="pcre_extra">pcre_extra</a> <dfn class="decl" id="spec::(anonymous)::lsd" title='spec::(anonymous union)::lsd' data-ref="spec::(anonymous)::lsd">lsd</dfn>;	<i>/* used to hold the mmap'd version */</i></td></tr>
+<tr><th id="36">36</th><td>	};</td></tr>
+<tr><th id="37">37</th><td>	<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="decl" id="spec::mode" title='spec::mode' data-ref="spec::mode">mode</dfn>;		<i>/* mode format value */</i></td></tr>
+<tr><th id="38">38</th><td>	<em>int</em> <dfn class="decl" id="spec::matches" title='spec::matches' data-ref="spec::matches">matches</dfn>;		<i>/* number of matching pathnames */</i></td></tr>
+<tr><th id="39">39</th><td>	<em>int</em> <dfn class="decl" id="spec::stem_id" title='spec::stem_id' data-ref="spec::stem_id">stem_id</dfn>;		<i>/* indicates which stem-compression item */</i></td></tr>
+<tr><th id="40">40</th><td>	<em>char</em> <dfn class="decl" id="spec::hasMetaChars" title='spec::hasMetaChars' data-ref="spec::hasMetaChars">hasMetaChars</dfn>;	<i>/* regular expression has meta-chars */</i></td></tr>
+<tr><th id="41">41</th><td>	<em>char</em> <dfn class="decl" id="spec::regcomp" title='spec::regcomp' data-ref="spec::regcomp">regcomp</dfn>;		<i>/* regex_str has been compiled to regex */</i></td></tr>
+<tr><th id="42">42</th><td>	<em>char</em> <dfn class="decl" id="spec::from_mmap" title='spec::from_mmap' data-ref="spec::from_mmap">from_mmap</dfn>;		<i>/* this spec is from an mmap of the data */</i></td></tr>
+<tr><th id="43">43</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="spec::prefix_len" title='spec::prefix_len' data-ref="spec::prefix_len">prefix_len</dfn>;      <i>/* length of fixed path prefix */</i></td></tr>
+<tr><th id="44">44</th><td>};</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><i>/* A regular expression stem */</i></td></tr>
+<tr><th id="47">47</th><td><b>struct</b> <dfn class="type def" id="stem" title='stem' data-ref="stem">stem</dfn> {</td></tr>
+<tr><th id="48">48</th><td>	<em>char</em> *<dfn class="decl" id="stem::buf" title='stem::buf' data-ref="stem::buf">buf</dfn>;</td></tr>
+<tr><th id="49">49</th><td>	<em>int</em> <dfn class="decl" id="stem::len" title='stem::len' data-ref="stem::len">len</dfn>;</td></tr>
+<tr><th id="50">50</th><td>	<em>char</em> <dfn class="decl" id="stem::from_mmap" title='stem::from_mmap' data-ref="stem::from_mmap">from_mmap</dfn>;</td></tr>
+<tr><th id="51">51</th><td>};</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><i>/* Where we map the file in during selabel_open() */</i></td></tr>
+<tr><th id="54">54</th><td><b>struct</b> <dfn class="type def" id="mmap_area" title='mmap_area' data-ref="mmap_area">mmap_area</dfn> {</td></tr>
+<tr><th id="55">55</th><td>	<em>void</em> *<dfn class="decl" id="mmap_area::addr" title='mmap_area::addr' data-ref="mmap_area::addr">addr</dfn>;	<i>/* Start addr + len used to release memory at close */</i></td></tr>
+<tr><th id="56">56</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="mmap_area::len" title='mmap_area::len' data-ref="mmap_area::len">len</dfn>;</td></tr>
+<tr><th id="57">57</th><td>	<em>void</em> *<dfn class="decl" id="mmap_area::next_addr" title='mmap_area::next_addr' data-ref="mmap_area::next_addr">next_addr</dfn>;	<i>/* Incremented by next_entry() */</i></td></tr>
+<tr><th id="58">58</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="mmap_area::next_len" title='mmap_area::next_len' data-ref="mmap_area::next_len">next_len</dfn>;	<i>/* Decremented by next_entry() */</i></td></tr>
+<tr><th id="59">59</th><td>	<b>struct</b> <a class="type" href="#mmap_area" title='mmap_area' data-ref="mmap_area">mmap_area</a> *<dfn class="decl" id="mmap_area::next" title='mmap_area::next' data-ref="mmap_area::next">next</dfn>;</td></tr>
+<tr><th id="60">60</th><td>};</td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><i>/* Our stored configuration */</i></td></tr>
+<tr><th id="63">63</th><td><b>struct</b> <dfn class="type def" id="saved_data" title='saved_data' data-ref="saved_data">saved_data</dfn> {</td></tr>
+<tr><th id="64">64</th><td>	<i>/*</i></td></tr>
+<tr><th id="65">65</th><td><i>	 * The array of specifications, initially in the same order as in</i></td></tr>
+<tr><th id="66">66</th><td><i>	 * the specification file. Sorting occurs based on hasMetaChars.</i></td></tr>
+<tr><th id="67">67</th><td><i>	 */</i></td></tr>
+<tr><th id="68">68</th><td>	<b>struct</b> <a class="type" href="#spec" title='spec' data-ref="spec">spec</a> *<dfn class="decl" id="saved_data::spec_arr" title='saved_data::spec_arr' data-ref="saved_data::spec_arr">spec_arr</dfn>;</td></tr>
+<tr><th id="69">69</th><td>	<em>unsigned</em> <em>int</em> <dfn class="decl" id="saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</dfn>;</td></tr>
+<tr><th id="70">70</th><td>	<em>unsigned</em> <em>int</em> <dfn class="decl" id="saved_data::alloc_specs" title='saved_data::alloc_specs' data-ref="saved_data::alloc_specs">alloc_specs</dfn>;</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td>	<i>/*</i></td></tr>
+<tr><th id="73">73</th><td><i>	 * The array of regular expression stems.</i></td></tr>
+<tr><th id="74">74</th><td><i>	 */</i></td></tr>
+<tr><th id="75">75</th><td>	<b>struct</b> <a class="type" href="#stem" title='stem' data-ref="stem">stem</a> *<dfn class="decl" id="saved_data::stem_arr" title='saved_data::stem_arr' data-ref="saved_data::stem_arr">stem_arr</dfn>;</td></tr>
+<tr><th id="76">76</th><td>	<em>int</em> <dfn class="decl" id="saved_data::num_stems" title='saved_data::num_stems' data-ref="saved_data::num_stems">num_stems</dfn>;</td></tr>
+<tr><th id="77">77</th><td>	<em>int</em> <dfn class="decl" id="saved_data::alloc_stems" title='saved_data::alloc_stems' data-ref="saved_data::alloc_stems">alloc_stems</dfn>;</td></tr>
+<tr><th id="78">78</th><td>	<b>struct</b> <a class="type" href="#mmap_area" title='mmap_area' data-ref="mmap_area">mmap_area</a> *<dfn class="decl" id="saved_data::mmap_areas" title='saved_data::mmap_areas' data-ref="saved_data::mmap_areas">mmap_areas</dfn>;</td></tr>
+<tr><th id="79">79</th><td>};</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><em>static</em> <b>inline</b> <a class="typedef" href="../../pcre/pcre.h.html#pcre_extra" title='pcre_extra' data-type='struct pcre_extra' data-ref="pcre_extra">pcre_extra</a> *<dfn class="decl def" id="get_pcre_extra" title='get_pcre_extra' data-ref="get_pcre_extra">get_pcre_extra</dfn>(<b>struct</b> <a class="type" href="#spec" title='spec' data-ref="spec">spec</a> *<dfn class="local col1 decl" id="1spec" title='spec' data-type='struct spec *' data-ref="1spec">spec</dfn>)</td></tr>
+<tr><th id="82">82</th><td>{</td></tr>
+<tr><th id="83">83</th><td>	<b>if</b> (<a class="local col1 ref" href="#1spec" title='spec' data-ref="1spec">spec</a>-&gt;<a class="ref" href="#spec::from_mmap" title='spec::from_mmap' data-ref="spec::from_mmap">from_mmap</a>)</td></tr>
+<tr><th id="84">84</th><td>		<b>return</b> &amp;<a class="local col1 ref" href="#1spec" title='spec' data-ref="1spec">spec</a>-&gt;<a class="ref" href="#spec::(anonymous)::lsd" title='spec::(anonymous union)::lsd' data-ref="spec::(anonymous)::lsd">lsd</a>;</td></tr>
+<tr><th id="85">85</th><td>	<b>else</b></td></tr>
+<tr><th id="86">86</th><td>		<b>return</b> <a class="local col1 ref" href="#1spec" title='spec' data-ref="1spec">spec</a>-&gt;<a class="ref" href="#spec::(anonymous)::sd" title='spec::(anonymous union)::sd' data-ref="spec::(anonymous)::sd">sd</a>;</td></tr>
+<tr><th id="87">87</th><td>}</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><em>static</em> <b>inline</b> <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="decl def" id="string_to_mode" title='string_to_mode' data-ref="string_to_mode">string_to_mode</dfn>(<em>char</em> *<dfn class="local col2 decl" id="2mode" title='mode' data-type='char *' data-ref="2mode">mode</dfn>)</td></tr>
+<tr><th id="90">90</th><td>{</td></tr>
+<tr><th id="91">91</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="3len" title='len' data-type='size_t' data-ref="3len">len</dfn>;</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td>	<b>if</b> (!<a class="local col2 ref" href="#2mode" title='mode' data-ref="2mode">mode</a>)</td></tr>
+<tr><th id="94">94</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="95">95</th><td>	<a class="local col3 ref" href="#3len" title='len' data-ref="3len">len</a> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col2 ref" href="#2mode" title='mode' data-ref="2mode">mode</a>);</td></tr>
+<tr><th id="96">96</th><td>	<b>if</b> (<a class="local col2 ref" href="#2mode" title='mode' data-ref="2mode">mode</a>[<var>0</var>] != <kbd>'-'</kbd> || <a class="local col3 ref" href="#3len" title='len' data-ref="3len">len</a> != <var>2</var>)</td></tr>
+<tr><th id="97">97</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="98">98</th><td>	<b>switch</b> (<a class="local col2 ref" href="#2mode" title='mode' data-ref="2mode">mode</a>[<var>1</var>]) {</td></tr>
+<tr><th id="99">99</th><td>	<b>case</b> <kbd>'b'</kbd>:</td></tr>
+<tr><th id="100">100</th><td>		<b>return</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#27" title="0060000" data-ref="_M/S_IFBLK">S_IFBLK</a>;</td></tr>
+<tr><th id="101">101</th><td>	<b>case</b> <kbd>'c'</kbd>:</td></tr>
+<tr><th id="102">102</th><td>		<b>return</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#30" title="0020000" data-ref="_M/S_IFCHR">S_IFCHR</a>;</td></tr>
+<tr><th id="103">103</th><td>	<b>case</b> <kbd>'d'</kbd>:</td></tr>
+<tr><th id="104">104</th><td>		<b>return</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#29" title="0040000" data-ref="_M/S_IFDIR">S_IFDIR</a>;</td></tr>
+<tr><th id="105">105</th><td>	<b>case</b> <kbd>'p'</kbd>:</td></tr>
+<tr><th id="106">106</th><td>		<b>return</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#31" title="0010000" data-ref="_M/S_IFIFO">S_IFIFO</a>;</td></tr>
+<tr><th id="107">107</th><td>	<b>case</b> <kbd>'l'</kbd>:</td></tr>
+<tr><th id="108">108</th><td>		<b>return</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#25" title="0120000" data-ref="_M/S_IFLNK">S_IFLNK</a>;</td></tr>
+<tr><th id="109">109</th><td>	<b>case</b> <kbd>'s'</kbd>:</td></tr>
+<tr><th id="110">110</th><td>		<b>return</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#24" title="0140000" data-ref="_M/S_IFSOCK">S_IFSOCK</a>;</td></tr>
+<tr><th id="111">111</th><td>	<b>case</b> <kbd>'-'</kbd>:</td></tr>
+<tr><th id="112">112</th><td>		<b>return</b> <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#26" title="0100000" data-ref="_M/S_IFREG">S_IFREG</a>;</td></tr>
+<tr><th id="113">113</th><td>	<b>default</b>:</td></tr>
+<tr><th id="114">114</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="115">115</th><td>	}</td></tr>
+<tr><th id="116">116</th><td>	<i>/* impossible to get here */</i></td></tr>
+<tr><th id="117">117</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="118">118</th><td>}</td></tr>
+<tr><th id="119">119</th><td></td></tr>
+<tr><th id="120">120</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="grow_specs" title='grow_specs' data-ref="grow_specs">grow_specs</dfn>(<b>struct</b> <a class="type" href="#saved_data" title='saved_data' data-ref="saved_data">saved_data</a> *<dfn class="local col4 decl" id="4data" title='data' data-type='struct saved_data *' data-ref="4data">data</dfn>)</td></tr>
+<tr><th id="121">121</th><td>{</td></tr>
+<tr><th id="122">122</th><td>	<b>struct</b> <a class="type" href="#spec" title='spec' data-ref="spec">spec</a> *<dfn class="local col5 decl" id="5specs" title='specs' data-type='struct spec *' data-ref="5specs">specs</dfn>;</td></tr>
+<tr><th id="123">123</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="6new_specs" title='new_specs' data-type='size_t' data-ref="6new_specs">new_specs</dfn>, <dfn class="local col7 decl" id="7total_specs" title='total_specs' data-type='size_t' data-ref="7total_specs">total_specs</dfn>;</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td>	<b>if</b> (<a class="local col4 ref" href="#4data" title='data' data-ref="4data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a> &lt; <a class="local col4 ref" href="#4data" title='data' data-ref="4data">data</a>-&gt;<a class="ref" href="#saved_data::alloc_specs" title='saved_data::alloc_specs' data-ref="saved_data::alloc_specs">alloc_specs</a>)</td></tr>
+<tr><th id="126">126</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td>	<a class="local col6 ref" href="#6new_specs" title='new_specs' data-ref="6new_specs">new_specs</a> = <a class="local col4 ref" href="#4data" title='data' data-ref="4data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a> + <var>16</var>;</td></tr>
+<tr><th id="129">129</th><td>	<a class="local col7 ref" href="#7total_specs" title='total_specs' data-ref="7total_specs">total_specs</a> = <a class="local col4 ref" href="#4data" title='data' data-ref="4data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a> + <a class="local col6 ref" href="#6new_specs" title='new_specs' data-ref="6new_specs">new_specs</a>;</td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td>	<a class="local col5 ref" href="#5specs" title='specs' data-ref="5specs">specs</a> = <a class="ref" href="../../../bionic/libc/include/malloc.h.html#realloc" title='realloc' data-ref="realloc">realloc</a>(<a class="local col4 ref" href="#4data" title='data' data-ref="4data">data</a>-&gt;<a class="ref" href="#saved_data::spec_arr" title='saved_data::spec_arr' data-ref="saved_data::spec_arr">spec_arr</a>, <a class="local col7 ref" href="#7total_specs" title='total_specs' data-ref="7total_specs">total_specs</a> * <b>sizeof</b>(*<a class="local col5 ref" href="#5specs" title='specs' data-ref="5specs">specs</a>));</td></tr>
+<tr><th id="132">132</th><td>	<b>if</b> (!<a class="local col5 ref" href="#5specs" title='specs' data-ref="5specs">specs</a>) {</td></tr>
+<tr><th id="133">133</th><td>		<a class="ref" href="../../../bionic/libc/include/stdio.h.html#perror" title='perror' data-ref="perror">perror</a>(<q>"realloc"</q>);</td></tr>
+<tr><th id="134">134</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="135">135</th><td>	}</td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td>	<i>/* blank the new entries */</i></td></tr>
+<tr><th id="138">138</th><td>	<a class="ref" href="../../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(&amp;<a class="local col5 ref" href="#5specs" title='specs' data-ref="5specs">specs</a>[<a class="local col4 ref" href="#4data" title='data' data-ref="4data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a>], <var>0</var>, <a class="local col6 ref" href="#6new_specs" title='new_specs' data-ref="6new_specs">new_specs</a> * <b>sizeof</b>(*<a class="local col5 ref" href="#5specs" title='specs' data-ref="5specs">specs</a>));</td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td>	<a class="local col4 ref" href="#4data" title='data' data-ref="4data">data</a>-&gt;<a class="ref" href="#saved_data::spec_arr" title='saved_data::spec_arr' data-ref="saved_data::spec_arr">spec_arr</a> = <a class="local col5 ref" href="#5specs" title='specs' data-ref="5specs">specs</a>;</td></tr>
+<tr><th id="141">141</th><td>	<a class="local col4 ref" href="#4data" title='data' data-ref="4data">data</a>-&gt;<a class="ref" href="#saved_data::alloc_specs" title='saved_data::alloc_specs' data-ref="saved_data::alloc_specs">alloc_specs</a> = <a class="local col7 ref" href="#7total_specs" title='total_specs' data-ref="7total_specs">total_specs</a>;</td></tr>
+<tr><th id="142">142</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="143">143</th><td>}</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><i>/* Determine if the regular expression specification has any meta characters. */</i></td></tr>
+<tr><th id="146">146</th><td><em>static</em> <b>inline</b> <em>void</em> <dfn class="decl def" id="spec_hasMetaChars" title='spec_hasMetaChars' data-ref="spec_hasMetaChars">spec_hasMetaChars</dfn>(<b>struct</b> <a class="type" href="#spec" title='spec' data-ref="spec">spec</a> *<dfn class="local col8 decl" id="8spec" title='spec' data-type='struct spec *' data-ref="8spec">spec</dfn>)</td></tr>
+<tr><th id="147">147</th><td>{</td></tr>
+<tr><th id="148">148</th><td>	<em>char</em> *<dfn class="local col9 decl" id="9c" title='c' data-type='char *' data-ref="9c">c</dfn>;</td></tr>
+<tr><th id="149">149</th><td>	<em>int</em> <dfn class="local col0 decl" id="10len" title='len' data-type='int' data-ref="10len">len</dfn>;</td></tr>
+<tr><th id="150">150</th><td>	<em>char</em> *<dfn class="local col1 decl" id="11end" title='end' data-type='char *' data-ref="11end">end</dfn>;</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td>	<a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a> = <a class="local col8 ref" href="#8spec" title='spec' data-ref="8spec">spec</a>-&gt;<a class="ref" href="#spec::regex_str" title='spec::regex_str' data-ref="spec::regex_str">regex_str</a>;</td></tr>
+<tr><th id="153">153</th><td>	<a class="local col0 ref" href="#10len" title='len' data-ref="10len">len</a> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col8 ref" href="#8spec" title='spec' data-ref="8spec">spec</a>-&gt;<a class="ref" href="#spec::regex_str" title='spec::regex_str' data-ref="spec::regex_str">regex_str</a>);</td></tr>
+<tr><th id="154">154</th><td>	<a class="local col1 ref" href="#11end" title='end' data-ref="11end">end</a> = <a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a> + <a class="local col0 ref" href="#10len" title='len' data-ref="10len">len</a>;</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td>	<a class="local col8 ref" href="#8spec" title='spec' data-ref="8spec">spec</a>-&gt;<a class="ref" href="#spec::hasMetaChars" title='spec::hasMetaChars' data-ref="spec::hasMetaChars">hasMetaChars</a> = <var>0</var>;</td></tr>
+<tr><th id="157">157</th><td>	<a class="local col8 ref" href="#8spec" title='spec' data-ref="8spec">spec</a>-&gt;<a class="ref" href="#spec::prefix_len" title='spec::prefix_len' data-ref="spec::prefix_len">prefix_len</a> = <a class="local col0 ref" href="#10len" title='len' data-ref="10len">len</a>;</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td>	<i>/* Look at each character in the RE specification string for a</i></td></tr>
+<tr><th id="160">160</th><td><i>	 * meta character. Return when any meta character reached. */</i></td></tr>
+<tr><th id="161">161</th><td>	<b>while</b> (<a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a> &lt; <a class="local col1 ref" href="#11end" title='end' data-ref="11end">end</a>) {</td></tr>
+<tr><th id="162">162</th><td>		<b>switch</b> (*<a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a>) {</td></tr>
+<tr><th id="163">163</th><td>		<b>case</b> <kbd>'.'</kbd>:</td></tr>
+<tr><th id="164">164</th><td>		<b>case</b> <kbd>'^'</kbd>:</td></tr>
+<tr><th id="165">165</th><td>		<b>case</b> <kbd>'$'</kbd>:</td></tr>
+<tr><th id="166">166</th><td>		<b>case</b> <kbd>'?'</kbd>:</td></tr>
+<tr><th id="167">167</th><td>		<b>case</b> <kbd>'*'</kbd>:</td></tr>
+<tr><th id="168">168</th><td>		<b>case</b> <kbd>'+'</kbd>:</td></tr>
+<tr><th id="169">169</th><td>		<b>case</b> <kbd>'|'</kbd>:</td></tr>
+<tr><th id="170">170</th><td>		<b>case</b> <kbd>'['</kbd>:</td></tr>
+<tr><th id="171">171</th><td>		<b>case</b> <kbd>'('</kbd>:</td></tr>
+<tr><th id="172">172</th><td>		<b>case</b> <kbd>'{'</kbd>:</td></tr>
+<tr><th id="173">173</th><td>			<a class="local col8 ref" href="#8spec" title='spec' data-ref="8spec">spec</a>-&gt;<a class="ref" href="#spec::hasMetaChars" title='spec::hasMetaChars' data-ref="spec::hasMetaChars">hasMetaChars</a> = <var>1</var>;</td></tr>
+<tr><th id="174">174</th><td>			<a class="local col8 ref" href="#8spec" title='spec' data-ref="8spec">spec</a>-&gt;<a class="ref" href="#spec::prefix_len" title='spec::prefix_len' data-ref="spec::prefix_len">prefix_len</a> = <a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a> - <a class="local col8 ref" href="#8spec" title='spec' data-ref="8spec">spec</a>-&gt;<a class="ref" href="#spec::regex_str" title='spec::regex_str' data-ref="spec::regex_str">regex_str</a>;</td></tr>
+<tr><th id="175">175</th><td>			<b>return</b>;</td></tr>
+<tr><th id="176">176</th><td>		<b>case</b> <kbd>'\\'</kbd>:	<i>/* skip the next character */</i></td></tr>
+<tr><th id="177">177</th><td>			<a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a>++;</td></tr>
+<tr><th id="178">178</th><td>			<b>break</b>;</td></tr>
+<tr><th id="179">179</th><td>		<b>default</b>:</td></tr>
+<tr><th id="180">180</th><td>			<b>break</b>;</td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td>		}</td></tr>
+<tr><th id="183">183</th><td>		<a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a>++;</td></tr>
+<tr><th id="184">184</th><td>	}</td></tr>
+<tr><th id="185">185</th><td>}</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td><i>/* Move exact pathname specifications to the end. */</i></td></tr>
+<tr><th id="188">188</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="sort_specs" title='sort_specs' data-ref="sort_specs">sort_specs</dfn>(<b>struct</b> <a class="type" href="#saved_data" title='saved_data' data-ref="saved_data">saved_data</a> *<dfn class="local col2 decl" id="12data" title='data' data-type='struct saved_data *' data-ref="12data">data</dfn>)</td></tr>
+<tr><th id="189">189</th><td>{</td></tr>
+<tr><th id="190">190</th><td>	<b>struct</b> <a class="type" href="#spec" title='spec' data-ref="spec">spec</a> *<dfn class="local col3 decl" id="13spec_copy" title='spec_copy' data-type='struct spec *' data-ref="13spec_copy">spec_copy</dfn>;</td></tr>
+<tr><th id="191">191</th><td>	<b>struct</b> <a class="type" href="#spec" title='spec' data-ref="spec">spec</a> <dfn class="local col4 decl" id="14spec" title='spec' data-type='struct spec' data-ref="14spec">spec</dfn>;</td></tr>
+<tr><th id="192">192</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col5 decl" id="15i" title='i' data-type='unsigned int' data-ref="15i">i</dfn>;</td></tr>
+<tr><th id="193">193</th><td>	<em>int</em> <dfn class="local col6 decl" id="16front" title='front' data-type='int' data-ref="16front">front</dfn>, <dfn class="local col7 decl" id="17back" title='back' data-type='int' data-ref="17back">back</dfn>;</td></tr>
+<tr><th id="194">194</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="18len" title='len' data-type='size_t' data-ref="18len">len</dfn> = <b>sizeof</b>(*<a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a>);</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td>	<a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a> = <a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<a class="local col8 ref" href="#18len" title='len' data-ref="18len">len</a> * <a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a>);</td></tr>
+<tr><th id="197">197</th><td>	<b>if</b> (!<a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a>)</td></tr>
+<tr><th id="198">198</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td>	<i>/* first move the exact pathnames to the back */</i></td></tr>
+<tr><th id="201">201</th><td>	<a class="local col6 ref" href="#16front" title='front' data-ref="16front">front</a> = <var>0</var>;</td></tr>
+<tr><th id="202">202</th><td>	<a class="local col7 ref" href="#17back" title='back' data-ref="17back">back</a> = <a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a> - <var>1</var>;</td></tr>
+<tr><th id="203">203</th><td>	<b>for</b> (<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> = <var>0</var>; <a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> &lt; <a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a>; <a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>++) {</td></tr>
+<tr><th id="204">204</th><td>		<b>if</b> (<a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>-&gt;<a class="ref" href="#saved_data::spec_arr" title='saved_data::spec_arr' data-ref="saved_data::spec_arr">spec_arr</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>].<a class="ref" href="#spec::hasMetaChars" title='spec::hasMetaChars' data-ref="spec::hasMetaChars">hasMetaChars</a>)</td></tr>
+<tr><th id="205">205</th><td>			<a class="ref" href="../../../bionic/libc/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(&amp;<a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a>[<a class="local col6 ref" href="#16front" title='front' data-ref="16front">front</a>++], &amp;<a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>-&gt;<a class="ref" href="#saved_data::spec_arr" title='saved_data::spec_arr' data-ref="saved_data::spec_arr">spec_arr</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>], <a class="local col8 ref" href="#18len" title='len' data-ref="18len">len</a>);</td></tr>
+<tr><th id="206">206</th><td>		<b>else</b></td></tr>
+<tr><th id="207">207</th><td>			<a class="ref" href="../../../bionic/libc/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(&amp;<a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a>[<a class="local col7 ref" href="#17back" title='back' data-ref="17back">back</a>--], &amp;<a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>-&gt;<a class="ref" href="#saved_data::spec_arr" title='saved_data::spec_arr' data-ref="saved_data::spec_arr">spec_arr</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>], <a class="local col8 ref" href="#18len" title='len' data-ref="18len">len</a>);</td></tr>
+<tr><th id="208">208</th><td>	}</td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td>	<i>/*</i></td></tr>
+<tr><th id="211">211</th><td><i>	 * now the exact pathnames are at the end, but they are in the reverse</i></td></tr>
+<tr><th id="212">212</th><td><i>	 * order. Since 'front' is now the first of the 'exact' we can run</i></td></tr>
+<tr><th id="213">213</th><td><i>	 * that part of the array switching the front and back element.</i></td></tr>
+<tr><th id="214">214</th><td><i>	 */</i></td></tr>
+<tr><th id="215">215</th><td>	<a class="local col7 ref" href="#17back" title='back' data-ref="17back">back</a> = <a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a> - <var>1</var>;</td></tr>
+<tr><th id="216">216</th><td>	<b>while</b> (<a class="local col6 ref" href="#16front" title='front' data-ref="16front">front</a> &lt; <a class="local col7 ref" href="#17back" title='back' data-ref="17back">back</a>) {</td></tr>
+<tr><th id="217">217</th><td>		<i>/* save the front */</i></td></tr>
+<tr><th id="218">218</th><td>		<a class="ref" href="../../../bionic/libc/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(&amp;<a class="local col4 ref" href="#14spec" title='spec' data-ref="14spec">spec</a>, &amp;<a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a>[<a class="local col6 ref" href="#16front" title='front' data-ref="16front">front</a>], <a class="local col8 ref" href="#18len" title='len' data-ref="18len">len</a>);</td></tr>
+<tr><th id="219">219</th><td>		<i>/* move the back to the front */</i></td></tr>
+<tr><th id="220">220</th><td>		<a class="ref" href="../../../bionic/libc/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(&amp;<a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a>[<a class="local col6 ref" href="#16front" title='front' data-ref="16front">front</a>], &amp;<a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a>[<a class="local col7 ref" href="#17back" title='back' data-ref="17back">back</a>], <a class="local col8 ref" href="#18len" title='len' data-ref="18len">len</a>);</td></tr>
+<tr><th id="221">221</th><td>		<i>/* put the old front in the back */</i></td></tr>
+<tr><th id="222">222</th><td>		<a class="ref" href="../../../bionic/libc/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(&amp;<a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a>[<a class="local col7 ref" href="#17back" title='back' data-ref="17back">back</a>], &amp;<a class="local col4 ref" href="#14spec" title='spec' data-ref="14spec">spec</a>, <a class="local col8 ref" href="#18len" title='len' data-ref="18len">len</a>);</td></tr>
+<tr><th id="223">223</th><td>		<a class="local col6 ref" href="#16front" title='front' data-ref="16front">front</a>++;</td></tr>
+<tr><th id="224">224</th><td>		<a class="local col7 ref" href="#17back" title='back' data-ref="17back">back</a>--;</td></tr>
+<tr><th id="225">225</th><td>	}</td></tr>
+<tr><th id="226">226</th><td></td></tr>
+<tr><th id="227">227</th><td>	<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>-&gt;<a class="ref" href="#saved_data::spec_arr" title='saved_data::spec_arr' data-ref="saved_data::spec_arr">spec_arr</a>);</td></tr>
+<tr><th id="228">228</th><td>	<a class="local col2 ref" href="#12data" title='data' data-ref="12data">data</a>-&gt;<a class="ref" href="#saved_data::spec_arr" title='saved_data::spec_arr' data-ref="saved_data::spec_arr">spec_arr</a> = <a class="local col3 ref" href="#13spec_copy" title='spec_copy' data-ref="13spec_copy">spec_copy</a>;</td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="231">231</th><td>}</td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td><i>/* Return the length of the text that can be considered the stem, returns 0</i></td></tr>
+<tr><th id="234">234</th><td><i> * if there is no identifiable stem */</i></td></tr>
+<tr><th id="235">235</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="get_stem_from_spec" title='get_stem_from_spec' data-ref="get_stem_from_spec">get_stem_from_spec</dfn>(<em>const</em> <em>char</em> *<em>const</em> <dfn class="local col9 decl" id="19buf" title='buf' data-type='const char *const' data-ref="19buf">buf</dfn>)</td></tr>
+<tr><th id="236">236</th><td>{</td></tr>
+<tr><th id="237">237</th><td>	<em>const</em> <em>char</em> *<dfn class="local col0 decl" id="20tmp" title='tmp' data-type='const char *' data-ref="20tmp">tmp</dfn> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strchr" title='strchr' data-ref="strchr">strchr</a>(<a class="local col9 ref" href="#19buf" title='buf' data-ref="19buf">buf</a> + <var>1</var>, <kbd>'/'</kbd>);</td></tr>
+<tr><th id="238">238</th><td>	<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="21ind" title='ind' data-type='const char *' data-ref="21ind">ind</dfn>;</td></tr>
+<tr><th id="239">239</th><td></td></tr>
+<tr><th id="240">240</th><td>	<b>if</b> (!<a class="local col0 ref" href="#20tmp" title='tmp' data-ref="20tmp">tmp</a>)</td></tr>
+<tr><th id="241">241</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="242">242</th><td></td></tr>
+<tr><th id="243">243</th><td>	<b>for</b> (<a class="local col1 ref" href="#21ind" title='ind' data-ref="21ind">ind</a> = <a class="local col9 ref" href="#19buf" title='buf' data-ref="19buf">buf</a>; <a class="local col1 ref" href="#21ind" title='ind' data-ref="21ind">ind</a> &lt; <a class="local col0 ref" href="#20tmp" title='tmp' data-ref="20tmp">tmp</a>; <a class="local col1 ref" href="#21ind" title='ind' data-ref="21ind">ind</a>++) {</td></tr>
+<tr><th id="244">244</th><td>		<b>if</b> (<a class="ref" href="../../../bionic/libc/include/string.h.html#strchr" title='strchr' data-ref="strchr">strchr</a>(<q>".^$?*+|[({"</q>, (<em>int</em>)*<a class="local col1 ref" href="#21ind" title='ind' data-ref="21ind">ind</a>))</td></tr>
+<tr><th id="245">245</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="246">246</th><td>	}</td></tr>
+<tr><th id="247">247</th><td>	<b>return</b> <a class="local col0 ref" href="#20tmp" title='tmp' data-ref="20tmp">tmp</a> - <a class="local col9 ref" href="#19buf" title='buf' data-ref="19buf">buf</a>;</td></tr>
+<tr><th id="248">248</th><td>}</td></tr>
+<tr><th id="249">249</th><td></td></tr>
+<tr><th id="250">250</th><td><i>/*</i></td></tr>
+<tr><th id="251">251</th><td><i> * return the stemid given a string and a length</i></td></tr>
+<tr><th id="252">252</th><td><i> */</i></td></tr>
+<tr><th id="253">253</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="find_stem" title='find_stem' data-ref="find_stem">find_stem</dfn>(<b>struct</b> <a class="type" href="#saved_data" title='saved_data' data-ref="saved_data">saved_data</a> *<dfn class="local col2 decl" id="22data" title='data' data-type='struct saved_data *' data-ref="22data">data</dfn>, <em>const</em> <em>char</em> *<dfn class="local col3 decl" id="23buf" title='buf' data-type='const char *' data-ref="23buf">buf</dfn>,</td></tr>
+<tr><th id="254">254</th><td>						    <em>int</em> <dfn class="local col4 decl" id="24stem_len" title='stem_len' data-type='int' data-ref="24stem_len">stem_len</dfn>)</td></tr>
+<tr><th id="255">255</th><td>{</td></tr>
+<tr><th id="256">256</th><td>	<em>int</em> <dfn class="local col5 decl" id="25i" title='i' data-type='int' data-ref="25i">i</dfn>;</td></tr>
+<tr><th id="257">257</th><td></td></tr>
+<tr><th id="258">258</th><td>	<b>for</b> (<a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a> = <var>0</var>; <a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a> &lt; <a class="local col2 ref" href="#22data" title='data' data-ref="22data">data</a>-&gt;<a class="ref" href="#saved_data::num_stems" title='saved_data::num_stems' data-ref="saved_data::num_stems">num_stems</a>; <a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a>++) {</td></tr>
+<tr><th id="259">259</th><td>		<b>if</b> (<a class="local col4 ref" href="#24stem_len" title='stem_len' data-ref="24stem_len">stem_len</a> == <a class="local col2 ref" href="#22data" title='data' data-ref="22data">data</a>-&gt;<a class="ref" href="#saved_data::stem_arr" title='saved_data::stem_arr' data-ref="saved_data::stem_arr">stem_arr</a>[<a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a>].<a class="ref" href="#stem::len" title='stem::len' data-ref="stem::len">len</a> &amp;&amp;</td></tr>
+<tr><th id="260">260</th><td>		    !<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col3 ref" href="#23buf" title='buf' data-ref="23buf">buf</a>, <a class="local col2 ref" href="#22data" title='data' data-ref="22data">data</a>-&gt;<a class="ref" href="#saved_data::stem_arr" title='saved_data::stem_arr' data-ref="saved_data::stem_arr">stem_arr</a>[<a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a>].<a class="ref" href="#stem::buf" title='stem::buf' data-ref="stem::buf">buf</a>, <a class="local col4 ref" href="#24stem_len" title='stem_len' data-ref="24stem_len">stem_len</a>))</td></tr>
+<tr><th id="261">261</th><td>			<b>return</b> <a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a>;</td></tr>
+<tr><th id="262">262</th><td>	}</td></tr>
+<tr><th id="263">263</th><td></td></tr>
+<tr><th id="264">264</th><td>	<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="265">265</th><td>}</td></tr>
+<tr><th id="266">266</th><td></td></tr>
+<tr><th id="267">267</th><td><i>/* returns the index of the new stored object */</i></td></tr>
+<tr><th id="268">268</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="store_stem" title='store_stem' data-ref="store_stem">store_stem</dfn>(<b>struct</b> <a class="type" href="#saved_data" title='saved_data' data-ref="saved_data">saved_data</a> *<dfn class="local col6 decl" id="26data" title='data' data-type='struct saved_data *' data-ref="26data">data</dfn>, <em>char</em> *<dfn class="local col7 decl" id="27buf" title='buf' data-type='char *' data-ref="27buf">buf</dfn>, <em>int</em> <dfn class="local col8 decl" id="28stem_len" title='stem_len' data-type='int' data-ref="28stem_len">stem_len</dfn>)</td></tr>
+<tr><th id="269">269</th><td>{</td></tr>
+<tr><th id="270">270</th><td>	<em>int</em> <dfn class="local col9 decl" id="29num" title='num' data-type='int' data-ref="29num">num</dfn> = <a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::num_stems" title='saved_data::num_stems' data-ref="saved_data::num_stems">num_stems</a>;</td></tr>
+<tr><th id="271">271</th><td></td></tr>
+<tr><th id="272">272</th><td>	<b>if</b> (<a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::alloc_stems" title='saved_data::alloc_stems' data-ref="saved_data::alloc_stems">alloc_stems</a> == <a class="local col9 ref" href="#29num" title='num' data-ref="29num">num</a>) {</td></tr>
+<tr><th id="273">273</th><td>		<b>struct</b> <a class="type" href="#stem" title='stem' data-ref="stem">stem</a> *<dfn class="local col0 decl" id="30tmp_arr" title='tmp_arr' data-type='struct stem *' data-ref="30tmp_arr">tmp_arr</dfn>;</td></tr>
+<tr><th id="274">274</th><td></td></tr>
+<tr><th id="275">275</th><td>		<a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::alloc_stems" title='saved_data::alloc_stems' data-ref="saved_data::alloc_stems">alloc_stems</a> = <a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::alloc_stems" title='saved_data::alloc_stems' data-ref="saved_data::alloc_stems">alloc_stems</a> * <var>2</var> + <var>16</var>;</td></tr>
+<tr><th id="276">276</th><td>		<a class="local col0 ref" href="#30tmp_arr" title='tmp_arr' data-ref="30tmp_arr">tmp_arr</a> = <a class="ref" href="../../../bionic/libc/include/malloc.h.html#realloc" title='realloc' data-ref="realloc">realloc</a>(<a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::stem_arr" title='saved_data::stem_arr' data-ref="saved_data::stem_arr">stem_arr</a>,</td></tr>
+<tr><th id="277">277</th><td>				  <b>sizeof</b>(*<a class="local col0 ref" href="#30tmp_arr" title='tmp_arr' data-ref="30tmp_arr">tmp_arr</a>) * <a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::alloc_stems" title='saved_data::alloc_stems' data-ref="saved_data::alloc_stems">alloc_stems</a>);</td></tr>
+<tr><th id="278">278</th><td>		<b>if</b> (!<a class="local col0 ref" href="#30tmp_arr" title='tmp_arr' data-ref="30tmp_arr">tmp_arr</a>)</td></tr>
+<tr><th id="279">279</th><td>			<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="280">280</th><td>		<a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::stem_arr" title='saved_data::stem_arr' data-ref="saved_data::stem_arr">stem_arr</a> = <a class="local col0 ref" href="#30tmp_arr" title='tmp_arr' data-ref="30tmp_arr">tmp_arr</a>;</td></tr>
+<tr><th id="281">281</th><td>	}</td></tr>
+<tr><th id="282">282</th><td>	<a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::stem_arr" title='saved_data::stem_arr' data-ref="saved_data::stem_arr">stem_arr</a>[<a class="local col9 ref" href="#29num" title='num' data-ref="29num">num</a>].<a class="ref" href="#stem::len" title='stem::len' data-ref="stem::len">len</a> = <a class="local col8 ref" href="#28stem_len" title='stem_len' data-ref="28stem_len">stem_len</a>;</td></tr>
+<tr><th id="283">283</th><td>	<a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::stem_arr" title='saved_data::stem_arr' data-ref="saved_data::stem_arr">stem_arr</a>[<a class="local col9 ref" href="#29num" title='num' data-ref="29num">num</a>].<a class="ref" href="#stem::buf" title='stem::buf' data-ref="stem::buf">buf</a> = <a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>;</td></tr>
+<tr><th id="284">284</th><td>	<a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::stem_arr" title='saved_data::stem_arr' data-ref="saved_data::stem_arr">stem_arr</a>[<a class="local col9 ref" href="#29num" title='num' data-ref="29num">num</a>].<a class="ref" href="#stem::from_mmap" title='stem::from_mmap' data-ref="stem::from_mmap">from_mmap</a> = <var>0</var>;</td></tr>
+<tr><th id="285">285</th><td>	<a class="local col6 ref" href="#26data" title='data' data-ref="26data">data</a>-&gt;<a class="ref" href="#saved_data::num_stems" title='saved_data::num_stems' data-ref="saved_data::num_stems">num_stems</a>++;</td></tr>
+<tr><th id="286">286</th><td></td></tr>
+<tr><th id="287">287</th><td>	<b>return</b> <a class="local col9 ref" href="#29num" title='num' data-ref="29num">num</a>;</td></tr>
+<tr><th id="288">288</th><td>}</td></tr>
+<tr><th id="289">289</th><td></td></tr>
+<tr><th id="290">290</th><td><i>/* find the stem of a file spec, returns the index into stem_arr for a new</i></td></tr>
+<tr><th id="291">291</th><td><i> * or existing stem, (or -1 if there is no possible stem - IE for a file in</i></td></tr>
+<tr><th id="292">292</th><td><i> * the root directory or a regex that is too complex for us). */</i></td></tr>
+<tr><th id="293">293</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="find_stem_from_spec" title='find_stem_from_spec' data-ref="find_stem_from_spec">find_stem_from_spec</dfn>(<b>struct</b> <a class="type" href="#saved_data" title='saved_data' data-ref="saved_data">saved_data</a> *<dfn class="local col1 decl" id="31data" title='data' data-type='struct saved_data *' data-ref="31data">data</dfn>, <em>const</em> <em>char</em> *<dfn class="local col2 decl" id="32buf" title='buf' data-type='const char *' data-ref="32buf">buf</dfn>)</td></tr>
+<tr><th id="294">294</th><td>{</td></tr>
+<tr><th id="295">295</th><td>	<em>int</em> <dfn class="local col3 decl" id="33stem_len" title='stem_len' data-type='int' data-ref="33stem_len">stem_len</dfn> = <a class="ref" href="#get_stem_from_spec" title='get_stem_from_spec' data-ref="get_stem_from_spec">get_stem_from_spec</a>(<a class="local col2 ref" href="#32buf" title='buf' data-ref="32buf">buf</a>);</td></tr>
+<tr><th id="296">296</th><td>	<em>int</em> <dfn class="local col4 decl" id="34stemid" title='stemid' data-type='int' data-ref="34stemid">stemid</dfn>;</td></tr>
+<tr><th id="297">297</th><td>	<em>char</em> *<dfn class="local col5 decl" id="35stem" title='stem' data-type='char *' data-ref="35stem">stem</dfn>;</td></tr>
+<tr><th id="298">298</th><td></td></tr>
+<tr><th id="299">299</th><td>	<b>if</b> (!<a class="local col3 ref" href="#33stem_len" title='stem_len' data-ref="33stem_len">stem_len</a>)</td></tr>
+<tr><th id="300">300</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="301">301</th><td></td></tr>
+<tr><th id="302">302</th><td>	<a class="local col4 ref" href="#34stemid" title='stemid' data-ref="34stemid">stemid</a> = <a class="ref" href="#find_stem" title='find_stem' data-ref="find_stem">find_stem</a>(<a class="local col1 ref" href="#31data" title='data' data-ref="31data">data</a>, <a class="local col2 ref" href="#32buf" title='buf' data-ref="32buf">buf</a>, <a class="local col3 ref" href="#33stem_len" title='stem_len' data-ref="33stem_len">stem_len</a>);</td></tr>
+<tr><th id="303">303</th><td>	<b>if</b> (<a class="local col4 ref" href="#34stemid" title='stemid' data-ref="34stemid">stemid</a> &gt;= <var>0</var>)</td></tr>
+<tr><th id="304">304</th><td>		<b>return</b> <a class="local col4 ref" href="#34stemid" title='stemid' data-ref="34stemid">stemid</a>;</td></tr>
+<tr><th id="305">305</th><td></td></tr>
+<tr><th id="306">306</th><td>	<i>/* not found, allocate a new one */</i></td></tr>
+<tr><th id="307">307</th><td>	<a class="local col5 ref" href="#35stem" title='stem' data-ref="35stem">stem</a> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strndup" title='strndup' data-ref="strndup">strndup</a>(<a class="local col2 ref" href="#32buf" title='buf' data-ref="32buf">buf</a>, <a class="local col3 ref" href="#33stem_len" title='stem_len' data-ref="33stem_len">stem_len</a>);</td></tr>
+<tr><th id="308">308</th><td>	<b>if</b> (!<a class="local col5 ref" href="#35stem" title='stem' data-ref="35stem">stem</a>)</td></tr>
+<tr><th id="309">309</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="310">310</th><td></td></tr>
+<tr><th id="311">311</th><td>	<b>return</b> <a class="ref" href="#store_stem" title='store_stem' data-ref="store_stem">store_stem</a>(<a class="local col1 ref" href="#31data" title='data' data-ref="31data">data</a>, <a class="local col5 ref" href="#35stem" title='stem' data-ref="35stem">stem</a>, <a class="local col3 ref" href="#33stem_len" title='stem_len' data-ref="33stem_len">stem_len</a>);</td></tr>
+<tr><th id="312">312</th><td>}</td></tr>
+<tr><th id="313">313</th><td></td></tr>
+<tr><th id="314">314</th><td><i>/* This will always check for buffer over-runs and either read the next entry</i></td></tr>
+<tr><th id="315">315</th><td><i> * if buf != NULL or skip over the entry (as these areas are mapped in the</i></td></tr>
+<tr><th id="316">316</th><td><i> * current buffer). */</i></td></tr>
+<tr><th id="317">317</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="next_entry" title='next_entry' data-ref="next_entry">next_entry</dfn>(<em>void</em> *<dfn class="local col6 decl" id="36buf" title='buf' data-type='void *' data-ref="36buf">buf</dfn>, <b>struct</b> <a class="type" href="#mmap_area" title='mmap_area' data-ref="mmap_area">mmap_area</a> *<dfn class="local col7 decl" id="37fp" title='fp' data-type='struct mmap_area *' data-ref="37fp">fp</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="38bytes" title='bytes' data-type='size_t' data-ref="38bytes">bytes</dfn>)</td></tr>
+<tr><th id="318">318</th><td>{</td></tr>
+<tr><th id="319">319</th><td>	<b>if</b> (<a class="local col8 ref" href="#38bytes" title='bytes' data-ref="38bytes">bytes</a> &gt; <a class="local col7 ref" href="#37fp" title='fp' data-ref="37fp">fp</a>-&gt;<a class="ref" href="#mmap_area::next_len" title='mmap_area::next_len' data-ref="mmap_area::next_len">next_len</a>)</td></tr>
+<tr><th id="320">320</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="321">321</th><td></td></tr>
+<tr><th id="322">322</th><td>	<b>if</b> (<a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>)</td></tr>
+<tr><th id="323">323</th><td>		<a class="ref" href="../../../bionic/libc/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>, <a class="local col7 ref" href="#37fp" title='fp' data-ref="37fp">fp</a>-&gt;<a class="ref" href="#mmap_area::next_addr" title='mmap_area::next_addr' data-ref="mmap_area::next_addr">next_addr</a>, <a class="local col8 ref" href="#38bytes" title='bytes' data-ref="38bytes">bytes</a>);</td></tr>
+<tr><th id="324">324</th><td></td></tr>
+<tr><th id="325">325</th><td>	<a class="local col7 ref" href="#37fp" title='fp' data-ref="37fp">fp</a>-&gt;<a class="ref" href="#mmap_area::next_addr" title='mmap_area::next_addr' data-ref="mmap_area::next_addr">next_addr</a> = (<em>char</em> *)<a class="local col7 ref" href="#37fp" title='fp' data-ref="37fp">fp</a>-&gt;<a class="ref" href="#mmap_area::next_addr" title='mmap_area::next_addr' data-ref="mmap_area::next_addr">next_addr</a> + <a class="local col8 ref" href="#38bytes" title='bytes' data-ref="38bytes">bytes</a>;</td></tr>
+<tr><th id="326">326</th><td>	<a class="local col7 ref" href="#37fp" title='fp' data-ref="37fp">fp</a>-&gt;<a class="ref" href="#mmap_area::next_len" title='mmap_area::next_len' data-ref="mmap_area::next_len">next_len</a> -= <a class="local col8 ref" href="#38bytes" title='bytes' data-ref="38bytes">bytes</a>;</td></tr>
+<tr><th id="327">327</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="328">328</th><td>}</td></tr>
+<tr><th id="329">329</th><td></td></tr>
+<tr><th id="330">330</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="compile_regex" title='compile_regex' data-ref="compile_regex">compile_regex</dfn>(<b>struct</b> <a class="type" href="#saved_data" title='saved_data' data-ref="saved_data">saved_data</a> *<dfn class="local col9 decl" id="39data" title='data' data-type='struct saved_data *' data-ref="39data">data</dfn>, <b>struct</b> <a class="type" href="#spec" title='spec' data-ref="spec">spec</a> *<dfn class="local col0 decl" id="40spec" title='spec' data-type='struct spec *' data-ref="40spec">spec</dfn>,</td></tr>
+<tr><th id="331">331</th><td>					    <em>const</em> <em>char</em> **<dfn class="local col1 decl" id="41errbuf" title='errbuf' data-type='const char **' data-ref="41errbuf">errbuf</dfn>)</td></tr>
+<tr><th id="332">332</th><td>{</td></tr>
+<tr><th id="333">333</th><td>	<em>const</em> <em>char</em> *<dfn class="local col2 decl" id="42tmperrbuf" title='tmperrbuf' data-type='const char *' data-ref="42tmperrbuf">tmperrbuf</dfn>;</td></tr>
+<tr><th id="334">334</th><td>	<em>char</em> *<dfn class="local col3 decl" id="43reg_buf" title='reg_buf' data-type='char *' data-ref="43reg_buf">reg_buf</dfn>, *<dfn class="local col4 decl" id="44anchored_regex" title='anchored_regex' data-type='char *' data-ref="44anchored_regex">anchored_regex</dfn>, *<dfn class="local col5 decl" id="45cp" title='cp' data-type='char *' data-ref="45cp">cp</dfn>;</td></tr>
+<tr><th id="335">335</th><td>	<b>struct</b> <a class="type" href="#stem" title='stem' data-ref="stem">stem</a> *<dfn class="local col6 decl" id="46stem_arr" title='stem_arr' data-type='struct stem *' data-ref="46stem_arr">stem_arr</dfn> = <a class="local col9 ref" href="#39data" title='data' data-ref="39data">data</a>-&gt;<a class="ref" href="#saved_data::stem_arr" title='saved_data::stem_arr' data-ref="saved_data::stem_arr">stem_arr</a>;</td></tr>
+<tr><th id="336">336</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="47len" title='len' data-type='size_t' data-ref="47len">len</dfn>;</td></tr>
+<tr><th id="337">337</th><td>	<em>int</em> <dfn class="local col8 decl" id="48erroff" title='erroff' data-type='int' data-ref="48erroff">erroff</dfn>;</td></tr>
+<tr><th id="338">338</th><td></td></tr>
+<tr><th id="339">339</th><td>	<b>if</b> (<a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::regcomp" title='spec::regcomp' data-ref="spec::regcomp">regcomp</a>)</td></tr>
+<tr><th id="340">340</th><td>		<b>return</b> <var>0</var>; <i>/* already done */</i></td></tr>
+<tr><th id="341">341</th><td></td></tr>
+<tr><th id="342">342</th><td>	<i>/* Skip the fixed stem. */</i></td></tr>
+<tr><th id="343">343</th><td>	<a class="local col3 ref" href="#43reg_buf" title='reg_buf' data-ref="43reg_buf">reg_buf</a> = <a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::regex_str" title='spec::regex_str' data-ref="spec::regex_str">regex_str</a>;</td></tr>
+<tr><th id="344">344</th><td>	<b>if</b> (<a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::stem_id" title='spec::stem_id' data-ref="spec::stem_id">stem_id</a> &gt;= <var>0</var>)</td></tr>
+<tr><th id="345">345</th><td>		<a class="local col3 ref" href="#43reg_buf" title='reg_buf' data-ref="43reg_buf">reg_buf</a> += <a class="local col6 ref" href="#46stem_arr" title='stem_arr' data-ref="46stem_arr">stem_arr</a>[<a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::stem_id" title='spec::stem_id' data-ref="spec::stem_id">stem_id</a>].<a class="ref" href="#stem::len" title='stem::len' data-ref="stem::len">len</a>;</td></tr>
+<tr><th id="346">346</th><td></td></tr>
+<tr><th id="347">347</th><td>	<i>/* Anchor the regular expression. */</i></td></tr>
+<tr><th id="348">348</th><td>	<a class="local col7 ref" href="#47len" title='len' data-ref="47len">len</a> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col3 ref" href="#43reg_buf" title='reg_buf' data-ref="43reg_buf">reg_buf</a>);</td></tr>
+<tr><th id="349">349</th><td>	<a class="local col5 ref" href="#45cp" title='cp' data-ref="45cp">cp</a> = <a class="local col4 ref" href="#44anchored_regex" title='anchored_regex' data-ref="44anchored_regex">anchored_regex</a> = <a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<a class="local col7 ref" href="#47len" title='len' data-ref="47len">len</a> + <var>3</var>);</td></tr>
+<tr><th id="350">350</th><td>	<b>if</b> (!<a class="local col4 ref" href="#44anchored_regex" title='anchored_regex' data-ref="44anchored_regex">anchored_regex</a>)</td></tr>
+<tr><th id="351">351</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="352">352</th><td></td></tr>
+<tr><th id="353">353</th><td>	<i>/* Create ^...$ regexp.  */</i></td></tr>
+<tr><th id="354">354</th><td>	*<a class="local col5 ref" href="#45cp" title='cp' data-ref="45cp">cp</a>++ = <kbd>'^'</kbd>;</td></tr>
+<tr><th id="355">355</th><td>	<a class="ref" href="../../../bionic/libc/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col5 ref" href="#45cp" title='cp' data-ref="45cp">cp</a>, <a class="local col3 ref" href="#43reg_buf" title='reg_buf' data-ref="43reg_buf">reg_buf</a>, <a class="local col7 ref" href="#47len" title='len' data-ref="47len">len</a>);</td></tr>
+<tr><th id="356">356</th><td>	<a class="local col5 ref" href="#45cp" title='cp' data-ref="45cp">cp</a> += <a class="local col7 ref" href="#47len" title='len' data-ref="47len">len</a>;</td></tr>
+<tr><th id="357">357</th><td>	*<a class="local col5 ref" href="#45cp" title='cp' data-ref="45cp">cp</a>++ = <kbd>'$'</kbd>;</td></tr>
+<tr><th id="358">358</th><td>	*<a class="local col5 ref" href="#45cp" title='cp' data-ref="45cp">cp</a> = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="359">359</th><td></td></tr>
+<tr><th id="360">360</th><td>	<i>/* Compile the regular expression. */</i></td></tr>
+<tr><th id="361">361</th><td>	<a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::regex" title='spec::regex' data-ref="spec::regex">regex</a> = <a class="ref" href="../../pcre/pcre.h.html#pcre_compile" title='pcre_compile' data-ref="pcre_compile">pcre_compile</a>(<a class="local col4 ref" href="#44anchored_regex" title='anchored_regex' data-ref="44anchored_regex">anchored_regex</a>, <a class="macro" href="../../pcre/pcre.h.html#129" title="0x00000004" data-ref="_M/PCRE_DOTALL">PCRE_DOTALL</a>, &amp;<a class="local col2 ref" href="#42tmperrbuf" title='tmperrbuf' data-ref="42tmperrbuf">tmperrbuf</a>,</td></tr>
+<tr><th id="362">362</th><td>						    &amp;<a class="local col8 ref" href="#48erroff" title='erroff' data-ref="48erroff">erroff</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="363">363</th><td>	<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col4 ref" href="#44anchored_regex" title='anchored_regex' data-ref="44anchored_regex">anchored_regex</a>);</td></tr>
+<tr><th id="364">364</th><td>	<b>if</b> (!<a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::regex" title='spec::regex' data-ref="spec::regex">regex</a>) {</td></tr>
+<tr><th id="365">365</th><td>		<b>if</b> (<a class="local col1 ref" href="#41errbuf" title='errbuf' data-ref="41errbuf">errbuf</a>)</td></tr>
+<tr><th id="366">366</th><td>			*<a class="local col1 ref" href="#41errbuf" title='errbuf' data-ref="41errbuf">errbuf</a> = <a class="local col2 ref" href="#42tmperrbuf" title='tmperrbuf' data-ref="42tmperrbuf">tmperrbuf</a>;</td></tr>
+<tr><th id="367">367</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="368">368</th><td>	}</td></tr>
+<tr><th id="369">369</th><td></td></tr>
+<tr><th id="370">370</th><td>	<a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::(anonymous)::sd" title='spec::(anonymous union)::sd' data-ref="spec::(anonymous)::sd">sd</a> = <a class="ref" href="../../pcre/pcre.h.html#pcre_study" title='pcre_study' data-ref="pcre_study">pcre_study</a>(<a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::regex" title='spec::regex' data-ref="spec::regex">regex</a>, <var>0</var>, &amp;<a class="local col2 ref" href="#42tmperrbuf" title='tmperrbuf' data-ref="42tmperrbuf">tmperrbuf</a>);</td></tr>
+<tr><th id="371">371</th><td>	<b>if</b> (!<a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::(anonymous)::sd" title='spec::(anonymous union)::sd' data-ref="spec::(anonymous)::sd">sd</a> &amp;&amp; <a class="local col2 ref" href="#42tmperrbuf" title='tmperrbuf' data-ref="42tmperrbuf">tmperrbuf</a>) {</td></tr>
+<tr><th id="372">372</th><td>		<b>if</b> (<a class="local col1 ref" href="#41errbuf" title='errbuf' data-ref="41errbuf">errbuf</a>)</td></tr>
+<tr><th id="373">373</th><td>			*<a class="local col1 ref" href="#41errbuf" title='errbuf' data-ref="41errbuf">errbuf</a> = <a class="local col2 ref" href="#42tmperrbuf" title='tmperrbuf' data-ref="42tmperrbuf">tmperrbuf</a>;</td></tr>
+<tr><th id="374">374</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="375">375</th><td>	}</td></tr>
+<tr><th id="376">376</th><td></td></tr>
+<tr><th id="377">377</th><td>	<i>/* Done. */</i></td></tr>
+<tr><th id="378">378</th><td>	<a class="local col0 ref" href="#40spec" title='spec' data-ref="40spec">spec</a>-&gt;<a class="ref" href="#spec::regcomp" title='spec::regcomp' data-ref="spec::regcomp">regcomp</a> = <var>1</var>;</td></tr>
+<tr><th id="379">379</th><td></td></tr>
+<tr><th id="380">380</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="381">381</th><td>}</td></tr>
+<tr><th id="382">382</th><td></td></tr>
+<tr><th id="383">383</th><td><i>/* This service is used by label_file.c process_file() and</i></td></tr>
+<tr><th id="384">384</th><td><i> * utils/sefcontext_compile.c */</i></td></tr>
+<tr><th id="385">385</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="process_line" title='process_line' data-ref="process_line">process_line</dfn>(<b>struct</b> <a class="type" href="label_internal.h.html#selabel_handle" title='selabel_handle' data-ref="selabel_handle">selabel_handle</a> *<dfn class="local col9 decl" id="49rec" title='rec' data-type='struct selabel_handle *' data-ref="49rec">rec</dfn>,</td></tr>
+<tr><th id="386">386</th><td>			<em>const</em> <em>char</em> *<dfn class="local col0 decl" id="50path" title='path' data-type='const char *' data-ref="50path">path</dfn>, <em>const</em> <em>char</em> *<dfn class="local col1 decl" id="51prefix" title='prefix' data-type='const char *' data-ref="51prefix">prefix</dfn>,</td></tr>
+<tr><th id="387">387</th><td>			<em>char</em> *<dfn class="local col2 decl" id="52line_buf" title='line_buf' data-type='char *' data-ref="52line_buf">line_buf</dfn>, <em>unsigned</em> <dfn class="local col3 decl" id="53lineno" title='lineno' data-type='unsigned int' data-ref="53lineno">lineno</dfn>)</td></tr>
+<tr><th id="388">388</th><td>{</td></tr>
+<tr><th id="389">389</th><td>	<em>int</em> <dfn class="local col4 decl" id="54items" title='items' data-type='int' data-ref="54items">items</dfn>, <dfn class="local col5 decl" id="55len" title='len' data-type='int' data-ref="55len">len</dfn>, <dfn class="local col6 decl" id="56rc" title='rc' data-type='int' data-ref="56rc">rc</dfn>;</td></tr>
+<tr><th id="390">390</th><td>	<em>char</em> *<dfn class="local col7 decl" id="57regex" title='regex' data-type='char *' data-ref="57regex">regex</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, *<dfn class="local col8 decl" id="58type" title='type' data-type='char *' data-ref="58type">type</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, *<dfn class="local col9 decl" id="59context" title='context' data-type='char *' data-ref="59context">context</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="391">391</th><td>	<b>struct</b> <a class="type" href="#saved_data" title='saved_data' data-ref="saved_data">saved_data</a> *<dfn class="local col0 decl" id="60data" title='data' data-type='struct saved_data *' data-ref="60data">data</dfn> = (<b>struct</b> <a class="type" href="#saved_data" title='saved_data' data-ref="saved_data">saved_data</a> *)<a class="local col9 ref" href="#49rec" title='rec' data-ref="49rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::data" title='selabel_handle::data' data-ref="selabel_handle::data">data</a>;</td></tr>
+<tr><th id="392">392</th><td>	<b>struct</b> <a class="type" href="#spec" title='spec' data-ref="spec">spec</a> *<dfn class="local col1 decl" id="61spec_arr" title='spec_arr' data-type='struct spec *' data-ref="61spec_arr">spec_arr</dfn>;</td></tr>
+<tr><th id="393">393</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col2 decl" id="62nspec" title='nspec' data-type='unsigned int' data-ref="62nspec">nspec</dfn> = <a class="local col0 ref" href="#60data" title='data' data-ref="60data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a>;</td></tr>
+<tr><th id="394">394</th><td>	<em>const</em> <em>char</em> *<dfn class="local col3 decl" id="63errbuf" title='errbuf' data-type='const char *' data-ref="63errbuf">errbuf</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="395">395</th><td></td></tr>
+<tr><th id="396">396</th><td>	<a class="local col4 ref" href="#54items" title='items' data-ref="54items">items</a> = <a class="ref" href="label_internal.h.html#read_spec_entries" title='read_spec_entries' data-ref="read_spec_entries">read_spec_entries</a>(<a class="local col2 ref" href="#52line_buf" title='line_buf' data-ref="52line_buf">line_buf</a>, &amp;<a class="local col3 ref" href="#63errbuf" title='errbuf' data-ref="63errbuf">errbuf</a>, <var>3</var>, &amp;<a class="local col7 ref" href="#57regex" title='regex' data-ref="57regex">regex</a>, &amp;<a class="local col8 ref" href="#58type" title='type' data-ref="58type">type</a>, &amp;<a class="local col9 ref" href="#59context" title='context' data-ref="59context">context</a>);</td></tr>
+<tr><th id="397">397</th><td>	<b>if</b> (<a class="local col4 ref" href="#54items" title='items' data-ref="54items">items</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="398">398</th><td>		<a class="local col6 ref" href="#56rc" title='rc' data-ref="56rc">rc</a> = <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="399">399</th><td>		<a class="ref" href="callbacks.h.html#selinux_log" title='selinux_log' data-ref="selinux_log">selinux_log</a>(<a class="macro" href="../include/selinux/selinux.h.html#158" title="0" data-ref="_M/SELINUX_ERROR">SELINUX_ERROR</a>,</td></tr>
+<tr><th id="400">400</th><td>			<q>"%s:  line %u error due to: %s\n"</q>, <a class="local col0 ref" href="#50path" title='path' data-ref="50path">path</a>,</td></tr>
+<tr><th id="401">401</th><td>			<a class="local col3 ref" href="#53lineno" title='lineno' data-ref="53lineno">lineno</a>, <a class="local col3 ref" href="#63errbuf" title='errbuf' data-ref="63errbuf">errbuf</a> ?: <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="402">402</th><td>		<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="local col6 ref" href="#56rc" title='rc' data-ref="56rc">rc</a>;</td></tr>
+<tr><th id="403">403</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="404">404</th><td>	}</td></tr>
+<tr><th id="405">405</th><td></td></tr>
+<tr><th id="406">406</th><td>	<b>if</b> (<a class="local col4 ref" href="#54items" title='items' data-ref="54items">items</a> == <var>0</var>)</td></tr>
+<tr><th id="407">407</th><td>		<b>return</b> <a class="local col4 ref" href="#54items" title='items' data-ref="54items">items</a>;</td></tr>
+<tr><th id="408">408</th><td></td></tr>
+<tr><th id="409">409</th><td>	<b>if</b> (<a class="local col4 ref" href="#54items" title='items' data-ref="54items">items</a> &lt; <var>2</var>) {</td></tr>
+<tr><th id="410">410</th><td>		<a class="ref" href="callbacks.h.html#selinux_log" title='selinux_log' data-ref="selinux_log">selinux_log</a>(<a class="macro" href="../include/selinux/selinux.h.html#158" title="0" data-ref="_M/SELINUX_ERROR">SELINUX_ERROR</a>,</td></tr>
+<tr><th id="411">411</th><td>			    <q>"%s:  line %u is missing fields\n"</q>, <a class="local col0 ref" href="#50path" title='path' data-ref="50path">path</a>,</td></tr>
+<tr><th id="412">412</th><td>			    <a class="local col3 ref" href="#53lineno" title='lineno' data-ref="53lineno">lineno</a>);</td></tr>
+<tr><th id="413">413</th><td>		<b>if</b> (<a class="local col4 ref" href="#54items" title='items' data-ref="54items">items</a> == <var>1</var>)</td></tr>
+<tr><th id="414">414</th><td>			<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col7 ref" href="#57regex" title='regex' data-ref="57regex">regex</a>);</td></tr>
+<tr><th id="415">415</th><td>		<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="416">416</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="417">417</th><td>	} <b>else</b> <b>if</b> (<a class="local col4 ref" href="#54items" title='items' data-ref="54items">items</a> == <var>2</var>) {</td></tr>
+<tr><th id="418">418</th><td>		<i>/* The type field is optional. */</i></td></tr>
+<tr><th id="419">419</th><td>		<a class="local col9 ref" href="#59context" title='context' data-ref="59context">context</a> = <a class="local col8 ref" href="#58type" title='type' data-ref="58type">type</a>;</td></tr>
+<tr><th id="420">420</th><td>		<a class="local col8 ref" href="#58type" title='type' data-ref="58type">type</a> = <var>0</var>;</td></tr>
+<tr><th id="421">421</th><td>	}</td></tr>
+<tr><th id="422">422</th><td></td></tr>
+<tr><th id="423">423</th><td>	<a class="local col5 ref" href="#55len" title='len' data-ref="55len">len</a> = <a class="ref" href="#get_stem_from_spec" title='get_stem_from_spec' data-ref="get_stem_from_spec">get_stem_from_spec</a>(<a class="local col7 ref" href="#57regex" title='regex' data-ref="57regex">regex</a>);</td></tr>
+<tr><th id="424">424</th><td>	<b>if</b> (<a class="local col5 ref" href="#55len" title='len' data-ref="55len">len</a> &amp;&amp; <a class="local col1 ref" href="#51prefix" title='prefix' data-ref="51prefix">prefix</a> &amp;&amp; <a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col1 ref" href="#51prefix" title='prefix' data-ref="51prefix">prefix</a>, <a class="local col7 ref" href="#57regex" title='regex' data-ref="57regex">regex</a>, <a class="local col5 ref" href="#55len" title='len' data-ref="55len">len</a>)) {</td></tr>
+<tr><th id="425">425</th><td>		<i>/* Stem of regex does not match requested prefix, discard. */</i></td></tr>
+<tr><th id="426">426</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col7 ref" href="#57regex" title='regex' data-ref="57regex">regex</a>);</td></tr>
+<tr><th id="427">427</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col8 ref" href="#58type" title='type' data-ref="58type">type</a>);</td></tr>
+<tr><th id="428">428</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col9 ref" href="#59context" title='context' data-ref="59context">context</a>);</td></tr>
+<tr><th id="429">429</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="430">430</th><td>	}</td></tr>
+<tr><th id="431">431</th><td></td></tr>
+<tr><th id="432">432</th><td>	<a class="local col6 ref" href="#56rc" title='rc' data-ref="56rc">rc</a> = <a class="ref" href="#grow_specs" title='grow_specs' data-ref="grow_specs">grow_specs</a>(<a class="local col0 ref" href="#60data" title='data' data-ref="60data">data</a>);</td></tr>
+<tr><th id="433">433</th><td>	<b>if</b> (<a class="local col6 ref" href="#56rc" title='rc' data-ref="56rc">rc</a>)</td></tr>
+<tr><th id="434">434</th><td>		<b>return</b> <a class="local col6 ref" href="#56rc" title='rc' data-ref="56rc">rc</a>;</td></tr>
+<tr><th id="435">435</th><td></td></tr>
+<tr><th id="436">436</th><td>	<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a> = <a class="local col0 ref" href="#60data" title='data' data-ref="60data">data</a>-&gt;<a class="ref" href="#saved_data::spec_arr" title='saved_data::spec_arr' data-ref="saved_data::spec_arr">spec_arr</a>;</td></tr>
+<tr><th id="437">437</th><td></td></tr>
+<tr><th id="438">438</th><td>	<i>/* process and store the specification in spec. */</i></td></tr>
+<tr><th id="439">439</th><td>	<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>].<a class="ref" href="#spec::stem_id" title='spec::stem_id' data-ref="spec::stem_id">stem_id</a> = <a class="ref" href="#find_stem_from_spec" title='find_stem_from_spec' data-ref="find_stem_from_spec">find_stem_from_spec</a>(<a class="local col0 ref" href="#60data" title='data' data-ref="60data">data</a>, <a class="local col7 ref" href="#57regex" title='regex' data-ref="57regex">regex</a>);</td></tr>
+<tr><th id="440">440</th><td>	<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>].<a class="ref" href="#spec::regex_str" title='spec::regex_str' data-ref="spec::regex_str">regex_str</a> = <a class="local col7 ref" href="#57regex" title='regex' data-ref="57regex">regex</a>;</td></tr>
+<tr><th id="441">441</th><td></td></tr>
+<tr><th id="442">442</th><td>	<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>].<a class="ref" href="#spec::type_str" title='spec::type_str' data-ref="spec::type_str">type_str</a> = <a class="local col8 ref" href="#58type" title='type' data-ref="58type">type</a>;</td></tr>
+<tr><th id="443">443</th><td>	<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>].<a class="ref" href="#spec::mode" title='spec::mode' data-ref="spec::mode">mode</a> = <var>0</var>;</td></tr>
+<tr><th id="444">444</th><td></td></tr>
+<tr><th id="445">445</th><td>	<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>].<a class="ref" href="#spec::lr" title='spec::lr' data-ref="spec::lr">lr</a>.<a class="ref" href="label_internal.h.html#selabel_lookup_rec::ctx_raw" title='selabel_lookup_rec::ctx_raw' data-ref="selabel_lookup_rec::ctx_raw">ctx_raw</a> = <a class="local col9 ref" href="#59context" title='context' data-ref="59context">context</a>;</td></tr>
+<tr><th id="446">446</th><td></td></tr>
+<tr><th id="447">447</th><td>	<i>/*</i></td></tr>
+<tr><th id="448">448</th><td><i>	 * bump data-&gt;nspecs to cause closef() to cover it in its free</i></td></tr>
+<tr><th id="449">449</th><td><i>	 * but do not bump nspec since it's used below.</i></td></tr>
+<tr><th id="450">450</th><td><i>	 */</i></td></tr>
+<tr><th id="451">451</th><td>	<a class="local col0 ref" href="#60data" title='data' data-ref="60data">data</a>-&gt;<a class="ref" href="#saved_data::nspec" title='saved_data::nspec' data-ref="saved_data::nspec">nspec</a>++;</td></tr>
+<tr><th id="452">452</th><td></td></tr>
+<tr><th id="453">453</th><td>	<b>if</b> (<a class="local col9 ref" href="#49rec" title='rec' data-ref="49rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::validating" title='selabel_handle::validating' data-ref="selabel_handle::validating">validating</a> &amp;&amp;</td></tr>
+<tr><th id="454">454</th><td>			    <a class="ref" href="#compile_regex" title='compile_regex' data-ref="compile_regex">compile_regex</a>(<a class="local col0 ref" href="#60data" title='data' data-ref="60data">data</a>, &amp;<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>], &amp;<a class="local col3 ref" href="#63errbuf" title='errbuf' data-ref="63errbuf">errbuf</a>)) {</td></tr>
+<tr><th id="455">455</th><td>		<a class="ref" href="callbacks.h.html#selinux_log" title='selinux_log' data-ref="selinux_log">selinux_log</a>(<a class="macro" href="../include/selinux/selinux.h.html#158" title="0" data-ref="_M/SELINUX_ERROR">SELINUX_ERROR</a>,</td></tr>
+<tr><th id="456">456</th><td>			   <q>"%s:  line %u has invalid regex %s:  %s\n"</q>,</td></tr>
+<tr><th id="457">457</th><td>			   <a class="local col0 ref" href="#50path" title='path' data-ref="50path">path</a>, <a class="local col3 ref" href="#53lineno" title='lineno' data-ref="53lineno">lineno</a>, <a class="local col7 ref" href="#57regex" title='regex' data-ref="57regex">regex</a>,</td></tr>
+<tr><th id="458">458</th><td>			   (<a class="local col3 ref" href="#63errbuf" title='errbuf' data-ref="63errbuf">errbuf</a> ? <a class="local col3 ref" href="#63errbuf" title='errbuf' data-ref="63errbuf">errbuf</a> : <q>"out of memory"</q>));</td></tr>
+<tr><th id="459">459</th><td>		<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="460">460</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="461">461</th><td>	}</td></tr>
+<tr><th id="462">462</th><td></td></tr>
+<tr><th id="463">463</th><td>	<b>if</b> (<a class="local col8 ref" href="#58type" title='type' data-ref="58type">type</a>) {</td></tr>
+<tr><th id="464">464</th><td>		<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="local col4 decl" id="64mode" title='mode' data-type='mode_t' data-ref="64mode">mode</dfn> = <a class="ref" href="#string_to_mode" title='string_to_mode' data-ref="string_to_mode">string_to_mode</a>(<a class="local col8 ref" href="#58type" title='type' data-ref="58type">type</a>);</td></tr>
+<tr><th id="465">465</th><td></td></tr>
+<tr><th id="466">466</th><td>		<b>if</b> (<a class="local col4 ref" href="#64mode" title='mode' data-ref="64mode">mode</a> == (<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>)-<var>1</var>) {</td></tr>
+<tr><th id="467">467</th><td>			<a class="ref" href="callbacks.h.html#selinux_log" title='selinux_log' data-ref="selinux_log">selinux_log</a>(<a class="macro" href="../include/selinux/selinux.h.html#158" title="0" data-ref="_M/SELINUX_ERROR">SELINUX_ERROR</a>,</td></tr>
+<tr><th id="468">468</th><td>				   <q>"%s:  line %u has invalid file type %s\n"</q>,</td></tr>
+<tr><th id="469">469</th><td>				   <a class="local col0 ref" href="#50path" title='path' data-ref="50path">path</a>, <a class="local col3 ref" href="#53lineno" title='lineno' data-ref="53lineno">lineno</a>, <a class="local col8 ref" href="#58type" title='type' data-ref="58type">type</a>);</td></tr>
+<tr><th id="470">470</th><td>			<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="471">471</th><td>			<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="472">472</th><td>		}</td></tr>
+<tr><th id="473">473</th><td>		<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>].<a class="ref" href="#spec::mode" title='spec::mode' data-ref="spec::mode">mode</a> = <a class="local col4 ref" href="#64mode" title='mode' data-ref="64mode">mode</a>;</td></tr>
+<tr><th id="474">474</th><td>	}</td></tr>
+<tr><th id="475">475</th><td></td></tr>
+<tr><th id="476">476</th><td>	<i>/* Determine if specification has</i></td></tr>
+<tr><th id="477">477</th><td><i>	 * any meta characters in the RE */</i></td></tr>
+<tr><th id="478">478</th><td>	<a class="ref" href="#spec_hasMetaChars" title='spec_hasMetaChars' data-ref="spec_hasMetaChars">spec_hasMetaChars</a>(&amp;<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>]);</td></tr>
+<tr><th id="479">479</th><td></td></tr>
+<tr><th id="480">480</th><td>	<b>if</b> (<a class="ref" href="../../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col9 ref" href="#59context" title='context' data-ref="59context">context</a>, <q>"&lt;&lt;none&gt;&gt;"</q>) &amp;&amp; <a class="local col9 ref" href="#49rec" title='rec' data-ref="49rec">rec</a>-&gt;<a class="ref" href="label_internal.h.html#selabel_handle::validating" title='selabel_handle::validating' data-ref="selabel_handle::validating">validating</a>) {</td></tr>
+<tr><th id="481">481</th><td>		<b>if</b> (<a class="ref" href="label_internal.h.html#selabel_validate" title='selabel_validate' data-ref="selabel_validate">selabel_validate</a>(<a class="local col9 ref" href="#49rec" title='rec' data-ref="49rec">rec</a>, &amp;<a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>].<a class="ref" href="#spec::lr" title='spec::lr' data-ref="spec::lr">lr</a>) &lt; <var>0</var>) {</td></tr>
+<tr><th id="482">482</th><td>			<a class="ref" href="callbacks.h.html#selinux_log" title='selinux_log' data-ref="selinux_log">selinux_log</a>(<a class="macro" href="../include/selinux/selinux.h.html#158" title="0" data-ref="_M/SELINUX_ERROR">SELINUX_ERROR</a>,</td></tr>
+<tr><th id="483">483</th><td>				    <q>"%s:  line %u has invalid context %s\n"</q>,</td></tr>
+<tr><th id="484">484</th><td>				    <a class="local col0 ref" href="#50path" title='path' data-ref="50path">path</a>, <a class="local col3 ref" href="#53lineno" title='lineno' data-ref="53lineno">lineno</a>, <a class="local col1 ref" href="#61spec_arr" title='spec_arr' data-ref="61spec_arr">spec_arr</a>[<a class="local col2 ref" href="#62nspec" title='nspec' data-ref="62nspec">nspec</a>].<a class="ref" href="#spec::lr" title='spec::lr' data-ref="spec::lr">lr</a>.<a class="ref" href="label_internal.h.html#selabel_lookup_rec::ctx_raw" title='selabel_lookup_rec::ctx_raw' data-ref="selabel_lookup_rec::ctx_raw">ctx_raw</a>);</td></tr>
+<tr><th id="485">485</th><td>			<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="486">486</th><td>			<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="487">487</th><td>		}</td></tr>
+<tr><th id="488">488</th><td>	}</td></tr>
+<tr><th id="489">489</th><td></td></tr>
+<tr><th id="490">490</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="491">491</th><td>}</td></tr>
+<tr><th id="492">492</th><td></td></tr>
+<tr><th id="493">493</th><td><u>#<span data-ppcond="1">endif</span> /* _SELABEL_FILE_H_ */</u></td></tr>
+<tr><th id="494">494</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='label_file.c.html'>codebrowser/external/libselinux/src/label_file.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

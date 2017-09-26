@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>encode_rs.h source code [codebrowser/external/fec/encode_rs.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/fec/encode_rs.h'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>fec</a>/<a href='encode_rs.h.html'>encode_rs.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* The guts of the Reed-Solomon encoder, meant to be #included</i></td></tr>
+<tr><th id="2">2</th><td><i> * into a function body with the following typedefs, macros and variables supplied</i></td></tr>
+<tr><th id="3">3</th><td><i> * according to the code parameters:</i></td></tr>
+<tr><th id="4">4</th><td><i></i></td></tr>
+<tr><th id="5">5</th><td><i> * data_t - a typedef for the data symbol</i></td></tr>
+<tr><th id="6">6</th><td><i> * data_t data[] - array of NN-NROOTS-PAD and type data_t to be encoded</i></td></tr>
+<tr><th id="7">7</th><td><i> * data_t parity[] - an array of NROOTS and type data_t to be written with parity symbols</i></td></tr>
+<tr><th id="8">8</th><td><i> * NROOTS - the number of roots in the RS code generator polynomial,</i></td></tr>
+<tr><th id="9">9</th><td><i> *          which is the same as the number of parity symbols in a block.</i></td></tr>
+<tr><th id="10">10</th><td><i>            Integer variable or literal.</i></td></tr>
+<tr><th id="11">11</th><td><i>	    * </i></td></tr>
+<tr><th id="12">12</th><td><i> * NN - the total number of symbols in a RS block. Integer variable or literal.</i></td></tr>
+<tr><th id="13">13</th><td><i> * PAD - the number of pad symbols in a block. Integer variable or literal.</i></td></tr>
+<tr><th id="14">14</th><td><i> * ALPHA_TO - The address of an array of NN elements to convert Galois field</i></td></tr>
+<tr><th id="15">15</th><td><i> *            elements in index (log) form to polynomial form. Read only.</i></td></tr>
+<tr><th id="16">16</th><td><i> * INDEX_OF - The address of an array of NN elements to convert Galois field</i></td></tr>
+<tr><th id="17">17</th><td><i> *            elements in polynomial form to index (log) form. Read only.</i></td></tr>
+<tr><th id="18">18</th><td><i> * MODNN - a function to reduce its argument modulo NN. May be inline or a macro.</i></td></tr>
+<tr><th id="19">19</th><td><i> * GENPOLY - an array of NROOTS+1 elements containing the generator polynomial in index form</i></td></tr>
+<tr><th id="20">20</th><td><i></i></td></tr>
+<tr><th id="21">21</th><td><i> * The memset() and memmove() functions are used. The appropriate header</i></td></tr>
+<tr><th id="22">22</th><td><i> * file declaring these functions (usually &lt;string.h&gt;) must be included by the calling</i></td></tr>
+<tr><th id="23">23</th><td><i> * program.</i></td></tr>
+<tr><th id="24">24</th><td><i></i></td></tr>
+<tr><th id="25">25</th><td><i> * Copyright 2004, Phil Karn, KA9Q</i></td></tr>
+<tr><th id="26">26</th><td><i> * May be used under the terms of the GNU Lesser General Public License (LGPL)</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#undef <a class="macro" href="char.h.html#20" data-ref="_M/A0">A0</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#define <dfn class="macro" id="_M/A0" data-ref="_M/A0">A0</dfn> (NN) /* Special reserved value encoding zero in index form */</u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td>{</td></tr>
+<tr><th id="34">34</th><td>  <em>int</em> <dfn class="local col5 decl" id="5i" title='i' data-type='int' data-ref="5i">i</dfn>, <dfn class="local col6 decl" id="6j" title='j' data-type='int' data-ref="6j">j</dfn>;</td></tr>
+<tr><th id="35">35</th><td>  <a class="typedef" href="char.h.html#data_t" title='data_t' data-type='unsigned char' data-ref="data_t">data_t</a> <dfn class="local col7 decl" id="7feedback" title='feedback' data-type='data_t' data-ref="7feedback">feedback</dfn>;</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td>  <a class="ref" href="../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col3 ref" href="encode_rs_char.c.html#3parity" title='parity' data-ref="3parity">parity</a>,<var>0</var>,<a class="macro" href="char.h.html#15" title="(rs-&gt;nroots)" data-ref="_M/NROOTS">NROOTS</a>*<b>sizeof</b>(<a class="typedef" href="char.h.html#data_t" title='data_t' data-type='unsigned char' data-ref="data_t">data_t</a>));</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td>  <b>for</b>(<a class="local col5 ref" href="#5i" title='i' data-ref="5i">i</a>=<var>0</var>;<a class="local col5 ref" href="#5i" title='i' data-ref="5i">i</a>&lt;<a class="macro" href="char.h.html#11" title="(rs-&gt;nn)" data-ref="_M/NN">NN</a>-<a class="macro" href="char.h.html#15" title="(rs-&gt;nroots)" data-ref="_M/NROOTS">NROOTS</a>-<a class="macro" href="char.h.html#19" title="(rs-&gt;pad)" data-ref="_M/PAD">PAD</a>;<a class="local col5 ref" href="#5i" title='i' data-ref="5i">i</a>++){</td></tr>
+<tr><th id="40">40</th><td>    <a class="local col7 ref" href="#7feedback" title='feedback' data-ref="7feedback">feedback</a> = <a class="macro" href="char.h.html#13" title="(rs-&gt;index_of)" data-ref="_M/INDEX_OF">INDEX_OF</a>[<a class="local col2 ref" href="encode_rs_char.c.html#2data" title='data' data-ref="2data">data</a>[<a class="local col5 ref" href="#5i" title='i' data-ref="5i">i</a>] ^ <a class="local col3 ref" href="encode_rs_char.c.html#3parity" title='parity' data-ref="3parity">parity</a>[<var>0</var>]];</td></tr>
+<tr><th id="41">41</th><td>    <b>if</b>(<a class="local col7 ref" href="#7feedback" title='feedback' data-ref="7feedback">feedback</a> != <a class="macro" href="#31" title="((rs-&gt;nn))" data-ref="_M/A0">A0</a>){      <i>/* feedback term is non-zero */</i></td></tr>
+<tr><th id="42">42</th><td><u>#<span data-ppcond="42">ifdef</span> <span class="macro" data-ref="_M/UNNORMALIZED">UNNORMALIZED</span></u></td></tr>
+<tr><th id="43">43</th><td>      <i>/* This line is unnecessary when GENPOLY[NROOTS] is unity, as it must</i></td></tr>
+<tr><th id="44">44</th><td><i>       * always be for the polynomials constructed by init_rs()</i></td></tr>
+<tr><th id="45">45</th><td><i>       */</i></td></tr>
+<tr><th id="46">46</th><td>      feedback = MODNN(NN - GENPOLY[NROOTS] + feedback);</td></tr>
+<tr><th id="47">47</th><td><u>#<span data-ppcond="42">endif</span></u></td></tr>
+<tr><th id="48">48</th><td>      <b>for</b>(<a class="local col6 ref" href="#6j" title='j' data-ref="6j">j</a>=<var>1</var>;<a class="local col6 ref" href="#6j" title='j' data-ref="6j">j</a>&lt;<a class="macro" href="char.h.html#15" title="(rs-&gt;nroots)" data-ref="_M/NROOTS">NROOTS</a>;<a class="local col6 ref" href="#6j" title='j' data-ref="6j">j</a>++)</td></tr>
+<tr><th id="49">49</th><td>	<a class="local col3 ref" href="encode_rs_char.c.html#3parity" title='parity' data-ref="3parity">parity</a>[<a class="local col6 ref" href="#6j" title='j' data-ref="6j">j</a>] ^= <a class="macro" href="char.h.html#12" title="(rs-&gt;alpha_to)" data-ref="_M/ALPHA_TO">ALPHA_TO</a>[<a class="macro" href="char.h.html#8" title="modnn(rs,feedback + (rs-&gt;genpoly)[(rs-&gt;nroots)-j])" data-ref="_M/MODNN">MODNN</a>(<a class="local col7 ref" href="#7feedback" title='feedback' data-ref="7feedback">feedback</a> + <a class="macro" href="char.h.html#14" title="(rs-&gt;genpoly)" data-ref="_M/GENPOLY">GENPOLY</a>[<a class="macro" href="char.h.html#15" title="(rs-&gt;nroots)" data-ref="_M/NROOTS">NROOTS</a>-<a class="local col6 ref" href="#6j" title='j' data-ref="6j">j</a>])];</td></tr>
+<tr><th id="50">50</th><td>    }</td></tr>
+<tr><th id="51">51</th><td>    <i>/* Shift */</i></td></tr>
+<tr><th id="52">52</th><td>    <a class="ref" href="../../bionic/libc/include/string.h.html#memmove" title='memmove' data-ref="memmove">memmove</a>(&amp;<a class="local col3 ref" href="encode_rs_char.c.html#3parity" title='parity' data-ref="3parity">parity</a>[<var>0</var>],&amp;<a class="local col3 ref" href="encode_rs_char.c.html#3parity" title='parity' data-ref="3parity">parity</a>[<var>1</var>],<b>sizeof</b>(<a class="typedef" href="char.h.html#data_t" title='data_t' data-type='unsigned char' data-ref="data_t">data_t</a>)*(<a class="macro" href="char.h.html#15" title="(rs-&gt;nroots)" data-ref="_M/NROOTS">NROOTS</a>-<var>1</var>));</td></tr>
+<tr><th id="53">53</th><td>    <b>if</b>(<a class="local col7 ref" href="#7feedback" title='feedback' data-ref="7feedback">feedback</a> != <a class="macro" href="#31" title="((rs-&gt;nn))" data-ref="_M/A0">A0</a>)</td></tr>
+<tr><th id="54">54</th><td>      <a class="local col3 ref" href="encode_rs_char.c.html#3parity" title='parity' data-ref="3parity">parity</a>[<a class="macro" href="char.h.html#15" title="(rs-&gt;nroots)" data-ref="_M/NROOTS">NROOTS</a>-<var>1</var>] = <a class="macro" href="char.h.html#12" title="(rs-&gt;alpha_to)" data-ref="_M/ALPHA_TO">ALPHA_TO</a>[<a class="macro" href="char.h.html#8" title="modnn(rs,feedback + (rs-&gt;genpoly)[0])" data-ref="_M/MODNN">MODNN</a>(<a class="local col7 ref" href="#7feedback" title='feedback' data-ref="7feedback">feedback</a> + <a class="macro" href="char.h.html#14" title="(rs-&gt;genpoly)" data-ref="_M/GENPOLY">GENPOLY</a>[<var>0</var>])];</td></tr>
+<tr><th id="55">55</th><td>    <b>else</b></td></tr>
+<tr><th id="56">56</th><td>      <a class="local col3 ref" href="encode_rs_char.c.html#3parity" title='parity' data-ref="3parity">parity</a>[<a class="macro" href="char.h.html#15" title="(rs-&gt;nroots)" data-ref="_M/NROOTS">NROOTS</a>-<var>1</var>] = <var>0</var>;</td></tr>
+<tr><th id="57">57</th><td>  }</td></tr>
+<tr><th id="58">58</th><td>}</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='encode_rs_char.c.html'>codebrowser/external/fec/encode_rs_char.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

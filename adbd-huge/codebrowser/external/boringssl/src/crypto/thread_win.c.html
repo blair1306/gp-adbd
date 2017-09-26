@@ -1,0 +1,300 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>thread_win.c source code [codebrowser/external/boringssl/src/crypto/thread_win.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/thread_win.c'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>external</a>/<a href='../..'>boringssl</a>/<a href='..'>src</a>/<a href='./'>crypto</a>/<a href='thread_win.c.html'>thread_win.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2015, Google Inc.</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Permission to use, copy, modify, and/or distribute this software for any</i></td></tr>
+<tr><th id="4">4</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="5">5</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="8">8</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="9">9</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY</i></td></tr>
+<tr><th id="10">10</th><td><i> * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION</i></td></tr>
+<tr><th id="12">12</th><td><i> * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN</i></td></tr>
+<tr><th id="13">13</th><td><i> * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */</i></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#include <a href="internal.h.html">"internal.h"</a></u></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">if</span> defined(<span class="macro" data-ref="_M/OPENSSL_WINDOWS">OPENSSL_WINDOWS</span>) &amp;&amp; !defined(<span class="macro" data-ref="_M/OPENSSL_NO_THREADS">OPENSSL_NO_THREADS</span>)</u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#pragma warning(push, 3)</u></td></tr>
+<tr><th id="20">20</th><td><u>#include &lt;windows.h&gt;</u></td></tr>
+<tr><th id="21">21</th><td><u>#pragma warning(pop)</u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#include &lt;assert.h&gt;</u></td></tr>
+<tr><th id="24">24</th><td><u>#include &lt;stdlib.h&gt;</u></td></tr>
+<tr><th id="25">25</th><td><u>#include &lt;string.h&gt;</u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#include &lt;openssl/mem.h&gt;</u></td></tr>
+<tr><th id="28">28</th><td><u>#include &lt;openssl/type_check.h&gt;</u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td>OPENSSL_COMPILE_ASSERT(<b>sizeof</b>(CRYPTO_MUTEX) &gt;= <b>sizeof</b>(CRITICAL_SECTION),</td></tr>
+<tr><th id="32">32</th><td>                       CRYPTO_MUTEX_too_small);</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><em>static</em> <em>void</em> run_once(CRYPTO_once_t *in_once, <em>void</em> (*init)(<em>void</em> *), <em>void</em> *arg) {</td></tr>
+<tr><th id="35">35</th><td>  <em>volatile</em> LONG *once = in_once;</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td>  <i>/* Values must be aligned. */</i></td></tr>
+<tr><th id="38">38</th><td>  assert((((uintptr_t) once) &amp; <var>3</var>) == <var>0</var>);</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td>  <i>/* This assumes that reading *once has acquire semantics. This should be true</i></td></tr>
+<tr><th id="41">41</th><td><i>   * on x86 and x86-64, where we expect Windows to run. */</i></td></tr>
+<tr><th id="42">42</th><td><u>#if !defined(OPENSSL_X86) &amp;&amp; !defined(OPENSSL_X86_64)</u></td></tr>
+<tr><th id="43">43</th><td><u>#error "Windows once code may not work on other platforms." \</u></td></tr>
+<tr><th id="44">44</th><td><u>       "You can use InitOnceBeginInitialize on &gt;=Vista"</u></td></tr>
+<tr><th id="45">45</th><td><u>#endif</u></td></tr>
+<tr><th id="46">46</th><td>  <b>if</b> (*once == <var>1</var>) {</td></tr>
+<tr><th id="47">47</th><td>    <b>return</b>;</td></tr>
+<tr><th id="48">48</th><td>  }</td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td>  <b>for</b> (;;) {</td></tr>
+<tr><th id="51">51</th><td>    <b>switch</b> (InterlockedCompareExchange(once, <var>2</var>, <var>0</var>)) {</td></tr>
+<tr><th id="52">52</th><td>      <b>case</b> <var>0</var>:</td></tr>
+<tr><th id="53">53</th><td>        <i>/* The value was zero so we are the first thread to call |CRYPTO_once|</i></td></tr>
+<tr><th id="54">54</th><td><i>         * on it. */</i></td></tr>
+<tr><th id="55">55</th><td>        init(arg);</td></tr>
+<tr><th id="56">56</th><td>        <i>/* Write one to indicate that initialisation is complete. */</i></td></tr>
+<tr><th id="57">57</th><td>        InterlockedExchange(once, <var>1</var>);</td></tr>
+<tr><th id="58">58</th><td>        <b>return</b>;</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td>      <b>case</b> <var>1</var>:</td></tr>
+<tr><th id="61">61</th><td>        <i>/* Another thread completed initialisation between our fast-path check</i></td></tr>
+<tr><th id="62">62</th><td><i>         * and |InterlockedCompareExchange|. */</i></td></tr>
+<tr><th id="63">63</th><td>        <b>return</b>;</td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td>      <b>case</b> <var>2</var>:</td></tr>
+<tr><th id="66">66</th><td>        <i>/* Another thread is running the initialisation. Switch to it then try</i></td></tr>
+<tr><th id="67">67</th><td><i>         * again. */</i></td></tr>
+<tr><th id="68">68</th><td>        SwitchToThread();</td></tr>
+<tr><th id="69">69</th><td>        <b>break</b>;</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td>      <b>default</b>:</td></tr>
+<tr><th id="72">72</th><td>        abort();</td></tr>
+<tr><th id="73">73</th><td>    }</td></tr>
+<tr><th id="74">74</th><td>  }</td></tr>
+<tr><th id="75">75</th><td>}</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><em>static</em> <em>void</em> call_once_init(<em>void</em> *arg) {</td></tr>
+<tr><th id="78">78</th><td>  <em>void</em> (*init_func)(<em>void</em>);</td></tr>
+<tr><th id="79">79</th><td>  <i>/* MSVC does not like casting between data and function pointers. */</i></td></tr>
+<tr><th id="80">80</th><td>  memcpy(&amp;init_func, &amp;arg, <b>sizeof</b>(<em>void</em> *));</td></tr>
+<tr><th id="81">81</th><td>  init_func();</td></tr>
+<tr><th id="82">82</th><td>}</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><em>void</em> CRYPTO_once(CRYPTO_once_t *in_once, <em>void</em> (*init)(<em>void</em>)) {</td></tr>
+<tr><th id="85">85</th><td>  <em>void</em> *arg;</td></tr>
+<tr><th id="86">86</th><td>  <i>/* MSVC does not like casting between data and function pointers. */</i></td></tr>
+<tr><th id="87">87</th><td>  memcpy(&amp;arg, &amp;init, <b>sizeof</b>(<em>void</em> *));</td></tr>
+<tr><th id="88">88</th><td>  run_once(in_once, call_once_init, arg);</td></tr>
+<tr><th id="89">89</th><td>}</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td><em>void</em> CRYPTO_MUTEX_init(CRYPTO_MUTEX *lock) {</td></tr>
+<tr><th id="92">92</th><td>  <b>if</b> (!InitializeCriticalSectionAndSpinCount((CRITICAL_SECTION *) lock, <var>0x400</var>)) {</td></tr>
+<tr><th id="93">93</th><td>    abort();</td></tr>
+<tr><th id="94">94</th><td>  }</td></tr>
+<tr><th id="95">95</th><td>}</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><em>void</em> CRYPTO_MUTEX_lock_read(CRYPTO_MUTEX *lock) {</td></tr>
+<tr><th id="98">98</th><td>  <i>/* Since we have to support Windows XP, read locks are actually exclusive. */</i></td></tr>
+<tr><th id="99">99</th><td>  EnterCriticalSection((CRITICAL_SECTION *) lock);</td></tr>
+<tr><th id="100">100</th><td>}</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td><em>void</em> CRYPTO_MUTEX_lock_write(CRYPTO_MUTEX *lock) {</td></tr>
+<tr><th id="103">103</th><td>  EnterCriticalSection((CRITICAL_SECTION *) lock);</td></tr>
+<tr><th id="104">104</th><td>}</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><em>void</em> CRYPTO_MUTEX_unlock(CRYPTO_MUTEX *lock) {</td></tr>
+<tr><th id="107">107</th><td>  LeaveCriticalSection((CRITICAL_SECTION *) lock);</td></tr>
+<tr><th id="108">108</th><td>}</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><em>void</em> CRYPTO_MUTEX_cleanup(CRYPTO_MUTEX *lock) {</td></tr>
+<tr><th id="111">111</th><td>  DeleteCriticalSection((CRITICAL_SECTION *) lock);</td></tr>
+<tr><th id="112">112</th><td>}</td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><em>static</em> <em>void</em> static_lock_init(<em>void</em> *arg) {</td></tr>
+<tr><th id="115">115</th><td>  <b>struct</b> CRYPTO_STATIC_MUTEX *lock = arg;</td></tr>
+<tr><th id="116">116</th><td>  <b>if</b> (!InitializeCriticalSectionAndSpinCount(&amp;lock-&gt;lock, <var>0x400</var>)) {</td></tr>
+<tr><th id="117">117</th><td>    abort();</td></tr>
+<tr><th id="118">118</th><td>  }</td></tr>
+<tr><th id="119">119</th><td>}</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><em>void</em> CRYPTO_STATIC_MUTEX_lock_read(<b>struct</b> CRYPTO_STATIC_MUTEX *lock) {</td></tr>
+<tr><th id="122">122</th><td>  <i>/* Since we have to support Windows XP, read locks are actually exclusive. */</i></td></tr>
+<tr><th id="123">123</th><td>  run_once(&amp;lock-&gt;once, static_lock_init, lock);</td></tr>
+<tr><th id="124">124</th><td>  EnterCriticalSection(&amp;lock-&gt;lock);</td></tr>
+<tr><th id="125">125</th><td>}</td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><em>void</em> CRYPTO_STATIC_MUTEX_lock_write(<b>struct</b> CRYPTO_STATIC_MUTEX *lock) {</td></tr>
+<tr><th id="128">128</th><td>  CRYPTO_STATIC_MUTEX_lock_read(lock);</td></tr>
+<tr><th id="129">129</th><td>}</td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td><em>void</em> CRYPTO_STATIC_MUTEX_unlock(<b>struct</b> CRYPTO_STATIC_MUTEX *lock) {</td></tr>
+<tr><th id="132">132</th><td>  LeaveCriticalSection(&amp;lock-&gt;lock);</td></tr>
+<tr><th id="133">133</th><td>}</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td><em>static</em> CRITICAL_SECTION g_destructors_lock;</td></tr>
+<tr><th id="136">136</th><td><em>static</em> thread_local_destructor_t g_destructors[NUM_OPENSSL_THREAD_LOCALS];</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td><em>static</em> CRYPTO_once_t g_thread_local_init_once = CRYPTO_ONCE_INIT;</td></tr>
+<tr><th id="139">139</th><td><em>static</em> DWORD g_thread_local_key;</td></tr>
+<tr><th id="140">140</th><td><em>static</em> <em>int</em> g_thread_local_failed;</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td><em>static</em> <em>void</em> thread_local_init(<em>void</em>) {</td></tr>
+<tr><th id="143">143</th><td>  <b>if</b> (!InitializeCriticalSectionAndSpinCount(&amp;g_destructors_lock, <var>0x400</var>)) {</td></tr>
+<tr><th id="144">144</th><td>    g_thread_local_failed = <var>1</var>;</td></tr>
+<tr><th id="145">145</th><td>    <b>return</b>;</td></tr>
+<tr><th id="146">146</th><td>  }</td></tr>
+<tr><th id="147">147</th><td>  g_thread_local_key = TlsAlloc();</td></tr>
+<tr><th id="148">148</th><td>  g_thread_local_failed = (g_thread_local_key == TLS_OUT_OF_INDEXES);</td></tr>
+<tr><th id="149">149</th><td>}</td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><em>static</em> <em>void</em> NTAPI thread_local_destructor(PVOID module,</td></tr>
+<tr><th id="152">152</th><td>                                          DWORD reason, PVOID reserved) {</td></tr>
+<tr><th id="153">153</th><td>  <b>if</b> (DLL_THREAD_DETACH != reason &amp;&amp; DLL_PROCESS_DETACH != reason) {</td></tr>
+<tr><th id="154">154</th><td>    <b>return</b>;</td></tr>
+<tr><th id="155">155</th><td>  }</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td>  CRYPTO_once(&amp;g_thread_local_init_once, thread_local_init);</td></tr>
+<tr><th id="158">158</th><td>  <b>if</b> (g_thread_local_failed) {</td></tr>
+<tr><th id="159">159</th><td>    <b>return</b>;</td></tr>
+<tr><th id="160">160</th><td>  }</td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td>  <em>void</em> **pointers = (<em>void</em>**) TlsGetValue(g_thread_local_key);</td></tr>
+<tr><th id="163">163</th><td>  <b>if</b> (pointers == NULL) {</td></tr>
+<tr><th id="164">164</th><td>    <b>return</b>;</td></tr>
+<tr><th id="165">165</th><td>  }</td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td>  thread_local_destructor_t destructors[NUM_OPENSSL_THREAD_LOCALS];</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td>  EnterCriticalSection(&amp;g_destructors_lock);</td></tr>
+<tr><th id="170">170</th><td>  memcpy(destructors, g_destructors, <b>sizeof</b>(destructors));</td></tr>
+<tr><th id="171">171</th><td>  LeaveCriticalSection(&amp;g_destructors_lock);</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td>  <em>unsigned</em> i;</td></tr>
+<tr><th id="174">174</th><td>  <b>for</b> (i = <var>0</var>; i &lt; NUM_OPENSSL_THREAD_LOCALS; i++) {</td></tr>
+<tr><th id="175">175</th><td>    <b>if</b> (destructors[i] != NULL) {</td></tr>
+<tr><th id="176">176</th><td>      destructors[i](pointers[i]);</td></tr>
+<tr><th id="177">177</th><td>    }</td></tr>
+<tr><th id="178">178</th><td>  }</td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td>  OPENSSL_free(pointers);</td></tr>
+<tr><th id="181">181</th><td>}</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td><i>/* Thread Termination Callbacks.</i></td></tr>
+<tr><th id="184">184</th><td><i> *</i></td></tr>
+<tr><th id="185">185</th><td><i> * Windows doesn't support a per-thread destructor with its TLS primitives.</i></td></tr>
+<tr><th id="186">186</th><td><i> * So, we build it manually by inserting a function to be called on each</i></td></tr>
+<tr><th id="187">187</th><td><i> * thread's exit. This magic is from <a href="http://www.codeproject.com/threads/tls.asp">http://www.codeproject.com/threads/tls.asp</a></i></td></tr>
+<tr><th id="188">188</th><td><i> * and it works for VC++ 7.0 and later.</i></td></tr>
+<tr><th id="189">189</th><td><i> *</i></td></tr>
+<tr><th id="190">190</th><td><i> * Force a reference to _tls_used to make the linker create the TLS directory</i></td></tr>
+<tr><th id="191">191</th><td><i> * if it's not already there. (E.g. if __declspec(thread) is not used). Force</i></td></tr>
+<tr><th id="192">192</th><td><i> * a reference to p_thread_callback_boringssl to prevent whole program</i></td></tr>
+<tr><th id="193">193</th><td><i> * optimization from discarding the variable. */</i></td></tr>
+<tr><th id="194">194</th><td><u>#ifdef _WIN64</u></td></tr>
+<tr><th id="195">195</th><td><u>#pragma comment(linker, "/INCLUDE:_tls_used")</u></td></tr>
+<tr><th id="196">196</th><td><u>#pragma comment(linker, "/INCLUDE:p_thread_callback_boringssl")</u></td></tr>
+<tr><th id="197">197</th><td><u>#else</u></td></tr>
+<tr><th id="198">198</th><td><u>#pragma comment(linker, "/INCLUDE:__tls_used")</u></td></tr>
+<tr><th id="199">199</th><td><u>#pragma comment(linker, "/INCLUDE:_p_thread_callback_boringssl")</u></td></tr>
+<tr><th id="200">200</th><td><u>#endif</u></td></tr>
+<tr><th id="201">201</th><td></td></tr>
+<tr><th id="202">202</th><td><i>/* .CRT$XLA to .CRT$XLZ is an array of PIMAGE_TLS_CALLBACK pointers that are</i></td></tr>
+<tr><th id="203">203</th><td><i> * called automatically by the OS loader code (not the CRT) when the module is</i></td></tr>
+<tr><th id="204">204</th><td><i> * loaded and on thread creation. They are NOT called if the module has been</i></td></tr>
+<tr><th id="205">205</th><td><i> * loaded by a LoadLibrary() call. It must have implicitly been loaded at</i></td></tr>
+<tr><th id="206">206</th><td><i> * process startup.</i></td></tr>
+<tr><th id="207">207</th><td><i> *</i></td></tr>
+<tr><th id="208">208</th><td><i> * By implicitly loaded, I mean that it is directly referenced by the main EXE</i></td></tr>
+<tr><th id="209">209</th><td><i> * or by one of its dependent DLLs. Delay-loaded DLL doesn't count as being</i></td></tr>
+<tr><th id="210">210</th><td><i> * implicitly loaded.</i></td></tr>
+<tr><th id="211">211</th><td><i> *</i></td></tr>
+<tr><th id="212">212</th><td><i> * See VC\crt\src\tlssup.c for reference. */</i></td></tr>
+<tr><th id="213">213</th><td></td></tr>
+<tr><th id="214">214</th><td><i>/* The linker must not discard p_thread_callback_boringssl. (We force a reference</i></td></tr>
+<tr><th id="215">215</th><td><i> * to this variable with a linker /INCLUDE:symbol pragma to ensure that.) If</i></td></tr>
+<tr><th id="216">216</th><td><i> * this variable is discarded, the OnThreadExit function will never be</i></td></tr>
+<tr><th id="217">217</th><td><i> * called. */</i></td></tr>
+<tr><th id="218">218</th><td><u>#ifdef _WIN64</u></td></tr>
+<tr><th id="219">219</th><td></td></tr>
+<tr><th id="220">220</th><td><i>/* .CRT section is merged with .rdata on x64 so it must be constant data. */</i></td></tr>
+<tr><th id="221">221</th><td><u>#pragma const_seg(".CRT$XLC")</u></td></tr>
+<tr><th id="222">222</th><td><i>/* When defining a const variable, it must have external linkage to be sure the</i></td></tr>
+<tr><th id="223">223</th><td><i> * linker doesn't discard it. */</i></td></tr>
+<tr><th id="224">224</th><td><b>extern</b> <em>const</em> PIMAGE_TLS_CALLBACK p_thread_callback_boringssl;</td></tr>
+<tr><th id="225">225</th><td><em>const</em> PIMAGE_TLS_CALLBACK p_thread_callback_boringssl = thread_local_destructor;</td></tr>
+<tr><th id="226">226</th><td><i>/* Reset the default section. */</i></td></tr>
+<tr><th id="227">227</th><td><u>#pragma const_seg()</u></td></tr>
+<tr><th id="228">228</th><td></td></tr>
+<tr><th id="229">229</th><td><u>#else</u></td></tr>
+<tr><th id="230">230</th><td></td></tr>
+<tr><th id="231">231</th><td><u>#pragma data_seg(".CRT$XLC")</u></td></tr>
+<tr><th id="232">232</th><td>PIMAGE_TLS_CALLBACK p_thread_callback_boringssl = thread_local_destructor;</td></tr>
+<tr><th id="233">233</th><td><i>/* Reset the default section. */</i></td></tr>
+<tr><th id="234">234</th><td><u>#pragma data_seg()</u></td></tr>
+<tr><th id="235">235</th><td></td></tr>
+<tr><th id="236">236</th><td><u>#endif  /* _WIN64 */</u></td></tr>
+<tr><th id="237">237</th><td></td></tr>
+<tr><th id="238">238</th><td><em>void</em> *CRYPTO_get_thread_local(thread_local_data_t index) {</td></tr>
+<tr><th id="239">239</th><td>  CRYPTO_once(&amp;g_thread_local_init_once, thread_local_init);</td></tr>
+<tr><th id="240">240</th><td>  <b>if</b> (g_thread_local_failed) {</td></tr>
+<tr><th id="241">241</th><td>    <b>return</b> NULL;</td></tr>
+<tr><th id="242">242</th><td>  }</td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td>  <em>void</em> **pointers = TlsGetValue(g_thread_local_key);</td></tr>
+<tr><th id="245">245</th><td>  <b>if</b> (pointers == NULL) {</td></tr>
+<tr><th id="246">246</th><td>    <b>return</b> NULL;</td></tr>
+<tr><th id="247">247</th><td>  }</td></tr>
+<tr><th id="248">248</th><td>  <b>return</b> pointers[index];</td></tr>
+<tr><th id="249">249</th><td>}</td></tr>
+<tr><th id="250">250</th><td></td></tr>
+<tr><th id="251">251</th><td><em>int</em> CRYPTO_set_thread_local(thread_local_data_t index, <em>void</em> *value,</td></tr>
+<tr><th id="252">252</th><td>                            thread_local_destructor_t destructor) {</td></tr>
+<tr><th id="253">253</th><td>  CRYPTO_once(&amp;g_thread_local_init_once, thread_local_init);</td></tr>
+<tr><th id="254">254</th><td>  <b>if</b> (g_thread_local_failed) {</td></tr>
+<tr><th id="255">255</th><td>    destructor(value);</td></tr>
+<tr><th id="256">256</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="257">257</th><td>  }</td></tr>
+<tr><th id="258">258</th><td></td></tr>
+<tr><th id="259">259</th><td>  <em>void</em> **pointers = TlsGetValue(g_thread_local_key);</td></tr>
+<tr><th id="260">260</th><td>  <b>if</b> (pointers == NULL) {</td></tr>
+<tr><th id="261">261</th><td>    pointers = OPENSSL_malloc(<b>sizeof</b>(<em>void</em> *) * NUM_OPENSSL_THREAD_LOCALS);</td></tr>
+<tr><th id="262">262</th><td>    <b>if</b> (pointers == NULL) {</td></tr>
+<tr><th id="263">263</th><td>      destructor(value);</td></tr>
+<tr><th id="264">264</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="265">265</th><td>    }</td></tr>
+<tr><th id="266">266</th><td>    memset(pointers, <var>0</var>, <b>sizeof</b>(<em>void</em> *) * NUM_OPENSSL_THREAD_LOCALS);</td></tr>
+<tr><th id="267">267</th><td>    <b>if</b> (TlsSetValue(g_thread_local_key, pointers) == <var>0</var>) {</td></tr>
+<tr><th id="268">268</th><td>      OPENSSL_free(pointers);</td></tr>
+<tr><th id="269">269</th><td>      destructor(value);</td></tr>
+<tr><th id="270">270</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="271">271</th><td>    }</td></tr>
+<tr><th id="272">272</th><td>  }</td></tr>
+<tr><th id="273">273</th><td></td></tr>
+<tr><th id="274">274</th><td>  EnterCriticalSection(&amp;g_destructors_lock);</td></tr>
+<tr><th id="275">275</th><td>  g_destructors[index] = destructor;</td></tr>
+<tr><th id="276">276</th><td>  LeaveCriticalSection(&amp;g_destructors_lock);</td></tr>
+<tr><th id="277">277</th><td></td></tr>
+<tr><th id="278">278</th><td>  pointers[index] = value;</td></tr>
+<tr><th id="279">279</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="280">280</th><td>}</td></tr>
+<tr><th id="281">281</th><td></td></tr>
+<tr><th id="282">282</th><td><u>#<span data-ppcond="17">endif</span>  /* OPENSSL_WINDOWS &amp;&amp; !OPENSSL_NO_THREADS */</u></td></tr>
+<tr><th id="283">283</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

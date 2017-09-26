@@ -1,0 +1,18 @@
+<def f='codebrowser/bionic/libc/dns/include/resolv_netid.h' l='68' ll='74'/>
+<size>20</size>
+<doc f='codebrowser/bionic/libc/dns/include/resolv_netid.h' l='57'>/*
+ * A struct to capture context relevant to network operations.
+ *
+ * Application and DNS netids/marks can differ from one another under certain
+ * circumstances, notably when a VPN applies to the given uid&apos;s traffic but the
+ * VPN network does not have its own DNS servers explicitly provisioned.
+ *
+ * The introduction of per-UID routing means the uid is also an essential part
+ * of the evaluation context. Its proper uninitialized value is
+ * NET_CONTEXT_INVALID_UID.
+ */</doc>
+<mbr r='android_net_context::app_netid' o='0' t='unsigned int'/>
+<mbr r='android_net_context::app_mark' o='32' t='unsigned int'/>
+<mbr r='android_net_context::dns_netid' o='64' t='unsigned int'/>
+<mbr r='android_net_context::dns_mark' o='96' t='unsigned int'/>
+<mbr r='android_net_context::uid' o='128' t='uid_t'/>

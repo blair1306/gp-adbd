@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>stat.h source code [codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/stat.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="stat,stat64 "/>
+<link rel="stylesheet" href="../../../../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/stat.h'; var root_path = '../../../../../../../../../..'; var data_path = '../../../../../../../../../../../data';</script>
+<script src='../../../../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../../../../..'>codebrowser</a>/<a href='../../../../../../../..'>prebuilts</a>/<a href='../../../../../../..'>ndk</a>/<a href='../../../../../..'>r11</a>/<a href='../../../../..'>platforms</a>/<a href='../../../..'>android-21</a>/<a href='../../..'>arch-x86_64</a>/<a href='../..'>usr</a>/<a href='..'>include</a>/<a href='./'>sys</a>/<a href='stat.h.html'>stat.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><u>#<span data-ppcond="28">ifndef</span> <span class="macro" data-ref="_M/_SYS_STAT_H_">_SYS_STAT_H_</span></u></td></tr>
+<tr><th id="29">29</th><td><u>#define <dfn class="macro" id="_M/_SYS_STAT_H_" data-ref="_M/_SYS_STAT_H_">_SYS_STAT_H_</dfn></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="time.h.html">&lt;sys/time.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../linux/stat.h.html">&lt;linux/stat.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="../endian.h.html">&lt;endian.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><a class="macro" href="cdefs.h.html#84" title="" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><u>#<span data-ppcond="40">if</span> defined(<span class="macro" data-ref="_M/__aarch64__">__aarch64__</span>) || (defined(<span class="macro" data-ref="_M/__mips__">__mips__</span>) &amp;&amp; defined(<span class="macro" data-ref="_M/__LP64__">__LP64__</span>))</u></td></tr>
+<tr><th id="41">41</th><td><u>#define __STAT64_BODY \</u></td></tr>
+<tr><th id="42">42</th><td><u>  unsigned long st_dev; \</u></td></tr>
+<tr><th id="43">43</th><td><u>  unsigned long st_ino; \</u></td></tr>
+<tr><th id="44">44</th><td><u>  unsigned int st_mode; \</u></td></tr>
+<tr><th id="45">45</th><td><u>  unsigned int st_nlink; \</u></td></tr>
+<tr><th id="46">46</th><td><u>  uid_t st_uid; \</u></td></tr>
+<tr><th id="47">47</th><td><u>  gid_t st_gid; \</u></td></tr>
+<tr><th id="48">48</th><td><u>  unsigned long st_rdev; \</u></td></tr>
+<tr><th id="49">49</th><td><u>  unsigned long __pad1; \</u></td></tr>
+<tr><th id="50">50</th><td><u>  long st_size; \</u></td></tr>
+<tr><th id="51">51</th><td><u>  int st_blksize; \</u></td></tr>
+<tr><th id="52">52</th><td><u>  int __pad2; \</u></td></tr>
+<tr><th id="53">53</th><td><u>  long st_blocks; \</u></td></tr>
+<tr><th id="54">54</th><td><u>  long st_atime; \</u></td></tr>
+<tr><th id="55">55</th><td><u>  unsigned long st_atime_nsec; \</u></td></tr>
+<tr><th id="56">56</th><td><u>  long st_mtime; \</u></td></tr>
+<tr><th id="57">57</th><td><u>  unsigned long st_mtime_nsec; \</u></td></tr>
+<tr><th id="58">58</th><td><u>  long st_ctime; \</u></td></tr>
+<tr><th id="59">59</th><td><u>  unsigned long st_ctime_nsec; \</u></td></tr>
+<tr><th id="60">60</th><td><u>  unsigned int __unused4; \</u></td></tr>
+<tr><th id="61">61</th><td><u>  unsigned int __unused5;</u> \</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><u>#<span data-ppcond="40">elif</span> defined(<span class="macro" data-ref="_M/__mips__">__mips__</span>) &amp;&amp; !defined(<span class="macro" data-ref="_M/__LP64__">__LP64__</span>)</u></td></tr>
+<tr><th id="64">64</th><td><u>#define __STAT64_BODY \</u></td></tr>
+<tr><th id="65">65</th><td><u>  unsigned int st_dev; \</u></td></tr>
+<tr><th id="66">66</th><td><u>  unsigned int __pad0[3]; \</u></td></tr>
+<tr><th id="67">67</th><td><u>  unsigned long long st_ino; \</u></td></tr>
+<tr><th id="68">68</th><td><u>  unsigned int st_mode; \</u></td></tr>
+<tr><th id="69">69</th><td><u>  unsigned int st_nlink; \</u></td></tr>
+<tr><th id="70">70</th><td><u>  uid_t st_uid; \</u></td></tr>
+<tr><th id="71">71</th><td><u>  gid_t st_gid; \</u></td></tr>
+<tr><th id="72">72</th><td><u>  unsigned int st_rdev; \</u></td></tr>
+<tr><th id="73">73</th><td><u>  unsigned int __pad1[3]; \</u></td></tr>
+<tr><th id="74">74</th><td><u>  long long st_size; \</u></td></tr>
+<tr><th id="75">75</th><td><u>  unsigned int st_atime; \</u></td></tr>
+<tr><th id="76">76</th><td><u>  unsigned int st_atime_nsec; \</u></td></tr>
+<tr><th id="77">77</th><td><u>  unsigned int st_mtime; \</u></td></tr>
+<tr><th id="78">78</th><td><u>  unsigned int st_mtime_nsec; \</u></td></tr>
+<tr><th id="79">79</th><td><u>  unsigned int st_ctime; \</u></td></tr>
+<tr><th id="80">80</th><td><u>  unsigned int st_ctime_nsec; \</u></td></tr>
+<tr><th id="81">81</th><td><u>  unsigned int st_blksize; \</u></td></tr>
+<tr><th id="82">82</th><td><u>  unsigned int __pad2; \</u></td></tr>
+<tr><th id="83">83</th><td><u>  unsigned long long st_blocks;</u> \</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><u>#<span data-ppcond="40">elif</span> defined(<span class="macro" data-ref="_M/__x86_64__">__x86_64__</span>)</u></td></tr>
+<tr><th id="86">86</th><td><u>#define <dfn class="macro" id="_M/__STAT64_BODY" data-ref="_M/__STAT64_BODY">__STAT64_BODY</dfn> \</u></td></tr>
+<tr><th id="87">87</th><td><u>  unsigned long <dfn class="decl" id="stat::st_dev" title='stat::st_dev' data-ref="stat::st_dev"><dfn class="decl" id="stat64::st_dev" title='stat64::st_dev' data-ref="stat64::st_dev">st_dev</dfn></dfn>; \</u></td></tr>
+<tr><th id="88">88</th><td><u>  unsigned long <dfn class="decl" id="stat::st_ino" title='stat::st_ino' data-ref="stat::st_ino"><dfn class="decl" id="stat64::st_ino" title='stat64::st_ino' data-ref="stat64::st_ino">st_ino</dfn></dfn>; \</u></td></tr>
+<tr><th id="89">89</th><td><u>  unsigned long <dfn class="decl" id="stat::st_nlink" title='stat::st_nlink' data-ref="stat::st_nlink"><dfn class="decl" id="stat64::st_nlink" title='stat64::st_nlink' data-ref="stat64::st_nlink">st_nlink</dfn></dfn>; \</u></td></tr>
+<tr><th id="90">90</th><td><u>  unsigned int <dfn class="decl" id="stat::st_mode" title='stat::st_mode' data-ref="stat::st_mode"><dfn class="decl" id="stat64::st_mode" title='stat64::st_mode' data-ref="stat64::st_mode">st_mode</dfn></dfn>; \</u></td></tr>
+<tr><th id="91">91</th><td><u>  <a class="typedef" href="types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> <dfn class="decl" id="stat::st_uid" title='stat::st_uid' data-ref="stat::st_uid"><dfn class="decl" id="stat64::st_uid" title='stat64::st_uid' data-ref="stat64::st_uid">st_uid</dfn></dfn>; \</u></td></tr>
+<tr><th id="92">92</th><td><u>  <a class="typedef" href="types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a> <dfn class="decl" id="stat::st_gid" title='stat::st_gid' data-ref="stat::st_gid"><dfn class="decl" id="stat64::st_gid" title='stat64::st_gid' data-ref="stat64::st_gid">st_gid</dfn></dfn>; \</u></td></tr>
+<tr><th id="93">93</th><td><u>  unsigned int <dfn class="decl" id="stat::__pad0" title='stat::__pad0' data-ref="stat::__pad0"><dfn class="decl" id="stat64::__pad0" title='stat64::__pad0' data-ref="stat64::__pad0">__pad0</dfn></dfn>; \</u></td></tr>
+<tr><th id="94">94</th><td><u>  unsigned long <dfn class="decl" id="stat::st_rdev" title='stat::st_rdev' data-ref="stat::st_rdev"><dfn class="decl" id="stat64::st_rdev" title='stat64::st_rdev' data-ref="stat64::st_rdev">st_rdev</dfn></dfn>; \</u></td></tr>
+<tr><th id="95">95</th><td><u>  long <dfn class="decl" id="stat::st_size" title='stat::st_size' data-ref="stat::st_size"><dfn class="decl" id="stat64::st_size" title='stat64::st_size' data-ref="stat64::st_size">st_size</dfn></dfn>; \</u></td></tr>
+<tr><th id="96">96</th><td><u>  long <dfn class="decl" id="stat::st_blksize" title='stat::st_blksize' data-ref="stat::st_blksize"><dfn class="decl" id="stat64::st_blksize" title='stat64::st_blksize' data-ref="stat64::st_blksize">st_blksize</dfn></dfn>; \</u></td></tr>
+<tr><th id="97">97</th><td><u>  long <dfn class="decl" id="stat::st_blocks" title='stat::st_blocks' data-ref="stat::st_blocks"><dfn class="decl" id="stat64::st_blocks" title='stat64::st_blocks' data-ref="stat64::st_blocks">st_blocks</dfn></dfn>; \</u></td></tr>
+<tr><th id="98">98</th><td><u>  unsigned long <dfn class="decl" id="stat::st_atime" title='stat::st_atime' data-ref="stat::st_atime"><dfn class="decl" id="stat64::st_atime" title='stat64::st_atime' data-ref="stat64::st_atime">st_atime</dfn></dfn>; \</u></td></tr>
+<tr><th id="99">99</th><td><u>  unsigned long <dfn class="decl" id="stat::st_atime_nsec" title='stat::st_atime_nsec' data-ref="stat::st_atime_nsec"><dfn class="decl" id="stat64::st_atime_nsec" title='stat64::st_atime_nsec' data-ref="stat64::st_atime_nsec">st_atime_nsec</dfn></dfn>; \</u></td></tr>
+<tr><th id="100">100</th><td><u>  unsigned long <dfn class="decl" id="stat::st_mtime" title='stat::st_mtime' data-ref="stat::st_mtime"><dfn class="decl" id="stat64::st_mtime" title='stat64::st_mtime' data-ref="stat64::st_mtime">st_mtime</dfn></dfn>; \</u></td></tr>
+<tr><th id="101">101</th><td><u>  unsigned long <dfn class="decl" id="stat::st_mtime_nsec" title='stat::st_mtime_nsec' data-ref="stat::st_mtime_nsec"><dfn class="decl" id="stat64::st_mtime_nsec" title='stat64::st_mtime_nsec' data-ref="stat64::st_mtime_nsec">st_mtime_nsec</dfn></dfn>; \</u></td></tr>
+<tr><th id="102">102</th><td><u>  unsigned long <dfn class="decl" id="stat::st_ctime" title='stat::st_ctime' data-ref="stat::st_ctime"><dfn class="decl" id="stat64::st_ctime" title='stat64::st_ctime' data-ref="stat64::st_ctime">st_ctime</dfn></dfn>; \</u></td></tr>
+<tr><th id="103">103</th><td><u>  unsigned long <dfn class="decl" id="stat::st_ctime_nsec" title='stat::st_ctime_nsec' data-ref="stat::st_ctime_nsec"><dfn class="decl" id="stat64::st_ctime_nsec" title='stat64::st_ctime_nsec' data-ref="stat64::st_ctime_nsec">st_ctime_nsec</dfn></dfn>; \</u></td></tr>
+<tr><th id="104">104</th><td><u>  long <dfn class="decl" id="stat::__pad3" title='stat::__pad3' data-ref="stat::__pad3"><dfn class="decl" id="stat64::__pad3" title='stat64::__pad3' data-ref="stat64::__pad3">__pad3</dfn></dfn>[3];</u> \</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><u>#<span data-ppcond="40">else</span></u></td></tr>
+<tr><th id="107">107</th><td><u>#define __STAT64_BODY \</u></td></tr>
+<tr><th id="108">108</th><td><u>  unsigned long long st_dev; \</u></td></tr>
+<tr><th id="109">109</th><td><u>  unsigned char __pad0[4]; \</u></td></tr>
+<tr><th id="110">110</th><td><u>  unsigned long __st_ino; \</u></td></tr>
+<tr><th id="111">111</th><td><u>  unsigned int st_mode; \</u></td></tr>
+<tr><th id="112">112</th><td><u>  unsigned int st_nlink; \</u></td></tr>
+<tr><th id="113">113</th><td><u>  uid_t st_uid; \</u></td></tr>
+<tr><th id="114">114</th><td><u>  gid_t st_gid; \</u></td></tr>
+<tr><th id="115">115</th><td><u>  unsigned long long st_rdev; \</u></td></tr>
+<tr><th id="116">116</th><td><u>  unsigned char __pad3[4]; \</u></td></tr>
+<tr><th id="117">117</th><td><u>  long long st_size; \</u></td></tr>
+<tr><th id="118">118</th><td><u>  unsigned long st_blksize; \</u></td></tr>
+<tr><th id="119">119</th><td><u>  unsigned long long st_blocks; \</u></td></tr>
+<tr><th id="120">120</th><td><u>  unsigned long st_atime; \</u></td></tr>
+<tr><th id="121">121</th><td><u>  unsigned long st_atime_nsec; \</u></td></tr>
+<tr><th id="122">122</th><td><u>  unsigned long st_mtime; \</u></td></tr>
+<tr><th id="123">123</th><td><u>  unsigned long st_mtime_nsec; \</u></td></tr>
+<tr><th id="124">124</th><td><u>  unsigned long st_ctime; \</u></td></tr>
+<tr><th id="125">125</th><td><u>  unsigned long st_ctime_nsec; \</u></td></tr>
+<tr><th id="126">126</th><td><u>  unsigned long long st_ino;</u> \</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td><u>#<span data-ppcond="40">endif</span></u></td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td><b>struct</b> <dfn class="type def" id="stat" title='stat' data-ref="stat">stat</dfn> { <a class="macro" href="#86" title="unsigned long st_dev; unsigned long st_ino; unsigned long st_nlink; unsigned int st_mode; uid_t st_uid; gid_t st_gid; unsigned int __pad0; unsigned long st_rdev; long st_size; long st_blksize; long st_blocks; unsigned long st_atime; unsigned long st_atime_nsec; unsigned long st_mtime; unsigned long st_mtime_nsec; unsigned long st_ctime; unsigned long st_ctime_nsec; long __pad3[3];" data-ref="_M/__STAT64_BODY">__STAT64_BODY</a> };</td></tr>
+<tr><th id="131">131</th><td><b>struct</b> <dfn class="type def" id="stat64" title='stat64' data-ref="stat64">stat64</dfn> { <a class="macro" href="#86" title="unsigned long st_dev; unsigned long st_ino; unsigned long st_nlink; unsigned int st_mode; uid_t st_uid; gid_t st_gid; unsigned int __pad0; unsigned long st_rdev; long st_size; long st_blksize; long st_blocks; unsigned long st_atime; unsigned long st_atime_nsec; unsigned long st_mtime; unsigned long st_mtime_nsec; unsigned long st_ctime; unsigned long st_ctime_nsec; long __pad3[3];" data-ref="_M/__STAT64_BODY">__STAT64_BODY</a> };</td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td><u>#undef <a class="macro" href="#86" data-ref="_M/__STAT64_BODY">__STAT64_BODY</a></u></td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td><u>#define <dfn class="macro" id="_M/st_atimensec" data-ref="_M/st_atimensec">st_atimensec</dfn> st_atime_nsec</u></td></tr>
+<tr><th id="136">136</th><td><u>#define <dfn class="macro" id="_M/st_mtimensec" data-ref="_M/st_mtimensec">st_mtimensec</dfn> st_mtime_nsec</u></td></tr>
+<tr><th id="137">137</th><td><u>#define <dfn class="macro" id="_M/st_ctimensec" data-ref="_M/st_ctimensec">st_ctimensec</dfn> st_ctime_nsec</u></td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td><u>#<span data-ppcond="139">ifdef</span> <span class="macro" data-ref="_M/__USE_BSD">__USE_BSD</span></u></td></tr>
+<tr><th id="140">140</th><td><i>/* Permission macros provided by glibc for compatibility with BSDs. */</i></td></tr>
+<tr><th id="141">141</th><td><u>#define ACCESSPERMS (S_IRWXU | S_IRWXG | S_IRWXO) /* 0777 */</u></td></tr>
+<tr><th id="142">142</th><td><u>#define ALLPERMS    (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO) /* 07777 */</u></td></tr>
+<tr><th id="143">143</th><td><u>#define DEFFILEMODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) /* 0666 */</u></td></tr>
+<tr><th id="144">144</th><td><u>#<span data-ppcond="139">endif</span></u></td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="chmod" title='chmod' data-ref="chmod">chmod</dfn>(<em>const</em> <em>char</em>*, <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="147">147</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fchmod" title='fchmod' data-ref="fchmod">fchmod</dfn>(<em>int</em>, <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="148">148</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="mkdir" title='mkdir' data-ref="mkdir">mkdir</dfn>(<em>const</em> <em>char</em>*, <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fstat" title='fstat' data-ref="fstat">fstat</dfn>(<em>int</em>, <b>struct</b> <a class="type" href="#stat" title='stat' data-ref="stat">stat</a>*);</td></tr>
+<tr><th id="151">151</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fstat64" title='fstat64' data-ref="fstat64">fstat64</dfn>(<em>int</em>, <b>struct</b> <a class="type" href="#stat64" title='stat64' data-ref="stat64">stat64</a>*);</td></tr>
+<tr><th id="152">152</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fstatat" title='fstatat' data-ref="fstatat">fstatat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <b>struct</b> <a class="type" href="#stat" title='stat' data-ref="stat">stat</a>*, <em>int</em>);</td></tr>
+<tr><th id="153">153</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fstatat64" title='fstatat64' data-ref="fstatat64">fstatat64</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <b>struct</b> <a class="type" href="#stat64" title='stat64' data-ref="stat64">stat64</a>*, <em>int</em>);</td></tr>
+<tr><th id="154">154</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="lstat" title='lstat' data-ref="lstat">lstat</dfn>(<em>const</em> <em>char</em>*, <b>struct</b> <a class="type" href="#stat" title='stat' data-ref="stat">stat</a>*);</td></tr>
+<tr><th id="155">155</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="lstat64" title='lstat64' data-ref="lstat64">lstat64</dfn>(<em>const</em> <em>char</em>*, <b>struct</b> <a class="type" href="#stat64" title='stat64' data-ref="stat64">stat64</a>*);</td></tr>
+<tr><th id="156">156</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="stat" title='stat' data-ref="stat">stat</dfn>(<em>const</em> <em>char</em>*, <b>struct</b> <a class="type" href="#stat" title='stat' data-ref="stat">stat</a>*);</td></tr>
+<tr><th id="157">157</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="stat64" title='stat64' data-ref="stat64">stat64</dfn>(<em>const</em> <em>char</em>*, <b>struct</b> <a class="type" href="#stat64" title='stat64' data-ref="stat64">stat64</a>*);</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="mknod" title='mknod' data-ref="mknod">mknod</dfn>(<em>const</em> <em>char</em>*, <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>, <a class="typedef" href="types.h.html#dev_t" title='dev_t' data-type='uint64_t' data-ref="dev_t">dev_t</a>);</td></tr>
+<tr><th id="160">160</th><td><b>extern</b> <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <a class="decl" href="#umask" title='umask' data-ref="umask">umask</a>(<a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td><u>#<span data-ppcond="162">if</span> defined(<a class="macro" href="cdefs.h.html#565" data-ref="_M/__BIONIC_FORTIFY">__BIONIC_FORTIFY</a>)</u></td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><b>extern</b> <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="decl" id="__umask_chk" title='__umask_chk' data-ref="__umask_chk">__umask_chk</dfn>(<a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="165">165</th><td><b>extern</b> <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="decl" id="__umask_real" title='__umask_real' data-ref="__umask_real">__umask_real</dfn>(<a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>) <b>__asm__</b>(<span class="macro" title="" data-ref="_M/__USER_LABEL_PREFIX__">__USER_LABEL_PREFIX__</span> <q>"umask"</q>);</td></tr>
+<tr><th id="166">166</th><td><a class="macro" href="cdefs.h.html#357" title="extern void __umask_invalid_mode(void)" data-ref="_M/__errordecl">__errordecl</a>(<dfn class="decl" id="__umask_invalid_mode" title='__umask_invalid_mode' data-ref="__umask_invalid_mode">__umask_invalid_mode</dfn>, <q>"umask called with invalid mode"</q>);</td></tr>
+<tr><th id="167">167</th><td></td></tr>
+<tr><th id="168">168</th><td><a class="macro" href="cdefs.h.html#573" title="extern __inline__ __attribute__ ((always_inline)) __attribute__ ((gnu_inline))" data-ref="_M/__BIONIC_FORTIFY_INLINE">__BIONIC_FORTIFY_INLINE</a></td></tr>
+<tr><th id="169">169</th><td><a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="decl def" id="umask" title='umask' data-ref="umask">umask</dfn>(<a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="local col1 decl" id="1mode" title='mode' data-type='mode_t' data-ref="1mode">mode</dfn>) {</td></tr>
+<tr><th id="170">170</th><td><u>#<span data-ppcond="170">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="171">171</th><td>  <b>if</b> (__builtin_constant_p(mode)) {</td></tr>
+<tr><th id="172">172</th><td>    <b>if</b> ((mode &amp; <var>0777</var>) != mode) {</td></tr>
+<tr><th id="173">173</th><td>      __umask_invalid_mode();</td></tr>
+<tr><th id="174">174</th><td>    }</td></tr>
+<tr><th id="175">175</th><td>    <b>return</b> __umask_real(mode);</td></tr>
+<tr><th id="176">176</th><td>  }</td></tr>
+<tr><th id="177">177</th><td><u>#<span data-ppcond="170">endif</span></u></td></tr>
+<tr><th id="178">178</th><td>  <b>return</b> <a class="ref" href="#__umask_chk" title='__umask_chk' data-ref="__umask_chk">__umask_chk</a>(<a class="local col1 ref" href="#1mode" title='mode' data-ref="1mode">mode</a>);</td></tr>
+<tr><th id="179">179</th><td>}</td></tr>
+<tr><th id="180">180</th><td><u>#<span data-ppcond="162">endif</span> /* defined(__BIONIC_FORTIFY) */</u></td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="mkfifo" title='mkfifo' data-ref="mkfifo">mkfifo</dfn>(<em>const</em> <em>char</em>*, <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fchmodat" title='fchmodat' data-ref="fchmodat">fchmodat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>, <em>int</em>);</td></tr>
+<tr><th id="185">185</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="mkdirat" title='mkdirat' data-ref="mkdirat">mkdirat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="186">186</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="mknodat" title='mknodat' data-ref="mknodat">mknodat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <a class="typedef" href="types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>, <a class="typedef" href="types.h.html#dev_t" title='dev_t' data-type='uint64_t' data-ref="dev_t">dev_t</a>);</td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td><u>#define <dfn class="macro" id="_M/UTIME_NOW" data-ref="_M/UTIME_NOW">UTIME_NOW</dfn>  ((1L &lt;&lt; 30) - 1L)</u></td></tr>
+<tr><th id="189">189</th><td><u>#define <dfn class="macro" id="_M/UTIME_OMIT" data-ref="_M/UTIME_OMIT">UTIME_OMIT</dfn> ((1L &lt;&lt; 30) - 2L)</u></td></tr>
+<tr><th id="190">190</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="utimensat" title='utimensat' data-ref="utimensat">utimensat</dfn>(<em>int</em> <dfn class="local col2 decl" id="2fd" title='fd' data-type='int' data-ref="2fd">fd</dfn>, <em>const</em> <em>char</em> *<dfn class="local col3 decl" id="3path" title='path' data-type='const char *' data-ref="3path">path</dfn>, <em>const</em> <b>struct</b> <a class="type" href="../linux/time.h.html#timespec" title='timespec' data-ref="timespec">timespec</a> <dfn class="local col4 decl" id="4times" title='times' data-type='const struct timespec *' data-ref="4times">times</dfn>[<var>2</var>], <em>int</em> <dfn class="local col5 decl" id="5flags" title='flags' data-type='int' data-ref="5flags">flags</dfn>);</td></tr>
+<tr><th id="191">191</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="futimens" title='futimens' data-ref="futimens">futimens</dfn>(<em>int</em> <dfn class="local col6 decl" id="6fd" title='fd' data-type='int' data-ref="6fd">fd</dfn>, <em>const</em> <b>struct</b> <a class="type" href="../linux/time.h.html#timespec" title='timespec' data-ref="timespec">timespec</a> <dfn class="local col7 decl" id="7times" title='times' data-type='const struct timespec *' data-ref="7times">times</dfn>[<var>2</var>]);</td></tr>
+<tr><th id="192">192</th><td></td></tr>
+<tr><th id="193">193</th><td><a class="macro" href="cdefs.h.html#85" title="" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><u>#<span data-ppcond="28">endif</span> /* _SYS_STAT_H_ */</u></td></tr>
+<tr><th id="196">196</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../../../../../../../external/boringssl/src/crypto/x509/by_dir.c.html'>codebrowser/external/boringssl/src/crypto/x509/by_dir.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

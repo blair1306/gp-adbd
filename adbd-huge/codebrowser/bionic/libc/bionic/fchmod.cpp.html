@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>fchmod.cpp source code [codebrowser/bionic/libc/bionic/fchmod.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/fchmod.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='fchmod.cpp.html'>fchmod.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2015 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../include/sys/stat.h.html">&lt;sys/stat.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><b>extern</b> <q>"C"</q> <em>int</em> <dfn class="decl" id="___fchmod" title='___fchmod' data-ref="___fchmod">___fchmod</dfn>(<em>int</em>, <a class="typedef" href="../include/sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><em>int</em> <dfn class="decl def" id="fchmod" title='fchmod' data-ref="fchmod">fchmod</dfn>(<em>int</em> <dfn class="local col1 decl" id="1fd" title='fd' data-type='int' data-ref="1fd">fd</dfn>, <a class="typedef" href="../include/sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="local col2 decl" id="2mode" title='mode' data-type='mode_t' data-ref="2mode">mode</dfn>) {</td></tr>
+<tr><th id="39">39</th><td>  <em>int</em> <dfn class="local col3 decl" id="3saved_errno" title='saved_errno' data-type='int' data-ref="3saved_errno">saved_errno</dfn> = <a class="macro" href="../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="40">40</th><td>  <em>int</em> <dfn class="local col4 decl" id="4result" title='result' data-type='int' data-ref="4result">result</dfn> = <a class="ref" href="#___fchmod" title='___fchmod' data-ref="___fchmod">___fchmod</a>(<a class="local col1 ref" href="#1fd" title='fd' data-ref="1fd">fd</a>, <a class="local col2 ref" href="#2mode" title='mode' data-ref="2mode">mode</a>);</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td>  <b>if</b> ((<a class="local col4 ref" href="#4result" title='result' data-ref="4result">result</a> == <var>0</var>) || (<a class="macro" href="../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> != <a class="macro" href="../kernel/uapi/asm-generic/errno-base.h.html#31" title="9" data-ref="_M/EBADF">EBADF</a>)) {</td></tr>
+<tr><th id="43">43</th><td>    <b>return</b> <a class="local col4 ref" href="#4result" title='result' data-ref="4result">result</a>;</td></tr>
+<tr><th id="44">44</th><td>  }</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td>  <i>// fd could be an O_PATH file descriptor, and the kernel</i></td></tr>
+<tr><th id="47">47</th><td><i>  // may not directly support fchmod() on such a file descriptor.</i></td></tr>
+<tr><th id="48">48</th><td><i>  // Use /proc/self/fd instead to emulate this support.</i></td></tr>
+<tr><th id="49">49</th><td><i>  // <a href="https://sourceware.org/bugzilla/show_bug.cgi?id=14578">https://sourceware.org/bugzilla/show_bug.cgi?id=14578</a></i></td></tr>
+<tr><th id="50">50</th><td><i>  //</i></td></tr>
+<tr><th id="51">51</th><td><i>  // As of February 2015, there are no kernels which support fchmod</i></td></tr>
+<tr><th id="52">52</th><td><i>  // on an O_PATH file descriptor, and "man open" documents fchmod</i></td></tr>
+<tr><th id="53">53</th><td><i>  // on O_PATH file descriptors as returning EBADF.</i></td></tr>
+<tr><th id="54">54</th><td>  <em>int</em> <dfn class="local col5 decl" id="5fd_flag" title='fd_flag' data-type='int' data-ref="5fd_flag">fd_flag</dfn> = <a class="ref" href="../include/fcntl.h.html#fcntl" title='fcntl' data-ref="fcntl">fcntl</a>(<a class="local col1 ref" href="#1fd" title='fd' data-ref="1fd">fd</a>, <a class="macro" href="../kernel/uapi/asm-generic/fcntl.h.html#102" title="3" data-ref="_M/F_GETFL">F_GETFL</a>);</td></tr>
+<tr><th id="55">55</th><td>  <b>if</b> ((<a class="local col5 ref" href="#5fd_flag" title='fd_flag' data-ref="5fd_flag">fd_flag</a> == -<var>1</var>) || ((<a class="local col5 ref" href="#5fd_flag" title='fd_flag' data-ref="5fd_flag">fd_flag</a> &amp; <a class="macro" href="../kernel/uapi/asm-generic/fcntl.h.html#86" title="010000000" data-ref="_M/O_PATH">O_PATH</a>) == <var>0</var>)) {</td></tr>
+<tr><th id="56">56</th><td>    <a class="macro" href="../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../kernel/uapi/asm-generic/errno-base.h.html#31" title="9" data-ref="_M/EBADF">EBADF</a>;</td></tr>
+<tr><th id="57">57</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="58">58</th><td>  }</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td>  <em>char</em> <dfn class="local col6 decl" id="6buf" title='buf' data-type='char [40]' data-ref="6buf">buf</dfn>[<var>40</var>];</td></tr>
+<tr><th id="61">61</th><td>  <a class="macro" href="../include/stdio.h.html#320" title="__builtin___snprintf_chk(buf, sizeof(buf), 0, __builtin_object_size((buf), 1), &quot;/proc/self/fd/%d&quot;, fd)" data-ref="_M/snprintf">snprintf</a>(<a class="local col6 ref" href="#6buf" title='buf' data-ref="6buf">buf</a>, <b>sizeof</b>(<a class="local col6 ref" href="#6buf" title='buf' data-ref="6buf">buf</a>), <q>"/proc/self/fd/%d"</q>, <a class="local col1 ref" href="#1fd" title='fd' data-ref="1fd">fd</a>);</td></tr>
+<tr><th id="62">62</th><td>  <a class="macro" href="../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="local col3 ref" href="#3saved_errno" title='saved_errno' data-ref="3saved_errno">saved_errno</a>;</td></tr>
+<tr><th id="63">63</th><td>  <a class="local col4 ref" href="#4result" title='result' data-ref="4result">result</a> = <a class="ref" href="../include/sys/stat.h.html#chmod" title='chmod' data-ref="chmod">chmod</a>(<a class="local col6 ref" href="#6buf" title='buf' data-ref="6buf">buf</a>, <a class="local col2 ref" href="#2mode" title='mode' data-ref="2mode">mode</a>);</td></tr>
+<tr><th id="64">64</th><td>  <b>if</b> ((<a class="local col4 ref" href="#4result" title='result' data-ref="4result">result</a> == -<var>1</var>) &amp;&amp; (<a class="macro" href="../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <a class="macro" href="../kernel/uapi/asm-generic/errno.h.html#29" title="40" data-ref="_M/ELOOP">ELOOP</a>)) {</td></tr>
+<tr><th id="65">65</th><td>    <i>// Linux does not support changing the mode of a symlink.</i></td></tr>
+<tr><th id="66">66</th><td><i>    // For fchmodat(AT_SYMLINK_NOFOLLOW), POSIX requires a return</i></td></tr>
+<tr><th id="67">67</th><td><i>    // value of ENOTSUP. Assume that's true here too.</i></td></tr>
+<tr><th id="68">68</th><td>    <a class="macro" href="../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../include/errno.h.html#40" title="95" data-ref="_M/ENOTSUP">ENOTSUP</a>;</td></tr>
+<tr><th id="69">69</th><td>  }</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td>  <b>return</b> <a class="local col4 ref" href="#4result" title='result' data-ref="4result">result</a>;</td></tr>
+<tr><th id="72">72</th><td>}</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

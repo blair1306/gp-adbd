@@ -1,0 +1,15 @@
+<dec f='codebrowser/bionic/libc/include/stdlib.h' l='107' type='uint32_t arc4random_uniform(uint32_t )'/>
+<def f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/crypt/arc4random_uniform.c' l='32' ll='56' type='uint32_t arc4random_uniform(uint32_t upper_bound)'/>
+<doc f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/crypt/arc4random_uniform.c' l='22'>/*
+ * Calculate a uniformly distributed random number less than upper_bound
+ * avoiding &quot;modulo bias&quot;.
+ *
+ * Uniformity is achieved by generating new random numbers until the one
+ * returned is outside the range [0, 2**32 % upper_bound).  This
+ * guarantees the selected random number will be inside
+ * [2**32 % upper_bound, 2**32) which maps back to [0, upper_bound)
+ * after reduction modulo upper_bound.
+ */</doc>
+<use f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/net/res_random.c' l='180' u='c' c='res_initid'/>
+<use f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/net/res_random.c' l='194' u='c' c='res_initid'/>
+<dec f='codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdlib.h' l='109' type='unsigned int arc4random_uniform(unsigned int )'/>

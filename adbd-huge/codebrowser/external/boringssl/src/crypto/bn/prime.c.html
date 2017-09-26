@@ -1,0 +1,863 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>prime.c source code [codebrowser/external/boringssl/src/crypto/bn/prime.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/bn/prime.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>bn</a>/<a href='prime.c.html'>prime.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.]</i></td></tr>
+<tr><th id="56">56</th><td><i> */</i></td></tr>
+<tr><th id="57">57</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="58">58</th><td><i> * Copyright (c) 1998-2001 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="59">59</th><td><i> *</i></td></tr>
+<tr><th id="60">60</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="61">61</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="62">62</th><td><i> * are met:</i></td></tr>
+<tr><th id="63">63</th><td><i> *</i></td></tr>
+<tr><th id="64">64</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="65">65</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="66">66</th><td><i> *</i></td></tr>
+<tr><th id="67">67</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="68">68</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="69">69</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="70">70</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="71">71</th><td><i> *</i></td></tr>
+<tr><th id="72">72</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="73">73</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="74">74</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="75">75</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="76">76</th><td><i> *</i></td></tr>
+<tr><th id="77">77</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="78">78</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="79">79</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="80">80</th><td><i> *    openssl-core@openssl.org.</i></td></tr>
+<tr><th id="81">81</th><td><i> *</i></td></tr>
+<tr><th id="82">82</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="83">83</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="84">84</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="85">85</th><td><i> *</i></td></tr>
+<tr><th id="86">86</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="87">87</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="88">88</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="89">89</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="90">90</th><td><i> *</i></td></tr>
+<tr><th id="91">91</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="92">92</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="93">93</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="94">94</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="95">95</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="96">96</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="97">97</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="98">98</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="99">99</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="100">100</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="101">101</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="102">102</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="103">103</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="104">104</th><td><i> *</i></td></tr>
+<tr><th id="105">105</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="106">106</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="107">107</th><td><i> * Hudson (tjh@cryptsoft.com). */</i></td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><u>#include <a href="../../include/openssl/bn.h.html">&lt;openssl/bn.h&gt;</a></u></td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="112">112</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><u>#include <a href="internal.h.html">"internal.h"</a></u></td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><i>/* number of Miller-Rabin iterations for an error rate  of less than 2^-80</i></td></tr>
+<tr><th id="117">117</th><td><i> * for random 'b'-bit input, b &gt;= 100 (taken from table 4.4 in the Handbook</i></td></tr>
+<tr><th id="118">118</th><td><i> * of Applied Cryptography [Menezes, van Oorschot, Vanstone; CRC Press 1996];</i></td></tr>
+<tr><th id="119">119</th><td><i> * original paper: Damgaard, Landrock, Pomerance: Average case error estimates</i></td></tr>
+<tr><th id="120">120</th><td><i> * for the strong probable prime test. -- Math. Comp. 61 (1993) 177-194) */</i></td></tr>
+<tr><th id="121">121</th><td><u>#define <dfn class="macro" id="_M/BN_prime_checks_for_size" data-ref="_M/BN_prime_checks_for_size">BN_prime_checks_for_size</dfn>(b) ((b) &gt;= 1300 ?  2 : \</u></td></tr>
+<tr><th id="122">122</th><td><u>                                (b) &gt;=  850 ?  3 : \</u></td></tr>
+<tr><th id="123">123</th><td><u>                                (b) &gt;=  650 ?  4 : \</u></td></tr>
+<tr><th id="124">124</th><td><u>                                (b) &gt;=  550 ?  5 : \</u></td></tr>
+<tr><th id="125">125</th><td><u>                                (b) &gt;=  450 ?  6 : \</u></td></tr>
+<tr><th id="126">126</th><td><u>                                (b) &gt;=  400 ?  7 : \</u></td></tr>
+<tr><th id="127">127</th><td><u>                                (b) &gt;=  350 ?  8 : \</u></td></tr>
+<tr><th id="128">128</th><td><u>                                (b) &gt;=  300 ?  9 : \</u></td></tr>
+<tr><th id="129">129</th><td><u>                                (b) &gt;=  250 ? 12 : \</u></td></tr>
+<tr><th id="130">130</th><td><u>                                (b) &gt;=  200 ? 15 : \</u></td></tr>
+<tr><th id="131">131</th><td><u>                                (b) &gt;=  150 ? 18 : \</u></td></tr>
+<tr><th id="132">132</th><td><u>                                /* b &gt;= 100 */ 27)</u></td></tr>
+<tr><th id="133">133</th><td></td></tr>
+<tr><th id="134">134</th><td><i>/* The quick sieve algorithm approach to weeding out primes is Philip</i></td></tr>
+<tr><th id="135">135</th><td><i> * Zimmermann's, as implemented in PGP.  I have had a read of his comments and</i></td></tr>
+<tr><th id="136">136</th><td><i> * implemented my own version. */</i></td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td><i>/* NUMPRIMES is the number of primes that fit into a uint16_t. */</i></td></tr>
+<tr><th id="139">139</th><td><u>#define <dfn class="macro" id="_M/NUMPRIMES" data-ref="_M/NUMPRIMES">NUMPRIMES</dfn> 2048</u></td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><i  data-doc="primes">/* primes contains all the primes that fit into a uint16_t. */</i></td></tr>
+<tr><th id="142">142</th><td><em>static</em> <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a> <dfn class="tu decl def" id="primes" title='primes' data-type='const uint16_t [2048]' data-ref="primes">primes</dfn>[<a class="macro" href="#139" title="2048" data-ref="_M/NUMPRIMES">NUMPRIMES</a>] = {</td></tr>
+<tr><th id="143">143</th><td>    <var>2</var>,     <var>3</var>,     <var>5</var>,     <var>7</var>,     <var>11</var>,    <var>13</var>,    <var>17</var>,    <var>19</var>,    <var>23</var>,    <var>29</var>,    <var>31</var>,</td></tr>
+<tr><th id="144">144</th><td>    <var>37</var>,    <var>41</var>,    <var>43</var>,    <var>47</var>,    <var>53</var>,    <var>59</var>,    <var>61</var>,    <var>67</var>,    <var>71</var>,    <var>73</var>,    <var>79</var>,</td></tr>
+<tr><th id="145">145</th><td>    <var>83</var>,    <var>89</var>,    <var>97</var>,    <var>101</var>,   <var>103</var>,   <var>107</var>,   <var>109</var>,   <var>113</var>,   <var>127</var>,   <var>131</var>,   <var>137</var>,</td></tr>
+<tr><th id="146">146</th><td>    <var>139</var>,   <var>149</var>,   <var>151</var>,   <var>157</var>,   <var>163</var>,   <var>167</var>,   <var>173</var>,   <var>179</var>,   <var>181</var>,   <var>191</var>,   <var>193</var>,</td></tr>
+<tr><th id="147">147</th><td>    <var>197</var>,   <var>199</var>,   <var>211</var>,   <var>223</var>,   <var>227</var>,   <var>229</var>,   <var>233</var>,   <var>239</var>,   <var>241</var>,   <var>251</var>,   <var>257</var>,</td></tr>
+<tr><th id="148">148</th><td>    <var>263</var>,   <var>269</var>,   <var>271</var>,   <var>277</var>,   <var>281</var>,   <var>283</var>,   <var>293</var>,   <var>307</var>,   <var>311</var>,   <var>313</var>,   <var>317</var>,</td></tr>
+<tr><th id="149">149</th><td>    <var>331</var>,   <var>337</var>,   <var>347</var>,   <var>349</var>,   <var>353</var>,   <var>359</var>,   <var>367</var>,   <var>373</var>,   <var>379</var>,   <var>383</var>,   <var>389</var>,</td></tr>
+<tr><th id="150">150</th><td>    <var>397</var>,   <var>401</var>,   <var>409</var>,   <var>419</var>,   <var>421</var>,   <var>431</var>,   <var>433</var>,   <var>439</var>,   <var>443</var>,   <var>449</var>,   <var>457</var>,</td></tr>
+<tr><th id="151">151</th><td>    <var>461</var>,   <var>463</var>,   <var>467</var>,   <var>479</var>,   <var>487</var>,   <var>491</var>,   <var>499</var>,   <var>503</var>,   <var>509</var>,   <var>521</var>,   <var>523</var>,</td></tr>
+<tr><th id="152">152</th><td>    <var>541</var>,   <var>547</var>,   <var>557</var>,   <var>563</var>,   <var>569</var>,   <var>571</var>,   <var>577</var>,   <var>587</var>,   <var>593</var>,   <var>599</var>,   <var>601</var>,</td></tr>
+<tr><th id="153">153</th><td>    <var>607</var>,   <var>613</var>,   <var>617</var>,   <var>619</var>,   <var>631</var>,   <var>641</var>,   <var>643</var>,   <var>647</var>,   <var>653</var>,   <var>659</var>,   <var>661</var>,</td></tr>
+<tr><th id="154">154</th><td>    <var>673</var>,   <var>677</var>,   <var>683</var>,   <var>691</var>,   <var>701</var>,   <var>709</var>,   <var>719</var>,   <var>727</var>,   <var>733</var>,   <var>739</var>,   <var>743</var>,</td></tr>
+<tr><th id="155">155</th><td>    <var>751</var>,   <var>757</var>,   <var>761</var>,   <var>769</var>,   <var>773</var>,   <var>787</var>,   <var>797</var>,   <var>809</var>,   <var>811</var>,   <var>821</var>,   <var>823</var>,</td></tr>
+<tr><th id="156">156</th><td>    <var>827</var>,   <var>829</var>,   <var>839</var>,   <var>853</var>,   <var>857</var>,   <var>859</var>,   <var>863</var>,   <var>877</var>,   <var>881</var>,   <var>883</var>,   <var>887</var>,</td></tr>
+<tr><th id="157">157</th><td>    <var>907</var>,   <var>911</var>,   <var>919</var>,   <var>929</var>,   <var>937</var>,   <var>941</var>,   <var>947</var>,   <var>953</var>,   <var>967</var>,   <var>971</var>,   <var>977</var>,</td></tr>
+<tr><th id="158">158</th><td>    <var>983</var>,   <var>991</var>,   <var>997</var>,   <var>1009</var>,  <var>1013</var>,  <var>1019</var>,  <var>1021</var>,  <var>1031</var>,  <var>1033</var>,  <var>1039</var>,  <var>1049</var>,</td></tr>
+<tr><th id="159">159</th><td>    <var>1051</var>,  <var>1061</var>,  <var>1063</var>,  <var>1069</var>,  <var>1087</var>,  <var>1091</var>,  <var>1093</var>,  <var>1097</var>,  <var>1103</var>,  <var>1109</var>,  <var>1117</var>,</td></tr>
+<tr><th id="160">160</th><td>    <var>1123</var>,  <var>1129</var>,  <var>1151</var>,  <var>1153</var>,  <var>1163</var>,  <var>1171</var>,  <var>1181</var>,  <var>1187</var>,  <var>1193</var>,  <var>1201</var>,  <var>1213</var>,</td></tr>
+<tr><th id="161">161</th><td>    <var>1217</var>,  <var>1223</var>,  <var>1229</var>,  <var>1231</var>,  <var>1237</var>,  <var>1249</var>,  <var>1259</var>,  <var>1277</var>,  <var>1279</var>,  <var>1283</var>,  <var>1289</var>,</td></tr>
+<tr><th id="162">162</th><td>    <var>1291</var>,  <var>1297</var>,  <var>1301</var>,  <var>1303</var>,  <var>1307</var>,  <var>1319</var>,  <var>1321</var>,  <var>1327</var>,  <var>1361</var>,  <var>1367</var>,  <var>1373</var>,</td></tr>
+<tr><th id="163">163</th><td>    <var>1381</var>,  <var>1399</var>,  <var>1409</var>,  <var>1423</var>,  <var>1427</var>,  <var>1429</var>,  <var>1433</var>,  <var>1439</var>,  <var>1447</var>,  <var>1451</var>,  <var>1453</var>,</td></tr>
+<tr><th id="164">164</th><td>    <var>1459</var>,  <var>1471</var>,  <var>1481</var>,  <var>1483</var>,  <var>1487</var>,  <var>1489</var>,  <var>1493</var>,  <var>1499</var>,  <var>1511</var>,  <var>1523</var>,  <var>1531</var>,</td></tr>
+<tr><th id="165">165</th><td>    <var>1543</var>,  <var>1549</var>,  <var>1553</var>,  <var>1559</var>,  <var>1567</var>,  <var>1571</var>,  <var>1579</var>,  <var>1583</var>,  <var>1597</var>,  <var>1601</var>,  <var>1607</var>,</td></tr>
+<tr><th id="166">166</th><td>    <var>1609</var>,  <var>1613</var>,  <var>1619</var>,  <var>1621</var>,  <var>1627</var>,  <var>1637</var>,  <var>1657</var>,  <var>1663</var>,  <var>1667</var>,  <var>1669</var>,  <var>1693</var>,</td></tr>
+<tr><th id="167">167</th><td>    <var>1697</var>,  <var>1699</var>,  <var>1709</var>,  <var>1721</var>,  <var>1723</var>,  <var>1733</var>,  <var>1741</var>,  <var>1747</var>,  <var>1753</var>,  <var>1759</var>,  <var>1777</var>,</td></tr>
+<tr><th id="168">168</th><td>    <var>1783</var>,  <var>1787</var>,  <var>1789</var>,  <var>1801</var>,  <var>1811</var>,  <var>1823</var>,  <var>1831</var>,  <var>1847</var>,  <var>1861</var>,  <var>1867</var>,  <var>1871</var>,</td></tr>
+<tr><th id="169">169</th><td>    <var>1873</var>,  <var>1877</var>,  <var>1879</var>,  <var>1889</var>,  <var>1901</var>,  <var>1907</var>,  <var>1913</var>,  <var>1931</var>,  <var>1933</var>,  <var>1949</var>,  <var>1951</var>,</td></tr>
+<tr><th id="170">170</th><td>    <var>1973</var>,  <var>1979</var>,  <var>1987</var>,  <var>1993</var>,  <var>1997</var>,  <var>1999</var>,  <var>2003</var>,  <var>2011</var>,  <var>2017</var>,  <var>2027</var>,  <var>2029</var>,</td></tr>
+<tr><th id="171">171</th><td>    <var>2039</var>,  <var>2053</var>,  <var>2063</var>,  <var>2069</var>,  <var>2081</var>,  <var>2083</var>,  <var>2087</var>,  <var>2089</var>,  <var>2099</var>,  <var>2111</var>,  <var>2113</var>,</td></tr>
+<tr><th id="172">172</th><td>    <var>2129</var>,  <var>2131</var>,  <var>2137</var>,  <var>2141</var>,  <var>2143</var>,  <var>2153</var>,  <var>2161</var>,  <var>2179</var>,  <var>2203</var>,  <var>2207</var>,  <var>2213</var>,</td></tr>
+<tr><th id="173">173</th><td>    <var>2221</var>,  <var>2237</var>,  <var>2239</var>,  <var>2243</var>,  <var>2251</var>,  <var>2267</var>,  <var>2269</var>,  <var>2273</var>,  <var>2281</var>,  <var>2287</var>,  <var>2293</var>,</td></tr>
+<tr><th id="174">174</th><td>    <var>2297</var>,  <var>2309</var>,  <var>2311</var>,  <var>2333</var>,  <var>2339</var>,  <var>2341</var>,  <var>2347</var>,  <var>2351</var>,  <var>2357</var>,  <var>2371</var>,  <var>2377</var>,</td></tr>
+<tr><th id="175">175</th><td>    <var>2381</var>,  <var>2383</var>,  <var>2389</var>,  <var>2393</var>,  <var>2399</var>,  <var>2411</var>,  <var>2417</var>,  <var>2423</var>,  <var>2437</var>,  <var>2441</var>,  <var>2447</var>,</td></tr>
+<tr><th id="176">176</th><td>    <var>2459</var>,  <var>2467</var>,  <var>2473</var>,  <var>2477</var>,  <var>2503</var>,  <var>2521</var>,  <var>2531</var>,  <var>2539</var>,  <var>2543</var>,  <var>2549</var>,  <var>2551</var>,</td></tr>
+<tr><th id="177">177</th><td>    <var>2557</var>,  <var>2579</var>,  <var>2591</var>,  <var>2593</var>,  <var>2609</var>,  <var>2617</var>,  <var>2621</var>,  <var>2633</var>,  <var>2647</var>,  <var>2657</var>,  <var>2659</var>,</td></tr>
+<tr><th id="178">178</th><td>    <var>2663</var>,  <var>2671</var>,  <var>2677</var>,  <var>2683</var>,  <var>2687</var>,  <var>2689</var>,  <var>2693</var>,  <var>2699</var>,  <var>2707</var>,  <var>2711</var>,  <var>2713</var>,</td></tr>
+<tr><th id="179">179</th><td>    <var>2719</var>,  <var>2729</var>,  <var>2731</var>,  <var>2741</var>,  <var>2749</var>,  <var>2753</var>,  <var>2767</var>,  <var>2777</var>,  <var>2789</var>,  <var>2791</var>,  <var>2797</var>,</td></tr>
+<tr><th id="180">180</th><td>    <var>2801</var>,  <var>2803</var>,  <var>2819</var>,  <var>2833</var>,  <var>2837</var>,  <var>2843</var>,  <var>2851</var>,  <var>2857</var>,  <var>2861</var>,  <var>2879</var>,  <var>2887</var>,</td></tr>
+<tr><th id="181">181</th><td>    <var>2897</var>,  <var>2903</var>,  <var>2909</var>,  <var>2917</var>,  <var>2927</var>,  <var>2939</var>,  <var>2953</var>,  <var>2957</var>,  <var>2963</var>,  <var>2969</var>,  <var>2971</var>,</td></tr>
+<tr><th id="182">182</th><td>    <var>2999</var>,  <var>3001</var>,  <var>3011</var>,  <var>3019</var>,  <var>3023</var>,  <var>3037</var>,  <var>3041</var>,  <var>3049</var>,  <var>3061</var>,  <var>3067</var>,  <var>3079</var>,</td></tr>
+<tr><th id="183">183</th><td>    <var>3083</var>,  <var>3089</var>,  <var>3109</var>,  <var>3119</var>,  <var>3121</var>,  <var>3137</var>,  <var>3163</var>,  <var>3167</var>,  <var>3169</var>,  <var>3181</var>,  <var>3187</var>,</td></tr>
+<tr><th id="184">184</th><td>    <var>3191</var>,  <var>3203</var>,  <var>3209</var>,  <var>3217</var>,  <var>3221</var>,  <var>3229</var>,  <var>3251</var>,  <var>3253</var>,  <var>3257</var>,  <var>3259</var>,  <var>3271</var>,</td></tr>
+<tr><th id="185">185</th><td>    <var>3299</var>,  <var>3301</var>,  <var>3307</var>,  <var>3313</var>,  <var>3319</var>,  <var>3323</var>,  <var>3329</var>,  <var>3331</var>,  <var>3343</var>,  <var>3347</var>,  <var>3359</var>,</td></tr>
+<tr><th id="186">186</th><td>    <var>3361</var>,  <var>3371</var>,  <var>3373</var>,  <var>3389</var>,  <var>3391</var>,  <var>3407</var>,  <var>3413</var>,  <var>3433</var>,  <var>3449</var>,  <var>3457</var>,  <var>3461</var>,</td></tr>
+<tr><th id="187">187</th><td>    <var>3463</var>,  <var>3467</var>,  <var>3469</var>,  <var>3491</var>,  <var>3499</var>,  <var>3511</var>,  <var>3517</var>,  <var>3527</var>,  <var>3529</var>,  <var>3533</var>,  <var>3539</var>,</td></tr>
+<tr><th id="188">188</th><td>    <var>3541</var>,  <var>3547</var>,  <var>3557</var>,  <var>3559</var>,  <var>3571</var>,  <var>3581</var>,  <var>3583</var>,  <var>3593</var>,  <var>3607</var>,  <var>3613</var>,  <var>3617</var>,</td></tr>
+<tr><th id="189">189</th><td>    <var>3623</var>,  <var>3631</var>,  <var>3637</var>,  <var>3643</var>,  <var>3659</var>,  <var>3671</var>,  <var>3673</var>,  <var>3677</var>,  <var>3691</var>,  <var>3697</var>,  <var>3701</var>,</td></tr>
+<tr><th id="190">190</th><td>    <var>3709</var>,  <var>3719</var>,  <var>3727</var>,  <var>3733</var>,  <var>3739</var>,  <var>3761</var>,  <var>3767</var>,  <var>3769</var>,  <var>3779</var>,  <var>3793</var>,  <var>3797</var>,</td></tr>
+<tr><th id="191">191</th><td>    <var>3803</var>,  <var>3821</var>,  <var>3823</var>,  <var>3833</var>,  <var>3847</var>,  <var>3851</var>,  <var>3853</var>,  <var>3863</var>,  <var>3877</var>,  <var>3881</var>,  <var>3889</var>,</td></tr>
+<tr><th id="192">192</th><td>    <var>3907</var>,  <var>3911</var>,  <var>3917</var>,  <var>3919</var>,  <var>3923</var>,  <var>3929</var>,  <var>3931</var>,  <var>3943</var>,  <var>3947</var>,  <var>3967</var>,  <var>3989</var>,</td></tr>
+<tr><th id="193">193</th><td>    <var>4001</var>,  <var>4003</var>,  <var>4007</var>,  <var>4013</var>,  <var>4019</var>,  <var>4021</var>,  <var>4027</var>,  <var>4049</var>,  <var>4051</var>,  <var>4057</var>,  <var>4073</var>,</td></tr>
+<tr><th id="194">194</th><td>    <var>4079</var>,  <var>4091</var>,  <var>4093</var>,  <var>4099</var>,  <var>4111</var>,  <var>4127</var>,  <var>4129</var>,  <var>4133</var>,  <var>4139</var>,  <var>4153</var>,  <var>4157</var>,</td></tr>
+<tr><th id="195">195</th><td>    <var>4159</var>,  <var>4177</var>,  <var>4201</var>,  <var>4211</var>,  <var>4217</var>,  <var>4219</var>,  <var>4229</var>,  <var>4231</var>,  <var>4241</var>,  <var>4243</var>,  <var>4253</var>,</td></tr>
+<tr><th id="196">196</th><td>    <var>4259</var>,  <var>4261</var>,  <var>4271</var>,  <var>4273</var>,  <var>4283</var>,  <var>4289</var>,  <var>4297</var>,  <var>4327</var>,  <var>4337</var>,  <var>4339</var>,  <var>4349</var>,</td></tr>
+<tr><th id="197">197</th><td>    <var>4357</var>,  <var>4363</var>,  <var>4373</var>,  <var>4391</var>,  <var>4397</var>,  <var>4409</var>,  <var>4421</var>,  <var>4423</var>,  <var>4441</var>,  <var>4447</var>,  <var>4451</var>,</td></tr>
+<tr><th id="198">198</th><td>    <var>4457</var>,  <var>4463</var>,  <var>4481</var>,  <var>4483</var>,  <var>4493</var>,  <var>4507</var>,  <var>4513</var>,  <var>4517</var>,  <var>4519</var>,  <var>4523</var>,  <var>4547</var>,</td></tr>
+<tr><th id="199">199</th><td>    <var>4549</var>,  <var>4561</var>,  <var>4567</var>,  <var>4583</var>,  <var>4591</var>,  <var>4597</var>,  <var>4603</var>,  <var>4621</var>,  <var>4637</var>,  <var>4639</var>,  <var>4643</var>,</td></tr>
+<tr><th id="200">200</th><td>    <var>4649</var>,  <var>4651</var>,  <var>4657</var>,  <var>4663</var>,  <var>4673</var>,  <var>4679</var>,  <var>4691</var>,  <var>4703</var>,  <var>4721</var>,  <var>4723</var>,  <var>4729</var>,</td></tr>
+<tr><th id="201">201</th><td>    <var>4733</var>,  <var>4751</var>,  <var>4759</var>,  <var>4783</var>,  <var>4787</var>,  <var>4789</var>,  <var>4793</var>,  <var>4799</var>,  <var>4801</var>,  <var>4813</var>,  <var>4817</var>,</td></tr>
+<tr><th id="202">202</th><td>    <var>4831</var>,  <var>4861</var>,  <var>4871</var>,  <var>4877</var>,  <var>4889</var>,  <var>4903</var>,  <var>4909</var>,  <var>4919</var>,  <var>4931</var>,  <var>4933</var>,  <var>4937</var>,</td></tr>
+<tr><th id="203">203</th><td>    <var>4943</var>,  <var>4951</var>,  <var>4957</var>,  <var>4967</var>,  <var>4969</var>,  <var>4973</var>,  <var>4987</var>,  <var>4993</var>,  <var>4999</var>,  <var>5003</var>,  <var>5009</var>,</td></tr>
+<tr><th id="204">204</th><td>    <var>5011</var>,  <var>5021</var>,  <var>5023</var>,  <var>5039</var>,  <var>5051</var>,  <var>5059</var>,  <var>5077</var>,  <var>5081</var>,  <var>5087</var>,  <var>5099</var>,  <var>5101</var>,</td></tr>
+<tr><th id="205">205</th><td>    <var>5107</var>,  <var>5113</var>,  <var>5119</var>,  <var>5147</var>,  <var>5153</var>,  <var>5167</var>,  <var>5171</var>,  <var>5179</var>,  <var>5189</var>,  <var>5197</var>,  <var>5209</var>,</td></tr>
+<tr><th id="206">206</th><td>    <var>5227</var>,  <var>5231</var>,  <var>5233</var>,  <var>5237</var>,  <var>5261</var>,  <var>5273</var>,  <var>5279</var>,  <var>5281</var>,  <var>5297</var>,  <var>5303</var>,  <var>5309</var>,</td></tr>
+<tr><th id="207">207</th><td>    <var>5323</var>,  <var>5333</var>,  <var>5347</var>,  <var>5351</var>,  <var>5381</var>,  <var>5387</var>,  <var>5393</var>,  <var>5399</var>,  <var>5407</var>,  <var>5413</var>,  <var>5417</var>,</td></tr>
+<tr><th id="208">208</th><td>    <var>5419</var>,  <var>5431</var>,  <var>5437</var>,  <var>5441</var>,  <var>5443</var>,  <var>5449</var>,  <var>5471</var>,  <var>5477</var>,  <var>5479</var>,  <var>5483</var>,  <var>5501</var>,</td></tr>
+<tr><th id="209">209</th><td>    <var>5503</var>,  <var>5507</var>,  <var>5519</var>,  <var>5521</var>,  <var>5527</var>,  <var>5531</var>,  <var>5557</var>,  <var>5563</var>,  <var>5569</var>,  <var>5573</var>,  <var>5581</var>,</td></tr>
+<tr><th id="210">210</th><td>    <var>5591</var>,  <var>5623</var>,  <var>5639</var>,  <var>5641</var>,  <var>5647</var>,  <var>5651</var>,  <var>5653</var>,  <var>5657</var>,  <var>5659</var>,  <var>5669</var>,  <var>5683</var>,</td></tr>
+<tr><th id="211">211</th><td>    <var>5689</var>,  <var>5693</var>,  <var>5701</var>,  <var>5711</var>,  <var>5717</var>,  <var>5737</var>,  <var>5741</var>,  <var>5743</var>,  <var>5749</var>,  <var>5779</var>,  <var>5783</var>,</td></tr>
+<tr><th id="212">212</th><td>    <var>5791</var>,  <var>5801</var>,  <var>5807</var>,  <var>5813</var>,  <var>5821</var>,  <var>5827</var>,  <var>5839</var>,  <var>5843</var>,  <var>5849</var>,  <var>5851</var>,  <var>5857</var>,</td></tr>
+<tr><th id="213">213</th><td>    <var>5861</var>,  <var>5867</var>,  <var>5869</var>,  <var>5879</var>,  <var>5881</var>,  <var>5897</var>,  <var>5903</var>,  <var>5923</var>,  <var>5927</var>,  <var>5939</var>,  <var>5953</var>,</td></tr>
+<tr><th id="214">214</th><td>    <var>5981</var>,  <var>5987</var>,  <var>6007</var>,  <var>6011</var>,  <var>6029</var>,  <var>6037</var>,  <var>6043</var>,  <var>6047</var>,  <var>6053</var>,  <var>6067</var>,  <var>6073</var>,</td></tr>
+<tr><th id="215">215</th><td>    <var>6079</var>,  <var>6089</var>,  <var>6091</var>,  <var>6101</var>,  <var>6113</var>,  <var>6121</var>,  <var>6131</var>,  <var>6133</var>,  <var>6143</var>,  <var>6151</var>,  <var>6163</var>,</td></tr>
+<tr><th id="216">216</th><td>    <var>6173</var>,  <var>6197</var>,  <var>6199</var>,  <var>6203</var>,  <var>6211</var>,  <var>6217</var>,  <var>6221</var>,  <var>6229</var>,  <var>6247</var>,  <var>6257</var>,  <var>6263</var>,</td></tr>
+<tr><th id="217">217</th><td>    <var>6269</var>,  <var>6271</var>,  <var>6277</var>,  <var>6287</var>,  <var>6299</var>,  <var>6301</var>,  <var>6311</var>,  <var>6317</var>,  <var>6323</var>,  <var>6329</var>,  <var>6337</var>,</td></tr>
+<tr><th id="218">218</th><td>    <var>6343</var>,  <var>6353</var>,  <var>6359</var>,  <var>6361</var>,  <var>6367</var>,  <var>6373</var>,  <var>6379</var>,  <var>6389</var>,  <var>6397</var>,  <var>6421</var>,  <var>6427</var>,</td></tr>
+<tr><th id="219">219</th><td>    <var>6449</var>,  <var>6451</var>,  <var>6469</var>,  <var>6473</var>,  <var>6481</var>,  <var>6491</var>,  <var>6521</var>,  <var>6529</var>,  <var>6547</var>,  <var>6551</var>,  <var>6553</var>,</td></tr>
+<tr><th id="220">220</th><td>    <var>6563</var>,  <var>6569</var>,  <var>6571</var>,  <var>6577</var>,  <var>6581</var>,  <var>6599</var>,  <var>6607</var>,  <var>6619</var>,  <var>6637</var>,  <var>6653</var>,  <var>6659</var>,</td></tr>
+<tr><th id="221">221</th><td>    <var>6661</var>,  <var>6673</var>,  <var>6679</var>,  <var>6689</var>,  <var>6691</var>,  <var>6701</var>,  <var>6703</var>,  <var>6709</var>,  <var>6719</var>,  <var>6733</var>,  <var>6737</var>,</td></tr>
+<tr><th id="222">222</th><td>    <var>6761</var>,  <var>6763</var>,  <var>6779</var>,  <var>6781</var>,  <var>6791</var>,  <var>6793</var>,  <var>6803</var>,  <var>6823</var>,  <var>6827</var>,  <var>6829</var>,  <var>6833</var>,</td></tr>
+<tr><th id="223">223</th><td>    <var>6841</var>,  <var>6857</var>,  <var>6863</var>,  <var>6869</var>,  <var>6871</var>,  <var>6883</var>,  <var>6899</var>,  <var>6907</var>,  <var>6911</var>,  <var>6917</var>,  <var>6947</var>,</td></tr>
+<tr><th id="224">224</th><td>    <var>6949</var>,  <var>6959</var>,  <var>6961</var>,  <var>6967</var>,  <var>6971</var>,  <var>6977</var>,  <var>6983</var>,  <var>6991</var>,  <var>6997</var>,  <var>7001</var>,  <var>7013</var>,</td></tr>
+<tr><th id="225">225</th><td>    <var>7019</var>,  <var>7027</var>,  <var>7039</var>,  <var>7043</var>,  <var>7057</var>,  <var>7069</var>,  <var>7079</var>,  <var>7103</var>,  <var>7109</var>,  <var>7121</var>,  <var>7127</var>,</td></tr>
+<tr><th id="226">226</th><td>    <var>7129</var>,  <var>7151</var>,  <var>7159</var>,  <var>7177</var>,  <var>7187</var>,  <var>7193</var>,  <var>7207</var>,  <var>7211</var>,  <var>7213</var>,  <var>7219</var>,  <var>7229</var>,</td></tr>
+<tr><th id="227">227</th><td>    <var>7237</var>,  <var>7243</var>,  <var>7247</var>,  <var>7253</var>,  <var>7283</var>,  <var>7297</var>,  <var>7307</var>,  <var>7309</var>,  <var>7321</var>,  <var>7331</var>,  <var>7333</var>,</td></tr>
+<tr><th id="228">228</th><td>    <var>7349</var>,  <var>7351</var>,  <var>7369</var>,  <var>7393</var>,  <var>7411</var>,  <var>7417</var>,  <var>7433</var>,  <var>7451</var>,  <var>7457</var>,  <var>7459</var>,  <var>7477</var>,</td></tr>
+<tr><th id="229">229</th><td>    <var>7481</var>,  <var>7487</var>,  <var>7489</var>,  <var>7499</var>,  <var>7507</var>,  <var>7517</var>,  <var>7523</var>,  <var>7529</var>,  <var>7537</var>,  <var>7541</var>,  <var>7547</var>,</td></tr>
+<tr><th id="230">230</th><td>    <var>7549</var>,  <var>7559</var>,  <var>7561</var>,  <var>7573</var>,  <var>7577</var>,  <var>7583</var>,  <var>7589</var>,  <var>7591</var>,  <var>7603</var>,  <var>7607</var>,  <var>7621</var>,</td></tr>
+<tr><th id="231">231</th><td>    <var>7639</var>,  <var>7643</var>,  <var>7649</var>,  <var>7669</var>,  <var>7673</var>,  <var>7681</var>,  <var>7687</var>,  <var>7691</var>,  <var>7699</var>,  <var>7703</var>,  <var>7717</var>,</td></tr>
+<tr><th id="232">232</th><td>    <var>7723</var>,  <var>7727</var>,  <var>7741</var>,  <var>7753</var>,  <var>7757</var>,  <var>7759</var>,  <var>7789</var>,  <var>7793</var>,  <var>7817</var>,  <var>7823</var>,  <var>7829</var>,</td></tr>
+<tr><th id="233">233</th><td>    <var>7841</var>,  <var>7853</var>,  <var>7867</var>,  <var>7873</var>,  <var>7877</var>,  <var>7879</var>,  <var>7883</var>,  <var>7901</var>,  <var>7907</var>,  <var>7919</var>,  <var>7927</var>,</td></tr>
+<tr><th id="234">234</th><td>    <var>7933</var>,  <var>7937</var>,  <var>7949</var>,  <var>7951</var>,  <var>7963</var>,  <var>7993</var>,  <var>8009</var>,  <var>8011</var>,  <var>8017</var>,  <var>8039</var>,  <var>8053</var>,</td></tr>
+<tr><th id="235">235</th><td>    <var>8059</var>,  <var>8069</var>,  <var>8081</var>,  <var>8087</var>,  <var>8089</var>,  <var>8093</var>,  <var>8101</var>,  <var>8111</var>,  <var>8117</var>,  <var>8123</var>,  <var>8147</var>,</td></tr>
+<tr><th id="236">236</th><td>    <var>8161</var>,  <var>8167</var>,  <var>8171</var>,  <var>8179</var>,  <var>8191</var>,  <var>8209</var>,  <var>8219</var>,  <var>8221</var>,  <var>8231</var>,  <var>8233</var>,  <var>8237</var>,</td></tr>
+<tr><th id="237">237</th><td>    <var>8243</var>,  <var>8263</var>,  <var>8269</var>,  <var>8273</var>,  <var>8287</var>,  <var>8291</var>,  <var>8293</var>,  <var>8297</var>,  <var>8311</var>,  <var>8317</var>,  <var>8329</var>,</td></tr>
+<tr><th id="238">238</th><td>    <var>8353</var>,  <var>8363</var>,  <var>8369</var>,  <var>8377</var>,  <var>8387</var>,  <var>8389</var>,  <var>8419</var>,  <var>8423</var>,  <var>8429</var>,  <var>8431</var>,  <var>8443</var>,</td></tr>
+<tr><th id="239">239</th><td>    <var>8447</var>,  <var>8461</var>,  <var>8467</var>,  <var>8501</var>,  <var>8513</var>,  <var>8521</var>,  <var>8527</var>,  <var>8537</var>,  <var>8539</var>,  <var>8543</var>,  <var>8563</var>,</td></tr>
+<tr><th id="240">240</th><td>    <var>8573</var>,  <var>8581</var>,  <var>8597</var>,  <var>8599</var>,  <var>8609</var>,  <var>8623</var>,  <var>8627</var>,  <var>8629</var>,  <var>8641</var>,  <var>8647</var>,  <var>8663</var>,</td></tr>
+<tr><th id="241">241</th><td>    <var>8669</var>,  <var>8677</var>,  <var>8681</var>,  <var>8689</var>,  <var>8693</var>,  <var>8699</var>,  <var>8707</var>,  <var>8713</var>,  <var>8719</var>,  <var>8731</var>,  <var>8737</var>,</td></tr>
+<tr><th id="242">242</th><td>    <var>8741</var>,  <var>8747</var>,  <var>8753</var>,  <var>8761</var>,  <var>8779</var>,  <var>8783</var>,  <var>8803</var>,  <var>8807</var>,  <var>8819</var>,  <var>8821</var>,  <var>8831</var>,</td></tr>
+<tr><th id="243">243</th><td>    <var>8837</var>,  <var>8839</var>,  <var>8849</var>,  <var>8861</var>,  <var>8863</var>,  <var>8867</var>,  <var>8887</var>,  <var>8893</var>,  <var>8923</var>,  <var>8929</var>,  <var>8933</var>,</td></tr>
+<tr><th id="244">244</th><td>    <var>8941</var>,  <var>8951</var>,  <var>8963</var>,  <var>8969</var>,  <var>8971</var>,  <var>8999</var>,  <var>9001</var>,  <var>9007</var>,  <var>9011</var>,  <var>9013</var>,  <var>9029</var>,</td></tr>
+<tr><th id="245">245</th><td>    <var>9041</var>,  <var>9043</var>,  <var>9049</var>,  <var>9059</var>,  <var>9067</var>,  <var>9091</var>,  <var>9103</var>,  <var>9109</var>,  <var>9127</var>,  <var>9133</var>,  <var>9137</var>,</td></tr>
+<tr><th id="246">246</th><td>    <var>9151</var>,  <var>9157</var>,  <var>9161</var>,  <var>9173</var>,  <var>9181</var>,  <var>9187</var>,  <var>9199</var>,  <var>9203</var>,  <var>9209</var>,  <var>9221</var>,  <var>9227</var>,</td></tr>
+<tr><th id="247">247</th><td>    <var>9239</var>,  <var>9241</var>,  <var>9257</var>,  <var>9277</var>,  <var>9281</var>,  <var>9283</var>,  <var>9293</var>,  <var>9311</var>,  <var>9319</var>,  <var>9323</var>,  <var>9337</var>,</td></tr>
+<tr><th id="248">248</th><td>    <var>9341</var>,  <var>9343</var>,  <var>9349</var>,  <var>9371</var>,  <var>9377</var>,  <var>9391</var>,  <var>9397</var>,  <var>9403</var>,  <var>9413</var>,  <var>9419</var>,  <var>9421</var>,</td></tr>
+<tr><th id="249">249</th><td>    <var>9431</var>,  <var>9433</var>,  <var>9437</var>,  <var>9439</var>,  <var>9461</var>,  <var>9463</var>,  <var>9467</var>,  <var>9473</var>,  <var>9479</var>,  <var>9491</var>,  <var>9497</var>,</td></tr>
+<tr><th id="250">250</th><td>    <var>9511</var>,  <var>9521</var>,  <var>9533</var>,  <var>9539</var>,  <var>9547</var>,  <var>9551</var>,  <var>9587</var>,  <var>9601</var>,  <var>9613</var>,  <var>9619</var>,  <var>9623</var>,</td></tr>
+<tr><th id="251">251</th><td>    <var>9629</var>,  <var>9631</var>,  <var>9643</var>,  <var>9649</var>,  <var>9661</var>,  <var>9677</var>,  <var>9679</var>,  <var>9689</var>,  <var>9697</var>,  <var>9719</var>,  <var>9721</var>,</td></tr>
+<tr><th id="252">252</th><td>    <var>9733</var>,  <var>9739</var>,  <var>9743</var>,  <var>9749</var>,  <var>9767</var>,  <var>9769</var>,  <var>9781</var>,  <var>9787</var>,  <var>9791</var>,  <var>9803</var>,  <var>9811</var>,</td></tr>
+<tr><th id="253">253</th><td>    <var>9817</var>,  <var>9829</var>,  <var>9833</var>,  <var>9839</var>,  <var>9851</var>,  <var>9857</var>,  <var>9859</var>,  <var>9871</var>,  <var>9883</var>,  <var>9887</var>,  <var>9901</var>,</td></tr>
+<tr><th id="254">254</th><td>    <var>9907</var>,  <var>9923</var>,  <var>9929</var>,  <var>9931</var>,  <var>9941</var>,  <var>9949</var>,  <var>9967</var>,  <var>9973</var>,  <var>10007</var>, <var>10009</var>, <var>10037</var>,</td></tr>
+<tr><th id="255">255</th><td>    <var>10039</var>, <var>10061</var>, <var>10067</var>, <var>10069</var>, <var>10079</var>, <var>10091</var>, <var>10093</var>, <var>10099</var>, <var>10103</var>, <var>10111</var>, <var>10133</var>,</td></tr>
+<tr><th id="256">256</th><td>    <var>10139</var>, <var>10141</var>, <var>10151</var>, <var>10159</var>, <var>10163</var>, <var>10169</var>, <var>10177</var>, <var>10181</var>, <var>10193</var>, <var>10211</var>, <var>10223</var>,</td></tr>
+<tr><th id="257">257</th><td>    <var>10243</var>, <var>10247</var>, <var>10253</var>, <var>10259</var>, <var>10267</var>, <var>10271</var>, <var>10273</var>, <var>10289</var>, <var>10301</var>, <var>10303</var>, <var>10313</var>,</td></tr>
+<tr><th id="258">258</th><td>    <var>10321</var>, <var>10331</var>, <var>10333</var>, <var>10337</var>, <var>10343</var>, <var>10357</var>, <var>10369</var>, <var>10391</var>, <var>10399</var>, <var>10427</var>, <var>10429</var>,</td></tr>
+<tr><th id="259">259</th><td>    <var>10433</var>, <var>10453</var>, <var>10457</var>, <var>10459</var>, <var>10463</var>, <var>10477</var>, <var>10487</var>, <var>10499</var>, <var>10501</var>, <var>10513</var>, <var>10529</var>,</td></tr>
+<tr><th id="260">260</th><td>    <var>10531</var>, <var>10559</var>, <var>10567</var>, <var>10589</var>, <var>10597</var>, <var>10601</var>, <var>10607</var>, <var>10613</var>, <var>10627</var>, <var>10631</var>, <var>10639</var>,</td></tr>
+<tr><th id="261">261</th><td>    <var>10651</var>, <var>10657</var>, <var>10663</var>, <var>10667</var>, <var>10687</var>, <var>10691</var>, <var>10709</var>, <var>10711</var>, <var>10723</var>, <var>10729</var>, <var>10733</var>,</td></tr>
+<tr><th id="262">262</th><td>    <var>10739</var>, <var>10753</var>, <var>10771</var>, <var>10781</var>, <var>10789</var>, <var>10799</var>, <var>10831</var>, <var>10837</var>, <var>10847</var>, <var>10853</var>, <var>10859</var>,</td></tr>
+<tr><th id="263">263</th><td>    <var>10861</var>, <var>10867</var>, <var>10883</var>, <var>10889</var>, <var>10891</var>, <var>10903</var>, <var>10909</var>, <var>10937</var>, <var>10939</var>, <var>10949</var>, <var>10957</var>,</td></tr>
+<tr><th id="264">264</th><td>    <var>10973</var>, <var>10979</var>, <var>10987</var>, <var>10993</var>, <var>11003</var>, <var>11027</var>, <var>11047</var>, <var>11057</var>, <var>11059</var>, <var>11069</var>, <var>11071</var>,</td></tr>
+<tr><th id="265">265</th><td>    <var>11083</var>, <var>11087</var>, <var>11093</var>, <var>11113</var>, <var>11117</var>, <var>11119</var>, <var>11131</var>, <var>11149</var>, <var>11159</var>, <var>11161</var>, <var>11171</var>,</td></tr>
+<tr><th id="266">266</th><td>    <var>11173</var>, <var>11177</var>, <var>11197</var>, <var>11213</var>, <var>11239</var>, <var>11243</var>, <var>11251</var>, <var>11257</var>, <var>11261</var>, <var>11273</var>, <var>11279</var>,</td></tr>
+<tr><th id="267">267</th><td>    <var>11287</var>, <var>11299</var>, <var>11311</var>, <var>11317</var>, <var>11321</var>, <var>11329</var>, <var>11351</var>, <var>11353</var>, <var>11369</var>, <var>11383</var>, <var>11393</var>,</td></tr>
+<tr><th id="268">268</th><td>    <var>11399</var>, <var>11411</var>, <var>11423</var>, <var>11437</var>, <var>11443</var>, <var>11447</var>, <var>11467</var>, <var>11471</var>, <var>11483</var>, <var>11489</var>, <var>11491</var>,</td></tr>
+<tr><th id="269">269</th><td>    <var>11497</var>, <var>11503</var>, <var>11519</var>, <var>11527</var>, <var>11549</var>, <var>11551</var>, <var>11579</var>, <var>11587</var>, <var>11593</var>, <var>11597</var>, <var>11617</var>,</td></tr>
+<tr><th id="270">270</th><td>    <var>11621</var>, <var>11633</var>, <var>11657</var>, <var>11677</var>, <var>11681</var>, <var>11689</var>, <var>11699</var>, <var>11701</var>, <var>11717</var>, <var>11719</var>, <var>11731</var>,</td></tr>
+<tr><th id="271">271</th><td>    <var>11743</var>, <var>11777</var>, <var>11779</var>, <var>11783</var>, <var>11789</var>, <var>11801</var>, <var>11807</var>, <var>11813</var>, <var>11821</var>, <var>11827</var>, <var>11831</var>,</td></tr>
+<tr><th id="272">272</th><td>    <var>11833</var>, <var>11839</var>, <var>11863</var>, <var>11867</var>, <var>11887</var>, <var>11897</var>, <var>11903</var>, <var>11909</var>, <var>11923</var>, <var>11927</var>, <var>11933</var>,</td></tr>
+<tr><th id="273">273</th><td>    <var>11939</var>, <var>11941</var>, <var>11953</var>, <var>11959</var>, <var>11969</var>, <var>11971</var>, <var>11981</var>, <var>11987</var>, <var>12007</var>, <var>12011</var>, <var>12037</var>,</td></tr>
+<tr><th id="274">274</th><td>    <var>12041</var>, <var>12043</var>, <var>12049</var>, <var>12071</var>, <var>12073</var>, <var>12097</var>, <var>12101</var>, <var>12107</var>, <var>12109</var>, <var>12113</var>, <var>12119</var>,</td></tr>
+<tr><th id="275">275</th><td>    <var>12143</var>, <var>12149</var>, <var>12157</var>, <var>12161</var>, <var>12163</var>, <var>12197</var>, <var>12203</var>, <var>12211</var>, <var>12227</var>, <var>12239</var>, <var>12241</var>,</td></tr>
+<tr><th id="276">276</th><td>    <var>12251</var>, <var>12253</var>, <var>12263</var>, <var>12269</var>, <var>12277</var>, <var>12281</var>, <var>12289</var>, <var>12301</var>, <var>12323</var>, <var>12329</var>, <var>12343</var>,</td></tr>
+<tr><th id="277">277</th><td>    <var>12347</var>, <var>12373</var>, <var>12377</var>, <var>12379</var>, <var>12391</var>, <var>12401</var>, <var>12409</var>, <var>12413</var>, <var>12421</var>, <var>12433</var>, <var>12437</var>,</td></tr>
+<tr><th id="278">278</th><td>    <var>12451</var>, <var>12457</var>, <var>12473</var>, <var>12479</var>, <var>12487</var>, <var>12491</var>, <var>12497</var>, <var>12503</var>, <var>12511</var>, <var>12517</var>, <var>12527</var>,</td></tr>
+<tr><th id="279">279</th><td>    <var>12539</var>, <var>12541</var>, <var>12547</var>, <var>12553</var>, <var>12569</var>, <var>12577</var>, <var>12583</var>, <var>12589</var>, <var>12601</var>, <var>12611</var>, <var>12613</var>,</td></tr>
+<tr><th id="280">280</th><td>    <var>12619</var>, <var>12637</var>, <var>12641</var>, <var>12647</var>, <var>12653</var>, <var>12659</var>, <var>12671</var>, <var>12689</var>, <var>12697</var>, <var>12703</var>, <var>12713</var>,</td></tr>
+<tr><th id="281">281</th><td>    <var>12721</var>, <var>12739</var>, <var>12743</var>, <var>12757</var>, <var>12763</var>, <var>12781</var>, <var>12791</var>, <var>12799</var>, <var>12809</var>, <var>12821</var>, <var>12823</var>,</td></tr>
+<tr><th id="282">282</th><td>    <var>12829</var>, <var>12841</var>, <var>12853</var>, <var>12889</var>, <var>12893</var>, <var>12899</var>, <var>12907</var>, <var>12911</var>, <var>12917</var>, <var>12919</var>, <var>12923</var>,</td></tr>
+<tr><th id="283">283</th><td>    <var>12941</var>, <var>12953</var>, <var>12959</var>, <var>12967</var>, <var>12973</var>, <var>12979</var>, <var>12983</var>, <var>13001</var>, <var>13003</var>, <var>13007</var>, <var>13009</var>,</td></tr>
+<tr><th id="284">284</th><td>    <var>13033</var>, <var>13037</var>, <var>13043</var>, <var>13049</var>, <var>13063</var>, <var>13093</var>, <var>13099</var>, <var>13103</var>, <var>13109</var>, <var>13121</var>, <var>13127</var>,</td></tr>
+<tr><th id="285">285</th><td>    <var>13147</var>, <var>13151</var>, <var>13159</var>, <var>13163</var>, <var>13171</var>, <var>13177</var>, <var>13183</var>, <var>13187</var>, <var>13217</var>, <var>13219</var>, <var>13229</var>,</td></tr>
+<tr><th id="286">286</th><td>    <var>13241</var>, <var>13249</var>, <var>13259</var>, <var>13267</var>, <var>13291</var>, <var>13297</var>, <var>13309</var>, <var>13313</var>, <var>13327</var>, <var>13331</var>, <var>13337</var>,</td></tr>
+<tr><th id="287">287</th><td>    <var>13339</var>, <var>13367</var>, <var>13381</var>, <var>13397</var>, <var>13399</var>, <var>13411</var>, <var>13417</var>, <var>13421</var>, <var>13441</var>, <var>13451</var>, <var>13457</var>,</td></tr>
+<tr><th id="288">288</th><td>    <var>13463</var>, <var>13469</var>, <var>13477</var>, <var>13487</var>, <var>13499</var>, <var>13513</var>, <var>13523</var>, <var>13537</var>, <var>13553</var>, <var>13567</var>, <var>13577</var>,</td></tr>
+<tr><th id="289">289</th><td>    <var>13591</var>, <var>13597</var>, <var>13613</var>, <var>13619</var>, <var>13627</var>, <var>13633</var>, <var>13649</var>, <var>13669</var>, <var>13679</var>, <var>13681</var>, <var>13687</var>,</td></tr>
+<tr><th id="290">290</th><td>    <var>13691</var>, <var>13693</var>, <var>13697</var>, <var>13709</var>, <var>13711</var>, <var>13721</var>, <var>13723</var>, <var>13729</var>, <var>13751</var>, <var>13757</var>, <var>13759</var>,</td></tr>
+<tr><th id="291">291</th><td>    <var>13763</var>, <var>13781</var>, <var>13789</var>, <var>13799</var>, <var>13807</var>, <var>13829</var>, <var>13831</var>, <var>13841</var>, <var>13859</var>, <var>13873</var>, <var>13877</var>,</td></tr>
+<tr><th id="292">292</th><td>    <var>13879</var>, <var>13883</var>, <var>13901</var>, <var>13903</var>, <var>13907</var>, <var>13913</var>, <var>13921</var>, <var>13931</var>, <var>13933</var>, <var>13963</var>, <var>13967</var>,</td></tr>
+<tr><th id="293">293</th><td>    <var>13997</var>, <var>13999</var>, <var>14009</var>, <var>14011</var>, <var>14029</var>, <var>14033</var>, <var>14051</var>, <var>14057</var>, <var>14071</var>, <var>14081</var>, <var>14083</var>,</td></tr>
+<tr><th id="294">294</th><td>    <var>14087</var>, <var>14107</var>, <var>14143</var>, <var>14149</var>, <var>14153</var>, <var>14159</var>, <var>14173</var>, <var>14177</var>, <var>14197</var>, <var>14207</var>, <var>14221</var>,</td></tr>
+<tr><th id="295">295</th><td>    <var>14243</var>, <var>14249</var>, <var>14251</var>, <var>14281</var>, <var>14293</var>, <var>14303</var>, <var>14321</var>, <var>14323</var>, <var>14327</var>, <var>14341</var>, <var>14347</var>,</td></tr>
+<tr><th id="296">296</th><td>    <var>14369</var>, <var>14387</var>, <var>14389</var>, <var>14401</var>, <var>14407</var>, <var>14411</var>, <var>14419</var>, <var>14423</var>, <var>14431</var>, <var>14437</var>, <var>14447</var>,</td></tr>
+<tr><th id="297">297</th><td>    <var>14449</var>, <var>14461</var>, <var>14479</var>, <var>14489</var>, <var>14503</var>, <var>14519</var>, <var>14533</var>, <var>14537</var>, <var>14543</var>, <var>14549</var>, <var>14551</var>,</td></tr>
+<tr><th id="298">298</th><td>    <var>14557</var>, <var>14561</var>, <var>14563</var>, <var>14591</var>, <var>14593</var>, <var>14621</var>, <var>14627</var>, <var>14629</var>, <var>14633</var>, <var>14639</var>, <var>14653</var>,</td></tr>
+<tr><th id="299">299</th><td>    <var>14657</var>, <var>14669</var>, <var>14683</var>, <var>14699</var>, <var>14713</var>, <var>14717</var>, <var>14723</var>, <var>14731</var>, <var>14737</var>, <var>14741</var>, <var>14747</var>,</td></tr>
+<tr><th id="300">300</th><td>    <var>14753</var>, <var>14759</var>, <var>14767</var>, <var>14771</var>, <var>14779</var>, <var>14783</var>, <var>14797</var>, <var>14813</var>, <var>14821</var>, <var>14827</var>, <var>14831</var>,</td></tr>
+<tr><th id="301">301</th><td>    <var>14843</var>, <var>14851</var>, <var>14867</var>, <var>14869</var>, <var>14879</var>, <var>14887</var>, <var>14891</var>, <var>14897</var>, <var>14923</var>, <var>14929</var>, <var>14939</var>,</td></tr>
+<tr><th id="302">302</th><td>    <var>14947</var>, <var>14951</var>, <var>14957</var>, <var>14969</var>, <var>14983</var>, <var>15013</var>, <var>15017</var>, <var>15031</var>, <var>15053</var>, <var>15061</var>, <var>15073</var>,</td></tr>
+<tr><th id="303">303</th><td>    <var>15077</var>, <var>15083</var>, <var>15091</var>, <var>15101</var>, <var>15107</var>, <var>15121</var>, <var>15131</var>, <var>15137</var>, <var>15139</var>, <var>15149</var>, <var>15161</var>,</td></tr>
+<tr><th id="304">304</th><td>    <var>15173</var>, <var>15187</var>, <var>15193</var>, <var>15199</var>, <var>15217</var>, <var>15227</var>, <var>15233</var>, <var>15241</var>, <var>15259</var>, <var>15263</var>, <var>15269</var>,</td></tr>
+<tr><th id="305">305</th><td>    <var>15271</var>, <var>15277</var>, <var>15287</var>, <var>15289</var>, <var>15299</var>, <var>15307</var>, <var>15313</var>, <var>15319</var>, <var>15329</var>, <var>15331</var>, <var>15349</var>,</td></tr>
+<tr><th id="306">306</th><td>    <var>15359</var>, <var>15361</var>, <var>15373</var>, <var>15377</var>, <var>15383</var>, <var>15391</var>, <var>15401</var>, <var>15413</var>, <var>15427</var>, <var>15439</var>, <var>15443</var>,</td></tr>
+<tr><th id="307">307</th><td>    <var>15451</var>, <var>15461</var>, <var>15467</var>, <var>15473</var>, <var>15493</var>, <var>15497</var>, <var>15511</var>, <var>15527</var>, <var>15541</var>, <var>15551</var>, <var>15559</var>,</td></tr>
+<tr><th id="308">308</th><td>    <var>15569</var>, <var>15581</var>, <var>15583</var>, <var>15601</var>, <var>15607</var>, <var>15619</var>, <var>15629</var>, <var>15641</var>, <var>15643</var>, <var>15647</var>, <var>15649</var>,</td></tr>
+<tr><th id="309">309</th><td>    <var>15661</var>, <var>15667</var>, <var>15671</var>, <var>15679</var>, <var>15683</var>, <var>15727</var>, <var>15731</var>, <var>15733</var>, <var>15737</var>, <var>15739</var>, <var>15749</var>,</td></tr>
+<tr><th id="310">310</th><td>    <var>15761</var>, <var>15767</var>, <var>15773</var>, <var>15787</var>, <var>15791</var>, <var>15797</var>, <var>15803</var>, <var>15809</var>, <var>15817</var>, <var>15823</var>, <var>15859</var>,</td></tr>
+<tr><th id="311">311</th><td>    <var>15877</var>, <var>15881</var>, <var>15887</var>, <var>15889</var>, <var>15901</var>, <var>15907</var>, <var>15913</var>, <var>15919</var>, <var>15923</var>, <var>15937</var>, <var>15959</var>,</td></tr>
+<tr><th id="312">312</th><td>    <var>15971</var>, <var>15973</var>, <var>15991</var>, <var>16001</var>, <var>16007</var>, <var>16033</var>, <var>16057</var>, <var>16061</var>, <var>16063</var>, <var>16067</var>, <var>16069</var>,</td></tr>
+<tr><th id="313">313</th><td>    <var>16073</var>, <var>16087</var>, <var>16091</var>, <var>16097</var>, <var>16103</var>, <var>16111</var>, <var>16127</var>, <var>16139</var>, <var>16141</var>, <var>16183</var>, <var>16187</var>,</td></tr>
+<tr><th id="314">314</th><td>    <var>16189</var>, <var>16193</var>, <var>16217</var>, <var>16223</var>, <var>16229</var>, <var>16231</var>, <var>16249</var>, <var>16253</var>, <var>16267</var>, <var>16273</var>, <var>16301</var>,</td></tr>
+<tr><th id="315">315</th><td>    <var>16319</var>, <var>16333</var>, <var>16339</var>, <var>16349</var>, <var>16361</var>, <var>16363</var>, <var>16369</var>, <var>16381</var>, <var>16411</var>, <var>16417</var>, <var>16421</var>,</td></tr>
+<tr><th id="316">316</th><td>    <var>16427</var>, <var>16433</var>, <var>16447</var>, <var>16451</var>, <var>16453</var>, <var>16477</var>, <var>16481</var>, <var>16487</var>, <var>16493</var>, <var>16519</var>, <var>16529</var>,</td></tr>
+<tr><th id="317">317</th><td>    <var>16547</var>, <var>16553</var>, <var>16561</var>, <var>16567</var>, <var>16573</var>, <var>16603</var>, <var>16607</var>, <var>16619</var>, <var>16631</var>, <var>16633</var>, <var>16649</var>,</td></tr>
+<tr><th id="318">318</th><td>    <var>16651</var>, <var>16657</var>, <var>16661</var>, <var>16673</var>, <var>16691</var>, <var>16693</var>, <var>16699</var>, <var>16703</var>, <var>16729</var>, <var>16741</var>, <var>16747</var>,</td></tr>
+<tr><th id="319">319</th><td>    <var>16759</var>, <var>16763</var>, <var>16787</var>, <var>16811</var>, <var>16823</var>, <var>16829</var>, <var>16831</var>, <var>16843</var>, <var>16871</var>, <var>16879</var>, <var>16883</var>,</td></tr>
+<tr><th id="320">320</th><td>    <var>16889</var>, <var>16901</var>, <var>16903</var>, <var>16921</var>, <var>16927</var>, <var>16931</var>, <var>16937</var>, <var>16943</var>, <var>16963</var>, <var>16979</var>, <var>16981</var>,</td></tr>
+<tr><th id="321">321</th><td>    <var>16987</var>, <var>16993</var>, <var>17011</var>, <var>17021</var>, <var>17027</var>, <var>17029</var>, <var>17033</var>, <var>17041</var>, <var>17047</var>, <var>17053</var>, <var>17077</var>,</td></tr>
+<tr><th id="322">322</th><td>    <var>17093</var>, <var>17099</var>, <var>17107</var>, <var>17117</var>, <var>17123</var>, <var>17137</var>, <var>17159</var>, <var>17167</var>, <var>17183</var>, <var>17189</var>, <var>17191</var>,</td></tr>
+<tr><th id="323">323</th><td>    <var>17203</var>, <var>17207</var>, <var>17209</var>, <var>17231</var>, <var>17239</var>, <var>17257</var>, <var>17291</var>, <var>17293</var>, <var>17299</var>, <var>17317</var>, <var>17321</var>,</td></tr>
+<tr><th id="324">324</th><td>    <var>17327</var>, <var>17333</var>, <var>17341</var>, <var>17351</var>, <var>17359</var>, <var>17377</var>, <var>17383</var>, <var>17387</var>, <var>17389</var>, <var>17393</var>, <var>17401</var>,</td></tr>
+<tr><th id="325">325</th><td>    <var>17417</var>, <var>17419</var>, <var>17431</var>, <var>17443</var>, <var>17449</var>, <var>17467</var>, <var>17471</var>, <var>17477</var>, <var>17483</var>, <var>17489</var>, <var>17491</var>,</td></tr>
+<tr><th id="326">326</th><td>    <var>17497</var>, <var>17509</var>, <var>17519</var>, <var>17539</var>, <var>17551</var>, <var>17569</var>, <var>17573</var>, <var>17579</var>, <var>17581</var>, <var>17597</var>, <var>17599</var>,</td></tr>
+<tr><th id="327">327</th><td>    <var>17609</var>, <var>17623</var>, <var>17627</var>, <var>17657</var>, <var>17659</var>, <var>17669</var>, <var>17681</var>, <var>17683</var>, <var>17707</var>, <var>17713</var>, <var>17729</var>,</td></tr>
+<tr><th id="328">328</th><td>    <var>17737</var>, <var>17747</var>, <var>17749</var>, <var>17761</var>, <var>17783</var>, <var>17789</var>, <var>17791</var>, <var>17807</var>, <var>17827</var>, <var>17837</var>, <var>17839</var>,</td></tr>
+<tr><th id="329">329</th><td>    <var>17851</var>, <var>17863</var>,</td></tr>
+<tr><th id="330">330</th><td>};</td></tr>
+<tr><th id="331">331</th><td></td></tr>
+<tr><th id="332">332</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#witness" title='witness' data-type='int witness(BIGNUM * w, const BIGNUM * a, const BIGNUM * a1, const BIGNUM * a1_odd, int k, BN_CTX * ctx, BN_MONT_CTX * mont)' data-ref="witness">witness</a>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="1w" title='w' data-type='BIGNUM *' data-ref="1w">w</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="2a" title='a' data-type='const BIGNUM *' data-ref="2a">a</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="3a1" title='a1' data-type='const BIGNUM *' data-ref="3a1">a1</dfn>,</td></tr>
+<tr><th id="333">333</th><td>                   <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col4 decl" id="4a1_odd" title='a1_odd' data-type='const BIGNUM *' data-ref="4a1_odd">a1_odd</dfn>, <em>int</em> <dfn class="local col5 decl" id="5k" title='k' data-type='int' data-ref="5k">k</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col6 decl" id="6ctx" title='ctx' data-type='BN_CTX *' data-ref="6ctx">ctx</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_MONT_CTX" title='BN_MONT_CTX' data-type='struct bn_mont_ctx_st' data-ref="BN_MONT_CTX">BN_MONT_CTX</a> *<dfn class="local col7 decl" id="7mont" title='mont' data-type='BN_MONT_CTX *' data-ref="7mont">mont</dfn>);</td></tr>
+<tr><th id="334">334</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#probable_prime" title='probable_prime' data-type='int probable_prime(BIGNUM * rnd, int bits)' data-ref="probable_prime">probable_prime</a>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col8 decl" id="8rnd" title='rnd' data-type='BIGNUM *' data-ref="8rnd">rnd</dfn>, <em>int</em> <dfn class="local col9 decl" id="9bits" title='bits' data-type='int' data-ref="9bits">bits</dfn>);</td></tr>
+<tr><th id="335">335</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#probable_prime_dh" title='probable_prime_dh' data-type='int probable_prime_dh(BIGNUM * rnd, int bits, const BIGNUM * add, const BIGNUM * rem, BN_CTX * ctx)' data-ref="probable_prime_dh">probable_prime_dh</a>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col0 decl" id="10rnd" title='rnd' data-type='BIGNUM *' data-ref="10rnd">rnd</dfn>, <em>int</em> <dfn class="local col1 decl" id="11bits" title='bits' data-type='int' data-ref="11bits">bits</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="12add" title='add' data-type='const BIGNUM *' data-ref="12add">add</dfn>,</td></tr>
+<tr><th id="336">336</th><td>                             <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="13rem" title='rem' data-type='const BIGNUM *' data-ref="13rem">rem</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col4 decl" id="14ctx" title='ctx' data-type='BN_CTX *' data-ref="14ctx">ctx</dfn>);</td></tr>
+<tr><th id="337">337</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#probable_prime_dh_safe" title='probable_prime_dh_safe' data-type='int probable_prime_dh_safe(BIGNUM * rnd, int bits, const BIGNUM * add, const BIGNUM * rem, BN_CTX * ctx)' data-ref="probable_prime_dh_safe">probable_prime_dh_safe</a>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col5 decl" id="15rnd" title='rnd' data-type='BIGNUM *' data-ref="15rnd">rnd</dfn>, <em>int</em> <dfn class="local col6 decl" id="16bits" title='bits' data-type='int' data-ref="16bits">bits</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col7 decl" id="17add" title='add' data-type='const BIGNUM *' data-ref="17add">add</dfn>,</td></tr>
+<tr><th id="338">338</th><td>                                  <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col8 decl" id="18rem" title='rem' data-type='const BIGNUM *' data-ref="18rem">rem</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col9 decl" id="19ctx" title='ctx' data-type='BN_CTX *' data-ref="19ctx">ctx</dfn>);</td></tr>
+<tr><th id="339">339</th><td></td></tr>
+<tr><th id="340">340</th><td><em>void</em> <dfn class="decl def" id="BN_GENCB_set" title='BN_GENCB_set' data-ref="BN_GENCB_set">BN_GENCB_set</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BN_GENCB" title='BN_GENCB' data-type='struct bn_gencb_st' data-ref="BN_GENCB">BN_GENCB</a> *<dfn class="local col0 decl" id="20callback" title='callback' data-type='BN_GENCB *' data-ref="20callback">callback</dfn>,</td></tr>
+<tr><th id="341">341</th><td>                  <em>int</em> (*<dfn class="local col1 decl" id="21f" title='f' data-type='int (*)(int, int, struct bn_gencb_st *)' data-ref="21f">f</dfn>)(<em>int</em> <dfn class="local col2 decl" id="22event" title='event' data-type='int' data-ref="22event">event</dfn>, <em>int</em> <dfn class="local col3 decl" id="23n" title='n' data-type='int' data-ref="23n">n</dfn>, <b>struct</b> <a class="type" href="../../include/openssl/bn.h.html#bn_gencb_st" title='bn_gencb_st' data-ref="bn_gencb_st">bn_gencb_st</a> *),</td></tr>
+<tr><th id="342">342</th><td>                  <em>void</em> *<dfn class="local col4 decl" id="24arg" title='arg' data-type='void *' data-ref="24arg">arg</dfn>) {</td></tr>
+<tr><th id="343">343</th><td>  <a class="local col0 ref" href="#20callback" title='callback' data-ref="20callback">callback</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bn_gencb_st::callback" title='bn_gencb_st::callback' data-ref="bn_gencb_st::callback">callback</a> = <a class="local col1 ref" href="#21f" title='f' data-ref="21f">f</a>;</td></tr>
+<tr><th id="344">344</th><td>  <a class="local col0 ref" href="#20callback" title='callback' data-ref="20callback">callback</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bn_gencb_st::arg" title='bn_gencb_st::arg' data-ref="bn_gencb_st::arg">arg</a> = <a class="local col4 ref" href="#24arg" title='arg' data-ref="24arg">arg</a>;</td></tr>
+<tr><th id="345">345</th><td>}</td></tr>
+<tr><th id="346">346</th><td></td></tr>
+<tr><th id="347">347</th><td><em>int</em> <dfn class="decl def" id="BN_GENCB_call" title='BN_GENCB_call' data-ref="BN_GENCB_call">BN_GENCB_call</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BN_GENCB" title='BN_GENCB' data-type='struct bn_gencb_st' data-ref="BN_GENCB">BN_GENCB</a> *<dfn class="local col5 decl" id="25callback" title='callback' data-type='BN_GENCB *' data-ref="25callback">callback</dfn>, <em>int</em> <dfn class="local col6 decl" id="26event" title='event' data-type='int' data-ref="26event">event</dfn>, <em>int</em> <dfn class="local col7 decl" id="27n" title='n' data-type='int' data-ref="27n">n</dfn>) {</td></tr>
+<tr><th id="348">348</th><td>  <b>if</b> (!<a class="local col5 ref" href="#25callback" title='callback' data-ref="25callback">callback</a>) {</td></tr>
+<tr><th id="349">349</th><td>    <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="350">350</th><td>  }</td></tr>
+<tr><th id="351">351</th><td></td></tr>
+<tr><th id="352">352</th><td>  <b>return</b> <a class="local col5 ref" href="#25callback" title='callback' data-ref="25callback">callback</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bn_gencb_st::callback" title='bn_gencb_st::callback' data-ref="bn_gencb_st::callback">callback</a>(<a class="local col6 ref" href="#26event" title='event' data-ref="26event">event</a>, <a class="local col7 ref" href="#27n" title='n' data-ref="27n">n</a>, <a class="local col5 ref" href="#25callback" title='callback' data-ref="25callback">callback</a>);</td></tr>
+<tr><th id="353">353</th><td>}</td></tr>
+<tr><th id="354">354</th><td></td></tr>
+<tr><th id="355">355</th><td><em>int</em> <dfn class="decl def" id="BN_generate_prime_ex" title='BN_generate_prime_ex' data-ref="BN_generate_prime_ex">BN_generate_prime_ex</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col8 decl" id="28ret" title='ret' data-type='BIGNUM *' data-ref="28ret">ret</dfn>, <em>int</em> <dfn class="local col9 decl" id="29bits" title='bits' data-type='int' data-ref="29bits">bits</dfn>, <em>int</em> <dfn class="local col0 decl" id="30safe" title='safe' data-type='int' data-ref="30safe">safe</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="31add" title='add' data-type='const BIGNUM *' data-ref="31add">add</dfn>,</td></tr>
+<tr><th id="356">356</th><td>                         <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="32rem" title='rem' data-type='const BIGNUM *' data-ref="32rem">rem</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_GENCB" title='BN_GENCB' data-type='struct bn_gencb_st' data-ref="BN_GENCB">BN_GENCB</a> *<dfn class="local col3 decl" id="33cb" title='cb' data-type='BN_GENCB *' data-ref="33cb">cb</dfn>) {</td></tr>
+<tr><th id="357">357</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col4 decl" id="34t" title='t' data-type='BIGNUM *' data-ref="34t">t</dfn>;</td></tr>
+<tr><th id="358">358</th><td>  <em>int</em> <dfn class="local col5 decl" id="35found" title='found' data-type='int' data-ref="35found">found</dfn> = <var>0</var>;</td></tr>
+<tr><th id="359">359</th><td>  <em>int</em> <dfn class="local col6 decl" id="36i" title='i' data-type='int' data-ref="36i">i</dfn>, <dfn class="local col7 decl" id="37j" title='j' data-type='int' data-ref="37j">j</dfn>, <dfn class="local col8 decl" id="38c1" title='c1' data-type='int' data-ref="38c1">c1</dfn> = <var>0</var>;</td></tr>
+<tr><th id="360">360</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col9 decl" id="39ctx" title='ctx' data-type='BN_CTX *' data-ref="39ctx">ctx</dfn>;</td></tr>
+<tr><th id="361">361</th><td>  <em>int</em> <dfn class="local col0 decl" id="40checks" title='checks' data-type='int' data-ref="40checks">checks</dfn> = <a class="macro" href="#121" title="((bits) &gt;= 1300 ? 2 : (bits) &gt;= 850 ? 3 : (bits) &gt;= 650 ? 4 : (bits) &gt;= 550 ? 5 : (bits) &gt;= 450 ? 6 : (bits) &gt;= 400 ? 7 : (bits) &gt;= 350 ? 8 : (bits) &gt;= 300 ? 9 : (bits) &gt;= 250 ? 12 : (bits) &gt;= 200 ? 15 : (bits) &gt;= 150 ? 18 : 27)" data-ref="_M/BN_prime_checks_for_size">BN_prime_checks_for_size</a>(<a class="local col9 ref" href="#29bits" title='bits' data-ref="29bits">bits</a>);</td></tr>
+<tr><th id="362">362</th><td></td></tr>
+<tr><th id="363">363</th><td>  <b>if</b> (<a class="local col9 ref" href="#29bits" title='bits' data-ref="29bits">bits</a> &lt; <var>2</var>) {</td></tr>
+<tr><th id="364">364</th><td>    <i>/* There are no prime numbers this small. */</i></td></tr>
+<tr><th id="365">365</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BN, 0, 103, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bn/prime.c&quot;, 365)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BN, <a class="macro" href="../../include/openssl/bn.h.html#871" title="103" data-ref="_M/BN_R_BITS_TOO_SMALL">BN_R_BITS_TOO_SMALL</a>);</td></tr>
+<tr><th id="366">366</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="367">367</th><td>  } <b>else</b> <b>if</b> (<a class="local col9 ref" href="#29bits" title='bits' data-ref="29bits">bits</a> == <var>2</var> &amp;&amp; <a class="local col0 ref" href="#30safe" title='safe' data-ref="30safe">safe</a>) {</td></tr>
+<tr><th id="368">368</th><td>    <i>/* The smallest safe prime (7) is three bits. */</i></td></tr>
+<tr><th id="369">369</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BN, 0, 103, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bn/prime.c&quot;, 369)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BN, <a class="macro" href="../../include/openssl/bn.h.html#871" title="103" data-ref="_M/BN_R_BITS_TOO_SMALL">BN_R_BITS_TOO_SMALL</a>);</td></tr>
+<tr><th id="370">370</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="371">371</th><td>  }</td></tr>
+<tr><th id="372">372</th><td></td></tr>
+<tr><th id="373">373</th><td>  <a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_new" title='BN_CTX_new' data-ref="BN_CTX_new">BN_CTX_new</a>();</td></tr>
+<tr><th id="374">374</th><td>  <b>if</b> (<a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="375">375</th><td>    <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="376">376</th><td>  }</td></tr>
+<tr><th id="377">377</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_start" title='BN_CTX_start' data-ref="BN_CTX_start">BN_CTX_start</a>(<a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a>);</td></tr>
+<tr><th id="378">378</th><td>  <a class="local col4 ref" href="#34t" title='t' data-ref="34t">t</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_get" title='BN_CTX_get' data-ref="BN_CTX_get">BN_CTX_get</a>(<a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a>);</td></tr>
+<tr><th id="379">379</th><td>  <b>if</b> (!<a class="local col4 ref" href="#34t" title='t' data-ref="34t">t</a>) {</td></tr>
+<tr><th id="380">380</th><td>    <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="381">381</th><td>  }</td></tr>
+<tr><th id="382">382</th><td></td></tr>
+<tr><th id="383">383</th><td><dfn class="lbl" id="42loop" data-ref="42loop">loop</dfn>:</td></tr>
+<tr><th id="384">384</th><td>  <i>/* make a random number and set the top and bottom bits */</i></td></tr>
+<tr><th id="385">385</th><td>  <b>if</b> (<a class="local col1 ref" href="#31add" title='add' data-ref="31add">add</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="386">386</th><td>    <b>if</b> (!<a class="tu ref" href="#probable_prime" title='probable_prime' data-use='c' data-ref="probable_prime">probable_prime</a>(<a class="local col8 ref" href="#28ret" title='ret' data-ref="28ret">ret</a>, <a class="local col9 ref" href="#29bits" title='bits' data-ref="29bits">bits</a>)) {</td></tr>
+<tr><th id="387">387</th><td>      <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="388">388</th><td>    }</td></tr>
+<tr><th id="389">389</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="390">390</th><td>    <b>if</b> (<a class="local col0 ref" href="#30safe" title='safe' data-ref="30safe">safe</a>) {</td></tr>
+<tr><th id="391">391</th><td>      <b>if</b> (!<a class="tu ref" href="#probable_prime_dh_safe" title='probable_prime_dh_safe' data-use='c' data-ref="probable_prime_dh_safe">probable_prime_dh_safe</a>(<a class="local col8 ref" href="#28ret" title='ret' data-ref="28ret">ret</a>, <a class="local col9 ref" href="#29bits" title='bits' data-ref="29bits">bits</a>, <a class="local col1 ref" href="#31add" title='add' data-ref="31add">add</a>, <a class="local col2 ref" href="#32rem" title='rem' data-ref="32rem">rem</a>, <a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a>)) {</td></tr>
+<tr><th id="392">392</th><td>        <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="393">393</th><td>      }</td></tr>
+<tr><th id="394">394</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="395">395</th><td>      <b>if</b> (!<a class="tu ref" href="#probable_prime_dh" title='probable_prime_dh' data-use='c' data-ref="probable_prime_dh">probable_prime_dh</a>(<a class="local col8 ref" href="#28ret" title='ret' data-ref="28ret">ret</a>, <a class="local col9 ref" href="#29bits" title='bits' data-ref="29bits">bits</a>, <a class="local col1 ref" href="#31add" title='add' data-ref="31add">add</a>, <a class="local col2 ref" href="#32rem" title='rem' data-ref="32rem">rem</a>, <a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a>)) {</td></tr>
+<tr><th id="396">396</th><td>        <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="397">397</th><td>      }</td></tr>
+<tr><th id="398">398</th><td>    }</td></tr>
+<tr><th id="399">399</th><td>  }</td></tr>
+<tr><th id="400">400</th><td></td></tr>
+<tr><th id="401">401</th><td>  <b>if</b> (!<a class="ref" href="#BN_GENCB_call" title='BN_GENCB_call' data-ref="BN_GENCB_call">BN_GENCB_call</a>(<a class="local col3 ref" href="#33cb" title='cb' data-ref="33cb">cb</a>, <a class="macro" href="../../include/openssl/bn.h.html#620" title="0" data-ref="_M/BN_GENCB_GENERATED">BN_GENCB_GENERATED</a>, <a class="local col8 ref" href="#38c1" title='c1' data-ref="38c1">c1</a>++)) {</td></tr>
+<tr><th id="402">402</th><td>    <i>/* aborted */</i></td></tr>
+<tr><th id="403">403</th><td>    <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="404">404</th><td>  }</td></tr>
+<tr><th id="405">405</th><td></td></tr>
+<tr><th id="406">406</th><td>  <b>if</b> (!<a class="local col0 ref" href="#30safe" title='safe' data-ref="30safe">safe</a>) {</td></tr>
+<tr><th id="407">407</th><td>    <a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> = <a class="ref" href="#BN_is_prime_fasttest_ex" title='BN_is_prime_fasttest_ex' data-ref="BN_is_prime_fasttest_ex">BN_is_prime_fasttest_ex</a>(<a class="local col8 ref" href="#28ret" title='ret' data-ref="28ret">ret</a>, <a class="local col0 ref" href="#40checks" title='checks' data-ref="40checks">checks</a>, <a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a>, <var>0</var>, <a class="local col3 ref" href="#33cb" title='cb' data-ref="33cb">cb</a>);</td></tr>
+<tr><th id="408">408</th><td>    <b>if</b> (<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> == -<var>1</var>) {</td></tr>
+<tr><th id="409">409</th><td>      <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="410">410</th><td>    } <b>else</b> <b>if</b> (<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> == <var>0</var>) {</td></tr>
+<tr><th id="411">411</th><td>      <b>goto</b> <a class="lbl" href="#42loop" data-ref="42loop">loop</a>;</td></tr>
+<tr><th id="412">412</th><td>    }</td></tr>
+<tr><th id="413">413</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="414">414</th><td>    <i>/* for "safe prime" generation, check that (p-1)/2 is prime. Since a prime</i></td></tr>
+<tr><th id="415">415</th><td><i>     * is odd, We just need to divide by 2 */</i></td></tr>
+<tr><th id="416">416</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_rshift1" title='BN_rshift1' data-ref="BN_rshift1">BN_rshift1</a>(<a class="local col4 ref" href="#34t" title='t' data-ref="34t">t</a>, <a class="local col8 ref" href="#28ret" title='ret' data-ref="28ret">ret</a>)) {</td></tr>
+<tr><th id="417">417</th><td>      <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="418">418</th><td>    }</td></tr>
+<tr><th id="419">419</th><td></td></tr>
+<tr><th id="420">420</th><td>    <b>for</b> (<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> = <var>0</var>; <a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> &lt; <a class="local col0 ref" href="#40checks" title='checks' data-ref="40checks">checks</a>; <a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>++) {</td></tr>
+<tr><th id="421">421</th><td>      <a class="local col7 ref" href="#37j" title='j' data-ref="37j">j</a> = <a class="ref" href="#BN_is_prime_fasttest_ex" title='BN_is_prime_fasttest_ex' data-ref="BN_is_prime_fasttest_ex">BN_is_prime_fasttest_ex</a>(<a class="local col8 ref" href="#28ret" title='ret' data-ref="28ret">ret</a>, <var>1</var>, <a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a>, <var>0</var>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="422">422</th><td>      <b>if</b> (<a class="local col7 ref" href="#37j" title='j' data-ref="37j">j</a> == -<var>1</var>) {</td></tr>
+<tr><th id="423">423</th><td>        <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="424">424</th><td>      } <b>else</b> <b>if</b> (<a class="local col7 ref" href="#37j" title='j' data-ref="37j">j</a> == <var>0</var>) {</td></tr>
+<tr><th id="425">425</th><td>        <b>goto</b> <a class="lbl" href="#42loop" data-ref="42loop">loop</a>;</td></tr>
+<tr><th id="426">426</th><td>      }</td></tr>
+<tr><th id="427">427</th><td></td></tr>
+<tr><th id="428">428</th><td>      <a class="local col7 ref" href="#37j" title='j' data-ref="37j">j</a> = <a class="ref" href="#BN_is_prime_fasttest_ex" title='BN_is_prime_fasttest_ex' data-ref="BN_is_prime_fasttest_ex">BN_is_prime_fasttest_ex</a>(<a class="local col4 ref" href="#34t" title='t' data-ref="34t">t</a>, <var>1</var>, <a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a>, <var>0</var>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="429">429</th><td>      <b>if</b> (<a class="local col7 ref" href="#37j" title='j' data-ref="37j">j</a> == -<var>1</var>) {</td></tr>
+<tr><th id="430">430</th><td>        <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="431">431</th><td>      } <b>else</b> <b>if</b> (<a class="local col7 ref" href="#37j" title='j' data-ref="37j">j</a> == <var>0</var>) {</td></tr>
+<tr><th id="432">432</th><td>        <b>goto</b> <a class="lbl" href="#42loop" data-ref="42loop">loop</a>;</td></tr>
+<tr><th id="433">433</th><td>      }</td></tr>
+<tr><th id="434">434</th><td></td></tr>
+<tr><th id="435">435</th><td>      <b>if</b> (!<a class="ref" href="#BN_GENCB_call" title='BN_GENCB_call' data-ref="BN_GENCB_call">BN_GENCB_call</a>(<a class="local col3 ref" href="#33cb" title='cb' data-ref="33cb">cb</a>, <a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>, <a class="local col8 ref" href="#38c1" title='c1' data-ref="38c1">c1</a> - <var>1</var>)) {</td></tr>
+<tr><th id="436">436</th><td>        <b>goto</b> <a class="lbl" href="#41err" data-ref="41err">err</a>;</td></tr>
+<tr><th id="437">437</th><td>      }</td></tr>
+<tr><th id="438">438</th><td>      <i>/* We have a safe prime test pass */</i></td></tr>
+<tr><th id="439">439</th><td>    }</td></tr>
+<tr><th id="440">440</th><td>  }</td></tr>
+<tr><th id="441">441</th><td></td></tr>
+<tr><th id="442">442</th><td>  <i>/* we have a prime :-) */</i></td></tr>
+<tr><th id="443">443</th><td>  <a class="local col5 ref" href="#35found" title='found' data-ref="35found">found</a> = <var>1</var>;</td></tr>
+<tr><th id="444">444</th><td></td></tr>
+<tr><th id="445">445</th><td><dfn class="lbl" id="41err" data-ref="41err">err</dfn>:</td></tr>
+<tr><th id="446">446</th><td>  <b>if</b> (<a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="447">447</th><td>    <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_end" title='BN_CTX_end' data-ref="BN_CTX_end">BN_CTX_end</a>(<a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a>);</td></tr>
+<tr><th id="448">448</th><td>    <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_free" title='BN_CTX_free' data-ref="BN_CTX_free">BN_CTX_free</a>(<a class="local col9 ref" href="#39ctx" title='ctx' data-ref="39ctx">ctx</a>);</td></tr>
+<tr><th id="449">449</th><td>  }</td></tr>
+<tr><th id="450">450</th><td></td></tr>
+<tr><th id="451">451</th><td>  <b>return</b> <a class="local col5 ref" href="#35found" title='found' data-ref="35found">found</a>;</td></tr>
+<tr><th id="452">452</th><td>}</td></tr>
+<tr><th id="453">453</th><td></td></tr>
+<tr><th id="454">454</th><td><em>int</em> <dfn class="decl def" id="BN_primality_test" title='BN_primality_test' data-ref="BN_primality_test">BN_primality_test</dfn>(<em>int</em> *<dfn class="local col3 decl" id="43is_probably_prime" title='is_probably_prime' data-type='int *' data-ref="43is_probably_prime">is_probably_prime</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col4 decl" id="44candidate" title='candidate' data-type='const BIGNUM *' data-ref="44candidate">candidate</dfn>,</td></tr>
+<tr><th id="455">455</th><td>                      <em>int</em> <dfn class="local col5 decl" id="45checks" title='checks' data-type='int' data-ref="45checks">checks</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col6 decl" id="46ctx" title='ctx' data-type='BN_CTX *' data-ref="46ctx">ctx</dfn>, <em>int</em> <dfn class="local col7 decl" id="47do_trial_division" title='do_trial_division' data-type='int' data-ref="47do_trial_division">do_trial_division</dfn>,</td></tr>
+<tr><th id="456">456</th><td>                      <a class="typedef" href="../../include/openssl/base.h.html#BN_GENCB" title='BN_GENCB' data-type='struct bn_gencb_st' data-ref="BN_GENCB">BN_GENCB</a> *<dfn class="local col8 decl" id="48cb" title='cb' data-type='BN_GENCB *' data-ref="48cb">cb</dfn>) {</td></tr>
+<tr><th id="457">457</th><td>  <b>switch</b> (<a class="ref" href="#BN_is_prime_fasttest_ex" title='BN_is_prime_fasttest_ex' data-ref="BN_is_prime_fasttest_ex">BN_is_prime_fasttest_ex</a>(<a class="local col4 ref" href="#44candidate" title='candidate' data-ref="44candidate">candidate</a>, <a class="local col5 ref" href="#45checks" title='checks' data-ref="45checks">checks</a>, <a class="local col6 ref" href="#46ctx" title='ctx' data-ref="46ctx">ctx</a>, <a class="local col7 ref" href="#47do_trial_division" title='do_trial_division' data-ref="47do_trial_division">do_trial_division</a>, <a class="local col8 ref" href="#48cb" title='cb' data-ref="48cb">cb</a>)) {</td></tr>
+<tr><th id="458">458</th><td>    <b>case</b> <var>1</var>:</td></tr>
+<tr><th id="459">459</th><td>      *<a class="local col3 ref" href="#43is_probably_prime" title='is_probably_prime' data-ref="43is_probably_prime">is_probably_prime</a> = <var>1</var>;</td></tr>
+<tr><th id="460">460</th><td>      <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="461">461</th><td>    <b>case</b> <var>0</var>:</td></tr>
+<tr><th id="462">462</th><td>      *<a class="local col3 ref" href="#43is_probably_prime" title='is_probably_prime' data-ref="43is_probably_prime">is_probably_prime</a> = <var>0</var>;</td></tr>
+<tr><th id="463">463</th><td>      <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="464">464</th><td>    <b>default</b>:</td></tr>
+<tr><th id="465">465</th><td>      *<a class="local col3 ref" href="#43is_probably_prime" title='is_probably_prime' data-ref="43is_probably_prime">is_probably_prime</a> = <var>0</var>;</td></tr>
+<tr><th id="466">466</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="467">467</th><td>  }</td></tr>
+<tr><th id="468">468</th><td>}</td></tr>
+<tr><th id="469">469</th><td></td></tr>
+<tr><th id="470">470</th><td><em>int</em> <dfn class="decl def" id="BN_is_prime_ex" title='BN_is_prime_ex' data-ref="BN_is_prime_ex">BN_is_prime_ex</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="49candidate" title='candidate' data-type='const BIGNUM *' data-ref="49candidate">candidate</dfn>, <em>int</em> <dfn class="local col0 decl" id="50checks" title='checks' data-type='int' data-ref="50checks">checks</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col1 decl" id="51ctx" title='ctx' data-type='BN_CTX *' data-ref="51ctx">ctx</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_GENCB" title='BN_GENCB' data-type='struct bn_gencb_st' data-ref="BN_GENCB">BN_GENCB</a> *<dfn class="local col2 decl" id="52cb" title='cb' data-type='BN_GENCB *' data-ref="52cb">cb</dfn>) {</td></tr>
+<tr><th id="471">471</th><td>  <b>return</b> <a class="ref" href="#BN_is_prime_fasttest_ex" title='BN_is_prime_fasttest_ex' data-ref="BN_is_prime_fasttest_ex">BN_is_prime_fasttest_ex</a>(<a class="local col9 ref" href="#49candidate" title='candidate' data-ref="49candidate">candidate</a>, <a class="local col0 ref" href="#50checks" title='checks' data-ref="50checks">checks</a>, <a class="local col1 ref" href="#51ctx" title='ctx' data-ref="51ctx">ctx</a>, <var>0</var>, <a class="local col2 ref" href="#52cb" title='cb' data-ref="52cb">cb</a>);</td></tr>
+<tr><th id="472">472</th><td>}</td></tr>
+<tr><th id="473">473</th><td></td></tr>
+<tr><th id="474">474</th><td><em>int</em> <dfn class="decl def" id="BN_is_prime_fasttest_ex" title='BN_is_prime_fasttest_ex' data-ref="BN_is_prime_fasttest_ex">BN_is_prime_fasttest_ex</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="53a" title='a' data-type='const BIGNUM *' data-ref="53a">a</dfn>, <em>int</em> <dfn class="local col4 decl" id="54checks" title='checks' data-type='int' data-ref="54checks">checks</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col5 decl" id="55ctx_passed" title='ctx_passed' data-type='BN_CTX *' data-ref="55ctx_passed">ctx_passed</dfn>,</td></tr>
+<tr><th id="475">475</th><td>                            <em>int</em> <dfn class="local col6 decl" id="56do_trial_division" title='do_trial_division' data-type='int' data-ref="56do_trial_division">do_trial_division</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_GENCB" title='BN_GENCB' data-type='struct bn_gencb_st' data-ref="BN_GENCB">BN_GENCB</a> *<dfn class="local col7 decl" id="57cb" title='cb' data-type='BN_GENCB *' data-ref="57cb">cb</dfn>) {</td></tr>
+<tr><th id="476">476</th><td>  <em>int</em> <dfn class="local col8 decl" id="58i" title='i' data-type='int' data-ref="58i">i</dfn>, <dfn class="local col9 decl" id="59j" title='j' data-type='int' data-ref="59j">j</dfn>, <dfn class="local col0 decl" id="60ret" title='ret' data-type='int' data-ref="60ret">ret</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="477">477</th><td>  <em>int</em> <dfn class="local col1 decl" id="61k" title='k' data-type='int' data-ref="61k">k</dfn>;</td></tr>
+<tr><th id="478">478</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col2 decl" id="62ctx" title='ctx' data-type='BN_CTX *' data-ref="62ctx">ctx</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="479">479</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="63A1" title='A1' data-type='BIGNUM *' data-ref="63A1">A1</dfn>, *<dfn class="local col4 decl" id="64A1_odd" title='A1_odd' data-type='BIGNUM *' data-ref="64A1_odd">A1_odd</dfn>, *<dfn class="local col5 decl" id="65check" title='check' data-type='BIGNUM *' data-ref="65check">check</dfn>; <i>/* taken from ctx */</i></td></tr>
+<tr><th id="480">480</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BN_MONT_CTX" title='BN_MONT_CTX' data-type='struct bn_mont_ctx_st' data-ref="BN_MONT_CTX">BN_MONT_CTX</a> *<dfn class="local col6 decl" id="66mont" title='mont' data-type='BN_MONT_CTX *' data-ref="66mont">mont</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="481">481</th><td>  <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col7 decl" id="67A" title='A' data-type='const BIGNUM *' data-ref="67A">A</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="482">482</th><td></td></tr>
+<tr><th id="483">483</th><td>  <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_cmp" title='BN_cmp' data-ref="BN_cmp">BN_cmp</a>(<a class="local col3 ref" href="#53a" title='a' data-ref="53a">a</a>, <a class="ref" href="../../include/openssl/bn.h.html#BN_value_one" title='BN_value_one' data-ref="BN_value_one">BN_value_one</a>()) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="484">484</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="485">485</th><td>  }</td></tr>
+<tr><th id="486">486</th><td></td></tr>
+<tr><th id="487">487</th><td>  <b>if</b> (<a class="local col4 ref" href="#54checks" title='checks' data-ref="54checks">checks</a> == <a class="macro" href="../../include/openssl/bn.h.html#658" title="0" data-ref="_M/BN_prime_checks">BN_prime_checks</a>) {</td></tr>
+<tr><th id="488">488</th><td>    <a class="local col4 ref" href="#54checks" title='checks' data-ref="54checks">checks</a> = <a class="macro" href="#121" title="((BN_num_bits(a)) &gt;= 1300 ? 2 : (BN_num_bits(a)) &gt;= 850 ? 3 : (BN_num_bits(a)) &gt;= 650 ? 4 : (BN_num_bits(a)) &gt;= 550 ? 5 : (BN_num_bits(a)) &gt;= 450 ? 6 : (BN_num_bits(a)) &gt;= 400 ? 7 : (BN_num_bits(a)) &gt;= 350 ? 8 : (BN_num_bits(a)) &gt;= 300 ? 9 : (BN_num_bits(a)) &gt;= 250 ? 12 : (BN_num_bits(a)) &gt;= 200 ? 15 : (BN_num_bits(a)) &gt;= 150 ? 18 : 27)" data-ref="_M/BN_prime_checks_for_size">BN_prime_checks_for_size</a>(<a class="ref" href="../../include/openssl/bn.h.html#BN_num_bits" title='BN_num_bits' data-ref="BN_num_bits">BN_num_bits</a>(<a class="local col3 ref" href="#53a" title='a' data-ref="53a">a</a>));</td></tr>
+<tr><th id="489">489</th><td>  }</td></tr>
+<tr><th id="490">490</th><td></td></tr>
+<tr><th id="491">491</th><td>  <i>/* first look for small factors */</i></td></tr>
+<tr><th id="492">492</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_is_odd" title='BN_is_odd' data-ref="BN_is_odd">BN_is_odd</a>(<a class="local col3 ref" href="#53a" title='a' data-ref="53a">a</a>)) {</td></tr>
+<tr><th id="493">493</th><td>    <i>/* a is even =&gt; a is prime if and only if a == 2 */</i></td></tr>
+<tr><th id="494">494</th><td>    <b>return</b> <a class="ref" href="../../include/openssl/bn.h.html#BN_is_word" title='BN_is_word' data-ref="BN_is_word">BN_is_word</a>(<a class="local col3 ref" href="#53a" title='a' data-ref="53a">a</a>, <var>2</var>);</td></tr>
+<tr><th id="495">495</th><td>  }</td></tr>
+<tr><th id="496">496</th><td></td></tr>
+<tr><th id="497">497</th><td>  <b>if</b> (<a class="local col6 ref" href="#56do_trial_division" title='do_trial_division' data-ref="56do_trial_division">do_trial_division</a>) {</td></tr>
+<tr><th id="498">498</th><td>    <b>for</b> (<a class="local col8 ref" href="#58i" title='i' data-ref="58i">i</a> = <var>1</var>; <a class="local col8 ref" href="#58i" title='i' data-ref="58i">i</a> &lt; <a class="macro" href="#139" title="2048" data-ref="_M/NUMPRIMES">NUMPRIMES</a>; <a class="local col8 ref" href="#58i" title='i' data-ref="58i">i</a>++) {</td></tr>
+<tr><th id="499">499</th><td>      <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_mod_word" title='BN_mod_word' data-ref="BN_mod_word">BN_mod_word</a>(<a class="local col3 ref" href="#53a" title='a' data-ref="53a">a</a>, <a class="tu ref" href="#primes" title='primes' data-use='r' data-ref="primes">primes</a>[<a class="local col8 ref" href="#58i" title='i' data-ref="58i">i</a>]) == <var>0</var>) {</td></tr>
+<tr><th id="500">500</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="501">501</th><td>      }</td></tr>
+<tr><th id="502">502</th><td>    }</td></tr>
+<tr><th id="503">503</th><td></td></tr>
+<tr><th id="504">504</th><td>    <b>if</b> (!<a class="ref" href="#BN_GENCB_call" title='BN_GENCB_call' data-ref="BN_GENCB_call">BN_GENCB_call</a>(<a class="local col7 ref" href="#57cb" title='cb' data-ref="57cb">cb</a>, <var>1</var>, -<var>1</var>)) {</td></tr>
+<tr><th id="505">505</th><td>      <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="506">506</th><td>    }</td></tr>
+<tr><th id="507">507</th><td>  }</td></tr>
+<tr><th id="508">508</th><td></td></tr>
+<tr><th id="509">509</th><td>  <b>if</b> (<a class="local col5 ref" href="#55ctx_passed" title='ctx_passed' data-ref="55ctx_passed">ctx_passed</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="510">510</th><td>    <a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a> = <a class="local col5 ref" href="#55ctx_passed" title='ctx_passed' data-ref="55ctx_passed">ctx_passed</a>;</td></tr>
+<tr><th id="511">511</th><td>  } <b>else</b> <b>if</b> ((<a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_new" title='BN_CTX_new' data-ref="BN_CTX_new">BN_CTX_new</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="512">512</th><td>    <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="513">513</th><td>  }</td></tr>
+<tr><th id="514">514</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_start" title='BN_CTX_start' data-ref="BN_CTX_start">BN_CTX_start</a>(<a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a>);</td></tr>
+<tr><th id="515">515</th><td></td></tr>
+<tr><th id="516">516</th><td>  <i>/* A := abs(a) */</i></td></tr>
+<tr><th id="517">517</th><td>  <b>if</b> (<a class="local col3 ref" href="#53a" title='a' data-ref="53a">a</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bignum_st::neg" title='bignum_st::neg' data-ref="bignum_st::neg">neg</a>) {</td></tr>
+<tr><th id="518">518</th><td>    <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="69t" title='t' data-type='BIGNUM *' data-ref="69t">t</dfn> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_get" title='BN_CTX_get' data-ref="BN_CTX_get">BN_CTX_get</a>(<a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a>);</td></tr>
+<tr><th id="519">519</th><td>    <b>if</b> (<a class="local col9 ref" href="#69t" title='t' data-ref="69t">t</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || !<a class="ref" href="../../include/openssl/bn.h.html#BN_copy" title='BN_copy' data-ref="BN_copy">BN_copy</a>(<a class="local col9 ref" href="#69t" title='t' data-ref="69t">t</a>, <a class="local col3 ref" href="#53a" title='a' data-ref="53a">a</a>)) {</td></tr>
+<tr><th id="520">520</th><td>      <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="521">521</th><td>    }</td></tr>
+<tr><th id="522">522</th><td>    <a class="local col9 ref" href="#69t" title='t' data-ref="69t">t</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bignum_st::neg" title='bignum_st::neg' data-ref="bignum_st::neg">neg</a> = <var>0</var>;</td></tr>
+<tr><th id="523">523</th><td>    <a class="local col7 ref" href="#67A" title='A' data-ref="67A">A</a> = <a class="local col9 ref" href="#69t" title='t' data-ref="69t">t</a>;</td></tr>
+<tr><th id="524">524</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="525">525</th><td>    <a class="local col7 ref" href="#67A" title='A' data-ref="67A">A</a> = <a class="local col3 ref" href="#53a" title='a' data-ref="53a">a</a>;</td></tr>
+<tr><th id="526">526</th><td>  }</td></tr>
+<tr><th id="527">527</th><td></td></tr>
+<tr><th id="528">528</th><td>  <a class="local col3 ref" href="#63A1" title='A1' data-ref="63A1">A1</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_get" title='BN_CTX_get' data-ref="BN_CTX_get">BN_CTX_get</a>(<a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a>);</td></tr>
+<tr><th id="529">529</th><td>  <a class="local col4 ref" href="#64A1_odd" title='A1_odd' data-ref="64A1_odd">A1_odd</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_get" title='BN_CTX_get' data-ref="BN_CTX_get">BN_CTX_get</a>(<a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a>);</td></tr>
+<tr><th id="530">530</th><td>  <a class="local col5 ref" href="#65check" title='check' data-ref="65check">check</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_get" title='BN_CTX_get' data-ref="BN_CTX_get">BN_CTX_get</a>(<a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a>);</td></tr>
+<tr><th id="531">531</th><td>  <b>if</b> (<a class="local col5 ref" href="#65check" title='check' data-ref="65check">check</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="532">532</th><td>    <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="533">533</th><td>  }</td></tr>
+<tr><th id="534">534</th><td></td></tr>
+<tr><th id="535">535</th><td>  <i>/* compute A1 := A - 1 */</i></td></tr>
+<tr><th id="536">536</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_copy" title='BN_copy' data-ref="BN_copy">BN_copy</a>(<a class="local col3 ref" href="#63A1" title='A1' data-ref="63A1">A1</a>, <a class="local col7 ref" href="#67A" title='A' data-ref="67A">A</a>)) {</td></tr>
+<tr><th id="537">537</th><td>    <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="538">538</th><td>  }</td></tr>
+<tr><th id="539">539</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_sub_word" title='BN_sub_word' data-ref="BN_sub_word">BN_sub_word</a>(<a class="local col3 ref" href="#63A1" title='A1' data-ref="63A1">A1</a>, <var>1</var>)) {</td></tr>
+<tr><th id="540">540</th><td>    <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="541">541</th><td>  }</td></tr>
+<tr><th id="542">542</th><td>  <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_is_zero" title='BN_is_zero' data-ref="BN_is_zero">BN_is_zero</a>(<a class="local col3 ref" href="#63A1" title='A1' data-ref="63A1">A1</a>)) {</td></tr>
+<tr><th id="543">543</th><td>    <a class="local col0 ref" href="#60ret" title='ret' data-ref="60ret">ret</a> = <var>0</var>;</td></tr>
+<tr><th id="544">544</th><td>    <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="545">545</th><td>  }</td></tr>
+<tr><th id="546">546</th><td></td></tr>
+<tr><th id="547">547</th><td>  <i>/* write  A1  as  A1_odd * 2^k */</i></td></tr>
+<tr><th id="548">548</th><td>  <a class="local col1 ref" href="#61k" title='k' data-ref="61k">k</a> = <var>1</var>;</td></tr>
+<tr><th id="549">549</th><td>  <b>while</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_is_bit_set" title='BN_is_bit_set' data-ref="BN_is_bit_set">BN_is_bit_set</a>(<a class="local col3 ref" href="#63A1" title='A1' data-ref="63A1">A1</a>, <a class="local col1 ref" href="#61k" title='k' data-ref="61k">k</a>)) {</td></tr>
+<tr><th id="550">550</th><td>    <a class="local col1 ref" href="#61k" title='k' data-ref="61k">k</a>++;</td></tr>
+<tr><th id="551">551</th><td>  }</td></tr>
+<tr><th id="552">552</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_rshift" title='BN_rshift' data-ref="BN_rshift">BN_rshift</a>(<a class="local col4 ref" href="#64A1_odd" title='A1_odd' data-ref="64A1_odd">A1_odd</a>, <a class="local col3 ref" href="#63A1" title='A1' data-ref="63A1">A1</a>, <a class="local col1 ref" href="#61k" title='k' data-ref="61k">k</a>)) {</td></tr>
+<tr><th id="553">553</th><td>    <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="554">554</th><td>  }</td></tr>
+<tr><th id="555">555</th><td></td></tr>
+<tr><th id="556">556</th><td>  <i>/* Montgomery setup for computations mod A */</i></td></tr>
+<tr><th id="557">557</th><td>  <a class="local col6 ref" href="#66mont" title='mont' data-ref="66mont">mont</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_new" title='BN_MONT_CTX_new' data-ref="BN_MONT_CTX_new">BN_MONT_CTX_new</a>();</td></tr>
+<tr><th id="558">558</th><td>  <b>if</b> (<a class="local col6 ref" href="#66mont" title='mont' data-ref="66mont">mont</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="559">559</th><td>    <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="560">560</th><td>  }</td></tr>
+<tr><th id="561">561</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_set" title='BN_MONT_CTX_set' data-ref="BN_MONT_CTX_set">BN_MONT_CTX_set</a>(<a class="local col6 ref" href="#66mont" title='mont' data-ref="66mont">mont</a>, <a class="local col7 ref" href="#67A" title='A' data-ref="67A">A</a>, <a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a>)) {</td></tr>
+<tr><th id="562">562</th><td>    <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="563">563</th><td>  }</td></tr>
+<tr><th id="564">564</th><td></td></tr>
+<tr><th id="565">565</th><td>  <b>for</b> (<a class="local col8 ref" href="#58i" title='i' data-ref="58i">i</a> = <var>0</var>; <a class="local col8 ref" href="#58i" title='i' data-ref="58i">i</a> &lt; <a class="local col4 ref" href="#54checks" title='checks' data-ref="54checks">checks</a>; <a class="local col8 ref" href="#58i" title='i' data-ref="58i">i</a>++) {</td></tr>
+<tr><th id="566">566</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_pseudo_rand_range" title='BN_pseudo_rand_range' data-ref="BN_pseudo_rand_range">BN_pseudo_rand_range</a>(<a class="local col5 ref" href="#65check" title='check' data-ref="65check">check</a>, <a class="local col3 ref" href="#63A1" title='A1' data-ref="63A1">A1</a>)) {</td></tr>
+<tr><th id="567">567</th><td>      <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="568">568</th><td>    }</td></tr>
+<tr><th id="569">569</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add_word" title='BN_add_word' data-ref="BN_add_word">BN_add_word</a>(<a class="local col5 ref" href="#65check" title='check' data-ref="65check">check</a>, <var>1</var>)) {</td></tr>
+<tr><th id="570">570</th><td>      <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="571">571</th><td>    }</td></tr>
+<tr><th id="572">572</th><td>    <i>/* now 1 &lt;= check &lt; A */</i></td></tr>
+<tr><th id="573">573</th><td></td></tr>
+<tr><th id="574">574</th><td>    <a class="local col9 ref" href="#59j" title='j' data-ref="59j">j</a> = <a class="tu ref" href="#witness" title='witness' data-use='c' data-ref="witness">witness</a>(<a class="local col5 ref" href="#65check" title='check' data-ref="65check">check</a>, <a class="local col7 ref" href="#67A" title='A' data-ref="67A">A</a>, <a class="local col3 ref" href="#63A1" title='A1' data-ref="63A1">A1</a>, <a class="local col4 ref" href="#64A1_odd" title='A1_odd' data-ref="64A1_odd">A1_odd</a>, <a class="local col1 ref" href="#61k" title='k' data-ref="61k">k</a>, <a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a>, <a class="local col6 ref" href="#66mont" title='mont' data-ref="66mont">mont</a>);</td></tr>
+<tr><th id="575">575</th><td>    <b>if</b> (<a class="local col9 ref" href="#59j" title='j' data-ref="59j">j</a> == -<var>1</var>) {</td></tr>
+<tr><th id="576">576</th><td>      <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="577">577</th><td>    }</td></tr>
+<tr><th id="578">578</th><td>    <b>if</b> (<a class="local col9 ref" href="#59j" title='j' data-ref="59j">j</a>) {</td></tr>
+<tr><th id="579">579</th><td>      <a class="local col0 ref" href="#60ret" title='ret' data-ref="60ret">ret</a> = <var>0</var>;</td></tr>
+<tr><th id="580">580</th><td>      <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="581">581</th><td>    }</td></tr>
+<tr><th id="582">582</th><td>    <b>if</b> (!<a class="ref" href="#BN_GENCB_call" title='BN_GENCB_call' data-ref="BN_GENCB_call">BN_GENCB_call</a>(<a class="local col7 ref" href="#57cb" title='cb' data-ref="57cb">cb</a>, <var>1</var>, <a class="local col8 ref" href="#58i" title='i' data-ref="58i">i</a>)) {</td></tr>
+<tr><th id="583">583</th><td>      <b>goto</b> <a class="lbl" href="#68err" data-ref="68err">err</a>;</td></tr>
+<tr><th id="584">584</th><td>    }</td></tr>
+<tr><th id="585">585</th><td>  }</td></tr>
+<tr><th id="586">586</th><td>  <a class="local col0 ref" href="#60ret" title='ret' data-ref="60ret">ret</a> = <var>1</var>;</td></tr>
+<tr><th id="587">587</th><td></td></tr>
+<tr><th id="588">588</th><td><dfn class="lbl" id="68err" data-ref="68err">err</dfn>:</td></tr>
+<tr><th id="589">589</th><td>  <b>if</b> (<a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="590">590</th><td>    <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_end" title='BN_CTX_end' data-ref="BN_CTX_end">BN_CTX_end</a>(<a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a>);</td></tr>
+<tr><th id="591">591</th><td>    <b>if</b> (<a class="local col5 ref" href="#55ctx_passed" title='ctx_passed' data-ref="55ctx_passed">ctx_passed</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="592">592</th><td>      <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_free" title='BN_CTX_free' data-ref="BN_CTX_free">BN_CTX_free</a>(<a class="local col2 ref" href="#62ctx" title='ctx' data-ref="62ctx">ctx</a>);</td></tr>
+<tr><th id="593">593</th><td>    }</td></tr>
+<tr><th id="594">594</th><td>  }</td></tr>
+<tr><th id="595">595</th><td>  <b>if</b> (<a class="local col6 ref" href="#66mont" title='mont' data-ref="66mont">mont</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="596">596</th><td>    <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_free" title='BN_MONT_CTX_free' data-ref="BN_MONT_CTX_free">BN_MONT_CTX_free</a>(<a class="local col6 ref" href="#66mont" title='mont' data-ref="66mont">mont</a>);</td></tr>
+<tr><th id="597">597</th><td>  }</td></tr>
+<tr><th id="598">598</th><td></td></tr>
+<tr><th id="599">599</th><td>  <b>return</b> <a class="local col0 ref" href="#60ret" title='ret' data-ref="60ret">ret</a>;</td></tr>
+<tr><th id="600">600</th><td>}</td></tr>
+<tr><th id="601">601</th><td></td></tr>
+<tr><th id="602">602</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="witness" title='witness' data-type='int witness(BIGNUM * w, const BIGNUM * a, const BIGNUM * a1, const BIGNUM * a1_odd, int k, BN_CTX * ctx, BN_MONT_CTX * mont)' data-ref="witness">witness</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col0 decl" id="70w" title='w' data-type='BIGNUM *' data-ref="70w">w</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="71a" title='a' data-type='const BIGNUM *' data-ref="71a">a</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="72a1" title='a1' data-type='const BIGNUM *' data-ref="72a1">a1</dfn>,</td></tr>
+<tr><th id="603">603</th><td>                   <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="73a1_odd" title='a1_odd' data-type='const BIGNUM *' data-ref="73a1_odd">a1_odd</dfn>, <em>int</em> <dfn class="local col4 decl" id="74k" title='k' data-type='int' data-ref="74k">k</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col5 decl" id="75ctx" title='ctx' data-type='BN_CTX *' data-ref="75ctx">ctx</dfn>,</td></tr>
+<tr><th id="604">604</th><td>                   <a class="typedef" href="../../include/openssl/base.h.html#BN_MONT_CTX" title='BN_MONT_CTX' data-type='struct bn_mont_ctx_st' data-ref="BN_MONT_CTX">BN_MONT_CTX</a> *<dfn class="local col6 decl" id="76mont" title='mont' data-type='BN_MONT_CTX *' data-ref="76mont">mont</dfn>) {</td></tr>
+<tr><th id="605">605</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_mod_exp_mont" title='BN_mod_exp_mont' data-ref="BN_mod_exp_mont">BN_mod_exp_mont</a>(<a class="local col0 ref" href="#70w" title='w' data-ref="70w">w</a>, <a class="local col0 ref" href="#70w" title='w' data-ref="70w">w</a>, <a class="local col3 ref" href="#73a1_odd" title='a1_odd' data-ref="73a1_odd">a1_odd</a>, <a class="local col1 ref" href="#71a" title='a' data-ref="71a">a</a>, <a class="local col5 ref" href="#75ctx" title='ctx' data-ref="75ctx">ctx</a>, <a class="local col6 ref" href="#76mont" title='mont' data-ref="76mont">mont</a>)) { <i>/* w := w^a1_odd mod a */</i></td></tr>
+<tr><th id="606">606</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="607">607</th><td>  }</td></tr>
+<tr><th id="608">608</th><td>  <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_is_one" title='BN_is_one' data-ref="BN_is_one">BN_is_one</a>(<a class="local col0 ref" href="#70w" title='w' data-ref="70w">w</a>)) {</td></tr>
+<tr><th id="609">609</th><td>    <b>return</b> <var>0</var>; <i>/* probably prime */</i></td></tr>
+<tr><th id="610">610</th><td>  }</td></tr>
+<tr><th id="611">611</th><td>  <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_cmp" title='BN_cmp' data-ref="BN_cmp">BN_cmp</a>(<a class="local col0 ref" href="#70w" title='w' data-ref="70w">w</a>, <a class="local col2 ref" href="#72a1" title='a1' data-ref="72a1">a1</a>) == <var>0</var>) {</td></tr>
+<tr><th id="612">612</th><td>    <b>return</b> <var>0</var>; <i>/* w == -1 (mod a),  'a' is probably prime */</i></td></tr>
+<tr><th id="613">613</th><td>  }</td></tr>
+<tr><th id="614">614</th><td></td></tr>
+<tr><th id="615">615</th><td>  <b>while</b> (--<a class="local col4 ref" href="#74k" title='k' data-ref="74k">k</a>) {</td></tr>
+<tr><th id="616">616</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_mod_mul" title='BN_mod_mul' data-ref="BN_mod_mul">BN_mod_mul</a>(<a class="local col0 ref" href="#70w" title='w' data-ref="70w">w</a>, <a class="local col0 ref" href="#70w" title='w' data-ref="70w">w</a>, <a class="local col0 ref" href="#70w" title='w' data-ref="70w">w</a>, <a class="local col1 ref" href="#71a" title='a' data-ref="71a">a</a>, <a class="local col5 ref" href="#75ctx" title='ctx' data-ref="75ctx">ctx</a>)) { <i>/* w := w^2 mod a */</i></td></tr>
+<tr><th id="617">617</th><td>      <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="618">618</th><td>    }</td></tr>
+<tr><th id="619">619</th><td></td></tr>
+<tr><th id="620">620</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_is_one" title='BN_is_one' data-ref="BN_is_one">BN_is_one</a>(<a class="local col0 ref" href="#70w" title='w' data-ref="70w">w</a>)) {</td></tr>
+<tr><th id="621">621</th><td>      <b>return</b> <var>1</var>; <i>/* 'a' is composite, otherwise a previous 'w' would</i></td></tr>
+<tr><th id="622">622</th><td><i>                 * have been == -1 (mod 'a') */</i></td></tr>
+<tr><th id="623">623</th><td>    }</td></tr>
+<tr><th id="624">624</th><td></td></tr>
+<tr><th id="625">625</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_cmp" title='BN_cmp' data-ref="BN_cmp">BN_cmp</a>(<a class="local col0 ref" href="#70w" title='w' data-ref="70w">w</a>, <a class="local col2 ref" href="#72a1" title='a1' data-ref="72a1">a1</a>) == <var>0</var>) {</td></tr>
+<tr><th id="626">626</th><td>      <b>return</b> <var>0</var>; <i>/* w == -1 (mod a), 'a' is probably prime */</i></td></tr>
+<tr><th id="627">627</th><td>    }</td></tr>
+<tr><th id="628">628</th><td>  }</td></tr>
+<tr><th id="629">629</th><td></td></tr>
+<tr><th id="630">630</th><td>  <i>/* If we get here, 'w' is the (a-1)/2-th power of the original 'w',</i></td></tr>
+<tr><th id="631">631</th><td><i>   * and it is neither -1 nor +1 -- so 'a' cannot be prime */</i></td></tr>
+<tr><th id="632">632</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="633">633</th><td>}</td></tr>
+<tr><th id="634">634</th><td></td></tr>
+<tr><th id="635">635</th><td><em>static</em> <a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a> <dfn class="tu decl def" id="get_word" title='get_word' data-type='uint64_t get_word(const BIGNUM * bn)' data-ref="get_word">get_word</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col7 decl" id="77bn" title='bn' data-type='const BIGNUM *' data-ref="77bn">bn</dfn>) {</td></tr>
+<tr><th id="636">636</th><td>  <b>if</b> (<a class="local col7 ref" href="#77bn" title='bn' data-ref="77bn">bn</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bignum_st::top" title='bignum_st::top' data-ref="bignum_st::top">top</a> == <var>1</var>) {</td></tr>
+<tr><th id="637">637</th><td>    <b>return</b> <a class="local col7 ref" href="#77bn" title='bn' data-ref="77bn">bn</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bignum_st::d" title='bignum_st::d' data-ref="bignum_st::d">d</a>[<var>0</var>];</td></tr>
+<tr><th id="638">638</th><td>  }</td></tr>
+<tr><th id="639">639</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="640">640</th><td>}</td></tr>
+<tr><th id="641">641</th><td></td></tr>
+<tr><th id="642">642</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="probable_prime" title='probable_prime' data-type='int probable_prime(BIGNUM * rnd, int bits)' data-ref="probable_prime">probable_prime</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col8 decl" id="78rnd" title='rnd' data-type='BIGNUM *' data-ref="78rnd">rnd</dfn>, <em>int</em> <dfn class="local col9 decl" id="79bits" title='bits' data-type='int' data-ref="79bits">bits</dfn>) {</td></tr>
+<tr><th id="643">643</th><td>  <em>int</em> <dfn class="local col0 decl" id="80i" title='i' data-type='int' data-ref="80i">i</dfn>;</td></tr>
+<tr><th id="644">644</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a> <dfn class="local col1 decl" id="81mods" title='mods' data-type='uint16_t [2048]' data-ref="81mods">mods</dfn>[<a class="macro" href="#139" title="2048" data-ref="_M/NUMPRIMES">NUMPRIMES</a>];</td></tr>
+<tr><th id="645">645</th><td>  <a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a> <dfn class="local col2 decl" id="82delta" title='delta' data-type='uint64_t' data-ref="82delta">delta</dfn>;</td></tr>
+<tr><th id="646">646</th><td>  <a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a> <dfn class="local col3 decl" id="83maxdelta" title='maxdelta' data-type='uint64_t' data-ref="83maxdelta">maxdelta</dfn> = <a class="macro" href="internal.h.html#153" title="(0xffffffffffffffffUL)" data-ref="_M/BN_MASK2">BN_MASK2</a> - <a class="tu ref" href="#primes" title='primes' data-use='r' data-ref="primes">primes</a>[<a class="macro" href="#139" title="2048" data-ref="_M/NUMPRIMES">NUMPRIMES</a> - <var>1</var>];</td></tr>
+<tr><th id="647">647</th><td>  <em>char</em> <dfn class="local col4 decl" id="84is_single_word" title='is_single_word' data-type='char' data-ref="84is_single_word">is_single_word</dfn> = <a class="local col9 ref" href="#79bits" title='bits' data-ref="79bits">bits</a> &lt;= <a class="macro" href="internal.h.html#150" title="64" data-ref="_M/BN_BITS2">BN_BITS2</a>;</td></tr>
+<tr><th id="648">648</th><td></td></tr>
+<tr><th id="649">649</th><td><dfn class="lbl" id="85again" data-ref="85again">again</dfn>:</td></tr>
+<tr><th id="650">650</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_rand" title='BN_rand' data-ref="BN_rand">BN_rand</a>(<a class="local col8 ref" href="#78rnd" title='rnd' data-ref="78rnd">rnd</a>, <a class="local col9 ref" href="#79bits" title='bits' data-ref="79bits">bits</a>, <var>1</var>, <var>1</var>)) {</td></tr>
+<tr><th id="651">651</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="652">652</th><td>  }</td></tr>
+<tr><th id="653">653</th><td></td></tr>
+<tr><th id="654">654</th><td>  <i>/* we now have a random number 'rnd' to test. */</i></td></tr>
+<tr><th id="655">655</th><td>  <b>for</b> (<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a> = <var>1</var>; <a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a> &lt; <a class="macro" href="#139" title="2048" data-ref="_M/NUMPRIMES">NUMPRIMES</a>; <a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>++) {</td></tr>
+<tr><th id="656">656</th><td>    <a class="local col1 ref" href="#81mods" title='mods' data-ref="81mods">mods</a>[<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>] = (<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a>)<a class="ref" href="../../include/openssl/bn.h.html#BN_mod_word" title='BN_mod_word' data-ref="BN_mod_word">BN_mod_word</a>(<a class="local col8 ref" href="#78rnd" title='rnd' data-ref="78rnd">rnd</a>, (<a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a>)<a class="tu ref" href="#primes" title='primes' data-use='r' data-ref="primes">primes</a>[<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>]);</td></tr>
+<tr><th id="657">657</th><td>  }</td></tr>
+<tr><th id="658">658</th><td>  <i>/* If bits is so small that it fits into a single word then we</i></td></tr>
+<tr><th id="659">659</th><td><i>   * additionally don't want to exceed that many bits. */</i></td></tr>
+<tr><th id="660">660</th><td>  <b>if</b> (<a class="local col4 ref" href="#84is_single_word" title='is_single_word' data-ref="84is_single_word">is_single_word</a>) {</td></tr>
+<tr><th id="661">661</th><td>    <a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a> <dfn class="local col6 decl" id="86size_limit" title='size_limit' data-type='uint64_t' data-ref="86size_limit">size_limit</dfn>;</td></tr>
+<tr><th id="662">662</th><td>    <b>if</b> (<a class="local col9 ref" href="#79bits" title='bits' data-ref="79bits">bits</a> == <a class="macro" href="internal.h.html#150" title="64" data-ref="_M/BN_BITS2">BN_BITS2</a>) {</td></tr>
+<tr><th id="663">663</th><td>      <i>/* Avoid undefined behavior. */</i></td></tr>
+<tr><th id="664">664</th><td>      <a class="local col6 ref" href="#86size_limit" title='size_limit' data-ref="86size_limit">size_limit</a> = ~((<a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a>)<var>0</var>) - <a class="tu ref" href="#get_word" title='get_word' data-use='c' data-ref="get_word">get_word</a>(<a class="local col8 ref" href="#78rnd" title='rnd' data-ref="78rnd">rnd</a>);</td></tr>
+<tr><th id="665">665</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="666">666</th><td>      <a class="local col6 ref" href="#86size_limit" title='size_limit' data-ref="86size_limit">size_limit</a> = (((<a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a>)<var>1</var>) &lt;&lt; <a class="local col9 ref" href="#79bits" title='bits' data-ref="79bits">bits</a>) - <a class="tu ref" href="#get_word" title='get_word' data-use='c' data-ref="get_word">get_word</a>(<a class="local col8 ref" href="#78rnd" title='rnd' data-ref="78rnd">rnd</a>) - <var>1</var>;</td></tr>
+<tr><th id="667">667</th><td>    }</td></tr>
+<tr><th id="668">668</th><td>    <b>if</b> (<a class="local col6 ref" href="#86size_limit" title='size_limit' data-ref="86size_limit">size_limit</a> &lt; <a class="local col3 ref" href="#83maxdelta" title='maxdelta' data-ref="83maxdelta">maxdelta</a>) {</td></tr>
+<tr><th id="669">669</th><td>      <a class="local col3 ref" href="#83maxdelta" title='maxdelta' data-ref="83maxdelta">maxdelta</a> = <a class="local col6 ref" href="#86size_limit" title='size_limit' data-ref="86size_limit">size_limit</a>;</td></tr>
+<tr><th id="670">670</th><td>    }</td></tr>
+<tr><th id="671">671</th><td>  }</td></tr>
+<tr><th id="672">672</th><td>  <a class="local col2 ref" href="#82delta" title='delta' data-ref="82delta">delta</a> = <var>0</var>;</td></tr>
+<tr><th id="673">673</th><td></td></tr>
+<tr><th id="674">674</th><td><dfn class="lbl" id="87loop" data-ref="87loop">loop</dfn>:</td></tr>
+<tr><th id="675">675</th><td>  <b>if</b> (<a class="local col4 ref" href="#84is_single_word" title='is_single_word' data-ref="84is_single_word">is_single_word</a>) {</td></tr>
+<tr><th id="676">676</th><td>    <a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a> <dfn class="local col8 decl" id="88rnd_word" title='rnd_word' data-type='uint64_t' data-ref="88rnd_word">rnd_word</dfn> = <a class="tu ref" href="#get_word" title='get_word' data-use='c' data-ref="get_word">get_word</a>(<a class="local col8 ref" href="#78rnd" title='rnd' data-ref="78rnd">rnd</a>);</td></tr>
+<tr><th id="677">677</th><td></td></tr>
+<tr><th id="678">678</th><td>    <i>/* In the case that the candidate prime is a single word then</i></td></tr>
+<tr><th id="679">679</th><td><i>     * we check that:</i></td></tr>
+<tr><th id="680">680</th><td><i>     *   1) It's greater than primes[i] because we shouldn't reject</i></td></tr>
+<tr><th id="681">681</th><td><i>     *      3 as being a prime number because it's a multiple of</i></td></tr>
+<tr><th id="682">682</th><td><i>     *      three.</i></td></tr>
+<tr><th id="683">683</th><td><i>     *   2) That it's not a multiple of a known prime. We don't</i></td></tr>
+<tr><th id="684">684</th><td><i>     *      check that rnd-1 is also coprime to all the known</i></td></tr>
+<tr><th id="685">685</th><td><i>     *      primes because there aren't many small primes where</i></td></tr>
+<tr><th id="686">686</th><td><i>     *      that's true. */</i></td></tr>
+<tr><th id="687">687</th><td>    <b>for</b> (<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a> = <var>1</var>; <a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a> &lt; <a class="macro" href="#139" title="2048" data-ref="_M/NUMPRIMES">NUMPRIMES</a> &amp;&amp; <a class="tu ref" href="#primes" title='primes' data-use='r' data-ref="primes">primes</a>[<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>] &lt; <a class="local col8 ref" href="#88rnd_word" title='rnd_word' data-ref="88rnd_word">rnd_word</a>; <a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>++) {</td></tr>
+<tr><th id="688">688</th><td>      <b>if</b> ((<a class="local col1 ref" href="#81mods" title='mods' data-ref="81mods">mods</a>[<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>] + <a class="local col2 ref" href="#82delta" title='delta' data-ref="82delta">delta</a>) % <a class="tu ref" href="#primes" title='primes' data-use='r' data-ref="primes">primes</a>[<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>] == <var>0</var>) {</td></tr>
+<tr><th id="689">689</th><td>        <a class="local col2 ref" href="#82delta" title='delta' data-ref="82delta">delta</a> += <var>2</var>;</td></tr>
+<tr><th id="690">690</th><td>        <b>if</b> (<a class="local col2 ref" href="#82delta" title='delta' data-ref="82delta">delta</a> &gt; <a class="local col3 ref" href="#83maxdelta" title='maxdelta' data-ref="83maxdelta">maxdelta</a>) {</td></tr>
+<tr><th id="691">691</th><td>          <b>goto</b> <a class="lbl" href="#85again" data-ref="85again">again</a>;</td></tr>
+<tr><th id="692">692</th><td>        }</td></tr>
+<tr><th id="693">693</th><td>        <b>goto</b> <a class="lbl" href="#87loop" data-ref="87loop">loop</a>;</td></tr>
+<tr><th id="694">694</th><td>      }</td></tr>
+<tr><th id="695">695</th><td>    }</td></tr>
+<tr><th id="696">696</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="697">697</th><td>    <b>for</b> (<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a> = <var>1</var>; <a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a> &lt; <a class="macro" href="#139" title="2048" data-ref="_M/NUMPRIMES">NUMPRIMES</a>; <a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>++) {</td></tr>
+<tr><th id="698">698</th><td>      <i>/* check that rnd is not a prime and also</i></td></tr>
+<tr><th id="699">699</th><td><i>       * that gcd(rnd-1,primes) == 1 (except for 2) */</i></td></tr>
+<tr><th id="700">700</th><td>      <b>if</b> (((<a class="local col1 ref" href="#81mods" title='mods' data-ref="81mods">mods</a>[<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>] + <a class="local col2 ref" href="#82delta" title='delta' data-ref="82delta">delta</a>) % <a class="tu ref" href="#primes" title='primes' data-use='r' data-ref="primes">primes</a>[<a class="local col0 ref" href="#80i" title='i' data-ref="80i">i</a>]) &lt;= <var>1</var>) {</td></tr>
+<tr><th id="701">701</th><td>        <a class="local col2 ref" href="#82delta" title='delta' data-ref="82delta">delta</a> += <var>2</var>;</td></tr>
+<tr><th id="702">702</th><td>        <b>if</b> (<a class="local col2 ref" href="#82delta" title='delta' data-ref="82delta">delta</a> &gt; <a class="local col3 ref" href="#83maxdelta" title='maxdelta' data-ref="83maxdelta">maxdelta</a>) {</td></tr>
+<tr><th id="703">703</th><td>          <b>goto</b> <a class="lbl" href="#85again" data-ref="85again">again</a>;</td></tr>
+<tr><th id="704">704</th><td>        }</td></tr>
+<tr><th id="705">705</th><td>        <b>goto</b> <a class="lbl" href="#87loop" data-ref="87loop">loop</a>;</td></tr>
+<tr><th id="706">706</th><td>      }</td></tr>
+<tr><th id="707">707</th><td>    }</td></tr>
+<tr><th id="708">708</th><td>  }</td></tr>
+<tr><th id="709">709</th><td></td></tr>
+<tr><th id="710">710</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add_word" title='BN_add_word' data-ref="BN_add_word">BN_add_word</a>(<a class="local col8 ref" href="#78rnd" title='rnd' data-ref="78rnd">rnd</a>, <a class="local col2 ref" href="#82delta" title='delta' data-ref="82delta">delta</a>)) {</td></tr>
+<tr><th id="711">711</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="712">712</th><td>  }</td></tr>
+<tr><th id="713">713</th><td>  <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_num_bits" title='BN_num_bits' data-ref="BN_num_bits">BN_num_bits</a>(<a class="local col8 ref" href="#78rnd" title='rnd' data-ref="78rnd">rnd</a>) != (<em>unsigned</em>)<a class="local col9 ref" href="#79bits" title='bits' data-ref="79bits">bits</a>) {</td></tr>
+<tr><th id="714">714</th><td>    <b>goto</b> <a class="lbl" href="#85again" data-ref="85again">again</a>;</td></tr>
+<tr><th id="715">715</th><td>  }</td></tr>
+<tr><th id="716">716</th><td></td></tr>
+<tr><th id="717">717</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="718">718</th><td>}</td></tr>
+<tr><th id="719">719</th><td></td></tr>
+<tr><th id="720">720</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="probable_prime_dh" title='probable_prime_dh' data-type='int probable_prime_dh(BIGNUM * rnd, int bits, const BIGNUM * add, const BIGNUM * rem, BN_CTX * ctx)' data-ref="probable_prime_dh">probable_prime_dh</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="89rnd" title='rnd' data-type='BIGNUM *' data-ref="89rnd">rnd</dfn>, <em>int</em> <dfn class="local col0 decl" id="90bits" title='bits' data-type='int' data-ref="90bits">bits</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="91add" title='add' data-type='const BIGNUM *' data-ref="91add">add</dfn>,</td></tr>
+<tr><th id="721">721</th><td>                             <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="92rem" title='rem' data-type='const BIGNUM *' data-ref="92rem">rem</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col3 decl" id="93ctx" title='ctx' data-type='BN_CTX *' data-ref="93ctx">ctx</dfn>) {</td></tr>
+<tr><th id="722">722</th><td>  <em>int</em> <dfn class="local col4 decl" id="94i" title='i' data-type='int' data-ref="94i">i</dfn>, <dfn class="local col5 decl" id="95ret" title='ret' data-type='int' data-ref="95ret">ret</dfn> = <var>0</var>;</td></tr>
+<tr><th id="723">723</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col6 decl" id="96t1" title='t1' data-type='BIGNUM *' data-ref="96t1">t1</dfn>;</td></tr>
+<tr><th id="724">724</th><td></td></tr>
+<tr><th id="725">725</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_start" title='BN_CTX_start' data-ref="BN_CTX_start">BN_CTX_start</a>(<a class="local col3 ref" href="#93ctx" title='ctx' data-ref="93ctx">ctx</a>);</td></tr>
+<tr><th id="726">726</th><td>  <b>if</b> ((<a class="local col6 ref" href="#96t1" title='t1' data-ref="96t1">t1</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_get" title='BN_CTX_get' data-ref="BN_CTX_get">BN_CTX_get</a>(<a class="local col3 ref" href="#93ctx" title='ctx' data-ref="93ctx">ctx</a>)) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="727">727</th><td>    <b>goto</b> <a class="lbl" href="#97err" data-ref="97err">err</a>;</td></tr>
+<tr><th id="728">728</th><td>  }</td></tr>
+<tr><th id="729">729</th><td></td></tr>
+<tr><th id="730">730</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_rand" title='BN_rand' data-ref="BN_rand">BN_rand</a>(<a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, <a class="local col0 ref" href="#90bits" title='bits' data-ref="90bits">bits</a>, <var>0</var>, <var>1</var>)) {</td></tr>
+<tr><th id="731">731</th><td>    <b>goto</b> <a class="lbl" href="#97err" data-ref="97err">err</a>;</td></tr>
+<tr><th id="732">732</th><td>  }</td></tr>
+<tr><th id="733">733</th><td></td></tr>
+<tr><th id="734">734</th><td>  <i>/* we need ((rnd-rem) % add) == 0 */</i></td></tr>
+<tr><th id="735">735</th><td></td></tr>
+<tr><th id="736">736</th><td>  <b>if</b> (!<a class="macro" href="../../include/openssl/bn.h.html#504" title="BN_div(((void*)0), (t1), (rnd), (add), (ctx))" data-ref="_M/BN_mod">BN_mod</a>(<a class="local col6 ref" href="#96t1" title='t1' data-ref="96t1">t1</a>, <a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, <a class="local col1 ref" href="#91add" title='add' data-ref="91add">add</a>, <a class="local col3 ref" href="#93ctx" title='ctx' data-ref="93ctx">ctx</a>)) {</td></tr>
+<tr><th id="737">737</th><td>    <b>goto</b> <a class="lbl" href="#97err" data-ref="97err">err</a>;</td></tr>
+<tr><th id="738">738</th><td>  }</td></tr>
+<tr><th id="739">739</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_sub" title='BN_sub' data-ref="BN_sub">BN_sub</a>(<a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, <a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, <a class="local col6 ref" href="#96t1" title='t1' data-ref="96t1">t1</a>)) {</td></tr>
+<tr><th id="740">740</th><td>    <b>goto</b> <a class="lbl" href="#97err" data-ref="97err">err</a>;</td></tr>
+<tr><th id="741">741</th><td>  }</td></tr>
+<tr><th id="742">742</th><td>  <b>if</b> (<a class="local col2 ref" href="#92rem" title='rem' data-ref="92rem">rem</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="743">743</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add_word" title='BN_add_word' data-ref="BN_add_word">BN_add_word</a>(<a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, <var>1</var>)) {</td></tr>
+<tr><th id="744">744</th><td>      <b>goto</b> <a class="lbl" href="#97err" data-ref="97err">err</a>;</td></tr>
+<tr><th id="745">745</th><td>    }</td></tr>
+<tr><th id="746">746</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="747">747</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add" title='BN_add' data-ref="BN_add">BN_add</a>(<a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, <a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, <a class="local col2 ref" href="#92rem" title='rem' data-ref="92rem">rem</a>)) {</td></tr>
+<tr><th id="748">748</th><td>      <b>goto</b> <a class="lbl" href="#97err" data-ref="97err">err</a>;</td></tr>
+<tr><th id="749">749</th><td>    }</td></tr>
+<tr><th id="750">750</th><td>  }</td></tr>
+<tr><th id="751">751</th><td>  <i>/* we now have a random number 'rand' to test. */</i></td></tr>
+<tr><th id="752">752</th><td></td></tr>
+<tr><th id="753">753</th><td><dfn class="lbl" id="98loop" data-ref="98loop">loop</dfn>:</td></tr>
+<tr><th id="754">754</th><td>  <b>for</b> (<a class="local col4 ref" href="#94i" title='i' data-ref="94i">i</a> = <var>1</var>; <a class="local col4 ref" href="#94i" title='i' data-ref="94i">i</a> &lt; <a class="macro" href="#139" title="2048" data-ref="_M/NUMPRIMES">NUMPRIMES</a>; <a class="local col4 ref" href="#94i" title='i' data-ref="94i">i</a>++) {</td></tr>
+<tr><th id="755">755</th><td>    <i>/* check that rnd is a prime */</i></td></tr>
+<tr><th id="756">756</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_mod_word" title='BN_mod_word' data-ref="BN_mod_word">BN_mod_word</a>(<a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, (<a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a>)<a class="tu ref" href="#primes" title='primes' data-use='r' data-ref="primes">primes</a>[<a class="local col4 ref" href="#94i" title='i' data-ref="94i">i</a>]) &lt;= <var>1</var>) {</td></tr>
+<tr><th id="757">757</th><td>      <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add" title='BN_add' data-ref="BN_add">BN_add</a>(<a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, <a class="local col9 ref" href="#89rnd" title='rnd' data-ref="89rnd">rnd</a>, <a class="local col1 ref" href="#91add" title='add' data-ref="91add">add</a>)) {</td></tr>
+<tr><th id="758">758</th><td>        <b>goto</b> <a class="lbl" href="#97err" data-ref="97err">err</a>;</td></tr>
+<tr><th id="759">759</th><td>      }</td></tr>
+<tr><th id="760">760</th><td>      <b>goto</b> <a class="lbl" href="#98loop" data-ref="98loop">loop</a>;</td></tr>
+<tr><th id="761">761</th><td>    }</td></tr>
+<tr><th id="762">762</th><td>  }</td></tr>
+<tr><th id="763">763</th><td></td></tr>
+<tr><th id="764">764</th><td>  <a class="local col5 ref" href="#95ret" title='ret' data-ref="95ret">ret</a> = <var>1</var>;</td></tr>
+<tr><th id="765">765</th><td></td></tr>
+<tr><th id="766">766</th><td><dfn class="lbl" id="97err" data-ref="97err">err</dfn>:</td></tr>
+<tr><th id="767">767</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_end" title='BN_CTX_end' data-ref="BN_CTX_end">BN_CTX_end</a>(<a class="local col3 ref" href="#93ctx" title='ctx' data-ref="93ctx">ctx</a>);</td></tr>
+<tr><th id="768">768</th><td>  <b>return</b> <a class="local col5 ref" href="#95ret" title='ret' data-ref="95ret">ret</a>;</td></tr>
+<tr><th id="769">769</th><td>}</td></tr>
+<tr><th id="770">770</th><td></td></tr>
+<tr><th id="771">771</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="probable_prime_dh_safe" title='probable_prime_dh_safe' data-type='int probable_prime_dh_safe(BIGNUM * p, int bits, const BIGNUM * padd, const BIGNUM * rem, BN_CTX * ctx)' data-ref="probable_prime_dh_safe">probable_prime_dh_safe</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="99p" title='p' data-type='BIGNUM *' data-ref="99p">p</dfn>, <em>int</em> <dfn class="local col0 decl" id="100bits" title='bits' data-type='int' data-ref="100bits">bits</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="101padd" title='padd' data-type='const BIGNUM *' data-ref="101padd">padd</dfn>,</td></tr>
+<tr><th id="772">772</th><td>                                  <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="102rem" title='rem' data-type='const BIGNUM *' data-ref="102rem">rem</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col3 decl" id="103ctx" title='ctx' data-type='BN_CTX *' data-ref="103ctx">ctx</dfn>) {</td></tr>
+<tr><th id="773">773</th><td>  <em>int</em> <dfn class="local col4 decl" id="104i" title='i' data-type='int' data-ref="104i">i</dfn>, <dfn class="local col5 decl" id="105ret" title='ret' data-type='int' data-ref="105ret">ret</dfn> = <var>0</var>;</td></tr>
+<tr><th id="774">774</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col6 decl" id="106t1" title='t1' data-type='BIGNUM *' data-ref="106t1">t1</dfn>, *<dfn class="local col7 decl" id="107qadd" title='qadd' data-type='BIGNUM *' data-ref="107qadd">qadd</dfn>, *<dfn class="local col8 decl" id="108q" title='q' data-type='BIGNUM *' data-ref="108q">q</dfn>;</td></tr>
+<tr><th id="775">775</th><td></td></tr>
+<tr><th id="776">776</th><td>  <a class="local col0 ref" href="#100bits" title='bits' data-ref="100bits">bits</a>--;</td></tr>
+<tr><th id="777">777</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_start" title='BN_CTX_start' data-ref="BN_CTX_start">BN_CTX_start</a>(<a class="local col3 ref" href="#103ctx" title='ctx' data-ref="103ctx">ctx</a>);</td></tr>
+<tr><th id="778">778</th><td>  <a class="local col6 ref" href="#106t1" title='t1' data-ref="106t1">t1</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_get" title='BN_CTX_get' data-ref="BN_CTX_get">BN_CTX_get</a>(<a class="local col3 ref" href="#103ctx" title='ctx' data-ref="103ctx">ctx</a>);</td></tr>
+<tr><th id="779">779</th><td>  <a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_get" title='BN_CTX_get' data-ref="BN_CTX_get">BN_CTX_get</a>(<a class="local col3 ref" href="#103ctx" title='ctx' data-ref="103ctx">ctx</a>);</td></tr>
+<tr><th id="780">780</th><td>  <a class="local col7 ref" href="#107qadd" title='qadd' data-ref="107qadd">qadd</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_get" title='BN_CTX_get' data-ref="BN_CTX_get">BN_CTX_get</a>(<a class="local col3 ref" href="#103ctx" title='ctx' data-ref="103ctx">ctx</a>);</td></tr>
+<tr><th id="781">781</th><td>  <b>if</b> (<a class="local col7 ref" href="#107qadd" title='qadd' data-ref="107qadd">qadd</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="782">782</th><td>    <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="783">783</th><td>  }</td></tr>
+<tr><th id="784">784</th><td></td></tr>
+<tr><th id="785">785</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_rshift1" title='BN_rshift1' data-ref="BN_rshift1">BN_rshift1</a>(<a class="local col7 ref" href="#107qadd" title='qadd' data-ref="107qadd">qadd</a>, <a class="local col1 ref" href="#101padd" title='padd' data-ref="101padd">padd</a>)) {</td></tr>
+<tr><th id="786">786</th><td>    <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="787">787</th><td>  }</td></tr>
+<tr><th id="788">788</th><td></td></tr>
+<tr><th id="789">789</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_rand" title='BN_rand' data-ref="BN_rand">BN_rand</a>(<a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, <a class="local col0 ref" href="#100bits" title='bits' data-ref="100bits">bits</a>, <var>0</var>, <var>1</var>)) {</td></tr>
+<tr><th id="790">790</th><td>    <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="791">791</th><td>  }</td></tr>
+<tr><th id="792">792</th><td></td></tr>
+<tr><th id="793">793</th><td>  <i>/* we need ((rnd-rem) % add) == 0 */</i></td></tr>
+<tr><th id="794">794</th><td>  <b>if</b> (!<a class="macro" href="../../include/openssl/bn.h.html#504" title="BN_div(((void*)0), (t1), (q), (qadd), (ctx))" data-ref="_M/BN_mod">BN_mod</a>(<a class="local col6 ref" href="#106t1" title='t1' data-ref="106t1">t1</a>, <a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, <a class="local col7 ref" href="#107qadd" title='qadd' data-ref="107qadd">qadd</a>, <a class="local col3 ref" href="#103ctx" title='ctx' data-ref="103ctx">ctx</a>)) {</td></tr>
+<tr><th id="795">795</th><td>    <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="796">796</th><td>  }</td></tr>
+<tr><th id="797">797</th><td></td></tr>
+<tr><th id="798">798</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_sub" title='BN_sub' data-ref="BN_sub">BN_sub</a>(<a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, <a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, <a class="local col6 ref" href="#106t1" title='t1' data-ref="106t1">t1</a>)) {</td></tr>
+<tr><th id="799">799</th><td>    <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="800">800</th><td>  }</td></tr>
+<tr><th id="801">801</th><td></td></tr>
+<tr><th id="802">802</th><td>  <b>if</b> (<a class="local col2 ref" href="#102rem" title='rem' data-ref="102rem">rem</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="803">803</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add_word" title='BN_add_word' data-ref="BN_add_word">BN_add_word</a>(<a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, <var>1</var>)) {</td></tr>
+<tr><th id="804">804</th><td>      <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="805">805</th><td>    }</td></tr>
+<tr><th id="806">806</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="807">807</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_rshift1" title='BN_rshift1' data-ref="BN_rshift1">BN_rshift1</a>(<a class="local col6 ref" href="#106t1" title='t1' data-ref="106t1">t1</a>, <a class="local col2 ref" href="#102rem" title='rem' data-ref="102rem">rem</a>)) {</td></tr>
+<tr><th id="808">808</th><td>      <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="809">809</th><td>    }</td></tr>
+<tr><th id="810">810</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add" title='BN_add' data-ref="BN_add">BN_add</a>(<a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, <a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, <a class="local col6 ref" href="#106t1" title='t1' data-ref="106t1">t1</a>)) {</td></tr>
+<tr><th id="811">811</th><td>      <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="812">812</th><td>    }</td></tr>
+<tr><th id="813">813</th><td>  }</td></tr>
+<tr><th id="814">814</th><td></td></tr>
+<tr><th id="815">815</th><td>  <i>/* we now have a random number 'rand' to test. */</i></td></tr>
+<tr><th id="816">816</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_lshift1" title='BN_lshift1' data-ref="BN_lshift1">BN_lshift1</a>(<a class="local col9 ref" href="#99p" title='p' data-ref="99p">p</a>, <a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>)) {</td></tr>
+<tr><th id="817">817</th><td>    <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="818">818</th><td>  }</td></tr>
+<tr><th id="819">819</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add_word" title='BN_add_word' data-ref="BN_add_word">BN_add_word</a>(<a class="local col9 ref" href="#99p" title='p' data-ref="99p">p</a>, <var>1</var>)) {</td></tr>
+<tr><th id="820">820</th><td>    <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="821">821</th><td>  }</td></tr>
+<tr><th id="822">822</th><td></td></tr>
+<tr><th id="823">823</th><td><dfn class="lbl" id="110loop" data-ref="110loop">loop</dfn>:</td></tr>
+<tr><th id="824">824</th><td>  <b>for</b> (<a class="local col4 ref" href="#104i" title='i' data-ref="104i">i</a> = <var>1</var>; <a class="local col4 ref" href="#104i" title='i' data-ref="104i">i</a> &lt; <a class="macro" href="#139" title="2048" data-ref="_M/NUMPRIMES">NUMPRIMES</a>; <a class="local col4 ref" href="#104i" title='i' data-ref="104i">i</a>++) {</td></tr>
+<tr><th id="825">825</th><td>    <i>/* check that p and q are prime */</i></td></tr>
+<tr><th id="826">826</th><td>    <i>/* check that for p and q</i></td></tr>
+<tr><th id="827">827</th><td><i>     * gcd(p-1,primes) == 1 (except for 2) */</i></td></tr>
+<tr><th id="828">828</th><td>    <b>if</b> ((<a class="ref" href="../../include/openssl/bn.h.html#BN_mod_word" title='BN_mod_word' data-ref="BN_mod_word">BN_mod_word</a>(<a class="local col9 ref" href="#99p" title='p' data-ref="99p">p</a>, (<a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a>)<a class="tu ref" href="#primes" title='primes' data-use='r' data-ref="primes">primes</a>[<a class="local col4 ref" href="#104i" title='i' data-ref="104i">i</a>]) == <var>0</var>) ||</td></tr>
+<tr><th id="829">829</th><td>        (<a class="ref" href="../../include/openssl/bn.h.html#BN_mod_word" title='BN_mod_word' data-ref="BN_mod_word">BN_mod_word</a>(<a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, (<a class="macro" href="../../include/openssl/bn.h.html#149" title="uint64_t" data-ref="_M/BN_ULONG">BN_ULONG</a>)<a class="tu ref" href="#primes" title='primes' data-use='r' data-ref="primes">primes</a>[<a class="local col4 ref" href="#104i" title='i' data-ref="104i">i</a>]) == <var>0</var>)) {</td></tr>
+<tr><th id="830">830</th><td>      <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add" title='BN_add' data-ref="BN_add">BN_add</a>(<a class="local col9 ref" href="#99p" title='p' data-ref="99p">p</a>, <a class="local col9 ref" href="#99p" title='p' data-ref="99p">p</a>, <a class="local col1 ref" href="#101padd" title='padd' data-ref="101padd">padd</a>)) {</td></tr>
+<tr><th id="831">831</th><td>        <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="832">832</th><td>      }</td></tr>
+<tr><th id="833">833</th><td>      <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_add" title='BN_add' data-ref="BN_add">BN_add</a>(<a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, <a class="local col8 ref" href="#108q" title='q' data-ref="108q">q</a>, <a class="local col7 ref" href="#107qadd" title='qadd' data-ref="107qadd">qadd</a>)) {</td></tr>
+<tr><th id="834">834</th><td>        <b>goto</b> <a class="lbl" href="#109err" data-ref="109err">err</a>;</td></tr>
+<tr><th id="835">835</th><td>      }</td></tr>
+<tr><th id="836">836</th><td>      <b>goto</b> <a class="lbl" href="#110loop" data-ref="110loop">loop</a>;</td></tr>
+<tr><th id="837">837</th><td>    }</td></tr>
+<tr><th id="838">838</th><td>  }</td></tr>
+<tr><th id="839">839</th><td></td></tr>
+<tr><th id="840">840</th><td>  <a class="local col5 ref" href="#105ret" title='ret' data-ref="105ret">ret</a> = <var>1</var>;</td></tr>
+<tr><th id="841">841</th><td></td></tr>
+<tr><th id="842">842</th><td><dfn class="lbl" id="109err" data-ref="109err">err</dfn>:</td></tr>
+<tr><th id="843">843</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_end" title='BN_CTX_end' data-ref="BN_CTX_end">BN_CTX_end</a>(<a class="local col3 ref" href="#103ctx" title='ctx' data-ref="103ctx">ctx</a>);</td></tr>
+<tr><th id="844">844</th><td>  <b>return</b> <a class="local col5 ref" href="#105ret" title='ret' data-ref="105ret">ret</a>;</td></tr>
+<tr><th id="845">845</th><td>}</td></tr>
+<tr><th id="846">846</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

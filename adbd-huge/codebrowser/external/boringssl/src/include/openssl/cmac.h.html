@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>cmac.h source code [codebrowser/external/boringssl/src/include/openssl/cmac.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/cmac.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='cmac.h.html'>cmac.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2015, Google Inc.</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Permission to use, copy, modify, and/or distribute this software for any</i></td></tr>
+<tr><th id="4">4</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="5">5</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="8">8</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="9">9</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY</i></td></tr>
+<tr><th id="10">10</th><td><i> * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION</i></td></tr>
+<tr><th id="12">12</th><td><i> * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN</i></td></tr>
+<tr><th id="13">13</th><td><i> * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */</i></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#<span data-ppcond="15">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_CMAC_H">OPENSSL_HEADER_CMAC_H</span></u></td></tr>
+<tr><th id="16">16</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_CMAC_H" data-ref="_M/OPENSSL_HEADER_CMAC_H">OPENSSL_HEADER_CMAC_H</dfn></u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#<span data-ppcond="20">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="21">21</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="22">22</th><td><u>#<span data-ppcond="20">endif</span></u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><i>/* CMAC.</i></td></tr>
+<tr><th id="26">26</th><td><i> *</i></td></tr>
+<tr><th id="27">27</th><td><i> * CMAC is a MAC based on AES-CBC and defined in</i></td></tr>
+<tr><th id="28">28</th><td><i> * <a href="https://tools.ietf.org/html/rfc4493#section-2.3">https://tools.ietf.org/html/rfc4493#section-2.3</a>. */</i></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><i>/* One-shot functions. */</i></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><i>/* AES_CMAC calculates the 16-byte, CMAC authenticator of |in_len| bytes of</i></td></tr>
+<tr><th id="34">34</th><td><i> * |in| and writes it to |out|. The |key_len| may be 16 or 32 bytes to select</i></td></tr>
+<tr><th id="35">35</th><td><i> * between AES-128 and AES-256. It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="36">36</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <a class="decl" href="../../crypto/cmac/cmac.c.html#AES_CMAC" title='AES_CMAC' data-ref="AES_CMAC" id="AES_CMAC">AES_CMAC</a>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col1 decl" id="1out" title='out' data-type='uint8_t *' data-ref="1out">out</dfn>[<var>16</var>], <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col2 decl" id="2key" title='key' data-type='const uint8_t *' data-ref="2key">key</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="3key_len" title='key_len' data-type='size_t' data-ref="3key_len">key_len</dfn>,</td></tr>
+<tr><th id="37">37</th><td>                            <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="4in" title='in' data-type='const uint8_t *' data-ref="4in">in</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="5in_len" title='in_len' data-type='size_t' data-ref="5in_len">in_len</dfn>);</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><i>/* Incremental interface. */</i></td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><i>/* CMAC_CTX_new allocates a fresh |CMAC_CTX| and returns it, or NULL on</i></td></tr>
+<tr><th id="43">43</th><td><i> * error. */</i></td></tr>
+<tr><th id="44">44</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<a class="decl" href="../../crypto/cmac/cmac.c.html#CMAC_CTX_new" title='CMAC_CTX_new' data-ref="CMAC_CTX_new" id="CMAC_CTX_new">CMAC_CTX_new</a>(<em>void</em>);</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><i>/* CMAC_CTX_free frees a |CMAC_CTX|. */</i></td></tr>
+<tr><th id="47">47</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <a class="decl" href="../../crypto/cmac/cmac.c.html#CMAC_CTX_free" title='CMAC_CTX_free' data-ref="CMAC_CTX_free" id="CMAC_CTX_free">CMAC_CTX_free</a>(<a class="typedef" href="base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col6 decl" id="6ctx" title='ctx' data-type='CMAC_CTX *' data-ref="6ctx">ctx</dfn>);</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><i>/* CMAC_Init configures |ctx| to use the given |key| and |cipher|. The CMAC RFC</i></td></tr>
+<tr><th id="50">50</th><td><i> * only specifies the use of AES-128 thus |key_len| should be 16 and |cipher|</i></td></tr>
+<tr><th id="51">51</th><td><i> * should be |EVP_aes_128_cbc()|. However, this implementation also supports</i></td></tr>
+<tr><th id="52">52</th><td><i> * AES-256 by setting |key_len| to 32 and |cipher| to |EVP_aes_256_cbc()|. The</i></td></tr>
+<tr><th id="53">53</th><td><i> * |engine| argument is ignored.</i></td></tr>
+<tr><th id="54">54</th><td><i> *</i></td></tr>
+<tr><th id="55">55</th><td><i> * It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="56">56</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <a class="decl" href="../../crypto/cmac/cmac.c.html#CMAC_Init" title='CMAC_Init' data-ref="CMAC_Init" id="CMAC_Init">CMAC_Init</a>(<a class="typedef" href="base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col7 decl" id="7ctx" title='ctx' data-type='CMAC_CTX *' data-ref="7ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col8 decl" id="8key" title='key' data-type='const void *' data-ref="8key">key</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="9key_len" title='key_len' data-type='size_t' data-ref="9key_len">key_len</dfn>,</td></tr>
+<tr><th id="57">57</th><td>                             <em>const</em> <a class="typedef" href="base.h.html#EVP_CIPHER" title='EVP_CIPHER' data-type='struct evp_cipher_st' data-ref="EVP_CIPHER">EVP_CIPHER</a> *<dfn class="local col0 decl" id="10cipher" title='cipher' data-type='const EVP_CIPHER *' data-ref="10cipher">cipher</dfn>, <a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> *<dfn class="local col1 decl" id="11engine" title='engine' data-type='ENGINE *' data-ref="11engine">engine</dfn>);</td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><i>/* CMAC_Reset resets |ctx| so that a fresh message can be authenticated. */</i></td></tr>
+<tr><th id="61">61</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <a class="decl" href="../../crypto/cmac/cmac.c.html#CMAC_Reset" title='CMAC_Reset' data-ref="CMAC_Reset" id="CMAC_Reset">CMAC_Reset</a>(<a class="typedef" href="base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col2 decl" id="12ctx" title='ctx' data-type='CMAC_CTX *' data-ref="12ctx">ctx</dfn>);</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><i>/* CMAC_Update processes |in_len| bytes of message from |in|. It returns one on</i></td></tr>
+<tr><th id="64">64</th><td><i> * success or zero on error. */</i></td></tr>
+<tr><th id="65">65</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <a class="decl" href="../../crypto/cmac/cmac.c.html#CMAC_Update" title='CMAC_Update' data-ref="CMAC_Update" id="CMAC_Update">CMAC_Update</a>(<a class="typedef" href="base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col3 decl" id="13ctx" title='ctx' data-type='CMAC_CTX *' data-ref="13ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="14in" title='in' data-type='const uint8_t *' data-ref="14in">in</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="15in_len" title='in_len' data-type='size_t' data-ref="15in_len">in_len</dfn>);</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><i>/* CMAC_Final sets |*out_len| to 16 and, if |out| is not NULL, writes 16 bytes</i></td></tr>
+<tr><th id="68">68</th><td><i> * of authenticator to it. It returns one on success or zero on error. */</i></td></tr>
+<tr><th id="69">69</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <a class="decl" href="../../crypto/cmac/cmac.c.html#CMAC_Final" title='CMAC_Final' data-ref="CMAC_Final" id="CMAC_Final">CMAC_Final</a>(<a class="typedef" href="base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col6 decl" id="16ctx" title='ctx' data-type='CMAC_CTX *' data-ref="16ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="17out" title='out' data-type='uint8_t *' data-ref="17out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col8 decl" id="18out_len" title='out_len' data-type='size_t *' data-ref="18out_len">out_len</dfn>);</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><u>#<span data-ppcond="72">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="73">73</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="74">74</th><td><u>#<span data-ppcond="72">endif</span></u></td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><u>#<span data-ppcond="15">endif</span>  /* OPENSSL_HEADER_CMAC_H */</u></td></tr>
+<tr><th id="77">77</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../crypto/cmac/cmac.c.html'>codebrowser/external/boringssl/src/crypto/cmac/cmac.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

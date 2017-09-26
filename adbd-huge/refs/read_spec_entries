@@ -1,0 +1,19 @@
+<dec f='codebrowser/external/libselinux/src/label_internal.h' l='91' type='int read_spec_entries(char * line_buf, const char ** errbuf, int num_args)'/>
+<doc f='codebrowser/external/libselinux/src/label_internal.h' l='87'>/*
+ * The read_spec_entries function may be used to
+ * replace sscanf to read entries from spec files.
+ */</doc>
+<use f='codebrowser/external/libselinux/src/label_android_property.c' l='94' u='c' c='process_line'/>
+<use f='codebrowser/external/libselinux/src/label_file.h' l='396' u='c' c='process_line'/>
+<def f='codebrowser/external/libselinux/src/label_support.c' l='70' ll='117' type='int read_spec_entries(char * line_buf, const char ** errbuf, int num_args)'/>
+<doc f='codebrowser/external/libselinux/src/label_support.c' l='59'>/*
+ * line_buf - Buffer containing the spec entries .
+ * errbuf   - Double pointer used for passing back specific error messages.
+ * num_args - The number of spec parameter entries to process.
+ * ...      - A &apos;char **spec_entry&apos; for each parameter.
+ * returns  - The number of items processed. On error, it returns -1 with errno
+ *            set and may set errbuf to a specific error message.
+ *
+ * This function calls read_spec_entry() to do the actual string processing.
+ * As such, can return anything from that function as well.
+ */</doc>

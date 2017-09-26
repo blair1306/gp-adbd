@@ -1,0 +1,14 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/x509v3.h' l='669' type='int X509_check_issued(X509 * issuer, X509 * subject)'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509/x509_vfy.c' l='480' u='c' c='check_issued'/>
+<def f='codebrowser/external/boringssl/src/crypto/x509v3/v3_purp.c' l='739' ll='762' type='int X509_check_issued(X509 * issuer, X509 * subject)'/>
+<doc f='codebrowser/external/boringssl/src/crypto/x509v3/v3_purp.c' l='727'>/* Various checks to see if one certificate issued the second.
+ * This can be used to prune a set of possible issuer certificates
+ * which have been looked up using some simple method such as by
+ * subject name.
+ * These are:
+ * 1. Check issuer_name(subject) == subject_name(issuer)
+ * 2. If akid(subject) exists check it matches issuer
+ * 3. If key_usage(issuer) exists check it supports certificate signing
+ * returns 0 for OK, positive for reason for mismatch, reasons match
+ * codes for X509_verify_cert()
+ */</doc>

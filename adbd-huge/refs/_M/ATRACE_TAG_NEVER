@@ -1,0 +1,19 @@
+<dec f='codebrowser/system/core/include/cutils/trace.h' l='51'/>
+<doc f='codebrowser/system/core/include/cutils/trace.h' l='33'>/**
+ * The ATRACE_TAG macro can be defined before including this header to trace
+ * using one of the tags defined below.  It must be defined to one of the
+ * following ATRACE_TAG_* macros.  The trace tag is used to filter tracing in
+ * userland to avoid some of the runtime cost of tracing when it is not desired.
+ *
+ * Defining ATRACE_TAG to be ATRACE_TAG_ALWAYS will result in the tracing always
+ * being enabled - this should ONLY be done for debug code, as userland tracing
+ * has a performance cost even when the trace is not being recorded.  Defining
+ * ATRACE_TAG to be ATRACE_TAG_NEVER or leaving ATRACE_TAG undefined will result
+ * in the tracing always being disabled.
+ *
+ * ATRACE_TAG_HAL should be bitwise ORed with the relevant tags for tracing
+ * within a hardware module.  For example a camera hardware module would set:
+ * #define ATRACE_TAG  (ATRACE_TAG_CAMERA | ATRACE_TAG_HAL)
+ *
+ * Keep these in sync with frameworks/base/core/java/android/os/Trace.java.
+ */</doc>

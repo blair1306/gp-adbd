@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>hashmap.h source code [codebrowser/system/core/include/cutils/hashmap.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/include/cutils/hashmap.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>system</a>/<a href='../..'>core</a>/<a href='..'>include</a>/<a href='./'>cutils</a>/<a href='hashmap.h.html'>hashmap.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2007 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="18">18</th><td><i class="doc"> * Hash map.</i></td></tr>
+<tr><th id="19">19</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#<span data-ppcond="21">ifndef</span> <span class="macro" data-ref="_M/__HASHMAP_H">__HASHMAP_H</span></u></td></tr>
+<tr><th id="22">22</th><td><u>#define <dfn class="macro" id="_M/__HASHMAP_H" data-ref="_M/__HASHMAP_H">__HASHMAP_H</dfn></u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><u>#include &lt;stdbool.h&gt;</u></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#<span data-ppcond="27">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="28">28</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="27">endif</span></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><i class="doc">/** A hash map. */</i></td></tr>
+<tr><th id="32">32</th><td><b>typedef</b> <b>struct</b> <a class="type" href="../../libcutils/hashmap.c.html#Hashmap" title='Hashmap' data-ref="Hashmap" id="Hashmap"><a class="type" href="../../libcutils/hashmap.c.html#Hashmap" title='Hashmap' data-ref="Hashmap">Hashmap</a></a> <dfn class="typedef" id="Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</dfn>;</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="35">35</th><td><i class="doc"> * Creates a new hash map. Returns NULL if memory allocation fails.</i></td></tr>
+<tr><th id="36">36</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="37">37</th><td><i class="doc"> * <span class="command">@param</span> <span class="arg">initialCapacity</span> number of expected entries</i></td></tr>
+<tr><th id="38">38</th><td><i class="doc"> * <span class="command">@param</span> <span class="arg">hash</span> function which hashes keys</i></td></tr>
+<tr><th id="39">39</th><td><i class="doc"> * <span class="command">@param</span> <span class="arg">equals</span> function which compares keys for equality</i></td></tr>
+<tr><th id="40">40</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="41">41</th><td><a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <a class="decl" href="../../libcutils/hashmap.c.html#hashmapCreate" title='hashmapCreate' data-ref="hashmapCreate" id="hashmapCreate">hashmapCreate</a>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="1initialCapacity" title='initialCapacity' data-type='size_t' data-ref="1initialCapacity">initialCapacity</dfn>,</td></tr>
+<tr><th id="42">42</th><td>        <em>int</em> (*<dfn class="local col2 decl" id="2hash" title='hash' data-type='int (*)(void *)' data-ref="2hash">hash</dfn>)(<em>void</em>* <dfn class="local col3 decl" id="3key" title='key' data-type='void *' data-ref="3key">key</dfn>), <span class="macro" title="_Bool" data-ref="_M/bool">bool</span> (*<dfn class="local col4 decl" id="4equals" title='equals' data-type='_Bool (*)(void *, void *)' data-ref="4equals">equals</dfn>)(<em>void</em>* <dfn class="local col5 decl" id="5keyA" title='keyA' data-type='void *' data-ref="5keyA">keyA</dfn>, <em>void</em>* <dfn class="local col6 decl" id="6keyB" title='keyB' data-type='void *' data-ref="6keyB">keyB</dfn>));</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="45">45</th><td><i class="doc"> * Frees the hash map. Does not free the keys or values themselves.</i></td></tr>
+<tr><th id="46">46</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="47">47</th><td><em>void</em> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapFree" title='hashmapFree' data-ref="hashmapFree" id="hashmapFree">hashmapFree</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col7 decl" id="7map" title='map' data-type='Hashmap *' data-ref="7map">map</dfn>);</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="50">50</th><td><i class="doc"> * Hashes the memory pointed to by key with the given size. Useful for</i></td></tr>
+<tr><th id="51">51</th><td><i class="doc"> * implementing hash functions.</i></td></tr>
+<tr><th id="52">52</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="53">53</th><td><em>int</em> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapHash" title='hashmapHash' data-ref="hashmapHash" id="hashmapHash">hashmapHash</a>(<em>void</em>* <dfn class="local col8 decl" id="8key" title='key' data-type='void *' data-ref="8key">key</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="9keySize" title='keySize' data-type='size_t' data-ref="9keySize">keySize</dfn>);</td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="56">56</th><td><i class="doc"> * Puts value for the given key in the map. Returns pre-existing value if</i></td></tr>
+<tr><th id="57">57</th><td><i class="doc"> * any.</i></td></tr>
+<tr><th id="58">58</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="59">59</th><td><i class="doc"> * If memory allocation fails, this function returns NULL, the map's size</i></td></tr>
+<tr><th id="60">60</th><td><i class="doc"> * does not increase, and errno is set to ENOMEM.</i></td></tr>
+<tr><th id="61">61</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="62">62</th><td><em>void</em>* <a class="decl" href="../../libcutils/hashmap.c.html#hashmapPut" title='hashmapPut' data-ref="hashmapPut" id="hashmapPut">hashmapPut</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col0 decl" id="10map" title='map' data-type='Hashmap *' data-ref="10map">map</dfn>, <em>void</em>* <dfn class="local col1 decl" id="11key" title='key' data-type='void *' data-ref="11key">key</dfn>, <em>void</em>* <dfn class="local col2 decl" id="12value" title='value' data-type='void *' data-ref="12value">value</dfn>);</td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="65">65</th><td><i class="doc"> * Gets a value from the map. Returns NULL if no entry for the given key is</i></td></tr>
+<tr><th id="66">66</th><td><i class="doc"> * found or if the value itself is NULL.</i></td></tr>
+<tr><th id="67">67</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="68">68</th><td><em>void</em>* <a class="decl" href="../../libcutils/hashmap.c.html#hashmapGet" title='hashmapGet' data-ref="hashmapGet" id="hashmapGet">hashmapGet</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col3 decl" id="13map" title='map' data-type='Hashmap *' data-ref="13map">map</dfn>, <em>void</em>* <dfn class="local col4 decl" id="14key" title='key' data-type='void *' data-ref="14key">key</dfn>);</td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="71">71</th><td><i class="doc"> * Returns true if the map contains an entry for the given key.</i></td></tr>
+<tr><th id="72">72</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="73">73</th><td><span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapContainsKey" title='hashmapContainsKey' data-ref="hashmapContainsKey" id="hashmapContainsKey">hashmapContainsKey</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col5 decl" id="15map" title='map' data-type='Hashmap *' data-ref="15map">map</dfn>, <em>void</em>* <dfn class="local col6 decl" id="16key" title='key' data-type='void *' data-ref="16key">key</dfn>);</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="76">76</th><td><i class="doc"> * Gets the value for a key. If a value is not found, this function gets a </i></td></tr>
+<tr><th id="77">77</th><td><i class="doc"> * value and creates an entry using the given callback.</i></td></tr>
+<tr><th id="78">78</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="79">79</th><td><i class="doc"> * If memory allocation fails, the callback is not called, this function</i></td></tr>
+<tr><th id="80">80</th><td><i class="doc"> * returns NULL, and errno is set to ENOMEM.</i></td></tr>
+<tr><th id="81">81</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="82">82</th><td><em>void</em>* <a class="decl" href="../../libcutils/hashmap.c.html#hashmapMemoize" title='hashmapMemoize' data-ref="hashmapMemoize" id="hashmapMemoize">hashmapMemoize</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col7 decl" id="17map" title='map' data-type='Hashmap *' data-ref="17map">map</dfn>, <em>void</em>* <dfn class="local col8 decl" id="18key" title='key' data-type='void *' data-ref="18key">key</dfn>, </td></tr>
+<tr><th id="83">83</th><td>        <em>void</em>* (*<dfn class="local col9 decl" id="19initialValue" title='initialValue' data-type='void *(*)(void *, void *)' data-ref="19initialValue">initialValue</dfn>)(<em>void</em>* <dfn class="local col0 decl" id="20key" title='key' data-type='void *' data-ref="20key">key</dfn>, <em>void</em>* <dfn class="local col1 decl" id="21context" title='context' data-type='void *' data-ref="21context">context</dfn>), <em>void</em>* <dfn class="local col2 decl" id="22context" title='context' data-type='void *' data-ref="22context">context</dfn>);</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="86">86</th><td><i class="doc"> * Removes an entry from the map. Returns the removed value or NULL if no</i></td></tr>
+<tr><th id="87">87</th><td><i class="doc"> * entry was present.</i></td></tr>
+<tr><th id="88">88</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="89">89</th><td><em>void</em>* <a class="decl" href="../../libcutils/hashmap.c.html#hashmapRemove" title='hashmapRemove' data-ref="hashmapRemove" id="hashmapRemove">hashmapRemove</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col3 decl" id="23map" title='map' data-type='Hashmap *' data-ref="23map">map</dfn>, <em>void</em>* <dfn class="local col4 decl" id="24key" title='key' data-type='void *' data-ref="24key">key</dfn>);</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="92">92</th><td><i class="doc"> * Gets the number of entries in this map.</i></td></tr>
+<tr><th id="93">93</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="94">94</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapSize" title='hashmapSize' data-ref="hashmapSize" id="hashmapSize">hashmapSize</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col5 decl" id="25map" title='map' data-type='Hashmap *' data-ref="25map">map</dfn>);</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="97">97</th><td><i class="doc"> * Invokes the given callback on each entry in the map. Stops iterating if</i></td></tr>
+<tr><th id="98">98</th><td><i class="doc"> * the callback returns false.</i></td></tr>
+<tr><th id="99">99</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="100">100</th><td><em>void</em> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapForEach" title='hashmapForEach' data-ref="hashmapForEach" id="hashmapForEach">hashmapForEach</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col6 decl" id="26map" title='map' data-type='Hashmap *' data-ref="26map">map</dfn>, </td></tr>
+<tr><th id="101">101</th><td>        <span class="macro" title="_Bool" data-ref="_M/bool">bool</span> (*<dfn class="local col7 decl" id="27callback" title='callback' data-type='_Bool (*)(void *, void *, void *)' data-ref="27callback">callback</dfn>)(<em>void</em>* <dfn class="local col8 decl" id="28key" title='key' data-type='void *' data-ref="28key">key</dfn>, <em>void</em>* <dfn class="local col9 decl" id="29value" title='value' data-type='void *' data-ref="29value">value</dfn>, <em>void</em>* <dfn class="local col0 decl" id="30context" title='context' data-type='void *' data-ref="30context">context</dfn>),</td></tr>
+<tr><th id="102">102</th><td>        <em>void</em>* <dfn class="local col1 decl" id="31context" title='context' data-type='void *' data-ref="31context">context</dfn>);</td></tr>
+<tr><th id="103">103</th><td></td></tr>
+<tr><th id="104">104</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="105">105</th><td><i class="doc"> * Concurrency support.</i></td></tr>
+<tr><th id="106">106</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="109">109</th><td><i class="doc"> * Locks the hash map so only the current thread can access it.</i></td></tr>
+<tr><th id="110">110</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="111">111</th><td><em>void</em> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapLock" title='hashmapLock' data-ref="hashmapLock" id="hashmapLock">hashmapLock</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col2 decl" id="32map" title='map' data-type='Hashmap *' data-ref="32map">map</dfn>);</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="114">114</th><td><i class="doc"> * Unlocks the hash map so other threads can access it.</i></td></tr>
+<tr><th id="115">115</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="116">116</th><td><em>void</em> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapUnlock" title='hashmapUnlock' data-ref="hashmapUnlock" id="hashmapUnlock">hashmapUnlock</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col3 decl" id="33map" title='map' data-type='Hashmap *' data-ref="33map">map</dfn>);</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="119">119</th><td><i class="doc"> * Key utilities.</i></td></tr>
+<tr><th id="120">120</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="123">123</th><td><i class="doc"> * Hashes int keys. 'key' is a pointer to int.</i></td></tr>
+<tr><th id="124">124</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="125">125</th><td><em>int</em> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapIntHash" title='hashmapIntHash' data-ref="hashmapIntHash" id="hashmapIntHash">hashmapIntHash</a>(<em>void</em>* <dfn class="local col4 decl" id="34key" title='key' data-type='void *' data-ref="34key">key</dfn>);</td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="128">128</th><td><i class="doc"> * Compares two int keys for equality.</i></td></tr>
+<tr><th id="129">129</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="130">130</th><td><span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapIntEquals" title='hashmapIntEquals' data-ref="hashmapIntEquals" id="hashmapIntEquals">hashmapIntEquals</a>(<em>void</em>* <dfn class="local col5 decl" id="35keyA" title='keyA' data-type='void *' data-ref="35keyA">keyA</dfn>, <em>void</em>* <dfn class="local col6 decl" id="36keyB" title='keyB' data-type='void *' data-ref="36keyB">keyB</dfn>);</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="133">133</th><td><i class="doc"> * For debugging.</i></td></tr>
+<tr><th id="134">134</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="137">137</th><td><i class="doc"> * Gets current capacity.</i></td></tr>
+<tr><th id="138">138</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="139">139</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapCurrentCapacity" title='hashmapCurrentCapacity' data-ref="hashmapCurrentCapacity" id="hashmapCurrentCapacity">hashmapCurrentCapacity</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col7 decl" id="37map" title='map' data-type='Hashmap *' data-ref="37map">map</dfn>);</td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="142">142</th><td><i class="doc"> * Counts the number of entry collisions.</i></td></tr>
+<tr><th id="143">143</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="144">144</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="../../libcutils/hashmap.c.html#hashmapCountCollisions" title='hashmapCountCollisions' data-ref="hashmapCountCollisions" id="hashmapCountCollisions">hashmapCountCollisions</a>(<a class="typedef" href="#Hashmap" title='Hashmap' data-type='struct Hashmap' data-ref="Hashmap">Hashmap</a>* <dfn class="local col8 decl" id="38map" title='map' data-type='Hashmap *' data-ref="38map">map</dfn>);</td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td><u>#<span data-ppcond="146">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="147">147</th><td>}</td></tr>
+<tr><th id="148">148</th><td><u>#<span data-ppcond="146">endif</span></u></td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><u>#<span data-ppcond="21">endif</span> /* __HASHMAP_H */</u> </td></tr>
+<tr><th id="151">151</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../libcutils/hashmap.c.html'>codebrowser/system/core/libcutils/hashmap.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

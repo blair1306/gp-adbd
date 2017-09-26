@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wait.cpp source code [codebrowser/bionic/libc/bionic/wait.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/wait.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='wait.cpp.html'>wait.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../include/sys/wait.h.html">&lt;sys/wait.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><b>extern</b> <q>"C"</q> <em>int</em> <dfn class="decl" id="__waitid" title='__waitid' data-ref="__waitid">__waitid</dfn>(<a class="typedef" href="../include/sys/wait.h.html#idtype_t" title='idtype_t' data-type='int' data-ref="idtype_t">idtype_t</a> <dfn class="local col1 decl" id="1which" title='which' data-type='idtype_t' data-ref="1which">which</dfn>, <a class="typedef" href="../include/sys/types.h.html#id_t" title='id_t' data-type='__id_t' data-ref="id_t">id_t</a> <dfn class="local col2 decl" id="2id" title='id' data-type='id_t' data-ref="2id">id</dfn>, <a class="typedef" href="../kernel/uapi/asm-generic/siginfo.h.html#siginfo_t" title='siginfo_t' data-type='struct siginfo' data-ref="siginfo_t">siginfo_t</a>* <dfn class="local col3 decl" id="3info" title='info' data-type='siginfo_t *' data-ref="3info">info</dfn>, <em>int</em> <dfn class="local col4 decl" id="4options" title='options' data-type='int' data-ref="4options">options</dfn>, <b>struct</b> <a class="type" href="../kernel/uapi/linux/resource.h.html#rusage" title='rusage' data-ref="rusage">rusage</a>* <dfn class="local col5 decl" id="5ru" title='ru' data-type='struct rusage *' data-ref="5ru">ru</dfn>);</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="decl def" id="wait" title='wait' data-ref="wait">wait</dfn>(<em>int</em>* <dfn class="local col6 decl" id="6status" title='status' data-type='int *' data-ref="6status">status</dfn>) {</td></tr>
+<tr><th id="35">35</th><td>  <b>return</b> <a class="ref" href="../include/sys/wait.h.html#wait4" title='wait4' data-ref="wait4">wait4</a>(-<var>1</var>, <a class="local col6 ref" href="#6status" title='status' data-ref="6status">status</a>, <var>0</var>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="36">36</th><td>}</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="decl def" id="waitpid" title='waitpid' data-ref="waitpid">waitpid</dfn>(<a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col7 decl" id="7pid" title='pid' data-type='pid_t' data-ref="7pid">pid</dfn>, <em>int</em>* <dfn class="local col8 decl" id="8status" title='status' data-type='int *' data-ref="8status">status</dfn>, <em>int</em> <dfn class="local col9 decl" id="9options" title='options' data-type='int' data-ref="9options">options</dfn>) {</td></tr>
+<tr><th id="39">39</th><td>  <b>return</b> <a class="ref" href="../include/sys/wait.h.html#wait4" title='wait4' data-ref="wait4">wait4</a>(<a class="local col7 ref" href="#7pid" title='pid' data-ref="7pid">pid</a>, <a class="local col8 ref" href="#8status" title='status' data-ref="8status">status</a>, <a class="local col9 ref" href="#9options" title='options' data-ref="9options">options</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="40">40</th><td>}</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><em>int</em> <dfn class="decl def" id="waitid" title='waitid' data-ref="waitid">waitid</dfn>(<a class="typedef" href="../include/sys/wait.h.html#idtype_t" title='idtype_t' data-type='int' data-ref="idtype_t">idtype_t</a> <dfn class="local col0 decl" id="10which" title='which' data-type='idtype_t' data-ref="10which">which</dfn>, <a class="typedef" href="../include/sys/types.h.html#id_t" title='id_t' data-type='__id_t' data-ref="id_t">id_t</a> <dfn class="local col1 decl" id="11id" title='id' data-type='id_t' data-ref="11id">id</dfn>, <a class="typedef" href="../kernel/uapi/asm-generic/siginfo.h.html#siginfo_t" title='siginfo_t' data-type='struct siginfo' data-ref="siginfo_t">siginfo_t</a>* <dfn class="local col2 decl" id="12info" title='info' data-type='siginfo_t *' data-ref="12info">info</dfn>, <em>int</em> <dfn class="local col3 decl" id="13options" title='options' data-type='int' data-ref="13options">options</dfn>) {</td></tr>
+<tr><th id="43">43</th><td>  <i>// The system call takes an optional struct rusage that we don't need.</i></td></tr>
+<tr><th id="44">44</th><td>  <b>return</b> <a class="ref" href="#__waitid" title='__waitid' data-ref="__waitid">__waitid</a>(<a class="local col0 ref" href="#10which" title='which' data-ref="10which">which</a>, <a class="local col1 ref" href="#11id" title='id' data-ref="11id">id</a>, <a class="local col2 ref" href="#12info" title='info' data-ref="12info">info</a>, <a class="local col3 ref" href="#13options" title='options' data-ref="13options">options</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="45">45</th><td>}</td></tr>
+<tr><th id="46">46</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

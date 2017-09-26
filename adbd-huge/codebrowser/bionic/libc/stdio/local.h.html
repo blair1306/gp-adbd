@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>local.h source code [codebrowser/bionic/libc/stdio/local.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/stdio/local.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>stdio</a>/<a href='local.h.html'>local.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$OpenBSD: local.h,v 1.12 2005/10/10 17:37:44 espie Exp $	*/</i></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><i>/*-</i></td></tr>
+<tr><th id="4">4</th><td><i> * Copyright (c) 1990, 1993</i></td></tr>
+<tr><th id="5">5</th><td><i> *	The Regents of the University of California.  All rights reserved.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * This code is derived from software contributed to Berkeley by</i></td></tr>
+<tr><th id="8">8</th><td><i> * Chris Torek.</i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="11">11</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="12">12</th><td><i> * are met:</i></td></tr>
+<tr><th id="13">13</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="14">14</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="15">15</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="16">16</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="17">17</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="18">18</th><td><i> * 3. Neither the name of the University nor the names of its contributors</i></td></tr>
+<tr><th id="19">19</th><td><i> *    may be used to endorse or promote products derived from this software</i></td></tr>
+<tr><th id="20">20</th><td><i> *    without specific prior written permission.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND</i></td></tr>
+<tr><th id="23">23</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="24">24</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="25">25</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="26">26</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="27">27</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="28">28</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="29">29</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="30">30</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="31">31</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="32">32</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="33">33</th><td><i> */</i></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><u>#<span data-ppcond="35">ifndef</span> <span class="macro" data-ref="_M/__BIONIC_STDIO_LOCAL_H__">__BIONIC_STDIO_LOCAL_H__</span></u></td></tr>
+<tr><th id="36">36</th><td><u>#define <dfn class="macro" id="_M/__BIONIC_STDIO_LOCAL_H__" data-ref="_M/__BIONIC_STDIO_LOCAL_H__">__BIONIC_STDIO_LOCAL_H__</dfn></u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#include <a href="../include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="39">39</th><td><u>#include &lt;stdbool.h&gt;</u></td></tr>
+<tr><th id="40">40</th><td><u>#include <a href="../include/wchar.h.html">&lt;wchar.h&gt;</a></u></td></tr>
+<tr><th id="41">41</th><td><u>#include <a href="wcio.h.html">"wcio.h"</a></u></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><i>/*</i></td></tr>
+<tr><th id="44">44</th><td><i> * Information local to this implementation of stdio,</i></td></tr>
+<tr><th id="45">45</th><td><i> * in particular, macros and private variables.</i></td></tr>
+<tr><th id="46">46</th><td><i> */</i></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><a class="macro" href="../include/sys/cdefs.h.html#85" title="extern &quot;C&quot; {" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td><b>struct</b> <dfn class="type def" id="__sbuf" title='__sbuf' data-ref="__sbuf">__sbuf</dfn> {</td></tr>
+<tr><th id="51">51</th><td>  <em>unsigned</em> <em>char</em>* <dfn class="decl" id="__sbuf::_base" title='__sbuf::_base' data-ref="__sbuf::_base">_base</dfn>;</td></tr>
+<tr><th id="52">52</th><td><u>#<span data-ppcond="52">if</span> defined(<span class="macro" data-ref="_M/__LP64__">__LP64__</span>)</u></td></tr>
+<tr><th id="53">53</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="__sbuf::_size" title='__sbuf::_size' data-ref="__sbuf::_size">_size</dfn>;</td></tr>
+<tr><th id="54">54</th><td><u>#<span data-ppcond="52">else</span></u></td></tr>
+<tr><th id="55">55</th><td>  <em>int</em> _size;</td></tr>
+<tr><th id="56">56</th><td><u>#<span data-ppcond="52">endif</span></u></td></tr>
+<tr><th id="57">57</th><td>};</td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><b>struct</b> <dfn class="type def" id="__sFILE" title='__sFILE' data-ref="__sFILE">__sFILE</dfn> {</td></tr>
+<tr><th id="60">60</th><td>	<em>unsigned</em> <em>char</em> *<dfn class="decl" id="__sFILE::_p" title='__sFILE::_p' data-ref="__sFILE::_p">_p</dfn>;	<i>/* current position in (some) buffer */</i></td></tr>
+<tr><th id="61">61</th><td>	<em>int</em>	<dfn class="decl" id="__sFILE::_r" title='__sFILE::_r' data-ref="__sFILE::_r">_r</dfn>;		<i>/* read space left for getc() */</i></td></tr>
+<tr><th id="62">62</th><td>	<em>int</em>	<dfn class="decl" id="__sFILE::_w" title='__sFILE::_w' data-ref="__sFILE::_w">_w</dfn>;		<i>/* write space left for putc() */</i></td></tr>
+<tr><th id="63">63</th><td><u>#<span data-ppcond="63">if</span> defined(<span class="macro" data-ref="_M/__LP64__">__LP64__</span>)</u></td></tr>
+<tr><th id="64">64</th><td>	<em>int</em>	<dfn class="decl" id="__sFILE::_flags" title='__sFILE::_flags' data-ref="__sFILE::_flags">_flags</dfn>;		<i>/* flags, below; this FILE is free if 0 */</i></td></tr>
+<tr><th id="65">65</th><td>	<em>int</em>	<dfn class="decl" id="__sFILE::_file" title='__sFILE::_file' data-ref="__sFILE::_file">_file</dfn>;		<i>/* fileno, if Unix descriptor, else -1 */</i></td></tr>
+<tr><th id="66">66</th><td><u>#<span data-ppcond="63">else</span></u></td></tr>
+<tr><th id="67">67</th><td>	<em>short</em>	_flags;		<i>/* flags, below; this FILE is free if 0 */</i></td></tr>
+<tr><th id="68">68</th><td>	<em>short</em>	_file;		<i>/* fileno, if Unix descriptor, else -1 */</i></td></tr>
+<tr><th id="69">69</th><td><u>#<span data-ppcond="63">endif</span></u></td></tr>
+<tr><th id="70">70</th><td>	<b>struct</b>	<a class="type" href="#__sbuf" title='__sbuf' data-ref="__sbuf">__sbuf</a> <dfn class="decl" id="__sFILE::_bf" title='__sFILE::_bf' data-ref="__sFILE::_bf">_bf</dfn>;	<i>/* the buffer (at least 1 byte, if !NULL) */</i></td></tr>
+<tr><th id="71">71</th><td>	<em>int</em>	<dfn class="decl" id="__sFILE::_lbfsize" title='__sFILE::_lbfsize' data-ref="__sFILE::_lbfsize">_lbfsize</dfn>;	<i>/* 0 or -_bf._size, for inline putc */</i></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td>	<i>// Function pointers used by `funopen`.</i></td></tr>
+<tr><th id="74">74</th><td><i>	// Note that `_seek` is ignored if `_seek64` (in __sfileext) is set.</i></td></tr>
+<tr><th id="75">75</th><td><i>	// TODO: NetBSD has `funopen2` which corrects the `int`s to `size_t`s.</i></td></tr>
+<tr><th id="76">76</th><td><i>	// TODO: glibc has `fopencookie` which passes the function pointers in a struct.</i></td></tr>
+<tr><th id="77">77</th><td>	<em>void</em>* <dfn class="decl" id="__sFILE::_cookie" title='__sFILE::_cookie' data-ref="__sFILE::_cookie">_cookie</dfn>;	<i>/* cookie passed to io functions */</i></td></tr>
+<tr><th id="78">78</th><td>	<em>int</em> (*<dfn class="decl" id="__sFILE::_close" title='__sFILE::_close' data-ref="__sFILE::_close">_close</dfn>)(<em>void</em>*);</td></tr>
+<tr><th id="79">79</th><td>	<em>int</em> (*<dfn class="decl" id="__sFILE::_read" title='__sFILE::_read' data-ref="__sFILE::_read">_read</dfn>)(<em>void</em>*, <em>char</em>*, <em>int</em>);</td></tr>
+<tr><th id="80">80</th><td>	<a class="typedef" href="../include/stdio.h.html#fpos_t" title='fpos_t' data-type='off_t' data-ref="fpos_t">fpos_t</a> (*<dfn class="decl" id="__sFILE::_seek" title='__sFILE::_seek' data-ref="__sFILE::_seek">_seek</dfn>)(<em>void</em>*, <a class="typedef" href="../include/stdio.h.html#fpos_t" title='fpos_t' data-type='off_t' data-ref="fpos_t">fpos_t</a>, <em>int</em>);</td></tr>
+<tr><th id="81">81</th><td>	<em>int</em> (*<dfn class="decl" id="__sFILE::_write" title='__sFILE::_write' data-ref="__sFILE::_write">_write</dfn>)(<em>void</em>*, <em>const</em> <em>char</em>*, <em>int</em>);</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td>	<i>/* extension data, to avoid further ABI breakage */</i></td></tr>
+<tr><th id="84">84</th><td>	<b>struct</b>	<a class="type" href="#__sbuf" title='__sbuf' data-ref="__sbuf">__sbuf</a> <dfn class="decl" id="__sFILE::_ext" title='__sFILE::_ext' data-ref="__sFILE::_ext">_ext</dfn>;</td></tr>
+<tr><th id="85">85</th><td>	<i>/* data for long sequences of ungetc() */</i></td></tr>
+<tr><th id="86">86</th><td>	<em>unsigned</em> <em>char</em> *<dfn class="decl" id="__sFILE::_up" title='__sFILE::_up' data-ref="__sFILE::_up">_up</dfn>;	<i>/* saved _p when _p is doing ungetc data */</i></td></tr>
+<tr><th id="87">87</th><td>	<em>int</em>	<dfn class="decl" id="__sFILE::_ur" title='__sFILE::_ur' data-ref="__sFILE::_ur">_ur</dfn>;		<i>/* saved _r when _r is counting ungetc data */</i></td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td>	<i>/* tricks to meet minimum requirements even when malloc() fails */</i></td></tr>
+<tr><th id="90">90</th><td>	<em>unsigned</em> <em>char</em> <dfn class="decl" id="__sFILE::_ubuf" title='__sFILE::_ubuf' data-ref="__sFILE::_ubuf">_ubuf</dfn>[<var>3</var>];	<i>/* guarantee an ungetc() buffer */</i></td></tr>
+<tr><th id="91">91</th><td>	<em>unsigned</em> <em>char</em> <dfn class="decl" id="__sFILE::_nbuf" title='__sFILE::_nbuf' data-ref="__sFILE::_nbuf">_nbuf</dfn>[<var>1</var>];	<i>/* guarantee a getc() buffer */</i></td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td>	<i>/* separate buffer for fgetln() when line crosses buffer boundary */</i></td></tr>
+<tr><th id="94">94</th><td>	<b>struct</b>	<a class="type" href="#__sbuf" title='__sbuf' data-ref="__sbuf">__sbuf</a> <dfn class="decl" id="__sFILE::_lb" title='__sFILE::_lb' data-ref="__sFILE::_lb">_lb</dfn>;	<i>/* buffer for fgetln() */</i></td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td>	<i>/* Unix stdio files get aligned to block boundaries on fseek() */</i></td></tr>
+<tr><th id="97">97</th><td>	<em>int</em>	<dfn class="decl" id="__sFILE::_blksize" title='__sFILE::_blksize' data-ref="__sFILE::_blksize">_blksize</dfn>;	<i>/* stat.st_blksize (may be != _bf._size) */</i></td></tr>
+<tr><th id="98">98</th><td></td></tr>
+<tr><th id="99">99</th><td>	<a class="typedef" href="../include/stdio.h.html#fpos_t" title='fpos_t' data-type='off_t' data-ref="fpos_t">fpos_t</a> <dfn class="decl" id="__sFILE::_unused_0" title='__sFILE::_unused_0' data-ref="__sFILE::_unused_0">_unused_0</dfn>; <i>// This was the `_offset` field (see below).</i></td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td>	<i>// Do not add new fields here. (Or remove or change the size of any above.)</i></td></tr>
+<tr><th id="102">102</th><td><i>	// Although bionic currently exports `stdin`, `stdout`, and `stderr` symbols,</i></td></tr>
+<tr><th id="103">103</th><td><i>	// that still hasn't made it to the NDK. All NDK-built apps index directly</i></td></tr>
+<tr><th id="104">104</th><td><i>	// into an array of this struct (which was in &lt;stdio.h&gt; historically), so if</i></td></tr>
+<tr><th id="105">105</th><td><i>	// you need to make any changes, they need to be in the `__sfileext` struct</i></td></tr>
+<tr><th id="106">106</th><td><i>	// below, and accessed via `_EXT`.</i></td></tr>
+<tr><th id="107">107</th><td>};</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><b>struct</b> <dfn class="type def" id="__sfileext" title='__sfileext' data-ref="__sfileext">__sfileext</dfn> {</td></tr>
+<tr><th id="110">110</th><td>  <i>// ungetc buffer.</i></td></tr>
+<tr><th id="111">111</th><td>  <b>struct</b> <a class="type" href="#__sbuf" title='__sbuf' data-ref="__sbuf">__sbuf</a> <dfn class="decl" id="__sfileext::_ub" title='__sfileext::_ub' data-ref="__sfileext::_ub">_ub</dfn>;</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td>  <i>// Wide char io status.</i></td></tr>
+<tr><th id="114">114</th><td>  <b>struct</b> <a class="type" href="wcio.h.html#wchar_io_data" title='wchar_io_data' data-ref="wchar_io_data">wchar_io_data</a> <dfn class="decl" id="__sfileext::_wcio" title='__sfileext::_wcio' data-ref="__sfileext::_wcio">_wcio</dfn>;</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td>  <i>// File lock.</i></td></tr>
+<tr><th id="117">117</th><td>  <a class="typedef" href="../include/pthread.h.html#pthread_mutex_t" title='pthread_mutex_t' data-type='struct pthread_mutex_t' data-ref="pthread_mutex_t">pthread_mutex_t</a> <dfn class="decl" id="__sfileext::_lock" title='__sfileext::_lock' data-ref="__sfileext::_lock">_lock</dfn>;</td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td>  <i>// __fsetlocking support.</i></td></tr>
+<tr><th id="120">120</th><td>  <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="__sfileext::_caller_handles_locking" title='__sfileext::_caller_handles_locking' data-ref="__sfileext::_caller_handles_locking">_caller_handles_locking</dfn>;</td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td>  <i>// Equivalent to `_seek` but for _FILE_OFFSET_BITS=64.</i></td></tr>
+<tr><th id="123">123</th><td><i>  // Callers should use this but fall back to `__sFILE::_seek`.</i></td></tr>
+<tr><th id="124">124</th><td>  <a class="typedef" href="../include/sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a> (*<dfn class="decl" id="__sfileext::_seek64" title='__sfileext::_seek64' data-ref="__sfileext::_seek64">_seek64</dfn>)(<em>void</em>*, <a class="typedef" href="../include/sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <em>int</em>);</td></tr>
+<tr><th id="125">125</th><td>};</td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><i>// Values for `__sFILE::_flags`.</i></td></tr>
+<tr><th id="128">128</th><td><u>#define <dfn class="macro" id="_M/__SLBF" data-ref="_M/__SLBF">__SLBF</dfn> 0x0001  // Line buffered.</u></td></tr>
+<tr><th id="129">129</th><td><u>#define <dfn class="macro" id="_M/__SNBF" data-ref="_M/__SNBF">__SNBF</dfn> 0x0002  // Unbuffered.</u></td></tr>
+<tr><th id="130">130</th><td><i>// RD and WR are never simultaneously asserted: use _SRW instead.</i></td></tr>
+<tr><th id="131">131</th><td><u>#define <dfn class="macro" id="_M/__SRD" data-ref="_M/__SRD">__SRD</dfn>  0x0004  // OK to read.</u></td></tr>
+<tr><th id="132">132</th><td><u>#define <dfn class="macro" id="_M/__SWR" data-ref="_M/__SWR">__SWR</dfn>  0x0008  // OK to write.</u></td></tr>
+<tr><th id="133">133</th><td><u>#define <dfn class="macro" id="_M/__SRW" data-ref="_M/__SRW">__SRW</dfn>  0x0010  // Open for reading &amp; writing.</u></td></tr>
+<tr><th id="134">134</th><td><u>#define <dfn class="macro" id="_M/__SEOF" data-ref="_M/__SEOF">__SEOF</dfn> 0x0020  // Found EOF.</u></td></tr>
+<tr><th id="135">135</th><td><u>#define <dfn class="macro" id="_M/__SERR" data-ref="_M/__SERR">__SERR</dfn> 0x0040  // Found error.</u></td></tr>
+<tr><th id="136">136</th><td><u>#define <dfn class="macro" id="_M/__SMBF" data-ref="_M/__SMBF">__SMBF</dfn> 0x0080  // `_buf` is from malloc.</u></td></tr>
+<tr><th id="137">137</th><td><u>#define <dfn class="macro" id="_M/__SAPP" data-ref="_M/__SAPP">__SAPP</dfn> 0x0100  // fdopen()ed in append mode.</u></td></tr>
+<tr><th id="138">138</th><td><u>#define <dfn class="macro" id="_M/__SSTR" data-ref="_M/__SSTR">__SSTR</dfn> 0x0200  // This is an sprintf/snprintf string.</u></td></tr>
+<tr><th id="139">139</th><td><i>// #define __SOPT 0x0400 --- historical (do fseek() optimization).</i></td></tr>
+<tr><th id="140">140</th><td><i>// #define __SNPT 0x0800 --- historical (do not do fseek() optimization).</i></td></tr>
+<tr><th id="141">141</th><td><i>// #define __SOFF 0x1000 --- historical (set iff _offset is in fact correct).</i></td></tr>
+<tr><th id="142">142</th><td><u>#define <dfn class="macro" id="_M/__SMOD" data-ref="_M/__SMOD">__SMOD</dfn> 0x2000  // true =&gt; fgetln modified _p text.</u></td></tr>
+<tr><th id="143">143</th><td><u>#define <dfn class="macro" id="_M/__SALC" data-ref="_M/__SALC">__SALC</dfn> 0x4000  // Allocate string space dynamically.</u></td></tr>
+<tr><th id="144">144</th><td><u>#define <dfn class="macro" id="_M/__SIGN" data-ref="_M/__SIGN">__SIGN</dfn> 0x8000  // Ignore this file in _fwalk.</u></td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td><i>// TODO: remove remaining references to these obsolete flags.</i></td></tr>
+<tr><th id="147">147</th><td><u>#define <dfn class="macro" id="_M/__SNPT" data-ref="_M/__SNPT">__SNPT</dfn> 0</u></td></tr>
+<tr><th id="148">148</th><td><u>#define <dfn class="macro" id="_M/__SOPT" data-ref="_M/__SOPT">__SOPT</dfn> 0</u></td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><u>#<span data-ppcond="150">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="151">151</th><td><u>#define <dfn class="macro" id="_M/_EXT" data-ref="_M/_EXT">_EXT</dfn>(fp) reinterpret_cast&lt;__sfileext*&gt;((fp)-&gt;_ext._base)</u></td></tr>
+<tr><th id="152">152</th><td><u>#<span data-ppcond="150">else</span></u></td></tr>
+<tr><th id="153">153</th><td><u>#define _EXT(fp) ((struct __sfileext *)((fp)-&gt;_ext._base))</u></td></tr>
+<tr><th id="154">154</th><td><u>#<span data-ppcond="150">endif</span></u></td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td><u>#define <dfn class="macro" id="_M/_UB" data-ref="_M/_UB">_UB</dfn>(fp) _EXT(fp)-&gt;_ub</u></td></tr>
+<tr><th id="157">157</th><td><u>#define <dfn class="macro" id="_M/_FLOCK" data-ref="_M/_FLOCK">_FLOCK</dfn>(fp)  _EXT(fp)-&gt;_lock</u></td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td><u>#define <dfn class="macro" id="_M/_FILEEXT_INIT" data-ref="_M/_FILEEXT_INIT">_FILEEXT_INIT</dfn>(fp) \</u></td></tr>
+<tr><th id="160">160</th><td><u>do { \</u></td></tr>
+<tr><th id="161">161</th><td><u>	_UB(fp)._base = NULL; \</u></td></tr>
+<tr><th id="162">162</th><td><u>	_UB(fp)._size = 0; \</u></td></tr>
+<tr><th id="163">163</th><td><u>	WCIO_INIT(fp); \</u></td></tr>
+<tr><th id="164">164</th><td><u>	pthread_mutexattr_t attr; \</u></td></tr>
+<tr><th id="165">165</th><td><u>	pthread_mutexattr_init(&amp;attr); \</u></td></tr>
+<tr><th id="166">166</th><td><u>	pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_RECURSIVE); \</u></td></tr>
+<tr><th id="167">167</th><td><u>	pthread_mutex_init(&amp;_FLOCK(fp), &amp;attr); \</u></td></tr>
+<tr><th id="168">168</th><td><u>	pthread_mutexattr_destroy(&amp;attr); \</u></td></tr>
+<tr><th id="169">169</th><td><u>	_EXT(fp)-&gt;_caller_handles_locking = false; \</u></td></tr>
+<tr><th id="170">170</th><td><u>} while (0)</u></td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><u>#define <dfn class="macro" id="_M/_FILEEXT_SETUP" data-ref="_M/_FILEEXT_SETUP">_FILEEXT_SETUP</dfn>(f, fext) \</u></td></tr>
+<tr><th id="173">173</th><td><u>do { \</u></td></tr>
+<tr><th id="174">174</th><td><u>	(f)-&gt;_ext._base = (unsigned char *)(fext); \</u></td></tr>
+<tr><th id="175">175</th><td><u>	_FILEEXT_INIT(f); \</u></td></tr>
+<tr><th id="176">176</th><td><u>} while (0)</u></td></tr>
+<tr><th id="177">177</th><td></td></tr>
+<tr><th id="178">178</th><td><i>/*</i></td></tr>
+<tr><th id="179">179</th><td><i> * Android &lt;= KitKat had getc/putc macros in &lt;stdio.h&gt; that referred</i></td></tr>
+<tr><th id="180">180</th><td><i> * to __srget/__swbuf, so those symbols need to be public for LP32</i></td></tr>
+<tr><th id="181">181</th><td><i> * but can be hidden for LP64.</i></td></tr>
+<tr><th id="182">182</th><td><i> */</i></td></tr>
+<tr><th id="183">183</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="__srget" title='__srget' data-ref="__srget">__srget</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a>*);</td></tr>
+<tr><th id="184">184</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="__swbuf" title='__swbuf' data-ref="__swbuf">__swbuf</dfn>(<em>int</em>, <a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a>*);</td></tr>
+<tr><th id="185">185</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="__srefill" title='__srefill' data-ref="__srefill">__srefill</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a>*);</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td><i>/* This was referenced by the apportable middleware for LP32. */</i></td></tr>
+<tr><th id="188">188</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="__swsetup" title='__swsetup' data-ref="__swsetup">__swsetup</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a>*);</td></tr>
+<tr><th id="189">189</th><td></td></tr>
+<tr><th id="190">190</th><td><i>/* These were referenced by a couple of different pieces of middleware and the Crystax NDK. */</i></td></tr>
+<tr><th id="191">191</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="__sflags" title='__sflags' data-ref="__sflags">__sflags</dfn>(<em>const</em> <em>char</em>*, <em>int</em>*);</td></tr>
+<tr><th id="192">192</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a>* <dfn class="decl" id="__sfp" title='__sfp' data-ref="__sfp">__sfp</dfn>(<em>void</em>);</td></tr>
+<tr><th id="193">193</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>void</em> <dfn class="decl" id="__smakebuf" title='__smakebuf' data-ref="__smakebuf">__smakebuf</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a>*);</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><i>/* These are referenced by the Greed for Glory franchise. */</i></td></tr>
+<tr><th id="196">196</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="__sflush" title='__sflush' data-ref="__sflush">__sflush</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *);</td></tr>
+<tr><th id="197">197</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="__sread" title='__sread' data-ref="__sread">__sread</dfn>(<em>void</em> *, <em>char</em> *, <em>int</em>);</td></tr>
+<tr><th id="198">198</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="__swrite" title='__swrite' data-ref="__swrite">__swrite</dfn>(<em>void</em> *, <em>const</em> <em>char</em> *, <em>int</em>);</td></tr>
+<tr><th id="199">199</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <a class="typedef" href="../include/stdio.h.html#fpos_t" title='fpos_t' data-type='off_t' data-ref="fpos_t">fpos_t</a> <dfn class="decl" id="__sseek" title='__sseek' data-ref="__sseek">__sseek</dfn>(<em>void</em> *, <a class="typedef" href="../include/stdio.h.html#fpos_t" title='fpos_t' data-type='off_t' data-ref="fpos_t">fpos_t</a>, <em>int</em>);</td></tr>
+<tr><th id="200">200</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="__sclose" title='__sclose' data-ref="__sclose">__sclose</dfn>(<em>void</em> *);</td></tr>
+<tr><th id="201">201</th><td><a class="macro" href="../include/sys/cdefs.h.html#435" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC32_LEGACY_PUBLIC__">__LIBC32_LEGACY_PUBLIC__</a> <em>int</em> <dfn class="decl" id="_fwalk" title='_fwalk' data-ref="_fwalk">_fwalk</dfn>(<em>int</em> (*)(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *));</td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td><u>#pragma GCC visibility push(hidden)</u></td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><a class="typedef" href="../include/sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a> <dfn class="decl" id="__sseek64" title='__sseek64' data-ref="__sseek64">__sseek64</dfn>(<em>void</em>*, <a class="typedef" href="../include/sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <em>int</em>);</td></tr>
+<tr><th id="206">206</th><td><em>int</em>	<dfn class="decl" id="__sflush_locked" title='__sflush_locked' data-ref="__sflush_locked">__sflush_locked</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *);</td></tr>
+<tr><th id="207">207</th><td><em>int</em>	<dfn class="decl" id="__swhatbuf" title='__swhatbuf' data-ref="__swhatbuf">__swhatbuf</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *, <em>int</em> *);</td></tr>
+<tr><th id="208">208</th><td><a class="typedef" href="../include/wchar.h.html#wint_t" title='wint_t' data-type='unsigned int' data-ref="wint_t">wint_t</a> <dfn class="decl" id="__fgetwc_unlock" title='__fgetwc_unlock' data-ref="__fgetwc_unlock">__fgetwc_unlock</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *);</td></tr>
+<tr><th id="209">209</th><td><a class="typedef" href="../include/wchar.h.html#wint_t" title='wint_t' data-type='unsigned int' data-ref="wint_t">wint_t</a>	<dfn class="decl" id="__ungetwc" title='__ungetwc' data-ref="__ungetwc">__ungetwc</dfn>(<a class="typedef" href="../include/wchar.h.html#wint_t" title='wint_t' data-type='unsigned int' data-ref="wint_t">wint_t</a>, <a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *);</td></tr>
+<tr><th id="210">210</th><td><em>int</em>	<dfn class="decl" id="__vfprintf" title='__vfprintf' data-ref="__vfprintf">__vfprintf</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *, <em>const</em> <em>char</em> *, <a class="typedef" href="../include/sys/types.h.html#__va_list" title='__va_list' data-type='__builtin_va_list' data-ref="__va_list">__va_list</a>);</td></tr>
+<tr><th id="211">211</th><td><em>int</em>	<dfn class="decl" id="__svfscanf" title='__svfscanf' data-ref="__svfscanf">__svfscanf</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> * <b>__restrict</b>, <em>const</em> <em>char</em> * <b>__restrict</b>, <a class="typedef" href="../include/sys/types.h.html#__va_list" title='__va_list' data-type='__builtin_va_list' data-ref="__va_list">__va_list</a>);</td></tr>
+<tr><th id="212">212</th><td><em>int</em>	<dfn class="decl" id="__vfwprintf" title='__vfwprintf' data-ref="__vfwprintf">__vfwprintf</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> * <b>__restrict</b>, <em>const</em> <em>wchar_t</em> * <b>__restrict</b>, <a class="typedef" href="../include/sys/types.h.html#__va_list" title='__va_list' data-type='__builtin_va_list' data-ref="__va_list">__va_list</a>);</td></tr>
+<tr><th id="213">213</th><td><em>int</em>	<dfn class="decl" id="__vfwscanf" title='__vfwscanf' data-ref="__vfwscanf">__vfwscanf</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> * <b>__restrict</b>, <em>const</em> <em>wchar_t</em> * <b>__restrict</b>, <a class="typedef" href="../include/sys/types.h.html#__va_list" title='__va_list' data-type='__builtin_va_list' data-ref="__va_list">__va_list</a>);</td></tr>
+<tr><th id="214">214</th><td></td></tr>
+<tr><th id="215">215</th><td><i>/*</i></td></tr>
+<tr><th id="216">216</th><td><i> * Return true if the given FILE cannot be written now.</i></td></tr>
+<tr><th id="217">217</th><td><i> */</i></td></tr>
+<tr><th id="218">218</th><td><u>#define	<dfn class="macro" id="_M/cantwrite" data-ref="_M/cantwrite">cantwrite</dfn>(fp) \</u></td></tr>
+<tr><th id="219">219</th><td><u>	((((fp)-&gt;_flags &amp; __SWR) == 0 || (fp)-&gt;_bf._base == NULL) &amp;&amp; \</u></td></tr>
+<tr><th id="220">220</th><td><u>	 __swsetup(fp))</u></td></tr>
+<tr><th id="221">221</th><td></td></tr>
+<tr><th id="222">222</th><td><i>/*</i></td></tr>
+<tr><th id="223">223</th><td><i> * Test whether the given stdio file has an active ungetc buffer;</i></td></tr>
+<tr><th id="224">224</th><td><i> * release such a buffer, without restoring ordinary unread data.</i></td></tr>
+<tr><th id="225">225</th><td><i> */</i></td></tr>
+<tr><th id="226">226</th><td><u>#define	<dfn class="macro" id="_M/HASUB" data-ref="_M/HASUB">HASUB</dfn>(fp) (_UB(fp)._base != NULL)</u></td></tr>
+<tr><th id="227">227</th><td><u>#define	<dfn class="macro" id="_M/FREEUB" data-ref="_M/FREEUB">FREEUB</dfn>(fp) { \</u></td></tr>
+<tr><th id="228">228</th><td><u>	if (_UB(fp)._base != (fp)-&gt;_ubuf) \</u></td></tr>
+<tr><th id="229">229</th><td><u>		free(_UB(fp)._base); \</u></td></tr>
+<tr><th id="230">230</th><td><u>	_UB(fp)._base = NULL; \</u></td></tr>
+<tr><th id="231">231</th><td><u>}</u></td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td><i>/*</i></td></tr>
+<tr><th id="234">234</th><td><i> * test for an fgetln() buffer.</i></td></tr>
+<tr><th id="235">235</th><td><i> */</i></td></tr>
+<tr><th id="236">236</th><td><u>#define	<dfn class="macro" id="_M/HASLB" data-ref="_M/HASLB">HASLB</dfn>(fp) ((fp)-&gt;_lb._base != NULL)</u></td></tr>
+<tr><th id="237">237</th><td><u>#define	<dfn class="macro" id="_M/FREELB" data-ref="_M/FREELB">FREELB</dfn>(fp) { \</u></td></tr>
+<tr><th id="238">238</th><td><u>	free((char *)(fp)-&gt;_lb._base); \</u></td></tr>
+<tr><th id="239">239</th><td><u>	(fp)-&gt;_lb._base = NULL; \</u></td></tr>
+<tr><th id="240">240</th><td><u>}</u></td></tr>
+<tr><th id="241">241</th><td></td></tr>
+<tr><th id="242">242</th><td><u>#define <dfn class="macro" id="_M/FLOCKFILE" data-ref="_M/FLOCKFILE">FLOCKFILE</dfn>(fp)   if (!_EXT(fp)-&gt;_caller_handles_locking) flockfile(fp)</u></td></tr>
+<tr><th id="243">243</th><td><u>#define <dfn class="macro" id="_M/FUNLOCKFILE" data-ref="_M/FUNLOCKFILE">FUNLOCKFILE</dfn>(fp) if (!_EXT(fp)-&gt;_caller_handles_locking) funlockfile(fp)</u></td></tr>
+<tr><th id="244">244</th><td></td></tr>
+<tr><th id="245">245</th><td><u>#define <dfn class="macro" id="_M/FLOATING_POINT" data-ref="_M/FLOATING_POINT">FLOATING_POINT</dfn></u></td></tr>
+<tr><th id="246">246</th><td><u>#define <dfn class="macro" id="_M/PRINTF_WIDE_CHAR" data-ref="_M/PRINTF_WIDE_CHAR">PRINTF_WIDE_CHAR</dfn></u></td></tr>
+<tr><th id="247">247</th><td><u>#define <dfn class="macro" id="_M/SCANF_WIDE_CHAR" data-ref="_M/SCANF_WIDE_CHAR">SCANF_WIDE_CHAR</dfn></u></td></tr>
+<tr><th id="248">248</th><td><u>#define <dfn class="macro" id="_M/NO_PRINTF_PERCENT_N" data-ref="_M/NO_PRINTF_PERCENT_N">NO_PRINTF_PERCENT_N</dfn></u></td></tr>
+<tr><th id="249">249</th><td></td></tr>
+<tr><th id="250">250</th><td><i>/* OpenBSD exposes these in &lt;stdio.h&gt;, but we only want them exposed to the implementation. */</i></td></tr>
+<tr><th id="251">251</th><td><u>#define <dfn class="macro" id="_M/__sfeof" data-ref="_M/__sfeof">__sfeof</dfn>(p)     (((p)-&gt;_flags &amp; __SEOF) != 0)</u></td></tr>
+<tr><th id="252">252</th><td><u>#define <dfn class="macro" id="_M/__sferror" data-ref="_M/__sferror">__sferror</dfn>(p)   (((p)-&gt;_flags &amp; __SERR) != 0)</u></td></tr>
+<tr><th id="253">253</th><td><u>#define <dfn class="macro" id="_M/__sclearerr" data-ref="_M/__sclearerr">__sclearerr</dfn>(p) ((void)((p)-&gt;_flags &amp;= ~(__SERR|__SEOF)))</u></td></tr>
+<tr><th id="254">254</th><td><u>#<span data-ppcond="254">if</span> !defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="255">255</th><td><u>#define __sgetc(p) (--(p)-&gt;_r &lt; 0 ? __srget(p) : (int)(*(p)-&gt;_p++))</u></td></tr>
+<tr><th id="256">256</th><td><em>static</em> <b>__inline</b> <em>int</em> __sputc(<em>int</em> _c, FILE* _p) {</td></tr>
+<tr><th id="257">257</th><td>  <b>if</b> (--_p-&gt;_w &gt;= <var>0</var> || (_p-&gt;_w &gt;= _p-&gt;_lbfsize &amp;&amp; (<em>char</em>)_c != <kbd>'\n'</kbd>)) {</td></tr>
+<tr><th id="258">258</th><td>    <b>return</b> (*_p-&gt;_p++ = _c);</td></tr>
+<tr><th id="259">259</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="260">260</th><td>    <b>return</b> (__swbuf(_c, _p));</td></tr>
+<tr><th id="261">261</th><td>  }</td></tr>
+<tr><th id="262">262</th><td>}</td></tr>
+<tr><th id="263">263</th><td><u>#<span data-ppcond="254">endif</span></u></td></tr>
+<tr><th id="264">264</th><td></td></tr>
+<tr><th id="265">265</th><td><i>/* OpenBSD declares these in fvwrite.h but we want to ensure they're hidden. */</i></td></tr>
+<tr><th id="266">266</th><td><b>struct</b> <dfn class="type" id="__suio" title='__suio' data-ref="__suio">__suio</dfn>;</td></tr>
+<tr><th id="267">267</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="__sfvwrite" title='__sfvwrite' data-ref="__sfvwrite">__sfvwrite</dfn>(<a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *, <b>struct</b> <a class="type" href="#__suio" title='__suio' data-ref="__suio">__suio</a> *);</td></tr>
+<tr><th id="268">268</th><td><a class="typedef" href="../include/wchar.h.html#wint_t" title='wint_t' data-type='unsigned int' data-ref="wint_t">wint_t</a> <dfn class="decl" id="__fputwc_unlock" title='__fputwc_unlock' data-ref="__fputwc_unlock">__fputwc_unlock</dfn>(<em>wchar_t</em> <dfn class="local col1 decl" id="1wc" title='wc' data-type='wchar_t' data-ref="1wc">wc</dfn>, <a class="typedef" href="../include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col2 decl" id="2fp" title='fp' data-type='FILE *' data-ref="2fp">fp</dfn>);</td></tr>
+<tr><th id="269">269</th><td></td></tr>
+<tr><th id="270">270</th><td><i>/* Remove the if (!__sdidinit) __sinit() idiom from untouched upstream stdio code. */</i></td></tr>
+<tr><th id="271">271</th><td><b>extern</b> <em>void</em> <dfn class="decl" id="__sinit" title='__sinit' data-ref="__sinit">__sinit</dfn>(<em>void</em>); <i>// Not actually implemented.</i></td></tr>
+<tr><th id="272">272</th><td><u>#define <dfn class="macro" id="_M/__sdidinit" data-ref="_M/__sdidinit">__sdidinit</dfn> 1</u></td></tr>
+<tr><th id="273">273</th><td></td></tr>
+<tr><th id="274">274</th><td><u>#pragma GCC visibility pop</u></td></tr>
+<tr><th id="275">275</th><td></td></tr>
+<tr><th id="276">276</th><td><a class="macro" href="../include/sys/cdefs.h.html#86" title="}" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="277">277</th><td></td></tr>
+<tr><th id="278">278</th><td><u>#<span data-ppcond="35">endif</span></u></td></tr>
+<tr><th id="279">279</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/flockfile.cpp.html'>codebrowser/bionic/libc/bionic/flockfile.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

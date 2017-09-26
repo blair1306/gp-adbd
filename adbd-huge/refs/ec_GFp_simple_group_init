@@ -1,0 +1,16 @@
+<dec f='codebrowser/external/boringssl/src/crypto/ec/internal.h' l='181' type='int ec_GFp_simple_group_init(EC_GROUP * )'/>
+<doc f='codebrowser/external/boringssl/src/crypto/ec/internal.h' l='180'>/* method functions in simple.c */</doc>
+<use f='codebrowser/external/boringssl/src/crypto/ec/ec_montgomery.c' l='80' u='c' c='ec_GFp_mont_group_init'/>
+<use f='codebrowser/external/boringssl/src/crypto/ec/p256-64.c' l='1606' u='c' c='ec_GFp_nistp256_group_init'/>
+<def f='codebrowser/external/boringssl/src/crypto/ec/simple.c' l='91' ll='97' type='int ec_GFp_simple_group_init(EC_GROUP * group)'/>
+<doc f='codebrowser/external/boringssl/src/crypto/ec/simple.c' l='79'>/* Most method functions in this file are designed to work with non-trivial
+ * representations of field elements if necessary (see ecp_mont.c): while
+ * standard modular addition and subtraction are used, the field_mul and
+ * field_sqr methods will be used for multiplication, and field_encode and
+ * field_decode (if defined) will be used for converting between
+ * representations.
+
+ * Functions ec_GFp_simple_points_make_affine() and
+ * ec_GFp_simple_point_get_affine_coordinates() specifically assume that if a
+ * non-trivial representation is used, it is a Montgomery representation (i.e.
+ * &apos;encoding&apos; means multiplying by some factor R). */</doc>

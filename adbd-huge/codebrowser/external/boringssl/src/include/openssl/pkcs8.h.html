@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>pkcs8.h source code [codebrowser/external/boringssl/src/include/openssl/pkcs8.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/pkcs8.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='pkcs8.h.html'>pkcs8.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL</i></td></tr>
+<tr><th id="2">2</th><td><i> * project 1999.</i></td></tr>
+<tr><th id="3">3</th><td><i> */</i></td></tr>
+<tr><th id="4">4</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="5">5</th><td><i> * Copyright (c) 1999 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="8">8</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="9">9</th><td><i> * are met:</i></td></tr>
+<tr><th id="10">10</th><td><i> *</i></td></tr>
+<tr><th id="11">11</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="12">12</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="13">13</th><td><i> *</i></td></tr>
+<tr><th id="14">14</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="15">15</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="16">16</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="17">17</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="18">18</th><td><i> *</i></td></tr>
+<tr><th id="19">19</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="20">20</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="21">21</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="22">22</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="23">23</th><td><i> *</i></td></tr>
+<tr><th id="24">24</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="25">25</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="26">26</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="27">27</th><td><i> *    licensing@OpenSSL.org.</i></td></tr>
+<tr><th id="28">28</th><td><i> *</i></td></tr>
+<tr><th id="29">29</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="30">30</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="31">31</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="32">32</th><td><i> *</i></td></tr>
+<tr><th id="33">33</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="34">34</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="35">35</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="36">36</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="37">37</th><td><i> *</i></td></tr>
+<tr><th id="38">38</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="39">39</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="40">40</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="41">41</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="42">42</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="43">43</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="44">44</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="45">45</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="46">46</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="47">47</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="48">48</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="49">49</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="50">50</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="53">53</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="54">54</th><td><i> * Hudson (tjh@cryptsoft.com). */</i></td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#<span data-ppcond="57">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_PKCS8_H">OPENSSL_HEADER_PKCS8_H</span></u></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_PKCS8_H" data-ref="_M/OPENSSL_HEADER_PKCS8_H">OPENSSL_HEADER_PKCS8_H</dfn></u></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="x509.h.html">&lt;openssl/x509.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="64">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="65">65</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="66">66</th><td><u>#<span data-ppcond="64">endif</span></u></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><i>/* PKCS8_encrypt_pbe serializes and encrypts a PKCS8_PRIV_KEY_INFO with PBES1 or</i></td></tr>
+<tr><th id="70">70</th><td><i> * PBES2 as defined in PKCS #5. Only pbeWithSHAAnd128BitRC4,</i></td></tr>
+<tr><th id="71">71</th><td><i> * pbeWithSHAAnd3-KeyTripleDES-CBC and pbeWithSHA1And40BitRC2, defined in PKCS</i></td></tr>
+<tr><th id="72">72</th><td><i> * #12, and PBES2, are supported.  PBES2 is selected by setting |cipher| and</i></td></tr>
+<tr><th id="73">73</th><td><i> * passing -1 for |pbe_nid|.  Otherwise, PBES1 is used and |cipher| is ignored.</i></td></tr>
+<tr><th id="74">74</th><td><i> *</i></td></tr>
+<tr><th id="75">75</th><td><i> * The |pass_raw_len| bytes pointed to by |pass_raw| are used as the password.</i></td></tr>
+<tr><th id="76">76</th><td><i> * Note that any conversions from the password as supplied in a text string</i></td></tr>
+<tr><th id="77">77</th><td><i> * (such as those specified in B.1 of PKCS #12) must be performed by the caller.</i></td></tr>
+<tr><th id="78">78</th><td><i> *</i></td></tr>
+<tr><th id="79">79</th><td><i> * If |salt| is NULL, a random salt of |salt_len| bytes is generated. If</i></td></tr>
+<tr><th id="80">80</th><td><i> * |salt_len| is zero, a default salt length is used instead.</i></td></tr>
+<tr><th id="81">81</th><td><i> *</i></td></tr>
+<tr><th id="82">82</th><td><i> * The resulting structure is stored in an X509_SIG which must be freed by the</i></td></tr>
+<tr><th id="83">83</th><td><i> * caller.</i></td></tr>
+<tr><th id="84">84</th><td><i> *</i></td></tr>
+<tr><th id="85">85</th><td><i> * TODO(davidben): Really? An X509_SIG? OpenSSL probably did that because it has</i></td></tr>
+<tr><th id="86">86</th><td><i> * the same structure as EncryptedPrivateKeyInfo. */</i></td></tr>
+<tr><th id="87">87</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#X509_SIG" title='X509_SIG' data-type='struct X509_sig_st' data-ref="X509_SIG">X509_SIG</a> *<dfn class="decl" id="PKCS8_encrypt_pbe" title='PKCS8_encrypt_pbe' data-ref="PKCS8_encrypt_pbe">PKCS8_encrypt_pbe</dfn>(<em>int</em> <dfn class="local col1 decl" id="1pbe_nid" title='pbe_nid' data-type='int' data-ref="1pbe_nid">pbe_nid</dfn>,</td></tr>
+<tr><th id="88">88</th><td>                                           <em>const</em> <a class="typedef" href="base.h.html#EVP_CIPHER" title='EVP_CIPHER' data-type='struct evp_cipher_st' data-ref="EVP_CIPHER">EVP_CIPHER</a> *<dfn class="local col2 decl" id="2cipher" title='cipher' data-type='const EVP_CIPHER *' data-ref="2cipher">cipher</dfn>,</td></tr>
+<tr><th id="89">89</th><td>                                           <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="3pass_raw" title='pass_raw' data-type='const uint8_t *' data-ref="3pass_raw">pass_raw</dfn>,</td></tr>
+<tr><th id="90">90</th><td>                                           <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="4pass_raw_len" title='pass_raw_len' data-type='size_t' data-ref="4pass_raw_len">pass_raw_len</dfn>,</td></tr>
+<tr><th id="91">91</th><td>                                           <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="5salt" title='salt' data-type='uint8_t *' data-ref="5salt">salt</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="6salt_len" title='salt_len' data-type='size_t' data-ref="6salt_len">salt_len</dfn>,</td></tr>
+<tr><th id="92">92</th><td>                                           <em>int</em> <dfn class="local col7 decl" id="7iterations" title='iterations' data-type='int' data-ref="7iterations">iterations</dfn>,</td></tr>
+<tr><th id="93">93</th><td>                                           <a class="typedef" href="base.h.html#PKCS8_PRIV_KEY_INFO" title='PKCS8_PRIV_KEY_INFO' data-type='struct pkcs8_priv_key_info_st' data-ref="PKCS8_PRIV_KEY_INFO">PKCS8_PRIV_KEY_INFO</a> *<dfn class="local col8 decl" id="8p8inf" title='p8inf' data-type='PKCS8_PRIV_KEY_INFO *' data-ref="8p8inf">p8inf</dfn>);</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><i>/* PKCS8_decrypt_pbe decrypts and decodes a PKCS8_PRIV_KEY_INFO with PBES1 or</i></td></tr>
+<tr><th id="96">96</th><td><i> * PBES2 as defined in PKCS #5. Only pbeWithSHAAnd128BitRC4,</i></td></tr>
+<tr><th id="97">97</th><td><i> * pbeWithSHAAnd3-KeyTripleDES-CBC and pbeWithSHA1And40BitRC2, and PBES2,</i></td></tr>
+<tr><th id="98">98</th><td><i> * defined in PKCS #12, are supported.</i></td></tr>
+<tr><th id="99">99</th><td><i> *</i></td></tr>
+<tr><th id="100">100</th><td><i> * The |pass_raw_len| bytes pointed to by |pass_raw| are used as the password.</i></td></tr>
+<tr><th id="101">101</th><td><i> * Note that any conversions from the password as supplied in a text string</i></td></tr>
+<tr><th id="102">102</th><td><i> * (such as those specified in B.1 of PKCS #12) must be performed by the caller.</i></td></tr>
+<tr><th id="103">103</th><td><i> *</i></td></tr>
+<tr><th id="104">104</th><td><i> * The resulting structure must be freed by the caller. */</i></td></tr>
+<tr><th id="105">105</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#PKCS8_PRIV_KEY_INFO" title='PKCS8_PRIV_KEY_INFO' data-type='struct pkcs8_priv_key_info_st' data-ref="PKCS8_PRIV_KEY_INFO">PKCS8_PRIV_KEY_INFO</a> *<dfn class="decl" id="PKCS8_decrypt_pbe" title='PKCS8_decrypt_pbe' data-ref="PKCS8_decrypt_pbe">PKCS8_decrypt_pbe</dfn>(<a class="typedef" href="base.h.html#X509_SIG" title='X509_SIG' data-type='struct X509_sig_st' data-ref="X509_SIG">X509_SIG</a> *<dfn class="local col9 decl" id="9pkcs8" title='pkcs8' data-type='X509_SIG *' data-ref="9pkcs8">pkcs8</dfn>,</td></tr>
+<tr><th id="106">106</th><td>                                                      <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col0 decl" id="10pass_raw" title='pass_raw' data-type='const uint8_t *' data-ref="10pass_raw">pass_raw</dfn>,</td></tr>
+<tr><th id="107">107</th><td>                                                      <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="11pass_raw_len" title='pass_raw_len' data-type='size_t' data-ref="11pass_raw_len">pass_raw_len</dfn>);</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><i>/* PKCS12_get_key_and_certs parses a PKCS#12 structure from |in|, authenticates</i></td></tr>
+<tr><th id="110">110</th><td><i> * and decrypts it using |password|, sets |*out_key| to the included private</i></td></tr>
+<tr><th id="111">111</th><td><i> * key and appends the included certificates to |out_certs|. It returns one on</i></td></tr>
+<tr><th id="112">112</th><td><i> * success and zero on error. The caller takes ownership of the outputs. */</i></td></tr>
+<tr><th id="113">113</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="PKCS12_get_key_and_certs" title='PKCS12_get_key_and_certs' data-ref="PKCS12_get_key_and_certs">PKCS12_get_key_and_certs</dfn>(<a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> **<dfn class="local col2 decl" id="12out_key" title='out_key' data-type='EVP_PKEY **' data-ref="12out_key">out_key</dfn>,</td></tr>
+<tr><th id="114">114</th><td>                                            <a class="macro" href="stack.h.html#112" title="struct stack_st_X509" data-ref="_M/STACK_OF">STACK_OF</a>(X509) *<dfn class="local col3 decl" id="13out_certs" title='out_certs' data-type='struct stack_st_X509 *' data-ref="13out_certs">out_certs</dfn>,</td></tr>
+<tr><th id="115">115</th><td>                                            <a class="typedef" href="base.h.html#CBS" title='CBS' data-type='struct cbs_st' data-ref="CBS">CBS</a> *<dfn class="local col4 decl" id="14in" title='in' data-type='CBS *' data-ref="14in">in</dfn>, <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="15password" title='password' data-type='const char *' data-ref="15password">password</dfn>);</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><i>/* Deprecated functions. */</i></td></tr>
+<tr><th id="119">119</th><td></td></tr>
+<tr><th id="120">120</th><td><i>/* PKCS8_encrypt calls |PKCS8_encrypt_pbe| after (in the PKCS#12 case) treating</i></td></tr>
+<tr><th id="121">121</th><td><i> * |pass| as an ASCII string, appending U+0000, and converting to UCS-2. (So the</i></td></tr>
+<tr><th id="122">122</th><td><i> * empty password encodes as two NUL bytes.) In the PBES2 case, the password is</i></td></tr>
+<tr><th id="123">123</th><td><i> * unchanged.  */</i></td></tr>
+<tr><th id="124">124</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#X509_SIG" title='X509_SIG' data-type='struct X509_sig_st' data-ref="X509_SIG">X509_SIG</a> *<dfn class="decl" id="PKCS8_encrypt" title='PKCS8_encrypt' data-ref="PKCS8_encrypt">PKCS8_encrypt</dfn>(<em>int</em> <dfn class="local col6 decl" id="16pbe_nid" title='pbe_nid' data-type='int' data-ref="16pbe_nid">pbe_nid</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EVP_CIPHER" title='EVP_CIPHER' data-type='struct evp_cipher_st' data-ref="EVP_CIPHER">EVP_CIPHER</a> *<dfn class="local col7 decl" id="17cipher" title='cipher' data-type='const EVP_CIPHER *' data-ref="17cipher">cipher</dfn>,</td></tr>
+<tr><th id="125">125</th><td>                                       <em>const</em> <em>char</em> *<dfn class="local col8 decl" id="18pass" title='pass' data-type='const char *' data-ref="18pass">pass</dfn>, <em>int</em> <dfn class="local col9 decl" id="19pass_len" title='pass_len' data-type='int' data-ref="19pass_len">pass_len</dfn>,</td></tr>
+<tr><th id="126">126</th><td>                                       <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col0 decl" id="20salt" title='salt' data-type='uint8_t *' data-ref="20salt">salt</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="21salt_len" title='salt_len' data-type='size_t' data-ref="21salt_len">salt_len</dfn>,</td></tr>
+<tr><th id="127">127</th><td>                                       <em>int</em> <dfn class="local col2 decl" id="22iterations" title='iterations' data-type='int' data-ref="22iterations">iterations</dfn>,</td></tr>
+<tr><th id="128">128</th><td>                                       <a class="typedef" href="base.h.html#PKCS8_PRIV_KEY_INFO" title='PKCS8_PRIV_KEY_INFO' data-type='struct pkcs8_priv_key_info_st' data-ref="PKCS8_PRIV_KEY_INFO">PKCS8_PRIV_KEY_INFO</a> *<dfn class="local col3 decl" id="23p8inf" title='p8inf' data-type='PKCS8_PRIV_KEY_INFO *' data-ref="23p8inf">p8inf</dfn>);</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td><i>/* PKCS8_decrypt calls PKCS8_decrypt_pbe after (in the PKCS#12 case) treating</i></td></tr>
+<tr><th id="131">131</th><td><i> * |pass| as an ASCII string, appending U+0000, and converting to UCS-2. (So the</i></td></tr>
+<tr><th id="132">132</th><td><i> *  empty password encodes as two NUL bytes.) In the PBES2 case, the password is</i></td></tr>
+<tr><th id="133">133</th><td><i> * unchanged. */</i></td></tr>
+<tr><th id="134">134</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#PKCS8_PRIV_KEY_INFO" title='PKCS8_PRIV_KEY_INFO' data-type='struct pkcs8_priv_key_info_st' data-ref="PKCS8_PRIV_KEY_INFO">PKCS8_PRIV_KEY_INFO</a> *<dfn class="decl" id="PKCS8_decrypt" title='PKCS8_decrypt' data-ref="PKCS8_decrypt">PKCS8_decrypt</dfn>(<a class="typedef" href="base.h.html#X509_SIG" title='X509_SIG' data-type='struct X509_sig_st' data-ref="X509_SIG">X509_SIG</a> *<dfn class="local col4 decl" id="24pkcs8" title='pkcs8' data-type='X509_SIG *' data-ref="24pkcs8">pkcs8</dfn>,</td></tr>
+<tr><th id="135">135</th><td>                                                  <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="25pass" title='pass' data-type='const char *' data-ref="25pass">pass</dfn>,</td></tr>
+<tr><th id="136">136</th><td>                                                  <em>int</em> <dfn class="local col6 decl" id="26pass_len" title='pass_len' data-type='int' data-ref="26pass_len">pass_len</dfn>);</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td><i>/* PKCS12_PBE_add does nothing. It exists for compatibility with OpenSSL. */</i></td></tr>
+<tr><th id="139">139</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="PKCS12_PBE_add" title='PKCS12_PBE_add' data-ref="PKCS12_PBE_add">PKCS12_PBE_add</dfn>(<em>void</em>);</td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><i>/* d2i_PKCS12 is a dummy function that copies |*ber_bytes| into a</i></td></tr>
+<tr><th id="142">142</th><td><i> * |PKCS12| structure. The |out_p12| argument must be NULL. On exit,</i></td></tr>
+<tr><th id="143">143</th><td><i> * |*ber_bytes| will be advanced by |ber_len|. It returns a fresh |PKCS12|</i></td></tr>
+<tr><th id="144">144</th><td><i> * structure or NULL on error.</i></td></tr>
+<tr><th id="145">145</th><td><i> *</i></td></tr>
+<tr><th id="146">146</th><td><i> * Note: unlike other d2i functions, |d2i_PKCS12| will always consume |ber_len|</i></td></tr>
+<tr><th id="147">147</th><td><i> * bytes.*/</i></td></tr>
+<tr><th id="148">148</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#PKCS12" title='PKCS12' data-type='struct pkcs12_st' data-ref="PKCS12">PKCS12</a> *<dfn class="decl" id="d2i_PKCS12" title='d2i_PKCS12' data-ref="d2i_PKCS12">d2i_PKCS12</dfn>(<a class="typedef" href="base.h.html#PKCS12" title='PKCS12' data-type='struct pkcs12_st' data-ref="PKCS12">PKCS12</a> **<dfn class="local col7 decl" id="27out_p12" title='out_p12' data-type='PKCS12 **' data-ref="27out_p12">out_p12</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col8 decl" id="28ber_bytes" title='ber_bytes' data-type='const uint8_t **' data-ref="28ber_bytes">ber_bytes</dfn>,</td></tr>
+<tr><th id="149">149</th><td>                                  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="29ber_len" title='ber_len' data-type='size_t' data-ref="29ber_len">ber_len</dfn>);</td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><i>/* d2i_PKCS12_bio acts like |d2i_PKCS12| but reads from a |BIO|. */</i></td></tr>
+<tr><th id="152">152</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#PKCS12" title='PKCS12' data-type='struct pkcs12_st' data-ref="PKCS12">PKCS12</a>* <dfn class="decl" id="d2i_PKCS12_bio" title='d2i_PKCS12_bio' data-ref="d2i_PKCS12_bio">d2i_PKCS12_bio</dfn>(<a class="typedef" href="base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col0 decl" id="30bio" title='bio' data-type='BIO *' data-ref="30bio">bio</dfn>, <a class="typedef" href="base.h.html#PKCS12" title='PKCS12' data-type='struct pkcs12_st' data-ref="PKCS12">PKCS12</a> **<dfn class="local col1 decl" id="31out_p12" title='out_p12' data-type='PKCS12 **' data-ref="31out_p12">out_p12</dfn>);</td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td><i>/* d2i_PKCS12_fp acts like |d2i_PKCS12| but reads from a |FILE|. */</i></td></tr>
+<tr><th id="155">155</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#PKCS12" title='PKCS12' data-type='struct pkcs12_st' data-ref="PKCS12">PKCS12</a>* <dfn class="decl" id="d2i_PKCS12_fp" title='d2i_PKCS12_fp' data-ref="d2i_PKCS12_fp">d2i_PKCS12_fp</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col2 decl" id="32fp" title='fp' data-type='FILE *' data-ref="32fp">fp</dfn>, <a class="typedef" href="base.h.html#PKCS12" title='PKCS12' data-type='struct pkcs12_st' data-ref="PKCS12">PKCS12</a> **<dfn class="local col3 decl" id="33out_p12" title='out_p12' data-type='PKCS12 **' data-ref="33out_p12">out_p12</dfn>);</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><i>/* PKCS12_parse calls |PKCS12_get_key_and_certs| on the ASN.1 data stored in</i></td></tr>
+<tr><th id="158">158</th><td><i> * |p12|. The |out_pkey| and |out_cert| arguments must not be NULL and, on</i></td></tr>
+<tr><th id="159">159</th><td><i> * successful exit, the private key and first certificate will be stored in</i></td></tr>
+<tr><th id="160">160</th><td><i> * them. The |out_ca_certs| argument may be NULL but, if not, then any extra</i></td></tr>
+<tr><th id="161">161</th><td><i> * certificates will be appended to |*out_ca_certs|. If |*out_ca_certs| is NULL</i></td></tr>
+<tr><th id="162">162</th><td><i> * then it will be set to a freshly allocated stack containing the extra certs.</i></td></tr>
+<tr><th id="163">163</th><td><i> *</i></td></tr>
+<tr><th id="164">164</th><td><i> * It returns one on success and zero on error. */</i></td></tr>
+<tr><th id="165">165</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="PKCS12_parse" title='PKCS12_parse' data-ref="PKCS12_parse">PKCS12_parse</dfn>(<em>const</em> <a class="typedef" href="base.h.html#PKCS12" title='PKCS12' data-type='struct pkcs12_st' data-ref="PKCS12">PKCS12</a> *<dfn class="local col4 decl" id="34p12" title='p12' data-type='const PKCS12 *' data-ref="34p12">p12</dfn>, <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="35password" title='password' data-type='const char *' data-ref="35password">password</dfn>,</td></tr>
+<tr><th id="166">166</th><td>                                <a class="typedef" href="base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> **<dfn class="local col6 decl" id="36out_pkey" title='out_pkey' data-type='EVP_PKEY **' data-ref="36out_pkey">out_pkey</dfn>, <a class="typedef" href="base.h.html#X509" title='X509' data-type='struct x509_st' data-ref="X509">X509</a> **<dfn class="local col7 decl" id="37out_cert" title='out_cert' data-type='X509 **' data-ref="37out_cert">out_cert</dfn>,</td></tr>
+<tr><th id="167">167</th><td>                                <a class="macro" href="stack.h.html#112" title="struct stack_st_X509" data-ref="_M/STACK_OF">STACK_OF</a>(X509) **<dfn class="local col8 decl" id="38out_ca_certs" title='out_ca_certs' data-type='struct stack_st_X509 **' data-ref="38out_ca_certs">out_ca_certs</dfn>);</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td><i>/* PKCS12_verify_mac returns one if |password| is a valid password for |p12|</i></td></tr>
+<tr><th id="170">170</th><td><i> * and zero otherwise. Since |PKCS12_parse| doesn't take a length parameter,</i></td></tr>
+<tr><th id="171">171</th><td><i> * it's not actually possible to use a non-NUL-terminated password to actually</i></td></tr>
+<tr><th id="172">172</th><td><i> * get anything from a |PKCS12|. Thus |password| and |password_len| may be</i></td></tr>
+<tr><th id="173">173</th><td><i> * |NULL| and zero, respectively, or else |password_len| may be -1, or else</i></td></tr>
+<tr><th id="174">174</th><td><i> * |password[password_len]| must be zero and no other NUL bytes may appear in</i></td></tr>
+<tr><th id="175">175</th><td><i> * |password|. If the |password_len| checks fail, zero is returned</i></td></tr>
+<tr><th id="176">176</th><td><i> * immediately. */</i></td></tr>
+<tr><th id="177">177</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="PKCS12_verify_mac" title='PKCS12_verify_mac' data-ref="PKCS12_verify_mac">PKCS12_verify_mac</dfn>(<em>const</em> <a class="typedef" href="base.h.html#PKCS12" title='PKCS12' data-type='struct pkcs12_st' data-ref="PKCS12">PKCS12</a> *<dfn class="local col9 decl" id="39p12" title='p12' data-type='const PKCS12 *' data-ref="39p12">p12</dfn>, <em>const</em> <em>char</em> *<dfn class="local col0 decl" id="40password" title='password' data-type='const char *' data-ref="40password">password</dfn>,</td></tr>
+<tr><th id="178">178</th><td>                                     <em>int</em> <dfn class="local col1 decl" id="41password_len" title='password_len' data-type='int' data-ref="41password_len">password_len</dfn>);</td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td><i>/* PKCS12_free frees |p12| and its contents. */</i></td></tr>
+<tr><th id="181">181</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="PKCS12_free" title='PKCS12_free' data-ref="PKCS12_free">PKCS12_free</dfn>(<a class="typedef" href="base.h.html#PKCS12" title='PKCS12' data-type='struct pkcs12_st' data-ref="PKCS12">PKCS12</a> *<dfn class="local col2 decl" id="42p12" title='p12' data-type='PKCS12 *' data-ref="42p12">p12</dfn>);</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td><u>#<span data-ppcond="184">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="185">185</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="186">186</th><td><u>#<span data-ppcond="184">endif</span></u></td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_BAD_PKCS12_DATA" data-ref="_M/PKCS8_R_BAD_PKCS12_DATA">PKCS8_R_BAD_PKCS12_DATA</dfn> 100</u></td></tr>
+<tr><th id="189">189</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_BAD_PKCS12_VERSION" data-ref="_M/PKCS8_R_BAD_PKCS12_VERSION">PKCS8_R_BAD_PKCS12_VERSION</dfn> 101</u></td></tr>
+<tr><th id="190">190</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_CIPHER_HAS_NO_OBJECT_IDENTIFIER" data-ref="_M/PKCS8_R_CIPHER_HAS_NO_OBJECT_IDENTIFIER">PKCS8_R_CIPHER_HAS_NO_OBJECT_IDENTIFIER</dfn> 102</u></td></tr>
+<tr><th id="191">191</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_CRYPT_ERROR" data-ref="_M/PKCS8_R_CRYPT_ERROR">PKCS8_R_CRYPT_ERROR</dfn> 103</u></td></tr>
+<tr><th id="192">192</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_DECODE_ERROR" data-ref="_M/PKCS8_R_DECODE_ERROR">PKCS8_R_DECODE_ERROR</dfn> 104</u></td></tr>
+<tr><th id="193">193</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_ENCODE_ERROR" data-ref="_M/PKCS8_R_ENCODE_ERROR">PKCS8_R_ENCODE_ERROR</dfn> 105</u></td></tr>
+<tr><th id="194">194</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_ENCRYPT_ERROR" data-ref="_M/PKCS8_R_ENCRYPT_ERROR">PKCS8_R_ENCRYPT_ERROR</dfn> 106</u></td></tr>
+<tr><th id="195">195</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_ERROR_SETTING_CIPHER_PARAMS" data-ref="_M/PKCS8_R_ERROR_SETTING_CIPHER_PARAMS">PKCS8_R_ERROR_SETTING_CIPHER_PARAMS</dfn> 107</u></td></tr>
+<tr><th id="196">196</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_INCORRECT_PASSWORD" data-ref="_M/PKCS8_R_INCORRECT_PASSWORD">PKCS8_R_INCORRECT_PASSWORD</dfn> 108</u></td></tr>
+<tr><th id="197">197</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_KEYGEN_FAILURE" data-ref="_M/PKCS8_R_KEYGEN_FAILURE">PKCS8_R_KEYGEN_FAILURE</dfn> 109</u></td></tr>
+<tr><th id="198">198</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_KEY_GEN_ERROR" data-ref="_M/PKCS8_R_KEY_GEN_ERROR">PKCS8_R_KEY_GEN_ERROR</dfn> 110</u></td></tr>
+<tr><th id="199">199</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_METHOD_NOT_SUPPORTED" data-ref="_M/PKCS8_R_METHOD_NOT_SUPPORTED">PKCS8_R_METHOD_NOT_SUPPORTED</dfn> 111</u></td></tr>
+<tr><th id="200">200</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_MISSING_MAC" data-ref="_M/PKCS8_R_MISSING_MAC">PKCS8_R_MISSING_MAC</dfn> 112</u></td></tr>
+<tr><th id="201">201</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_MULTIPLE_PRIVATE_KEYS_IN_PKCS12" data-ref="_M/PKCS8_R_MULTIPLE_PRIVATE_KEYS_IN_PKCS12">PKCS8_R_MULTIPLE_PRIVATE_KEYS_IN_PKCS12</dfn> 113</u></td></tr>
+<tr><th id="202">202</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_PKCS12_PUBLIC_KEY_INTEGRITY_NOT_SUPPORTED" data-ref="_M/PKCS8_R_PKCS12_PUBLIC_KEY_INTEGRITY_NOT_SUPPORTED">PKCS8_R_PKCS12_PUBLIC_KEY_INTEGRITY_NOT_SUPPORTED</dfn> 114</u></td></tr>
+<tr><th id="203">203</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_PKCS12_TOO_DEEPLY_NESTED" data-ref="_M/PKCS8_R_PKCS12_TOO_DEEPLY_NESTED">PKCS8_R_PKCS12_TOO_DEEPLY_NESTED</dfn> 115</u></td></tr>
+<tr><th id="204">204</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_PRIVATE_KEY_DECODE_ERROR" data-ref="_M/PKCS8_R_PRIVATE_KEY_DECODE_ERROR">PKCS8_R_PRIVATE_KEY_DECODE_ERROR</dfn> 116</u></td></tr>
+<tr><th id="205">205</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_PRIVATE_KEY_ENCODE_ERROR" data-ref="_M/PKCS8_R_PRIVATE_KEY_ENCODE_ERROR">PKCS8_R_PRIVATE_KEY_ENCODE_ERROR</dfn> 117</u></td></tr>
+<tr><th id="206">206</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_TOO_LONG" data-ref="_M/PKCS8_R_TOO_LONG">PKCS8_R_TOO_LONG</dfn> 118</u></td></tr>
+<tr><th id="207">207</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNKNOWN_ALGORITHM" data-ref="_M/PKCS8_R_UNKNOWN_ALGORITHM">PKCS8_R_UNKNOWN_ALGORITHM</dfn> 119</u></td></tr>
+<tr><th id="208">208</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNKNOWN_CIPHER" data-ref="_M/PKCS8_R_UNKNOWN_CIPHER">PKCS8_R_UNKNOWN_CIPHER</dfn> 120</u></td></tr>
+<tr><th id="209">209</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNKNOWN_CIPHER_ALGORITHM" data-ref="_M/PKCS8_R_UNKNOWN_CIPHER_ALGORITHM">PKCS8_R_UNKNOWN_CIPHER_ALGORITHM</dfn> 121</u></td></tr>
+<tr><th id="210">210</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNKNOWN_DIGEST" data-ref="_M/PKCS8_R_UNKNOWN_DIGEST">PKCS8_R_UNKNOWN_DIGEST</dfn> 122</u></td></tr>
+<tr><th id="211">211</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNKNOWN_HASH" data-ref="_M/PKCS8_R_UNKNOWN_HASH">PKCS8_R_UNKNOWN_HASH</dfn> 123</u></td></tr>
+<tr><th id="212">212</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNSUPPORTED_PRIVATE_KEY_ALGORITHM" data-ref="_M/PKCS8_R_UNSUPPORTED_PRIVATE_KEY_ALGORITHM">PKCS8_R_UNSUPPORTED_PRIVATE_KEY_ALGORITHM</dfn> 124</u></td></tr>
+<tr><th id="213">213</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNSUPPORTED_KEYLENGTH" data-ref="_M/PKCS8_R_UNSUPPORTED_KEYLENGTH">PKCS8_R_UNSUPPORTED_KEYLENGTH</dfn> 125</u></td></tr>
+<tr><th id="214">214</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNSUPPORTED_SALT_TYPE" data-ref="_M/PKCS8_R_UNSUPPORTED_SALT_TYPE">PKCS8_R_UNSUPPORTED_SALT_TYPE</dfn> 126</u></td></tr>
+<tr><th id="215">215</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNSUPPORTED_CIPHER" data-ref="_M/PKCS8_R_UNSUPPORTED_CIPHER">PKCS8_R_UNSUPPORTED_CIPHER</dfn> 127</u></td></tr>
+<tr><th id="216">216</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNSUPPORTED_KEY_DERIVATION_FUNCTION" data-ref="_M/PKCS8_R_UNSUPPORTED_KEY_DERIVATION_FUNCTION">PKCS8_R_UNSUPPORTED_KEY_DERIVATION_FUNCTION</dfn> 128</u></td></tr>
+<tr><th id="217">217</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_BAD_ITERATION_COUNT" data-ref="_M/PKCS8_R_BAD_ITERATION_COUNT">PKCS8_R_BAD_ITERATION_COUNT</dfn> 129</u></td></tr>
+<tr><th id="218">218</th><td><u>#define <dfn class="macro" id="_M/PKCS8_R_UNSUPPORTED_PRF" data-ref="_M/PKCS8_R_UNSUPPORTED_PRF">PKCS8_R_UNSUPPORTED_PRF</dfn> 130</u></td></tr>
+<tr><th id="219">219</th><td></td></tr>
+<tr><th id="220">220</th><td><u>#<span data-ppcond="57">endif</span>  /* OPENSSL_HEADER_PKCS8_H */</u></td></tr>
+<tr><th id="221">221</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../crypto/pem/pem_pk8.c.html'>codebrowser/external/boringssl/src/crypto/pem/pem_pk8.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>p256.h source code [codebrowser/system/core/include/mincrypt/p256.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/include/mincrypt/p256.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>system</a>/<a href='../..'>core</a>/<a href='..'>include</a>/<a href='./'>mincrypt</a>/<a href='p256.h.html'>p256.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright 2013 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="5">5</th><td><i> * modification, are permitted provided that the following conditions are met:</i></td></tr>
+<tr><th id="6">6</th><td><i> *     * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="7">7</th><td><i> *       notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="8">8</th><td><i> *     * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *       notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="10">10</th><td><i> *       documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="11">11</th><td><i> *     * Neither the name of Google Inc. nor the names of its contributors may</i></td></tr>
+<tr><th id="12">12</th><td><i> *       be used to endorse or promote products derived from this software</i></td></tr>
+<tr><th id="13">13</th><td><i> *       without specific prior written permission.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY Google Inc. ``AS IS'' AND ANY EXPRESS OR</i></td></tr>
+<tr><th id="16">16</th><td><i> * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="17">17</th><td><i> * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO</i></td></tr>
+<tr><th id="18">18</th><td><i> * EVENT SHALL Google Inc. BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="19">19</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</i></td></tr>
+<tr><th id="20">20</th><td><i> * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</i></td></tr>
+<tr><th id="21">21</th><td><i> * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,</i></td></tr>
+<tr><th id="22">22</th><td><i> * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR</i></td></tr>
+<tr><th id="23">23</th><td><i> * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF</i></td></tr>
+<tr><th id="24">24</th><td><i> * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="25">25</th><td><i> */</i></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#<span data-ppcond="27">ifndef</span> <span class="macro" data-ref="_M/SYSTEM_CORE_INCLUDE_MINCRYPT_LITE_P256_H_">SYSTEM_CORE_INCLUDE_MINCRYPT_LITE_P256_H_</span></u></td></tr>
+<tr><th id="28">28</th><td><u>#define <dfn class="macro" id="_M/SYSTEM_CORE_INCLUDE_MINCRYPT_LITE_P256_H_" data-ref="_M/SYSTEM_CORE_INCLUDE_MINCRYPT_LITE_P256_H_">SYSTEM_CORE_INCLUDE_MINCRYPT_LITE_P256_H_</dfn></u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><i>// Collection of routines manipulating 256 bit unsigned integers.</i></td></tr>
+<tr><th id="31">31</th><td><i>// Just enough to implement ecdsa-p256 and related algorithms.</i></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../../../../bionic/libc/include/stdint.h.html">&lt;stdint.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><u>#<span data-ppcond="35">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="36">36</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="37">37</th><td><u>#<span data-ppcond="35">endif</span></u></td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/P256_BITSPERDIGIT" data-ref="_M/P256_BITSPERDIGIT">P256_BITSPERDIGIT</dfn> 32</u></td></tr>
+<tr><th id="40">40</th><td><u>#define <dfn class="macro" id="_M/P256_NDIGITS" data-ref="_M/P256_NDIGITS">P256_NDIGITS</dfn> 8</u></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/P256_NBYTES" data-ref="_M/P256_NBYTES">P256_NBYTES</dfn> 32</u></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><b>typedef</b> <em>int</em> <dfn class="typedef" id="p256_err" title='p256_err' data-type='int' data-ref="p256_err">p256_err</dfn>;</td></tr>
+<tr><th id="44">44</th><td><b>typedef</b> <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="typedef" id="p256_digit" title='p256_digit' data-type='uint32_t' data-ref="p256_digit">p256_digit</dfn>;</td></tr>
+<tr><th id="45">45</th><td><b>typedef</b> <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int32_t" title='int32_t' data-type='__int32_t' data-ref="int32_t">int32_t</a> <dfn class="typedef" id="p256_sdigit" title='p256_sdigit' data-type='int32_t' data-ref="p256_sdigit">p256_sdigit</dfn>;</td></tr>
+<tr><th id="46">46</th><td><b>typedef</b> <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="typedef" id="p256_ddigit" title='p256_ddigit' data-type='uint64_t' data-ref="p256_ddigit">p256_ddigit</dfn>;</td></tr>
+<tr><th id="47">47</th><td><b>typedef</b> <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#int64_t" title='int64_t' data-type='__int64_t' data-ref="int64_t">int64_t</a> <dfn class="typedef" id="p256_sddigit" title='p256_sddigit' data-type='int64_t' data-ref="p256_sddigit">p256_sddigit</dfn>;</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><i>// Defining p256_int as struct to leverage struct assigment.</i></td></tr>
+<tr><th id="50">50</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="51">51</th><td>  <a class="typedef" href="#p256_digit" title='p256_digit' data-type='uint32_t' data-ref="p256_digit">p256_digit</a> <dfn class="decl" id="(anonymous)::a" title='(anonymous struct)::a' data-ref="(anonymous)::a">a</dfn>[<a class="macro" href="#40" title="8" data-ref="_M/P256_NDIGITS">P256_NDIGITS</a>];</td></tr>
+<tr><th id="52">52</th><td>} <dfn class="typedef" id="p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</dfn>;</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><b>extern</b> <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> <dfn class="decl" id="SECP256r1_n" title='SECP256r1_n' data-ref="SECP256r1_n">SECP256r1_n</dfn>;  <i>// Curve order</i></td></tr>
+<tr><th id="55">55</th><td><b>extern</b> <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> <dfn class="decl" id="SECP256r1_p" title='SECP256r1_p' data-ref="SECP256r1_p">SECP256r1_p</dfn>;  <i>// Curve prime</i></td></tr>
+<tr><th id="56">56</th><td><b>extern</b> <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> <dfn class="decl" id="SECP256r1_b" title='SECP256r1_b' data-ref="SECP256r1_b">SECP256r1_b</dfn>;  <i>// Curve param</i></td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td><i>// Initialize a p256_int to zero.</i></td></tr>
+<tr><th id="59">59</th><td><em>void</em> <dfn class="decl" id="p256_init" title='p256_init' data-ref="p256_init">p256_init</dfn>(<a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col1 decl" id="1a" title='a' data-type='p256_int *' data-ref="1a">a</dfn>);</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><i>// Clear a p256_int to zero.</i></td></tr>
+<tr><th id="62">62</th><td><em>void</em> <dfn class="decl" id="p256_clear" title='p256_clear' data-ref="p256_clear">p256_clear</dfn>(<a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col2 decl" id="2a" title='a' data-type='p256_int *' data-ref="2a">a</dfn>);</td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><i>// Return bit. Index 0 is least significant.</i></td></tr>
+<tr><th id="65">65</th><td><em>int</em> <dfn class="decl" id="p256_get_bit" title='p256_get_bit' data-ref="p256_get_bit">p256_get_bit</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col3 decl" id="3a" title='a' data-type='const p256_int *' data-ref="3a">a</dfn>, <em>int</em> <dfn class="local col4 decl" id="4index" title='index' data-type='int' data-ref="4index">index</dfn>);</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><i>// b := a % MOD</i></td></tr>
+<tr><th id="68">68</th><td><em>void</em> <dfn class="decl" id="p256_mod" title='p256_mod' data-ref="p256_mod">p256_mod</dfn>(</td></tr>
+<tr><th id="69">69</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col5 decl" id="5MOD" title='MOD' data-type='const p256_int *' data-ref="5MOD">MOD</dfn>,</td></tr>
+<tr><th id="70">70</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col6 decl" id="6a" title='a' data-type='const p256_int *' data-ref="6a">a</dfn>,</td></tr>
+<tr><th id="71">71</th><td>    <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col7 decl" id="7b" title='b' data-type='p256_int *' data-ref="7b">b</dfn>);</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><i>// c := a * (top_b | b) % MOD</i></td></tr>
+<tr><th id="74">74</th><td><em>void</em> <dfn class="decl" id="p256_modmul" title='p256_modmul' data-ref="p256_modmul">p256_modmul</dfn>(</td></tr>
+<tr><th id="75">75</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col8 decl" id="8MOD" title='MOD' data-type='const p256_int *' data-ref="8MOD">MOD</dfn>,</td></tr>
+<tr><th id="76">76</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col9 decl" id="9a" title='a' data-type='const p256_int *' data-ref="9a">a</dfn>,</td></tr>
+<tr><th id="77">77</th><td>    <em>const</em> <a class="typedef" href="#p256_digit" title='p256_digit' data-type='uint32_t' data-ref="p256_digit">p256_digit</a> <dfn class="local col0 decl" id="10top_b" title='top_b' data-type='const p256_digit' data-ref="10top_b">top_b</dfn>,</td></tr>
+<tr><th id="78">78</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col1 decl" id="11b" title='b' data-type='const p256_int *' data-ref="11b">b</dfn>,</td></tr>
+<tr><th id="79">79</th><td>    <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col2 decl" id="12c" title='c' data-type='p256_int *' data-ref="12c">c</dfn>);</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><i>// b := 1 / a % MOD</i></td></tr>
+<tr><th id="82">82</th><td><i>// MOD best be SECP256r1_n</i></td></tr>
+<tr><th id="83">83</th><td><em>void</em> <dfn class="decl" id="p256_modinv" title='p256_modinv' data-ref="p256_modinv">p256_modinv</dfn>(</td></tr>
+<tr><th id="84">84</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col3 decl" id="13MOD" title='MOD' data-type='const p256_int *' data-ref="13MOD">MOD</dfn>,</td></tr>
+<tr><th id="85">85</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col4 decl" id="14a" title='a' data-type='const p256_int *' data-ref="14a">a</dfn>,</td></tr>
+<tr><th id="86">86</th><td>    <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col5 decl" id="15b" title='b' data-type='p256_int *' data-ref="15b">b</dfn>);</td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><i>// b := 1 / a % MOD</i></td></tr>
+<tr><th id="89">89</th><td><i>// MOD best be SECP256r1_n</i></td></tr>
+<tr><th id="90">90</th><td><i>// Faster than p256_modinv()</i></td></tr>
+<tr><th id="91">91</th><td><em>void</em> <dfn class="decl" id="p256_modinv_vartime" title='p256_modinv_vartime' data-ref="p256_modinv_vartime">p256_modinv_vartime</dfn>(</td></tr>
+<tr><th id="92">92</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col6 decl" id="16MOD" title='MOD' data-type='const p256_int *' data-ref="16MOD">MOD</dfn>,</td></tr>
+<tr><th id="93">93</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col7 decl" id="17a" title='a' data-type='const p256_int *' data-ref="17a">a</dfn>,</td></tr>
+<tr><th id="94">94</th><td>    <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col8 decl" id="18b" title='b' data-type='p256_int *' data-ref="18b">b</dfn>);</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><i>// b := a &lt;&lt; (n % P256_BITSPERDIGIT)</i></td></tr>
+<tr><th id="97">97</th><td><i>// Returns the bits shifted out of most significant digit.</i></td></tr>
+<tr><th id="98">98</th><td><a class="typedef" href="#p256_digit" title='p256_digit' data-type='uint32_t' data-ref="p256_digit">p256_digit</a> <dfn class="decl" id="p256_shl" title='p256_shl' data-ref="p256_shl">p256_shl</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col9 decl" id="19a" title='a' data-type='const p256_int *' data-ref="19a">a</dfn>, <em>int</em> <dfn class="local col0 decl" id="20n" title='n' data-type='int' data-ref="20n">n</dfn>, <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col1 decl" id="21b" title='b' data-type='p256_int *' data-ref="21b">b</dfn>);</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><i>// b := a &gt;&gt; (n % P256_BITSPERDIGIT)</i></td></tr>
+<tr><th id="101">101</th><td><em>void</em> <dfn class="decl" id="p256_shr" title='p256_shr' data-ref="p256_shr">p256_shr</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col2 decl" id="22a" title='a' data-type='const p256_int *' data-ref="22a">a</dfn>, <em>int</em> <dfn class="local col3 decl" id="23n" title='n' data-type='int' data-ref="23n">n</dfn>, <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col4 decl" id="24b" title='b' data-type='p256_int *' data-ref="24b">b</dfn>);</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><em>int</em> <dfn class="decl" id="p256_is_zero" title='p256_is_zero' data-ref="p256_is_zero">p256_is_zero</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col5 decl" id="25a" title='a' data-type='const p256_int *' data-ref="25a">a</dfn>);</td></tr>
+<tr><th id="104">104</th><td><em>int</em> <dfn class="decl" id="p256_is_odd" title='p256_is_odd' data-ref="p256_is_odd">p256_is_odd</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col6 decl" id="26a" title='a' data-type='const p256_int *' data-ref="26a">a</dfn>);</td></tr>
+<tr><th id="105">105</th><td><em>int</em> <dfn class="decl" id="p256_is_even" title='p256_is_even' data-ref="p256_is_even">p256_is_even</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col7 decl" id="27a" title='a' data-type='const p256_int *' data-ref="27a">a</dfn>);</td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><i>// Returns -1, 0 or 1.</i></td></tr>
+<tr><th id="108">108</th><td><em>int</em> <dfn class="decl" id="p256_cmp" title='p256_cmp' data-ref="p256_cmp">p256_cmp</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col8 decl" id="28a" title='a' data-type='const p256_int *' data-ref="28a">a</dfn>, <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col9 decl" id="29b" title='b' data-type='const p256_int *' data-ref="29b">b</dfn>);</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><i>// c: = a - b</i></td></tr>
+<tr><th id="111">111</th><td><i>// Returns -1 on borrow.</i></td></tr>
+<tr><th id="112">112</th><td><em>int</em> <dfn class="decl" id="p256_sub" title='p256_sub' data-ref="p256_sub">p256_sub</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col0 decl" id="30a" title='a' data-type='const p256_int *' data-ref="30a">a</dfn>, <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col1 decl" id="31b" title='b' data-type='const p256_int *' data-ref="31b">b</dfn>, <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col2 decl" id="32c" title='c' data-type='p256_int *' data-ref="32c">c</dfn>);</td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><i>// c := a + b</i></td></tr>
+<tr><th id="115">115</th><td><i>// Returns 1 on carry.</i></td></tr>
+<tr><th id="116">116</th><td><em>int</em> <dfn class="decl" id="p256_add" title='p256_add' data-ref="p256_add">p256_add</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col3 decl" id="33a" title='a' data-type='const p256_int *' data-ref="33a">a</dfn>, <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col4 decl" id="34b" title='b' data-type='const p256_int *' data-ref="34b">b</dfn>, <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col5 decl" id="35c" title='c' data-type='p256_int *' data-ref="35c">c</dfn>);</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><i>// c := a + (single digit)b</i></td></tr>
+<tr><th id="119">119</th><td><i>// Returns carry 1 on carry.</i></td></tr>
+<tr><th id="120">120</th><td><em>int</em> <dfn class="decl" id="p256_add_d" title='p256_add_d' data-ref="p256_add_d">p256_add_d</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col6 decl" id="36a" title='a' data-type='const p256_int *' data-ref="36a">a</dfn>, <a class="typedef" href="#p256_digit" title='p256_digit' data-type='uint32_t' data-ref="p256_digit">p256_digit</a> <dfn class="local col7 decl" id="37b" title='b' data-type='p256_digit' data-ref="37b">b</dfn>, <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col8 decl" id="38c" title='c' data-type='p256_int *' data-ref="38c">c</dfn>);</td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td><i>// ec routines.</i></td></tr>
+<tr><th id="123">123</th><td><i></i></td></tr>
+<tr><th id="124">124</th><td><i>// {out_x,out_y} := nG</i></td></tr>
+<tr><th id="125">125</th><td><em>void</em> <dfn class="decl" id="p256_base_point_mul" title='p256_base_point_mul' data-ref="p256_base_point_mul">p256_base_point_mul</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col9 decl" id="39n" title='n' data-type='const p256_int *' data-ref="39n">n</dfn>,</td></tr>
+<tr><th id="126">126</th><td>                         <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col0 decl" id="40out_x" title='out_x' data-type='p256_int *' data-ref="40out_x">out_x</dfn>,</td></tr>
+<tr><th id="127">127</th><td>                         <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col1 decl" id="41out_y" title='out_y' data-type='p256_int *' data-ref="41out_y">out_y</dfn>);</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td><i>// {out_x,out_y} := n{in_x,in_y}</i></td></tr>
+<tr><th id="130">130</th><td><em>void</em> <dfn class="decl" id="p256_point_mul" title='p256_point_mul' data-ref="p256_point_mul">p256_point_mul</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col2 decl" id="42n" title='n' data-type='const p256_int *' data-ref="42n">n</dfn>,</td></tr>
+<tr><th id="131">131</th><td>                    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col3 decl" id="43in_x" title='in_x' data-type='const p256_int *' data-ref="43in_x">in_x</dfn>,</td></tr>
+<tr><th id="132">132</th><td>                    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col4 decl" id="44in_y" title='in_y' data-type='const p256_int *' data-ref="44in_y">in_y</dfn>,</td></tr>
+<tr><th id="133">133</th><td>                    <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col5 decl" id="45out_x" title='out_x' data-type='p256_int *' data-ref="45out_x">out_x</dfn>,</td></tr>
+<tr><th id="134">134</th><td>                    <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col6 decl" id="46out_y" title='out_y' data-type='p256_int *' data-ref="46out_y">out_y</dfn>);</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td><i>// {out_x,out_y} := n1G + n2{in_x,in_y}</i></td></tr>
+<tr><th id="137">137</th><td><em>void</em> <dfn class="decl" id="p256_points_mul_vartime" title='p256_points_mul_vartime' data-ref="p256_points_mul_vartime">p256_points_mul_vartime</dfn>(</td></tr>
+<tr><th id="138">138</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col7 decl" id="47n1" title='n1' data-type='const p256_int *' data-ref="47n1">n1</dfn>, <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col8 decl" id="48n2" title='n2' data-type='const p256_int *' data-ref="48n2">n2</dfn>,</td></tr>
+<tr><th id="139">139</th><td>    <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col9 decl" id="49in_x" title='in_x' data-type='const p256_int *' data-ref="49in_x">in_x</dfn>, <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col0 decl" id="50in_y" title='in_y' data-type='const p256_int *' data-ref="50in_y">in_y</dfn>,</td></tr>
+<tr><th id="140">140</th><td>    <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col1 decl" id="51out_x" title='out_x' data-type='p256_int *' data-ref="51out_x">out_x</dfn>, <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a> *<dfn class="local col2 decl" id="52out_y" title='out_y' data-type='p256_int *' data-ref="52out_y">out_y</dfn>);</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td><i>// Return whether point {x,y} is on curve.</i></td></tr>
+<tr><th id="143">143</th><td><em>int</em> <dfn class="decl" id="p256_is_valid_point" title='p256_is_valid_point' data-ref="p256_is_valid_point">p256_is_valid_point</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col3 decl" id="53x" title='x' data-type='const p256_int *' data-ref="53x">x</dfn>, <em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col4 decl" id="54y" title='y' data-type='const p256_int *' data-ref="54y">y</dfn>);</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><i>// Outputs big-endian binary form. No leading zero skips.</i></td></tr>
+<tr><th id="146">146</th><td><em>void</em> <dfn class="decl" id="p256_to_bin" title='p256_to_bin' data-ref="p256_to_bin">p256_to_bin</dfn>(<em>const</em> <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col5 decl" id="55src" title='src' data-type='const p256_int *' data-ref="55src">src</dfn>, <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col6 decl" id="56dst" title='dst' data-type='uint8_t *' data-ref="56dst">dst</dfn>[<a class="macro" href="#41" title="32" data-ref="_M/P256_NBYTES">P256_NBYTES</a>]);</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td><i>// Reads from big-endian binary form,</i></td></tr>
+<tr><th id="149">149</th><td><i>// thus pre-pad with leading zeros if short.</i></td></tr>
+<tr><th id="150">150</th><td><em>void</em> <dfn class="decl" id="p256_from_bin" title='p256_from_bin' data-ref="p256_from_bin">p256_from_bin</dfn>(<em>const</em> <a class="typedef" href="../../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col7 decl" id="57src" title='src' data-type='const uint8_t *' data-ref="57src">src</dfn>[<a class="macro" href="#41" title="32" data-ref="_M/P256_NBYTES">P256_NBYTES</a>], <a class="typedef" href="#p256_int" title='p256_int' data-type='struct p256_int' data-ref="p256_int">p256_int</a>* <dfn class="local col8 decl" id="58dst" title='dst' data-type='p256_int *' data-ref="58dst">dst</dfn>);</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><u>#define <dfn class="macro" id="_M/P256_DIGITS" data-ref="_M/P256_DIGITS">P256_DIGITS</dfn>(x) ((x)-&gt;a)</u></td></tr>
+<tr><th id="153">153</th><td><u>#define <dfn class="macro" id="_M/P256_DIGIT" data-ref="_M/P256_DIGIT">P256_DIGIT</dfn>(x,y) ((x)-&gt;a[y])</u></td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td><u>#define <dfn class="macro" id="_M/P256_ZERO" data-ref="_M/P256_ZERO">P256_ZERO</dfn> {{0}}</u></td></tr>
+<tr><th id="156">156</th><td><u>#define <dfn class="macro" id="_M/P256_ONE" data-ref="_M/P256_ONE">P256_ONE</dfn> {{1}}</u></td></tr>
+<tr><th id="157">157</th><td></td></tr>
+<tr><th id="158">158</th><td><u>#<span data-ppcond="158">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="159">159</th><td>}</td></tr>
+<tr><th id="160">160</th><td><u>#<span data-ppcond="158">endif</span></u></td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td><u>#<span data-ppcond="27">endif</span>  // SYSTEM_CORE_INCLUDE_MINCRYPT_LITE_P256_H_</u></td></tr>
+<tr><th id="163">163</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../libmincrypt/dsa_sig.c.html'>codebrowser/system/core/libmincrypt/dsa_sig.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

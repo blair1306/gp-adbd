@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>time.h source code [codebrowser/bionic/libc/include/time.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/time.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>include</a>/<a href='time.h.html'>time.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="29">ifndef</span> <span class="macro" data-ref="_M/_TIME_H_">_TIME_H_</span></u></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/_TIME_H_" data-ref="_M/_TIME_H_">_TIME_H_</dfn></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="sys/time.h.html">&lt;sys/time.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="xlocale.h.html">&lt;xlocale.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><a class="macro" href="sys/cdefs.h.html#85" title="extern &quot;C&quot; {" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/CLOCKS_PER_SEC" data-ref="_M/CLOCKS_PER_SEC">CLOCKS_PER_SEC</dfn> 1000000</u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="tzname" title='tzname' data-ref="tzname">tzname</dfn>[] <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="41">41</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="daylight" title='daylight' data-ref="daylight">daylight</dfn> <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="42">42</th><td><b>extern</b> <em>long</em> <em>int</em> <dfn class="decl" id="timezone" title='timezone' data-ref="timezone">timezone</dfn> <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><b>struct</b> <a class="type" href="../kernel/uapi/asm-generic/siginfo.h.html#sigevent" title='sigevent' data-ref="sigevent" id="sigevent">sigevent</a>;</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><b>struct</b> <dfn class="type def" id="tm" title='tm' data-ref="tm">tm</dfn> {</td></tr>
+<tr><th id="47">47</th><td>  <em>int</em> <dfn class="decl" id="tm::tm_sec" title='tm::tm_sec' data-ref="tm::tm_sec">tm_sec</dfn>;</td></tr>
+<tr><th id="48">48</th><td>  <em>int</em> <dfn class="decl" id="tm::tm_min" title='tm::tm_min' data-ref="tm::tm_min">tm_min</dfn>;</td></tr>
+<tr><th id="49">49</th><td>  <em>int</em> <dfn class="decl" id="tm::tm_hour" title='tm::tm_hour' data-ref="tm::tm_hour">tm_hour</dfn>;</td></tr>
+<tr><th id="50">50</th><td>  <em>int</em> <dfn class="decl" id="tm::tm_mday" title='tm::tm_mday' data-ref="tm::tm_mday">tm_mday</dfn>;</td></tr>
+<tr><th id="51">51</th><td>  <em>int</em> <dfn class="decl" id="tm::tm_mon" title='tm::tm_mon' data-ref="tm::tm_mon">tm_mon</dfn>;</td></tr>
+<tr><th id="52">52</th><td>  <em>int</em> <dfn class="decl" id="tm::tm_year" title='tm::tm_year' data-ref="tm::tm_year">tm_year</dfn>;</td></tr>
+<tr><th id="53">53</th><td>  <em>int</em> <dfn class="decl" id="tm::tm_wday" title='tm::tm_wday' data-ref="tm::tm_wday">tm_wday</dfn>;</td></tr>
+<tr><th id="54">54</th><td>  <em>int</em> <dfn class="decl" id="tm::tm_yday" title='tm::tm_yday' data-ref="tm::tm_yday">tm_yday</dfn>;</td></tr>
+<tr><th id="55">55</th><td>  <em>int</em> <dfn class="decl" id="tm::tm_isdst" title='tm::tm_isdst' data-ref="tm::tm_isdst">tm_isdst</dfn>;</td></tr>
+<tr><th id="56">56</th><td>  <em>long</em> <em>int</em> <dfn class="decl" id="tm::tm_gmtoff" title='tm::tm_gmtoff' data-ref="tm::tm_gmtoff">tm_gmtoff</dfn>;</td></tr>
+<tr><th id="57">57</th><td>  <em>const</em> <em>char</em>* <dfn class="decl" id="tm::tm_zone" title='tm::tm_zone' data-ref="tm::tm_zone">tm_zone</dfn>;</td></tr>
+<tr><th id="58">58</th><td>};</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#define <dfn class="macro" id="_M/TM_ZONE" data-ref="_M/TM_ZONE">TM_ZONE</dfn> tm_zone</u></td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="decl" id="time" title='time' data-ref="time">time</dfn>(<a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="63">63</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="nanosleep" title='nanosleep' data-ref="nanosleep">nanosleep</dfn>(<em>const</em> <b>struct</b> <a class="type" href="bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>*, <b>struct</b> <a class="type" href="bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="asctime" title='asctime' data-ref="asctime">asctime</dfn>(<em>const</em> <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="66">66</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="asctime_r" title='asctime_r' data-ref="asctime_r">asctime_r</dfn>(<em>const</em> <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>*, <em>char</em>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><b>extern</b> <em>double</em> <dfn class="decl" id="difftime" title='difftime' data-ref="difftime">difftime</dfn>(<a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>, <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="69">69</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="decl" id="mktime" title='mktime' data-ref="mktime">mktime</dfn>(<b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><b>extern</b> <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>* <dfn class="decl" id="localtime" title='localtime' data-ref="localtime">localtime</dfn>(<em>const</em> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="72">72</th><td><b>extern</b> <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>* <dfn class="decl" id="localtime_r" title='localtime_r' data-ref="localtime_r">localtime_r</dfn>(<em>const</em> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>*, <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><b>extern</b> <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>* <dfn class="decl" id="gmtime" title='gmtime' data-ref="gmtime">gmtime</dfn>(<em>const</em> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="75">75</th><td><b>extern</b> <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>* <dfn class="decl" id="gmtime_r" title='gmtime_r' data-ref="gmtime_r">gmtime_r</dfn>(<em>const</em> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>*, <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="strptime" title='strptime' data-ref="strptime">strptime</dfn>(<em>const</em> <em>char</em>*, <em>const</em> <em>char</em>*, <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="78">78</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="strftime" title='strftime' data-ref="strftime">strftime</dfn>(<em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>const</em> <em>char</em>*, <em>const</em> <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="79">79</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="strftime_l" title='strftime_l' data-ref="strftime_l">strftime_l</dfn>(<em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>const</em> <em>char</em> *, <em>const</em> <b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a> *, <a class="typedef" href="xlocale.h.html#locale_t" title='locale_t' data-type='struct __locale_t *' data-ref="locale_t">locale_t</a>) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="ctime" title='ctime' data-ref="ctime">ctime</dfn>(<em>const</em> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="82">82</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="ctime_r" title='ctime_r' data-ref="ctime_r">ctime_r</dfn>(<em>const</em> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>*, <em>char</em>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><b>extern</b> <em>void</em> <dfn class="decl" id="tzset" title='tzset' data-ref="tzset">tzset</dfn>(<em>void</em>) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#clock_t" title='clock_t' data-type='__kernel_clock_t' data-ref="clock_t">clock_t</a> <dfn class="decl" id="clock" title='clock' data-ref="clock">clock</dfn>(<em>void</em>) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="clock_getcpuclockid" title='clock_getcpuclockid' data-ref="clock_getcpuclockid">clock_getcpuclockid</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>, <a class="typedef" href="sys/types.h.html#clockid_t" title='clockid_t' data-type='__clockid_t' data-ref="clockid_t">clockid_t</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="clock_getres" title='clock_getres' data-ref="clock_getres">clock_getres</dfn>(<a class="typedef" href="sys/types.h.html#clockid_t" title='clockid_t' data-type='__clockid_t' data-ref="clockid_t">clockid_t</a>, <b>struct</b> <a class="type" href="bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="91">91</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="clock_gettime" title='clock_gettime' data-ref="clock_gettime">clock_gettime</dfn>(<a class="typedef" href="sys/types.h.html#clockid_t" title='clockid_t' data-type='__clockid_t' data-ref="clockid_t">clockid_t</a>, <b>struct</b> <a class="type" href="bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="92">92</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="clock_nanosleep" title='clock_nanosleep' data-ref="clock_nanosleep">clock_nanosleep</dfn>(<a class="typedef" href="sys/types.h.html#clockid_t" title='clockid_t' data-type='__clockid_t' data-ref="clockid_t">clockid_t</a>, <em>int</em>, <em>const</em> <b>struct</b> <a class="type" href="bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>*, <b>struct</b> <a class="type" href="bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="93">93</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="clock_settime" title='clock_settime' data-ref="clock_settime">clock_settime</dfn>(<a class="typedef" href="sys/types.h.html#clockid_t" title='clockid_t' data-type='__clockid_t' data-ref="clockid_t">clockid_t</a>, <em>const</em> <b>struct</b> <a class="type" href="bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="timer_create" title='timer_create' data-ref="timer_create">timer_create</dfn>(<em>int</em>, <b>struct</b> <a class="type" href="../kernel/uapi/asm-generic/siginfo.h.html#sigevent" title='sigevent' data-ref="sigevent">sigevent</a>*, <a class="typedef" href="sys/types.h.html#timer_t" title='timer_t' data-type='__timer_t' data-ref="timer_t">timer_t</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="96">96</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="timer_delete" title='timer_delete' data-ref="timer_delete">timer_delete</dfn>(<a class="typedef" href="sys/types.h.html#timer_t" title='timer_t' data-type='__timer_t' data-ref="timer_t">timer_t</a>) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="97">97</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="timer_settime" title='timer_settime' data-ref="timer_settime">timer_settime</dfn>(<a class="typedef" href="sys/types.h.html#timer_t" title='timer_t' data-type='__timer_t' data-ref="timer_t">timer_t</a>, <em>int</em>, <em>const</em> <b>struct</b> <a class="type" href="../kernel/uapi/linux/time.h.html#itimerspec" title='itimerspec' data-ref="itimerspec">itimerspec</a>*, <b>struct</b> <a class="type" href="../kernel/uapi/linux/time.h.html#itimerspec" title='itimerspec' data-ref="itimerspec">itimerspec</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="98">98</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="timer_gettime" title='timer_gettime' data-ref="timer_gettime">timer_gettime</dfn>(<a class="typedef" href="sys/types.h.html#timer_t" title='timer_t' data-type='__timer_t' data-ref="timer_t">timer_t</a>, <b>struct</b> <a class="type" href="../kernel/uapi/linux/time.h.html#itimerspec" title='itimerspec' data-ref="itimerspec">itimerspec</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="99">99</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="timer_getoverrun" title='timer_getoverrun' data-ref="timer_getoverrun">timer_getoverrun</dfn>(<a class="typedef" href="sys/types.h.html#timer_t" title='timer_t' data-type='__timer_t' data-ref="timer_t">timer_t</a>) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td><i>/* Non-standard extensions that are in the BSDs and glibc. */</i></td></tr>
+<tr><th id="102">102</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="decl" id="timelocal" title='timelocal' data-ref="timelocal">timelocal</dfn>(<b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="103">103</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="decl" id="timegm" title='timegm' data-ref="timegm">timegm</dfn>(<b>struct</b> <a class="type" href="#tm" title='tm' data-ref="tm">tm</a>*) <a class="macro" href="sys/cdefs.h.html#441" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><a class="macro" href="sys/cdefs.h.html#86" title="}" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><u>#<span data-ppcond="29">endif</span> /* _TIME_H_ */</u></td></tr>
+<tr><th id="108">108</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/NetdClient.cpp.html'>codebrowser/bionic/libc/bionic/NetdClient.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

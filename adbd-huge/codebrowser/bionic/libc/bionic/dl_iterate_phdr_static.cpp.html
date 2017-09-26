@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>dl_iterate_phdr_static.cpp source code [codebrowser/bionic/libc/bionic/dl_iterate_phdr_static.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/dl_iterate_phdr_static.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='dl_iterate_phdr_static.cpp.html'>dl_iterate_phdr_static.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2006 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../include/elf.h.html">&lt;elf.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../include/sys/auxv.h.html">&lt;sys/auxv.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../include/link.h.html">&lt;link.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><i>/* ld provides this to us in the default link script */</i></td></tr>
+<tr><th id="36">36</th><td><b>extern</b> <q>"C"</q> <em>void</em>* <dfn class="decl" id="__executable_start" title='__executable_start' data-ref="__executable_start">__executable_start</dfn>;</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><em>int</em> <dfn class="decl def" id="dl_iterate_phdr" title='dl_iterate_phdr' data-ref="dl_iterate_phdr">dl_iterate_phdr</dfn>(<em>int</em> (*<dfn class="local col1 decl" id="1cb" title='cb' data-type='int (*)(struct dl_phdr_info *, size_t, void *)' data-ref="1cb">cb</dfn>)(<b>struct</b> <a class="type" href="../include/link.h.html#dl_phdr_info" title='dl_phdr_info' data-ref="dl_phdr_info">dl_phdr_info</a>* <dfn class="local col2 decl" id="2info" title='info' data-type='struct dl_phdr_info *' data-ref="2info">info</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="3size" title='size' data-type='size_t' data-ref="3size">size</dfn>, <em>void</em>* <dfn class="local col4 decl" id="4data" title='data' data-type='void *' data-ref="4data">data</dfn>), <em>void</em>* <dfn class="local col5 decl" id="5data" title='data' data-type='void *' data-ref="5data">data</dfn>) {</td></tr>
+<tr><th id="39">39</th><td>  <a class="macro" href="../include/link.h.html#37" title="Elf64_Ehdr" data-ref="_M/ElfW">ElfW</a>(Ehdr)* <dfn class="local col6 decl" id="6ehdr" title='ehdr' data-type='Elf64_Ehdr *' data-ref="6ehdr">ehdr</dfn> = <b>reinterpret_cast</b>&lt;<a class="macro" href="../include/link.h.html#37" title="Elf64_Ehdr" data-ref="_M/ElfW">ElfW</a>(Ehdr)*&gt;(&amp;<a class="ref" href="#__executable_start" title='__executable_start' data-ref="__executable_start">__executable_start</a>);</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td>  <b>if</b> (<a class="ref" href="../include/string.h.html#memcmp" title='memcmp' data-ref="memcmp">memcmp</a>(<a class="local col6 ref" href="#6ehdr" title='ehdr' data-ref="6ehdr">ehdr</a>-&gt;<a class="ref" href="../kernel/uapi/linux/elf.h.html#elf64_hdr::e_ident" title='elf64_hdr::e_ident' data-ref="elf64_hdr::e_ident">e_ident</a>, <a class="macro" href="../kernel/uapi/linux/elf.h.html#357" title="&quot;\177ELF&quot;" data-ref="_M/ELFMAG">ELFMAG</a>, <a class="macro" href="../kernel/uapi/linux/elf.h.html#359" title="4" data-ref="_M/SELFMAG">SELFMAG</a>) != <var>0</var>) {</td></tr>
+<tr><th id="42">42</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="43">43</th><td>  }</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td>  <i>// Dynamic binaries get their dl_iterate_phdr from the dynamic linker, but</i></td></tr>
+<tr><th id="46">46</th><td><i>  // static binaries get this. We don't have a list of shared objects to</i></td></tr>
+<tr><th id="47">47</th><td><i>  // iterate over, since there's really only a single monolithic blob of</i></td></tr>
+<tr><th id="48">48</th><td><i>  // code/data, plus optionally a VDSO.</i></td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td>  <b>struct</b> <a class="type" href="../include/link.h.html#dl_phdr_info" title='dl_phdr_info' data-ref="dl_phdr_info">dl_phdr_info</a> <a class="ref fake" href="../include/link.h.html#42" title='dl_phdr_info::dl_phdr_info' data-ref="_ZN12dl_phdr_infoC1Ev"></a><dfn class="local col7 decl" id="7exe_info" title='exe_info' data-type='struct dl_phdr_info' data-ref="7exe_info">exe_info</dfn>;</td></tr>
+<tr><th id="51">51</th><td>  <a class="local col7 ref" href="#7exe_info" title='exe_info' data-ref="7exe_info">exe_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_addr" title='dl_phdr_info::dlpi_addr' data-ref="dl_phdr_info::dlpi_addr">dlpi_addr</a> = <var>0</var>;</td></tr>
+<tr><th id="52">52</th><td>  <a class="local col7 ref" href="#7exe_info" title='exe_info' data-ref="7exe_info">exe_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_name" title='dl_phdr_info::dlpi_name' data-ref="dl_phdr_info::dlpi_name">dlpi_name</a> = <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="53">53</th><td>  <a class="local col7 ref" href="#7exe_info" title='exe_info' data-ref="7exe_info">exe_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_phdr" title='dl_phdr_info::dlpi_phdr' data-ref="dl_phdr_info::dlpi_phdr">dlpi_phdr</a> = <b>reinterpret_cast</b>&lt;<a class="macro" href="../include/link.h.html#37" title="Elf64_Phdr" data-ref="_M/ElfW">ElfW</a>(Phdr)*&gt;(<b>reinterpret_cast</b>&lt;<a class="typedef" href="../include/stdint.h.html#uintptr_t" title='uintptr_t' data-type='__uintptr_t' data-ref="uintptr_t">uintptr_t</a>&gt;(<a class="local col6 ref" href="#6ehdr" title='ehdr' data-ref="6ehdr">ehdr</a>) + <a class="local col6 ref" href="#6ehdr" title='ehdr' data-ref="6ehdr">ehdr</a>-&gt;<a class="ref" href="../kernel/uapi/linux/elf.h.html#elf64_hdr::e_phoff" title='elf64_hdr::e_phoff' data-ref="elf64_hdr::e_phoff">e_phoff</a>);</td></tr>
+<tr><th id="54">54</th><td>  <a class="local col7 ref" href="#7exe_info" title='exe_info' data-ref="7exe_info">exe_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_phnum" title='dl_phdr_info::dlpi_phnum' data-ref="dl_phdr_info::dlpi_phnum">dlpi_phnum</a> = <a class="local col6 ref" href="#6ehdr" title='ehdr' data-ref="6ehdr">ehdr</a>-&gt;<a class="ref" href="../kernel/uapi/linux/elf.h.html#elf64_hdr::e_phnum" title='elf64_hdr::e_phnum' data-ref="elf64_hdr::e_phnum">e_phnum</a>;</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><u>#<span data-ppcond="56">if</span> defined(<a class="macro" href="../kernel/uapi/asm-x86/asm/auxvec.h.html#25" data-ref="_M/AT_SYSINFO_EHDR">AT_SYSINFO_EHDR</a>)</u></td></tr>
+<tr><th id="57">57</th><td>  <i>// Try the executable first.</i></td></tr>
+<tr><th id="58">58</th><td>  <em>int</em> <dfn class="local col8 decl" id="8rc" title='rc' data-type='int' data-ref="8rc">rc</dfn> = <a class="local col1 ref" href="#1cb" title='cb' data-ref="1cb">cb</a>(&amp;<a class="local col7 ref" href="#7exe_info" title='exe_info' data-ref="7exe_info">exe_info</a>, <b>sizeof</b>(<a class="local col7 ref" href="#7exe_info" title='exe_info' data-ref="7exe_info">exe_info</a>), <a class="local col5 ref" href="#5data" title='data' data-ref="5data">data</a>);</td></tr>
+<tr><th id="59">59</th><td>  <b>if</b> (<a class="local col8 ref" href="#8rc" title='rc' data-ref="8rc">rc</a> != <var>0</var>) {</td></tr>
+<tr><th id="60">60</th><td>    <b>return</b> <a class="local col8 ref" href="#8rc" title='rc' data-ref="8rc">rc</a>;</td></tr>
+<tr><th id="61">61</th><td>  }</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td>  <i>// Try the VDSO if that didn't work.</i></td></tr>
+<tr><th id="64">64</th><td>  <a class="macro" href="../include/link.h.html#37" title="Elf64_Ehdr" data-ref="_M/ElfW">ElfW</a>(Ehdr)* <dfn class="local col9 decl" id="9ehdr_vdso" title='ehdr_vdso' data-type='Elf64_Ehdr *' data-ref="9ehdr_vdso">ehdr_vdso</dfn> = <b>reinterpret_cast</b>&lt;<a class="macro" href="../include/link.h.html#37" title="Elf64_Ehdr" data-ref="_M/ElfW">ElfW</a>(Ehdr)*&gt;(<a class="ref" href="../include/sys/auxv.h.html#getauxval" title='getauxval' data-ref="getauxval">getauxval</a>(<a class="macro" href="../kernel/uapi/asm-x86/asm/auxvec.h.html#25" title="33" data-ref="_M/AT_SYSINFO_EHDR">AT_SYSINFO_EHDR</a>));</td></tr>
+<tr><th id="65">65</th><td>  <b>if</b> (<a class="local col9 ref" href="#9ehdr_vdso" title='ehdr_vdso' data-ref="9ehdr_vdso">ehdr_vdso</a> == <b>nullptr</b>) {</td></tr>
+<tr><th id="66">66</th><td>    <i>// There is no VDSO, so there's nowhere left to look.</i></td></tr>
+<tr><th id="67">67</th><td>    <b>return</b> <a class="local col8 ref" href="#8rc" title='rc' data-ref="8rc">rc</a>;</td></tr>
+<tr><th id="68">68</th><td>  }</td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td>  <b>struct</b> <a class="type" href="../include/link.h.html#dl_phdr_info" title='dl_phdr_info' data-ref="dl_phdr_info">dl_phdr_info</a> <a class="ref fake" href="../include/link.h.html#42" title='dl_phdr_info::dl_phdr_info' data-ref="_ZN12dl_phdr_infoC1Ev"></a><dfn class="local col0 decl" id="10vdso_info" title='vdso_info' data-type='struct dl_phdr_info' data-ref="10vdso_info">vdso_info</dfn>;</td></tr>
+<tr><th id="71">71</th><td>  <a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_addr" title='dl_phdr_info::dlpi_addr' data-ref="dl_phdr_info::dlpi_addr">dlpi_addr</a> = <var>0</var>;</td></tr>
+<tr><th id="72">72</th><td>  <a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_name" title='dl_phdr_info::dlpi_name' data-ref="dl_phdr_info::dlpi_name">dlpi_name</a> = <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="73">73</th><td>  <a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_phdr" title='dl_phdr_info::dlpi_phdr' data-ref="dl_phdr_info::dlpi_phdr">dlpi_phdr</a> = <b>reinterpret_cast</b>&lt;<a class="macro" href="../include/link.h.html#37" title="Elf64_Phdr" data-ref="_M/ElfW">ElfW</a>(Phdr)*&gt;(<b>reinterpret_cast</b>&lt;<em>char</em>*&gt;(<a class="local col9 ref" href="#9ehdr_vdso" title='ehdr_vdso' data-ref="9ehdr_vdso">ehdr_vdso</a>) + <a class="local col9 ref" href="#9ehdr_vdso" title='ehdr_vdso' data-ref="9ehdr_vdso">ehdr_vdso</a>-&gt;<a class="ref" href="../kernel/uapi/linux/elf.h.html#elf64_hdr::e_phoff" title='elf64_hdr::e_phoff' data-ref="elf64_hdr::e_phoff">e_phoff</a>);</td></tr>
+<tr><th id="74">74</th><td>  <a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_phnum" title='dl_phdr_info::dlpi_phnum' data-ref="dl_phdr_info::dlpi_phnum">dlpi_phnum</a> = <a class="local col9 ref" href="#9ehdr_vdso" title='ehdr_vdso' data-ref="9ehdr_vdso">ehdr_vdso</a>-&gt;<a class="ref" href="../kernel/uapi/linux/elf.h.html#elf64_hdr::e_phnum" title='elf64_hdr::e_phnum' data-ref="elf64_hdr::e_phnum">e_phnum</a>;</td></tr>
+<tr><th id="75">75</th><td>  <b>for</b> (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="11i" title='i' data-type='size_t' data-ref="11i">i</dfn> = <var>0</var>; <a class="local col1 ref" href="#11i" title='i' data-ref="11i">i</a> &lt; <a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_phnum" title='dl_phdr_info::dlpi_phnum' data-ref="dl_phdr_info::dlpi_phnum">dlpi_phnum</a>; ++<a class="local col1 ref" href="#11i" title='i' data-ref="11i">i</a>) {</td></tr>
+<tr><th id="76">76</th><td>    <b>if</b> (<a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_phdr" title='dl_phdr_info::dlpi_phdr' data-ref="dl_phdr_info::dlpi_phdr">dlpi_phdr</a>[<a class="local col1 ref" href="#11i" title='i' data-ref="11i">i</a>].<a class="ref" href="../kernel/uapi/linux/elf.h.html#elf64_phdr::p_type" title='elf64_phdr::p_type' data-ref="elf64_phdr::p_type">p_type</a> == <a class="macro" href="../kernel/uapi/linux/elf.h.html#41" title="1" data-ref="_M/PT_LOAD">PT_LOAD</a>) {</td></tr>
+<tr><th id="77">77</th><td>      <a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_addr" title='dl_phdr_info::dlpi_addr' data-ref="dl_phdr_info::dlpi_addr">dlpi_addr</a> = (<a class="macro" href="../include/link.h.html#37" title="Elf64_Addr" data-ref="_M/ElfW">ElfW</a>(Addr)) <a class="local col9 ref" href="#9ehdr_vdso" title='ehdr_vdso' data-ref="9ehdr_vdso">ehdr_vdso</a> - <a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>.<a class="ref" href="../include/link.h.html#dl_phdr_info::dlpi_phdr" title='dl_phdr_info::dlpi_phdr' data-ref="dl_phdr_info::dlpi_phdr">dlpi_phdr</a>[<a class="local col1 ref" href="#11i" title='i' data-ref="11i">i</a>].<a class="ref" href="../kernel/uapi/linux/elf.h.html#elf64_phdr::p_vaddr" title='elf64_phdr::p_vaddr' data-ref="elf64_phdr::p_vaddr">p_vaddr</a>;</td></tr>
+<tr><th id="78">78</th><td>      <b>break</b>;</td></tr>
+<tr><th id="79">79</th><td>    }</td></tr>
+<tr><th id="80">80</th><td>  }</td></tr>
+<tr><th id="81">81</th><td>  <b>return</b> <a class="local col1 ref" href="#1cb" title='cb' data-ref="1cb">cb</a>(&amp;<a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>, <b>sizeof</b>(<a class="local col0 ref" href="#10vdso_info" title='vdso_info' data-ref="10vdso_info">vdso_info</a>), <a class="local col5 ref" href="#5data" title='data' data-ref="5data">data</a>);</td></tr>
+<tr><th id="82">82</th><td><u>#<span data-ppcond="56">else</span></u></td></tr>
+<tr><th id="83">83</th><td>  <i>// There's only the executable to try.</i></td></tr>
+<tr><th id="84">84</th><td>  <b>return</b> cb(&amp;exe_info, <b>sizeof</b>(exe_info), data);</td></tr>
+<tr><th id="85">85</th><td><u>#<span data-ppcond="56">endif</span></u></td></tr>
+<tr><th id="86">86</th><td>}</td></tr>
+<tr><th id="87">87</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

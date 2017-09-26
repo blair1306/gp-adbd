@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>fenv.h source code [codebrowser/bionic/libc/include/fenv.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/fenv.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>include</a>/<a href='fenv.h.html'>fenv.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*  $OpenBSD: fenv.h,v 1.2 2011/05/25 21:46:49 martynas Exp $ */</i></td></tr>
+<tr><th id="2">2</th><td><i>/*  $NetBSD: fenv.h,v 1.2.4.1 2011/02/08 16:18:55 bouyer Exp $  */</i></td></tr>
+<tr><th id="3">3</th><td></td></tr>
+<tr><th id="4">4</th><td><i>/*</i></td></tr>
+<tr><th id="5">5</th><td><i> * Copyright (c) 2010 The NetBSD Foundation, Inc.</i></td></tr>
+<tr><th id="6">6</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="9">9</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * are met:</i></td></tr>
+<tr><th id="11">11</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="12">12</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="13">13</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="14">14</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="15">15</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="16">16</th><td><i> *</i></td></tr>
+<tr><th id="17">17</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE NETBSD FOUNDATION, INC. AND CONTRIBUTORS</i></td></tr>
+<tr><th id="18">18</th><td><i> * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED</i></td></tr>
+<tr><th id="19">19</th><td><i> * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="20">20</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS</i></td></tr>
+<tr><th id="21">21</th><td><i> * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR</i></td></tr>
+<tr><th id="22">22</th><td><i> * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF</i></td></tr>
+<tr><th id="23">23</th><td><i> * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS</i></td></tr>
+<tr><th id="24">24</th><td><i> * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN</i></td></tr>
+<tr><th id="25">25</th><td><i> * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="26">26</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</i></td></tr>
+<tr><th id="27">27</th><td><i> * POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="28">28</th><td><i> */</i></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#<span data-ppcond="30">ifndef</span> <span class="macro" data-ref="_M/_FENV_H_">_FENV_H_</span></u></td></tr>
+<tr><th id="31">31</th><td><u>#define <dfn class="macro" id="_M/_FENV_H_" data-ref="_M/_FENV_H_">_FENV_H_</dfn></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../arch-x86_64/include/machine/fenv.h.html">&lt;machine/fenv.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><a class="macro" href="sys/cdefs.h.html#89" title="" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="37">37</th><td><u>#pragma GCC visibility push(default)</u></td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><em>int</em> <dfn class="decl" id="feclearexcept" title='feclearexcept' data-ref="feclearexcept">feclearexcept</dfn>(<em>int</em>);</td></tr>
+<tr><th id="40">40</th><td><em>int</em> <dfn class="decl" id="fegetexceptflag" title='fegetexceptflag' data-ref="fegetexceptflag">fegetexceptflag</dfn>(<a class="typedef" href="../arch-x86_64/include/machine/fenv.h.html#fexcept_t" title='fexcept_t' data-type='__uint32_t' data-ref="fexcept_t">fexcept_t</a> *, <em>int</em>);</td></tr>
+<tr><th id="41">41</th><td><em>int</em> <dfn class="decl" id="feraiseexcept" title='feraiseexcept' data-ref="feraiseexcept">feraiseexcept</dfn>(<em>int</em>);</td></tr>
+<tr><th id="42">42</th><td><em>int</em> <dfn class="decl" id="fesetexceptflag" title='fesetexceptflag' data-ref="fesetexceptflag">fesetexceptflag</dfn>(<em>const</em> <a class="typedef" href="../arch-x86_64/include/machine/fenv.h.html#fexcept_t" title='fexcept_t' data-type='__uint32_t' data-ref="fexcept_t">fexcept_t</a> *, <em>int</em>);</td></tr>
+<tr><th id="43">43</th><td><em>int</em> <dfn class="decl" id="fetestexcept" title='fetestexcept' data-ref="fetestexcept">fetestexcept</dfn>(<em>int</em>);</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><em>int</em> <dfn class="decl" id="fegetround" title='fegetround' data-ref="fegetround">fegetround</dfn>(<em>void</em>);</td></tr>
+<tr><th id="46">46</th><td><em>int</em> <dfn class="decl" id="fesetround" title='fesetround' data-ref="fesetround">fesetround</dfn>(<em>int</em>);</td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><em>int</em> <dfn class="decl" id="fegetenv" title='fegetenv' data-ref="fegetenv">fegetenv</dfn>(<a class="typedef" href="../arch-x86_64/include/machine/fenv.h.html#fenv_t" title='fenv_t' data-type='struct fenv_t' data-ref="fenv_t">fenv_t</a> *);</td></tr>
+<tr><th id="49">49</th><td><em>int</em> <dfn class="decl" id="feholdexcept" title='feholdexcept' data-ref="feholdexcept">feholdexcept</dfn>(<a class="typedef" href="../arch-x86_64/include/machine/fenv.h.html#fenv_t" title='fenv_t' data-type='struct fenv_t' data-ref="fenv_t">fenv_t</a> *);</td></tr>
+<tr><th id="50">50</th><td><em>int</em> <dfn class="decl" id="fesetenv" title='fesetenv' data-ref="fesetenv">fesetenv</dfn>(<em>const</em> <a class="typedef" href="../arch-x86_64/include/machine/fenv.h.html#fenv_t" title='fenv_t' data-type='struct fenv_t' data-ref="fenv_t">fenv_t</a> *);</td></tr>
+<tr><th id="51">51</th><td><em>int</em> <dfn class="decl" id="feupdateenv" title='feupdateenv' data-ref="feupdateenv">feupdateenv</dfn>(<em>const</em> <a class="typedef" href="../arch-x86_64/include/machine/fenv.h.html#fenv_t" title='fenv_t' data-type='struct fenv_t' data-ref="fenv_t">fenv_t</a> *);</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><em>int</em> <dfn class="decl" id="feenableexcept" title='feenableexcept' data-ref="feenableexcept">feenableexcept</dfn>(<em>int</em>);</td></tr>
+<tr><th id="54">54</th><td><em>int</em> <dfn class="decl" id="fedisableexcept" title='fedisableexcept' data-ref="fedisableexcept">fedisableexcept</dfn>(<em>int</em>);</td></tr>
+<tr><th id="55">55</th><td><em>int</em> <dfn class="decl" id="fegetexcept" title='fegetexcept' data-ref="fegetexcept">fegetexcept</dfn>(<em>void</em>);</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><i>/*</i></td></tr>
+<tr><th id="58">58</th><td><i> * The following constant represents the default floating-point environment</i></td></tr>
+<tr><th id="59">59</th><td><i> * (that is, the one installed at program startup) and has type pointer to</i></td></tr>
+<tr><th id="60">60</th><td><i> * const-qualified fenv_t.</i></td></tr>
+<tr><th id="61">61</th><td><i> *</i></td></tr>
+<tr><th id="62">62</th><td><i> * It can be used as an argument to the functions that manage the floating-point</i></td></tr>
+<tr><th id="63">63</th><td><i> * environment, namely fesetenv() and feupdateenv().</i></td></tr>
+<tr><th id="64">64</th><td><i> */</i></td></tr>
+<tr><th id="65">65</th><td><b>extern</b> <em>const</em> <a class="typedef" href="../arch-x86_64/include/machine/fenv.h.html#fenv_t" title='fenv_t' data-type='struct fenv_t' data-ref="fenv_t">fenv_t</a> <dfn class="decl" id="__fe_dfl_env" title='__fe_dfl_env' data-ref="__fe_dfl_env">__fe_dfl_env</dfn>;</td></tr>
+<tr><th id="66">66</th><td><u>#define <dfn class="macro" id="_M/FE_DFL_ENV" data-ref="_M/FE_DFL_ENV">FE_DFL_ENV</dfn>  (&amp;__fe_dfl_env)</u></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><u>#pragma GCC visibility pop</u></td></tr>
+<tr><th id="69">69</th><td><a class="macro" href="sys/cdefs.h.html#90" title="" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><u>#<span data-ppcond="30">endif</span>  /* ! _FENV_H_ */</u></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../upstream-openbsd/lib/libc/gdtoa/strtod.c.html'>codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/strtod.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

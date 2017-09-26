@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>mktemp.c source code [codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/mktemp.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/mktemp.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libc</a>/<a href='../../..'>upstream-openbsd</a>/<a href='../..'>lib</a>/<a href='..'>libc</a>/<a href='./'>stdio</a>/<a href='mktemp.c.html'>mktemp.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$OpenBSD: mktemp.c,v 1.35 2014/10/31 15:54:14 millert Exp $ */</i></td></tr>
+<tr><th id="2">2</th><td><i>/*</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright (c) 1996-1998, 2008 Theo de Raadt</i></td></tr>
+<tr><th id="4">4</th><td><i> * Copyright (c) 1997, 2008-2009 Todd C. Miller</i></td></tr>
+<tr><th id="5">5</th><td><i> *</i></td></tr>
+<tr><th id="6">6</th><td><i> * Permission to use, copy, modify, and distribute this software for any</i></td></tr>
+<tr><th id="7">7</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="8">8</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="12">12</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</i></td></tr>
+<tr><th id="13">13</th><td><i> * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="14">14</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</i></td></tr>
+<tr><th id="15">15</th><td><i> * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</i></td></tr>
+<tr><th id="16">16</th><td><i> * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</i></td></tr>
+<tr><th id="17">17</th><td><i> */</i></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="../../../../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../../include/sys/stat.h.html">&lt;sys/stat.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../../include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../../include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../../include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../../../../include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../../../../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="../../../../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../../include/ctype.h.html">&lt;ctype.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../../../../include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/MKTEMP_NAME" data-ref="_M/MKTEMP_NAME">MKTEMP_NAME</dfn>	0</u></td></tr>
+<tr><th id="31">31</th><td><u>#define <dfn class="macro" id="_M/MKTEMP_FILE" data-ref="_M/MKTEMP_FILE">MKTEMP_FILE</dfn>	1</u></td></tr>
+<tr><th id="32">32</th><td><u>#define <dfn class="macro" id="_M/MKTEMP_DIR" data-ref="_M/MKTEMP_DIR">MKTEMP_DIR</dfn>	2</u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#define <dfn class="macro" id="_M/TEMPCHARS" data-ref="_M/TEMPCHARS">TEMPCHARS</dfn>	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"</u></td></tr>
+<tr><th id="35">35</th><td><u>#define <dfn class="macro" id="_M/NUM_CHARS" data-ref="_M/NUM_CHARS">NUM_CHARS</dfn>	(sizeof(TEMPCHARS) - 1)</u></td></tr>
+<tr><th id="36">36</th><td><u>#define <dfn class="macro" id="_M/MIN_X" data-ref="_M/MIN_X">MIN_X</dfn>		6</u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/MKOTEMP_FLAGS" data-ref="_M/MKOTEMP_FLAGS">MKOTEMP_FLAGS</dfn>	(O_APPEND | O_CLOEXEC | O_DSYNC | O_RSYNC | O_SYNC)</u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><u>#<span data-ppcond="40">ifndef</span> <span class="macro" data-ref="_M/nitems">nitems</span></u></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/nitems" data-ref="_M/nitems">nitems</dfn>(_a)	(sizeof((_a)) / sizeof((_a)[0]))</u></td></tr>
+<tr><th id="42">42</th><td><u>#<span data-ppcond="40">endif</span></u></td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><em>static</em> <em>int</em></td></tr>
+<tr><th id="45">45</th><td><dfn class="tu decl def" id="mktemp_internal" title='mktemp_internal' data-type='int mktemp_internal(char * path, int slen, int mode, int flags)' data-ref="mktemp_internal">mktemp_internal</dfn>(<em>char</em> *<dfn class="local col1 decl" id="1path" title='path' data-type='char *' data-ref="1path">path</dfn>, <em>int</em> <dfn class="local col2 decl" id="2slen" title='slen' data-type='int' data-ref="2slen">slen</dfn>, <em>int</em> <dfn class="local col3 decl" id="3mode" title='mode' data-type='int' data-ref="3mode">mode</dfn>, <em>int</em> <dfn class="local col4 decl" id="4flags" title='flags' data-type='int' data-ref="4flags">flags</dfn>)</td></tr>
+<tr><th id="46">46</th><td>{</td></tr>
+<tr><th id="47">47</th><td>	<em>char</em> *<dfn class="local col5 decl" id="5start" title='start' data-type='char *' data-ref="5start">start</dfn>, *<dfn class="local col6 decl" id="6cp" title='cp' data-type='char *' data-ref="6cp">cp</dfn>, *<dfn class="local col7 decl" id="7ep" title='ep' data-type='char *' data-ref="7ep">ep</dfn>;</td></tr>
+<tr><th id="48">48</th><td>	<em>const</em> <em>char</em> <dfn class="local col8 decl" id="8tempchars" title='tempchars' data-type='const char [63]' data-ref="8tempchars">tempchars</dfn>[] = <a class="macro" href="#34" title="&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&quot;" data-ref="_M/TEMPCHARS">TEMPCHARS</a>;</td></tr>
+<tr><th id="49">49</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col9 decl" id="9tries" title='tries' data-type='unsigned int' data-ref="9tries">tries</dfn>;</td></tr>
+<tr><th id="50">50</th><td>	<b>struct</b> <a class="type" href="../../../../include/sys/stat.h.html#stat" title='stat' data-ref="stat">stat</a> <dfn class="local col0 decl" id="10sb" title='sb' data-type='struct stat' data-ref="10sb">sb</dfn>;</td></tr>
+<tr><th id="51">51</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="11len" title='len' data-type='size_t' data-ref="11len">len</dfn>;</td></tr>
+<tr><th id="52">52</th><td>	<em>int</em> <dfn class="local col2 decl" id="12fd" title='fd' data-type='int' data-ref="12fd">fd</dfn>;</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td>	<a class="local col1 ref" href="#11len" title='len' data-ref="11len">len</a> = <a class="ref" href="../../../../include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a>);</td></tr>
+<tr><th id="55">55</th><td>	<b>if</b> (<a class="local col1 ref" href="#11len" title='len' data-ref="11len">len</a> &lt; <a class="macro" href="#36" title="6" data-ref="_M/MIN_X">MIN_X</a> || <a class="local col2 ref" href="#2slen" title='slen' data-ref="2slen">slen</a> &lt; <var>0</var> || (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col2 ref" href="#2slen" title='slen' data-ref="2slen">slen</a> &gt; <a class="local col1 ref" href="#11len" title='len' data-ref="11len">len</a> - <a class="macro" href="#36" title="6" data-ref="_M/MIN_X">MIN_X</a>) {</td></tr>
+<tr><th id="56">56</th><td>		<a class="macro" href="../../../../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../../kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="57">57</th><td>		<b>return</b>(-<var>1</var>);</td></tr>
+<tr><th id="58">58</th><td>	}</td></tr>
+<tr><th id="59">59</th><td>	<a class="local col7 ref" href="#7ep" title='ep' data-ref="7ep">ep</a> = <a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a> + <a class="local col1 ref" href="#11len" title='len' data-ref="11len">len</a> - <a class="local col2 ref" href="#2slen" title='slen' data-ref="2slen">slen</a>;</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td>	<b>for</b> (<a class="local col5 ref" href="#5start" title='start' data-ref="5start">start</a> = <a class="local col7 ref" href="#7ep" title='ep' data-ref="7ep">ep</a>; <a class="local col5 ref" href="#5start" title='start' data-ref="5start">start</a> &gt; <a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a> &amp;&amp; <a class="local col5 ref" href="#5start" title='start' data-ref="5start">start</a>[-<var>1</var>] == <kbd>'X'</kbd>; <a class="local col5 ref" href="#5start" title='start' data-ref="5start">start</a>--)</td></tr>
+<tr><th id="62">62</th><td>		;</td></tr>
+<tr><th id="63">63</th><td>	<b>if</b> (<a class="local col7 ref" href="#7ep" title='ep' data-ref="7ep">ep</a> - <a class="local col5 ref" href="#5start" title='start' data-ref="5start">start</a> &lt; <a class="macro" href="#36" title="6" data-ref="_M/MIN_X">MIN_X</a>) {</td></tr>
+<tr><th id="64">64</th><td>		<a class="macro" href="../../../../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../../kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="65">65</th><td>		<b>return</b>(-<var>1</var>);</td></tr>
+<tr><th id="66">66</th><td>	}</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td>	<b>if</b> (<a class="local col4 ref" href="#4flags" title='flags' data-ref="4flags">flags</a> &amp; ~<a class="macro" href="#38" title="(00002000 | 02000000 | 00010000 | (04000000 | 00010000) | (04000000 | 00010000))" data-ref="_M/MKOTEMP_FLAGS">MKOTEMP_FLAGS</a>) {</td></tr>
+<tr><th id="69">69</th><td>		<a class="macro" href="../../../../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../../kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="70">70</th><td>		<b>return</b>(-<var>1</var>);</td></tr>
+<tr><th id="71">71</th><td>	}</td></tr>
+<tr><th id="72">72</th><td>	<a class="local col4 ref" href="#4flags" title='flags' data-ref="4flags">flags</a> |= <a class="macro" href="../../../../kernel/uapi/asm-generic/fcntl.h.html#29" title="00000100" data-ref="_M/O_CREAT">O_CREAT</a> | <a class="macro" href="../../../../kernel/uapi/asm-generic/fcntl.h.html#32" title="00000200" data-ref="_M/O_EXCL">O_EXCL</a> | <a class="macro" href="../../../../kernel/uapi/asm-generic/fcntl.h.html#26" title="00000002" data-ref="_M/O_RDWR">O_RDWR</a>;</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>	<a class="local col9 ref" href="#9tries" title='tries' data-ref="9tries">tries</a> = <a class="macro" href="../../../../include/sys/limits.h.html#53" title="0x7fffffff" data-ref="_M/INT_MAX">INT_MAX</a>;</td></tr>
+<tr><th id="75">75</th><td>	<b>do</b> {</td></tr>
+<tr><th id="76">76</th><td>		<a class="local col6 ref" href="#6cp" title='cp' data-ref="6cp">cp</a> = <a class="local col5 ref" href="#5start" title='start' data-ref="5start">start</a>;</td></tr>
+<tr><th id="77">77</th><td>		<b>do</b> {</td></tr>
+<tr><th id="78">78</th><td>			<em>unsigned</em> <em>short</em> <dfn class="local col3 decl" id="13rbuf" title='rbuf' data-type='unsigned short [16]' data-ref="13rbuf">rbuf</dfn>[<var>16</var>];</td></tr>
+<tr><th id="79">79</th><td>			<em>unsigned</em> <em>int</em> <dfn class="local col4 decl" id="14i" title='i' data-type='unsigned int' data-ref="14i">i</dfn>;</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td>			<i>/*</i></td></tr>
+<tr><th id="82">82</th><td><i>			 * Avoid lots of arc4random() calls by using</i></td></tr>
+<tr><th id="83">83</th><td><i>			 * a buffer sized for up to 16 Xs at a time.</i></td></tr>
+<tr><th id="84">84</th><td><i>			 */</i></td></tr>
+<tr><th id="85">85</th><td>			<a class="ref" href="../../../../include/stdlib.h.html#arc4random_buf" title='arc4random_buf' data-ref="arc4random_buf">arc4random_buf</a>(<a class="local col3 ref" href="#13rbuf" title='rbuf' data-ref="13rbuf">rbuf</a>, <b>sizeof</b>(<a class="local col3 ref" href="#13rbuf" title='rbuf' data-ref="13rbuf">rbuf</a>));</td></tr>
+<tr><th id="86">86</th><td>			<b>for</b> (<a class="local col4 ref" href="#14i" title='i' data-ref="14i">i</a> = <var>0</var>; <a class="local col4 ref" href="#14i" title='i' data-ref="14i">i</a> &lt; <a class="macro" href="#41" title="(sizeof((rbuf)) / sizeof((rbuf)[0]))" data-ref="_M/nitems">nitems</a>(<a class="local col3 ref" href="#13rbuf" title='rbuf' data-ref="13rbuf">rbuf</a>) &amp;&amp; <a class="local col6 ref" href="#6cp" title='cp' data-ref="6cp">cp</a> != <a class="local col7 ref" href="#7ep" title='ep' data-ref="7ep">ep</a>; <a class="local col4 ref" href="#14i" title='i' data-ref="14i">i</a>++)</td></tr>
+<tr><th id="87">87</th><td>				*<a class="local col6 ref" href="#6cp" title='cp' data-ref="6cp">cp</a>++ = <a class="local col8 ref" href="#8tempchars" title='tempchars' data-ref="8tempchars">tempchars</a>[<a class="local col3 ref" href="#13rbuf" title='rbuf' data-ref="13rbuf">rbuf</a>[<a class="local col4 ref" href="#14i" title='i' data-ref="14i">i</a>] % <a class="macro" href="#35" title="(sizeof(&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&quot;) - 1)" data-ref="_M/NUM_CHARS">NUM_CHARS</a>];</td></tr>
+<tr><th id="88">88</th><td>		} <b>while</b> (<a class="local col6 ref" href="#6cp" title='cp' data-ref="6cp">cp</a> != <a class="local col7 ref" href="#7ep" title='ep' data-ref="7ep">ep</a>);</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td>		<b>switch</b> (<a class="local col3 ref" href="#3mode" title='mode' data-ref="3mode">mode</a>) {</td></tr>
+<tr><th id="91">91</th><td>		<b>case</b> <a class="macro" href="#30" title="0" data-ref="_M/MKTEMP_NAME">MKTEMP_NAME</a>:</td></tr>
+<tr><th id="92">92</th><td>			<b>if</b> (<a class="ref" href="../../../../include/sys/stat.h.html#lstat" title='lstat' data-ref="lstat">lstat</a>(<a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a>, &amp;<a class="local col0 ref" href="#10sb" title='sb' data-ref="10sb">sb</a>) != <var>0</var>)</td></tr>
+<tr><th id="93">93</th><td>				<b>return</b>(<a class="macro" href="../../../../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <a class="macro" href="../../../../kernel/uapi/asm-generic/errno-base.h.html#22" title="2" data-ref="_M/ENOENT">ENOENT</a> ? <var>0</var> : -<var>1</var>);</td></tr>
+<tr><th id="94">94</th><td>			<b>break</b>;</td></tr>
+<tr><th id="95">95</th><td>		<b>case</b> <a class="macro" href="#31" title="1" data-ref="_M/MKTEMP_FILE">MKTEMP_FILE</a>:</td></tr>
+<tr><th id="96">96</th><td>			<a class="local col2 ref" href="#12fd" title='fd' data-ref="12fd">fd</a> = <a class="ref" href="../../../../include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a>, <a class="local col4 ref" href="#4flags" title='flags' data-ref="4flags">flags</a>, <a class="macro" href="../../../../kernel/uapi/linux/stat.h.html#46" title="00400" data-ref="_M/S_IRUSR">S_IRUSR</a>|<a class="macro" href="../../../../kernel/uapi/linux/stat.h.html#47" title="00200" data-ref="_M/S_IWUSR">S_IWUSR</a>);</td></tr>
+<tr><th id="97">97</th><td>			<b>if</b> (<a class="local col2 ref" href="#12fd" title='fd' data-ref="12fd">fd</a> != -<var>1</var> || <a class="macro" href="../../../../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> != <a class="macro" href="../../../../kernel/uapi/asm-generic/errno-base.h.html#41" title="17" data-ref="_M/EEXIST">EEXIST</a>)</td></tr>
+<tr><th id="98">98</th><td>				<b>return</b>(<a class="local col2 ref" href="#12fd" title='fd' data-ref="12fd">fd</a>);</td></tr>
+<tr><th id="99">99</th><td>			<b>break</b>;</td></tr>
+<tr><th id="100">100</th><td>		<b>case</b> <a class="macro" href="#32" title="2" data-ref="_M/MKTEMP_DIR">MKTEMP_DIR</a>:</td></tr>
+<tr><th id="101">101</th><td>			<b>if</b> (<a class="ref" href="../../../../include/sys/stat.h.html#mkdir" title='mkdir' data-ref="mkdir">mkdir</a>(<a class="local col1 ref" href="#1path" title='path' data-ref="1path">path</a>, <a class="macro" href="../../../../kernel/uapi/linux/stat.h.html#46" title="00400" data-ref="_M/S_IRUSR">S_IRUSR</a>|<a class="macro" href="../../../../kernel/uapi/linux/stat.h.html#47" title="00200" data-ref="_M/S_IWUSR">S_IWUSR</a>|<a class="macro" href="../../../../kernel/uapi/linux/stat.h.html#49" title="00100" data-ref="_M/S_IXUSR">S_IXUSR</a>) == <var>0</var>)</td></tr>
+<tr><th id="102">102</th><td>				<b>return</b>(<var>0</var>);</td></tr>
+<tr><th id="103">103</th><td>			<b>if</b> (<a class="macro" href="../../../../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> != <a class="macro" href="../../../../kernel/uapi/asm-generic/errno-base.h.html#41" title="17" data-ref="_M/EEXIST">EEXIST</a>)</td></tr>
+<tr><th id="104">104</th><td>				<b>return</b>(-<var>1</var>);</td></tr>
+<tr><th id="105">105</th><td>			<b>break</b>;</td></tr>
+<tr><th id="106">106</th><td>		}</td></tr>
+<tr><th id="107">107</th><td>	} <b>while</b> (--<a class="local col9 ref" href="#9tries" title='tries' data-ref="9tries">tries</a>);</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td>	<a class="macro" href="../../../../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../../kernel/uapi/asm-generic/errno-base.h.html#41" title="17" data-ref="_M/EEXIST">EEXIST</a>;</td></tr>
+<tr><th id="110">110</th><td>	<b>return</b>(-<var>1</var>);</td></tr>
+<tr><th id="111">111</th><td>}</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><em>char</em> *<a class="decl" href="#_mktemp" title='_mktemp' data-ref="_mktemp">_mktemp</a>(<em>char</em> *);</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td><em>char</em> *</td></tr>
+<tr><th id="116">116</th><td><dfn class="decl def" id="_mktemp" title='_mktemp' data-ref="_mktemp">_mktemp</dfn>(<em>char</em> *<dfn class="local col5 decl" id="15path" title='path' data-type='char *' data-ref="15path">path</dfn>)</td></tr>
+<tr><th id="117">117</th><td>{</td></tr>
+<tr><th id="118">118</th><td>	<b>if</b> (<a class="tu ref" href="#mktemp_internal" title='mktemp_internal' data-use='c' data-ref="mktemp_internal">mktemp_internal</a>(<a class="local col5 ref" href="#15path" title='path' data-ref="15path">path</a>, <var>0</var>, <a class="macro" href="#30" title="0" data-ref="_M/MKTEMP_NAME">MKTEMP_NAME</a>, <var>0</var>) == -<var>1</var>)</td></tr>
+<tr><th id="119">119</th><td>		<b>return</b>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="120">120</th><td>	<b>return</b>(<a class="local col5 ref" href="#15path" title='path' data-ref="15path">path</a>);</td></tr>
+<tr><th id="121">121</th><td>}</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><a class="macro" href="../../../android/include/openbsd-compat.h.html#40" title="" data-ref="_M/__warn_references">__warn_references</a>(mktemp,</td></tr>
+<tr><th id="124">124</th><td>    <q>"warning: mktemp() possibly used unsafely; consider using mkstemp()"</q>);</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td><em>char</em> *</td></tr>
+<tr><th id="127">127</th><td><dfn class="decl def" id="mktemp" title='mktemp' data-ref="mktemp">mktemp</dfn>(<em>char</em> *<dfn class="local col6 decl" id="16path" title='path' data-type='char *' data-ref="16path">path</dfn>)</td></tr>
+<tr><th id="128">128</th><td>{</td></tr>
+<tr><th id="129">129</th><td>	<b>return</b>(<a class="ref" href="#_mktemp" title='_mktemp' data-ref="_mktemp">_mktemp</a>(<a class="local col6 ref" href="#16path" title='path' data-ref="16path">path</a>));</td></tr>
+<tr><th id="130">130</th><td>}</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><em>int</em></td></tr>
+<tr><th id="133">133</th><td><dfn class="decl def" id="mkostemps" title='mkostemps' data-ref="mkostemps">mkostemps</dfn>(<em>char</em> *<dfn class="local col7 decl" id="17path" title='path' data-type='char *' data-ref="17path">path</dfn>, <em>int</em> <dfn class="local col8 decl" id="18slen" title='slen' data-type='int' data-ref="18slen">slen</dfn>, <em>int</em> <dfn class="local col9 decl" id="19flags" title='flags' data-type='int' data-ref="19flags">flags</dfn>)</td></tr>
+<tr><th id="134">134</th><td>{</td></tr>
+<tr><th id="135">135</th><td>	<b>return</b>(<a class="tu ref" href="#mktemp_internal" title='mktemp_internal' data-use='c' data-ref="mktemp_internal">mktemp_internal</a>(<a class="local col7 ref" href="#17path" title='path' data-ref="17path">path</a>, <a class="local col8 ref" href="#18slen" title='slen' data-ref="18slen">slen</a>, <a class="macro" href="#31" title="1" data-ref="_M/MKTEMP_FILE">MKTEMP_FILE</a>, <a class="local col9 ref" href="#19flags" title='flags' data-ref="19flags">flags</a>));</td></tr>
+<tr><th id="136">136</th><td>}</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td><em>int</em></td></tr>
+<tr><th id="139">139</th><td><dfn class="decl def" id="mkstemp" title='mkstemp' data-ref="mkstemp">mkstemp</dfn>(<em>char</em> *<dfn class="local col0 decl" id="20path" title='path' data-type='char *' data-ref="20path">path</dfn>)</td></tr>
+<tr><th id="140">140</th><td>{</td></tr>
+<tr><th id="141">141</th><td>	<b>return</b>(<a class="tu ref" href="#mktemp_internal" title='mktemp_internal' data-use='c' data-ref="mktemp_internal">mktemp_internal</a>(<a class="local col0 ref" href="#20path" title='path' data-ref="20path">path</a>, <var>0</var>, <a class="macro" href="#31" title="1" data-ref="_M/MKTEMP_FILE">MKTEMP_FILE</a>, <var>0</var>));</td></tr>
+<tr><th id="142">142</th><td>}</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td><em>int</em></td></tr>
+<tr><th id="145">145</th><td><dfn class="decl def" id="mkostemp" title='mkostemp' data-ref="mkostemp">mkostemp</dfn>(<em>char</em> *<dfn class="local col1 decl" id="21path" title='path' data-type='char *' data-ref="21path">path</dfn>, <em>int</em> <dfn class="local col2 decl" id="22flags" title='flags' data-type='int' data-ref="22flags">flags</dfn>)</td></tr>
+<tr><th id="146">146</th><td>{</td></tr>
+<tr><th id="147">147</th><td>	<b>return</b>(<a class="tu ref" href="#mktemp_internal" title='mktemp_internal' data-use='c' data-ref="mktemp_internal">mktemp_internal</a>(<a class="local col1 ref" href="#21path" title='path' data-ref="21path">path</a>, <var>0</var>, <a class="macro" href="#31" title="1" data-ref="_M/MKTEMP_FILE">MKTEMP_FILE</a>, <a class="local col2 ref" href="#22flags" title='flags' data-ref="22flags">flags</a>));</td></tr>
+<tr><th id="148">148</th><td>}</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><em>int</em></td></tr>
+<tr><th id="151">151</th><td><dfn class="decl def" id="mkstemps" title='mkstemps' data-ref="mkstemps">mkstemps</dfn>(<em>char</em> *<dfn class="local col3 decl" id="23path" title='path' data-type='char *' data-ref="23path">path</dfn>, <em>int</em> <dfn class="local col4 decl" id="24slen" title='slen' data-type='int' data-ref="24slen">slen</dfn>)</td></tr>
+<tr><th id="152">152</th><td>{</td></tr>
+<tr><th id="153">153</th><td>	<b>return</b>(<a class="tu ref" href="#mktemp_internal" title='mktemp_internal' data-use='c' data-ref="mktemp_internal">mktemp_internal</a>(<a class="local col3 ref" href="#23path" title='path' data-ref="23path">path</a>, <a class="local col4 ref" href="#24slen" title='slen' data-ref="24slen">slen</a>, <a class="macro" href="#31" title="1" data-ref="_M/MKTEMP_FILE">MKTEMP_FILE</a>, <var>0</var>));</td></tr>
+<tr><th id="154">154</th><td>}</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td><em>char</em> *</td></tr>
+<tr><th id="157">157</th><td><dfn class="decl def" id="mkdtemp" title='mkdtemp' data-ref="mkdtemp">mkdtemp</dfn>(<em>char</em> *<dfn class="local col5 decl" id="25path" title='path' data-type='char *' data-ref="25path">path</dfn>)</td></tr>
+<tr><th id="158">158</th><td>{</td></tr>
+<tr><th id="159">159</th><td>	<em>int</em> <dfn class="local col6 decl" id="26error" title='error' data-type='int' data-ref="26error">error</dfn>;</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td>	<a class="local col6 ref" href="#26error" title='error' data-ref="26error">error</a> = <a class="tu ref" href="#mktemp_internal" title='mktemp_internal' data-use='c' data-ref="mktemp_internal">mktemp_internal</a>(<a class="local col5 ref" href="#25path" title='path' data-ref="25path">path</a>, <var>0</var>, <a class="macro" href="#32" title="2" data-ref="_M/MKTEMP_DIR">MKTEMP_DIR</a>, <var>0</var>);</td></tr>
+<tr><th id="162">162</th><td>	<b>return</b>(<a class="local col6 ref" href="#26error" title='error' data-ref="26error">error</a> ? <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> : <a class="local col5 ref" href="#25path" title='path' data-ref="25path">path</a>);</td></tr>
+<tr><th id="163">163</th><td>}</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

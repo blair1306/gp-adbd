@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>signal_handler.c source code [codebrowser/external/minijail/signal_handler.c] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="local_sigsys "/>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/minijail/signal_handler.c'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>minijail</a>/<a href='signal_handler.c.html'>signal_handler.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2012 The Chromium OS Authors. All rights reserved.</i></td></tr>
+<tr><th id="2">2</th><td><i> * Use of this source code is governed by a BSD-style license that can be</i></td></tr>
+<tr><th id="3">3</th><td><i> * found in the LICENSE file.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><i>/* These header files need to be included before asm/siginfo.h such that</i></td></tr>
+<tr><th id="7">7</th><td><i> * pid_t, timer_t, and clock_t are defined. */</i></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><u>#include <a href="../../bionic/libc/kernel/uapi/asm-x86/asm/siginfo.h.html">&lt;asm/siginfo.h&gt;</a></u></td></tr>
+<tr><th id="12">12</th><td><u>#define <dfn class="macro" id="_M/__have_siginfo_t" data-ref="_M/__have_siginfo_t">__have_siginfo_t</dfn> 1</u></td></tr>
+<tr><th id="13">13</th><td><u>#define <dfn class="macro" id="_M/__have_sigval_t" data-ref="_M/__have_sigval_t">__have_sigval_t</dfn> 1</u></td></tr>
+<tr><th id="14">14</th><td><u>#define <dfn class="macro" id="_M/__have_sigevent_t" data-ref="_M/__have_sigevent_t">__have_sigevent_t</dfn> 1</u></td></tr>
+<tr><th id="15">15</th><td></td></tr>
+<tr><th id="16">16</th><td><u>#include <a href="../../bionic/libc/include/signal.h.html">&lt;signal.h&gt;</a></u></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="signal_handler.h.html">"signal_handler.h"</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="util.h.html">"util.h"</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><b>struct</b> <dfn class="type def" id="local_sigsys" title='local_sigsys' data-ref="local_sigsys">local_sigsys</dfn> {</td></tr>
+<tr><th id="24">24</th><td>	<em>void</em>		*<dfn class="tu decl" id="local_sigsys::ip" title='local_sigsys::ip' data-type='void *' data-ref="local_sigsys::ip">ip</dfn>;</td></tr>
+<tr><th id="25">25</th><td>	<em>int</em>		<dfn class="tu decl" id="local_sigsys::nr" title='local_sigsys::nr' data-type='int' data-ref="local_sigsys::nr">nr</dfn>;</td></tr>
+<tr><th id="26">26</th><td>	<em>unsigned</em> <em>int</em>	<dfn class="tu decl" id="local_sigsys::arch" title='local_sigsys::arch' data-type='unsigned int' data-ref="local_sigsys::arch">arch</dfn>;</td></tr>
+<tr><th id="27">27</th><td>};</td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><em>void</em> <dfn class="decl def" id="log_sigsys_handler" title='log_sigsys_handler' data-ref="log_sigsys_handler">log_sigsys_handler</dfn>(<em>int</em> <dfn class="local col1 decl" id="1nr" title='nr' data-type='int' data-ref="1nr">nr</dfn>, <a class="typedef" href="../../bionic/libc/kernel/uapi/asm-generic/siginfo.h.html#siginfo_t" title='siginfo_t' data-type='struct siginfo' data-ref="siginfo_t">siginfo_t</a> *<dfn class="local col2 decl" id="2info" title='info' data-type='siginfo_t *' data-ref="2info">info</dfn>, <em>void</em> *<dfn class="local col3 decl" id="3void_context" title='void_context' data-type='void *' data-ref="3void_context">void_context</dfn>)</td></tr>
+<tr><th id="30">30</th><td>{</td></tr>
+<tr><th id="31">31</th><td>	<b>struct</b> <a class="type" href="#local_sigsys" title='local_sigsys' data-ref="local_sigsys">local_sigsys</a> <dfn class="local col4 decl" id="4sigsys" title='sigsys' data-type='struct local_sigsys' data-ref="4sigsys">sigsys</dfn>;</td></tr>
+<tr><th id="32">32</th><td>	<em>const</em> <em>char</em> *<dfn class="local col5 decl" id="5syscall_name" title='syscall_name' data-type='const char *' data-ref="5syscall_name">syscall_name</dfn>;</td></tr>
+<tr><th id="33">33</th><td>	<a class="ref" href="../../bionic/libc/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(&amp;<a class="local col4 ref" href="#4sigsys" title='sigsys' data-ref="4sigsys">sigsys</a>, &amp;<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="../../bionic/libc/kernel/uapi/asm-generic/siginfo.h.html#siginfo::_sifields" title='siginfo::_sifields' data-ref="siginfo::_sifields">_sifields</a>, <b>sizeof</b>(<a class="local col4 ref" href="#4sigsys" title='sigsys' data-ref="4sigsys">sigsys</a>));</td></tr>
+<tr><th id="34">34</th><td>	<a class="local col5 ref" href="#5syscall_name" title='syscall_name' data-ref="5syscall_name">syscall_name</a> = <a class="ref" href="util.h.html#lookup_syscall_name" title='lookup_syscall_name' data-ref="lookup_syscall_name">lookup_syscall_name</a>(<a class="local col4 ref" href="#4sigsys" title='sigsys' data-ref="4sigsys">sigsys</a>.<a class="tu ref" href="#local_sigsys::nr" title='local_sigsys::nr' data-use='r' data-ref="local_sigsys::nr">nr</a>);</td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td>	(<em>void</em>) <a class="local col3 ref" href="#3void_context" title='void_context' data-ref="3void_context">void_context</a>;</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td>	<b>if</b> (<a class="local col5 ref" href="#5syscall_name" title='syscall_name' data-ref="5syscall_name">syscall_name</a>)</td></tr>
+<tr><th id="39">39</th><td>		<a class="macro" href="util.h.html#15" title="do { syslog(3, &quot;libminijail: &quot; &quot;blocked syscall: %s&quot;, syscall_name); abort(); } while (0)" data-ref="_M/die">die</a>(<q>"blocked syscall: %s"</q>, <a class="local col5 ref" href="#5syscall_name" title='syscall_name' data-ref="5syscall_name">syscall_name</a>);</td></tr>
+<tr><th id="40">40</th><td>	<b>else</b></td></tr>
+<tr><th id="41">41</th><td>		<a class="macro" href="util.h.html#15" title="do { syslog(3, &quot;libminijail: &quot; &quot;blocked syscall: %d&quot;, nr); abort(); } while (0)" data-ref="_M/die">die</a>(<q>"blocked syscall: %d"</q>, <a class="local col1 ref" href="#1nr" title='nr' data-ref="1nr">nr</a>);</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td>	<i>/*</i></td></tr>
+<tr><th id="44">44</th><td><i>	 * We trapped on a syscall that should have killed the process.</i></td></tr>
+<tr><th id="45">45</th><td><i>	 * This should never ever return, but we're paranoid.</i></td></tr>
+<tr><th id="46">46</th><td><i>	 */</i></td></tr>
+<tr><th id="47">47</th><td>	<b>for</b> (;;)</td></tr>
+<tr><th id="48">48</th><td>		<a class="ref" href="../../bionic/libc/include/unistd.h.html#_exit" title='_exit' data-ref="_exit">_exit</a>(<var>1</var>);</td></tr>
+<tr><th id="49">49</th><td>}</td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td><em>int</em> <dfn class="decl def" id="install_sigsys_handler" title='install_sigsys_handler' data-ref="install_sigsys_handler">install_sigsys_handler</dfn>()</td></tr>
+<tr><th id="52">52</th><td>{</td></tr>
+<tr><th id="53">53</th><td>	<em>int</em> <dfn class="local col6 decl" id="6ret" title='ret' data-type='int' data-ref="6ret">ret</dfn> = <var>0</var>;</td></tr>
+<tr><th id="54">54</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/include/signal.h.html#sigaction" title='sigaction' data-ref="sigaction">sigaction</a> <dfn class="local col7 decl" id="7act" title='act' data-type='struct sigaction' data-ref="7act">act</dfn>;</td></tr>
+<tr><th id="55">55</th><td>	<a class="typedef" href="../../bionic/libc/kernel/uapi/asm-x86/asm/signal.h.html#sigset_t" title='sigset_t' data-type='unsigned long' data-ref="sigset_t">sigset_t</a> <dfn class="local col8 decl" id="8mask" title='mask' data-type='sigset_t' data-ref="8mask">mask</dfn>;</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td>	<a class="ref" href="../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(&amp;<a class="local col7 ref" href="#7act" title='act' data-ref="7act">act</a>, <var>0</var>, <b>sizeof</b>(<a class="local col7 ref" href="#7act" title='act' data-ref="7act">act</a>));</td></tr>
+<tr><th id="58">58</th><td>	<a class="local col7 ref" href="#7act" title='act' data-ref="7act">act</a>.<a class="ref" href="../../bionic/libc/include/signal.h.html#sigaction::(anonymous)::sa_sigaction" title='sigaction::(anonymous union)::sa_sigaction' data-ref="sigaction::(anonymous)::sa_sigaction">sa_sigaction</a> = &amp;<a class="ref" href="#log_sigsys_handler" title='log_sigsys_handler' data-ref="log_sigsys_handler">log_sigsys_handler</a>;</td></tr>
+<tr><th id="59">59</th><td>	<a class="local col7 ref" href="#7act" title='act' data-ref="7act">act</a>.<a class="ref" href="../../bionic/libc/include/signal.h.html#sigaction::sa_flags" title='sigaction::sa_flags' data-ref="sigaction::sa_flags">sa_flags</a> = <a class="macro" href="../../bionic/libc/kernel/uapi/asm-x86/asm/signal.h.html#79" title="0x00000004u" data-ref="_M/SA_SIGINFO">SA_SIGINFO</a>;</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td>	<a class="ref" href="../../bionic/libc/include/signal.h.html#sigemptyset" title='sigemptyset' data-ref="sigemptyset">sigemptyset</a>(&amp;<a class="local col8 ref" href="#8mask" title='mask' data-ref="8mask">mask</a>);</td></tr>
+<tr><th id="62">62</th><td>	<a class="ref" href="../../bionic/libc/include/signal.h.html#sigaddset" title='sigaddset' data-ref="sigaddset">sigaddset</a>(&amp;<a class="local col8 ref" href="#8mask" title='mask' data-ref="8mask">mask</a>, <a class="macro" href="../../bionic/libc/kernel/uapi/asm-x86/asm/signal.h.html#71" title="31" data-ref="_M/SIGSYS">SIGSYS</a>);</td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td>	<a class="local col6 ref" href="#6ret" title='ret' data-ref="6ret">ret</a> = <a class="ref" href="../../bionic/libc/include/signal.h.html#sigaction" title='sigaction' data-ref="sigaction">sigaction</a>(<a class="macro" href="../../bionic/libc/kernel/uapi/asm-x86/asm/signal.h.html#71" title="31" data-ref="_M/SIGSYS">SIGSYS</a>, &amp;<a class="local col7 ref" href="#7act" title='act' data-ref="7act">act</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="65">65</th><td>	<b>if</b> (<a class="local col6 ref" href="#6ret" title='ret' data-ref="6ret">ret</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="66">66</th><td>		<b>return</b> <a class="local col6 ref" href="#6ret" title='ret' data-ref="6ret">ret</a>;</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td>	<a class="local col6 ref" href="#6ret" title='ret' data-ref="6ret">ret</a> = <a class="ref" href="../../bionic/libc/include/signal.h.html#sigprocmask" title='sigprocmask' data-ref="sigprocmask">sigprocmask</a>(<a class="macro" href="../../bionic/libc/kernel/uapi/asm-generic/signal-defs.h.html#27" title="1" data-ref="_M/SIG_UNBLOCK">SIG_UNBLOCK</a>, &amp;<a class="local col8 ref" href="#8mask" title='mask' data-ref="8mask">mask</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="69">69</th><td>	<b>if</b> (<a class="local col6 ref" href="#6ret" title='ret' data-ref="6ret">ret</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="70">70</th><td>		<b>return</b> <a class="local col6 ref" href="#6ret" title='ret' data-ref="6ret">ret</a>;</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="73">73</th><td>}</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

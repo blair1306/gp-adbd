@@ -1,0 +1,13 @@
+<dec f='codebrowser/external/boringssl/src/crypto/cipher/internal.h' l='115' type='int EVP_tls_cbc_remove_padding(unsigned int * out_len, const uint8_t * in, unsigned int in_len, unsigned int block_size, unsigned int mac_size)'/>
+<doc f='codebrowser/external/boringssl/src/crypto/cipher/internal.h' l='105'>/* EVP_tls_cbc_get_padding determines the padding from the decrypted, TLS, CBC
+ * record in |in|. This decrypted record should not include any &quot;decrypted&quot;
+ * explicit IV. It sets |*out_len| to the length with the padding removed or
+ * |in_len| if invalid.
+ *
+ * block_size: the block size of the cipher used to encrypt the record.
+ * returns:
+ *   0: (in non-constant time) if the record is publicly invalid.
+ *   1: if the padding was valid
+ *  -1: otherwise. */</doc>
+<use f='codebrowser/external/boringssl/src/crypto/cipher/e_tls.c' l='270' u='c' c='aead_tls_open'/>
+<def f='codebrowser/external/boringssl/src/crypto/cipher/tls_cbc.c' l='75' ll='123' type='int EVP_tls_cbc_remove_padding(unsigned int * out_len, const uint8_t * in, unsigned int in_len, unsigned int block_size, unsigned int mac_size)'/>

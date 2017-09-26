@@ -1,0 +1,15 @@
+<dec f='codebrowser/external/minijail/libminijail.h' l='139' type='int minijail_mount(struct minijail * j, const char * src, const char * dest, const char * type, unsigned long flags)'/>
+<def f='codebrowser/external/minijail/libminijail.c' l='609' ll='652' type='int minijail_mount(struct minijail * j, const char * src, const char * dest, const char * type, unsigned long flags)'/>
+<use f='codebrowser/external/minijail/libminijail.c' l='662' u='c' c='minijail_bind'/>
+<use f='codebrowser/external/minijail/libminijail.c' l='918' u='c' c='minijail_unmarshal'/>
+<doc f='codebrowser/external/minijail/libminijail.h' l='128'>/*
+ * minijail_mount: when entering minijail @j, mounts @src at @dst with @flags
+ * @j         minijail to bind inside
+ * @src       source to bind
+ * @dest      location to bind (inside chroot)
+ * @type      type of filesystem
+ * @flags     flags passed to mount
+ *
+ * This may be called multiple times; all bindings will be applied in the order
+ * of minijail_mount() calls.
+ */</doc>

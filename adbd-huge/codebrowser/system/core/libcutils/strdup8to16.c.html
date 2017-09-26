@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>strdup8to16.c source code [codebrowser/system/core/libcutils/strdup8to16.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/libcutils/strdup8to16.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>libcutils</a>/<a href='strdup8to16.c.html'>strdup8to16.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* libs/cutils/strdup8to16.c</i></td></tr>
+<tr><th id="2">2</th><td><i>**</i></td></tr>
+<tr><th id="3">3</th><td><i>** Copyright 2006, The Android Open Source Project</i></td></tr>
+<tr><th id="4">4</th><td><i>**</i></td></tr>
+<tr><th id="5">5</th><td><i>** Licensed under the Apache License, Version 2.0 (the "License"); </i></td></tr>
+<tr><th id="6">6</th><td><i>** you may not use this file except in compliance with the License. </i></td></tr>
+<tr><th id="7">7</th><td><i>** You may obtain a copy of the License at </i></td></tr>
+<tr><th id="8">8</th><td><i>**</i></td></tr>
+<tr><th id="9">9</th><td><i>**     <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a> </i></td></tr>
+<tr><th id="10">10</th><td><i>**</i></td></tr>
+<tr><th id="11">11</th><td><i>** Unless required by applicable law or agreed to in writing, software </i></td></tr>
+<tr><th id="12">12</th><td><i>** distributed under the License is distributed on an "AS IS" BASIS, </i></td></tr>
+<tr><th id="13">13</th><td><i>** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. </i></td></tr>
+<tr><th id="14">14</th><td><i>** See the License for the specific language governing permissions and </i></td></tr>
+<tr><th id="15">15</th><td><i>** limitations under the License.</i></td></tr>
+<tr><th id="16">16</th><td><i>*/</i></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="../include/cutils/jstring.h.html">&lt;cutils/jstring.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="../../../bionic/libc/include/assert.h.html">&lt;assert.h&gt;</a></u></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../bionic/libc/include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><i>/* See <a href="http://www.unicode.org/reports/tr22/">http://www.unicode.org/reports/tr22/</a> for discussion</i></td></tr>
+<tr><th id="24">24</th><td><i> * on invalid sequences</i></td></tr>
+<tr><th id="25">25</th><td><i> */</i></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#define <dfn class="macro" id="_M/UTF16_REPLACEMENT_CHAR" data-ref="_M/UTF16_REPLACEMENT_CHAR">UTF16_REPLACEMENT_CHAR</dfn> 0xfffd</u></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><i>/* Clever trick from Dianne that returns 1-4 depending on leading bit sequence*/</i></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/UTF8_SEQ_LENGTH" data-ref="_M/UTF8_SEQ_LENGTH">UTF8_SEQ_LENGTH</dfn>(ch) (((0xe5000000 &gt;&gt; ((ch &gt;&gt; 3) &amp; 0x1e)) &amp; 3) + 1)</u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><i>/* note: macro expands to multiple lines */</i></td></tr>
+<tr><th id="33">33</th><td><u>#define <dfn class="macro" id="_M/UTF8_SHIFT_AND_MASK" data-ref="_M/UTF8_SHIFT_AND_MASK">UTF8_SHIFT_AND_MASK</dfn>(unicode, byte)  \</u></td></tr>
+<tr><th id="34">34</th><td><u>            (unicode)&lt;&lt;=6; (unicode) |= (0x3f &amp; (byte));</u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><u>#define <dfn class="macro" id="_M/UNICODE_UPPER_LIMIT" data-ref="_M/UNICODE_UPPER_LIMIT">UNICODE_UPPER_LIMIT</dfn> 0x10fffd</u>    </td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="39">39</th><td><i class="doc"> * out_len is an out parameter (which may not be null) containing the</i></td></tr>
+<tr><th id="40">40</th><td><i class="doc"> * length of the UTF-16 string (which may contain embedded \0's)</i></td></tr>
+<tr><th id="41">41</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><b>extern</b> <a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a> * <dfn class="decl def" id="strdup8to16" title='strdup8to16' data-ref="strdup8to16">strdup8to16</dfn> (<em>const</em> <em>char</em>* <dfn class="local col1 decl" id="1s" title='s' data-type='const char *' data-ref="1s">s</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col2 decl" id="2out_len" title='out_len' data-type='size_t *' data-ref="2out_len">out_len</dfn>)</td></tr>
+<tr><th id="44">44</th><td>{</td></tr>
+<tr><th id="45">45</th><td>    <a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a> *<dfn class="local col3 decl" id="3ret" title='ret' data-type='char16_t *' data-ref="3ret">ret</dfn>;</td></tr>
+<tr><th id="46">46</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="4len" title='len' data-type='size_t' data-ref="4len">len</dfn>;</td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td>    <b>if</b> (<a class="local col1 ref" href="#1s" title='s' data-ref="1s">s</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td>    <a class="local col4 ref" href="#4len" title='len' data-ref="4len">len</a> = <a class="ref" href="#strlen8to16" title='strlen8to16' data-ref="strlen8to16">strlen8to16</a>(<a class="local col1 ref" href="#1s" title='s' data-ref="1s">s</a>);</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td>    <i>// fail on overflow</i></td></tr>
+<tr><th id="53">53</th><td>    <b>if</b> (<a class="local col4 ref" href="#4len" title='len' data-ref="4len">len</a> &amp;&amp; <a class="macro" href="../../../bionic/libc/include/stdint.h.html#218" title="(18446744073709551615UL)" data-ref="_M/SIZE_MAX">SIZE_MAX</a>/<a class="local col4 ref" href="#4len" title='len' data-ref="4len">len</a> &lt; <b>sizeof</b>(<a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a>))</td></tr>
+<tr><th id="54">54</th><td>        <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td>    <i>// no plus-one here. UTF-16 strings are not null terminated</i></td></tr>
+<tr><th id="57">57</th><td>    <a class="local col3 ref" href="#3ret" title='ret' data-ref="3ret">ret</a> = (<a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a> *) <a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a> (<b>sizeof</b>(<a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a>) * <a class="local col4 ref" href="#4len" title='len' data-ref="4len">len</a>);</td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td>    <b>return</b> <a class="ref" href="#strcpy8to16" title='strcpy8to16' data-ref="strcpy8to16">strcpy8to16</a> (<a class="local col3 ref" href="#3ret" title='ret' data-ref="3ret">ret</a>, <a class="local col1 ref" href="#1s" title='s' data-ref="1s">s</a>, <a class="local col2 ref" href="#2out_len" title='out_len' data-ref="2out_len">out_len</a>);</td></tr>
+<tr><th id="60">60</th><td>}</td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="63">63</th><td><i class="doc"> * Like "strlen", but for strings encoded with Java's modified UTF-8.</i></td></tr>
+<tr><th id="64">64</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="65">65</th><td><i class="doc"> * The value returned is the number of UTF-16 characters required</i></td></tr>
+<tr><th id="66">66</th><td><i class="doc"> * to represent this string.</i></td></tr>
+<tr><th id="67">67</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="68">68</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl def" id="strlen8to16" title='strlen8to16' data-ref="strlen8to16">strlen8to16</dfn> (<em>const</em> <em>char</em>* <dfn class="local col5 decl" id="5utf8Str" title='utf8Str' data-type='const char *' data-ref="5utf8Str">utf8Str</dfn>)</td></tr>
+<tr><th id="69">69</th><td>{</td></tr>
+<tr><th id="70">70</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="6len" title='len' data-type='size_t' data-ref="6len">len</dfn> = <var>0</var>;</td></tr>
+<tr><th id="71">71</th><td>    <em>int</em> <dfn class="local col7 decl" id="7ic" title='ic' data-type='int' data-ref="7ic">ic</dfn>;</td></tr>
+<tr><th id="72">72</th><td>    <em>int</em> <dfn class="local col8 decl" id="8expected" title='expected' data-type='int' data-ref="8expected">expected</dfn> = <var>0</var>;</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>    <b>while</b> ((<a class="local col7 ref" href="#7ic" title='ic' data-ref="7ic">ic</a> = *<a class="local col5 ref" href="#5utf8Str" title='utf8Str' data-ref="5utf8Str">utf8Str</a>++) != <kbd>'\0'</kbd>) {</td></tr>
+<tr><th id="75">75</th><td>        <i>/* bytes that start 0? or 11 are lead bytes and count as characters.*/</i></td></tr>
+<tr><th id="76">76</th><td>        <i>/* bytes that start 10 are extention bytes and are not counted */</i></td></tr>
+<tr><th id="77">77</th><td>         </td></tr>
+<tr><th id="78">78</th><td>        <b>if</b> ((<a class="local col7 ref" href="#7ic" title='ic' data-ref="7ic">ic</a> &amp; <var>0xc0</var>) == <var>0x80</var>) {</td></tr>
+<tr><th id="79">79</th><td>            <i>/* count the 0x80 extention bytes. if we have more than</i></td></tr>
+<tr><th id="80">80</th><td><i>             * expected, then start counting them because strcpy8to16</i></td></tr>
+<tr><th id="81">81</th><td><i>             * will insert UTF16_REPLACEMENT_CHAR's</i></td></tr>
+<tr><th id="82">82</th><td><i>             */</i></td></tr>
+<tr><th id="83">83</th><td>            <a class="local col8 ref" href="#8expected" title='expected' data-ref="8expected">expected</a>--;</td></tr>
+<tr><th id="84">84</th><td>            <b>if</b> (<a class="local col8 ref" href="#8expected" title='expected' data-ref="8expected">expected</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="85">85</th><td>                <a class="local col6 ref" href="#6len" title='len' data-ref="6len">len</a>++;</td></tr>
+<tr><th id="86">86</th><td>            }</td></tr>
+<tr><th id="87">87</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="88">88</th><td>            <a class="local col6 ref" href="#6len" title='len' data-ref="6len">len</a>++;</td></tr>
+<tr><th id="89">89</th><td>            <a class="local col8 ref" href="#8expected" title='expected' data-ref="8expected">expected</a> = <a class="macro" href="#30" title="(((0xe5000000 &gt;&gt; ((ic &gt;&gt; 3) &amp; 0x1e)) &amp; 3) + 1)" data-ref="_M/UTF8_SEQ_LENGTH">UTF8_SEQ_LENGTH</a>(<a class="local col7 ref" href="#7ic" title='ic' data-ref="7ic">ic</a>) - <var>1</var>;</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td>            <i>/* this will result in a surrogate pair */</i></td></tr>
+<tr><th id="92">92</th><td>            <b>if</b> (<a class="local col8 ref" href="#8expected" title='expected' data-ref="8expected">expected</a> == <var>3</var>) {</td></tr>
+<tr><th id="93">93</th><td>                <a class="local col6 ref" href="#6len" title='len' data-ref="6len">len</a>++;</td></tr>
+<tr><th id="94">94</th><td>            }</td></tr>
+<tr><th id="95">95</th><td>        }</td></tr>
+<tr><th id="96">96</th><td>    }</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td>    <b>return</b> <a class="local col6 ref" href="#6len" title='len' data-ref="6len">len</a>;</td></tr>
+<tr><th id="99">99</th><td>}</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><i  data-doc="getUtf32FromUtf8">/*</i></td></tr>
+<tr><th id="104">104</th><td><i  data-doc="getUtf32FromUtf8"> * Retrieve the next UTF-32 character from a UTF-8 string.</i></td></tr>
+<tr><th id="105">105</th><td><i  data-doc="getUtf32FromUtf8"> *</i></td></tr>
+<tr><th id="106">106</th><td><i  data-doc="getUtf32FromUtf8"> * Stops at inner \0's</i></td></tr>
+<tr><th id="107">107</th><td><i  data-doc="getUtf32FromUtf8"> *</i></td></tr>
+<tr><th id="108">108</th><td><i  data-doc="getUtf32FromUtf8"> * Returns UTF16_REPLACEMENT_CHAR if an invalid sequence is encountered</i></td></tr>
+<tr><th id="109">109</th><td><i  data-doc="getUtf32FromUtf8"> *</i></td></tr>
+<tr><th id="110">110</th><td><i  data-doc="getUtf32FromUtf8"> * Advances "*pUtf8Ptr" to the start of the next character.</i></td></tr>
+<tr><th id="111">111</th><td><i  data-doc="getUtf32FromUtf8"> */</i></td></tr>
+<tr><th id="112">112</th><td><em>static</em> <b>inline</b> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="tu decl def" id="getUtf32FromUtf8" title='getUtf32FromUtf8' data-type='uint32_t getUtf32FromUtf8(const char ** pUtf8Ptr)' data-ref="getUtf32FromUtf8">getUtf32FromUtf8</dfn>(<em>const</em> <em>char</em>** <dfn class="local col9 decl" id="9pUtf8Ptr" title='pUtf8Ptr' data-type='const char **' data-ref="9pUtf8Ptr">pUtf8Ptr</dfn>)</td></tr>
+<tr><th id="113">113</th><td>{</td></tr>
+<tr><th id="114">114</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col0 decl" id="10ret" title='ret' data-type='uint32_t' data-ref="10ret">ret</dfn>;</td></tr>
+<tr><th id="115">115</th><td>    <em>int</em> <dfn class="local col1 decl" id="11seq_len" title='seq_len' data-type='int' data-ref="11seq_len">seq_len</dfn>;</td></tr>
+<tr><th id="116">116</th><td>    <em>int</em> <dfn class="local col2 decl" id="12i" title='i' data-type='int' data-ref="12i">i</dfn>;</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td>    <i>/* Mask for leader byte for lengths 1, 2, 3, and 4 respectively*/</i></td></tr>
+<tr><th id="119">119</th><td>    <em>static</em> <em>const</em> <em>char</em> <dfn class="local col3 decl" id="13leaderMask" title='leaderMask' data-type='const char [4]' data-ref="13leaderMask">leaderMask</dfn>[<var>4</var>] = {<var>0xff</var>, <var>0x1f</var>, <var>0x0f</var>, <var>0x07</var>};</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td>    <i>/* Bytes that start with bits "10" are not leading characters. */</i></td></tr>
+<tr><th id="122">122</th><td>    <b>if</b> (((**<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a>) &amp; <var>0xc0</var>) == <var>0x80</var>) {</td></tr>
+<tr><th id="123">123</th><td>        (*<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a>)++;</td></tr>
+<tr><th id="124">124</th><td>        <b>return</b> <a class="macro" href="#27" title="0xfffd" data-ref="_M/UTF16_REPLACEMENT_CHAR">UTF16_REPLACEMENT_CHAR</a>;</td></tr>
+<tr><th id="125">125</th><td>    }</td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td>    <i>/* note we tolerate invalid leader 11111xxx here */</i>    </td></tr>
+<tr><th id="128">128</th><td>    <a class="local col1 ref" href="#11seq_len" title='seq_len' data-ref="11seq_len">seq_len</a> = <a class="macro" href="#30" title="(((0xe5000000 &gt;&gt; ((**pUtf8Ptr &gt;&gt; 3) &amp; 0x1e)) &amp; 3) + 1)" data-ref="_M/UTF8_SEQ_LENGTH">UTF8_SEQ_LENGTH</a>(**<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a>);</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td>    <a class="local col0 ref" href="#10ret" title='ret' data-ref="10ret">ret</a> = (**<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a>) &amp; <a class="local col3 ref" href="#13leaderMask" title='leaderMask' data-ref="13leaderMask">leaderMask</a> [<a class="local col1 ref" href="#11seq_len" title='seq_len' data-ref="11seq_len">seq_len</a> - <var>1</var>];</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td>    <b>if</b> (**<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a> == <kbd>'\0'</kbd>) <b>return</b> <a class="local col0 ref" href="#10ret" title='ret' data-ref="10ret">ret</a>;</td></tr>
+<tr><th id="133">133</th><td></td></tr>
+<tr><th id="134">134</th><td>    (*<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a>)++;</td></tr>
+<tr><th id="135">135</th><td>    <b>for</b> (<a class="local col2 ref" href="#12i" title='i' data-ref="12i">i</a> = <var>1</var>; <a class="local col2 ref" href="#12i" title='i' data-ref="12i">i</a> &lt; <a class="local col1 ref" href="#11seq_len" title='seq_len' data-ref="11seq_len">seq_len</a> ; <a class="local col2 ref" href="#12i" title='i' data-ref="12i">i</a>++, (*<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a>)++) {</td></tr>
+<tr><th id="136">136</th><td>        <b>if</b> ((**<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a>) == <kbd>'\0'</kbd>) <b>return</b> <a class="macro" href="#27" title="0xfffd" data-ref="_M/UTF16_REPLACEMENT_CHAR">UTF16_REPLACEMENT_CHAR</a>;</td></tr>
+<tr><th id="137">137</th><td>        <b>if</b> (((**<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a>) &amp; <var>0xc0</var>) != <var>0x80</var>) <b>return</b> <a class="macro" href="#27" title="0xfffd" data-ref="_M/UTF16_REPLACEMENT_CHAR">UTF16_REPLACEMENT_CHAR</a>;</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td>        <a class="macro" href="#33" title="(ret)&lt;&lt;=6; (ret) |= (0x3f &amp; (**pUtf8Ptr));" data-ref="_M/UTF8_SHIFT_AND_MASK">UTF8_SHIFT_AND_MASK</a>(<a class="local col0 ref" href="#10ret" title='ret' data-ref="10ret">ret</a>, **<a class="local col9 ref" href="#9pUtf8Ptr" title='pUtf8Ptr' data-ref="9pUtf8Ptr">pUtf8Ptr</a>);</td></tr>
+<tr><th id="140">140</th><td>    }</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td>    <b>return</b> <a class="local col0 ref" href="#10ret" title='ret' data-ref="10ret">ret</a>;</td></tr>
+<tr><th id="143">143</th><td>}</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="147">147</th><td><i class="doc"> * out_len is an out parameter (which may not be null) containing the</i></td></tr>
+<tr><th id="148">148</th><td><i class="doc"> * length of the UTF-16 string (which may contain embedded \0's)</i></td></tr>
+<tr><th id="149">149</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><b>extern</b> <a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a> * <dfn class="decl def" id="strcpy8to16" title='strcpy8to16' data-ref="strcpy8to16">strcpy8to16</dfn> (<a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a> *<dfn class="local col4 decl" id="14utf16Str" title='utf16Str' data-type='char16_t *' data-ref="14utf16Str">utf16Str</dfn>, <em>const</em> <em>char</em>*<dfn class="local col5 decl" id="15utf8Str" title='utf8Str' data-type='const char *' data-ref="15utf8Str">utf8Str</dfn>, </td></tr>
+<tr><th id="152">152</th><td>                                       <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col6 decl" id="16out_len" title='out_len' data-type='size_t *' data-ref="16out_len">out_len</dfn>)</td></tr>
+<tr><th id="153">153</th><td>{   </td></tr>
+<tr><th id="154">154</th><td>    <a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a> *<dfn class="local col7 decl" id="17dest" title='dest' data-type='char16_t *' data-ref="17dest">dest</dfn> = <a class="local col4 ref" href="#14utf16Str" title='utf16Str' data-ref="14utf16Str">utf16Str</a>;</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td>    <b>while</b> (*<a class="local col5 ref" href="#15utf8Str" title='utf8Str' data-ref="15utf8Str">utf8Str</a> != <kbd>'\0'</kbd>) {</td></tr>
+<tr><th id="157">157</th><td>        <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col8 decl" id="18ret" title='ret' data-type='uint32_t' data-ref="18ret">ret</dfn>;</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td>        <a class="local col8 ref" href="#18ret" title='ret' data-ref="18ret">ret</a> = <a class="tu ref" href="#getUtf32FromUtf8" title='getUtf32FromUtf8' data-use='c' data-ref="getUtf32FromUtf8">getUtf32FromUtf8</a>(&amp;<a class="local col5 ref" href="#15utf8Str" title='utf8Str' data-ref="15utf8Str">utf8Str</a>);</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td>        <b>if</b> (<a class="local col8 ref" href="#18ret" title='ret' data-ref="18ret">ret</a> &lt;= <var>0xffff</var>) {</td></tr>
+<tr><th id="162">162</th><td>            *<a class="local col7 ref" href="#17dest" title='dest' data-ref="17dest">dest</a>++ = (<a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a>) <a class="local col8 ref" href="#18ret" title='ret' data-ref="18ret">ret</a>;</td></tr>
+<tr><th id="163">163</th><td>        } <b>else</b> <b>if</b> (<a class="local col8 ref" href="#18ret" title='ret' data-ref="18ret">ret</a> &lt;= <a class="macro" href="#36" title="0x10fffd" data-ref="_M/UNICODE_UPPER_LIMIT">UNICODE_UPPER_LIMIT</a>)  {</td></tr>
+<tr><th id="164">164</th><td>            <i>/* Create surrogate pairs */</i></td></tr>
+<tr><th id="165">165</th><td>            <i>/* See <a href="http://en.wikipedia.org/wiki/UTF-16/UCS-2#Method_for_code_points_in_Plane_1.2C_Plane_2">http://en.wikipedia.org/wiki/UTF-16/UCS-2#Method_for_code_points_in_Plane_1.2C_Plane_2</a> */</i></td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td>            *<a class="local col7 ref" href="#17dest" title='dest' data-ref="17dest">dest</a>++ = <var>0xd800</var> | ((<a class="local col8 ref" href="#18ret" title='ret' data-ref="18ret">ret</a> - <var>0x10000</var>) &gt;&gt; <var>10</var>);</td></tr>
+<tr><th id="168">168</th><td>            *<a class="local col7 ref" href="#17dest" title='dest' data-ref="17dest">dest</a>++ = <var>0xdc00</var> | ((<a class="local col8 ref" href="#18ret" title='ret' data-ref="18ret">ret</a> - <var>0x10000</var>) &amp;  <var>0x3ff</var>);</td></tr>
+<tr><th id="169">169</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="170">170</th><td>            *<a class="local col7 ref" href="#17dest" title='dest' data-ref="17dest">dest</a>++ = <a class="macro" href="#27" title="0xfffd" data-ref="_M/UTF16_REPLACEMENT_CHAR">UTF16_REPLACEMENT_CHAR</a>;</td></tr>
+<tr><th id="171">171</th><td>        }</td></tr>
+<tr><th id="172">172</th><td>    }</td></tr>
+<tr><th id="173">173</th><td></td></tr>
+<tr><th id="174">174</th><td>    *<a class="local col6 ref" href="#16out_len" title='out_len' data-ref="16out_len">out_len</a> = <a class="local col7 ref" href="#17dest" title='dest' data-ref="17dest">dest</a> - <a class="local col4 ref" href="#14utf16Str" title='utf16Str' data-ref="14utf16Str">utf16Str</a>;</td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td>    <b>return</b> <a class="local col4 ref" href="#14utf16Str" title='utf16Str' data-ref="14utf16Str">utf16Str</a>;</td></tr>
+<tr><th id="177">177</th><td>}</td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="180">180</th><td><i class="doc"> * length is the number of characters in the UTF-8 string.</i></td></tr>
+<tr><th id="181">181</th><td><i class="doc"> * out_len is an out parameter (which may not be null) containing the</i></td></tr>
+<tr><th id="182">182</th><td><i class="doc"> * length of the UTF-16 string (which may contain embedded \0's)</i></td></tr>
+<tr><th id="183">183</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="184">184</th><td></td></tr>
+<tr><th id="185">185</th><td><b>extern</b> <a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a> * <dfn class="decl def" id="strcpylen8to16" title='strcpylen8to16' data-ref="strcpylen8to16">strcpylen8to16</dfn> (<a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a> *<dfn class="local col9 decl" id="19utf16Str" title='utf16Str' data-type='char16_t *' data-ref="19utf16Str">utf16Str</dfn>, <em>const</em> <em>char</em>*<dfn class="local col0 decl" id="20utf8Str" title='utf8Str' data-type='const char *' data-ref="20utf8Str">utf8Str</dfn>,</td></tr>
+<tr><th id="186">186</th><td>                                       <em>int</em> <dfn class="local col1 decl" id="21length" title='length' data-type='int' data-ref="21length">length</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col2 decl" id="22out_len" title='out_len' data-type='size_t *' data-ref="22out_len">out_len</dfn>)</td></tr>
+<tr><th id="187">187</th><td>{</td></tr>
+<tr><th id="188">188</th><td>    <i>/* TODO: Share more of this code with the method above. Only 2 lines changed. */</i></td></tr>
+<tr><th id="189">189</th><td>    </td></tr>
+<tr><th id="190">190</th><td>    <a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a> *<dfn class="local col3 decl" id="23dest" title='dest' data-type='char16_t *' data-ref="23dest">dest</dfn> = <a class="local col9 ref" href="#19utf16Str" title='utf16Str' data-ref="19utf16Str">utf16Str</a>;</td></tr>
+<tr><th id="191">191</th><td></td></tr>
+<tr><th id="192">192</th><td>    <em>const</em> <em>char</em> *<dfn class="local col4 decl" id="24end" title='end' data-type='const char *' data-ref="24end">end</dfn> = <a class="local col0 ref" href="#20utf8Str" title='utf8Str' data-ref="20utf8Str">utf8Str</a> + <a class="local col1 ref" href="#21length" title='length' data-ref="21length">length</a>; <i>/* This line */</i></td></tr>
+<tr><th id="193">193</th><td>    <b>while</b> (<a class="local col0 ref" href="#20utf8Str" title='utf8Str' data-ref="20utf8Str">utf8Str</a> &lt; <a class="local col4 ref" href="#24end" title='end' data-ref="24end">end</a>) {             <i>/* and this line changed. */</i></td></tr>
+<tr><th id="194">194</th><td>        <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col5 decl" id="25ret" title='ret' data-type='uint32_t' data-ref="25ret">ret</dfn>;</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td>        <a class="local col5 ref" href="#25ret" title='ret' data-ref="25ret">ret</a> = <a class="tu ref" href="#getUtf32FromUtf8" title='getUtf32FromUtf8' data-use='c' data-ref="getUtf32FromUtf8">getUtf32FromUtf8</a>(&amp;<a class="local col0 ref" href="#20utf8Str" title='utf8Str' data-ref="20utf8Str">utf8Str</a>);</td></tr>
+<tr><th id="197">197</th><td></td></tr>
+<tr><th id="198">198</th><td>        <b>if</b> (<a class="local col5 ref" href="#25ret" title='ret' data-ref="25ret">ret</a> &lt;= <var>0xffff</var>) {</td></tr>
+<tr><th id="199">199</th><td>            *<a class="local col3 ref" href="#23dest" title='dest' data-ref="23dest">dest</a>++ = (<a class="typedef" href="../include/cutils/jstring.h.html#char16_t" title='char16_t' data-type='uint16_t' data-ref="char16_t">char16_t</a>) <a class="local col5 ref" href="#25ret" title='ret' data-ref="25ret">ret</a>;</td></tr>
+<tr><th id="200">200</th><td>        } <b>else</b> <b>if</b> (<a class="local col5 ref" href="#25ret" title='ret' data-ref="25ret">ret</a> &lt;= <a class="macro" href="#36" title="0x10fffd" data-ref="_M/UNICODE_UPPER_LIMIT">UNICODE_UPPER_LIMIT</a>)  {</td></tr>
+<tr><th id="201">201</th><td>            <i>/* Create surrogate pairs */</i></td></tr>
+<tr><th id="202">202</th><td>            <i>/* See <a href="http://en.wikipedia.org/wiki/UTF-16/UCS-2#Method_for_code_points_in_Plane_1.2C_Plane_2">http://en.wikipedia.org/wiki/UTF-16/UCS-2#Method_for_code_points_in_Plane_1.2C_Plane_2</a> */</i></td></tr>
+<tr><th id="203">203</th><td></td></tr>
+<tr><th id="204">204</th><td>            *<a class="local col3 ref" href="#23dest" title='dest' data-ref="23dest">dest</a>++ = <var>0xd800</var> | ((<a class="local col5 ref" href="#25ret" title='ret' data-ref="25ret">ret</a> - <var>0x10000</var>) &gt;&gt; <var>10</var>);</td></tr>
+<tr><th id="205">205</th><td>            *<a class="local col3 ref" href="#23dest" title='dest' data-ref="23dest">dest</a>++ = <var>0xdc00</var> | ((<a class="local col5 ref" href="#25ret" title='ret' data-ref="25ret">ret</a> - <var>0x10000</var>) &amp;  <var>0x3ff</var>);</td></tr>
+<tr><th id="206">206</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="207">207</th><td>            *<a class="local col3 ref" href="#23dest" title='dest' data-ref="23dest">dest</a>++ = <a class="macro" href="#27" title="0xfffd" data-ref="_M/UTF16_REPLACEMENT_CHAR">UTF16_REPLACEMENT_CHAR</a>;</td></tr>
+<tr><th id="208">208</th><td>        }</td></tr>
+<tr><th id="209">209</th><td>    }</td></tr>
+<tr><th id="210">210</th><td></td></tr>
+<tr><th id="211">211</th><td>    *<a class="local col2 ref" href="#22out_len" title='out_len' data-ref="22out_len">out_len</a> = <a class="local col3 ref" href="#23dest" title='dest' data-ref="23dest">dest</a> - <a class="local col9 ref" href="#19utf16Str" title='utf16Str' data-ref="19utf16Str">utf16Str</a>;</td></tr>
+<tr><th id="212">212</th><td></td></tr>
+<tr><th id="213">213</th><td>    <b>return</b> <a class="local col9 ref" href="#19utf16Str" title='utf16Str' data-ref="19utf16Str">utf16Str</a>;</td></tr>
+<tr><th id="214">214</th><td>}</td></tr>
+<tr><th id="215">215</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

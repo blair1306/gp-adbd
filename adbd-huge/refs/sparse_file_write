@@ -1,0 +1,20 @@
+<dec f='codebrowser/system/core/libsparse/include/sparse/sparse.h' l='161' type='int sparse_file_write(struct sparse_file * s, int fd, _Bool gz, _Bool sparse, _Bool crc)'/>
+<doc f='codebrowser/system/core/libsparse/include/sparse/sparse.h' l='143'>/**
+ * sparse_file_write - write a sparse file to a file
+ *
+ * @s - sparse file cookie
+ * @fd - file descriptor to write to
+ * @gz - write a gzipped file
+ * @sparse - write in the Android sparse file format
+ * @crc - append a crc chunk
+ *
+ * Writes a sparse file to a file.  If gz is true, the data will be passed
+ * through zlib.  If sparse is true, the file will be written in the Android
+ * sparse file format.  If sparse is false, the file will be written by seeking
+ * over unused chunks, producing a smaller file if the filesystem supports
+ * sparse files.  If crc is true, the crc of the expanded data will be
+ * calculated and appended in a crc chunk.
+ *
+ * Returns 0 on success, negative errno on error.
+ */</doc>
+<use f='codebrowser/system/extras/ext4_utils/ext4_utils.c' l='192' u='c' c='write_ext4_image'/>

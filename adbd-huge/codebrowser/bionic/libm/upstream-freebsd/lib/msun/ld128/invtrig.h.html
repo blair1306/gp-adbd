@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>invtrig.h source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/invtrig.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/invtrig.h'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>ld128</a>/<a href='invtrig.h.html'>invtrig.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*-</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 2008 David Schultz &lt;das@FreeBSD.ORG&gt;</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="12">12</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="13">13</th><td><i> *</i></td></tr>
+<tr><th id="14">14</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND</i></td></tr>
+<tr><th id="15">15</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="16">16</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="17">17</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="19">19</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="20">20</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="21">21</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="22">22</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="23">23</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="24">24</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="25">25</th><td><i> *</i></td></tr>
+<tr><th id="26">26</th><td><i> * $FreeBSD$</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include &lt;float.h&gt;</u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../../../../fpmath.h.html">"fpmath.h"</a></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#define	<dfn class="macro" id="_M/BIAS" data-ref="_M/BIAS">BIAS</dfn>		(LDBL_MAX_EXP - 1)</u></td></tr>
+<tr><th id="34">34</th><td><u>#define	<dfn class="macro" id="_M/MANH_SIZE" data-ref="_M/MANH_SIZE">MANH_SIZE</dfn>	(LDBL_MANH_SIZE + 1)</u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><i>/* Approximation thresholds. */</i></td></tr>
+<tr><th id="37">37</th><td><u>#define	<dfn class="macro" id="_M/ASIN_LINEAR" data-ref="_M/ASIN_LINEAR">ASIN_LINEAR</dfn>	(BIAS - 56)	/* 2**-56 */</u></td></tr>
+<tr><th id="38">38</th><td><u>#define	<dfn class="macro" id="_M/ACOS_CONST" data-ref="_M/ACOS_CONST">ACOS_CONST</dfn>	(BIAS - 113)	/* 2**-113 */</u></td></tr>
+<tr><th id="39">39</th><td><u>#define	<dfn class="macro" id="_M/ATAN_CONST" data-ref="_M/ATAN_CONST">ATAN_CONST</dfn>	(BIAS + 113)	/* 2**113 */</u></td></tr>
+<tr><th id="40">40</th><td><u>#define	<dfn class="macro" id="_M/ATAN_LINEAR" data-ref="_M/ATAN_LINEAR">ATAN_LINEAR</dfn>	(BIAS - 56)	/* 2**-56 */</u></td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><i>/* 0.95 */</i></td></tr>
+<tr><th id="43">43</th><td><u>#define	<dfn class="macro" id="_M/THRESH" data-ref="_M/THRESH">THRESH</dfn>	((0xe666666666666666ULL&gt;&gt;(64-(MANH_SIZE-1)))|LDBL_NBIT)</u></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><i>/* Constants shared by the long double inverse trig functions. */</i></td></tr>
+<tr><th id="46">46</th><td><u>#define	<dfn class="macro" id="_M/pS0" data-ref="_M/pS0">pS0</dfn>	<dfn class="decl" id="_ItL_pS0" title='_ItL_pS0' data-ref="_ItL_pS0"><a class="ref" href="#75" title='_ItL_pS0' data-ref="_ItL_pS0">_ItL_pS0</a></dfn></u></td></tr>
+<tr><th id="47">47</th><td><u>#define	<dfn class="macro" id="_M/pS1" data-ref="_M/pS1">pS1</dfn>	<dfn class="decl" id="_ItL_pS1" title='_ItL_pS1' data-ref="_ItL_pS1"><a class="ref" href="#75" title='_ItL_pS1' data-ref="_ItL_pS1">_ItL_pS1</a></dfn></u></td></tr>
+<tr><th id="48">48</th><td><u>#define	<dfn class="macro" id="_M/pS2" data-ref="_M/pS2">pS2</dfn>	<dfn class="decl" id="_ItL_pS2" title='_ItL_pS2' data-ref="_ItL_pS2"><a class="ref" href="#75" title='_ItL_pS2' data-ref="_ItL_pS2">_ItL_pS2</a></dfn></u></td></tr>
+<tr><th id="49">49</th><td><u>#define	<dfn class="macro" id="_M/pS3" data-ref="_M/pS3">pS3</dfn>	<dfn class="decl" id="_ItL_pS3" title='_ItL_pS3' data-ref="_ItL_pS3"><a class="ref" href="#75" title='_ItL_pS3' data-ref="_ItL_pS3">_ItL_pS3</a></dfn></u></td></tr>
+<tr><th id="50">50</th><td><u>#define	<dfn class="macro" id="_M/pS4" data-ref="_M/pS4">pS4</dfn>	<dfn class="decl" id="_ItL_pS4" title='_ItL_pS4' data-ref="_ItL_pS4"><a class="ref" href="#75" title='_ItL_pS4' data-ref="_ItL_pS4">_ItL_pS4</a></dfn></u></td></tr>
+<tr><th id="51">51</th><td><u>#define	<dfn class="macro" id="_M/pS5" data-ref="_M/pS5">pS5</dfn>	<dfn class="decl" id="_ItL_pS5" title='_ItL_pS5' data-ref="_ItL_pS5"><a class="ref" href="#75" title='_ItL_pS5' data-ref="_ItL_pS5">_ItL_pS5</a></dfn></u></td></tr>
+<tr><th id="52">52</th><td><u>#define	<dfn class="macro" id="_M/pS6" data-ref="_M/pS6">pS6</dfn>	<dfn class="decl" id="_ItL_pS6" title='_ItL_pS6' data-ref="_ItL_pS6"><a class="ref" href="#75" title='_ItL_pS6' data-ref="_ItL_pS6">_ItL_pS6</a></dfn></u></td></tr>
+<tr><th id="53">53</th><td><u>#define	<dfn class="macro" id="_M/pS7" data-ref="_M/pS7">pS7</dfn>	<dfn class="decl" id="_ItL_pS7" title='_ItL_pS7' data-ref="_ItL_pS7"><a class="ref" href="#75" title='_ItL_pS7' data-ref="_ItL_pS7">_ItL_pS7</a></dfn></u></td></tr>
+<tr><th id="54">54</th><td><u>#define	<dfn class="macro" id="_M/pS8" data-ref="_M/pS8">pS8</dfn>	<dfn class="decl" id="_ItL_pS8" title='_ItL_pS8' data-ref="_ItL_pS8"><a class="ref" href="#75" title='_ItL_pS8' data-ref="_ItL_pS8">_ItL_pS8</a></dfn></u></td></tr>
+<tr><th id="55">55</th><td><u>#define	<dfn class="macro" id="_M/pS9" data-ref="_M/pS9">pS9</dfn>	<dfn class="decl" id="_ItL_pS9" title='_ItL_pS9' data-ref="_ItL_pS9"><a class="ref" href="#75" title='_ItL_pS9' data-ref="_ItL_pS9">_ItL_pS9</a></dfn></u></td></tr>
+<tr><th id="56">56</th><td><u>#define	<dfn class="macro" id="_M/qS1" data-ref="_M/qS1">qS1</dfn>	<dfn class="decl" id="_ItL_qS1" title='_ItL_qS1' data-ref="_ItL_qS1"><a class="ref" href="#76" title='_ItL_qS1' data-ref="_ItL_qS1">_ItL_qS1</a></dfn></u></td></tr>
+<tr><th id="57">57</th><td><u>#define	<dfn class="macro" id="_M/qS2" data-ref="_M/qS2">qS2</dfn>	<dfn class="decl" id="_ItL_qS2" title='_ItL_qS2' data-ref="_ItL_qS2"><a class="ref" href="#76" title='_ItL_qS2' data-ref="_ItL_qS2">_ItL_qS2</a></dfn></u></td></tr>
+<tr><th id="58">58</th><td><u>#define	<dfn class="macro" id="_M/qS3" data-ref="_M/qS3">qS3</dfn>	<dfn class="decl" id="_ItL_qS3" title='_ItL_qS3' data-ref="_ItL_qS3"><a class="ref" href="#76" title='_ItL_qS3' data-ref="_ItL_qS3">_ItL_qS3</a></dfn></u></td></tr>
+<tr><th id="59">59</th><td><u>#define	<dfn class="macro" id="_M/qS4" data-ref="_M/qS4">qS4</dfn>	<dfn class="decl" id="_ItL_qS4" title='_ItL_qS4' data-ref="_ItL_qS4"><a class="ref" href="#76" title='_ItL_qS4' data-ref="_ItL_qS4">_ItL_qS4</a></dfn></u></td></tr>
+<tr><th id="60">60</th><td><u>#define	<dfn class="macro" id="_M/qS5" data-ref="_M/qS5">qS5</dfn>	<dfn class="decl" id="_ItL_qS5" title='_ItL_qS5' data-ref="_ItL_qS5"><a class="ref" href="#76" title='_ItL_qS5' data-ref="_ItL_qS5">_ItL_qS5</a></dfn></u></td></tr>
+<tr><th id="61">61</th><td><u>#define	<dfn class="macro" id="_M/qS6" data-ref="_M/qS6">qS6</dfn>	<dfn class="decl" id="_ItL_qS6" title='_ItL_qS6' data-ref="_ItL_qS6"><a class="ref" href="#76" title='_ItL_qS6' data-ref="_ItL_qS6">_ItL_qS6</a></dfn></u></td></tr>
+<tr><th id="62">62</th><td><u>#define	<dfn class="macro" id="_M/qS7" data-ref="_M/qS7">qS7</dfn>	<dfn class="decl" id="_ItL_qS7" title='_ItL_qS7' data-ref="_ItL_qS7"><a class="ref" href="#76" title='_ItL_qS7' data-ref="_ItL_qS7">_ItL_qS7</a></dfn></u></td></tr>
+<tr><th id="63">63</th><td><u>#define	<dfn class="macro" id="_M/qS8" data-ref="_M/qS8">qS8</dfn>	<dfn class="decl" id="_ItL_qS8" title='_ItL_qS8' data-ref="_ItL_qS8"><a class="ref" href="#76" title='_ItL_qS8' data-ref="_ItL_qS8">_ItL_qS8</a></dfn></u></td></tr>
+<tr><th id="64">64</th><td><u>#define	<dfn class="macro" id="_M/qS9" data-ref="_M/qS9">qS9</dfn>	<dfn class="decl" id="_ItL_qS9" title='_ItL_qS9' data-ref="_ItL_qS9"><a class="ref" href="#76" title='_ItL_qS9' data-ref="_ItL_qS9">_ItL_qS9</a></dfn></u></td></tr>
+<tr><th id="65">65</th><td><u>#define	<dfn class="macro" id="_M/atanhi" data-ref="_M/atanhi">atanhi</dfn>	<dfn class="decl" id="_ItL_atanhi" title='_ItL_atanhi' data-ref="_ItL_atanhi">_ItL_atanhi</dfn></u></td></tr>
+<tr><th id="66">66</th><td><u>#define	<dfn class="macro" id="_M/atanlo" data-ref="_M/atanlo">atanlo</dfn>	<dfn class="decl" id="_ItL_atanlo" title='_ItL_atanlo' data-ref="_ItL_atanlo">_ItL_atanlo</dfn></u></td></tr>
+<tr><th id="67">67</th><td><u>#define	<dfn class="macro" id="_M/aT" data-ref="_M/aT">aT</dfn>	<dfn class="decl" id="_ItL_aT" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT"><a class="ref" href="#77" title='_ItL_aT' data-ref="_ItL_aT">_ItL_aT</a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></dfn></u></td></tr>
+<tr><th id="68">68</th><td><u>#define	<dfn class="macro" id="_M/pi_lo" data-ref="_M/pi_lo">pi_lo</dfn>	<dfn class="decl" id="_ItL_pi_lo" title='_ItL_pi_lo' data-ref="_ItL_pi_lo">_ItL_pi_lo</dfn></u></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><u>#define	<dfn class="macro" id="_M/pio2_hi" data-ref="_M/pio2_hi">pio2_hi</dfn>	atanhi[3]</u></td></tr>
+<tr><th id="71">71</th><td><u>#define	<dfn class="macro" id="_M/pio2_lo" data-ref="_M/pio2_lo">pio2_lo</dfn>	atanlo[3]</u></td></tr>
+<tr><th id="72">72</th><td><u>#define	<dfn class="macro" id="_M/pio4_hi" data-ref="_M/pio4_hi">pio4_hi</dfn>	atanhi[1]</u></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><i>/* Constants shared by the long double inverse trig functions. */</i></td></tr>
+<tr><th id="75">75</th><td><b>extern</b> <em>const</em> <em>long</em> <em>double</em> <a class="macro" href="#46" title="_ItL_pS0" data-ref="_M/pS0">pS0</a>, <a class="macro" href="#47" title="_ItL_pS1" data-ref="_M/pS1">pS1</a>, <a class="macro" href="#48" title="_ItL_pS2" data-ref="_M/pS2">pS2</a>, <a class="macro" href="#49" title="_ItL_pS3" data-ref="_M/pS3">pS3</a>, <a class="macro" href="#50" title="_ItL_pS4" data-ref="_M/pS4">pS4</a>, <a class="macro" href="#51" title="_ItL_pS5" data-ref="_M/pS5">pS5</a>, <a class="macro" href="#52" title="_ItL_pS6" data-ref="_M/pS6">pS6</a>, <a class="macro" href="#53" title="_ItL_pS7" data-ref="_M/pS7">pS7</a>, <a class="macro" href="#54" title="_ItL_pS8" data-ref="_M/pS8">pS8</a>, <a class="macro" href="#55" title="_ItL_pS9" data-ref="_M/pS9">pS9</a>;</td></tr>
+<tr><th id="76">76</th><td><b>extern</b> <em>const</em> <em>long</em> <em>double</em> <a class="macro" href="#56" title="_ItL_qS1" data-ref="_M/qS1">qS1</a>, <a class="macro" href="#57" title="_ItL_qS2" data-ref="_M/qS2">qS2</a>, <a class="macro" href="#58" title="_ItL_qS3" data-ref="_M/qS3">qS3</a>, <a class="macro" href="#59" title="_ItL_qS4" data-ref="_M/qS4">qS4</a>, <a class="macro" href="#60" title="_ItL_qS5" data-ref="_M/qS5">qS5</a>, <a class="macro" href="#61" title="_ItL_qS6" data-ref="_M/qS6">qS6</a>, <a class="macro" href="#62" title="_ItL_qS7" data-ref="_M/qS7">qS7</a>, <a class="macro" href="#63" title="_ItL_qS8" data-ref="_M/qS8">qS8</a>, <a class="macro" href="#64" title="_ItL_qS9" data-ref="_M/qS9">qS9</a>;</td></tr>
+<tr><th id="77">77</th><td><b>extern</b> <em>const</em> <em>long</em> <em>double</em> <a class="macro" href="#65" title="_ItL_atanhi" data-ref="_M/atanhi">atanhi</a>[], <a class="macro" href="#66" title="_ItL_atanlo" data-ref="_M/atanlo">atanlo</a>[], <a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[];</td></tr>
+<tr><th id="78">78</th><td><b>extern</b> <em>const</em> <em>long</em> <em>double</em> <a class="macro" href="#68" title="_ItL_pi_lo" data-ref="_M/pi_lo">pi_lo</a>;</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><em>static</em> <b>inline</b> <em>long</em> <em>double</em></td></tr>
+<tr><th id="81">81</th><td><dfn class="decl def" id="P" title='P' data-ref="P">P</dfn>(<em>long</em> <em>double</em> <dfn class="local col1 decl" id="1x" title='x' data-type='long double' data-ref="1x">x</dfn>)</td></tr>
+<tr><th id="82">82</th><td>{</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td>	<b>return</b> (<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * (<a class="macro" href="#46" title="_ItL_pS0" data-ref="_M/pS0">pS0</a> + <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * (<a class="macro" href="#47" title="_ItL_pS1" data-ref="_M/pS1">pS1</a> + <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * (<a class="macro" href="#48" title="_ItL_pS2" data-ref="_M/pS2">pS2</a> + <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * (<a class="macro" href="#49" title="_ItL_pS3" data-ref="_M/pS3">pS3</a> + <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * \</td></tr>
+<tr><th id="85">85</th><td>		(<a class="macro" href="#50" title="_ItL_pS4" data-ref="_M/pS4">pS4</a> + <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * (<a class="macro" href="#51" title="_ItL_pS5" data-ref="_M/pS5">pS5</a> + <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * (<a class="macro" href="#52" title="_ItL_pS6" data-ref="_M/pS6">pS6</a> + <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * (<a class="macro" href="#53" title="_ItL_pS7" data-ref="_M/pS7">pS7</a> + <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * (<a class="macro" href="#54" title="_ItL_pS8" data-ref="_M/pS8">pS8</a> + <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * \</td></tr>
+<tr><th id="86">86</th><td>		<a class="macro" href="#55" title="_ItL_pS9" data-ref="_M/pS9">pS9</a>))))))))));</td></tr>
+<tr><th id="87">87</th><td>}</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><em>static</em> <b>inline</b> <em>long</em> <em>double</em></td></tr>
+<tr><th id="90">90</th><td><dfn class="decl def" id="Q" title='Q' data-ref="Q">Q</dfn>(<em>long</em> <em>double</em> <dfn class="local col2 decl" id="2x" title='x' data-type='long double' data-ref="2x">x</dfn>)</td></tr>
+<tr><th id="91">91</th><td>{</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td>	<b>return</b> (<var>1.0</var> + <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> * (<a class="macro" href="#56" title="_ItL_qS1" data-ref="_M/qS1">qS1</a> + <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> * (<a class="macro" href="#57" title="_ItL_qS2" data-ref="_M/qS2">qS2</a> + <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> * (<a class="macro" href="#58" title="_ItL_qS3" data-ref="_M/qS3">qS3</a> + <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> * (<a class="macro" href="#59" title="_ItL_qS4" data-ref="_M/qS4">qS4</a> + <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> * \</td></tr>
+<tr><th id="94">94</th><td>		(<a class="macro" href="#60" title="_ItL_qS5" data-ref="_M/qS5">qS5</a> + <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> * (<a class="macro" href="#61" title="_ItL_qS6" data-ref="_M/qS6">qS6</a> + <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> * (<a class="macro" href="#62" title="_ItL_qS7" data-ref="_M/qS7">qS7</a> + <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> * (<a class="macro" href="#63" title="_ItL_qS8" data-ref="_M/qS8">qS8</a> + <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> * <a class="macro" href="#64" title="_ItL_qS9" data-ref="_M/qS9">qS9</a>)))))))));</td></tr>
+<tr><th id="95">95</th><td>}</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><em>static</em> <b>inline</b> <em>long</em> <em>double</em></td></tr>
+<tr><th id="98">98</th><td><dfn class="decl def" id="T_even" title='T_even' data-ref="T_even">T_even</dfn>(<em>long</em> <em>double</em> <dfn class="local col3 decl" id="3x" title='x' data-type='long double' data-ref="3x">x</dfn>)</td></tr>
+<tr><th id="99">99</th><td>{</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td>	<b>return</b> (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>0</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>2</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>4</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>6</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * \</td></tr>
+<tr><th id="102">102</th><td>		(<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>8</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>10</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>12</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>14</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * \</td></tr>
+<tr><th id="103">103</th><td>		(<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>16</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>18</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>20</var>] + <a class="local col3 ref" href="#3x" title='x' data-ref="3x">x</a> * <a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>22</var>])))))))))));</td></tr>
+<tr><th id="104">104</th><td>}</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><em>static</em> <b>inline</b> <em>long</em> <em>double</em></td></tr>
+<tr><th id="107">107</th><td><dfn class="decl def" id="T_odd" title='T_odd' data-ref="T_odd">T_odd</dfn>(<em>long</em> <em>double</em> <dfn class="local col4 decl" id="4x" title='x' data-type='long double' data-ref="4x">x</dfn>)</td></tr>
+<tr><th id="108">108</th><td>{</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td>	<b>return</b> (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>1</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>3</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>5</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>7</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * \</td></tr>
+<tr><th id="111">111</th><td>		(<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>9</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>11</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>13</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>15</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * \</td></tr>
+<tr><th id="112">112</th><td>		(<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>17</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>19</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * (<a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>21</var>] + <a class="local col4 ref" href="#4x" title='x' data-ref="4x">x</a> * <a class="macro" href="#67" title="_ItL_aT" data-ref="_M/aT">aT</a>[<var>23</var>])))))))))));</td></tr>
+<tr><th id="113">113</th><td>}</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='invtrig.c.html'>codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/invtrig.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

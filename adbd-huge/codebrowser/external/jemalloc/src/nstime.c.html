@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>nstime.c source code [codebrowser/external/jemalloc/src/nstime.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/jemalloc/src/nstime.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>jemalloc</a>/<a href='./'>src</a>/<a href='nstime.c.html'>nstime.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#include <a href="../include/jemalloc/internal/jemalloc_internal.h.html">"jemalloc/internal/jemalloc_internal.h"</a></u></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><u>#define	<dfn class="macro" id="_M/BILLION" data-ref="_M/BILLION">BILLION</dfn>	UINT64_C(1000000000)</u></td></tr>
+<tr><th id="4">4</th><td></td></tr>
+<tr><th id="5">5</th><td><em>void</em></td></tr>
+<tr><th id="6">6</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#340" title="je_nstime_init" data-ref="_M/nstime_init">nstime_init</a>(<a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col1 decl" id="1time" title='time' data-type='nstime_t *' data-ref="1time">time</dfn>, <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col2 decl" id="2ns" title='ns' data-type='uint64_t' data-ref="2ns">ns</dfn>)</td></tr>
+<tr><th id="7">7</th><td>{</td></tr>
+<tr><th id="8">8</th><td></td></tr>
+<tr><th id="9">9</th><td>	<a class="local col1 ref" href="#1time" title='time' data-ref="1time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> = <a class="local col2 ref" href="#2ns" title='ns' data-ref="2ns">ns</a>;</td></tr>
+<tr><th id="10">10</th><td>}</td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><em>void</em></td></tr>
+<tr><th id="13">13</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#341" title="je_nstime_init2" data-ref="_M/nstime_init2">nstime_init2</a>(<a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col3 decl" id="3time" title='time' data-type='nstime_t *' data-ref="3time">time</dfn>, <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col4 decl" id="4sec" title='sec' data-type='uint64_t' data-ref="4sec">sec</dfn>, <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col5 decl" id="5nsec" title='nsec' data-type='uint64_t' data-ref="5nsec">nsec</dfn>)</td></tr>
+<tr><th id="14">14</th><td>{</td></tr>
+<tr><th id="15">15</th><td></td></tr>
+<tr><th id="16">16</th><td>	<a class="local col3 ref" href="#3time" title='time' data-ref="3time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> = <a class="local col4 ref" href="#4sec" title='sec' data-ref="4sec">sec</a> * <a class="macro" href="#3" title="1000000000UL" data-ref="_M/BILLION">BILLION</a> + <a class="local col5 ref" href="#5nsec" title='nsec' data-ref="5nsec">nsec</a>;</td></tr>
+<tr><th id="17">17</th><td>}</td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a></td></tr>
+<tr><th id="20">20</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#342" title="je_nstime_ns" data-ref="_M/nstime_ns">nstime_ns</a>(<em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col6 decl" id="6time" title='time' data-type='const nstime_t *' data-ref="6time">time</dfn>)</td></tr>
+<tr><th id="21">21</th><td>{</td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td>	<b>return</b> (<a class="local col6 ref" href="#6time" title='time' data-ref="6time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a>);</td></tr>
+<tr><th id="24">24</th><td>}</td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a></td></tr>
+<tr><th id="27">27</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#344" title="je_nstime_sec" data-ref="_M/nstime_sec">nstime_sec</a>(<em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col7 decl" id="7time" title='time' data-type='const nstime_t *' data-ref="7time">time</dfn>)</td></tr>
+<tr><th id="28">28</th><td>{</td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td>	<b>return</b> (<a class="local col7 ref" href="#7time" title='time' data-ref="7time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> / <a class="macro" href="#3" title="1000000000UL" data-ref="_M/BILLION">BILLION</a>);</td></tr>
+<tr><th id="31">31</th><td>}</td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a></td></tr>
+<tr><th id="34">34</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#343" title="je_nstime_nsec" data-ref="_M/nstime_nsec">nstime_nsec</a>(<em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col8 decl" id="8time" title='time' data-type='const nstime_t *' data-ref="8time">time</dfn>)</td></tr>
+<tr><th id="35">35</th><td>{</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td>	<b>return</b> (<a class="local col8 ref" href="#8time" title='time' data-ref="8time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> % <a class="macro" href="#3" title="1000000000UL" data-ref="_M/BILLION">BILLION</a>);</td></tr>
+<tr><th id="38">38</th><td>}</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><em>void</em></td></tr>
+<tr><th id="41">41</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#336" title="je_nstime_copy" data-ref="_M/nstime_copy">nstime_copy</a>(<a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col9 decl" id="9time" title='time' data-type='nstime_t *' data-ref="9time">time</dfn>, <em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col0 decl" id="10source" title='source' data-type='const nstime_t *' data-ref="10source">source</dfn>)</td></tr>
+<tr><th id="42">42</th><td>{</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td>	*<a class="local col9 ref" href="#9time" title='time' data-ref="9time">time</a> = *<a class="local col0 ref" href="#10source" title='source' data-ref="10source">source</a>;</td></tr>
+<tr><th id="45">45</th><td>}</td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td><em>int</em></td></tr>
+<tr><th id="48">48</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#335" title="je_nstime_compare" data-ref="_M/nstime_compare">nstime_compare</a>(<em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col1 decl" id="11a" title='a' data-type='const nstime_t *' data-ref="11a">a</dfn>, <em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col2 decl" id="12b" title='b' data-type='const nstime_t *' data-ref="12b">b</dfn>)</td></tr>
+<tr><th id="49">49</th><td>{</td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td>	<b>return</b> ((<a class="local col1 ref" href="#11a" title='a' data-ref="11a">a</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> &gt; <a class="local col2 ref" href="#12b" title='b' data-ref="12b">b</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a>) - (<a class="local col1 ref" href="#11a" title='a' data-ref="11a">a</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> &lt; <a class="local col2 ref" href="#12b" title='b' data-ref="12b">b</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a>));</td></tr>
+<tr><th id="52">52</th><td>}</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><em>void</em></td></tr>
+<tr><th id="55">55</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#334" title="je_nstime_add" data-ref="_M/nstime_add">nstime_add</a>(<a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col3 decl" id="13time" title='time' data-type='nstime_t *' data-ref="13time">time</dfn>, <em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col4 decl" id="14addend" title='addend' data-type='const nstime_t *' data-ref="14addend">addend</dfn>)</td></tr>
+<tr><th id="56">56</th><td>{</td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td>	<a class="macro" href="../include/jemalloc/internal/assert.h.html#6" title="do { if (__builtin_expect(!!(config_debug &amp;&amp; !((18446744073709551615UL) - time-&gt;ns &gt;= addend-&gt;ns)), 0)) { je_malloc_printf( &quot;&lt;jemalloc&gt;: %s:%d: Failed assertion: \&quot;%s\&quot;\n&quot;, &quot;/home/jon/workspace/vandroid/external/jemalloc/src/nstime.c&quot;, 58, &quot;UINT64_MAX - time-&gt;ns &gt;= addend-&gt;ns&quot;); abort(); } } while (0)" data-ref="_M/assert">assert</a>(<a class="macro" href="../../../bionic/libc/include/stdint.h.html#192" title="(18446744073709551615UL)" data-ref="_M/UINT64_MAX">UINT64_MAX</a> - <a class="local col3 ref" href="#13time" title='time' data-ref="13time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> &gt;= <a class="local col4 ref" href="#14addend" title='addend' data-ref="14addend">addend</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a>);</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td>	<a class="local col3 ref" href="#13time" title='time' data-ref="13time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> += <a class="local col4 ref" href="#14addend" title='addend' data-ref="14addend">addend</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a>;</td></tr>
+<tr><th id="61">61</th><td>}</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><em>void</em></td></tr>
+<tr><th id="64">64</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#345" title="je_nstime_subtract" data-ref="_M/nstime_subtract">nstime_subtract</a>(<a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col5 decl" id="15time" title='time' data-type='nstime_t *' data-ref="15time">time</dfn>, <em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col6 decl" id="16subtrahend" title='subtrahend' data-type='const nstime_t *' data-ref="16subtrahend">subtrahend</dfn>)</td></tr>
+<tr><th id="65">65</th><td>{</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td>	<a class="macro" href="../include/jemalloc/internal/assert.h.html#6" title="do { if (__builtin_expect(!!(config_debug &amp;&amp; !(je_nstime_compare(time, subtrahend) &gt;= 0)), 0)) { je_malloc_printf( &quot;&lt;jemalloc&gt;: %s:%d: Failed assertion: \&quot;%s\&quot;\n&quot;, &quot;/home/jon/workspace/vandroid/external/jemalloc/src/nstime.c&quot;, 67, &quot;nstime_compare(time, subtrahend) &gt;= 0&quot;); abort(); } } while (0)" data-ref="_M/assert">assert</a>(<a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#335" title="je_nstime_compare" data-ref="_M/nstime_compare">nstime_compare</a>(<a class="local col5 ref" href="#15time" title='time' data-ref="15time">time</a>, <a class="local col6 ref" href="#16subtrahend" title='subtrahend' data-ref="16subtrahend">subtrahend</a>) &gt;= <var>0</var>);</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td>	<a class="local col5 ref" href="#15time" title='time' data-ref="15time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> -= <a class="local col6 ref" href="#16subtrahend" title='subtrahend' data-ref="16subtrahend">subtrahend</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a>;</td></tr>
+<tr><th id="70">70</th><td>}</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><em>void</em></td></tr>
+<tr><th id="73">73</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#339" title="je_nstime_imultiply" data-ref="_M/nstime_imultiply">nstime_imultiply</a>(<a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col7 decl" id="17time" title='time' data-type='nstime_t *' data-ref="17time">time</dfn>, <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col8 decl" id="18multiplier" title='multiplier' data-type='uint64_t' data-ref="18multiplier">multiplier</dfn>)</td></tr>
+<tr><th id="74">74</th><td>{</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td>	<a class="macro" href="../include/jemalloc/internal/assert.h.html#6" title="do { if (__builtin_expect(!!(config_debug &amp;&amp; !((((time-&gt;ns | multiplier) &amp; ((18446744073709551615UL) &lt;&lt; (sizeof(uint64_t) &lt;&lt; 2))) == 0) || ((time-&gt;ns * multiplier) / multiplier == time-&gt;ns))), 0)) { je_malloc_printf( &quot;&lt;jemalloc&gt;: %s:%d: Failed assertion: \&quot;%s\&quot;\n&quot;, &quot;/home/jon/workspace/vandroid/external/jemalloc/src/nstime.c&quot;, 77, &quot;(((time-&gt;ns | multiplier) &amp; (UINT64_MAX &lt;&lt; (sizeof(uint64_t) &lt;&lt; 2))) == 0) || ((time-&gt;ns * multiplier) / multiplier == time-&gt;ns)&quot;); abort(); } } while (0)" data-ref="_M/assert">assert</a>((((<a class="local col7 ref" href="#17time" title='time' data-ref="17time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> | <a class="local col8 ref" href="#18multiplier" title='multiplier' data-ref="18multiplier">multiplier</a>) &amp; (<a class="macro" href="../../../bionic/libc/include/stdint.h.html#192" title="(18446744073709551615UL)" data-ref="_M/UINT64_MAX">UINT64_MAX</a> &lt;&lt; (<b>sizeof</b>(<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>) &lt;&lt;</td></tr>
+<tr><th id="77">77</th><td>	    <var>2</var>))) == <var>0</var>) || ((<a class="local col7 ref" href="#17time" title='time' data-ref="17time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> * <a class="local col8 ref" href="#18multiplier" title='multiplier' data-ref="18multiplier">multiplier</a>) / <a class="local col8 ref" href="#18multiplier" title='multiplier' data-ref="18multiplier">multiplier</a> == <a class="local col7 ref" href="#17time" title='time' data-ref="17time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a>));</td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td>	<a class="local col7 ref" href="#17time" title='time' data-ref="17time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> *= <a class="local col8 ref" href="#18multiplier" title='multiplier' data-ref="18multiplier">multiplier</a>;</td></tr>
+<tr><th id="80">80</th><td>}</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><em>void</em></td></tr>
+<tr><th id="83">83</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#338" title="je_nstime_idivide" data-ref="_M/nstime_idivide">nstime_idivide</a>(<a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col9 decl" id="19time" title='time' data-type='nstime_t *' data-ref="19time">time</dfn>, <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col0 decl" id="20divisor" title='divisor' data-type='uint64_t' data-ref="20divisor">divisor</dfn>)</td></tr>
+<tr><th id="84">84</th><td>{</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td>	<a class="macro" href="../include/jemalloc/internal/assert.h.html#6" title="do { if (__builtin_expect(!!(config_debug &amp;&amp; !(divisor != 0)), 0)) { je_malloc_printf( &quot;&lt;jemalloc&gt;: %s:%d: Failed assertion: \&quot;%s\&quot;\n&quot;, &quot;/home/jon/workspace/vandroid/external/jemalloc/src/nstime.c&quot;, 86, &quot;divisor != 0&quot;); abort(); } } while (0)" data-ref="_M/assert">assert</a>(<a class="local col0 ref" href="#20divisor" title='divisor' data-ref="20divisor">divisor</a> != <var>0</var>);</td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td>	<a class="local col9 ref" href="#19time" title='time' data-ref="19time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> /= <a class="local col0 ref" href="#20divisor" title='divisor' data-ref="20divisor">divisor</a>;</td></tr>
+<tr><th id="89">89</th><td>}</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td><a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a></td></tr>
+<tr><th id="92">92</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#337" title="je_nstime_divide" data-ref="_M/nstime_divide">nstime_divide</a>(<em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col1 decl" id="21time" title='time' data-type='const nstime_t *' data-ref="21time">time</dfn>, <em>const</em> <a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col2 decl" id="22divisor" title='divisor' data-type='const nstime_t *' data-ref="22divisor">divisor</dfn>)</td></tr>
+<tr><th id="93">93</th><td>{</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td>	<a class="macro" href="../include/jemalloc/internal/assert.h.html#6" title="do { if (__builtin_expect(!!(config_debug &amp;&amp; !(divisor-&gt;ns != 0)), 0)) { je_malloc_printf( &quot;&lt;jemalloc&gt;: %s:%d: Failed assertion: \&quot;%s\&quot;\n&quot;, &quot;/home/jon/workspace/vandroid/external/jemalloc/src/nstime.c&quot;, 95, &quot;divisor-&gt;ns != 0&quot;); abort(); } } while (0)" data-ref="_M/assert">assert</a>(<a class="local col2 ref" href="#22divisor" title='divisor' data-ref="22divisor">divisor</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> != <var>0</var>);</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td>	<b>return</b> (<a class="local col1 ref" href="#21time" title='time' data-ref="21time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> / <a class="local col2 ref" href="#22divisor" title='divisor' data-ref="22divisor">divisor</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a>);</td></tr>
+<tr><th id="98">98</th><td>}</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><u>#<span data-ppcond="100">ifdef</span> <span class="macro" data-ref="_M/JEMALLOC_JET">JEMALLOC_JET</span></u></td></tr>
+<tr><th id="101">101</th><td><u>#undef nstime_update</u></td></tr>
+<tr><th id="102">102</th><td><u>#define	nstime_update JEMALLOC_N(nstime_update_impl)</u></td></tr>
+<tr><th id="103">103</th><td><u>#<span data-ppcond="100">endif</span></u></td></tr>
+<tr><th id="104">104</th><td><span class="macro" title="_Bool" data-ref="_M/bool">bool</span></td></tr>
+<tr><th id="105">105</th><td><a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#346" title="je_nstime_update" data-ref="_M/nstime_update">nstime_update</a>(<a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> *<dfn class="local col3 decl" id="23time" title='time' data-type='nstime_t *' data-ref="23time">time</dfn>)</td></tr>
+<tr><th id="106">106</th><td>{</td></tr>
+<tr><th id="107">107</th><td>	<a class="typedef" href="../include/jemalloc/internal/nstime.h.html#nstime_t" title='nstime_t' data-type='struct nstime_s' data-ref="nstime_t">nstime_t</a> <dfn class="local col4 decl" id="24old_time" title='old_time' data-type='nstime_t' data-ref="24old_time">old_time</dfn>;</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td>	<a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#336" title="je_nstime_copy" data-ref="_M/nstime_copy">nstime_copy</a>(&amp;<a class="local col4 ref" href="#24old_time" title='old_time' data-ref="24old_time">old_time</a>, <a class="local col3 ref" href="#23time" title='time' data-ref="23time">time</a>);</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><u>#<span data-ppcond="111">ifdef</span> <span class="macro" data-ref="_M/_WIN32">_WIN32</span></u></td></tr>
+<tr><th id="112">112</th><td>	{</td></tr>
+<tr><th id="113">113</th><td>		FILETIME ft;</td></tr>
+<tr><th id="114">114</th><td>		uint64_t ticks;</td></tr>
+<tr><th id="115">115</th><td>		GetSystemTimeAsFileTime(&amp;ft);</td></tr>
+<tr><th id="116">116</th><td>		ticks = (((uint64_t)ft.dwHighDateTime) &lt;&lt; <var>32</var>) |</td></tr>
+<tr><th id="117">117</th><td>		    ft.dwLowDateTime;</td></tr>
+<tr><th id="118">118</th><td>		time-&gt;ns = ticks * <var>100</var>;</td></tr>
+<tr><th id="119">119</th><td>	}</td></tr>
+<tr><th id="120">120</th><td><u>#<span data-ppcond="111">elif</span> <a class="macro" href="../include/jemalloc/internal/nstime.h.html#4" title="defined(0) &amp;&amp; 0 &gt;= 0" data-ref="_M/JEMALLOC_CLOCK_GETTIME">JEMALLOC_CLOCK_GETTIME</a></u></td></tr>
+<tr><th id="121">121</th><td>	{</td></tr>
+<tr><th id="122">122</th><td>		<b>struct</b> <a class="type" href="../../../bionic/libc/include/bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a> <dfn class="local col5 decl" id="25ts" title='ts' data-type='struct timespec' data-ref="25ts">ts</dfn>;</td></tr>
+<tr><th id="123">123</th><td></td></tr>
+<tr><th id="124">124</th><td>		<b>if</b> (<a class="ref" href="../../../bionic/libc/include/sys/sysconf.h.html#sysconf" title='sysconf' data-ref="sysconf">sysconf</a>(<a class="macro" href="../../../bionic/libc/include/sys/sysconf.h.html#130" title="0x0064" data-ref="_M/_SC_MONOTONIC_CLOCK">_SC_MONOTONIC_CLOCK</a>) &gt; <var>0</var>)</td></tr>
+<tr><th id="125">125</th><td>			<a class="ref" href="../../../bionic/libc/include/time.h.html#clock_gettime" title='clock_gettime' data-ref="clock_gettime">clock_gettime</a>(<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/time.h.html#56" title="1" data-ref="_M/CLOCK_MONOTONIC">CLOCK_MONOTONIC</a>, &amp;<a class="local col5 ref" href="#25ts" title='ts' data-ref="25ts">ts</a>);</td></tr>
+<tr><th id="126">126</th><td>		<b>else</b></td></tr>
+<tr><th id="127">127</th><td>			<a class="ref" href="../../../bionic/libc/include/time.h.html#clock_gettime" title='clock_gettime' data-ref="clock_gettime">clock_gettime</a>(<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/time.h.html#55" title="0" data-ref="_M/CLOCK_REALTIME">CLOCK_REALTIME</a>, &amp;<a class="local col5 ref" href="#25ts" title='ts' data-ref="25ts">ts</a>);</td></tr>
+<tr><th id="128">128</th><td>		<a class="local col3 ref" href="#23time" title='time' data-ref="23time">time</a>-&gt;<a class="ref" href="../include/jemalloc/internal/nstime.h.html#nstime_s::ns" title='nstime_s::ns' data-ref="nstime_s::ns">ns</a> = <a class="local col5 ref" href="#25ts" title='ts' data-ref="25ts">ts</a>.<a class="ref" href="../../../bionic/libc/include/bits/timespec.h.html#timespec::tv_sec" title='timespec::tv_sec' data-ref="timespec::tv_sec">tv_sec</a> * <a class="macro" href="#3" title="1000000000UL" data-ref="_M/BILLION">BILLION</a> + <a class="local col5 ref" href="#25ts" title='ts' data-ref="25ts">ts</a>.<a class="ref" href="../../../bionic/libc/include/bits/timespec.h.html#timespec::tv_nsec" title='timespec::tv_nsec' data-ref="timespec::tv_nsec">tv_nsec</a>;</td></tr>
+<tr><th id="129">129</th><td>	}</td></tr>
+<tr><th id="130">130</th><td><u>#<span data-ppcond="111">else</span></u></td></tr>
+<tr><th id="131">131</th><td>	<b>struct</b> timeval tv;</td></tr>
+<tr><th id="132">132</th><td>	gettimeofday(&amp;tv, NULL);</td></tr>
+<tr><th id="133">133</th><td>	time-&gt;ns = tv.tv_sec * BILLION + tv.tv_usec * <var>1000</var>;</td></tr>
+<tr><th id="134">134</th><td><u>#<span data-ppcond="111">endif</span></u></td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td>	<i>/* Handle non-monotonic clocks. */</i></td></tr>
+<tr><th id="137">137</th><td>	<b>if</b> (<a class="macro" href="../include/jemalloc/internal/util.h.html#71" title="__builtin_expect(!!(je_nstime_compare(&amp;old_time, time) &gt; 0), 0)" data-ref="_M/unlikely">unlikely</a>(<a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#335" title="je_nstime_compare" data-ref="_M/nstime_compare">nstime_compare</a>(&amp;<a class="local col4 ref" href="#24old_time" title='old_time' data-ref="24old_time">old_time</a>, <a class="local col3 ref" href="#23time" title='time' data-ref="23time">time</a>) &gt; <var>0</var>)) {</td></tr>
+<tr><th id="138">138</th><td>		<a class="macro" href="../include/jemalloc/internal/private_namespace.h.html#336" title="je_nstime_copy" data-ref="_M/nstime_copy">nstime_copy</a>(<a class="local col3 ref" href="#23time" title='time' data-ref="23time">time</a>, &amp;<a class="local col4 ref" href="#24old_time" title='old_time' data-ref="24old_time">old_time</a>);</td></tr>
+<tr><th id="139">139</th><td>		<b>return</b> (<span class="macro" title="1" data-ref="_M/true">true</span>);</td></tr>
+<tr><th id="140">140</th><td>	}</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td>	<b>return</b> (<span class="macro" title="0" data-ref="_M/false">false</span>);</td></tr>
+<tr><th id="143">143</th><td>}</td></tr>
+<tr><th id="144">144</th><td><u>#<span data-ppcond="144">ifdef</span> <span class="macro" data-ref="_M/JEMALLOC_JET">JEMALLOC_JET</span></u></td></tr>
+<tr><th id="145">145</th><td><u>#undef nstime_update</u></td></tr>
+<tr><th id="146">146</th><td><u>#define	nstime_update JEMALLOC_N(nstime_update)</u></td></tr>
+<tr><th id="147">147</th><td>nstime_update_t *nstime_update = JEMALLOC_N(nstime_update_impl);</td></tr>
+<tr><th id="148">148</th><td><u>#<span data-ppcond="144">endif</span></u></td></tr>
+<tr><th id="149">149</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

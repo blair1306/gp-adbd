@@ -1,0 +1,51 @@
+<dec f='codebrowser/external/pcre/dist/pcre_internal.h' l='2744' macro='1' type='int _pcre_valid_utf(const pcre_uchar * , int , int * )'/>
+<def f='codebrowser/external/pcre/dist/pcre_valid_utf8.c' l='107' macro='1' type='int _pcre_valid_utf(const pcre_uchar * string, int length, int * erroroffset)'/>
+<doc f='codebrowser/external/pcre/dist/pcre_valid_utf8.c' l='56'>/* This function is called (optionally) at the start of compile or match, to
+check that a supposed UTF-8 string is actually valid. The early check means
+that subsequent code can assume it is dealing with a valid string. The check
+can be turned off for maximum performance, but the consequences of supplying an
+invalid string are then undefined.
+
+Originally, this function checked according to RFC 2279, allowing for values in
+the range 0 to 0x7fffffff, up to 6 bytes long, but ensuring that they were in
+the canonical format. Once somebody had pointed out RFC 3629 to me (it
+obsoletes 2279), additional restrictions were applied. The values are now
+limited to be between 0 and 0x0010ffff, no more than 4 bytes long, and the
+subrange 0xd000 to 0xdfff is excluded. However, the format of 5-byte and 6-byte
+characters is still checked.
+
+From release 8.13 more information about the details of the error are passed
+back in the returned value:
+
+PCRE_UTF8_ERR0   No error
+PCRE_UTF8_ERR1   Missing 1 byte at the end of the string
+PCRE_UTF8_ERR2   Missing 2 bytes at the end of the string
+PCRE_UTF8_ERR3   Missing 3 bytes at the end of the string
+PCRE_UTF8_ERR4   Missing 4 bytes at the end of the string
+PCRE_UTF8_ERR5   Missing 5 bytes at the end of the string
+PCRE_UTF8_ERR6   2nd-byte&apos;s two top bits are not 0x80
+PCRE_UTF8_ERR7   3rd-byte&apos;s two top bits are not 0x80
+PCRE_UTF8_ERR8   4th-byte&apos;s two top bits are not 0x80
+PCRE_UTF8_ERR9   5th-byte&apos;s two top bits are not 0x80
+PCRE_UTF8_ERR10  6th-byte&apos;s two top bits are not 0x80
+PCRE_UTF8_ERR11  5-byte character is not permitted by RFC 3629
+PCRE_UTF8_ERR12  6-byte character is not permitted by RFC 3629
+PCRE_UTF8_ERR13  4-byte character with value &gt; 0x10ffff is not permitted
+PCRE_UTF8_ERR14  3-byte character with value 0xd000-0xdfff is not permitted
+PCRE_UTF8_ERR15  Overlong 2-byte sequence
+PCRE_UTF8_ERR16  Overlong 3-byte sequence
+PCRE_UTF8_ERR17  Overlong 4-byte sequence
+PCRE_UTF8_ERR18  Overlong 5-byte sequence (won&apos;t ever occur)
+PCRE_UTF8_ERR19  Overlong 6-byte sequence (won&apos;t ever occur)
+PCRE_UTF8_ERR20  Isolated 0x80 byte (not within UTF-8 character)
+PCRE_UTF8_ERR21  Byte with the illegal value 0xfe or 0xff
+PCRE_UTF8_ERR22  Unused (was non-character)
+
+Arguments:
+  string       points to the string
+  length       length of string, or -1 if the string is zero-terminated
+  errp         pointer to an error position offset variable
+
+Returns:       = 0    if the string is a valid UTF-8 string
+               &gt; 0    otherwise, setting the offset of the bad character
+*/</doc>

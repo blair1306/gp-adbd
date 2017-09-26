@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>vfs.h source code [codebrowser/bionic/libc/include/sys/vfs.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="statfs,statfs64 "/>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/sys/vfs.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>bionic</a>/<a href='../..'>libc</a>/<a href='..'>include</a>/<a href='./'>sys</a>/<a href='vfs.h.html'>vfs.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="29">ifndef</span> <span class="macro" data-ref="_M/_SYS_VFS_H_">_SYS_VFS_H_</span></u></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/_SYS_VFS_H_" data-ref="_M/_SYS_VFS_H_">_SYS_VFS_H_</dfn></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../stdint.h.html">&lt;stdint.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><a class="macro" href="cdefs.h.html#89" title="" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i>/* The kernel's __kernel_fsid_t has a 'val' member but glibc uses '__val'. */</i></td></tr>
+<tr><th id="39">39</th><td><b>typedef</b> <b>struct</b> { <em>int</em> <dfn class="decl" id="(anonymous)::__val" title='(anonymous struct)::__val' data-ref="(anonymous)::__val">__val</dfn>[<var>2</var>]; } <dfn class="typedef" id="__fsid_t" title='__fsid_t' data-type='struct __fsid_t' data-ref="__fsid_t">__fsid_t</dfn>;</td></tr>
+<tr><th id="40">40</th><td><b>typedef</b> <a class="typedef" href="#__fsid_t" title='__fsid_t' data-type='struct __fsid_t' data-ref="__fsid_t">__fsid_t</a> <dfn class="typedef" id="fsid_t" title='fsid_t' data-type='__fsid_t' data-ref="fsid_t">fsid_t</dfn>;</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><u>#<span data-ppcond="42">if</span> defined(<span class="macro" data-ref="_M/__aarch64__">__aarch64__</span>) || defined(<span class="macro" data-ref="_M/__x86_64__">__x86_64__</span>)</u></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/__STATFS64_BODY" data-ref="_M/__STATFS64_BODY">__STATFS64_BODY</dfn> \</u></td></tr>
+<tr><th id="44">44</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_type" title='statfs::f_type' data-ref="statfs::f_type"><dfn class="decl" id="statfs64::f_type" title='statfs64::f_type' data-ref="statfs64::f_type">f_type</dfn></dfn>; \</u></td></tr>
+<tr><th id="45">45</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_bsize" title='statfs::f_bsize' data-ref="statfs::f_bsize"><dfn class="decl" id="statfs64::f_bsize" title='statfs64::f_bsize' data-ref="statfs64::f_bsize">f_bsize</dfn></dfn>; \</u></td></tr>
+<tr><th id="46">46</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_blocks" title='statfs::f_blocks' data-ref="statfs::f_blocks"><dfn class="decl" id="statfs64::f_blocks" title='statfs64::f_blocks' data-ref="statfs64::f_blocks">f_blocks</dfn></dfn>; \</u></td></tr>
+<tr><th id="47">47</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_bfree" title='statfs::f_bfree' data-ref="statfs::f_bfree"><dfn class="decl" id="statfs64::f_bfree" title='statfs64::f_bfree' data-ref="statfs64::f_bfree">f_bfree</dfn></dfn>; \</u></td></tr>
+<tr><th id="48">48</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_bavail" title='statfs::f_bavail' data-ref="statfs::f_bavail"><dfn class="decl" id="statfs64::f_bavail" title='statfs64::f_bavail' data-ref="statfs64::f_bavail">f_bavail</dfn></dfn>; \</u></td></tr>
+<tr><th id="49">49</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_files" title='statfs::f_files' data-ref="statfs::f_files"><dfn class="decl" id="statfs64::f_files" title='statfs64::f_files' data-ref="statfs64::f_files">f_files</dfn></dfn>; \</u></td></tr>
+<tr><th id="50">50</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_ffree" title='statfs::f_ffree' data-ref="statfs::f_ffree"><dfn class="decl" id="statfs64::f_ffree" title='statfs64::f_ffree' data-ref="statfs64::f_ffree">f_ffree</dfn></dfn>; \</u></td></tr>
+<tr><th id="51">51</th><td><u>  <a class="typedef" href="#fsid_t" title='fsid_t' data-type='__fsid_t' data-ref="fsid_t">fsid_t</a> <dfn class="decl" id="statfs::f_fsid" title='statfs::f_fsid' data-ref="statfs::f_fsid"><dfn class="decl" id="statfs64::f_fsid" title='statfs64::f_fsid' data-ref="statfs64::f_fsid">f_fsid</dfn></dfn>; \</u></td></tr>
+<tr><th id="52">52</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_namelen" title='statfs::f_namelen' data-ref="statfs::f_namelen"><dfn class="decl" id="statfs64::f_namelen" title='statfs64::f_namelen' data-ref="statfs64::f_namelen">f_namelen</dfn></dfn>; \</u></td></tr>
+<tr><th id="53">53</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_frsize" title='statfs::f_frsize' data-ref="statfs::f_frsize"><dfn class="decl" id="statfs64::f_frsize" title='statfs64::f_frsize' data-ref="statfs64::f_frsize">f_frsize</dfn></dfn>; \</u></td></tr>
+<tr><th id="54">54</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_flags" title='statfs::f_flags' data-ref="statfs::f_flags"><dfn class="decl" id="statfs64::f_flags" title='statfs64::f_flags' data-ref="statfs64::f_flags">f_flags</dfn></dfn>; \</u></td></tr>
+<tr><th id="55">55</th><td><u>  <a class="typedef" href="../stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="statfs::f_spare" title='statfs::f_spare' data-ref="statfs::f_spare"><dfn class="decl" id="statfs64::f_spare" title='statfs64::f_spare' data-ref="statfs64::f_spare">f_spare</dfn></dfn>[4];</u> \</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#<span data-ppcond="42">elif</span> defined(__mips__) &amp;&amp; defined(__LP64__)</u></td></tr>
+<tr><th id="58">58</th><td><i>/* 64-bit MIPS. */</i></td></tr>
+<tr><th id="59">59</th><td><u>#define __STATFS64_BODY \</u></td></tr>
+<tr><th id="60">60</th><td><u>  uint64_t f_type; \</u></td></tr>
+<tr><th id="61">61</th><td><u>  uint64_t f_bsize; \</u></td></tr>
+<tr><th id="62">62</th><td><u>  uint64_t f_frsize; /* Fragment size - unsupported. */ \</u></td></tr>
+<tr><th id="63">63</th><td><u>  uint64_t f_blocks; \</u></td></tr>
+<tr><th id="64">64</th><td><u>  uint64_t f_bfree; \</u></td></tr>
+<tr><th id="65">65</th><td><u>  uint64_t f_files; \</u></td></tr>
+<tr><th id="66">66</th><td><u>  uint64_t f_ffree; \</u></td></tr>
+<tr><th id="67">67</th><td><u>  uint64_t f_bavail; \</u></td></tr>
+<tr><th id="68">68</th><td><u>  fsid_t f_fsid; \</u></td></tr>
+<tr><th id="69">69</th><td><u>  uint64_t f_namelen; \</u></td></tr>
+<tr><th id="70">70</th><td><u>  uint64_t f_flags; \</u></td></tr>
+<tr><th id="71">71</th><td><u>  uint64_t f_spare[5];</u> \</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><u>#elif defined(__mips__)</u></td></tr>
+<tr><th id="74">74</th><td><i>/* 32-bit MIPS (corresponds to the kernel's statfs64 type). */</i></td></tr>
+<tr><th id="75">75</th><td><u>#define __STATFS64_BODY \</u></td></tr>
+<tr><th id="76">76</th><td><u>  uint32_t f_type; \</u></td></tr>
+<tr><th id="77">77</th><td><u>  uint32_t f_bsize; \</u></td></tr>
+<tr><th id="78">78</th><td><u>  uint32_t f_frsize; \</u></td></tr>
+<tr><th id="79">79</th><td><u>  uint32_t __pad; \</u></td></tr>
+<tr><th id="80">80</th><td><u>  uint64_t f_blocks; \</u></td></tr>
+<tr><th id="81">81</th><td><u>  uint64_t f_bfree; \</u></td></tr>
+<tr><th id="82">82</th><td><u>  uint64_t f_files; \</u></td></tr>
+<tr><th id="83">83</th><td><u>  uint64_t f_ffree; \</u></td></tr>
+<tr><th id="84">84</th><td><u>  uint64_t f_bavail; \</u></td></tr>
+<tr><th id="85">85</th><td><u>  fsid_t f_fsid; \</u></td></tr>
+<tr><th id="86">86</th><td><u>  uint32_t f_namelen; \</u></td></tr>
+<tr><th id="87">87</th><td><u>  uint32_t f_flags; \</u></td></tr>
+<tr><th id="88">88</th><td><u>  uint32_t f_spare[5];</u> \</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td><u>#else</u></td></tr>
+<tr><th id="91">91</th><td><i>/* 32-bit ARM or x86 (corresponds to the kernel's statfs64 type). */</i></td></tr>
+<tr><th id="92">92</th><td><u>#define __STATFS64_BODY \</u></td></tr>
+<tr><th id="93">93</th><td><u>  uint32_t f_type; \</u></td></tr>
+<tr><th id="94">94</th><td><u>  uint32_t f_bsize; \</u></td></tr>
+<tr><th id="95">95</th><td><u>  uint64_t f_blocks; \</u></td></tr>
+<tr><th id="96">96</th><td><u>  uint64_t f_bfree; \</u></td></tr>
+<tr><th id="97">97</th><td><u>  uint64_t f_bavail; \</u></td></tr>
+<tr><th id="98">98</th><td><u>  uint64_t f_files; \</u></td></tr>
+<tr><th id="99">99</th><td><u>  uint64_t f_ffree; \</u></td></tr>
+<tr><th id="100">100</th><td><u>  fsid_t f_fsid; \</u></td></tr>
+<tr><th id="101">101</th><td><u>  uint32_t f_namelen; \</u></td></tr>
+<tr><th id="102">102</th><td><u>  uint32_t f_frsize; \</u></td></tr>
+<tr><th id="103">103</th><td><u>  uint32_t f_flags; \</u></td></tr>
+<tr><th id="104">104</th><td><u>  uint32_t f_spare[4];</u> \</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><u>#<span data-ppcond="42">endif</span></u></td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td><b>struct</b> <dfn class="type def" id="statfs" title='statfs' data-ref="statfs">statfs</dfn> { <a class="macro" href="#43" title="uint64_t f_type; uint64_t f_bsize; uint64_t f_blocks; uint64_t f_bfree; uint64_t f_bavail; uint64_t f_files; uint64_t f_ffree; fsid_t f_fsid; uint64_t f_namelen; uint64_t f_frsize; uint64_t f_flags; uint64_t f_spare[4];" data-ref="_M/__STATFS64_BODY">__STATFS64_BODY</a> };</td></tr>
+<tr><th id="109">109</th><td><b>struct</b> <dfn class="type def" id="statfs64" title='statfs64' data-ref="statfs64">statfs64</dfn> { <a class="macro" href="#43" title="uint64_t f_type; uint64_t f_bsize; uint64_t f_blocks; uint64_t f_bfree; uint64_t f_bavail; uint64_t f_files; uint64_t f_ffree; fsid_t f_fsid; uint64_t f_namelen; uint64_t f_frsize; uint64_t f_flags; uint64_t f_spare[4];" data-ref="_M/__STATFS64_BODY">__STATFS64_BODY</a> };</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><u>#undef <a class="macro" href="#43" data-ref="_M/__STATFS64_BODY">__STATFS64_BODY</a></u></td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><i>/* Declare that we have the f_namelen, f_frsize, and f_flags fields. */</i></td></tr>
+<tr><th id="114">114</th><td><u>#define <dfn class="macro" id="_M/_STATFS_F_NAMELEN" data-ref="_M/_STATFS_F_NAMELEN">_STATFS_F_NAMELEN</dfn></u></td></tr>
+<tr><th id="115">115</th><td><u>#define <dfn class="macro" id="_M/_STATFS_F_FRSIZE" data-ref="_M/_STATFS_F_FRSIZE">_STATFS_F_FRSIZE</dfn></u></td></tr>
+<tr><th id="116">116</th><td><u>#define <dfn class="macro" id="_M/_STATFS_F_FLAGS" data-ref="_M/_STATFS_F_FLAGS">_STATFS_F_FLAGS</dfn></u></td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><i>/* Pull in the kernel magic numbers. */</i></td></tr>
+<tr><th id="119">119</th><td><u>#include <a href="../../kernel/uapi/linux/magic.h.html">&lt;linux/magic.h&gt;</a></u></td></tr>
+<tr><th id="120">120</th><td><i>/* Add in ones that we had historically that aren't in the uapi header. */</i></td></tr>
+<tr><th id="121">121</th><td><u>#define <dfn class="macro" id="_M/BEFS_SUPER_MAGIC" data-ref="_M/BEFS_SUPER_MAGIC">BEFS_SUPER_MAGIC</dfn>      0x42465331</u></td></tr>
+<tr><th id="122">122</th><td><u>#define <dfn class="macro" id="_M/BFS_MAGIC" data-ref="_M/BFS_MAGIC">BFS_MAGIC</dfn>             0x1BADFACE</u></td></tr>
+<tr><th id="123">123</th><td><u>#define <dfn class="macro" id="_M/CIFS_MAGIC_NUMBER" data-ref="_M/CIFS_MAGIC_NUMBER">CIFS_MAGIC_NUMBER</dfn>     0xFF534D42</u></td></tr>
+<tr><th id="124">124</th><td><u>#define <dfn class="macro" id="_M/COH_SUPER_MAGIC" data-ref="_M/COH_SUPER_MAGIC">COH_SUPER_MAGIC</dfn>       0x012FF7B7</u></td></tr>
+<tr><th id="125">125</th><td><u>#define <dfn class="macro" id="_M/DEVFS_SUPER_MAGIC" data-ref="_M/DEVFS_SUPER_MAGIC">DEVFS_SUPER_MAGIC</dfn>     0x1373</u></td></tr>
+<tr><th id="126">126</th><td><u>#define <dfn class="macro" id="_M/EXT_SUPER_MAGIC" data-ref="_M/EXT_SUPER_MAGIC">EXT_SUPER_MAGIC</dfn>       0x137D</u></td></tr>
+<tr><th id="127">127</th><td><u>#define <dfn class="macro" id="_M/EXT2_OLD_SUPER_MAGIC" data-ref="_M/EXT2_OLD_SUPER_MAGIC">EXT2_OLD_SUPER_MAGIC</dfn>  0xEF51</u></td></tr>
+<tr><th id="128">128</th><td><u>#define <dfn class="macro" id="_M/HFS_SUPER_MAGIC" data-ref="_M/HFS_SUPER_MAGIC">HFS_SUPER_MAGIC</dfn>       0x4244</u></td></tr>
+<tr><th id="129">129</th><td><u>#define <dfn class="macro" id="_M/JFS_SUPER_MAGIC" data-ref="_M/JFS_SUPER_MAGIC">JFS_SUPER_MAGIC</dfn>       0x3153464a</u></td></tr>
+<tr><th id="130">130</th><td><u>#define <dfn class="macro" id="_M/NTFS_SB_MAGIC" data-ref="_M/NTFS_SB_MAGIC">NTFS_SB_MAGIC</dfn>         0x5346544e</u></td></tr>
+<tr><th id="131">131</th><td><u>#define <dfn class="macro" id="_M/ROMFS_MAGIC" data-ref="_M/ROMFS_MAGIC">ROMFS_MAGIC</dfn>           0x7275</u></td></tr>
+<tr><th id="132">132</th><td><u>#define <dfn class="macro" id="_M/SYSV2_SUPER_MAGIC" data-ref="_M/SYSV2_SUPER_MAGIC">SYSV2_SUPER_MAGIC</dfn>     0x012FF7B6</u></td></tr>
+<tr><th id="133">133</th><td><u>#define <dfn class="macro" id="_M/SYSV4_SUPER_MAGIC" data-ref="_M/SYSV4_SUPER_MAGIC">SYSV4_SUPER_MAGIC</dfn>     0x012FF7B5</u></td></tr>
+<tr><th id="134">134</th><td><u>#define <dfn class="macro" id="_M/UDF_SUPER_MAGIC" data-ref="_M/UDF_SUPER_MAGIC">UDF_SUPER_MAGIC</dfn>       0x15013346</u></td></tr>
+<tr><th id="135">135</th><td><u>#define <dfn class="macro" id="_M/UFS_MAGIC" data-ref="_M/UFS_MAGIC">UFS_MAGIC</dfn>             0x00011954</u></td></tr>
+<tr><th id="136">136</th><td><u>#define <dfn class="macro" id="_M/VXFS_SUPER_MAGIC" data-ref="_M/VXFS_SUPER_MAGIC">VXFS_SUPER_MAGIC</dfn>      0xa501FCF5</u></td></tr>
+<tr><th id="137">137</th><td><u>#define <dfn class="macro" id="_M/XENIX_SUPER_MAGIC" data-ref="_M/XENIX_SUPER_MAGIC">XENIX_SUPER_MAGIC</dfn>     0x012FF7B4</u></td></tr>
+<tr><th id="138">138</th><td><u>#define <dfn class="macro" id="_M/XFS_SUPER_MAGIC" data-ref="_M/XFS_SUPER_MAGIC">XFS_SUPER_MAGIC</dfn>       0x58465342</u></td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="statfs" title='statfs' data-ref="statfs">statfs</dfn>(<em>const</em> <em>char</em>*, <b>struct</b> <a class="type" href="#statfs" title='statfs' data-ref="statfs">statfs</a>*) <a class="macro" href="cdefs.h.html#160" title="__attribute__((__nonnull__ (1, 2)))" data-ref="_M/__nonnull">__nonnull</a>((<var>1</var>, <var>2</var>));</td></tr>
+<tr><th id="141">141</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="statfs64" title='statfs64' data-ref="statfs64">statfs64</dfn>(<em>const</em> <em>char</em>*, <b>struct</b> <a class="type" href="#statfs64" title='statfs64' data-ref="statfs64">statfs64</a>*) <a class="macro" href="cdefs.h.html#160" title="__attribute__((__nonnull__ (1, 2)))" data-ref="_M/__nonnull">__nonnull</a>((<var>1</var>, <var>2</var>));</td></tr>
+<tr><th id="142">142</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fstatfs" title='fstatfs' data-ref="fstatfs">fstatfs</dfn>(<em>int</em>, <b>struct</b> <a class="type" href="#statfs" title='statfs' data-ref="statfs">statfs</a>*) <a class="macro" href="cdefs.h.html#160" title="__attribute__((__nonnull__ (2)))" data-ref="_M/__nonnull">__nonnull</a>((<var>2</var>));</td></tr>
+<tr><th id="143">143</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fstatfs64" title='fstatfs64' data-ref="fstatfs64">fstatfs64</dfn>(<em>int</em>, <b>struct</b> <a class="type" href="#statfs64" title='statfs64' data-ref="statfs64">statfs64</a>*) <a class="macro" href="cdefs.h.html#160" title="__attribute__((__nonnull__ (2)))" data-ref="_M/__nonnull">__nonnull</a>((<var>2</var>));</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><a class="macro" href="cdefs.h.html#90" title="" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="146">146</th><td></td></tr>
+<tr><th id="147">147</th><td><u>#<span data-ppcond="29">endif</span> /* _SYS_VFS_H_ */</u></td></tr>
+<tr><th id="148">148</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../bionic/getentropy_linux.c.html'>codebrowser/bionic/libc/bionic/getentropy_linux.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

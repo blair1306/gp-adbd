@@ -1,0 +1,569 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>services.cpp source code [codebrowser/system/core/adb/services.cpp] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="stinfo "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/adb/services.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>adb</a>/<a href='services.cpp.html'>services.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2007 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#define <dfn class="macro" id="_M/TRACE_TAG" data-ref="_M/TRACE_TAG">TRACE_TAG</dfn> <a class="enum" href="adb_trace.h.html#AdbTrace::SERVICES" title='AdbTrace::SERVICES' data-ref="AdbTrace::SERVICES">SERVICES</a></u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="sysdeps.h.html">"sysdeps.h"</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#<span data-ppcond="27">ifndef</span> <span class="macro" data-ref="_M/_WIN32">_WIN32</span></u></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../../../bionic/libc/include/netdb.h.html">&lt;netdb.h&gt;</a></u></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../../../bionic/libc/include/netinet/in.h.html">&lt;netinet/in.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../../../bionic/libc/include/sys/ioctl.h.html">&lt;sys/ioctl.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#<span data-ppcond="27">endif</span></u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../base/include/android-base/file.h.html">&lt;android-base/file.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="../base/include/android-base/parsenetaddress.h.html">&lt;android-base/parsenetaddress.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="../base/include/android-base/stringprintf.h.html">&lt;android-base/stringprintf.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td><u>#include <a href="../base/include/android-base/strings.h.html">&lt;android-base/strings.h&gt;</a></u></td></tr>
+<tr><th id="38">38</th><td><u>#include <a href="../include/cutils/sockets.h.html">&lt;cutils/sockets.h&gt;</a></u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><u>#<span data-ppcond="40">if</span> !<span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="41">41</th><td><u>#include <a href="../include/cutils/android_reboot.h.html">"cutils/android_reboot.h"</a></u></td></tr>
+<tr><th id="42">42</th><td><u>#include <a href="../include/cutils/properties.h.html">"cutils/properties.h"</a></u></td></tr>
+<tr><th id="43">43</th><td><u>#<span data-ppcond="40">endif</span></u></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><u>#include <a href="adb.h.html">"adb.h"</a></u></td></tr>
+<tr><th id="46">46</th><td><u>#include <a href="adb_io.h.html">"adb_io.h"</a></u></td></tr>
+<tr><th id="47">47</th><td><u>#include <a href="adb_utils.h.html">"adb_utils.h"</a></u></td></tr>
+<tr><th id="48">48</th><td><u>#include <a href="file_sync_service.h.html">"file_sync_service.h"</a></u></td></tr>
+<tr><th id="49">49</th><td><u>#include <a href="remount_service.h.html">"remount_service.h"</a></u></td></tr>
+<tr><th id="50">50</th><td><u>#include <a href="services.h.html">"services.h"</a></u></td></tr>
+<tr><th id="51">51</th><td><u>#include <a href="shell_service.h.html">"shell_service.h"</a></u></td></tr>
+<tr><th id="52">52</th><td><u>#include <a href="sysdeps.h.html">"sysdeps.h"</a></u></td></tr>
+<tr><th id="53">53</th><td><u>#include <a href="transport.h.html">"transport.h"</a></u></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><b>struct</b> <dfn class="type def" id="stinfo" title='stinfo' data-ref="stinfo">stinfo</dfn> {</td></tr>
+<tr><th id="56">56</th><td>    <em>void</em> (*<dfn class="tu decl" id="stinfo::func" title='stinfo::func' data-type='void (*)(int, void *)' data-ref="stinfo::func">func</dfn>)(<em>int</em> <dfn class="local col6 decl" id="36fd" title='fd' data-type='int' data-ref="36fd">fd</dfn>, <em>void</em> *<dfn class="local col7 decl" id="37cookie" title='cookie' data-type='void *' data-ref="37cookie">cookie</dfn>);</td></tr>
+<tr><th id="57">57</th><td>    <em>int</em> <dfn class="tu decl" id="stinfo::fd" title='stinfo::fd' data-type='int' data-ref="stinfo::fd">fd</dfn>;</td></tr>
+<tr><th id="58">58</th><td>    <em>void</em> *<dfn class="tu decl" id="stinfo::cookie" title='stinfo::cookie' data-type='void *' data-ref="stinfo::cookie">cookie</dfn>;</td></tr>
+<tr><th id="59">59</th><td>};</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="_ZL22service_bootstrap_funcPv" title='service_bootstrap_func' data-type='void service_bootstrap_func(void * x)' data-ref="_ZL22service_bootstrap_funcPv">service_bootstrap_func</dfn>(<em>void</em>* <dfn class="local col8 decl" id="38x" title='x' data-type='void *' data-ref="38x">x</dfn>) {</td></tr>
+<tr><th id="62">62</th><td>    <a class="type" href="#stinfo" title='stinfo' data-ref="stinfo">stinfo</a>* <dfn class="local col9 decl" id="39sti" title='sti' data-type='stinfo *' data-ref="39sti">sti</dfn> = <b>reinterpret_cast</b>&lt;<a class="type" href="#stinfo" title='stinfo' data-ref="stinfo">stinfo</a>*&gt;(<a class="local col8 ref" href="#38x" title='x' data-ref="38x">x</a>);</td></tr>
+<tr><th id="63">63</th><td>    <a class="ref" href="sysdeps.h.html#_ZL18adb_thread_setnameRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='adb_thread_setname' data-ref="_ZL18adb_thread_setnameRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">adb_thread_setname</a>(<span class="namespace">android::base::</span><a class="ref" href="../base/include/android-base/stringprintf.h.html#_ZN7android4base12StringPrintfEPKcz" title='android::base::StringPrintf' data-ref="_ZN7android4base12StringPrintfEPKcz">StringPrintf</a>(<q>"service %d"</q>, <a class="local col9 ref" href="#39sti" title='sti' data-ref="39sti">sti</a>-&gt;<a class="tu ref" href="#stinfo::fd" title='stinfo::fd' data-use='r' data-ref="stinfo::fd">fd</a>));</td></tr>
+<tr><th id="64">64</th><td>    <a class="local col9 ref" href="#39sti" title='sti' data-ref="39sti">sti</a>-&gt;<a class="tu ref" href="#stinfo::func" title='stinfo::func' data-use='r' data-ref="stinfo::func">func</a>(<a class="local col9 ref" href="#39sti" title='sti' data-ref="39sti">sti</a>-&gt;<a class="tu ref" href="#stinfo::fd" title='stinfo::fd' data-use='r' data-ref="stinfo::fd">fd</a>, <a class="local col9 ref" href="#39sti" title='sti' data-ref="39sti">sti</a>-&gt;<a class="tu ref" href="#stinfo::cookie" title='stinfo::cookie' data-use='r' data-ref="stinfo::cookie">cookie</a>);</td></tr>
+<tr><th id="65">65</th><td>    <a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col9 ref" href="#39sti" title='sti' data-ref="39sti">sti</a>);</td></tr>
+<tr><th id="66">66</th><td>}</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="68">if</span> !<span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><em>void</em> <dfn class="decl def" id="_Z20restart_root_serviceiPv" title='restart_root_service' data-ref="_Z20restart_root_serviceiPv">restart_root_service</dfn>(<em>int</em> <dfn class="local col0 decl" id="40fd" title='fd' data-type='int' data-ref="40fd">fd</dfn>, <em>void</em> *<dfn class="local col1 decl" id="41cookie" title='cookie' data-type='void *' data-ref="41cookie">cookie</dfn>) {</td></tr>
+<tr><th id="71">71</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/unistd.h.html#getuid" title='getuid' data-ref="getuid">getuid</a>() == <var>0</var>) {</td></tr>
+<tr><th id="72">72</th><td>        <a class="ref" href="adb_io.h.html#_Z14WriteFdExactlyiPKc" title='WriteFdExactly' data-ref="_Z14WriteFdExactlyiPKc">WriteFdExactly</a>(<a class="local col0 ref" href="#40fd" title='fd' data-ref="40fd">fd</a>, <q>"adbd is already running as root\n"</q>);</td></tr>
+<tr><th id="73">73</th><td>        <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col0 ref" href="#40fd" title='fd' data-ref="40fd">fd</a>);</td></tr>
+<tr><th id="74">74</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="75">75</th><td>        <em>char</em> <dfn class="local col2 decl" id="42value" title='value' data-type='char [92]' data-ref="42value">value</dfn>[<a class="macro" href="../include/cutils/properties.h.html#37" title="92" data-ref="_M/PROPERTY_VALUE_MAX">PROPERTY_VALUE_MAX</a>];</td></tr>
+<tr><th id="76">76</th><td>        <a class="ref" href="../include/cutils/properties.h.html#property_get" title='property_get' data-ref="property_get">property_get</a>(<q>"ro.debuggable"</q>, <a class="local col2 ref" href="#42value" title='value' data-ref="42value">value</a>, <q>""</q>);</td></tr>
+<tr><th id="77">77</th><td>        <b>if</b> (<a class="ref" href="../../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col2 ref" href="#42value" title='value' data-ref="42value">value</a>, <q>"1"</q>) != <var>0</var>) {</td></tr>
+<tr><th id="78">78</th><td>            <a class="ref" href="adb_io.h.html#_Z14WriteFdExactlyiPKc" title='WriteFdExactly' data-ref="_Z14WriteFdExactlyiPKc">WriteFdExactly</a>(<a class="local col0 ref" href="#40fd" title='fd' data-ref="40fd">fd</a>, <q>"adbd cannot run as root in production builds\n"</q>);</td></tr>
+<tr><th id="79">79</th><td>            <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col0 ref" href="#40fd" title='fd' data-ref="40fd">fd</a>);</td></tr>
+<tr><th id="80">80</th><td>            <b>return</b>;</td></tr>
+<tr><th id="81">81</th><td>        }</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td>        <a class="ref" href="../include/cutils/properties.h.html#property_set" title='property_set' data-ref="property_set">property_set</a>(<q>"service.adb.root"</q>, <q>"1"</q>);</td></tr>
+<tr><th id="84">84</th><td>        <a class="ref" href="adb_io.h.html#_Z14WriteFdExactlyiPKc" title='WriteFdExactly' data-ref="_Z14WriteFdExactlyiPKc">WriteFdExactly</a>(<a class="local col0 ref" href="#40fd" title='fd' data-ref="40fd">fd</a>, <q>"restarting adbd as root\n"</q>);</td></tr>
+<tr><th id="85">85</th><td>        <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col0 ref" href="#40fd" title='fd' data-ref="40fd">fd</a>);</td></tr>
+<tr><th id="86">86</th><td>    }</td></tr>
+<tr><th id="87">87</th><td>}</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><em>void</em> <dfn class="decl def" id="_Z22restart_unroot_serviceiPv" title='restart_unroot_service' data-ref="_Z22restart_unroot_serviceiPv">restart_unroot_service</dfn>(<em>int</em> <dfn class="local col3 decl" id="43fd" title='fd' data-type='int' data-ref="43fd">fd</dfn>, <em>void</em> *<dfn class="local col4 decl" id="44cookie" title='cookie' data-type='void *' data-ref="44cookie">cookie</dfn>) {</td></tr>
+<tr><th id="90">90</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/unistd.h.html#getuid" title='getuid' data-ref="getuid">getuid</a>() != <var>0</var>) {</td></tr>
+<tr><th id="91">91</th><td>        <a class="ref" href="adb_io.h.html#_Z14WriteFdExactlyiPKc" title='WriteFdExactly' data-ref="_Z14WriteFdExactlyiPKc">WriteFdExactly</a>(<a class="local col3 ref" href="#43fd" title='fd' data-ref="43fd">fd</a>, <q>"adbd not running as root\n"</q>);</td></tr>
+<tr><th id="92">92</th><td>        <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col3 ref" href="#43fd" title='fd' data-ref="43fd">fd</a>);</td></tr>
+<tr><th id="93">93</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="94">94</th><td>        <a class="ref" href="../include/cutils/properties.h.html#property_set" title='property_set' data-ref="property_set">property_set</a>(<q>"service.adb.root"</q>, <q>"0"</q>);</td></tr>
+<tr><th id="95">95</th><td>        <a class="ref" href="adb_io.h.html#_Z14WriteFdExactlyiPKc" title='WriteFdExactly' data-ref="_Z14WriteFdExactlyiPKc">WriteFdExactly</a>(<a class="local col3 ref" href="#43fd" title='fd' data-ref="43fd">fd</a>, <q>"restarting adbd as non root\n"</q>);</td></tr>
+<tr><th id="96">96</th><td>        <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col3 ref" href="#43fd" title='fd' data-ref="43fd">fd</a>);</td></tr>
+<tr><th id="97">97</th><td>    }</td></tr>
+<tr><th id="98">98</th><td>}</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><em>void</em> <dfn class="decl def" id="_Z19restart_tcp_serviceiPv" title='restart_tcp_service' data-ref="_Z19restart_tcp_serviceiPv">restart_tcp_service</dfn>(<em>int</em> <dfn class="local col5 decl" id="45fd" title='fd' data-type='int' data-ref="45fd">fd</dfn>, <em>void</em> *<dfn class="local col6 decl" id="46cookie" title='cookie' data-type='void *' data-ref="46cookie">cookie</dfn>) {</td></tr>
+<tr><th id="101">101</th><td>    <em>int</em> <dfn class="local col7 decl" id="47port" title='port' data-type='int' data-ref="47port">port</dfn> = (<em>int</em>) (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uintptr_t" title='uintptr_t' data-type='__uintptr_t' data-ref="uintptr_t">uintptr_t</a>) <a class="local col6 ref" href="#46cookie" title='cookie' data-ref="46cookie">cookie</a>;</td></tr>
+<tr><th id="102">102</th><td>    <b>if</b> (<a class="local col7 ref" href="#47port" title='port' data-ref="47port">port</a> &lt;= <var>0</var>) {</td></tr>
+<tr><th id="103">103</th><td>        <a class="ref" href="adb_io.h.html#_Z10WriteFdFmtiPKcz" title='WriteFdFmt' data-ref="_Z10WriteFdFmtiPKcz">WriteFdFmt</a>(<a class="local col5 ref" href="#45fd" title='fd' data-ref="45fd">fd</a>, <q>"invalid port %d\n"</q>, <a class="local col7 ref" href="#47port" title='port' data-ref="47port">port</a>);</td></tr>
+<tr><th id="104">104</th><td>        <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col5 ref" href="#45fd" title='fd' data-ref="45fd">fd</a>);</td></tr>
+<tr><th id="105">105</th><td>        <b>return</b>;</td></tr>
+<tr><th id="106">106</th><td>    }</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td>    <em>char</em> <dfn class="local col8 decl" id="48value" title='value' data-type='char [92]' data-ref="48value">value</dfn>[<a class="macro" href="../include/cutils/properties.h.html#37" title="92" data-ref="_M/PROPERTY_VALUE_MAX">PROPERTY_VALUE_MAX</a>];</td></tr>
+<tr><th id="109">109</th><td>    <a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(value, sizeof(value), 0, __builtin_object_size((value), 1), &quot;%d&quot;, port)" data-ref="_M/snprintf">snprintf</a>(<a class="local col8 ref" href="#48value" title='value' data-ref="48value">value</a>, <b>sizeof</b>(<a class="local col8 ref" href="#48value" title='value' data-ref="48value">value</a>), <q>"%d"</q>, <a class="local col7 ref" href="#47port" title='port' data-ref="47port">port</a>);</td></tr>
+<tr><th id="110">110</th><td>    <a class="ref" href="../include/cutils/properties.h.html#property_set" title='property_set' data-ref="property_set">property_set</a>(<q>"service.adb.tcp.port"</q>, <a class="local col8 ref" href="#48value" title='value' data-ref="48value">value</a>);</td></tr>
+<tr><th id="111">111</th><td>    <a class="ref" href="adb_io.h.html#_Z10WriteFdFmtiPKcz" title='WriteFdFmt' data-ref="_Z10WriteFdFmtiPKcz">WriteFdFmt</a>(<a class="local col5 ref" href="#45fd" title='fd' data-ref="45fd">fd</a>, <q>"restarting in TCP mode port: %d\n"</q>, <a class="local col7 ref" href="#47port" title='port' data-ref="47port">port</a>);</td></tr>
+<tr><th id="112">112</th><td>    <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col5 ref" href="#45fd" title='fd' data-ref="45fd">fd</a>);</td></tr>
+<tr><th id="113">113</th><td>}</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td><em>void</em> <dfn class="decl def" id="_Z19restart_usb_serviceiPv" title='restart_usb_service' data-ref="_Z19restart_usb_serviceiPv">restart_usb_service</dfn>(<em>int</em> <dfn class="local col9 decl" id="49fd" title='fd' data-type='int' data-ref="49fd">fd</dfn>, <em>void</em> *<dfn class="local col0 decl" id="50cookie" title='cookie' data-type='void *' data-ref="50cookie">cookie</dfn>) {</td></tr>
+<tr><th id="116">116</th><td>    <a class="ref" href="../include/cutils/properties.h.html#property_set" title='property_set' data-ref="property_set">property_set</a>(<q>"service.adb.tcp.port"</q>, <q>"0"</q>);</td></tr>
+<tr><th id="117">117</th><td>    <a class="ref" href="adb_io.h.html#_Z14WriteFdExactlyiPKc" title='WriteFdExactly' data-ref="_Z14WriteFdExactlyiPKc">WriteFdExactly</a>(<a class="local col9 ref" href="#49fd" title='fd' data-ref="49fd">fd</a>, <q>"restarting in USB mode\n"</q>);</td></tr>
+<tr><th id="118">118</th><td>    <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col9 ref" href="#49fd" title='fd' data-ref="49fd">fd</a>);</td></tr>
+<tr><th id="119">119</th><td>}</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><em>static</em> <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="tu decl def" id="_ZL19reboot_service_impliPKc" title='reboot_service_impl' data-type='bool reboot_service_impl(int fd, const char * arg)' data-ref="_ZL19reboot_service_impliPKc">reboot_service_impl</dfn>(<em>int</em> <dfn class="local col1 decl" id="51fd" title='fd' data-type='int' data-ref="51fd">fd</dfn>, <em>const</em> <em>char</em>* <dfn class="local col2 decl" id="52arg" title='arg' data-type='const char *' data-ref="52arg">arg</dfn>) {</td></tr>
+<tr><th id="122">122</th><td>    <em>const</em> <em>char</em>* <dfn class="local col3 decl" id="53reboot_arg" title='reboot_arg' data-type='const char *' data-ref="53reboot_arg">reboot_arg</dfn> = <a class="local col2 ref" href="#52arg" title='arg' data-ref="52arg">arg</a>;</td></tr>
+<tr><th id="123">123</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="local col4 decl" id="54auto_reboot" title='auto_reboot' data-type='bool' data-ref="54auto_reboot">auto_reboot</dfn> = <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col3 ref" href="#53reboot_arg" title='reboot_arg' data-ref="53reboot_arg">reboot_arg</a>, <q>"sideload-auto-reboot"</q>) == <var>0</var>) {</td></tr>
+<tr><th id="126">126</th><td>        <a class="local col4 ref" href="#54auto_reboot" title='auto_reboot' data-ref="54auto_reboot">auto_reboot</a> = <span class="macro" title="true" data-ref="_M/true"><b>true</b></span>;</td></tr>
+<tr><th id="127">127</th><td>        <a class="local col3 ref" href="#53reboot_arg" title='reboot_arg' data-ref="53reboot_arg">reboot_arg</a> = <q>"sideload"</q>;</td></tr>
+<tr><th id="128">128</th><td>    }</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td>    <i>// It reboots into sideload mode by setting "--sideload" or "--sideload_auto_reboot"</i></td></tr>
+<tr><th id="131">131</th><td><i>    // in the command file.</i></td></tr>
+<tr><th id="132">132</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col3 ref" href="#53reboot_arg" title='reboot_arg' data-ref="53reboot_arg">reboot_arg</a>, <q>"sideload"</q>) == <var>0</var>) {</td></tr>
+<tr><th id="133">133</th><td>        <b>if</b> (<a class="ref" href="../../../bionic/libc/include/unistd.h.html#getuid" title='getuid' data-ref="getuid">getuid</a>() != <var>0</var>) {</td></tr>
+<tr><th id="134">134</th><td>            <a class="ref" href="adb_io.h.html#_Z14WriteFdExactlyiPKc" title='WriteFdExactly' data-ref="_Z14WriteFdExactlyiPKc">WriteFdExactly</a>(<a class="local col1 ref" href="#51fd" title='fd' data-ref="51fd">fd</a>, <q>"'adb root' is required for 'adb reboot sideload'.\n"</q>);</td></tr>
+<tr><th id="135">135</th><td>            <b>return</b> <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="136">136</th><td>        }</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td>        <em>const</em> <em>char</em>* <em>const</em> <dfn class="local col5 decl" id="55recovery_dir" title='recovery_dir' data-type='const char *const' data-ref="55recovery_dir">recovery_dir</dfn> = <q>"/cache/recovery"</q>;</td></tr>
+<tr><th id="139">139</th><td>        <em>const</em> <em>char</em>* <em>const</em> <dfn class="local col6 decl" id="56command_file" title='command_file' data-type='const char *const' data-ref="56command_file">command_file</dfn> = <q>"/cache/recovery/command"</q>;</td></tr>
+<tr><th id="140">140</th><td>        <i>// Ensure /cache/recovery exists.</i></td></tr>
+<tr><th id="141">141</th><td>        <b>if</b> (<a class="ref" href="sysdeps.h.html#_ZL9adb_mkdirRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEi" title='adb_mkdir' data-ref="_ZL9adb_mkdirRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEi">adb_mkdir</a>(<a class="ref fake" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringC1EPKNT0_9char_typeE" title='std::__1::basic_string::basic_string&lt;_CharT, _Traits, _Allocator&gt;' data-ref="_ZNSt3__112basic_stringC1EPKNT0_9char_typeE"></a><a class="local col5 ref" href="#55recovery_dir" title='recovery_dir' data-ref="55recovery_dir">recovery_dir</a>, <var>0770</var>) == -<var>1</var> &amp;&amp; <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> != <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#41" title="17" data-ref="_M/EEXIST">EEXIST</a>) {</td></tr>
+<tr><th id="142">142</th><td>            <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; SERVICES)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/services.cpp&quot;, 142, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;Failed to create directory &apos;%s&apos;: %s&quot;, recovery_dir, strerror((*__errno())))" data-ref="_M/D">D</a>(<q>"Failed to create directory '%s': %s"</q>, <a class="local col5 ref" href="#55recovery_dir" title='recovery_dir' data-ref="55recovery_dir">recovery_dir</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="143">143</th><td>            <b>return</b> <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="144">144</th><td>        }</td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td>        <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="local col7 decl" id="57write_status" title='write_status' data-type='bool' data-ref="57write_status">write_status</dfn> = <span class="namespace">android::base::</span><a class="ref" href="../base/include/android-base/file.h.html#_ZN7android4base17WriteStringToFileERKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEES9_" title='android::base::WriteStringToFile' data-ref="_ZN7android4base17WriteStringToFileERKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEES9_">WriteStringToFile</a>(</td></tr>
+<tr><th id="147">147</th><td>                <a class="ref fake" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringC1EPKNT0_9char_typeE" title='std::__1::basic_string::basic_string&lt;_CharT, _Traits, _Allocator&gt;' data-ref="_ZNSt3__112basic_stringC1EPKNT0_9char_typeE"></a><a class="local col4 ref" href="#54auto_reboot" title='auto_reboot' data-ref="54auto_reboot">auto_reboot</a> ? <q>"--sideload_auto_reboot"</q> : <q>"--sideload"</q>, <a class="ref fake" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringC1EPKNT0_9char_typeE" title='std::__1::basic_string::basic_string&lt;_CharT, _Traits, _Allocator&gt;' data-ref="_ZNSt3__112basic_stringC1EPKNT0_9char_typeE"></a><a class="local col6 ref" href="#56command_file" title='command_file' data-ref="56command_file">command_file</a>);</td></tr>
+<tr><th id="148">148</th><td>        <b>if</b> (!<a class="local col7 ref" href="#57write_status" title='write_status' data-ref="57write_status">write_status</a>) {</td></tr>
+<tr><th id="149">149</th><td>            <b>return</b> <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="150">150</th><td>        }</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td>        <a class="local col3 ref" href="#53reboot_arg" title='reboot_arg' data-ref="53reboot_arg">reboot_arg</a> = <q>"recovery"</q>;</td></tr>
+<tr><th id="153">153</th><td>    }</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#sync" title='sync' data-ref="sync">sync</a>();</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td>    <em>char</em> <dfn class="local col8 decl" id="58property_val" title='property_val' data-type='char [92]' data-ref="58property_val">property_val</dfn>[<a class="macro" href="../include/cutils/properties.h.html#37" title="92" data-ref="_M/PROPERTY_VALUE_MAX">PROPERTY_VALUE_MAX</a>];</td></tr>
+<tr><th id="158">158</th><td>    <em>int</em> <dfn class="local col9 decl" id="59ret" title='ret' data-type='int' data-ref="59ret">ret</dfn> = <a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(property_val, sizeof(property_val), 0, __builtin_object_size((property_val), 1), &quot;reboot,%s&quot;, reboot_arg)" data-ref="_M/snprintf">snprintf</a>(<a class="local col8 ref" href="#58property_val" title='property_val' data-ref="58property_val">property_val</a>, <b>sizeof</b>(<a class="local col8 ref" href="#58property_val" title='property_val' data-ref="58property_val">property_val</a>), <q>"reboot,%s"</q>, <a class="local col3 ref" href="#53reboot_arg" title='reboot_arg' data-ref="53reboot_arg">reboot_arg</a>);</td></tr>
+<tr><th id="159">159</th><td>    <b>if</b> (<a class="local col9 ref" href="#59ret" title='ret' data-ref="59ret">ret</a> &gt;= <b>static_cast</b>&lt;<em>int</em>&gt;(<b>sizeof</b>(<a class="local col8 ref" href="#58property_val" title='property_val' data-ref="58property_val">property_val</a>))) {</td></tr>
+<tr><th id="160">160</th><td>        <a class="ref" href="adb_io.h.html#_Z10WriteFdFmtiPKcz" title='WriteFdFmt' data-ref="_Z10WriteFdFmtiPKcz">WriteFdFmt</a>(<a class="local col1 ref" href="#51fd" title='fd' data-ref="51fd">fd</a>, <q>"reboot string too long: %d\n"</q>, <a class="local col9 ref" href="#59ret" title='ret' data-ref="59ret">ret</a>);</td></tr>
+<tr><th id="161">161</th><td>        <b>return</b> <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="162">162</th><td>    }</td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td>    <a class="local col9 ref" href="#59ret" title='ret' data-ref="59ret">ret</a> = <a class="ref" href="../include/cutils/properties.h.html#property_set" title='property_set' data-ref="property_set">property_set</a>(<a class="macro" href="../include/cutils/android_reboot.h.html#30" title="&quot;sys.powerctl&quot;" data-ref="_M/ANDROID_RB_PROPERTY">ANDROID_RB_PROPERTY</a>, <a class="local col8 ref" href="#58property_val" title='property_val' data-ref="58property_val">property_val</a>);</td></tr>
+<tr><th id="165">165</th><td>    <b>if</b> (<a class="local col9 ref" href="#59ret" title='ret' data-ref="59ret">ret</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="166">166</th><td>        <a class="ref" href="adb_io.h.html#_Z10WriteFdFmtiPKcz" title='WriteFdFmt' data-ref="_Z10WriteFdFmtiPKcz">WriteFdFmt</a>(<a class="local col1 ref" href="#51fd" title='fd' data-ref="51fd">fd</a>, <q>"reboot failed: %d\n"</q>, <a class="local col9 ref" href="#59ret" title='ret' data-ref="59ret">ret</a>);</td></tr>
+<tr><th id="167">167</th><td>        <b>return</b> <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="168">168</th><td>    }</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td>    <b>return</b> <span class="macro" title="true" data-ref="_M/true"><b>true</b></span>;</td></tr>
+<tr><th id="171">171</th><td>}</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td><em>void</em> <dfn class="decl def" id="_Z14reboot_serviceiPv" title='reboot_service' data-ref="_Z14reboot_serviceiPv">reboot_service</dfn>(<em>int</em> <dfn class="local col0 decl" id="60fd" title='fd' data-type='int' data-ref="60fd">fd</dfn>, <em>void</em>* <dfn class="local col1 decl" id="61arg" title='arg' data-type='void *' data-ref="61arg">arg</dfn>)</td></tr>
+<tr><th id="174">174</th><td>{</td></tr>
+<tr><th id="175">175</th><td>    <b>if</b> (<a class="tu ref" href="#_ZL19reboot_service_impliPKc" title='reboot_service_impl' data-use='c' data-ref="_ZL19reboot_service_impliPKc">reboot_service_impl</a>(<a class="local col0 ref" href="#60fd" title='fd' data-ref="60fd">fd</a>, <b>static_cast</b>&lt;<em>const</em> <em>char</em>*&gt;(<a class="local col1 ref" href="#61arg" title='arg' data-ref="61arg">arg</a>))) {</td></tr>
+<tr><th id="176">176</th><td>        <i>// Don't return early. Give the reboot command time to take effect</i></td></tr>
+<tr><th id="177">177</th><td><i>        // to avoid messing up scripts which do "adb reboot &amp;&amp; adb wait-for-device"</i></td></tr>
+<tr><th id="178">178</th><td>        <b>while</b> (<span class="macro" title="true" data-ref="_M/true"><b>true</b></span>) {</td></tr>
+<tr><th id="179">179</th><td>            <a class="ref" href="../../../bionic/libc/include/unistd.h.html#pause" title='pause' data-ref="pause">pause</a>();</td></tr>
+<tr><th id="180">180</th><td>        }</td></tr>
+<tr><th id="181">181</th><td>    }</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td>    <a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col1 ref" href="#61arg" title='arg' data-ref="61arg">arg</a>);</td></tr>
+<tr><th id="184">184</th><td>    <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col0 ref" href="#60fd" title='fd' data-ref="60fd">fd</a>);</td></tr>
+<tr><th id="185">185</th><td>}</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td><em>int</em> <dfn class="decl def" id="_Z15reverse_servicePKc" title='reverse_service' data-ref="_Z15reverse_servicePKc">reverse_service</dfn>(<em>const</em> <em>char</em>* <dfn class="local col2 decl" id="62command" title='command' data-type='const char *' data-ref="62command">command</dfn>) {</td></tr>
+<tr><th id="188">188</th><td>    <em>int</em> <dfn class="local col3 decl" id="63s" title='s' data-type='int [2]' data-ref="63s">s</dfn>[<var>2</var>];</td></tr>
+<tr><th id="189">189</th><td>    <b>if</b> (<a class="ref" href="sysdeps.h.html#_ZL14adb_socketpairPi" title='adb_socketpair' data-ref="_ZL14adb_socketpairPi">adb_socketpair</a>(<a class="local col3 ref" href="#63s" title='s' data-ref="63s">s</a>)) {</td></tr>
+<tr><th id="190">190</th><td>        <a class="macro" href="../base/include/android-base/logging.h.html#136" title="__builtin_expect((::android::base::ERROR &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/services.cpp&quot;, 190, ::android::base::DEFAULT, ::android::base::ERROR, (*__errno())).stream()" data-ref="_M/PLOG">PLOG</a>(<a class="enum" href="../base/include/android-base/logging.h.html#android::base::LogSeverity::ERROR" title='android::base::LogSeverity::ERROR' data-ref="android::base::LogSeverity::ERROR">ERROR</a>) <a class="ref" href="../../../external/libcxx/include/ostream.html#_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc" title='std::__1::operator&lt;&lt;' data-ref="_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc">&lt;&lt;</a> <q>"cannot create service socket pair."</q>;</td></tr>
+<tr><th id="191">191</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="192">192</th><td>    }</td></tr>
+<tr><th id="193">193</th><td>    <a class="macro" href="adb_trace.h.html#46" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; SERVICES)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/services.cpp&quot;, 193, ::android::base::DEFAULT, ::android::base::INFO, -1).stream()" data-ref="_M/VLOG">VLOG</a>(<a class="enum" href="adb_trace.h.html#AdbTrace::SERVICES" title='AdbTrace::SERVICES' data-ref="AdbTrace::SERVICES">SERVICES</a>) <a class="ref" href="../../../external/libcxx/include/ostream.html#_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc" title='std::__1::operator&lt;&lt;' data-ref="_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc">&lt;&lt;</a> <q>"service socketpair: "</q> <a class="ref" href="../../../external/libcxx/include/ostream.html#_ZNSt3__113basic_ostreamlsEi" title='std::__1::basic_ostream::operator&lt;&lt;' data-ref="_ZNSt3__113basic_ostreamlsEi">&lt;&lt;</a> <a class="local col3 ref" href="#63s" title='s' data-ref="63s">s</a>[<var>0</var>] <a class="ref" href="../../../external/libcxx/include/ostream.html#_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc" title='std::__1::operator&lt;&lt;' data-ref="_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc">&lt;&lt;</a> <q>", "</q> <a class="ref" href="../../../external/libcxx/include/ostream.html#_ZNSt3__113basic_ostreamlsEi" title='std::__1::basic_ostream::operator&lt;&lt;' data-ref="_ZNSt3__113basic_ostreamlsEi">&lt;&lt;</a> <a class="local col3 ref" href="#63s" title='s' data-ref="63s">s</a>[<var>1</var>];</td></tr>
+<tr><th id="194">194</th><td>    <b>if</b> (<a class="ref" href="adb.h.html#_Z22handle_forward_requestPKc13TransportTypeS0_i" title='handle_forward_request' data-ref="_Z22handle_forward_requestPKc13TransportTypeS0_i">handle_forward_request</a>(<a class="local col2 ref" href="#62command" title='command' data-ref="62command">command</a>, <a class="enum" href="adb.h.html#TransportType::kTransportAny" title='TransportType::kTransportAny' data-ref="TransportType::kTransportAny">kTransportAny</a>, <b>nullptr</b>, <a class="local col3 ref" href="#63s" title='s' data-ref="63s">s</a>[<var>1</var>]) &lt; <var>0</var>) {</td></tr>
+<tr><th id="195">195</th><td>        <a class="ref" href="adb_io.h.html#_Z8SendFailiRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='SendFail' data-ref="_Z8SendFailiRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">SendFail</a>(<a class="local col3 ref" href="#63s" title='s' data-ref="63s">s</a>[<var>1</var>], <a class="ref fake" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringC1EPKNT0_9char_typeE" title='std::__1::basic_string::basic_string&lt;_CharT, _Traits, _Allocator&gt;' data-ref="_ZNSt3__112basic_stringC1EPKNT0_9char_typeE"></a><q>"not a reverse forwarding command"</q>);</td></tr>
+<tr><th id="196">196</th><td>    }</td></tr>
+<tr><th id="197">197</th><td>    <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col3 ref" href="#63s" title='s' data-ref="63s">s</a>[<var>1</var>]);</td></tr>
+<tr><th id="198">198</th><td>    <b>return</b> <a class="local col3 ref" href="#63s" title='s' data-ref="63s">s</a>[<var>0</var>];</td></tr>
+<tr><th id="199">199</th><td>}</td></tr>
+<tr><th id="200">200</th><td></td></tr>
+<tr><th id="201">201</th><td><i  data-doc="_ZL12ShellServiceRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEPK10atransport">// Shell service string can look like:</i></td></tr>
+<tr><th id="202">202</th><td><i  data-doc="_ZL12ShellServiceRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEPK10atransport">//   shell[,arg1,arg2,...]:[command]</i></td></tr>
+<tr><th id="203">203</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="_ZL12ShellServiceRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEPK10atransport" title='ShellService' data-type='int ShellService(const std::string &amp; args, const atransport * transport)' data-ref="_ZL12ShellServiceRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEPK10atransport">ShellService</dfn>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col4 decl" id="64args" title='args' data-type='const std::string &amp;' data-ref="64args">args</dfn>, <em>const</em> <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col5 decl" id="65transport" title='transport' data-type='const atransport *' data-ref="65transport">transport</dfn>) {</td></tr>
+<tr><th id="204">204</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="66delimiter_index" title='delimiter_index' data-type='size_t' data-ref="66delimiter_index">delimiter_index</dfn> = <a class="local col4 ref" href="#64args" title='args' data-ref="64args">args</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string4findENT0_9char_typeENS_16allocator_traitsIT1_E9size_typeE" title='std::__1::basic_string::find' data-ref="_ZNKSt3__112basic_string4findENT0_9char_typeENS_16allocator_traitsIT1_E9size_typeE">find</a>(<kbd>':'</kbd>);</td></tr>
+<tr><th id="205">205</th><td>    <b>if</b> (<a class="local col6 ref" href="#66delimiter_index" title='delimiter_index' data-ref="66delimiter_index">delimiter_index</a> == <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>::<a class="ref" href="../../../external/libcxx/include/string.html#std::__1::basic_string::npos" title='std::__1::basic_string::npos' data-ref="std::__1::basic_string::npos">npos</a>) {</td></tr>
+<tr><th id="206">206</th><td>        <a class="macro" href="../base/include/android-base/logging.h.html#119" title="__builtin_expect((::android::base::ERROR &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/services.cpp&quot;, 206, ::android::base::DEFAULT, ::android::base::ERROR, -1).stream()" data-ref="_M/LOG">LOG</a>(<a class="enum" href="../base/include/android-base/logging.h.html#android::base::LogSeverity::ERROR" title='android::base::LogSeverity::ERROR' data-ref="android::base::LogSeverity::ERROR">ERROR</a>) <a class="ref" href="../../../external/libcxx/include/ostream.html#_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc" title='std::__1::operator&lt;&lt;' data-ref="_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc">&lt;&lt;</a> <q>"No ':' found in shell service arguments: "</q> <a class="ref" href="../../../external/libcxx/include/ostream.html#_ZNSt3__1lsERNS_13basic_ostreamIT_T0_EERKNS_12basic_stringIS1_S2_T1_EE" title='std::__1::operator&lt;&lt;' data-ref="_ZNSt3__1lsERNS_13basic_ostreamIT_T0_EERKNS_12basic_stringIS1_S2_T1_EE">&lt;&lt;</a> <a class="local col4 ref" href="#64args" title='args' data-ref="64args">args</a>;</td></tr>
+<tr><th id="207">207</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="208">208</th><td>    }</td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td>    <em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="local col7 decl" id="67service_args" title='service_args' data-type='const std::string' data-ref="67service_args">service_args</dfn> = <a class="local col4 ref" href="#64args" title='args' data-ref="64args">args</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string6substrENS_16allocator_traitsIT1_E9size_typeES4_" title='std::__1::basic_string::substr' data-ref="_ZNKSt3__112basic_string6substrENS_16allocator_traitsIT1_E9size_typeES4_">substr</a>(<var>0</var>, <a class="local col6 ref" href="#66delimiter_index" title='delimiter_index' data-ref="66delimiter_index">delimiter_index</a>);</td></tr>
+<tr><th id="211">211</th><td>    <em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="local col8 decl" id="68command" title='command' data-type='const std::string' data-ref="68command">command</dfn> = <a class="local col4 ref" href="#64args" title='args' data-ref="64args">args</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string6substrENS_16allocator_traitsIT1_E9size_typeES4_" title='std::__1::basic_string::substr' data-ref="_ZNKSt3__112basic_string6substrENS_16allocator_traitsIT1_E9size_typeES4_">substr</a>(<a class="local col6 ref" href="#66delimiter_index" title='delimiter_index' data-ref="66delimiter_index">delimiter_index</a> + <var>1</var>);</td></tr>
+<tr><th id="212">212</th><td></td></tr>
+<tr><th id="213">213</th><td>    <i>// Defaults:</i></td></tr>
+<tr><th id="214">214</th><td><i>    //   PTY for interactive, raw for non-interactive.</i></td></tr>
+<tr><th id="215">215</th><td><i>    //   No protocol.</i></td></tr>
+<tr><th id="216">216</th><td><i>    //   $TERM set to "dumb".</i></td></tr>
+<tr><th id="217">217</th><td>    <a class="type" href="shell_service.h.html#SubprocessType" title='SubprocessType' data-ref="SubprocessType">SubprocessType</a> <dfn class="local col9 decl" id="69type" title='type' data-type='SubprocessType' data-ref="69type">type</dfn>(<a class="local col8 ref" href="#68command" title='command' data-ref="68command">command</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5emptyEv" title='std::__1::basic_string::empty' data-ref="_ZNKSt3__112basic_string5emptyEv">empty</a>() ? <a class="type" href="shell_service.h.html#SubprocessType" title='SubprocessType' data-ref="SubprocessType">SubprocessType</a>::<a class="enum" href="shell_service.h.html#SubprocessType::kPty" title='SubprocessType::kPty' data-ref="SubprocessType::kPty">kPty</a></td></tr>
+<tr><th id="218">218</th><td>                                        : <a class="type" href="shell_service.h.html#SubprocessType" title='SubprocessType' data-ref="SubprocessType">SubprocessType</a>::<a class="enum" href="shell_service.h.html#SubprocessType::kRaw" title='SubprocessType::kRaw' data-ref="SubprocessType::kRaw">kRaw</a>);</td></tr>
+<tr><th id="219">219</th><td>    <a class="type" href="shell_service.h.html#SubprocessProtocol" title='SubprocessProtocol' data-ref="SubprocessProtocol">SubprocessProtocol</a> <dfn class="local col0 decl" id="70protocol" title='protocol' data-type='SubprocessProtocol' data-ref="70protocol">protocol</dfn> = <a class="type" href="shell_service.h.html#SubprocessProtocol" title='SubprocessProtocol' data-ref="SubprocessProtocol">SubprocessProtocol</a>::<a class="enum" href="shell_service.h.html#SubprocessProtocol::kNone" title='SubprocessProtocol::kNone' data-ref="SubprocessProtocol::kNone">kNone</a>;</td></tr>
+<tr><th id="220">220</th><td>    <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="local col1 decl" id="71terminal_type" title='terminal_type' data-type='std::string' data-ref="71terminal_type">terminal_type</dfn> = <a class="ref fake" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringC1EPKNT0_9char_typeE" title='std::__1::basic_string::basic_string&lt;_CharT, _Traits, _Allocator&gt;' data-ref="_ZNSt3__112basic_stringC1EPKNT0_9char_typeE"></a><q>"dumb"</q>;</td></tr>
+<tr><th id="221">221</th><td></td></tr>
+<tr><th id="222">222</th><td>    <b>for</b> (<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp; <dfn class="local col2 decl" id="72arg" title='arg' data-type='const std::string &amp;' data-ref="72arg">arg</dfn> : <span class="namespace">android::base::</span><a class="ref" href="../base/include/android-base/strings.h.html#_ZN7android4base5SplitERKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEES9_" title='android::base::Split' data-ref="_ZN7android4base5SplitERKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEES9_">Split</a>(<a class="local col7 ref" href="#67service_args" title='service_args' data-ref="67service_args">service_args</a>, <a class="ref fake" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringC1EPKNT0_9char_typeE" title='std::__1::basic_string::basic_string&lt;_CharT, _Traits, _Allocator&gt;' data-ref="_ZNSt3__112basic_stringC1EPKNT0_9char_typeE"></a><q>","</q>)) {</td></tr>
+<tr><th id="223">223</th><td>        <b>if</b> (<a class="local col2 ref" href="#72arg" title='arg' data-ref="72arg">arg</a> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__1eqERKNS_12basic_stringIT_T0_T1_EEPKS1_" title='std::__1::operator==' data-ref="_ZNSt3__1eqERKNS_12basic_stringIT_T0_T1_EEPKS1_">==</a> <a class="ref" href="services.h.html#kShellServiceArgRaw" title='kShellServiceArgRaw' data-ref="kShellServiceArgRaw">kShellServiceArgRaw</a>) {</td></tr>
+<tr><th id="224">224</th><td>            <a class="local col9 ref" href="#69type" title='type' data-ref="69type">type</a> = <a class="type" href="shell_service.h.html#SubprocessType" title='SubprocessType' data-ref="SubprocessType">SubprocessType</a>::<a class="enum" href="shell_service.h.html#SubprocessType::kRaw" title='SubprocessType::kRaw' data-ref="SubprocessType::kRaw">kRaw</a>;</td></tr>
+<tr><th id="225">225</th><td>        } <b>else</b> <b>if</b> (<a class="local col2 ref" href="#72arg" title='arg' data-ref="72arg">arg</a> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__1eqERKNS_12basic_stringIT_T0_T1_EEPKS1_" title='std::__1::operator==' data-ref="_ZNSt3__1eqERKNS_12basic_stringIT_T0_T1_EEPKS1_">==</a> <a class="ref" href="services.h.html#kShellServiceArgPty" title='kShellServiceArgPty' data-ref="kShellServiceArgPty">kShellServiceArgPty</a>) {</td></tr>
+<tr><th id="226">226</th><td>            <a class="local col9 ref" href="#69type" title='type' data-ref="69type">type</a> = <a class="type" href="shell_service.h.html#SubprocessType" title='SubprocessType' data-ref="SubprocessType">SubprocessType</a>::<a class="enum" href="shell_service.h.html#SubprocessType::kPty" title='SubprocessType::kPty' data-ref="SubprocessType::kPty">kPty</a>;</td></tr>
+<tr><th id="227">227</th><td>        } <b>else</b> <b>if</b> (<a class="local col2 ref" href="#72arg" title='arg' data-ref="72arg">arg</a> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__1eqERKNS_12basic_stringIT_T0_T1_EEPKS1_" title='std::__1::operator==' data-ref="_ZNSt3__1eqERKNS_12basic_stringIT_T0_T1_EEPKS1_">==</a> <a class="ref" href="services.h.html#kShellServiceArgShellProtocol" title='kShellServiceArgShellProtocol' data-ref="kShellServiceArgShellProtocol">kShellServiceArgShellProtocol</a>) {</td></tr>
+<tr><th id="228">228</th><td>            <a class="local col0 ref" href="#70protocol" title='protocol' data-ref="70protocol">protocol</a> = <a class="type" href="shell_service.h.html#SubprocessProtocol" title='SubprocessProtocol' data-ref="SubprocessProtocol">SubprocessProtocol</a>::<a class="enum" href="shell_service.h.html#SubprocessProtocol::kShell" title='SubprocessProtocol::kShell' data-ref="SubprocessProtocol::kShell">kShell</a>;</td></tr>
+<tr><th id="229">229</th><td>        } <b>else</b> <b>if</b> (<span class="namespace">android::base::</span><a class="ref" href="../base/include/android-base/strings.h.html#_ZN7android4base10StartsWithERKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEPKc" title='android::base::StartsWith' data-ref="_ZN7android4base10StartsWithERKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEPKc">StartsWith</a>(<a class="local col2 ref" href="#72arg" title='arg' data-ref="72arg">arg</a>, <q>"TERM="</q>)) {</td></tr>
+<tr><th id="230">230</th><td>            <a class="local col1 ref" href="#71terminal_type" title='terminal_type' data-ref="71terminal_type">terminal_type</a> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringaSEONS_12basic_stringIT_T0_T1_EE" title='std::__1::basic_string::operator=' data-ref="_ZNSt3__112basic_stringaSEONS_12basic_stringIT_T0_T1_EE">=</a> <a class="local col2 ref" href="#72arg" title='arg' data-ref="72arg">arg</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string6substrENS_16allocator_traitsIT1_E9size_typeES4_" title='std::__1::basic_string::substr' data-ref="_ZNKSt3__112basic_string6substrENS_16allocator_traitsIT1_E9size_typeES4_">substr</a>(<var>5</var>);</td></tr>
+<tr><th id="231">231</th><td>        } <b>else</b> <b>if</b> (!<a class="local col2 ref" href="#72arg" title='arg' data-ref="72arg">arg</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5emptyEv" title='std::__1::basic_string::empty' data-ref="_ZNKSt3__112basic_string5emptyEv">empty</a>()) {</td></tr>
+<tr><th id="232">232</th><td>            <i>// This is not an error to allow for future expansion.</i></td></tr>
+<tr><th id="233">233</th><td>            <a class="macro" href="../base/include/android-base/logging.h.html#119" title="__builtin_expect((::android::base::WARNING &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/services.cpp&quot;, 233, ::android::base::DEFAULT, ::android::base::WARNING, -1).stream()" data-ref="_M/LOG">LOG</a>(<a class="enum" href="../base/include/android-base/logging.h.html#android::base::LogSeverity::WARNING" title='android::base::LogSeverity::WARNING' data-ref="android::base::LogSeverity::WARNING">WARNING</a>) <a class="ref" href="../../../external/libcxx/include/ostream.html#_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc" title='std::__1::operator&lt;&lt;' data-ref="_ZNSt3__1lsERNS_13basic_ostreamIcT_EEPKc">&lt;&lt;</a> <q>"Ignoring unknown shell service argument: "</q> <a class="ref" href="../../../external/libcxx/include/ostream.html#_ZNSt3__1lsERNS_13basic_ostreamIT_T0_EERKNS_12basic_stringIS1_S2_T1_EE" title='std::__1::operator&lt;&lt;' data-ref="_ZNSt3__1lsERNS_13basic_ostreamIT_T0_EERKNS_12basic_stringIS1_S2_T1_EE">&lt;&lt;</a> <a class="local col2 ref" href="#72arg" title='arg' data-ref="72arg">arg</a>;</td></tr>
+<tr><th id="234">234</th><td>        }</td></tr>
+<tr><th id="235">235</th><td>    }</td></tr>
+<tr><th id="236">236</th><td></td></tr>
+<tr><th id="237">237</th><td>    <b>return</b> <a class="ref" href="shell_service.h.html#_Z15StartSubprocessPKcS0_14SubprocessType18SubprocessProtocol" title='StartSubprocess' data-ref="_Z15StartSubprocessPKcS0_14SubprocessType18SubprocessProtocol">StartSubprocess</a>(<a class="local col8 ref" href="#68command" title='command' data-ref="68command">command</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5c_strEv" title='std::__1::basic_string::c_str' data-ref="_ZNKSt3__112basic_string5c_strEv">c_str</a>(), <a class="local col1 ref" href="#71terminal_type" title='terminal_type' data-ref="71terminal_type">terminal_type</a>.<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5c_strEv" title='std::__1::basic_string::c_str' data-ref="_ZNKSt3__112basic_string5c_strEv">c_str</a>(), <a class="local col9 ref" href="#69type" title='type' data-ref="69type">type</a>, <a class="local col0 ref" href="#70protocol" title='protocol' data-ref="70protocol">protocol</a>);</td></tr>
+<tr><th id="238">238</th><td>}</td></tr>
+<tr><th id="239">239</th><td></td></tr>
+<tr><th id="240">240</th><td><u>#<span data-ppcond="68">endif</span>  // !ADB_HOST</u></td></tr>
+<tr><th id="241">241</th><td></td></tr>
+<tr><th id="242">242</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-type='int create_service_thread(void (*)(int, void *) func, void * cookie)' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</dfn>(<em>void</em> (*<dfn class="local col3 decl" id="73func" title='func' data-type='void (*)(int, void *)' data-ref="73func">func</dfn>)(<em>int</em>, <em>void</em> *), <em>void</em> *<dfn class="local col4 decl" id="74cookie" title='cookie' data-type='void *' data-ref="74cookie">cookie</dfn>)</td></tr>
+<tr><th id="243">243</th><td>{</td></tr>
+<tr><th id="244">244</th><td>    <em>int</em> <dfn class="local col5 decl" id="75s" title='s' data-type='int [2]' data-ref="75s">s</dfn>[<var>2</var>];</td></tr>
+<tr><th id="245">245</th><td>    <b>if</b> (<a class="ref" href="sysdeps.h.html#_ZL14adb_socketpairPi" title='adb_socketpair' data-ref="_ZL14adb_socketpairPi">adb_socketpair</a>(<a class="local col5 ref" href="#75s" title='s' data-ref="75s">s</a>)) {</td></tr>
+<tr><th id="246">246</th><td>        <a class="ref" href="../../../bionic/libc/include/stdio.h.html#printf" title='printf' data-ref="printf">printf</a>(<q>"cannot create service socket pair\n"</q>);</td></tr>
+<tr><th id="247">247</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="248">248</th><td>    }</td></tr>
+<tr><th id="249">249</th><td>    <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; SERVICES)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/services.cpp&quot;, 249, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;socketpair: (%d,%d)&quot;, s[0], s[1])" data-ref="_M/D">D</a>(<q>"socketpair: (%d,%d)"</q>, <a class="local col5 ref" href="#75s" title='s' data-ref="75s">s</a>[<var>0</var>], <a class="local col5 ref" href="#75s" title='s' data-ref="75s">s</a>[<var>1</var>]);</td></tr>
+<tr><th id="250">250</th><td></td></tr>
+<tr><th id="251">251</th><td>    <a class="type" href="#stinfo" title='stinfo' data-ref="stinfo">stinfo</a>* <dfn class="local col6 decl" id="76sti" title='sti' data-type='stinfo *' data-ref="76sti">sti</dfn> = <b>reinterpret_cast</b>&lt;<a class="type" href="#stinfo" title='stinfo' data-ref="stinfo">stinfo</a>*&gt;(<a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<b>sizeof</b>(<a class="type" href="#stinfo" title='stinfo' data-ref="stinfo">stinfo</a>)));</td></tr>
+<tr><th id="252">252</th><td>    <b>if</b> (<a class="local col6 ref" href="#76sti" title='sti' data-ref="76sti">sti</a> == <b>nullptr</b>) {</td></tr>
+<tr><th id="253">253</th><td>        <a class="ref" href="adb.h.html#_Z5fatalPKcz" title='fatal' data-ref="_Z5fatalPKcz">fatal</a>(<q>"cannot allocate stinfo"</q>);</td></tr>
+<tr><th id="254">254</th><td>    }</td></tr>
+<tr><th id="255">255</th><td>    <a class="local col6 ref" href="#76sti" title='sti' data-ref="76sti">sti</a>-&gt;<a class="tu ref" href="#stinfo::func" title='stinfo::func' data-use='w' data-ref="stinfo::func">func</a> = <a class="local col3 ref" href="#73func" title='func' data-ref="73func">func</a>;</td></tr>
+<tr><th id="256">256</th><td>    <a class="local col6 ref" href="#76sti" title='sti' data-ref="76sti">sti</a>-&gt;<a class="tu ref" href="#stinfo::cookie" title='stinfo::cookie' data-use='w' data-ref="stinfo::cookie">cookie</a> = <a class="local col4 ref" href="#74cookie" title='cookie' data-ref="74cookie">cookie</a>;</td></tr>
+<tr><th id="257">257</th><td>    <a class="local col6 ref" href="#76sti" title='sti' data-ref="76sti">sti</a>-&gt;<a class="tu ref" href="#stinfo::fd" title='stinfo::fd' data-use='w' data-ref="stinfo::fd">fd</a> = <a class="local col5 ref" href="#75s" title='s' data-ref="75s">s</a>[<var>1</var>];</td></tr>
+<tr><th id="258">258</th><td></td></tr>
+<tr><th id="259">259</th><td>    <b>if</b> (!<a class="ref" href="sysdeps.h.html#_ZL17adb_thread_createPFvPvES_Pl" title='adb_thread_create' data-ref="_ZL17adb_thread_createPFvPvES_Pl">adb_thread_create</a>(<a class="tu ref" href="#_ZL22service_bootstrap_funcPv" title='service_bootstrap_func' data-use='r' data-ref="_ZL22service_bootstrap_funcPv">service_bootstrap_func</a>, <a class="local col6 ref" href="#76sti" title='sti' data-ref="76sti">sti</a>)) {</td></tr>
+<tr><th id="260">260</th><td>        <a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col6 ref" href="#76sti" title='sti' data-ref="76sti">sti</a>);</td></tr>
+<tr><th id="261">261</th><td>        <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col5 ref" href="#75s" title='s' data-ref="75s">s</a>[<var>0</var>]);</td></tr>
+<tr><th id="262">262</th><td>        <a class="ref" href="sysdeps.h.html#_Z9adb_closei" title='adb_close' data-ref="_Z9adb_closei">adb_close</a>(<a class="local col5 ref" href="#75s" title='s' data-ref="75s">s</a>[<var>1</var>]);</td></tr>
+<tr><th id="263">263</th><td>        <a class="ref" href="../../../bionic/libc/include/stdio.h.html#printf" title='printf' data-ref="printf">printf</a>(<q>"cannot create service thread\n"</q>);</td></tr>
+<tr><th id="264">264</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="265">265</th><td>    }</td></tr>
+<tr><th id="266">266</th><td></td></tr>
+<tr><th id="267">267</th><td>    <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; SERVICES)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/services.cpp&quot;, 267, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;service thread started, %d:%d&quot;,s[0], s[1])" data-ref="_M/D">D</a>(<q>"service thread started, %d:%d"</q>,<a class="local col5 ref" href="#75s" title='s' data-ref="75s">s</a>[<var>0</var>], <a class="local col5 ref" href="#75s" title='s' data-ref="75s">s</a>[<var>1</var>]);</td></tr>
+<tr><th id="268">268</th><td>    <b>return</b> <a class="local col5 ref" href="#75s" title='s' data-ref="75s">s</a>[<var>0</var>];</td></tr>
+<tr><th id="269">269</th><td>}</td></tr>
+<tr><th id="270">270</th><td></td></tr>
+<tr><th id="271">271</th><td><em>int</em> <dfn class="decl def" id="_Z13service_to_fdPKcPK10atransport" title='service_to_fd' data-ref="_Z13service_to_fdPKcPK10atransport">service_to_fd</dfn>(<em>const</em> <em>char</em>* <dfn class="local col7 decl" id="77name" title='name' data-type='const char *' data-ref="77name">name</dfn>, <em>const</em> <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col8 decl" id="78transport" title='transport' data-type='const atransport *' data-ref="78transport">transport</dfn>) {</td></tr>
+<tr><th id="272">272</th><td>    <em>int</em> <dfn class="local col9 decl" id="79ret" title='ret' data-type='int' data-ref="79ret">ret</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="273">273</th><td></td></tr>
+<tr><th id="274">274</th><td>    <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"tcp:"</q>, <var>4</var>)) {</td></tr>
+<tr><th id="275">275</th><td>        <em>int</em> <dfn class="local col0 decl" id="80port" title='port' data-type='int' data-ref="80port">port</dfn> = <a class="ref" href="../../../bionic/libc/include/stdlib.h.html#atoi" title='atoi' data-ref="atoi">atoi</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>4</var>);</td></tr>
+<tr><th id="276">276</th><td>        <a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strchr" title='strchr' data-ref="strchr">strchr</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>4</var>, <kbd>':'</kbd>);</td></tr>
+<tr><th id="277">277</th><td>        <b>if</b>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> == <var>0</var>) {</td></tr>
+<tr><th id="278">278</th><td>            <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <a class="ref fake" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringC1Ev" title='std::__1::basic_string::basic_string&lt;_CharT, _Traits, _Allocator&gt;' data-ref="_ZNSt3__112basic_stringC1Ev"></a><dfn class="local col1 decl" id="81error" title='error' data-type='std::string' data-ref="81error">error</dfn>;</td></tr>
+<tr><th id="279">279</th><td>            <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="sysdeps.h.html#_Z23network_loopback_clientiiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='network_loopback_client' data-ref="_Z23network_loopback_clientiiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">network_loopback_client</a>(<a class="local col0 ref" href="#80port" title='port' data-ref="80port">port</a>, <a class="macro" href="../../../bionic/libc/include/sys/socket.h.html#54" title="1" data-ref="_M/SOCK_STREAM">SOCK_STREAM</a>, &amp;<a class="local col1 ref" href="#81error" title='error' data-ref="81error">error</a>);</td></tr>
+<tr><th id="280">280</th><td>            <b>if</b> (<a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> &gt;= <var>0</var>)</td></tr>
+<tr><th id="281">281</th><td>                <a class="ref" href="sysdeps.h.html#_ZL17disable_tcp_naglei" title='disable_tcp_nagle' data-ref="_ZL17disable_tcp_naglei">disable_tcp_nagle</a>(<a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a>);</td></tr>
+<tr><th id="282">282</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="283">283</th><td><u>#<span data-ppcond="283">if</span> <span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="284">284</th><td>            std::string error;</td></tr>
+<tr><th id="285">285</th><td>            ret = network_connect(name + <var>1</var>, port, SOCK_STREAM, <var>0</var>, &amp;error);</td></tr>
+<tr><th id="286">286</th><td><u>#<span data-ppcond="283">else</span></u></td></tr>
+<tr><th id="287">287</th><td>            <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="288">288</th><td><u>#<span data-ppcond="283">endif</span></u></td></tr>
+<tr><th id="289">289</th><td>        }</td></tr>
+<tr><th id="290">290</th><td><u>#<span data-ppcond="290">if</span> !defined(<span class="macro" data-ref="_M/_WIN32">_WIN32</span>)   /* winsock doesn't implement unix domain sockets */</u></td></tr>
+<tr><th id="291">291</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"local:"</q>, <var>6</var>)) {</td></tr>
+<tr><th id="292">292</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="../include/cutils/sockets.h.html#socket_local_client" title='socket_local_client' data-ref="socket_local_client">socket_local_client</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>6</var>,</td></tr>
+<tr><th id="293">293</th><td>                <a class="macro" href="../include/cutils/sockets.h.html#83" title="1" data-ref="_M/ANDROID_SOCKET_NAMESPACE_RESERVED">ANDROID_SOCKET_NAMESPACE_RESERVED</a>, <a class="macro" href="../../../bionic/libc/include/sys/socket.h.html#54" title="1" data-ref="_M/SOCK_STREAM">SOCK_STREAM</a>);</td></tr>
+<tr><th id="294">294</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"localreserved:"</q>, <var>14</var>)) {</td></tr>
+<tr><th id="295">295</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="../include/cutils/sockets.h.html#socket_local_client" title='socket_local_client' data-ref="socket_local_client">socket_local_client</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>14</var>,</td></tr>
+<tr><th id="296">296</th><td>                <a class="macro" href="../include/cutils/sockets.h.html#83" title="1" data-ref="_M/ANDROID_SOCKET_NAMESPACE_RESERVED">ANDROID_SOCKET_NAMESPACE_RESERVED</a>, <a class="macro" href="../../../bionic/libc/include/sys/socket.h.html#54" title="1" data-ref="_M/SOCK_STREAM">SOCK_STREAM</a>);</td></tr>
+<tr><th id="297">297</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"localabstract:"</q>, <var>14</var>)) {</td></tr>
+<tr><th id="298">298</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="../include/cutils/sockets.h.html#socket_local_client" title='socket_local_client' data-ref="socket_local_client">socket_local_client</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>14</var>,</td></tr>
+<tr><th id="299">299</th><td>                <a class="macro" href="../include/cutils/sockets.h.html#81" title="0" data-ref="_M/ANDROID_SOCKET_NAMESPACE_ABSTRACT">ANDROID_SOCKET_NAMESPACE_ABSTRACT</a>, <a class="macro" href="../../../bionic/libc/include/sys/socket.h.html#54" title="1" data-ref="_M/SOCK_STREAM">SOCK_STREAM</a>);</td></tr>
+<tr><th id="300">300</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"localfilesystem:"</q>, <var>16</var>)) {</td></tr>
+<tr><th id="301">301</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="../include/cutils/sockets.h.html#socket_local_client" title='socket_local_client' data-ref="socket_local_client">socket_local_client</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>16</var>,</td></tr>
+<tr><th id="302">302</th><td>                <a class="macro" href="../include/cutils/sockets.h.html#85" title="2" data-ref="_M/ANDROID_SOCKET_NAMESPACE_FILESYSTEM">ANDROID_SOCKET_NAMESPACE_FILESYSTEM</a>, <a class="macro" href="../../../bionic/libc/include/sys/socket.h.html#54" title="1" data-ref="_M/SOCK_STREAM">SOCK_STREAM</a>);</td></tr>
+<tr><th id="303">303</th><td><u>#<span data-ppcond="290">endif</span></u></td></tr>
+<tr><th id="304">304</th><td><u>#<span data-ppcond="304">if</span> !<span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="305">305</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<q>"dev:"</q>, <a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <var>4</var>)) {</td></tr>
+<tr><th id="306">306</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="sysdeps.h.html#_ZL9unix_openPKciz" title='unix_open' data-ref="_ZL9unix_openPKciz">unix_open</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>4</var>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#26" title="00000002" data-ref="_M/O_RDWR">O_RDWR</a> | <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#77" title="02000000" data-ref="_M/O_CLOEXEC">O_CLOEXEC</a>);</td></tr>
+<tr><th id="307">307</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"framebuffer:"</q>, <var>12</var>)) {</td></tr>
+<tr><th id="308">308</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="adb.h.html#_Z19framebuffer_serviceiPv" title='framebuffer_service' data-ref="_Z19framebuffer_serviceiPv">framebuffer_service</a>, <var>0</var>);</td></tr>
+<tr><th id="309">309</th><td>    } <b>else</b> <b>if</b> (!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"jdwp:"</q>, <var>5</var>)) {</td></tr>
+<tr><th id="310">310</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="adb.h.html#_Z25create_jdwp_connection_fdi" title='create_jdwp_connection_fd' data-ref="_Z25create_jdwp_connection_fdi">create_jdwp_connection_fd</a>(<a class="ref" href="../../../bionic/libc/include/stdlib.h.html#atoi" title='atoi' data-ref="atoi">atoi</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>+<var>5</var>));</td></tr>
+<tr><th id="311">311</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"shell"</q>, <var>5</var>)) {</td></tr>
+<tr><th id="312">312</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL12ShellServiceRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEPK10atransport" title='ShellService' data-use='c' data-ref="_ZL12ShellServiceRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEPK10atransport">ShellService</a>(<a class="ref fake" href="../../../external/libcxx/include/string.html#_ZNSt3__112basic_stringC1EPKNT0_9char_typeE" title='std::__1::basic_string::basic_string&lt;_CharT, _Traits, _Allocator&gt;' data-ref="_ZNSt3__112basic_stringC1EPKNT0_9char_typeE"></a><a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>5</var>, <a class="local col8 ref" href="#78transport" title='transport' data-ref="78transport">transport</a>);</td></tr>
+<tr><th id="313">313</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"exec:"</q>, <var>5</var>)) {</td></tr>
+<tr><th id="314">314</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="shell_service.h.html#_Z15StartSubprocessPKcS0_14SubprocessType18SubprocessProtocol" title='StartSubprocess' data-ref="_Z15StartSubprocessPKcS0_14SubprocessType18SubprocessProtocol">StartSubprocess</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>5</var>, <b>nullptr</b>, <a class="type" href="shell_service.h.html#SubprocessType" title='SubprocessType' data-ref="SubprocessType">SubprocessType</a>::<a class="enum" href="shell_service.h.html#SubprocessType::kRaw" title='SubprocessType::kRaw' data-ref="SubprocessType::kRaw">kRaw</a>, <a class="type" href="shell_service.h.html#SubprocessProtocol" title='SubprocessProtocol' data-ref="SubprocessProtocol">SubprocessProtocol</a>::<a class="enum" href="shell_service.h.html#SubprocessProtocol::kNone" title='SubprocessProtocol::kNone' data-ref="SubprocessProtocol::kNone">kNone</a>);</td></tr>
+<tr><th id="315">315</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"sync:"</q>, <var>5</var>)) {</td></tr>
+<tr><th id="316">316</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="file_sync_service.h.html#_Z17file_sync_serviceiPv" title='file_sync_service' data-ref="_Z17file_sync_serviceiPv">file_sync_service</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="317">317</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"remount:"</q>, <var>8</var>)) {</td></tr>
+<tr><th id="318">318</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="remount_service.h.html#_Z15remount_serviceiPv" title='remount_service' data-ref="_Z15remount_serviceiPv">remount_service</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="319">319</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"reboot:"</q>, <var>7</var>)) {</td></tr>
+<tr><th id="320">320</th><td>        <em>void</em>* <dfn class="local col2 decl" id="82arg" title='arg' data-type='void *' data-ref="82arg">arg</dfn> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strdup" title='strdup' data-ref="strdup">strdup</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>7</var>);</td></tr>
+<tr><th id="321">321</th><td>        <b>if</b> (<a class="local col2 ref" href="#82arg" title='arg' data-ref="82arg">arg</a> == <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>) <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="322">322</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="#_Z14reboot_serviceiPv" title='reboot_service' data-ref="_Z14reboot_serviceiPv">reboot_service</a>, <a class="local col2 ref" href="#82arg" title='arg' data-ref="82arg">arg</a>);</td></tr>
+<tr><th id="323">323</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"root:"</q>, <var>5</var>)) {</td></tr>
+<tr><th id="324">324</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="#_Z20restart_root_serviceiPv" title='restart_root_service' data-ref="_Z20restart_root_serviceiPv">restart_root_service</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="325">325</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"unroot:"</q>, <var>7</var>)) {</td></tr>
+<tr><th id="326">326</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="#_Z22restart_unroot_serviceiPv" title='restart_unroot_service' data-ref="_Z22restart_unroot_serviceiPv">restart_unroot_service</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="327">327</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"backup:"</q>, <var>7</var>)) {</td></tr>
+<tr><th id="328">328</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="shell_service.h.html#_Z15StartSubprocessPKcS0_14SubprocessType18SubprocessProtocol" title='StartSubprocess' data-ref="_Z15StartSubprocessPKcS0_14SubprocessType18SubprocessProtocol">StartSubprocess</a>(<span class="namespace">android::base::</span><a class="ref" href="../base/include/android-base/stringprintf.h.html#_ZN7android4base12StringPrintfEPKcz" title='android::base::StringPrintf' data-ref="_ZN7android4base12StringPrintfEPKcz">StringPrintf</a>(<q>"/system/bin/bu backup %s"</q>,</td></tr>
+<tr><th id="329">329</th><td>                                                          (<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>7</var>)).<a class="ref" href="../../../external/libcxx/include/string.html#_ZNKSt3__112basic_string5c_strEv" title='std::__1::basic_string::c_str' data-ref="_ZNKSt3__112basic_string5c_strEv">c_str</a>(),</td></tr>
+<tr><th id="330">330</th><td>                              <b>nullptr</b>, <a class="type" href="shell_service.h.html#SubprocessType" title='SubprocessType' data-ref="SubprocessType">SubprocessType</a>::<a class="enum" href="shell_service.h.html#SubprocessType::kRaw" title='SubprocessType::kRaw' data-ref="SubprocessType::kRaw">kRaw</a>, <a class="type" href="shell_service.h.html#SubprocessProtocol" title='SubprocessProtocol' data-ref="SubprocessProtocol">SubprocessProtocol</a>::<a class="enum" href="shell_service.h.html#SubprocessProtocol::kNone" title='SubprocessProtocol::kNone' data-ref="SubprocessProtocol::kNone">kNone</a>);</td></tr>
+<tr><th id="331">331</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"restore:"</q>, <var>8</var>)) {</td></tr>
+<tr><th id="332">332</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="shell_service.h.html#_Z15StartSubprocessPKcS0_14SubprocessType18SubprocessProtocol" title='StartSubprocess' data-ref="_Z15StartSubprocessPKcS0_14SubprocessType18SubprocessProtocol">StartSubprocess</a>(<q>"/system/bin/bu restore"</q>, <b>nullptr</b>, <a class="type" href="shell_service.h.html#SubprocessType" title='SubprocessType' data-ref="SubprocessType">SubprocessType</a>::<a class="enum" href="shell_service.h.html#SubprocessType::kRaw" title='SubprocessType::kRaw' data-ref="SubprocessType::kRaw">kRaw</a>,</td></tr>
+<tr><th id="333">333</th><td>                              <a class="type" href="shell_service.h.html#SubprocessProtocol" title='SubprocessProtocol' data-ref="SubprocessProtocol">SubprocessProtocol</a>::<a class="enum" href="shell_service.h.html#SubprocessProtocol::kNone" title='SubprocessProtocol::kNone' data-ref="SubprocessProtocol::kNone">kNone</a>);</td></tr>
+<tr><th id="334">334</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"tcpip:"</q>, <var>6</var>)) {</td></tr>
+<tr><th id="335">335</th><td>        <em>int</em> <dfn class="local col3 decl" id="83port" title='port' data-type='int' data-ref="83port">port</dfn>;</td></tr>
+<tr><th id="336">336</th><td>        <b>if</b> (<a class="ref" href="../../../bionic/libc/include/stdio.h.html#sscanf" title='sscanf' data-ref="sscanf">sscanf</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>6</var>, <q>"%d"</q>, &amp;<a class="local col3 ref" href="#83port" title='port' data-ref="83port">port</a>) != <var>1</var>) {</td></tr>
+<tr><th id="337">337</th><td>            <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="338">338</th><td>        }</td></tr>
+<tr><th id="339">339</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="#_Z19restart_tcp_serviceiPv" title='restart_tcp_service' data-ref="_Z19restart_tcp_serviceiPv">restart_tcp_service</a>, (<em>void</em> *) (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uintptr_t" title='uintptr_t' data-type='__uintptr_t' data-ref="uintptr_t">uintptr_t</a>) <a class="local col3 ref" href="#83port" title='port' data-ref="83port">port</a>);</td></tr>
+<tr><th id="340">340</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"usb:"</q>, <var>4</var>)) {</td></tr>
+<tr><th id="341">341</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="#_Z19restart_usb_serviceiPv" title='restart_usb_service' data-ref="_Z19restart_usb_serviceiPv">restart_usb_service</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="342">342</th><td>    } <b>else</b> <b>if</b> (!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"reverse:"</q>, <var>8</var>)) {</td></tr>
+<tr><th id="343">343</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="ref" href="#_Z15reverse_servicePKc" title='reverse_service' data-ref="_Z15reverse_servicePKc">reverse_service</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a> + <var>8</var>);</td></tr>
+<tr><th id="344">344</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"disable-verity:"</q>, <var>15</var>)) {</td></tr>
+<tr><th id="345">345</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="adb.h.html#_Z32set_verity_enabled_state_serviceiPv" title='set_verity_enabled_state_service' data-ref="_Z32set_verity_enabled_state_serviceiPv">set_verity_enabled_state_service</a>, (<em>void</em>*)<var>0</var>);</td></tr>
+<tr><th id="346">346</th><td>    } <b>else</b> <b>if</b>(!<a class="ref" href="../../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col7 ref" href="#77name" title='name' data-ref="77name">name</a>, <q>"enable-verity:"</q>, <var>15</var>)) {</td></tr>
+<tr><th id="347">347</th><td>        <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> = <a class="tu ref" href="#_ZL21create_service_threadPFviPvES_" title='create_service_thread' data-use='c' data-ref="_ZL21create_service_threadPFviPvES_">create_service_thread</a>(<a class="ref" href="adb.h.html#_Z32set_verity_enabled_state_serviceiPv" title='set_verity_enabled_state_service' data-ref="_Z32set_verity_enabled_state_serviceiPv">set_verity_enabled_state_service</a>, (<em>void</em>*)<var>1</var>);</td></tr>
+<tr><th id="348">348</th><td><u>#<span data-ppcond="304">endif</span></u></td></tr>
+<tr><th id="349">349</th><td>    }</td></tr>
+<tr><th id="350">350</th><td>    <b>if</b> (<a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a> &gt;= <var>0</var>) {</td></tr>
+<tr><th id="351">351</th><td>        <a class="ref" href="sysdeps.h.html#_ZL13close_on_execi" title='close_on_exec' data-ref="_ZL13close_on_execi">close_on_exec</a>(<a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a>);</td></tr>
+<tr><th id="352">352</th><td>    }</td></tr>
+<tr><th id="353">353</th><td>    <b>return</b> <a class="local col9 ref" href="#79ret" title='ret' data-ref="79ret">ret</a>;</td></tr>
+<tr><th id="354">354</th><td>}</td></tr>
+<tr><th id="355">355</th><td></td></tr>
+<tr><th id="356">356</th><td><u>#<span data-ppcond="356">if</span> <span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="357">357</th><td><b>struct</b> state_info {</td></tr>
+<tr><th id="358">358</th><td>    TransportType transport_type;</td></tr>
+<tr><th id="359">359</th><td>    std::string serial;</td></tr>
+<tr><th id="360">360</th><td>    ConnectionState state;</td></tr>
+<tr><th id="361">361</th><td>};</td></tr>
+<tr><th id="362">362</th><td></td></tr>
+<tr><th id="363">363</th><td><em>static</em> <em>void</em> wait_for_state(<em>int</em> fd, <em>void</em>* data) {</td></tr>
+<tr><th id="364">364</th><td>    std::unique_ptr&lt;state_info&gt; sinfo(<b>reinterpret_cast</b>&lt;state_info*&gt;(data));</td></tr>
+<tr><th id="365">365</th><td></td></tr>
+<tr><th id="366">366</th><td>    D(<q>"wait_for_state %d"</q>, sinfo-&gt;state);</td></tr>
+<tr><th id="367">367</th><td></td></tr>
+<tr><th id="368">368</th><td>    <b>while</b> (<b>true</b>) {</td></tr>
+<tr><th id="369">369</th><td>        <em>bool</em> is_ambiguous = <b>false</b>;</td></tr>
+<tr><th id="370">370</th><td>        std::string error = <q>"unknown error"</q>;</td></tr>
+<tr><th id="371">371</th><td>        <em>const</em> <em>char</em>* serial = sinfo-&gt;serial.length() ? sinfo-&gt;serial.c_str() : NULL;</td></tr>
+<tr><th id="372">372</th><td>        atransport* t = acquire_one_transport(sinfo-&gt;transport_type, serial, &amp;is_ambiguous, &amp;error);</td></tr>
+<tr><th id="373">373</th><td>        <b>if</b> (t != <b>nullptr</b> &amp;&amp; t-&gt;connection_state == sinfo-&gt;state) {</td></tr>
+<tr><th id="374">374</th><td>            SendOkay(fd);</td></tr>
+<tr><th id="375">375</th><td>            <b>break</b>;</td></tr>
+<tr><th id="376">376</th><td>        } <b>else</b> <b>if</b> (!is_ambiguous) {</td></tr>
+<tr><th id="377">377</th><td>            adb_pollfd pfd = {.fd = fd, .events = POLLIN };</td></tr>
+<tr><th id="378">378</th><td>            <em>int</em> rc = adb_poll(&amp;pfd, <var>1</var>, <var>1000</var>);</td></tr>
+<tr><th id="379">379</th><td>            <b>if</b> (rc &lt; <var>0</var>) {</td></tr>
+<tr><th id="380">380</th><td>                SendFail(fd, error);</td></tr>
+<tr><th id="381">381</th><td>                <b>break</b>;</td></tr>
+<tr><th id="382">382</th><td>            } <b>else</b> <b>if</b> (rc &gt; <var>0</var> &amp;&amp; (pfd.revents &amp; POLLHUP) != <var>0</var>) {</td></tr>
+<tr><th id="383">383</th><td>                <i>// The other end of the socket is closed, probably because the other side was</i></td></tr>
+<tr><th id="384">384</th><td><i>                // terminated, bail out.</i></td></tr>
+<tr><th id="385">385</th><td>                <b>break</b>;</td></tr>
+<tr><th id="386">386</th><td>            }</td></tr>
+<tr><th id="387">387</th><td></td></tr>
+<tr><th id="388">388</th><td>            <i>// Try again...</i></td></tr>
+<tr><th id="389">389</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="390">390</th><td>            SendFail(fd, error);</td></tr>
+<tr><th id="391">391</th><td>            <b>break</b>;</td></tr>
+<tr><th id="392">392</th><td>        }</td></tr>
+<tr><th id="393">393</th><td>    }</td></tr>
+<tr><th id="394">394</th><td></td></tr>
+<tr><th id="395">395</th><td>    adb_close(fd);</td></tr>
+<tr><th id="396">396</th><td>    D(<q>"wait_for_state is done"</q>);</td></tr>
+<tr><th id="397">397</th><td>}</td></tr>
+<tr><th id="398">398</th><td></td></tr>
+<tr><th id="399">399</th><td><em>static</em> <em>void</em> connect_device(<em>const</em> std::string&amp; address, std::string* response) {</td></tr>
+<tr><th id="400">400</th><td>    <b>if</b> (address.empty()) {</td></tr>
+<tr><th id="401">401</th><td>        *response = <q>"empty address"</q>;</td></tr>
+<tr><th id="402">402</th><td>        <b>return</b>;</td></tr>
+<tr><th id="403">403</th><td>    }</td></tr>
+<tr><th id="404">404</th><td></td></tr>
+<tr><th id="405">405</th><td>    std::string serial;</td></tr>
+<tr><th id="406">406</th><td>    std::string host;</td></tr>
+<tr><th id="407">407</th><td>    <em>int</em> port = DEFAULT_ADB_LOCAL_TRANSPORT_PORT;</td></tr>
+<tr><th id="408">408</th><td>    <b>if</b> (!android::base::ParseNetAddress(address, &amp;host, &amp;port, &amp;serial, response)) {</td></tr>
+<tr><th id="409">409</th><td>        <b>return</b>;</td></tr>
+<tr><th id="410">410</th><td>    }</td></tr>
+<tr><th id="411">411</th><td></td></tr>
+<tr><th id="412">412</th><td>    std::string error;</td></tr>
+<tr><th id="413">413</th><td>    <em>int</em> fd = network_connect(host.c_str(), port, SOCK_STREAM, <var>10</var>, &amp;error);</td></tr>
+<tr><th id="414">414</th><td>    <b>if</b> (fd == -<var>1</var>) {</td></tr>
+<tr><th id="415">415</th><td>        *response = android::base::StringPrintf(<q>"unable to connect to %s: %s"</q>,</td></tr>
+<tr><th id="416">416</th><td>                                                serial.c_str(), error.c_str());</td></tr>
+<tr><th id="417">417</th><td>        <b>return</b>;</td></tr>
+<tr><th id="418">418</th><td>    }</td></tr>
+<tr><th id="419">419</th><td></td></tr>
+<tr><th id="420">420</th><td>    D(<q>"client: connected %s remote on fd %d"</q>, serial.c_str(), fd);</td></tr>
+<tr><th id="421">421</th><td>    close_on_exec(fd);</td></tr>
+<tr><th id="422">422</th><td>    disable_tcp_nagle(fd);</td></tr>
+<tr><th id="423">423</th><td></td></tr>
+<tr><th id="424">424</th><td>    <i>// Send a TCP keepalive ping to the device every second so we can detect disconnects.</i></td></tr>
+<tr><th id="425">425</th><td>    <b>if</b> (!set_tcp_keepalive(fd, <var>1</var>)) {</td></tr>
+<tr><th id="426">426</th><td>        D(<q>"warning: failed to configure TCP keepalives (%s)"</q>, strerror(errno));</td></tr>
+<tr><th id="427">427</th><td>    }</td></tr>
+<tr><th id="428">428</th><td></td></tr>
+<tr><th id="429">429</th><td>    <em>int</em> ret = register_socket_transport(fd, serial.c_str(), port, <var>0</var>);</td></tr>
+<tr><th id="430">430</th><td>    <b>if</b> (ret &lt; <var>0</var>) {</td></tr>
+<tr><th id="431">431</th><td>        adb_close(fd);</td></tr>
+<tr><th id="432">432</th><td>        *response = android::base::StringPrintf(<q>"already connected to %s"</q>, serial.c_str());</td></tr>
+<tr><th id="433">433</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="434">434</th><td>        *response = android::base::StringPrintf(<q>"connected to %s"</q>, serial.c_str());</td></tr>
+<tr><th id="435">435</th><td>    }</td></tr>
+<tr><th id="436">436</th><td>}</td></tr>
+<tr><th id="437">437</th><td></td></tr>
+<tr><th id="438">438</th><td><em>void</em> connect_emulator(<em>const</em> std::string&amp; port_spec, std::string* response) {</td></tr>
+<tr><th id="439">439</th><td>    std::vector&lt;std::string&gt; pieces = android::base::Split(port_spec, <q>","</q>);</td></tr>
+<tr><th id="440">440</th><td>    <b>if</b> (pieces.size() != <var>2</var>) {</td></tr>
+<tr><th id="441">441</th><td>        *response = android::base::StringPrintf(<q>"unable to parse '%s' as &lt;console port&gt;,&lt;adb port&gt;"</q>,</td></tr>
+<tr><th id="442">442</th><td>                                                port_spec.c_str());</td></tr>
+<tr><th id="443">443</th><td>        <b>return</b>;</td></tr>
+<tr><th id="444">444</th><td>    }</td></tr>
+<tr><th id="445">445</th><td></td></tr>
+<tr><th id="446">446</th><td>    <em>int</em> console_port = strtol(pieces[<var>0</var>].c_str(), NULL, <var>0</var>);</td></tr>
+<tr><th id="447">447</th><td>    <em>int</em> adb_port = strtol(pieces[<var>1</var>].c_str(), NULL, <var>0</var>);</td></tr>
+<tr><th id="448">448</th><td>    <b>if</b> (console_port &lt;= <var>0</var> || adb_port &lt;= <var>0</var>) {</td></tr>
+<tr><th id="449">449</th><td>        *response = android::base::StringPrintf(<q>"Invalid port numbers: %s"</q>, port_spec.c_str());</td></tr>
+<tr><th id="450">450</th><td>        <b>return</b>;</td></tr>
+<tr><th id="451">451</th><td>    }</td></tr>
+<tr><th id="452">452</th><td></td></tr>
+<tr><th id="453">453</th><td>    <i>// Check if the emulator is already known.</i></td></tr>
+<tr><th id="454">454</th><td><i>    // Note: There's a small but harmless race condition here: An emulator not</i></td></tr>
+<tr><th id="455">455</th><td><i>    // present just yet could be registered by another invocation right</i></td></tr>
+<tr><th id="456">456</th><td><i>    // after doing this check here. However, local_connect protects</i></td></tr>
+<tr><th id="457">457</th><td><i>    // against double-registration too. From here, a better error message</i></td></tr>
+<tr><th id="458">458</th><td><i>    // can be produced. In the case of the race condition, the very specific</i></td></tr>
+<tr><th id="459">459</th><td><i>    // error message won't be shown, but the data doesn't get corrupted.</i></td></tr>
+<tr><th id="460">460</th><td>    atransport* known_emulator = find_emulator_transport_by_adb_port(adb_port);</td></tr>
+<tr><th id="461">461</th><td>    <b>if</b> (known_emulator != <b>nullptr</b>) {</td></tr>
+<tr><th id="462">462</th><td>        *response = android::base::StringPrintf(<q>"Emulator already registered on port %d"</q>, adb_port);</td></tr>
+<tr><th id="463">463</th><td>        <b>return</b>;</td></tr>
+<tr><th id="464">464</th><td>    }</td></tr>
+<tr><th id="465">465</th><td></td></tr>
+<tr><th id="466">466</th><td>    <i>// Check if more emulators can be registered. Similar unproblematic</i></td></tr>
+<tr><th id="467">467</th><td><i>    // race condition as above.</i></td></tr>
+<tr><th id="468">468</th><td>    <em>int</em> candidate_slot = get_available_local_transport_index();</td></tr>
+<tr><th id="469">469</th><td>    <b>if</b> (candidate_slot &lt; <var>0</var>) {</td></tr>
+<tr><th id="470">470</th><td>        *response = <q>"Cannot accept more emulators"</q>;</td></tr>
+<tr><th id="471">471</th><td>        <b>return</b>;</td></tr>
+<tr><th id="472">472</th><td>    }</td></tr>
+<tr><th id="473">473</th><td></td></tr>
+<tr><th id="474">474</th><td>    <i>// Preconditions met, try to connect to the emulator.</i></td></tr>
+<tr><th id="475">475</th><td>    std::string error;</td></tr>
+<tr><th id="476">476</th><td>    <b>if</b> (!local_connect_arbitrary_ports(console_port, adb_port, &amp;error)) {</td></tr>
+<tr><th id="477">477</th><td>        *response = android::base::StringPrintf(<q>"Connected to emulator on ports %d,%d"</q>,</td></tr>
+<tr><th id="478">478</th><td>                                                console_port, adb_port);</td></tr>
+<tr><th id="479">479</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="480">480</th><td>        *response = android::base::StringPrintf(<q>"Could not connect to emulator on ports %d,%d: %s"</q>,</td></tr>
+<tr><th id="481">481</th><td>                                                console_port, adb_port, error.c_str());</td></tr>
+<tr><th id="482">482</th><td>    }</td></tr>
+<tr><th id="483">483</th><td>}</td></tr>
+<tr><th id="484">484</th><td></td></tr>
+<tr><th id="485">485</th><td><em>static</em> <em>void</em> connect_service(<em>int</em> fd, <em>void</em>* data) {</td></tr>
+<tr><th id="486">486</th><td>    <em>char</em>* host = <b>reinterpret_cast</b>&lt;<em>char</em>*&gt;(data);</td></tr>
+<tr><th id="487">487</th><td>    std::string response;</td></tr>
+<tr><th id="488">488</th><td>    <b>if</b> (!strncmp(host, <q>"emu:"</q>, <var>4</var>)) {</td></tr>
+<tr><th id="489">489</th><td>        connect_emulator(host + <var>4</var>, &amp;response);</td></tr>
+<tr><th id="490">490</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="491">491</th><td>        connect_device(host, &amp;response);</td></tr>
+<tr><th id="492">492</th><td>    }</td></tr>
+<tr><th id="493">493</th><td>    free(host);</td></tr>
+<tr><th id="494">494</th><td></td></tr>
+<tr><th id="495">495</th><td>    <i>// Send response for emulator and device</i></td></tr>
+<tr><th id="496">496</th><td>    SendProtocolString(fd, response);</td></tr>
+<tr><th id="497">497</th><td>    adb_close(fd);</td></tr>
+<tr><th id="498">498</th><td>}</td></tr>
+<tr><th id="499">499</th><td><u>#<span data-ppcond="356">endif</span></u></td></tr>
+<tr><th id="500">500</th><td></td></tr>
+<tr><th id="501">501</th><td><u>#<span data-ppcond="501">if</span> <span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="502">502</th><td>asocket* host_service_to_socket(<em>const</em> <em>char</em>* name, <em>const</em> <em>char</em>* serial) {</td></tr>
+<tr><th id="503">503</th><td>    <b>if</b> (!strcmp(name,<q>"track-devices"</q>)) {</td></tr>
+<tr><th id="504">504</th><td>        <b>return</b> create_device_tracker();</td></tr>
+<tr><th id="505">505</th><td>    } <b>else</b> <b>if</b> (android::base::StartsWith(name, <q>"wait-for-"</q>)) {</td></tr>
+<tr><th id="506">506</th><td>        name += strlen(<q>"wait-for-"</q>);</td></tr>
+<tr><th id="507">507</th><td></td></tr>
+<tr><th id="508">508</th><td>        std::unique_ptr&lt;state_info&gt; sinfo(<b>new</b> state_info);</td></tr>
+<tr><th id="509">509</th><td>        <b>if</b> (sinfo == <b>nullptr</b>) {</td></tr>
+<tr><th id="510">510</th><td>            fprintf(stderr, <q>"couldn't allocate state_info: %s"</q>, strerror(errno));</td></tr>
+<tr><th id="511">511</th><td>            <b>return</b> <b>nullptr</b>;</td></tr>
+<tr><th id="512">512</th><td>        }</td></tr>
+<tr><th id="513">513</th><td></td></tr>
+<tr><th id="514">514</th><td>        <b>if</b> (serial) sinfo-&gt;serial = serial;</td></tr>
+<tr><th id="515">515</th><td></td></tr>
+<tr><th id="516">516</th><td>        <b>if</b> (android::base::StartsWith(name, <q>"local"</q>)) {</td></tr>
+<tr><th id="517">517</th><td>            name += strlen(<q>"local"</q>);</td></tr>
+<tr><th id="518">518</th><td>            sinfo-&gt;transport_type = kTransportLocal;</td></tr>
+<tr><th id="519">519</th><td>        } <b>else</b> <b>if</b> (android::base::StartsWith(name, <q>"usb"</q>)) {</td></tr>
+<tr><th id="520">520</th><td>            name += strlen(<q>"usb"</q>);</td></tr>
+<tr><th id="521">521</th><td>            sinfo-&gt;transport_type = kTransportUsb;</td></tr>
+<tr><th id="522">522</th><td>        } <b>else</b> <b>if</b> (android::base::StartsWith(name, <q>"any"</q>)) {</td></tr>
+<tr><th id="523">523</th><td>            name += strlen(<q>"any"</q>);</td></tr>
+<tr><th id="524">524</th><td>            sinfo-&gt;transport_type = kTransportAny;</td></tr>
+<tr><th id="525">525</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="526">526</th><td>            <b>return</b> <b>nullptr</b>;</td></tr>
+<tr><th id="527">527</th><td>        }</td></tr>
+<tr><th id="528">528</th><td></td></tr>
+<tr><th id="529">529</th><td>        <b>if</b> (!strcmp(name, <q>"-device"</q>)) {</td></tr>
+<tr><th id="530">530</th><td>            sinfo-&gt;state = kCsDevice;</td></tr>
+<tr><th id="531">531</th><td>        } <b>else</b> <b>if</b> (!strcmp(name, <q>"-recovery"</q>)) {</td></tr>
+<tr><th id="532">532</th><td>            sinfo-&gt;state = kCsRecovery;</td></tr>
+<tr><th id="533">533</th><td>        } <b>else</b> <b>if</b> (!strcmp(name, <q>"-sideload"</q>)) {</td></tr>
+<tr><th id="534">534</th><td>            sinfo-&gt;state = kCsSideload;</td></tr>
+<tr><th id="535">535</th><td>        } <b>else</b> <b>if</b> (!strcmp(name, <q>"-bootloader"</q>)) {</td></tr>
+<tr><th id="536">536</th><td>            sinfo-&gt;state = kCsBootloader;</td></tr>
+<tr><th id="537">537</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="538">538</th><td>            <b>return</b> <b>nullptr</b>;</td></tr>
+<tr><th id="539">539</th><td>        }</td></tr>
+<tr><th id="540">540</th><td></td></tr>
+<tr><th id="541">541</th><td>        <em>int</em> fd = create_service_thread(wait_for_state, sinfo.release());</td></tr>
+<tr><th id="542">542</th><td>        <b>return</b> create_local_socket(fd);</td></tr>
+<tr><th id="543">543</th><td>    } <b>else</b> <b>if</b> (!strncmp(name, <q>"connect:"</q>, <var>8</var>)) {</td></tr>
+<tr><th id="544">544</th><td>        <em>char</em>* host = strdup(name + <var>8</var>);</td></tr>
+<tr><th id="545">545</th><td>        <em>int</em> fd = create_service_thread(connect_service, host);</td></tr>
+<tr><th id="546">546</th><td>        <b>return</b> create_local_socket(fd);</td></tr>
+<tr><th id="547">547</th><td>    }</td></tr>
+<tr><th id="548">548</th><td>    <b>return</b> NULL;</td></tr>
+<tr><th id="549">549</th><td>}</td></tr>
+<tr><th id="550">550</th><td><u>#<span data-ppcond="501">endif</span> /* ADB_HOST */</u></td></tr>
+<tr><th id="551">551</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

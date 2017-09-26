@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>adb.h source code [codebrowser/system/core/adb/adb.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ConnectionState,TransportType,adisconnect,alistener,amessage,apacket "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/adb/adb.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>adb</a>/<a href='adb.h.html'>adb.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2007 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/__ADB_H">__ADB_H</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/__ADB_H" data-ref="_M/__ADB_H">__ADB_H</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../bionic/libc/include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../external/libcxx/include/string.html">&lt;string&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../base/include/android-base/macros.h.html">&lt;android-base/macros.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="adb_trace.h.html">"adb_trace.h"</a></u></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="fdevent.h.html">"fdevent.h"</a></u></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="socket.h.html">"socket.h"</a></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><b>constexpr</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl def" id="MAX_PAYLOAD_V1" title='MAX_PAYLOAD_V1' data-ref="MAX_PAYLOAD_V1">MAX_PAYLOAD_V1</dfn> = <var>4</var> * <var>1024</var>;</td></tr>
+<tr><th id="32">32</th><td><b>constexpr</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl def" id="MAX_PAYLOAD_V2" title='MAX_PAYLOAD_V2' data-ref="MAX_PAYLOAD_V2">MAX_PAYLOAD_V2</dfn> = <var>256</var> * <var>1024</var>;</td></tr>
+<tr><th id="33">33</th><td><b>constexpr</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl def" id="MAX_PAYLOAD" title='MAX_PAYLOAD' data-ref="MAX_PAYLOAD">MAX_PAYLOAD</dfn> = <a class="ref" href="#MAX_PAYLOAD_V2" title='MAX_PAYLOAD_V2' data-ref="MAX_PAYLOAD_V2">MAX_PAYLOAD_V2</a>;</td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><u>#define <dfn class="macro" id="_M/A_SYNC" data-ref="_M/A_SYNC">A_SYNC</dfn> 0x434e5953</u></td></tr>
+<tr><th id="36">36</th><td><u>#define <dfn class="macro" id="_M/A_CNXN" data-ref="_M/A_CNXN">A_CNXN</dfn> 0x4e584e43</u></td></tr>
+<tr><th id="37">37</th><td><u>#define <dfn class="macro" id="_M/A_OPEN" data-ref="_M/A_OPEN">A_OPEN</dfn> 0x4e45504f</u></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/A_OKAY" data-ref="_M/A_OKAY">A_OKAY</dfn> 0x59414b4f</u></td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/A_CLSE" data-ref="_M/A_CLSE">A_CLSE</dfn> 0x45534c43</u></td></tr>
+<tr><th id="40">40</th><td><u>#define <dfn class="macro" id="_M/A_WRTE" data-ref="_M/A_WRTE">A_WRTE</dfn> 0x45545257</u></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/A_AUTH" data-ref="_M/A_AUTH">A_AUTH</dfn> 0x48545541</u></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><i>// ADB protocol version.</i></td></tr>
+<tr><th id="44">44</th><td><u>#define <dfn class="macro" id="_M/A_VERSION" data-ref="_M/A_VERSION">A_VERSION</dfn> 0x01000000</u></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><i>// Used for help/version information.</i></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/ADB_VERSION_MAJOR" data-ref="_M/ADB_VERSION_MAJOR">ADB_VERSION_MAJOR</dfn> 1</u></td></tr>
+<tr><th id="48">48</th><td><u>#define <dfn class="macro" id="_M/ADB_VERSION_MINOR" data-ref="_M/ADB_VERSION_MINOR">ADB_VERSION_MINOR</dfn> 0</u></td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td><span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <a class="decl" href="adb.cpp.html#_Z11adb_versionv" title='adb_version' data-ref="_Z11adb_versionv" id="_Z11adb_versionv">adb_version</a>();</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><i>// Increment this when we want to force users to start a new adb server.</i></td></tr>
+<tr><th id="53">53</th><td><u>#define <dfn class="macro" id="_M/ADB_SERVER_VERSION" data-ref="_M/ADB_SERVER_VERSION">ADB_SERVER_VERSION</dfn> 35</u></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><b>class</b> <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport" id="atransport">atransport</a>;</td></tr>
+<tr><th id="56">56</th><td><b>struct</b> <dfn class="type" id="usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</dfn>;</td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td><b>struct</b> <dfn class="type def" id="amessage" title='amessage' data-ref="amessage">amessage</dfn> {</td></tr>
+<tr><th id="59">59</th><td>    <em>unsigned</em> <dfn class="decl" id="amessage::command" title='amessage::command' data-ref="amessage::command">command</dfn>;       <i>/* command identifier constant      */</i></td></tr>
+<tr><th id="60">60</th><td>    <em>unsigned</em> <dfn class="decl" id="amessage::arg0" title='amessage::arg0' data-ref="amessage::arg0">arg0</dfn>;          <i>/* first argument                   */</i></td></tr>
+<tr><th id="61">61</th><td>    <em>unsigned</em> <dfn class="decl" id="amessage::arg1" title='amessage::arg1' data-ref="amessage::arg1">arg1</dfn>;          <i>/* second argument                  */</i></td></tr>
+<tr><th id="62">62</th><td>    <em>unsigned</em> <dfn class="decl" id="amessage::data_length" title='amessage::data_length' data-ref="amessage::data_length">data_length</dfn>;   <i>/* length of payload (0 is allowed) */</i></td></tr>
+<tr><th id="63">63</th><td>    <em>unsigned</em> <dfn class="decl" id="amessage::data_check" title='amessage::data_check' data-ref="amessage::data_check">data_check</dfn>;    <i>/* checksum of data payload         */</i></td></tr>
+<tr><th id="64">64</th><td>    <em>unsigned</em> <dfn class="decl" id="amessage::magic" title='amessage::magic' data-ref="amessage::magic">magic</dfn>;         <i>/* command ^ 0xffffffff             */</i></td></tr>
+<tr><th id="65">65</th><td>};</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><b>struct</b> <dfn class="type def" id="apacket" title='apacket' data-ref="apacket">apacket</dfn></td></tr>
+<tr><th id="68">68</th><td>{</td></tr>
+<tr><th id="69">69</th><td>    <a class="type" href="#apacket" title='apacket' data-ref="apacket">apacket</a> *<dfn class="decl" id="apacket::next" title='apacket::next' data-ref="apacket::next">next</dfn>;</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td>    <em>unsigned</em> <dfn class="decl" id="apacket::len" title='apacket::len' data-ref="apacket::len">len</dfn>;</td></tr>
+<tr><th id="72">72</th><td>    <em>unsigned</em> <em>char</em> *<dfn class="decl" id="apacket::ptr" title='apacket::ptr' data-ref="apacket::ptr">ptr</dfn>;</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>    <a class="type" href="#amessage" title='amessage' data-ref="amessage">amessage</a> <dfn class="decl" id="apacket::msg" title='apacket::msg' data-ref="apacket::msg">msg</dfn>;</td></tr>
+<tr><th id="75">75</th><td>    <em>unsigned</em> <em>char</em> <dfn class="decl" id="apacket::data" title='apacket::data' data-ref="apacket::data">data</dfn>[<a class="ref" href="#MAX_PAYLOAD" title='MAX_PAYLOAD' data-ref="MAX_PAYLOAD">MAX_PAYLOAD</a>];</td></tr>
+<tr><th id="76">76</th><td>};</td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td><i>/* the adisconnect structure is used to record a callback that</i></td></tr>
+<tr><th id="79">79</th><td><i>** will be called whenever a transport is disconnected (e.g. by the user)</i></td></tr>
+<tr><th id="80">80</th><td><i>** this should be used to cleanup objects that depend on the</i></td></tr>
+<tr><th id="81">81</th><td><i>** transport (e.g. remote sockets, listeners, etc...)</i></td></tr>
+<tr><th id="82">82</th><td><i>*/</i></td></tr>
+<tr><th id="83">83</th><td><b>struct</b>  <dfn class="type def" id="adisconnect" title='adisconnect' data-ref="adisconnect">adisconnect</dfn></td></tr>
+<tr><th id="84">84</th><td>{</td></tr>
+<tr><th id="85">85</th><td>    <em>void</em>        (*<dfn class="decl" id="adisconnect::func" title='adisconnect::func' data-ref="adisconnect::func">func</dfn>)(<em>void</em>*  <dfn class="local col2 decl" id="242opaque" title='opaque' data-type='void *' data-ref="242opaque">opaque</dfn>, <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a>*  <dfn class="local col3 decl" id="243t" title='t' data-type='atransport *' data-ref="243t">t</dfn>);</td></tr>
+<tr><th id="86">86</th><td>    <em>void</em>*         <dfn class="decl" id="adisconnect::opaque" title='adisconnect::opaque' data-ref="adisconnect::opaque">opaque</dfn>;</td></tr>
+<tr><th id="87">87</th><td>};</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td><i>// A transport object models the connection to a remote device or emulator there</i></td></tr>
+<tr><th id="91">91</th><td><i>// is one transport per connected device/emulator. A "local transport" connects</i></td></tr>
+<tr><th id="92">92</th><td><i>// through TCP (for the emulator), while a "usb transport" through USB (for real</i></td></tr>
+<tr><th id="93">93</th><td><i>// devices).</i></td></tr>
+<tr><th id="94">94</th><td><i>//</i></td></tr>
+<tr><th id="95">95</th><td><i>// Note that kTransportHost doesn't really correspond to a real transport</i></td></tr>
+<tr><th id="96">96</th><td><i>// object, it's a special value used to indicate that a client wants to connect</i></td></tr>
+<tr><th id="97">97</th><td><i>// to a service implemented within the ADB server itself.</i></td></tr>
+<tr><th id="98">98</th><td><b>enum</b> <dfn class="type def" id="TransportType" title='TransportType' data-ref="TransportType">TransportType</dfn> {</td></tr>
+<tr><th id="99">99</th><td>    <dfn class="enum" id="TransportType::kTransportUsb" title='TransportType::kTransportUsb' data-ref="TransportType::kTransportUsb">kTransportUsb</dfn>,</td></tr>
+<tr><th id="100">100</th><td>    <dfn class="enum" id="TransportType::kTransportLocal" title='TransportType::kTransportLocal' data-ref="TransportType::kTransportLocal">kTransportLocal</dfn>,</td></tr>
+<tr><th id="101">101</th><td>    <dfn class="enum" id="TransportType::kTransportAny" title='TransportType::kTransportAny' data-ref="TransportType::kTransportAny">kTransportAny</dfn>,</td></tr>
+<tr><th id="102">102</th><td>    <dfn class="enum" id="TransportType::kTransportHost" title='TransportType::kTransportHost' data-ref="TransportType::kTransportHost">kTransportHost</dfn>,</td></tr>
+<tr><th id="103">103</th><td>};</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><u>#define <dfn class="macro" id="_M/TOKEN_SIZE" data-ref="_M/TOKEN_SIZE">TOKEN_SIZE</dfn> 20</u></td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><b>enum</b> <dfn class="type def" id="ConnectionState" title='ConnectionState' data-ref="ConnectionState">ConnectionState</dfn> {</td></tr>
+<tr><th id="108">108</th><td>    <dfn class="enum" id="ConnectionState::kCsAny" title='ConnectionState::kCsAny' data-ref="ConnectionState::kCsAny">kCsAny</dfn> = -<var>1</var>,</td></tr>
+<tr><th id="109">109</th><td>    <dfn class="enum" id="ConnectionState::kCsOffline" title='ConnectionState::kCsOffline' data-ref="ConnectionState::kCsOffline">kCsOffline</dfn> = <var>0</var>,</td></tr>
+<tr><th id="110">110</th><td>    <dfn class="enum" id="ConnectionState::kCsBootloader" title='ConnectionState::kCsBootloader' data-ref="ConnectionState::kCsBootloader">kCsBootloader</dfn>,</td></tr>
+<tr><th id="111">111</th><td>    <dfn class="enum" id="ConnectionState::kCsDevice" title='ConnectionState::kCsDevice' data-ref="ConnectionState::kCsDevice">kCsDevice</dfn>,</td></tr>
+<tr><th id="112">112</th><td>    <dfn class="enum" id="ConnectionState::kCsHost" title='ConnectionState::kCsHost' data-ref="ConnectionState::kCsHost">kCsHost</dfn>,</td></tr>
+<tr><th id="113">113</th><td>    <dfn class="enum" id="ConnectionState::kCsRecovery" title='ConnectionState::kCsRecovery' data-ref="ConnectionState::kCsRecovery">kCsRecovery</dfn>,</td></tr>
+<tr><th id="114">114</th><td>    <dfn class="enum" id="ConnectionState::kCsNoPerm" title='ConnectionState::kCsNoPerm' data-ref="ConnectionState::kCsNoPerm">kCsNoPerm</dfn>,  <i>// Insufficient permissions to communicate with the device.</i></td></tr>
+<tr><th id="115">115</th><td>    <dfn class="enum" id="ConnectionState::kCsSideload" title='ConnectionState::kCsSideload' data-ref="ConnectionState::kCsSideload">kCsSideload</dfn>,</td></tr>
+<tr><th id="116">116</th><td>    <dfn class="enum" id="ConnectionState::kCsUnauthorized" title='ConnectionState::kCsUnauthorized' data-ref="ConnectionState::kCsUnauthorized">kCsUnauthorized</dfn>,</td></tr>
+<tr><th id="117">117</th><td>};</td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td><i>/* A listener is an entity which binds to a local port</i></td></tr>
+<tr><th id="120">120</th><td><i>** and, upon receiving a connection on that port, creates</i></td></tr>
+<tr><th id="121">121</th><td><i>** an asocket to connect the new local connection to a</i></td></tr>
+<tr><th id="122">122</th><td><i>** specific remote service.</i></td></tr>
+<tr><th id="123">123</th><td><i>**</i></td></tr>
+<tr><th id="124">124</th><td><i>** TODO: some listeners read from the new connection to</i></td></tr>
+<tr><th id="125">125</th><td><i>** determine what exact service to connect to on the far</i></td></tr>
+<tr><th id="126">126</th><td><i>** side.</i></td></tr>
+<tr><th id="127">127</th><td><i>*/</i></td></tr>
+<tr><th id="128">128</th><td><b>struct</b> <dfn class="type def" id="alistener" title='alistener' data-ref="alistener">alistener</dfn></td></tr>
+<tr><th id="129">129</th><td>{</td></tr>
+<tr><th id="130">130</th><td>    <a class="type" href="#alistener" title='alistener' data-ref="alistener">alistener</a> *<dfn class="decl" id="alistener::next" title='alistener::next' data-ref="alistener::next">next</dfn>;</td></tr>
+<tr><th id="131">131</th><td>    <a class="type" href="#alistener" title='alistener' data-ref="alistener">alistener</a> *<dfn class="decl" id="alistener::prev" title='alistener::prev' data-ref="alistener::prev">prev</dfn>;</td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td>    <a class="type" href="fdevent.h.html#fdevent" title='fdevent' data-ref="fdevent">fdevent</a> <dfn class="decl" id="alistener::fde" title='alistener::fde' data-ref="alistener::fde">fde</dfn>;</td></tr>
+<tr><th id="134">134</th><td>    <em>int</em> <dfn class="decl" id="alistener::fd" title='alistener::fd' data-ref="alistener::fd">fd</dfn>;</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td>    <em>char</em> *<dfn class="decl" id="alistener::local_name" title='alistener::local_name' data-ref="alistener::local_name">local_name</dfn>;</td></tr>
+<tr><th id="137">137</th><td>    <em>char</em> *<dfn class="decl" id="alistener::connect_to" title='alistener::connect_to' data-ref="alistener::connect_to">connect_to</dfn>;</td></tr>
+<tr><th id="138">138</th><td>    <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="decl" id="alistener::transport" title='alistener::transport' data-ref="alistener::transport">transport</dfn>;</td></tr>
+<tr><th id="139">139</th><td>    <a class="type" href="#adisconnect" title='adisconnect' data-ref="adisconnect">adisconnect</a>  <dfn class="decl" id="alistener::disconnect" title='alistener::disconnect' data-ref="alistener::disconnect">disconnect</dfn>;</td></tr>
+<tr><th id="140">140</th><td>};</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td><em>void</em> <dfn class="decl" id="_Z12print_packetPKcP7apacket" title='print_packet' data-ref="_Z12print_packetPKcP7apacket">print_packet</dfn>(<em>const</em> <em>char</em> *<dfn class="local col4 decl" id="244label" title='label' data-type='const char *' data-ref="244label">label</dfn>, <a class="type" href="#apacket" title='apacket' data-ref="apacket">apacket</a> *<dfn class="local col5 decl" id="245p" title='p' data-type='apacket *' data-ref="245p">p</dfn>);</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><i>// These use the system (v)fprintf, not the adb prefixed ones defined in sysdeps.h, so they</i></td></tr>
+<tr><th id="146">146</th><td><i>// shouldn't be tagged with ADB_FORMAT_ARCHETYPE.</i></td></tr>
+<tr><th id="147">147</th><td><em>void</em> <a class="decl" href="adb.cpp.html#_Z5fatalPKcz" title='fatal' data-ref="_Z5fatalPKcz" id="_Z5fatalPKcz">fatal</a>(<em>const</em> <em>char</em>* <dfn class="local col6 decl" id="246fmt" title='fmt' data-type='const char *' data-ref="246fmt">fmt</dfn>, ...) <b>__attribute__</b>((noreturn, format(__printf__, <var>1</var>, <var>2</var>)));</td></tr>
+<tr><th id="148">148</th><td><em>void</em> <a class="decl" href="adb.cpp.html#_Z11fatal_errnoPKcz" title='fatal_errno' data-ref="_Z11fatal_errnoPKcz" id="_Z11fatal_errnoPKcz">fatal_errno</a>(<em>const</em> <em>char</em>* <dfn class="local col7 decl" id="247fmt" title='fmt' data-type='const char *' data-ref="247fmt">fmt</dfn>, ...) <b>__attribute__</b>((noreturn, format(__printf__, <var>1</var>, <var>2</var>)));</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><em>void</em> <a class="decl" href="adb.cpp.html#_Z13handle_packetP7apacketP10atransport" title='handle_packet' data-ref="_Z13handle_packetP7apacketP10atransport" id="_Z13handle_packetP7apacketP10atransport">handle_packet</a>(<a class="type" href="#apacket" title='apacket' data-ref="apacket">apacket</a> *<dfn class="local col8 decl" id="248p" title='p' data-type='apacket *' data-ref="248p">p</dfn>, <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col9 decl" id="249t" title='t' data-type='atransport *' data-ref="249t">t</dfn>);</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><em>void</em> <dfn class="decl" id="_Z11get_my_pathPcm" title='get_my_path' data-ref="_Z11get_my_pathPcm">get_my_path</dfn>(<em>char</em> *<dfn class="local col0 decl" id="250s" title='s' data-type='char *' data-ref="250s">s</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="251maxLen" title='maxLen' data-type='size_t' data-ref="251maxLen">maxLen</dfn>);</td></tr>
+<tr><th id="153">153</th><td><em>int</em> <dfn class="decl" id="_Z13launch_serveri" title='launch_server' data-ref="_Z13launch_serveri">launch_server</dfn>(<em>int</em> <dfn class="local col2 decl" id="252server_port" title='server_port' data-type='int' data-ref="252server_port">server_port</dfn>);</td></tr>
+<tr><th id="154">154</th><td><em>int</em> <dfn class="decl" id="_Z15adb_server_mainiii" title='adb_server_main' data-ref="_Z15adb_server_mainiii">adb_server_main</dfn>(<em>int</em> <dfn class="local col3 decl" id="253is_daemon" title='is_daemon' data-type='int' data-ref="253is_daemon">is_daemon</dfn>, <em>int</em> <dfn class="local col4 decl" id="254server_port" title='server_port' data-type='int' data-ref="254server_port">server_port</dfn>, <em>int</em> <dfn class="local col5 decl" id="255ack_reply_fd" title='ack_reply_fd' data-type='int' data-ref="255ack_reply_fd">ack_reply_fd</dfn>);</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td><i>/* initialize a transport object's func pointers and state */</i></td></tr>
+<tr><th id="157">157</th><td><u>#<span data-ppcond="157">if</span> <span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="158">158</th><td><em>int</em> get_available_local_transport_index();</td></tr>
+<tr><th id="159">159</th><td><u>#<span data-ppcond="157">endif</span></u></td></tr>
+<tr><th id="160">160</th><td><em>int</em>  <dfn class="decl" id="_Z21init_socket_transportP10atransportiii" title='init_socket_transport' data-ref="_Z21init_socket_transportP10atransportiii">init_socket_transport</dfn>(<a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col6 decl" id="256t" title='t' data-type='atransport *' data-ref="256t">t</dfn>, <em>int</em> <dfn class="local col7 decl" id="257s" title='s' data-type='int' data-ref="257s">s</dfn>, <em>int</em> <dfn class="local col8 decl" id="258port" title='port' data-type='int' data-ref="258port">port</dfn>, <em>int</em> <dfn class="local col9 decl" id="259local" title='local' data-type='int' data-ref="259local">local</dfn>);</td></tr>
+<tr><th id="161">161</th><td><em>void</em> <dfn class="decl" id="_Z18init_usb_transportP10atransportP10usb_handle15ConnectionState" title='init_usb_transport' data-ref="_Z18init_usb_transportP10atransportP10usb_handle15ConnectionState">init_usb_transport</dfn>(<a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col0 decl" id="260t" title='t' data-type='atransport *' data-ref="260t">t</dfn>, <a class="type" href="#usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</a> *<dfn class="local col1 decl" id="261usb" title='usb' data-type='usb_handle *' data-ref="261usb">usb</dfn>, <a class="type" href="#ConnectionState" title='ConnectionState' data-ref="ConnectionState">ConnectionState</a> <dfn class="local col2 decl" id="262state" title='state' data-type='ConnectionState' data-ref="262state">state</dfn>);</td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td><u>#<span data-ppcond="163">if</span> <span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="164">164</th><td>atransport* find_emulator_transport_by_adb_port(<em>int</em> adb_port);</td></tr>
+<tr><th id="165">165</th><td><u>#<span data-ppcond="163">endif</span></u></td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><em>int</em> <dfn class="decl" id="_Z13service_to_fdPKcPK10atransport" title='service_to_fd' data-ref="_Z13service_to_fdPKcPK10atransport">service_to_fd</dfn>(<em>const</em> <em>char</em>* <dfn class="local col3 decl" id="263name" title='name' data-type='const char *' data-ref="263name">name</dfn>, <em>const</em> <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col4 decl" id="264transport" title='transport' data-type='const atransport *' data-ref="264transport">transport</dfn>);</td></tr>
+<tr><th id="168">168</th><td><u>#<span data-ppcond="168">if</span> <span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="169">169</th><td>asocket *host_service_to_socket(<em>const</em> <em>char</em>*  name, <em>const</em> <em>char</em> *serial);</td></tr>
+<tr><th id="170">170</th><td><u>#<span data-ppcond="168">endif</span></u></td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><u>#<span data-ppcond="172">if</span> !<span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="173">173</th><td><em>int</em>       <dfn class="decl" id="_Z9init_jdwpv" title='init_jdwp' data-ref="_Z9init_jdwpv">init_jdwp</dfn>(<em>void</em>);</td></tr>
+<tr><th id="174">174</th><td><a class="type" href="socket.h.html#asocket" title='asocket' data-ref="asocket">asocket</a>*  <dfn class="decl" id="_Z26create_jdwp_service_socketv" title='create_jdwp_service_socket' data-ref="_Z26create_jdwp_service_socketv">create_jdwp_service_socket</dfn>();</td></tr>
+<tr><th id="175">175</th><td><a class="type" href="socket.h.html#asocket" title='asocket' data-ref="asocket">asocket</a>*  <dfn class="decl" id="_Z34create_jdwp_tracker_service_socketv" title='create_jdwp_tracker_service_socket' data-ref="_Z34create_jdwp_tracker_service_socketv">create_jdwp_tracker_service_socket</dfn>();</td></tr>
+<tr><th id="176">176</th><td><em>int</em>       <dfn class="decl" id="_Z25create_jdwp_connection_fdi" title='create_jdwp_connection_fd' data-ref="_Z25create_jdwp_connection_fdi">create_jdwp_connection_fd</dfn>(<em>int</em>  <dfn class="local col5 decl" id="265jdwp_pid" title='jdwp_pid' data-type='int' data-ref="265jdwp_pid">jdwp_pid</dfn>);</td></tr>
+<tr><th id="177">177</th><td><u>#<span data-ppcond="172">endif</span></u></td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td><em>int</em> <a class="decl" href="adb.cpp.html#_Z22handle_forward_requestPKc13TransportTypeS0_i" title='handle_forward_request' data-ref="_Z22handle_forward_requestPKc13TransportTypeS0_i" id="_Z22handle_forward_requestPKc13TransportTypeS0_i">handle_forward_request</a>(<em>const</em> <em>char</em>* <dfn class="local col6 decl" id="266service" title='service' data-type='const char *' data-ref="266service">service</dfn>, <a class="type" href="#TransportType" title='TransportType' data-ref="TransportType">TransportType</a> <dfn class="local col7 decl" id="267type" title='type' data-type='TransportType' data-ref="267type">type</dfn>, <em>const</em> <em>char</em>* <dfn class="local col8 decl" id="268serial" title='serial' data-type='const char *' data-ref="268serial">serial</dfn>, <em>int</em> <dfn class="local col9 decl" id="269reply_fd" title='reply_fd' data-type='int' data-ref="269reply_fd">reply_fd</dfn>);</td></tr>
+<tr><th id="180">180</th><td></td></tr>
+<tr><th id="181">181</th><td><u>#<span data-ppcond="181">if</span> !<span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="182">182</th><td><em>void</em> <dfn class="decl" id="_Z19framebuffer_serviceiPv" title='framebuffer_service' data-ref="_Z19framebuffer_serviceiPv">framebuffer_service</dfn>(<em>int</em> <dfn class="local col0 decl" id="270fd" title='fd' data-type='int' data-ref="270fd">fd</dfn>, <em>void</em> *<dfn class="local col1 decl" id="271cookie" title='cookie' data-type='void *' data-ref="271cookie">cookie</dfn>);</td></tr>
+<tr><th id="183">183</th><td><em>void</em> <dfn class="decl" id="_Z32set_verity_enabled_state_serviceiPv" title='set_verity_enabled_state_service' data-ref="_Z32set_verity_enabled_state_serviceiPv">set_verity_enabled_state_service</dfn>(<em>int</em> <dfn class="local col2 decl" id="272fd" title='fd' data-type='int' data-ref="272fd">fd</dfn>, <em>void</em>* <dfn class="local col3 decl" id="273cookie" title='cookie' data-type='void *' data-ref="273cookie">cookie</dfn>);</td></tr>
+<tr><th id="184">184</th><td><u>#<span data-ppcond="181">endif</span></u></td></tr>
+<tr><th id="185">185</th><td></td></tr>
+<tr><th id="186">186</th><td><i>/* packet allocator */</i></td></tr>
+<tr><th id="187">187</th><td><a class="type" href="#apacket" title='apacket' data-ref="apacket">apacket</a> *<a class="decl" href="adb.cpp.html#_Z11get_apacketv" title='get_apacket' data-ref="_Z11get_apacketv" id="_Z11get_apacketv">get_apacket</a>(<em>void</em>);</td></tr>
+<tr><th id="188">188</th><td><em>void</em> <a class="decl" href="adb.cpp.html#_Z11put_apacketP7apacket" title='put_apacket' data-ref="_Z11put_apacketP7apacket" id="_Z11put_apacketP7apacket">put_apacket</a>(<a class="type" href="#apacket" title='apacket' data-ref="apacket">apacket</a> *<dfn class="local col4 decl" id="274p" title='p' data-type='apacket *' data-ref="274p">p</dfn>);</td></tr>
+<tr><th id="189">189</th><td></td></tr>
+<tr><th id="190">190</th><td><i>// Define it if you want to dump packets.</i></td></tr>
+<tr><th id="191">191</th><td><u>#define <dfn class="macro" id="_M/DEBUG_PACKETS" data-ref="_M/DEBUG_PACKETS">DEBUG_PACKETS</dfn> 0</u></td></tr>
+<tr><th id="192">192</th><td></td></tr>
+<tr><th id="193">193</th><td><u>#<span data-ppcond="193">if</span> !<a class="macro" href="#191" title="0" data-ref="_M/DEBUG_PACKETS">DEBUG_PACKETS</a></u></td></tr>
+<tr><th id="194">194</th><td><u>#define <dfn class="macro" id="_M/print_packet" data-ref="_M/print_packet">print_packet</dfn>(tag,p) do {} while (0)</u></td></tr>
+<tr><th id="195">195</th><td><u>#<span data-ppcond="193">endif</span></u></td></tr>
+<tr><th id="196">196</th><td></td></tr>
+<tr><th id="197">197</th><td><u>#<span data-ppcond="197">if</span> ADB_HOST_ON_TARGET</u></td></tr>
+<tr><th id="198">198</th><td><i>/* adb and adbd are coexisting on the target, so use 5038 for adb</i></td></tr>
+<tr><th id="199">199</th><td><i> * to avoid conflicting with adbd's usage of 5037</i></td></tr>
+<tr><th id="200">200</th><td><i> */</i></td></tr>
+<tr><th id="201">201</th><td><u>#  define DEFAULT_ADB_PORT 5038</u></td></tr>
+<tr><th id="202">202</th><td><u>#<span data-ppcond="197">else</span></u></td></tr>
+<tr><th id="203">203</th><td><u>#  define <dfn class="macro" id="_M/DEFAULT_ADB_PORT" data-ref="_M/DEFAULT_ADB_PORT">DEFAULT_ADB_PORT</dfn> 5037</u></td></tr>
+<tr><th id="204">204</th><td><u>#<span data-ppcond="197">endif</span></u></td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td><u>#define <dfn class="macro" id="_M/DEFAULT_ADB_LOCAL_TRANSPORT_PORT" data-ref="_M/DEFAULT_ADB_LOCAL_TRANSPORT_PORT">DEFAULT_ADB_LOCAL_TRANSPORT_PORT</dfn> 5555</u></td></tr>
+<tr><th id="207">207</th><td></td></tr>
+<tr><th id="208">208</th><td><u>#define <dfn class="macro" id="_M/ADB_CLASS" data-ref="_M/ADB_CLASS">ADB_CLASS</dfn>              0xff</u></td></tr>
+<tr><th id="209">209</th><td><u>#define <dfn class="macro" id="_M/ADB_SUBCLASS" data-ref="_M/ADB_SUBCLASS">ADB_SUBCLASS</dfn>           0x42</u></td></tr>
+<tr><th id="210">210</th><td><u>#define <dfn class="macro" id="_M/ADB_PROTOCOL" data-ref="_M/ADB_PROTOCOL">ADB_PROTOCOL</dfn>           0x1</u></td></tr>
+<tr><th id="211">211</th><td></td></tr>
+<tr><th id="212">212</th><td></td></tr>
+<tr><th id="213">213</th><td><em>void</em> <dfn class="decl" id="_Z10local_initi" title='local_init' data-ref="_Z10local_initi">local_init</dfn>(<em>int</em> <dfn class="local col5 decl" id="275port" title='port' data-type='int' data-ref="275port">port</dfn>);</td></tr>
+<tr><th id="214">214</th><td><em>void</em> <dfn class="decl" id="_Z13local_connecti" title='local_connect' data-ref="_Z13local_connecti">local_connect</dfn>(<em>int</em> <dfn class="local col6 decl" id="276port" title='port' data-type='int' data-ref="276port">port</dfn>);</td></tr>
+<tr><th id="215">215</th><td><em>int</em>  <dfn class="decl" id="_Z29local_connect_arbitrary_portsiiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE" title='local_connect_arbitrary_ports' data-ref="_Z29local_connect_arbitrary_portsiiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE">local_connect_arbitrary_ports</dfn>(<em>int</em> <dfn class="local col7 decl" id="277console_port" title='console_port' data-type='int' data-ref="277console_port">console_port</dfn>, <em>int</em> <dfn class="local col8 decl" id="278adb_port" title='adb_port' data-type='int' data-ref="278adb_port">adb_port</dfn>, <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>* <dfn class="local col9 decl" id="279error" title='error' data-type='std::string *' data-ref="279error">error</dfn>);</td></tr>
+<tr><th id="216">216</th><td></td></tr>
+<tr><th id="217">217</th><td><i>// USB host/client interface.</i></td></tr>
+<tr><th id="218">218</th><td><em>void</em> <dfn class="decl" id="_Z8usb_initv" title='usb_init' data-ref="_Z8usb_initv">usb_init</dfn>();</td></tr>
+<tr><th id="219">219</th><td><em>int</em> <dfn class="decl" id="_Z9usb_writeP10usb_handlePKvi" title='usb_write' data-ref="_Z9usb_writeP10usb_handlePKvi">usb_write</dfn>(<a class="type" href="#usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</a> *<dfn class="local col0 decl" id="280h" title='h' data-type='usb_handle *' data-ref="280h">h</dfn>, <em>const</em> <em>void</em> *<dfn class="local col1 decl" id="281data" title='data' data-type='const void *' data-ref="281data">data</dfn>, <em>int</em> <dfn class="local col2 decl" id="282len" title='len' data-type='int' data-ref="282len">len</dfn>);</td></tr>
+<tr><th id="220">220</th><td><em>int</em> <dfn class="decl" id="_Z8usb_readP10usb_handlePvi" title='usb_read' data-ref="_Z8usb_readP10usb_handlePvi">usb_read</dfn>(<a class="type" href="#usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</a> *<dfn class="local col3 decl" id="283h" title='h' data-type='usb_handle *' data-ref="283h">h</dfn>, <em>void</em> *<dfn class="local col4 decl" id="284data" title='data' data-type='void *' data-ref="284data">data</dfn>, <em>int</em> <dfn class="local col5 decl" id="285len" title='len' data-type='int' data-ref="285len">len</dfn>);</td></tr>
+<tr><th id="221">221</th><td><em>int</em> <dfn class="decl" id="_Z9usb_closeP10usb_handle" title='usb_close' data-ref="_Z9usb_closeP10usb_handle">usb_close</dfn>(<a class="type" href="#usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</a> *<dfn class="local col6 decl" id="286h" title='h' data-type='usb_handle *' data-ref="286h">h</dfn>);</td></tr>
+<tr><th id="222">222</th><td><em>void</em> <dfn class="decl" id="_Z8usb_kickP10usb_handle" title='usb_kick' data-ref="_Z8usb_kickP10usb_handle">usb_kick</dfn>(<a class="type" href="#usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</a> *<dfn class="local col7 decl" id="287h" title='h' data-type='usb_handle *' data-ref="287h">h</dfn>);</td></tr>
+<tr><th id="223">223</th><td></td></tr>
+<tr><th id="224">224</th><td><i>// USB device detection.</i></td></tr>
+<tr><th id="225">225</th><td><u>#<span data-ppcond="225">if</span> <span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="226">226</th><td><em>int</em> is_adb_interface(<em>int</em> vid, <em>int</em> pid, <em>int</em> usb_class, <em>int</em> usb_subclass, <em>int</em> usb_protocol);</td></tr>
+<tr><th id="227">227</th><td><u>#<span data-ppcond="225">endif</span></u></td></tr>
+<tr><th id="228">228</th><td></td></tr>
+<tr><th id="229">229</th><td><em>int</em> <dfn class="decl" id="_Z15adb_commandlineiPPKc" title='adb_commandline' data-ref="_Z15adb_commandlineiPPKc">adb_commandline</dfn>(<em>int</em> <dfn class="local col8 decl" id="288argc" title='argc' data-type='int' data-ref="288argc">argc</dfn>, <em>const</em> <em>char</em> **<dfn class="local col9 decl" id="289argv" title='argv' data-type='const char **' data-ref="289argv">argv</dfn>);</td></tr>
+<tr><th id="230">230</th><td></td></tr>
+<tr><th id="231">231</th><td><a class="type" href="#ConnectionState" title='ConnectionState' data-ref="ConnectionState">ConnectionState</a> <dfn class="decl" id="_Z16connection_stateP10atransport" title='connection_state' data-ref="_Z16connection_stateP10atransport">connection_state</dfn>(<a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col0 decl" id="290t" title='t' data-type='atransport *' data-ref="290t">t</dfn>);</td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td><b>extern</b> <em>const</em> <em>char</em>* <dfn class="decl" id="adb_device_banner" title='adb_device_banner' data-ref="adb_device_banner">adb_device_banner</dfn>;</td></tr>
+<tr><th id="234">234</th><td></td></tr>
+<tr><th id="235">235</th><td><u>#<span data-ppcond="235">if</span> !<span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="236">236</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="SHELL_EXIT_NOTIFY_FD" title='SHELL_EXIT_NOTIFY_FD' data-ref="SHELL_EXIT_NOTIFY_FD">SHELL_EXIT_NOTIFY_FD</dfn>;</td></tr>
+<tr><th id="237">237</th><td><u>#<span data-ppcond="235">endif</span> // !ADB_HOST</u></td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td><u>#define <dfn class="macro" id="_M/CHUNK_SIZE" data-ref="_M/CHUNK_SIZE">CHUNK_SIZE</dfn> (64*1024)</u></td></tr>
+<tr><th id="240">240</th><td></td></tr>
+<tr><th id="241">241</th><td><u>#<span data-ppcond="241">if</span> !<span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="242">242</th><td><u>#define <dfn class="macro" id="_M/USB_ADB_PATH" data-ref="_M/USB_ADB_PATH">USB_ADB_PATH</dfn>     "/dev/android_adb"</u></td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td><u>#define <dfn class="macro" id="_M/USB_FFS_ADB_PATH" data-ref="_M/USB_FFS_ADB_PATH">USB_FFS_ADB_PATH</dfn>  "/dev/usb-ffs/adb/"</u></td></tr>
+<tr><th id="245">245</th><td><u>#define <dfn class="macro" id="_M/USB_FFS_ADB_EP" data-ref="_M/USB_FFS_ADB_EP">USB_FFS_ADB_EP</dfn>(x) USB_FFS_ADB_PATH#x</u></td></tr>
+<tr><th id="246">246</th><td></td></tr>
+<tr><th id="247">247</th><td><u>#define <dfn class="macro" id="_M/USB_FFS_ADB_EP0" data-ref="_M/USB_FFS_ADB_EP0">USB_FFS_ADB_EP0</dfn>   USB_FFS_ADB_EP(ep0)</u></td></tr>
+<tr><th id="248">248</th><td><u>#define <dfn class="macro" id="_M/USB_FFS_ADB_OUT" data-ref="_M/USB_FFS_ADB_OUT">USB_FFS_ADB_OUT</dfn>   USB_FFS_ADB_EP(ep1)</u></td></tr>
+<tr><th id="249">249</th><td><u>#define <dfn class="macro" id="_M/USB_FFS_ADB_IN" data-ref="_M/USB_FFS_ADB_IN">USB_FFS_ADB_IN</dfn>    USB_FFS_ADB_EP(ep2)</u></td></tr>
+<tr><th id="250">250</th><td><u>#<span data-ppcond="241">endif</span></u></td></tr>
+<tr><th id="251">251</th><td></td></tr>
+<tr><th id="252">252</th><td><em>int</em> <a class="decl" href="adb.cpp.html#_Z19handle_host_requestPKc13TransportTypeS0_iP7asocket" title='handle_host_request' data-ref="_Z19handle_host_requestPKc13TransportTypeS0_iP7asocket" id="_Z19handle_host_requestPKc13TransportTypeS0_iP7asocket">handle_host_request</a>(<em>const</em> <em>char</em>* <dfn class="local col1 decl" id="291service" title='service' data-type='const char *' data-ref="291service">service</dfn>, <a class="type" href="#TransportType" title='TransportType' data-ref="TransportType">TransportType</a> <dfn class="local col2 decl" id="292type" title='type' data-type='TransportType' data-ref="292type">type</dfn>, <em>const</em> <em>char</em>* <dfn class="local col3 decl" id="293serial" title='serial' data-type='const char *' data-ref="293serial">serial</dfn>, <em>int</em> <dfn class="local col4 decl" id="294reply_fd" title='reply_fd' data-type='int' data-ref="294reply_fd">reply_fd</dfn>, <a class="type" href="socket.h.html#asocket" title='asocket' data-ref="asocket">asocket</a> *<dfn class="local col5 decl" id="295s" title='s' data-type='asocket *' data-ref="295s">s</dfn>);</td></tr>
+<tr><th id="253">253</th><td></td></tr>
+<tr><th id="254">254</th><td><em>void</em> <a class="decl" href="adb.cpp.html#_Z13handle_onlineP10atransport" title='handle_online' data-ref="_Z13handle_onlineP10atransport" id="_Z13handle_onlineP10atransport">handle_online</a>(<a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col6 decl" id="296t" title='t' data-type='atransport *' data-ref="296t">t</dfn>);</td></tr>
+<tr><th id="255">255</th><td><em>void</em> <a class="decl" href="adb.cpp.html#_Z14handle_offlineP10atransport" title='handle_offline' data-ref="_Z14handle_offlineP10atransport" id="_Z14handle_offlineP10atransport">handle_offline</a>(<a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col7 decl" id="297t" title='t' data-type='atransport *' data-ref="297t">t</dfn>);</td></tr>
+<tr><th id="256">256</th><td></td></tr>
+<tr><th id="257">257</th><td><em>void</em> <a class="decl" href="adb.cpp.html#_Z12send_connectP10atransport" title='send_connect' data-ref="_Z12send_connectP10atransport" id="_Z12send_connectP10atransport">send_connect</a>(<a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col8 decl" id="298t" title='t' data-type='atransport *' data-ref="298t">t</dfn>);</td></tr>
+<tr><th id="258">258</th><td></td></tr>
+<tr><th id="259">259</th><td><em>void</em> <a class="decl" href="adb.cpp.html#_Z12parse_bannerRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEP10atransport" title='parse_banner' data-ref="_Z12parse_bannerRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEP10atransport" id="_Z12parse_bannerRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEP10atransport">parse_banner</a>(<em>const</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a>&amp;, <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a>* <dfn class="local col9 decl" id="299t" title='t' data-type='atransport *' data-ref="299t">t</dfn>);</td></tr>
+<tr><th id="260">260</th><td></td></tr>
+<tr><th id="261">261</th><td><u>#<span data-ppcond="17">endif</span></u></td></tr>
+<tr><th id="262">262</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='adb.cpp.html'>codebrowser/system/core/adb/adb.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>t_req.c source code [codebrowser/external/boringssl/src/crypto/x509/t_req.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/x509/t_req.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>x509</a>/<a href='t_req.c.html'>t_req.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../include/openssl/bn.h.html">&lt;openssl/bn.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="../../include/openssl/buffer.h.html">&lt;openssl/buffer.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/objects.h.html">&lt;openssl/objects.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../include/openssl/x509.h.html">&lt;openssl/x509.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td><u>#include <a href="../../include/openssl/x509v3.h.html">&lt;openssl/x509v3.h&gt;</a></u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><em>int</em> <dfn class="decl def" id="X509_REQ_print_fp" title='X509_REQ_print_fp' data-ref="X509_REQ_print_fp">X509_REQ_print_fp</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col1 decl" id="1fp" title='fp' data-type='FILE *' data-ref="1fp">fp</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#X509_REQ" title='X509_REQ' data-type='struct X509_req_st' data-ref="X509_REQ">X509_REQ</a> *<dfn class="local col2 decl" id="2x" title='x' data-type='X509_REQ *' data-ref="2x">x</dfn>) {</td></tr>
+<tr><th id="68">68</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col3 decl" id="3bio" title='bio' data-type='BIO *' data-ref="3bio">bio</dfn> = <a class="ref" href="../../include/openssl/bio.h.html#BIO_new" title='BIO_new' data-ref="BIO_new">BIO_new</a>(<a class="ref" href="../../include/openssl/bio.h.html#BIO_s_file" title='BIO_s_file' data-ref="BIO_s_file">BIO_s_file</a>());</td></tr>
+<tr><th id="69">69</th><td>  <b>if</b> (<a class="local col3 ref" href="#3bio" title='bio' data-ref="3bio">bio</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="70">70</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509, 0, ERR_LIB_BUF, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509/t_req.c&quot;, 70)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509, <a class="macro" href="../../include/openssl/err.h.html#427" title="ERR_LIB_BUF" data-ref="_M/ERR_R_BUF_LIB">ERR_R_BUF_LIB</a>);</td></tr>
+<tr><th id="71">71</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="72">72</th><td>  }</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>  <a class="ref" href="../../include/openssl/bio.h.html#BIO_set_fp" title='BIO_set_fp' data-ref="BIO_set_fp">BIO_set_fp</a>(<a class="local col3 ref" href="#3bio" title='bio' data-ref="3bio">bio</a>, <a class="local col1 ref" href="#1fp" title='fp' data-ref="1fp">fp</a>, <a class="macro" href="../../include/openssl/bio.h.html#689" title="0" data-ref="_M/BIO_NOCLOSE">BIO_NOCLOSE</a>);</td></tr>
+<tr><th id="75">75</th><td>  <em>int</em> <dfn class="local col4 decl" id="4ret" title='ret' data-type='int' data-ref="4ret">ret</dfn> = <a class="ref" href="#X509_REQ_print" title='X509_REQ_print' data-ref="X509_REQ_print">X509_REQ_print</a>(<a class="local col3 ref" href="#3bio" title='bio' data-ref="3bio">bio</a>, <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a>);</td></tr>
+<tr><th id="76">76</th><td>  <a class="ref" href="../../include/openssl/bio.h.html#BIO_free" title='BIO_free' data-ref="BIO_free">BIO_free</a>(<a class="local col3 ref" href="#3bio" title='bio' data-ref="3bio">bio</a>);</td></tr>
+<tr><th id="77">77</th><td>  <b>return</b> <a class="local col4 ref" href="#4ret" title='ret' data-ref="4ret">ret</a>;</td></tr>
+<tr><th id="78">78</th><td>}</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><em>int</em> <dfn class="decl def" id="X509_REQ_print_ex" title='X509_REQ_print_ex' data-ref="X509_REQ_print_ex">X509_REQ_print_ex</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col5 decl" id="5bio" title='bio' data-type='BIO *' data-ref="5bio">bio</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#X509_REQ" title='X509_REQ' data-type='struct X509_req_st' data-ref="X509_REQ">X509_REQ</a> *<dfn class="local col6 decl" id="6x" title='x' data-type='X509_REQ *' data-ref="6x">x</dfn>, <em>unsigned</em> <em>long</em> <dfn class="local col7 decl" id="7nmflags" title='nmflags' data-type='unsigned long' data-ref="7nmflags">nmflags</dfn>,</td></tr>
+<tr><th id="81">81</th><td>                      <em>unsigned</em> <em>long</em> <dfn class="local col8 decl" id="8cflag" title='cflag' data-type='unsigned long' data-ref="8cflag">cflag</dfn>) {</td></tr>
+<tr><th id="82">82</th><td>  <em>long</em> <dfn class="local col9 decl" id="9l" title='l' data-type='long' data-ref="9l">l</dfn>;</td></tr>
+<tr><th id="83">83</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#EVP_PKEY" title='EVP_PKEY' data-type='struct evp_pkey_st' data-ref="EVP_PKEY">EVP_PKEY</a> *<dfn class="local col0 decl" id="10pkey" title='pkey' data-type='EVP_PKEY *' data-ref="10pkey">pkey</dfn>;</td></tr>
+<tr><th id="84">84</th><td>  <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_ATTRIBUTE" data-ref="_M/STACK_OF">STACK_OF</a>(X509_ATTRIBUTE) * <dfn class="local col1 decl" id="11sk" title='sk' data-type='struct stack_st_X509_ATTRIBUTE *' data-ref="11sk">sk</dfn>;</td></tr>
+<tr><th id="85">85</th><td>  <em>char</em> <dfn class="local col2 decl" id="12mlch" title='mlch' data-type='char' data-ref="12mlch">mlch</dfn> = <kbd>' '</kbd>;</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td>  <em>int</em> <dfn class="local col3 decl" id="13nmindent" title='nmindent' data-type='int' data-ref="13nmindent">nmindent</dfn> = <var>0</var>;</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td>  <b>if</b> ((<a class="local col7 ref" href="#7nmflags" title='nmflags' data-ref="7nmflags">nmflags</a> &amp; <a class="macro" href="../../include/openssl/x509.h.html#336" title="(0xf &lt;&lt; 16)" data-ref="_M/XN_FLAG_SEP_MASK">XN_FLAG_SEP_MASK</a>) == <a class="macro" href="../../include/openssl/x509.h.html#342" title="(4 &lt;&lt; 16)" data-ref="_M/XN_FLAG_SEP_MULTILINE">XN_FLAG_SEP_MULTILINE</a>) {</td></tr>
+<tr><th id="90">90</th><td>    <a class="local col2 ref" href="#12mlch" title='mlch' data-ref="12mlch">mlch</a> = <kbd>'\n'</kbd>;</td></tr>
+<tr><th id="91">91</th><td>    <a class="local col3 ref" href="#13nmindent" title='nmindent' data-ref="13nmindent">nmindent</a> = <var>12</var>;</td></tr>
+<tr><th id="92">92</th><td>  }</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td>  <b>if</b> (<a class="local col7 ref" href="#7nmflags" title='nmflags' data-ref="7nmflags">nmflags</a> == <a class="macro" href="../../include/openssl/x509.h.html#317" title="0" data-ref="_M/X509_FLAG_COMPAT">X509_FLAG_COMPAT</a>) {</td></tr>
+<tr><th id="95">95</th><td>    <a class="local col3 ref" href="#13nmindent" title='nmindent' data-ref="13nmindent">nmindent</a> = <var>16</var>;</td></tr>
+<tr><th id="96">96</th><td>  }</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#X509_REQ_INFO" title='X509_REQ_INFO' data-type='struct X509_req_info_st' data-ref="X509_REQ_INFO">X509_REQ_INFO</a> *<dfn class="local col4 decl" id="14ri" title='ri' data-type='X509_REQ_INFO *' data-ref="14ri">ri</dfn> = <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_req_st::req_info" title='X509_req_st::req_info' data-ref="X509_req_st::req_info">req_info</a>;</td></tr>
+<tr><th id="99">99</th><td>  <b>if</b> (!(<a class="local col8 ref" href="#8cflag" title='cflag' data-ref="8cflag">cflag</a> &amp; <a class="macro" href="../../include/openssl/x509.h.html#318" title="1L" data-ref="_M/X509_FLAG_NO_HEADER">X509_FLAG_NO_HEADER</a>)) {</td></tr>
+<tr><th id="100">100</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"Certificate Request:\n"</q>, <var>21</var>) &lt;= <var>0</var> ||</td></tr>
+<tr><th id="101">101</th><td>        <a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"    Data:\n"</q>, <var>10</var>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="102">102</th><td>      <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="103">103</th><td>    }</td></tr>
+<tr><th id="104">104</th><td>  }</td></tr>
+<tr><th id="105">105</th><td>  <b>if</b> (!(<a class="local col8 ref" href="#8cflag" title='cflag' data-ref="8cflag">cflag</a> &amp; <a class="macro" href="../../include/openssl/x509.h.html#319" title="(1L &lt;&lt; 1)" data-ref="_M/X509_FLAG_NO_VERSION">X509_FLAG_NO_VERSION</a>)) {</td></tr>
+<tr><th id="106">106</th><td>    <a class="local col9 ref" href="#9l" title='l' data-ref="9l">l</a> = <a class="macro" href="../../include/openssl/x509.h.html#566" title="ASN1_INTEGER_get((x)-&gt;req_info-&gt;version)" data-ref="_M/X509_REQ_get_version">X509_REQ_get_version</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="107">107</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"%8sVersion: %ld (0x%lx)\n"</q>, <q>""</q>, <a class="local col9 ref" href="#9l" title='l' data-ref="9l">l</a> + <var>1</var>, <a class="local col9 ref" href="#9l" title='l' data-ref="9l">l</a>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="108">108</th><td>      <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="109">109</th><td>    }</td></tr>
+<tr><th id="110">110</th><td>  }</td></tr>
+<tr><th id="111">111</th><td>  <b>if</b> (!(<a class="local col8 ref" href="#8cflag" title='cflag' data-ref="8cflag">cflag</a> &amp; <a class="macro" href="../../include/openssl/x509.h.html#324" title="(1L &lt;&lt; 6)" data-ref="_M/X509_FLAG_NO_SUBJECT">X509_FLAG_NO_SUBJECT</a>)) {</td></tr>
+<tr><th id="112">112</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"        Subject:%c"</q>, <a class="local col2 ref" href="#12mlch" title='mlch' data-ref="12mlch">mlch</a>) &lt;= <var>0</var> ||</td></tr>
+<tr><th id="113">113</th><td>        <a class="ref" href="../../include/openssl/x509.h.html#X509_NAME_print_ex" title='X509_NAME_print_ex' data-ref="X509_NAME_print_ex">X509_NAME_print_ex</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <a class="local col4 ref" href="#14ri" title='ri' data-ref="14ri">ri</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_req_info_st::subject" title='X509_req_info_st::subject' data-ref="X509_req_info_st::subject">subject</a>, <a class="local col3 ref" href="#13nmindent" title='nmindent' data-ref="13nmindent">nmindent</a>, <a class="local col7 ref" href="#7nmflags" title='nmflags' data-ref="7nmflags">nmflags</a>) &lt; <var>0</var> ||</td></tr>
+<tr><th id="114">114</th><td>        <a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"\n"</q>, <var>1</var>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="115">115</th><td>      <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="116">116</th><td>    }</td></tr>
+<tr><th id="117">117</th><td>  }</td></tr>
+<tr><th id="118">118</th><td>  <b>if</b> (!(<a class="local col8 ref" href="#8cflag" title='cflag' data-ref="8cflag">cflag</a> &amp; <a class="macro" href="../../include/openssl/x509.h.html#325" title="(1L &lt;&lt; 7)" data-ref="_M/X509_FLAG_NO_PUBKEY">X509_FLAG_NO_PUBKEY</a>)) {</td></tr>
+<tr><th id="119">119</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"        Subject Public Key Info:\n"</q>, <var>33</var>) &lt;= <var>0</var> ||</td></tr>
+<tr><th id="120">120</th><td>        <a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"%12sPublic Key Algorithm: "</q>, <q>""</q>) &lt;= <var>0</var> ||</td></tr>
+<tr><th id="121">121</th><td>        <a class="ref" href="../../include/openssl/asn1.h.html#i2a_ASN1_OBJECT" title='i2a_ASN1_OBJECT' data-ref="i2a_ASN1_OBJECT">i2a_ASN1_OBJECT</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <a class="local col4 ref" href="#14ri" title='ri' data-ref="14ri">ri</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_req_info_st::pubkey" title='X509_req_info_st::pubkey' data-ref="X509_req_info_st::pubkey">pubkey</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_pubkey_st::algor" title='X509_pubkey_st::algor' data-ref="X509_pubkey_st::algor">algor</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#X509_algor_st::algorithm" title='X509_algor_st::algorithm' data-ref="X509_algor_st::algorithm">algorithm</a>) &lt;= <var>0</var> ||</td></tr>
+<tr><th id="122">122</th><td>        <a class="ref" href="../../include/openssl/bio.h.html#BIO_puts" title='BIO_puts' data-ref="BIO_puts">BIO_puts</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"\n"</q>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="123">123</th><td>      <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="124">124</th><td>    }</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td>    <a class="local col0 ref" href="#10pkey" title='pkey' data-ref="10pkey">pkey</a> = <a class="ref" href="../../include/openssl/x509.h.html#X509_REQ_get_pubkey" title='X509_REQ_get_pubkey' data-ref="X509_REQ_get_pubkey">X509_REQ_get_pubkey</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="127">127</th><td>    <b>if</b> (<a class="local col0 ref" href="#10pkey" title='pkey' data-ref="10pkey">pkey</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="128">128</th><td>      <a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"%12sUnable to load Public Key\n"</q>, <q>""</q>);</td></tr>
+<tr><th id="129">129</th><td>      <a class="ref" href="../../include/openssl/bio.h.html#ERR_print_errors" title='ERR_print_errors' data-ref="ERR_print_errors">ERR_print_errors</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>);</td></tr>
+<tr><th id="130">130</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="131">131</th><td>      <a class="ref" href="../../include/openssl/evp.h.html#EVP_PKEY_print_public" title='EVP_PKEY_print_public' data-ref="EVP_PKEY_print_public">EVP_PKEY_print_public</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <a class="local col0 ref" href="#10pkey" title='pkey' data-ref="10pkey">pkey</a>, <var>16</var>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="132">132</th><td>      <a class="ref" href="../../include/openssl/evp.h.html#EVP_PKEY_free" title='EVP_PKEY_free' data-ref="EVP_PKEY_free">EVP_PKEY_free</a>(<a class="local col0 ref" href="#10pkey" title='pkey' data-ref="10pkey">pkey</a>);</td></tr>
+<tr><th id="133">133</th><td>    }</td></tr>
+<tr><th id="134">134</th><td>  }</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td>  <b>if</b> (!(<a class="local col8 ref" href="#8cflag" title='cflag' data-ref="8cflag">cflag</a> &amp; <a class="macro" href="../../include/openssl/x509.h.html#329" title="(1L &lt;&lt; 11)" data-ref="_M/X509_FLAG_NO_ATTRIBUTES">X509_FLAG_NO_ATTRIBUTES</a>)) {</td></tr>
+<tr><th id="137">137</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"%8sAttributes:\n"</q>, <q>""</q>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="138">138</th><td>      <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="139">139</th><td>    }</td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td>    <a class="local col1 ref" href="#11sk" title='sk' data-ref="11sk">sk</a> = <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_req_st::req_info" title='X509_req_st::req_info' data-ref="X509_req_st::req_info">req_info</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_req_info_st::attributes" title='X509_req_info_st::attributes' data-ref="X509_req_info_st::attributes">attributes</a>;</td></tr>
+<tr><th id="142">142</th><td>    <b>if</b> (<a class="macro" href="../../include/openssl/stack_macros.h.html#2364" title="sk_num(((_STACK *) (1 ? (sk) : (struct stack_st_X509_ATTRIBUTE *)0)))" data-ref="_M/sk_X509_ATTRIBUTE_num">sk_X509_ATTRIBUTE_num</a>(<a class="local col1 ref" href="#11sk" title='sk' data-ref="11sk">sk</a>) == <var>0</var>) {</td></tr>
+<tr><th id="143">143</th><td>      <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"%12sa0:00\n"</q>, <q>""</q>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="144">144</th><td>        <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="145">145</th><td>      }</td></tr>
+<tr><th id="146">146</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="147">147</th><td>      <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="16i" title='i' data-type='size_t' data-ref="16i">i</dfn>;</td></tr>
+<tr><th id="148">148</th><td>      <b>for</b> (<a class="local col6 ref" href="#16i" title='i' data-ref="16i">i</a> = <var>0</var>; <a class="local col6 ref" href="#16i" title='i' data-ref="16i">i</a> &lt; <a class="macro" href="../../include/openssl/stack_macros.h.html#2364" title="sk_num(((_STACK *) (1 ? (sk) : (struct stack_st_X509_ATTRIBUTE *)0)))" data-ref="_M/sk_X509_ATTRIBUTE_num">sk_X509_ATTRIBUTE_num</a>(<a class="local col1 ref" href="#11sk" title='sk' data-ref="11sk">sk</a>); <a class="local col6 ref" href="#16i" title='i' data-ref="16i">i</a>++) {</td></tr>
+<tr><th id="149">149</th><td>        <a class="typedef" href="../../include/openssl/base.h.html#X509_ATTRIBUTE" title='X509_ATTRIBUTE' data-type='struct x509_attributes_st' data-ref="X509_ATTRIBUTE">X509_ATTRIBUTE</a> *<dfn class="local col7 decl" id="17a" title='a' data-type='X509_ATTRIBUTE *' data-ref="17a">a</dfn> = <a class="macro" href="../../include/openssl/stack_macros.h.html#2370" title="((X509_ATTRIBUTE *)sk_value( ((_STACK *) (1 ? (sk) : (const struct stack_st_X509_ATTRIBUTE *)0)), (i)))" data-ref="_M/sk_X509_ATTRIBUTE_value">sk_X509_ATTRIBUTE_value</a>(<a class="local col1 ref" href="#11sk" title='sk' data-ref="11sk">sk</a>, <a class="local col6 ref" href="#16i" title='i' data-ref="16i">i</a>);</td></tr>
+<tr><th id="150">150</th><td>        <a class="typedef" href="../../include/openssl/base.h.html#ASN1_OBJECT" title='ASN1_OBJECT' data-type='struct asn1_object_st' data-ref="ASN1_OBJECT">ASN1_OBJECT</a> *<dfn class="local col8 decl" id="18aobj" title='aobj' data-type='ASN1_OBJECT *' data-ref="18aobj">aobj</dfn> = <a class="ref" href="../../include/openssl/x509.h.html#X509_ATTRIBUTE_get0_object" title='X509_ATTRIBUTE_get0_object' data-ref="X509_ATTRIBUTE_get0_object">X509_ATTRIBUTE_get0_object</a>(<a class="local col7 ref" href="#17a" title='a' data-ref="17a">a</a>);</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td>        <b>if</b> (<a class="ref" href="../../include/openssl/x509.h.html#X509_REQ_extension_nid" title='X509_REQ_extension_nid' data-ref="X509_REQ_extension_nid">X509_REQ_extension_nid</a>(<a class="ref" href="../../include/openssl/obj.h.html#OBJ_obj2nid" title='OBJ_obj2nid' data-ref="OBJ_obj2nid">OBJ_obj2nid</a>(<a class="local col8 ref" href="#18aobj" title='aobj' data-ref="18aobj">aobj</a>))) {</td></tr>
+<tr><th id="153">153</th><td>          <b>continue</b>;</td></tr>
+<tr><th id="154">154</th><td>        }</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td>        <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"%12s"</q>, <q>""</q>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="157">157</th><td>          <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="158">158</th><td>        }</td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td>        <em>const</em> <em>int</em> <dfn class="local col9 decl" id="19num_attrs" title='num_attrs' data-type='const int' data-ref="19num_attrs">num_attrs</dfn> = <a class="ref" href="../../include/openssl/x509.h.html#X509_ATTRIBUTE_count" title='X509_ATTRIBUTE_count' data-ref="X509_ATTRIBUTE_count">X509_ATTRIBUTE_count</a>(<a class="local col7 ref" href="#17a" title='a' data-ref="17a">a</a>);</td></tr>
+<tr><th id="161">161</th><td>        <em>const</em> <em>int</em> <dfn class="local col0 decl" id="20obj_str_len" title='obj_str_len' data-type='const int' data-ref="20obj_str_len">obj_str_len</dfn> = <a class="ref" href="../../include/openssl/asn1.h.html#i2a_ASN1_OBJECT" title='i2a_ASN1_OBJECT' data-ref="i2a_ASN1_OBJECT">i2a_ASN1_OBJECT</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <a class="local col8 ref" href="#18aobj" title='aobj' data-ref="18aobj">aobj</a>);</td></tr>
+<tr><th id="162">162</th><td>        <b>if</b> (<a class="local col0 ref" href="#20obj_str_len" title='obj_str_len' data-ref="20obj_str_len">obj_str_len</a> &lt;= <var>0</var>) {</td></tr>
+<tr><th id="163">163</th><td>          <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_puts" title='BIO_puts' data-ref="BIO_puts">BIO_puts</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"(Unable to print attribute ID.)\n"</q>) &lt; <var>0</var>) {</td></tr>
+<tr><th id="164">164</th><td>            <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="165">165</th><td>          } <b>else</b> {</td></tr>
+<tr><th id="166">166</th><td>            <b>continue</b>;</td></tr>
+<tr><th id="167">167</th><td>          }</td></tr>
+<tr><th id="168">168</th><td>        }</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td>        <em>int</em> <dfn class="local col1 decl" id="21j" title='j' data-type='int' data-ref="21j">j</dfn>;</td></tr>
+<tr><th id="171">171</th><td>        <b>for</b> (<a class="local col1 ref" href="#21j" title='j' data-ref="21j">j</a> = <var>0</var>; <a class="local col1 ref" href="#21j" title='j' data-ref="21j">j</a> &lt; <a class="local col9 ref" href="#19num_attrs" title='num_attrs' data-ref="19num_attrs">num_attrs</a>; <a class="local col1 ref" href="#21j" title='j' data-ref="21j">j</a>++) {</td></tr>
+<tr><th id="172">172</th><td>          <em>const</em> <a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_TYPE" title='ASN1_TYPE' data-type='struct asn1_type_st' data-ref="ASN1_TYPE">ASN1_TYPE</a> *<dfn class="local col2 decl" id="22at" title='at' data-type='const ASN1_TYPE *' data-ref="22at">at</dfn> = <a class="ref" href="../../include/openssl/x509.h.html#X509_ATTRIBUTE_get0_type" title='X509_ATTRIBUTE_get0_type' data-ref="X509_ATTRIBUTE_get0_type">X509_ATTRIBUTE_get0_type</a>(<a class="local col7 ref" href="#17a" title='a' data-ref="17a">a</a>, <a class="local col1 ref" href="#21j" title='j' data-ref="21j">j</a>);</td></tr>
+<tr><th id="173">173</th><td>          <em>const</em> <em>int</em> <dfn class="local col3 decl" id="23type" title='type' data-type='const int' data-ref="23type">type</dfn> = <a class="local col2 ref" href="#22at" title='at' data-ref="22at">at</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_type_st::type" title='asn1_type_st::type' data-ref="asn1_type_st::type">type</a>;</td></tr>
+<tr><th id="174">174</th><td>          <a class="typedef" href="../../include/openssl/base.h.html#ASN1_BIT_STRING" title='ASN1_BIT_STRING' data-type='struct asn1_string_st' data-ref="ASN1_BIT_STRING">ASN1_BIT_STRING</a> *<dfn class="local col4 decl" id="24bs" title='bs' data-type='ASN1_BIT_STRING *' data-ref="24bs">bs</dfn> = <a class="local col2 ref" href="#22at" title='at' data-ref="22at">at</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_type_st::value" title='asn1_type_st::value' data-ref="asn1_type_st::value">value</a>.<a class="ref" href="../../include/openssl/asn1.h.html#asn1_type_st::(anonymous)::asn1_string" title='asn1_type_st::(anonymous union)::asn1_string' data-ref="asn1_type_st::(anonymous)::asn1_string">asn1_string</a>;</td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td>          <em>int</em> <dfn class="local col5 decl" id="25k" title='k' data-type='int' data-ref="25k">k</dfn>;</td></tr>
+<tr><th id="177">177</th><td>          <b>for</b> (<a class="local col5 ref" href="#25k" title='k' data-ref="25k">k</a> = <var>25</var> - <a class="local col0 ref" href="#20obj_str_len" title='obj_str_len' data-ref="20obj_str_len">obj_str_len</a>; <a class="local col5 ref" href="#25k" title='k' data-ref="25k">k</a> &gt; <var>0</var>; <a class="local col5 ref" href="#25k" title='k' data-ref="25k">k</a>--) {</td></tr>
+<tr><th id="178">178</th><td>            <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>" "</q>, <var>1</var>) != <var>1</var>) {</td></tr>
+<tr><th id="179">179</th><td>              <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="180">180</th><td>            }</td></tr>
+<tr><th id="181">181</th><td>          }</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td>          <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_puts" title='BIO_puts' data-ref="BIO_puts">BIO_puts</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>":"</q>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="184">184</th><td>            <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="185">185</th><td>          }</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td>          <b>if</b> (<a class="local col3 ref" href="#23type" title='type' data-ref="23type">type</a> == <a class="macro" href="../../include/openssl/asn1.h.html#107" title="19" data-ref="_M/V_ASN1_PRINTABLESTRING">V_ASN1_PRINTABLESTRING</a> ||</td></tr>
+<tr><th id="188">188</th><td>              <a class="local col3 ref" href="#23type" title='type' data-ref="23type">type</a> == <a class="macro" href="../../include/openssl/asn1.h.html#103" title="12" data-ref="_M/V_ASN1_UTF8STRING">V_ASN1_UTF8STRING</a> ||</td></tr>
+<tr><th id="189">189</th><td>              <a class="local col3 ref" href="#23type" title='type' data-ref="23type">type</a> == <a class="macro" href="../../include/openssl/asn1.h.html#111" title="22" data-ref="_M/V_ASN1_IA5STRING">V_ASN1_IA5STRING</a> ||</td></tr>
+<tr><th id="190">190</th><td>              <a class="local col3 ref" href="#23type" title='type' data-ref="23type">type</a> == <a class="macro" href="../../include/openssl/asn1.h.html#108" title="20" data-ref="_M/V_ASN1_T61STRING">V_ASN1_T61STRING</a>) {</td></tr>
+<tr><th id="191">191</th><td>            <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, (<em>char</em> *)<a class="local col4 ref" href="#24bs" title='bs' data-ref="24bs">bs</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>, <a class="local col4 ref" href="#24bs" title='bs' data-ref="24bs">bs</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>) != <a class="local col4 ref" href="#24bs" title='bs' data-ref="24bs">bs</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>) {</td></tr>
+<tr><th id="192">192</th><td>              <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="193">193</th><td>            }</td></tr>
+<tr><th id="194">194</th><td>            <a class="ref" href="../../include/openssl/bio.h.html#BIO_puts" title='BIO_puts' data-ref="BIO_puts">BIO_puts</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"\n"</q>);</td></tr>
+<tr><th id="195">195</th><td>          } <b>else</b> {</td></tr>
+<tr><th id="196">196</th><td>            <a class="ref" href="../../include/openssl/bio.h.html#BIO_puts" title='BIO_puts' data-ref="BIO_puts">BIO_puts</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"unable to print attribute\n"</q>);</td></tr>
+<tr><th id="197">197</th><td>          }</td></tr>
+<tr><th id="198">198</th><td>        }</td></tr>
+<tr><th id="199">199</th><td>      }</td></tr>
+<tr><th id="200">200</th><td>    }</td></tr>
+<tr><th id="201">201</th><td>  }</td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td>  <b>if</b> (!(<a class="local col8 ref" href="#8cflag" title='cflag' data-ref="8cflag">cflag</a> &amp; <a class="macro" href="../../include/openssl/x509.h.html#326" title="(1L &lt;&lt; 8)" data-ref="_M/X509_FLAG_NO_EXTENSIONS">X509_FLAG_NO_EXTENSIONS</a>)) {</td></tr>
+<tr><th id="204">204</th><td>    <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_EXTENSION" data-ref="_M/STACK_OF">STACK_OF</a>(X509_EXTENSION) *<dfn class="local col6 decl" id="26exts" title='exts' data-type='struct stack_st_X509_EXTENSION *' data-ref="26exts">exts</dfn> = <a class="ref" href="../../include/openssl/x509.h.html#X509_REQ_get_extensions" title='X509_REQ_get_extensions' data-ref="X509_REQ_get_extensions">X509_REQ_get_extensions</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="205">205</th><td>    <b>if</b> (<a class="local col6 ref" href="#26exts" title='exts' data-ref="26exts">exts</a>) {</td></tr>
+<tr><th id="206">206</th><td>      <a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"%8sRequested Extensions:\n"</q>, <q>""</q>);</td></tr>
+<tr><th id="207">207</th><td></td></tr>
+<tr><th id="208">208</th><td>      <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="27i" title='i' data-type='size_t' data-ref="27i">i</dfn>;</td></tr>
+<tr><th id="209">209</th><td>      <b>for</b> (<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> = <var>0</var>; <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> &lt; <a class="macro" href="../../include/openssl/stack_macros.h.html#2525" title="sk_num(((_STACK *) (1 ? (exts) : (struct stack_st_X509_EXTENSION *)0)))" data-ref="_M/sk_X509_EXTENSION_num">sk_X509_EXTENSION_num</a>(<a class="local col6 ref" href="#26exts" title='exts' data-ref="26exts">exts</a>); <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>++) {</td></tr>
+<tr><th id="210">210</th><td>        <a class="typedef" href="../../include/openssl/base.h.html#X509_EXTENSION" title='X509_EXTENSION' data-type='struct X509_extension_st' data-ref="X509_EXTENSION">X509_EXTENSION</a> *<dfn class="local col8 decl" id="28ex" title='ex' data-type='X509_EXTENSION *' data-ref="28ex">ex</dfn> = <a class="macro" href="../../include/openssl/stack_macros.h.html#2531" title="((X509_EXTENSION *)sk_value( ((_STACK *) (1 ? (exts) : (const struct stack_st_X509_EXTENSION *)0)), (i)))" data-ref="_M/sk_X509_EXTENSION_value">sk_X509_EXTENSION_value</a>(<a class="local col6 ref" href="#26exts" title='exts' data-ref="26exts">exts</a>, <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>);</td></tr>
+<tr><th id="211">211</th><td>        <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"%12s"</q>, <q>""</q>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="212">212</th><td>          <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="213">213</th><td>        }</td></tr>
+<tr><th id="214">214</th><td>        <a class="typedef" href="../../include/openssl/base.h.html#ASN1_OBJECT" title='ASN1_OBJECT' data-type='struct asn1_object_st' data-ref="ASN1_OBJECT">ASN1_OBJECT</a> *<dfn class="local col9 decl" id="29obj" title='obj' data-type='ASN1_OBJECT *' data-ref="29obj">obj</dfn> = <a class="ref" href="../../include/openssl/x509.h.html#X509_EXTENSION_get_object" title='X509_EXTENSION_get_object' data-ref="X509_EXTENSION_get_object">X509_EXTENSION_get_object</a>(<a class="local col8 ref" href="#28ex" title='ex' data-ref="28ex">ex</a>);</td></tr>
+<tr><th id="215">215</th><td>        <a class="ref" href="../../include/openssl/asn1.h.html#i2a_ASN1_OBJECT" title='i2a_ASN1_OBJECT' data-ref="i2a_ASN1_OBJECT">i2a_ASN1_OBJECT</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <a class="local col9 ref" href="#29obj" title='obj' data-ref="29obj">obj</a>);</td></tr>
+<tr><th id="216">216</th><td>        <em>const</em> <em>int</em> <dfn class="local col0 decl" id="30is_critical" title='is_critical' data-type='const int' data-ref="30is_critical">is_critical</dfn> = <a class="ref" href="../../include/openssl/x509.h.html#X509_EXTENSION_get_critical" title='X509_EXTENSION_get_critical' data-ref="X509_EXTENSION_get_critical">X509_EXTENSION_get_critical</a>(<a class="local col8 ref" href="#28ex" title='ex' data-ref="28ex">ex</a>);</td></tr>
+<tr><th id="217">217</th><td>        <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>": %s\n"</q>, <a class="local col0 ref" href="#30is_critical" title='is_critical' data-ref="30is_critical">is_critical</a> ? <q>"critical"</q> : <q>""</q>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="218">218</th><td>          <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="219">219</th><td>        }</td></tr>
+<tr><th id="220">220</th><td>        <b>if</b> (!<a class="ref" href="../../include/openssl/x509v3.h.html#X509V3_EXT_print" title='X509V3_EXT_print' data-ref="X509V3_EXT_print">X509V3_EXT_print</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <a class="local col8 ref" href="#28ex" title='ex' data-ref="28ex">ex</a>, <a class="local col8 ref" href="#8cflag" title='cflag' data-ref="8cflag">cflag</a>, <var>16</var>)) {</td></tr>
+<tr><th id="221">221</th><td>          <a class="ref" href="../../include/openssl/bio.h.html#BIO_printf" title='BIO_printf' data-ref="BIO_printf">BIO_printf</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"%16s"</q>, <q>""</q>);</td></tr>
+<tr><th id="222">222</th><td>          <a class="ref" href="../../include/openssl/asn1.h.html#ASN1_STRING_print" title='ASN1_STRING_print' data-ref="ASN1_STRING_print">ASN1_STRING_print</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <a class="ref" href="../../include/openssl/x509.h.html#X509_EXTENSION_get_data" title='X509_EXTENSION_get_data' data-ref="X509_EXTENSION_get_data">X509_EXTENSION_get_data</a>(<a class="local col8 ref" href="#28ex" title='ex' data-ref="28ex">ex</a>));</td></tr>
+<tr><th id="223">223</th><td>        }</td></tr>
+<tr><th id="224">224</th><td>        <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <q>"\n"</q>, <var>1</var>) &lt;= <var>0</var>) {</td></tr>
+<tr><th id="225">225</th><td>          <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="226">226</th><td>        }</td></tr>
+<tr><th id="227">227</th><td>      }</td></tr>
+<tr><th id="228">228</th><td>      <a class="macro" href="../../include/openssl/stack_macros.h.html#2543" title="sk_pop_free( ((_STACK *) (1 ? (exts) : (struct stack_st_X509_EXTENSION *)0)), ((void (*)(void *)) (1 ? (X509_EXTENSION_free) : (void (*)(X509_EXTENSION *))0)))" data-ref="_M/sk_X509_EXTENSION_pop_free">sk_X509_EXTENSION_pop_free</a>(<a class="local col6 ref" href="#26exts" title='exts' data-ref="26exts">exts</a>, <a class="ref" href="../../include/openssl/x509.h.html#768" title='X509_EXTENSION_free' data-ref="X509_EXTENSION_free">X509_EXTENSION_free</a>);</td></tr>
+<tr><th id="229">229</th><td>    }</td></tr>
+<tr><th id="230">230</th><td>  }</td></tr>
+<tr><th id="231">231</th><td></td></tr>
+<tr><th id="232">232</th><td>  <b>if</b> (!(<a class="local col8 ref" href="#8cflag" title='cflag' data-ref="8cflag">cflag</a> &amp; <a class="macro" href="../../include/openssl/x509.h.html#327" title="(1L &lt;&lt; 9)" data-ref="_M/X509_FLAG_NO_SIGDUMP">X509_FLAG_NO_SIGDUMP</a>) &amp;&amp;</td></tr>
+<tr><th id="233">233</th><td>      !<a class="ref" href="../../include/openssl/x509.h.html#X509_signature_print" title='X509_signature_print' data-ref="X509_signature_print">X509_signature_print</a>(<a class="local col5 ref" href="#5bio" title='bio' data-ref="5bio">bio</a>, <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_req_st::sig_alg" title='X509_req_st::sig_alg' data-ref="X509_req_st::sig_alg">sig_alg</a>, <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_req_st::signature" title='X509_req_st::signature' data-ref="X509_req_st::signature">signature</a>)) {</td></tr>
+<tr><th id="234">234</th><td>    <b>goto</b> <a class="lbl" href="#15err" data-ref="15err">err</a>;</td></tr>
+<tr><th id="235">235</th><td>  }</td></tr>
+<tr><th id="236">236</th><td></td></tr>
+<tr><th id="237">237</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td><dfn class="lbl" id="15err" data-ref="15err">err</dfn>:</td></tr>
+<tr><th id="240">240</th><td>  <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509, 0, ERR_LIB_BUF, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509/t_req.c&quot;, 240)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509, <a class="macro" href="../../include/openssl/err.h.html#427" title="ERR_LIB_BUF" data-ref="_M/ERR_R_BUF_LIB">ERR_R_BUF_LIB</a>);</td></tr>
+<tr><th id="241">241</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="242">242</th><td>}</td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td><em>int</em> <dfn class="decl def" id="X509_REQ_print" title='X509_REQ_print' data-ref="X509_REQ_print">X509_REQ_print</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col1 decl" id="31bio" title='bio' data-type='BIO *' data-ref="31bio">bio</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#X509_REQ" title='X509_REQ' data-type='struct X509_req_st' data-ref="X509_REQ">X509_REQ</a> *<dfn class="local col2 decl" id="32req" title='req' data-type='X509_REQ *' data-ref="32req">req</dfn>) {</td></tr>
+<tr><th id="245">245</th><td>  <b>return</b> <a class="ref" href="#X509_REQ_print_ex" title='X509_REQ_print_ex' data-ref="X509_REQ_print_ex">X509_REQ_print_ex</a>(<a class="local col1 ref" href="#31bio" title='bio' data-ref="31bio">bio</a>, <a class="local col2 ref" href="#32req" title='req' data-ref="32req">req</a>, <a class="macro" href="../../include/openssl/x509.h.html#338" title="0" data-ref="_M/XN_FLAG_COMPAT">XN_FLAG_COMPAT</a>, <a class="macro" href="../../include/openssl/x509.h.html#317" title="0" data-ref="_M/X509_FLAG_COMPAT">X509_FLAG_COMPAT</a>);</td></tr>
+<tr><th id="246">246</th><td>}</td></tr>
+<tr><th id="247">247</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,11 @@
+<dec f='codebrowser/system/extras/ext4_utils/allocate.h' l='44' type='struct block_allocation * allocate_blocks(u32 len)'/>
+<def f='codebrowser/system/extras/ext4_utils/allocate.c' l='446' ll='459' type='struct block_allocation * allocate_blocks(u32 len)'/>
+<doc f='codebrowser/system/extras/ext4_utils/allocate.c' l='439'>/* Allocate len blocks.  The blocks may be spread across multiple block groups,
+   and are returned in a linked list of the blocks in each block group.  The
+   allocation algorithm is:
+      1.  If the remaining allocation is larger than any available contiguous region,
+          allocate the largest contiguous region and loop
+      2.  Otherwise, allocate the smallest contiguous region that it fits in
+*/</doc>
+<use f='codebrowser/system/extras/ext4_utils/extent.c' l='78' u='c' c='do_inode_allocate_extents'/>
+<use f='codebrowser/system/extras/ext4_utils/indirect.c' l='392' u='c' c='do_inode_allocate_indirect'/>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>__cxa_guard.cpp source code [codebrowser/bionic/libc/bionic/__cxa_guard.cpp] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="_guard_t "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/__cxa_guard.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='__cxa_guard.cpp.html'>__cxa_guard.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2006 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../include/endian.h.html">&lt;endian.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="../include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td><u>#undef <span class="macro" data-ref="_M/_USING_LIBCXX">_USING_LIBCXX</span>  // Prevent using of &lt;atomic&gt;.</u></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../include/stdatomic.h.html">&lt;stdatomic.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../private/bionic_futex.h.html">"private/bionic_futex.h"</a></u></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><i>// This file contains C++ ABI support functions for one time</i></td></tr>
+<tr><th id="27">27</th><td><i>// constructors as defined in the "Run-time ABI for the ARM Architecture"</i></td></tr>
+<tr><th id="28">28</th><td><i>// section 4.4.2</i></td></tr>
+<tr><th id="29">29</th><td><i>//</i></td></tr>
+<tr><th id="30">30</th><td><i>// ARM C++ ABI and Itanium/x86 C++ ABI has different definition for</i></td></tr>
+<tr><th id="31">31</th><td><i>// one time construction:</i></td></tr>
+<tr><th id="32">32</th><td><i>//</i></td></tr>
+<tr><th id="33">33</th><td><i>//    ARM C++ ABI defines the LSB of guard variable should be tested</i></td></tr>
+<tr><th id="34">34</th><td><i>//    by compiler-generated code before calling __cxa_guard_acquire et al.</i></td></tr>
+<tr><th id="35">35</th><td><i>//</i></td></tr>
+<tr><th id="36">36</th><td><i>//    The Itanium/x86 C++ ABI defines the low-order _byte_ should be</i></td></tr>
+<tr><th id="37">37</th><td><i>//    tested instead.</i></td></tr>
+<tr><th id="38">38</th><td><i>//</i></td></tr>
+<tr><th id="39">39</th><td><i>//    Meanwhile, guard variable are 32bit aligned for ARM, and 64bit</i></td></tr>
+<tr><th id="40">40</th><td><i>//    aligned for x86.</i></td></tr>
+<tr><th id="41">41</th><td><i>//</i></td></tr>
+<tr><th id="42">42</th><td><i>// Reference documentation:</i></td></tr>
+<tr><th id="43">43</th><td><i>//</i></td></tr>
+<tr><th id="44">44</th><td><i>//    section 3.2.3 of ARM IHI 0041C (for ARM)</i></td></tr>
+<tr><th id="45">45</th><td><i>//    section 3.3.2 of the Itanium C++ ABI specification v1.83 (for x86).</i></td></tr>
+<tr><th id="46">46</th><td><i>//</i></td></tr>
+<tr><th id="47">47</th><td><i>// There is no C++ ABI available for other ARCH. But the gcc source</i></td></tr>
+<tr><th id="48">48</th><td><i>// shows all other ARCH follow the definition of Itanium/x86 C++ ABI.</i></td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td><u>#<span data-ppcond="50">if</span> defined(<span class="macro" data-ref="_M/__arm__">__arm__</span>)</u></td></tr>
+<tr><th id="51">51</th><td><i>// The ARM C++ ABI mandates that guard variables are 32-bit aligned, 32-bit</i></td></tr>
+<tr><th id="52">52</th><td><i>// values. The LSB is tested by the compiler-generated code before calling</i></td></tr>
+<tr><th id="53">53</th><td><i>// __cxa_guard_acquire.</i></td></tr>
+<tr><th id="54">54</th><td><b>union</b> _guard_t {</td></tr>
+<tr><th id="55">55</th><td>  atomic_int state;</td></tr>
+<tr><th id="56">56</th><td>  int32_t aligner;</td></tr>
+<tr><th id="57">57</th><td>};</td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#<span data-ppcond="50">else</span></u></td></tr>
+<tr><th id="60">60</th><td><i>// The Itanium/x86 C++ ABI (used by all other architectures) mandates that</i></td></tr>
+<tr><th id="61">61</th><td><i>// guard variables are 64-bit aligned, 64-bit values. The LSB is tested by</i></td></tr>
+<tr><th id="62">62</th><td><i>// the compiler-generated code before calling __cxa_guard_acquire.</i></td></tr>
+<tr><th id="63">63</th><td><b>union</b> <dfn class="type def" id="_guard_t" title='_guard_t' data-ref="_guard_t">_guard_t</dfn> {</td></tr>
+<tr><th id="64">64</th><td>  <a class="typedef" href="../include/stdatomic.h.html#atomic_int" title='atomic_int' data-type='_Atomic(int)' data-ref="atomic_int">atomic_int</a> <dfn class="tu decl" id="_guard_t::state" title='_guard_t::state' data-type='atomic_int' data-ref="_guard_t::state">state</dfn>;</td></tr>
+<tr><th id="65">65</th><td>  <a class="typedef" href="../include/stdint.h.html#int64_t" title='int64_t' data-type='__int64_t' data-ref="int64_t">int64_t</a> <dfn class="tu decl" id="_guard_t::aligner" title='_guard_t::aligner' data-type='int64_t' data-ref="_guard_t::aligner">aligner</dfn>;</td></tr>
+<tr><th id="66">66</th><td>};</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="50">endif</span></u></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><i>// Set construction state values according to reference documentation.</i></td></tr>
+<tr><th id="71">71</th><td><i>// 0 is the initialization value.</i></td></tr>
+<tr><th id="72">72</th><td><i>// Arm requires ((*gv &amp; 1) == 1) after __cxa_guard_release, ((*gv &amp; 3) == 0) after __cxa_guard_abort.</i></td></tr>
+<tr><th id="73">73</th><td><i>// X86 requires first byte not modified by __cxa_guard_acquire, first byte is non-zero after</i></td></tr>
+<tr><th id="74">74</th><td><i>// __cxa_guard_release.</i></td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><u>#define <dfn class="macro" id="_M/CONSTRUCTION_NOT_YET_STARTED" data-ref="_M/CONSTRUCTION_NOT_YET_STARTED">CONSTRUCTION_NOT_YET_STARTED</dfn>                0</u></td></tr>
+<tr><th id="77">77</th><td><u>#define <dfn class="macro" id="_M/CONSTRUCTION_COMPLETE" data-ref="_M/CONSTRUCTION_COMPLETE">CONSTRUCTION_COMPLETE</dfn>                       1</u></td></tr>
+<tr><th id="78">78</th><td><u>#define <dfn class="macro" id="_M/CONSTRUCTION_UNDERWAY_WITHOUT_WAITER" data-ref="_M/CONSTRUCTION_UNDERWAY_WITHOUT_WAITER">CONSTRUCTION_UNDERWAY_WITHOUT_WAITER</dfn>    0x100</u></td></tr>
+<tr><th id="79">79</th><td><u>#define <dfn class="macro" id="_M/CONSTRUCTION_UNDERWAY_WITH_WAITER" data-ref="_M/CONSTRUCTION_UNDERWAY_WITH_WAITER">CONSTRUCTION_UNDERWAY_WITH_WAITER</dfn>       0x200</u></td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><b>extern</b> <q>"C"</q> <em>int</em> <dfn class="decl def" id="__cxa_guard_acquire" title='__cxa_guard_acquire' data-ref="__cxa_guard_acquire">__cxa_guard_acquire</dfn>(<a class="type" href="#_guard_t" title='_guard_t' data-ref="_guard_t">_guard_t</a>* <dfn class="local col8 decl" id="248gv" title='gv' data-type='_guard_t *' data-ref="248gv">gv</dfn>) {</td></tr>
+<tr><th id="82">82</th><td>  <em>int</em> <dfn class="local col9 decl" id="249old_value" title='old_value' data-type='int' data-ref="249old_value">old_value</dfn> = <a class="macro" href="../include/stdatomic.h.html#423" title="__c11_atomic_load(&amp;gv-&gt;state, memory_order_relaxed)" data-ref="_M/atomic_load_explicit">atomic_load_explicit</a>(&amp;<a class="local col8 ref" href="#248gv" title='gv' data-ref="248gv">gv</a>-&gt;<a class="tu ref" href="#_guard_t::state" title='_guard_t::state' data-use='a' data-ref="_guard_t::state">state</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>);</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td>  <b>while</b> (<span class="macro" title="true" data-ref="_M/true"><b>true</b></span>) {</td></tr>
+<tr><th id="85">85</th><td>    <b>if</b> (<a class="local col9 ref" href="#249old_value" title='old_value' data-ref="249old_value">old_value</a> == <a class="macro" href="#77" title="1" data-ref="_M/CONSTRUCTION_COMPLETE">CONSTRUCTION_COMPLETE</a>) {</td></tr>
+<tr><th id="86">86</th><td>      <i>// A load_acquire operation is need before exiting with COMPLETE state, as we have to ensure</i></td></tr>
+<tr><th id="87">87</th><td><i>      // that all the stores performed by the construction function are observable on this CPU</i></td></tr>
+<tr><th id="88">88</th><td><i>      // after we exit.</i></td></tr>
+<tr><th id="89">89</th><td>      <a class="ref" href="../include/stdatomic.h.html#_ZL19atomic_thread_fence12memory_order" title='atomic_thread_fence' data-ref="_ZL19atomic_thread_fence12memory_order">atomic_thread_fence</a>(<a class="enum" href="../include/stdatomic.h.html#memory_order_acquire" title='memory_order_acquire' data-ref="memory_order_acquire">memory_order_acquire</a>);</td></tr>
+<tr><th id="90">90</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="91">91</th><td>    } <b>else</b> <b>if</b> (<a class="local col9 ref" href="#249old_value" title='old_value' data-ref="249old_value">old_value</a> == <a class="macro" href="#76" title="0" data-ref="_M/CONSTRUCTION_NOT_YET_STARTED">CONSTRUCTION_NOT_YET_STARTED</a>) {</td></tr>
+<tr><th id="92">92</th><td>      <b>if</b> (!<a class="macro" href="../include/stdatomic.h.html#407" title="__c11_atomic_compare_exchange_weak(&amp;gv-&gt;state, &amp;old_value, 0x100, memory_order_relaxed, memory_order_relaxed)" data-ref="_M/atomic_compare_exchange_weak_explicit">atomic_compare_exchange_weak_explicit</a>(&amp;<a class="local col8 ref" href="#248gv" title='gv' data-ref="248gv">gv</a>-&gt;<a class="tu ref" href="#_guard_t::state" title='_guard_t::state' data-use='a' data-ref="_guard_t::state">state</a>, &amp;<a class="local col9 ref" href="#249old_value" title='old_value' data-ref="249old_value">old_value</a>,</td></tr>
+<tr><th id="93">93</th><td>                                                  <a class="macro" href="#78" title="0x100" data-ref="_M/CONSTRUCTION_UNDERWAY_WITHOUT_WAITER">CONSTRUCTION_UNDERWAY_WITHOUT_WAITER</a>,</td></tr>
+<tr><th id="94">94</th><td>                                                  <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>,</td></tr>
+<tr><th id="95">95</th><td>                                                  <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>)) {</td></tr>
+<tr><th id="96">96</th><td>        <b>continue</b>;</td></tr>
+<tr><th id="97">97</th><td>      }</td></tr>
+<tr><th id="98">98</th><td>      <i>// The acquire fence may not be needed. But as described in section 3.3.2 of</i></td></tr>
+<tr><th id="99">99</th><td><i>      // the Itanium C++ ABI specification, it probably has to behave like the</i></td></tr>
+<tr><th id="100">100</th><td><i>      // acquisition of a mutex, which needs an acquire fence.</i></td></tr>
+<tr><th id="101">101</th><td>      <a class="ref" href="../include/stdatomic.h.html#_ZL19atomic_thread_fence12memory_order" title='atomic_thread_fence' data-ref="_ZL19atomic_thread_fence12memory_order">atomic_thread_fence</a>(<a class="enum" href="../include/stdatomic.h.html#memory_order_acquire" title='memory_order_acquire' data-ref="memory_order_acquire">memory_order_acquire</a>);</td></tr>
+<tr><th id="102">102</th><td>      <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="103">103</th><td>    } <b>else</b> <b>if</b> (<a class="local col9 ref" href="#249old_value" title='old_value' data-ref="249old_value">old_value</a> == <a class="macro" href="#78" title="0x100" data-ref="_M/CONSTRUCTION_UNDERWAY_WITHOUT_WAITER">CONSTRUCTION_UNDERWAY_WITHOUT_WAITER</a>) {</td></tr>
+<tr><th id="104">104</th><td>      <b>if</b> (!<a class="macro" href="../include/stdatomic.h.html#407" title="__c11_atomic_compare_exchange_weak(&amp;gv-&gt;state, &amp;old_value, 0x200, memory_order_relaxed, memory_order_relaxed)" data-ref="_M/atomic_compare_exchange_weak_explicit">atomic_compare_exchange_weak_explicit</a>(&amp;<a class="local col8 ref" href="#248gv" title='gv' data-ref="248gv">gv</a>-&gt;<a class="tu ref" href="#_guard_t::state" title='_guard_t::state' data-use='a' data-ref="_guard_t::state">state</a>, &amp;<a class="local col9 ref" href="#249old_value" title='old_value' data-ref="249old_value">old_value</a>,</td></tr>
+<tr><th id="105">105</th><td>                                                 <a class="macro" href="#79" title="0x200" data-ref="_M/CONSTRUCTION_UNDERWAY_WITH_WAITER">CONSTRUCTION_UNDERWAY_WITH_WAITER</a>,</td></tr>
+<tr><th id="106">106</th><td>                                                 <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>,</td></tr>
+<tr><th id="107">107</th><td>                                                 <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>)) {</td></tr>
+<tr><th id="108">108</th><td>        <b>continue</b>;</td></tr>
+<tr><th id="109">109</th><td>      }</td></tr>
+<tr><th id="110">110</th><td>    }</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td>    <a class="ref" href="../private/bionic_futex.h.html#__futex_wait_ex" title='__futex_wait_ex' data-ref="__futex_wait_ex">__futex_wait_ex</a>(&amp;<a class="local col8 ref" href="#248gv" title='gv' data-ref="248gv">gv</a>-&gt;<a class="tu ref" href="#_guard_t::state" title='_guard_t::state' data-use='a' data-ref="_guard_t::state">state</a>, <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>, <a class="macro" href="#79" title="0x200" data-ref="_M/CONSTRUCTION_UNDERWAY_WITH_WAITER">CONSTRUCTION_UNDERWAY_WITH_WAITER</a>, <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>, <b>nullptr</b>);</td></tr>
+<tr><th id="113">113</th><td>    <a class="local col9 ref" href="#249old_value" title='old_value' data-ref="249old_value">old_value</a> = <a class="macro" href="../include/stdatomic.h.html#423" title="__c11_atomic_load(&amp;gv-&gt;state, memory_order_relaxed)" data-ref="_M/atomic_load_explicit">atomic_load_explicit</a>(&amp;<a class="local col8 ref" href="#248gv" title='gv' data-ref="248gv">gv</a>-&gt;<a class="tu ref" href="#_guard_t::state" title='_guard_t::state' data-use='a' data-ref="_guard_t::state">state</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_relaxed" title='memory_order_relaxed' data-ref="memory_order_relaxed">memory_order_relaxed</a>);</td></tr>
+<tr><th id="114">114</th><td>  }</td></tr>
+<tr><th id="115">115</th><td>}</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><b>extern</b> <q>"C"</q> <em>void</em> <dfn class="decl def" id="__cxa_guard_release" title='__cxa_guard_release' data-ref="__cxa_guard_release">__cxa_guard_release</dfn>(<a class="type" href="#_guard_t" title='_guard_t' data-ref="_guard_t">_guard_t</a>* <dfn class="local col0 decl" id="250gv" title='gv' data-type='_guard_t *' data-ref="250gv">gv</dfn>) {</td></tr>
+<tr><th id="118">118</th><td>  <i>// Release fence is used to make all stores performed by the construction function</i></td></tr>
+<tr><th id="119">119</th><td><i>  // visible in other threads.</i></td></tr>
+<tr><th id="120">120</th><td>  <em>int</em> <dfn class="local col1 decl" id="251old_value" title='old_value' data-type='int' data-ref="251old_value">old_value</dfn> = <a class="macro" href="../include/stdatomic.h.html#411" title="__c11_atomic_exchange(&amp;gv-&gt;state, 1, memory_order_release)" data-ref="_M/atomic_exchange_explicit">atomic_exchange_explicit</a>(&amp;<a class="local col0 ref" href="#250gv" title='gv' data-ref="250gv">gv</a>-&gt;<a class="tu ref" href="#_guard_t::state" title='_guard_t::state' data-use='a' data-ref="_guard_t::state">state</a>, <a class="macro" href="#77" title="1" data-ref="_M/CONSTRUCTION_COMPLETE">CONSTRUCTION_COMPLETE</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_release" title='memory_order_release' data-ref="memory_order_release">memory_order_release</a>);</td></tr>
+<tr><th id="121">121</th><td>  <b>if</b> (<a class="local col1 ref" href="#251old_value" title='old_value' data-ref="251old_value">old_value</a> == <a class="macro" href="#79" title="0x200" data-ref="_M/CONSTRUCTION_UNDERWAY_WITH_WAITER">CONSTRUCTION_UNDERWAY_WITH_WAITER</a>) {</td></tr>
+<tr><th id="122">122</th><td>    <a class="ref" href="../private/bionic_futex.h.html#__futex_wake_ex" title='__futex_wake_ex' data-ref="__futex_wake_ex">__futex_wake_ex</a>(&amp;<a class="local col0 ref" href="#250gv" title='gv' data-ref="250gv">gv</a>-&gt;<a class="tu ref" href="#_guard_t::state" title='_guard_t::state' data-use='a' data-ref="_guard_t::state">state</a>, <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>, <a class="macro" href="../include/sys/limits.h.html#53" title="0x7fffffff" data-ref="_M/INT_MAX">INT_MAX</a>);</td></tr>
+<tr><th id="123">123</th><td>  }</td></tr>
+<tr><th id="124">124</th><td>}</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td><b>extern</b> <q>"C"</q> <em>void</em> <dfn class="decl def" id="__cxa_guard_abort" title='__cxa_guard_abort' data-ref="__cxa_guard_abort">__cxa_guard_abort</dfn>(<a class="type" href="#_guard_t" title='_guard_t' data-ref="_guard_t">_guard_t</a>* <dfn class="local col2 decl" id="252gv" title='gv' data-type='_guard_t *' data-ref="252gv">gv</dfn>) {</td></tr>
+<tr><th id="127">127</th><td>  <i>// Release fence is used to make all stores performed by the construction function</i></td></tr>
+<tr><th id="128">128</th><td><i>  // visible in other threads.</i></td></tr>
+<tr><th id="129">129</th><td>  <em>int</em> <dfn class="local col3 decl" id="253old_value" title='old_value' data-type='int' data-ref="253old_value">old_value</dfn> = <a class="macro" href="../include/stdatomic.h.html#411" title="__c11_atomic_exchange(&amp;gv-&gt;state, 0, memory_order_release)" data-ref="_M/atomic_exchange_explicit">atomic_exchange_explicit</a>(&amp;<a class="local col2 ref" href="#252gv" title='gv' data-ref="252gv">gv</a>-&gt;<a class="tu ref" href="#_guard_t::state" title='_guard_t::state' data-use='a' data-ref="_guard_t::state">state</a>, <a class="macro" href="#76" title="0" data-ref="_M/CONSTRUCTION_NOT_YET_STARTED">CONSTRUCTION_NOT_YET_STARTED</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_release" title='memory_order_release' data-ref="memory_order_release">memory_order_release</a>);</td></tr>
+<tr><th id="130">130</th><td>  <b>if</b> (<a class="local col3 ref" href="#253old_value" title='old_value' data-ref="253old_value">old_value</a> == <a class="macro" href="#79" title="0x200" data-ref="_M/CONSTRUCTION_UNDERWAY_WITH_WAITER">CONSTRUCTION_UNDERWAY_WITH_WAITER</a>) {</td></tr>
+<tr><th id="131">131</th><td>    <a class="ref" href="../private/bionic_futex.h.html#__futex_wake_ex" title='__futex_wake_ex' data-ref="__futex_wake_ex">__futex_wake_ex</a>(&amp;<a class="local col2 ref" href="#252gv" title='gv' data-ref="252gv">gv</a>-&gt;<a class="tu ref" href="#_guard_t::state" title='_guard_t::state' data-use='a' data-ref="_guard_t::state">state</a>, <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>, <a class="macro" href="../include/sys/limits.h.html#53" title="0x7fffffff" data-ref="_M/INT_MAX">INT_MAX</a>);</td></tr>
+<tr><th id="132">132</th><td>  }</td></tr>
+<tr><th id="133">133</th><td>}</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

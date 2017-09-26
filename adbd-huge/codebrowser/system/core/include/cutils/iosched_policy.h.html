@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>iosched_policy.h source code [codebrowser/system/core/include/cutils/iosched_policy.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/include/cutils/iosched_policy.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>system</a>/<a href='../..'>core</a>/<a href='..'>include</a>/<a href='./'>cutils</a>/<a href='iosched_policy.h.html'>iosched_policy.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2007 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/__CUTILS_IOSCHED_POLICY_H">__CUTILS_IOSCHED_POLICY_H</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/__CUTILS_IOSCHED_POLICY_H" data-ref="_M/__CUTILS_IOSCHED_POLICY_H">__CUTILS_IOSCHED_POLICY_H</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#<span data-ppcond="20">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="21">21</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="22">22</th><td><u>#<span data-ppcond="20">endif</span></u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><b>typedef</b> <b>enum</b> {</td></tr>
+<tr><th id="25">25</th><td>    <dfn class="enum" id="IoSchedClass_NONE" title='IoSchedClass_NONE' data-ref="IoSchedClass_NONE">IoSchedClass_NONE</dfn>,</td></tr>
+<tr><th id="26">26</th><td>    <dfn class="enum" id="IoSchedClass_RT" title='IoSchedClass_RT' data-ref="IoSchedClass_RT">IoSchedClass_RT</dfn>,</td></tr>
+<tr><th id="27">27</th><td>    <dfn class="enum" id="IoSchedClass_BE" title='IoSchedClass_BE' data-ref="IoSchedClass_BE">IoSchedClass_BE</dfn>,</td></tr>
+<tr><th id="28">28</th><td>    <dfn class="enum" id="IoSchedClass_IDLE" title='IoSchedClass_IDLE' data-ref="IoSchedClass_IDLE">IoSchedClass_IDLE</dfn>,</td></tr>
+<tr><th id="29">29</th><td>} <dfn class="typedef" id="IoSchedClass" title='IoSchedClass' data-type='enum IoSchedClass' data-ref="IoSchedClass">IoSchedClass</dfn>;</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><b>extern</b> <em>int</em> <a class="decl" href="../../libcutils/iosched_policy.c.html#android_set_ioprio" title='android_set_ioprio' data-ref="android_set_ioprio" id="android_set_ioprio">android_set_ioprio</a>(<em>int</em> <dfn class="local col1 decl" id="1pid" title='pid' data-type='int' data-ref="1pid">pid</dfn>, <a class="typedef" href="#IoSchedClass" title='IoSchedClass' data-type='enum IoSchedClass' data-ref="IoSchedClass">IoSchedClass</a> <dfn class="local col2 decl" id="2clazz" title='clazz' data-type='IoSchedClass' data-ref="2clazz">clazz</dfn>, <em>int</em> <dfn class="local col3 decl" id="3ioprio" title='ioprio' data-type='int' data-ref="3ioprio">ioprio</dfn>);</td></tr>
+<tr><th id="32">32</th><td><b>extern</b> <em>int</em> <a class="decl" href="../../libcutils/iosched_policy.c.html#android_get_ioprio" title='android_get_ioprio' data-ref="android_get_ioprio" id="android_get_ioprio">android_get_ioprio</a>(<em>int</em> <dfn class="local col4 decl" id="4pid" title='pid' data-type='int' data-ref="4pid">pid</dfn>, <a class="typedef" href="#IoSchedClass" title='IoSchedClass' data-type='enum IoSchedClass' data-ref="IoSchedClass">IoSchedClass</a> *<dfn class="local col5 decl" id="5clazz" title='clazz' data-type='IoSchedClass *' data-ref="5clazz">clazz</dfn>, <em>int</em> *<dfn class="local col6 decl" id="6ioprio" title='ioprio' data-type='int *' data-ref="6ioprio">ioprio</dfn>);</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#<span data-ppcond="34">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="35">35</th><td>}</td></tr>
+<tr><th id="36">36</th><td><u>#<span data-ppcond="34">endif</span></u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#<span data-ppcond="17">endif</span> /* __CUTILS_IOSCHED_POLICY_H */</u> </td></tr>
+<tr><th id="39">39</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../libcutils/iosched_policy.c.html'>codebrowser/system/core/libcutils/iosched_policy.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

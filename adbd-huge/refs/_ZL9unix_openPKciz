@@ -1,0 +1,17 @@
+<def f='codebrowser/system/core/adb/sysdeps.h' l='522' ll='537' type='int unix_open(const char * path, int options)'/>
+<doc f='codebrowser/system/core/adb/sysdeps.h' l='513'>// Open a file and return a file descriptor that may be used with unix_read(),
+// unix_write(), unix_close(), but not adb_read(), adb_write(), adb_close().
+//
+// On Unix, this is based on open(), so the file descriptor is a real OS file
+// descriptor, but the Windows implementation (in sysdeps_win32.cpp) returns a
+// file descriptor that can only be used with C Runtime APIs (which are wrapped
+// by unix_read(), unix_write(), unix_close()). Also, the C Runtime has
+// configurable CR/LF translation which defaults to text mode, but is settable
+// with _setmode().</doc>
+<use f='codebrowser/system/core/adb/adb_trace.cpp' l='66' u='c' c='_Z16start_device_logv'/>
+<use f='codebrowser/system/core/adb/adb_utils.cpp' l='47' u='c' c='_Z11close_stdinv'/>
+<use f='codebrowser/system/core/adb/remount_service.cpp' l='78' u='c' c='_Z26make_block_device_writableRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE'/>
+<use f='codebrowser/system/core/adb/services.cpp' l='306' u='c' c='_Z13service_to_fdPKcPK10atransport'/>
+<use f='codebrowser/system/core/adb/usb_linux_client.cpp' l='251' u='c' c='_ZL19usb_adb_open_threadPv'/>
+<use f='codebrowser/system/core/adb/usb_linux_client.cpp' l='254' u='c' c='_ZL19usb_adb_open_threadPv'/>
+<use f='codebrowser/system/core/adb/usb_linux_client.cpp' l='339' u='c' c='_ZL12usb_adb_initv'/>

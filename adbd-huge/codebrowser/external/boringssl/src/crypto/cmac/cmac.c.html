@@ -1,0 +1,258 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>cmac.c source code [codebrowser/external/boringssl/src/crypto/cmac/cmac.c] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="cmac_ctx_st "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/cmac/cmac.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>cmac</a>/<a href='cmac.c.html'>cmac.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 2010 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="5">5</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="6">6</th><td><i> * are met:</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *</i></td></tr>
+<tr><th id="11">11</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="12">12</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="13">13</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="14">14</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="15">15</th><td><i> *</i></td></tr>
+<tr><th id="16">16</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="17">17</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="18">18</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="19">19</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="20">20</th><td><i> *</i></td></tr>
+<tr><th id="21">21</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="22">22</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="23">23</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="24">24</th><td><i> *    licensing@OpenSSL.org.</i></td></tr>
+<tr><th id="25">25</th><td><i> *</i></td></tr>
+<tr><th id="26">26</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="27">27</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="28">28</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="29">29</th><td><i> *</i></td></tr>
+<tr><th id="30">30</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="31">31</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="33">33</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *</i></td></tr>
+<tr><th id="35">35</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="36">36</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="37">37</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="38">38</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="39">39</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="40">40</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="41">41</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="42">42</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="43">43</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="44">44</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="45">45</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="46">46</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="47">47</th><td><i> * ==================================================================== */</i></td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><u>#include <a href="../../include/openssl/cmac.h.html">&lt;openssl/cmac.h&gt;</a></u></td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/assert.h.html">&lt;assert.h&gt;</a></u></td></tr>
+<tr><th id="52">52</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><u>#include <a href="../../include/openssl/aes.h.html">&lt;openssl/aes.h&gt;</a></u></td></tr>
+<tr><th id="55">55</th><td><u>#include <a href="../../include/openssl/cipher.h.html">&lt;openssl/cipher.h&gt;</a></u></td></tr>
+<tr><th id="56">56</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><b>struct</b> <dfn class="type def" id="cmac_ctx_st" title='cmac_ctx_st' data-ref="cmac_ctx_st">cmac_ctx_st</dfn> {</td></tr>
+<tr><th id="60">60</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#EVP_CIPHER_CTX" title='EVP_CIPHER_CTX' data-type='struct evp_cipher_ctx_st' data-ref="EVP_CIPHER_CTX">EVP_CIPHER_CTX</a> <dfn class="decl" id="cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</dfn>;</td></tr>
+<tr><th id="61">61</th><td>  <i>/* k1 and k2 are the CMAC subkeys. See</i></td></tr>
+<tr><th id="62">62</th><td><i>   * <a href="https://tools.ietf.org/html/rfc4493#section-2.3">https://tools.ietf.org/html/rfc4493#section-2.3</a> */</i></td></tr>
+<tr><th id="63">63</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="cmac_ctx_st::k1" title='cmac_ctx_st::k1' data-ref="cmac_ctx_st::k1">k1</dfn>[<a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>];</td></tr>
+<tr><th id="64">64</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="cmac_ctx_st::k2" title='cmac_ctx_st::k2' data-ref="cmac_ctx_st::k2">k2</dfn>[<a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>];</td></tr>
+<tr><th id="65">65</th><td>  <i>/* Last (possibly partial) scratch */</i></td></tr>
+<tr><th id="66">66</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="cmac_ctx_st::block" title='cmac_ctx_st::block' data-ref="cmac_ctx_st::block">block</dfn>[<a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>];</td></tr>
+<tr><th id="67">67</th><td>  <i>/* block_used contains the number of valid bytes in |block|. */</i></td></tr>
+<tr><th id="68">68</th><td>  <em>unsigned</em> <dfn class="decl" id="cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</dfn>;</td></tr>
+<tr><th id="69">69</th><td>};</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="CMAC_CTX_init" title='CMAC_CTX_init' data-type='void CMAC_CTX_init(CMAC_CTX * ctx)' data-ref="CMAC_CTX_init">CMAC_CTX_init</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col9 decl" id="19ctx" title='ctx' data-type='CMAC_CTX *' data-ref="19ctx">ctx</dfn>) {</td></tr>
+<tr><th id="72">72</th><td>  <a class="ref" href="../../include/openssl/cipher.h.html#EVP_CIPHER_CTX_init" title='EVP_CIPHER_CTX_init' data-ref="EVP_CIPHER_CTX_init">EVP_CIPHER_CTX_init</a>(&amp;<a class="local col9 ref" href="#19ctx" title='ctx' data-ref="19ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</a>);</td></tr>
+<tr><th id="73">73</th><td>}</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="CMAC_CTX_cleanup" title='CMAC_CTX_cleanup' data-type='void CMAC_CTX_cleanup(CMAC_CTX * ctx)' data-ref="CMAC_CTX_cleanup">CMAC_CTX_cleanup</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col0 decl" id="20ctx" title='ctx' data-type='CMAC_CTX *' data-ref="20ctx">ctx</dfn>) {</td></tr>
+<tr><th id="76">76</th><td>  <a class="ref" href="../../include/openssl/cipher.h.html#EVP_CIPHER_CTX_cleanup" title='EVP_CIPHER_CTX_cleanup' data-ref="EVP_CIPHER_CTX_cleanup">EVP_CIPHER_CTX_cleanup</a>(&amp;<a class="local col0 ref" href="#20ctx" title='ctx' data-ref="20ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</a>);</td></tr>
+<tr><th id="77">77</th><td>  <a class="ref" href="../../include/openssl/mem.h.html#OPENSSL_cleanse" title='OPENSSL_cleanse' data-ref="OPENSSL_cleanse">OPENSSL_cleanse</a>(<a class="local col0 ref" href="#20ctx" title='ctx' data-ref="20ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::k1" title='cmac_ctx_st::k1' data-ref="cmac_ctx_st::k1">k1</a>, <b>sizeof</b>(<a class="local col0 ref" href="#20ctx" title='ctx' data-ref="20ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::k1" title='cmac_ctx_st::k1' data-ref="cmac_ctx_st::k1">k1</a>));</td></tr>
+<tr><th id="78">78</th><td>  <a class="ref" href="../../include/openssl/mem.h.html#OPENSSL_cleanse" title='OPENSSL_cleanse' data-ref="OPENSSL_cleanse">OPENSSL_cleanse</a>(<a class="local col0 ref" href="#20ctx" title='ctx' data-ref="20ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::k2" title='cmac_ctx_st::k2' data-ref="cmac_ctx_st::k2">k2</a>, <b>sizeof</b>(<a class="local col0 ref" href="#20ctx" title='ctx' data-ref="20ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::k2" title='cmac_ctx_st::k2' data-ref="cmac_ctx_st::k2">k2</a>));</td></tr>
+<tr><th id="79">79</th><td>  <a class="ref" href="../../include/openssl/mem.h.html#OPENSSL_cleanse" title='OPENSSL_cleanse' data-ref="OPENSSL_cleanse">OPENSSL_cleanse</a>(<a class="local col0 ref" href="#20ctx" title='ctx' data-ref="20ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block" title='cmac_ctx_st::block' data-ref="cmac_ctx_st::block">block</a>, <b>sizeof</b>(<a class="local col0 ref" href="#20ctx" title='ctx' data-ref="20ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block" title='cmac_ctx_st::block' data-ref="cmac_ctx_st::block">block</a>));</td></tr>
+<tr><th id="80">80</th><td>}</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><em>int</em> <dfn class="decl def" id="AES_CMAC" title='AES_CMAC' data-ref="AES_CMAC">AES_CMAC</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col1 decl" id="21out" title='out' data-type='uint8_t *' data-ref="21out">out</dfn>[<var>16</var>], <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col2 decl" id="22key" title='key' data-type='const uint8_t *' data-ref="22key">key</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="23key_len" title='key_len' data-type='size_t' data-ref="23key_len">key_len</dfn>,</td></tr>
+<tr><th id="83">83</th><td>             <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="24in" title='in' data-type='const uint8_t *' data-ref="24in">in</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="25in_len" title='in_len' data-type='size_t' data-ref="25in_len">in_len</dfn>) {</td></tr>
+<tr><th id="84">84</th><td>  <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#EVP_CIPHER" title='EVP_CIPHER' data-type='struct evp_cipher_st' data-ref="EVP_CIPHER">EVP_CIPHER</a> *<dfn class="local col6 decl" id="26cipher" title='cipher' data-type='const EVP_CIPHER *' data-ref="26cipher">cipher</dfn>;</td></tr>
+<tr><th id="85">85</th><td>  <b>switch</b> (<a class="local col3 ref" href="#23key_len" title='key_len' data-ref="23key_len">key_len</a>) {</td></tr>
+<tr><th id="86">86</th><td>    <b>case</b> <var>16</var>:</td></tr>
+<tr><th id="87">87</th><td>      <a class="local col6 ref" href="#26cipher" title='cipher' data-ref="26cipher">cipher</a> = <a class="ref" href="../../include/openssl/cipher.h.html#EVP_aes_128_cbc" title='EVP_aes_128_cbc' data-ref="EVP_aes_128_cbc">EVP_aes_128_cbc</a>();</td></tr>
+<tr><th id="88">88</th><td>      <b>break</b>;</td></tr>
+<tr><th id="89">89</th><td>    <b>case</b> <var>32</var>:</td></tr>
+<tr><th id="90">90</th><td>      <a class="local col6 ref" href="#26cipher" title='cipher' data-ref="26cipher">cipher</a> = <a class="ref" href="../../include/openssl/cipher.h.html#EVP_aes_256_cbc" title='EVP_aes_256_cbc' data-ref="EVP_aes_256_cbc">EVP_aes_256_cbc</a>();</td></tr>
+<tr><th id="91">91</th><td>      <b>break</b>;</td></tr>
+<tr><th id="92">92</th><td>    <b>default</b>:</td></tr>
+<tr><th id="93">93</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="94">94</th><td>  }</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="27scratch_out_len" title='scratch_out_len' data-type='size_t' data-ref="27scratch_out_len">scratch_out_len</dfn>;</td></tr>
+<tr><th id="97">97</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> <dfn class="local col8 decl" id="28ctx" title='ctx' data-type='CMAC_CTX' data-ref="28ctx">ctx</dfn>;</td></tr>
+<tr><th id="98">98</th><td>  <a class="tu ref" href="#CMAC_CTX_init" title='CMAC_CTX_init' data-use='c' data-ref="CMAC_CTX_init">CMAC_CTX_init</a>(&amp;<a class="local col8 ref" href="#28ctx" title='ctx' data-ref="28ctx">ctx</a>);</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td>  <em>const</em> <em>int</em> <dfn class="local col9 decl" id="29ok" title='ok' data-type='const int' data-ref="29ok">ok</dfn> = <a class="ref" href="#CMAC_Init" title='CMAC_Init' data-ref="CMAC_Init">CMAC_Init</a>(&amp;<a class="local col8 ref" href="#28ctx" title='ctx' data-ref="28ctx">ctx</a>, <a class="local col2 ref" href="#22key" title='key' data-ref="22key">key</a>, <a class="local col3 ref" href="#23key_len" title='key_len' data-ref="23key_len">key_len</a>, <a class="local col6 ref" href="#26cipher" title='cipher' data-ref="26cipher">cipher</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> <i>/* engine */</i>) &amp;&amp;</td></tr>
+<tr><th id="101">101</th><td>                 <a class="ref" href="#CMAC_Update" title='CMAC_Update' data-ref="CMAC_Update">CMAC_Update</a>(&amp;<a class="local col8 ref" href="#28ctx" title='ctx' data-ref="28ctx">ctx</a>, <a class="local col4 ref" href="#24in" title='in' data-ref="24in">in</a>, <a class="local col5 ref" href="#25in_len" title='in_len' data-ref="25in_len">in_len</a>) &amp;&amp;</td></tr>
+<tr><th id="102">102</th><td>                 <a class="ref" href="#CMAC_Final" title='CMAC_Final' data-ref="CMAC_Final">CMAC_Final</a>(&amp;<a class="local col8 ref" href="#28ctx" title='ctx' data-ref="28ctx">ctx</a>, <a class="local col1 ref" href="#21out" title='out' data-ref="21out">out</a>, &amp;<a class="local col7 ref" href="#27scratch_out_len" title='scratch_out_len' data-ref="27scratch_out_len">scratch_out_len</a>);</td></tr>
+<tr><th id="103">103</th><td></td></tr>
+<tr><th id="104">104</th><td>  <a class="tu ref" href="#CMAC_CTX_cleanup" title='CMAC_CTX_cleanup' data-use='c' data-ref="CMAC_CTX_cleanup">CMAC_CTX_cleanup</a>(&amp;<a class="local col8 ref" href="#28ctx" title='ctx' data-ref="28ctx">ctx</a>);</td></tr>
+<tr><th id="105">105</th><td>  <b>return</b> <a class="local col9 ref" href="#29ok" title='ok' data-ref="29ok">ok</a>;</td></tr>
+<tr><th id="106">106</th><td>}</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td><a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="decl def" id="CMAC_CTX_new" title='CMAC_CTX_new' data-ref="CMAC_CTX_new">CMAC_CTX_new</dfn>(<em>void</em>) {</td></tr>
+<tr><th id="109">109</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col0 decl" id="30ctx" title='ctx' data-type='CMAC_CTX *' data-ref="30ctx">ctx</dfn> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<b>sizeof</b>(*<a class="local col0 ref" href="#30ctx" title='ctx' data-ref="30ctx">ctx</a>));</td></tr>
+<tr><th id="110">110</th><td>  <b>if</b> (<a class="local col0 ref" href="#30ctx" title='ctx' data-ref="30ctx">ctx</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="111">111</th><td>    <a class="tu ref" href="#CMAC_CTX_init" title='CMAC_CTX_init' data-use='c' data-ref="CMAC_CTX_init">CMAC_CTX_init</a>(<a class="local col0 ref" href="#30ctx" title='ctx' data-ref="30ctx">ctx</a>);</td></tr>
+<tr><th id="112">112</th><td>  }</td></tr>
+<tr><th id="113">113</th><td>  <b>return</b> <a class="local col0 ref" href="#30ctx" title='ctx' data-ref="30ctx">ctx</a>;</td></tr>
+<tr><th id="114">114</th><td>}</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><em>void</em> <dfn class="decl def" id="CMAC_CTX_free" title='CMAC_CTX_free' data-ref="CMAC_CTX_free">CMAC_CTX_free</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col1 decl" id="31ctx" title='ctx' data-type='CMAC_CTX *' data-ref="31ctx">ctx</dfn>) {</td></tr>
+<tr><th id="117">117</th><td>  <b>if</b> (<a class="local col1 ref" href="#31ctx" title='ctx' data-ref="31ctx">ctx</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="118">118</th><td>    <b>return</b>;</td></tr>
+<tr><th id="119">119</th><td>  }</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td>  <a class="tu ref" href="#CMAC_CTX_cleanup" title='CMAC_CTX_cleanup' data-use='c' data-ref="CMAC_CTX_cleanup">CMAC_CTX_cleanup</a>(<a class="local col1 ref" href="#31ctx" title='ctx' data-ref="31ctx">ctx</a>);</td></tr>
+<tr><th id="122">122</th><td>  <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col1 ref" href="#31ctx" title='ctx' data-ref="31ctx">ctx</a>);</td></tr>
+<tr><th id="123">123</th><td>}</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td><i  data-doc="binary_field_mul_x">/* binary_field_mul_x treats the 128 bits at |in| as an element of GF(2¹²⁸)</i></td></tr>
+<tr><th id="126">126</th><td><i  data-doc="binary_field_mul_x"> * with a hard-coded reduction polynomial and sets |out| as x times the</i></td></tr>
+<tr><th id="127">127</th><td><i  data-doc="binary_field_mul_x"> * input.</i></td></tr>
+<tr><th id="128">128</th><td><i  data-doc="binary_field_mul_x"> *</i></td></tr>
+<tr><th id="129">129</th><td><i  data-doc="binary_field_mul_x"> * See <a href="https://tools.ietf.org/html/rfc4493#section-2.3">https://tools.ietf.org/html/rfc4493#section-2.3</a> */</i></td></tr>
+<tr><th id="130">130</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="binary_field_mul_x" title='binary_field_mul_x' data-type='void binary_field_mul_x(uint8_t * out, const uint8_t * in)' data-ref="binary_field_mul_x">binary_field_mul_x</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col2 decl" id="32out" title='out' data-type='uint8_t *' data-ref="32out">out</dfn>[<var>16</var>], <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col3 decl" id="33in" title='in' data-type='const uint8_t *' data-ref="33in">in</dfn>[<var>16</var>]) {</td></tr>
+<tr><th id="131">131</th><td>  <em>unsigned</em> <dfn class="local col4 decl" id="34i" title='i' data-type='unsigned int' data-ref="34i">i</dfn>;</td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td>  <i>/* Shift |in| to left, including carry. */</i></td></tr>
+<tr><th id="134">134</th><td>  <b>for</b> (<a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a> = <var>0</var>; <a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a> &lt; <var>15</var>; <a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a>++) {</td></tr>
+<tr><th id="135">135</th><td>    <a class="local col2 ref" href="#32out" title='out' data-ref="32out">out</a>[<a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a>] = (<a class="local col3 ref" href="#33in" title='in' data-ref="33in">in</a>[<a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a>] &lt;&lt; <var>1</var>) | (<a class="local col3 ref" href="#33in" title='in' data-ref="33in">in</a>[<a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a>+<var>1</var>] &gt;&gt; <var>7</var>);</td></tr>
+<tr><th id="136">136</th><td>  }</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td>  <i>/* If MSB set fixup with R. */</i></td></tr>
+<tr><th id="139">139</th><td>  <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col5 decl" id="35carry" title='carry' data-type='const uint8_t' data-ref="35carry">carry</dfn> = <a class="local col3 ref" href="#33in" title='in' data-ref="33in">in</a>[<var>0</var>] &gt;&gt; <var>7</var>;</td></tr>
+<tr><th id="140">140</th><td>  <a class="local col2 ref" href="#32out" title='out' data-ref="32out">out</a>[<a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a>] = (<a class="local col3 ref" href="#33in" title='in' data-ref="33in">in</a>[<a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a>] &lt;&lt; <var>1</var>) ^ ((<var>0</var> - <a class="local col5 ref" href="#35carry" title='carry' data-ref="35carry">carry</a>) &amp; <var>0x87</var>);</td></tr>
+<tr><th id="141">141</th><td>}</td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td><em>static</em> <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="tu decl def" id="kZeroIV" title='kZeroIV' data-type='const uint8_t [16]' data-ref="kZeroIV">kZeroIV</dfn>[<a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>] = {<var>0</var>};</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><em>int</em> <dfn class="decl def" id="CMAC_Init" title='CMAC_Init' data-ref="CMAC_Init">CMAC_Init</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col6 decl" id="36ctx" title='ctx' data-type='CMAC_CTX *' data-ref="36ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col7 decl" id="37key" title='key' data-type='const void *' data-ref="37key">key</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="38key_len" title='key_len' data-type='size_t' data-ref="38key_len">key_len</dfn>,</td></tr>
+<tr><th id="146">146</th><td>              <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#EVP_CIPHER" title='EVP_CIPHER' data-type='struct evp_cipher_st' data-ref="EVP_CIPHER">EVP_CIPHER</a> *<dfn class="local col9 decl" id="39cipher" title='cipher' data-type='const EVP_CIPHER *' data-ref="39cipher">cipher</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> *<dfn class="local col0 decl" id="40engine" title='engine' data-type='ENGINE *' data-ref="40engine">engine</dfn>) {</td></tr>
+<tr><th id="147">147</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col1 decl" id="41scratch" title='scratch' data-type='uint8_t [16]' data-ref="41scratch">scratch</dfn>[<a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>];</td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td>  <b>if</b> (<a class="ref" href="../../include/openssl/cipher.h.html#EVP_CIPHER_block_size" title='EVP_CIPHER_block_size' data-ref="EVP_CIPHER_block_size">EVP_CIPHER_block_size</a>(<a class="local col9 ref" href="#39cipher" title='cipher' data-ref="39cipher">cipher</a>) != <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a> ||</td></tr>
+<tr><th id="150">150</th><td>      <a class="ref" href="../../include/openssl/cipher.h.html#EVP_CIPHER_key_length" title='EVP_CIPHER_key_length' data-ref="EVP_CIPHER_key_length">EVP_CIPHER_key_length</a>(<a class="local col9 ref" href="#39cipher" title='cipher' data-ref="39cipher">cipher</a>) != <a class="local col8 ref" href="#38key_len" title='key_len' data-ref="38key_len">key_len</a> ||</td></tr>
+<tr><th id="151">151</th><td>      !<a class="ref" href="../../include/openssl/cipher.h.html#EVP_EncryptInit_ex" title='EVP_EncryptInit_ex' data-ref="EVP_EncryptInit_ex">EVP_EncryptInit_ex</a>(&amp;<a class="local col6 ref" href="#36ctx" title='ctx' data-ref="36ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</a>, <a class="local col9 ref" href="#39cipher" title='cipher' data-ref="39cipher">cipher</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <a class="local col7 ref" href="#37key" title='key' data-ref="37key">key</a>, <a class="tu ref" href="#kZeroIV" title='kZeroIV' data-use='r' data-ref="kZeroIV">kZeroIV</a>) ||</td></tr>
+<tr><th id="152">152</th><td>      !<a class="ref" href="../../include/openssl/cipher.h.html#EVP_Cipher" title='EVP_Cipher' data-ref="EVP_Cipher">EVP_Cipher</a>(&amp;<a class="local col6 ref" href="#36ctx" title='ctx' data-ref="36ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</a>, <a class="local col1 ref" href="#41scratch" title='scratch' data-ref="41scratch">scratch</a>, <a class="tu ref" href="#kZeroIV" title='kZeroIV' data-use='r' data-ref="kZeroIV">kZeroIV</a>, <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>) ||</td></tr>
+<tr><th id="153">153</th><td>      <i>/* Reset context again ready for first data. */</i></td></tr>
+<tr><th id="154">154</th><td>      !<a class="ref" href="../../include/openssl/cipher.h.html#EVP_EncryptInit_ex" title='EVP_EncryptInit_ex' data-ref="EVP_EncryptInit_ex">EVP_EncryptInit_ex</a>(&amp;<a class="local col6 ref" href="#36ctx" title='ctx' data-ref="36ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <a class="tu ref" href="#kZeroIV" title='kZeroIV' data-use='r' data-ref="kZeroIV">kZeroIV</a>)) {</td></tr>
+<tr><th id="155">155</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="156">156</th><td>  }</td></tr>
+<tr><th id="157">157</th><td></td></tr>
+<tr><th id="158">158</th><td>  <a class="tu ref" href="#binary_field_mul_x" title='binary_field_mul_x' data-use='c' data-ref="binary_field_mul_x">binary_field_mul_x</a>(<a class="local col6 ref" href="#36ctx" title='ctx' data-ref="36ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::k1" title='cmac_ctx_st::k1' data-ref="cmac_ctx_st::k1">k1</a>, <a class="local col1 ref" href="#41scratch" title='scratch' data-ref="41scratch">scratch</a>);</td></tr>
+<tr><th id="159">159</th><td>  <a class="tu ref" href="#binary_field_mul_x" title='binary_field_mul_x' data-use='c' data-ref="binary_field_mul_x">binary_field_mul_x</a>(<a class="local col6 ref" href="#36ctx" title='ctx' data-ref="36ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::k2" title='cmac_ctx_st::k2' data-ref="cmac_ctx_st::k2">k2</a>, <a class="local col6 ref" href="#36ctx" title='ctx' data-ref="36ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::k1" title='cmac_ctx_st::k1' data-ref="cmac_ctx_st::k1">k1</a>);</td></tr>
+<tr><th id="160">160</th><td>  <a class="local col6 ref" href="#36ctx" title='ctx' data-ref="36ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a> = <var>0</var>;</td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="163">163</th><td>}</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td><em>int</em> <dfn class="decl def" id="CMAC_Reset" title='CMAC_Reset' data-ref="CMAC_Reset">CMAC_Reset</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col2 decl" id="42ctx" title='ctx' data-type='CMAC_CTX *' data-ref="42ctx">ctx</dfn>) {</td></tr>
+<tr><th id="166">166</th><td>  <a class="local col2 ref" href="#42ctx" title='ctx' data-ref="42ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a> = <var>0</var>;</td></tr>
+<tr><th id="167">167</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/cipher.h.html#EVP_EncryptInit_ex" title='EVP_EncryptInit_ex' data-ref="EVP_EncryptInit_ex">EVP_EncryptInit_ex</a>(&amp;<a class="local col2 ref" href="#42ctx" title='ctx' data-ref="42ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <a class="tu ref" href="#kZeroIV" title='kZeroIV' data-use='r' data-ref="kZeroIV">kZeroIV</a>);</td></tr>
+<tr><th id="168">168</th><td>}</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td><em>int</em> <dfn class="decl def" id="CMAC_Update" title='CMAC_Update' data-ref="CMAC_Update">CMAC_Update</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col3 decl" id="43ctx" title='ctx' data-type='CMAC_CTX *' data-ref="43ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="44in" title='in' data-type='const uint8_t *' data-ref="44in">in</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="45in_len" title='in_len' data-type='size_t' data-ref="45in_len">in_len</dfn>) {</td></tr>
+<tr><th id="171">171</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col6 decl" id="46scratch" title='scratch' data-type='uint8_t [16]' data-ref="46scratch">scratch</dfn>[<a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>];</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td>  <b>if</b> (<a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="174">174</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="47todo" title='todo' data-type='size_t' data-ref="47todo">todo</dfn> = <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a> - <a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a>;</td></tr>
+<tr><th id="175">175</th><td>    <b>if</b> (<a class="local col5 ref" href="#45in_len" title='in_len' data-ref="45in_len">in_len</a> &lt; <a class="local col7 ref" href="#47todo" title='todo' data-ref="47todo">todo</a>) {</td></tr>
+<tr><th id="176">176</th><td>      <a class="local col7 ref" href="#47todo" title='todo' data-ref="47todo">todo</a> = <a class="local col5 ref" href="#45in_len" title='in_len' data-ref="45in_len">in_len</a>;</td></tr>
+<tr><th id="177">177</th><td>    }</td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td>    <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block" title='cmac_ctx_st::block' data-ref="cmac_ctx_st::block">block</a> + <a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a>, <a class="local col4 ref" href="#44in" title='in' data-ref="44in">in</a>, <a class="local col7 ref" href="#47todo" title='todo' data-ref="47todo">todo</a>);</td></tr>
+<tr><th id="180">180</th><td>    <a class="local col4 ref" href="#44in" title='in' data-ref="44in">in</a> += <a class="local col7 ref" href="#47todo" title='todo' data-ref="47todo">todo</a>;</td></tr>
+<tr><th id="181">181</th><td>    <a class="local col5 ref" href="#45in_len" title='in_len' data-ref="45in_len">in_len</a> -= <a class="local col7 ref" href="#47todo" title='todo' data-ref="47todo">todo</a>;</td></tr>
+<tr><th id="182">182</th><td>    <a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a> += <a class="local col7 ref" href="#47todo" title='todo' data-ref="47todo">todo</a>;</td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td>    <i>/* If |in_len| is zero then either |ctx-&gt;block_used| is less than</i></td></tr>
+<tr><th id="185">185</th><td><i>     * |AES_BLOCK_SIZE|, in which case we can stop here, or |ctx-&gt;block_used|</i></td></tr>
+<tr><th id="186">186</th><td><i>     * is exactly |AES_BLOCK_SIZE| but there's no more data to process. In the</i></td></tr>
+<tr><th id="187">187</th><td><i>     * latter case we don't want to process this block now because it might be</i></td></tr>
+<tr><th id="188">188</th><td><i>     * the last block and that block is treated specially. */</i></td></tr>
+<tr><th id="189">189</th><td>    <b>if</b> (<a class="local col5 ref" href="#45in_len" title='in_len' data-ref="45in_len">in_len</a> == <var>0</var>) {</td></tr>
+<tr><th id="190">190</th><td>      <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="191">191</th><td>    }</td></tr>
+<tr><th id="192">192</th><td></td></tr>
+<tr><th id="193">193</th><td>    <a class="macro" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/assert.h.html#51" title="((void)0)" data-ref="_M/assert">assert</a>(ctx-&gt;block_used == AES_BLOCK_SIZE);</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/cipher.h.html#EVP_Cipher" title='EVP_Cipher' data-ref="EVP_Cipher">EVP_Cipher</a>(&amp;<a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</a>, <a class="local col6 ref" href="#46scratch" title='scratch' data-ref="46scratch">scratch</a>, <a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block" title='cmac_ctx_st::block' data-ref="cmac_ctx_st::block">block</a>, <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>)) {</td></tr>
+<tr><th id="196">196</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="197">197</th><td>    }</td></tr>
+<tr><th id="198">198</th><td>  }</td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td>  <i>/* Encrypt all but one of the remaining blocks. */</i></td></tr>
+<tr><th id="201">201</th><td>  <b>while</b> (<a class="local col5 ref" href="#45in_len" title='in_len' data-ref="45in_len">in_len</a> &gt; <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>) {</td></tr>
+<tr><th id="202">202</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/cipher.h.html#EVP_Cipher" title='EVP_Cipher' data-ref="EVP_Cipher">EVP_Cipher</a>(&amp;<a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</a>, <a class="local col6 ref" href="#46scratch" title='scratch' data-ref="46scratch">scratch</a>, <a class="local col4 ref" href="#44in" title='in' data-ref="44in">in</a>, <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>)) {</td></tr>
+<tr><th id="203">203</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="204">204</th><td>    }</td></tr>
+<tr><th id="205">205</th><td>    <a class="local col4 ref" href="#44in" title='in' data-ref="44in">in</a> += <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>;</td></tr>
+<tr><th id="206">206</th><td>    <a class="local col5 ref" href="#45in_len" title='in_len' data-ref="45in_len">in_len</a> -= <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>;</td></tr>
+<tr><th id="207">207</th><td>  }</td></tr>
+<tr><th id="208">208</th><td></td></tr>
+<tr><th id="209">209</th><td>  <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block" title='cmac_ctx_st::block' data-ref="cmac_ctx_st::block">block</a>, <a class="local col4 ref" href="#44in" title='in' data-ref="44in">in</a>, <a class="local col5 ref" href="#45in_len" title='in_len' data-ref="45in_len">in_len</a>);</td></tr>
+<tr><th id="210">210</th><td>  <a class="local col3 ref" href="#43ctx" title='ctx' data-ref="43ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a> = <a class="local col5 ref" href="#45in_len" title='in_len' data-ref="45in_len">in_len</a>;</td></tr>
+<tr><th id="211">211</th><td></td></tr>
+<tr><th id="212">212</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="213">213</th><td>}</td></tr>
+<tr><th id="214">214</th><td></td></tr>
+<tr><th id="215">215</th><td><em>int</em> <dfn class="decl def" id="CMAC_Final" title='CMAC_Final' data-ref="CMAC_Final">CMAC_Final</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#CMAC_CTX" title='CMAC_CTX' data-type='struct cmac_ctx_st' data-ref="CMAC_CTX">CMAC_CTX</a> *<dfn class="local col8 decl" id="48ctx" title='ctx' data-type='CMAC_CTX *' data-ref="48ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="49out" title='out' data-type='uint8_t *' data-ref="49out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col0 decl" id="50out_len" title='out_len' data-type='size_t *' data-ref="50out_len">out_len</dfn>) {</td></tr>
+<tr><th id="216">216</th><td>  *<a class="local col0 ref" href="#50out_len" title='out_len' data-ref="50out_len">out_len</a> = <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>;</td></tr>
+<tr><th id="217">217</th><td>  <b>if</b> (<a class="local col9 ref" href="#49out" title='out' data-ref="49out">out</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="218">218</th><td>    <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="219">219</th><td>  }</td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td>  <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="51mask" title='mask' data-type='const uint8_t *' data-ref="51mask">mask</dfn> = <a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::k1" title='cmac_ctx_st::k1' data-ref="cmac_ctx_st::k1">k1</a>;</td></tr>
+<tr><th id="222">222</th><td></td></tr>
+<tr><th id="223">223</th><td>  <b>if</b> (<a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a> != <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>) {</td></tr>
+<tr><th id="224">224</th><td>    <i>/* If the last block is incomplete, terminate it with a single 'one' bit</i></td></tr>
+<tr><th id="225">225</th><td><i>     * followed by zeros. */</i></td></tr>
+<tr><th id="226">226</th><td>    <a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block" title='cmac_ctx_st::block' data-ref="cmac_ctx_st::block">block</a>[<a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a>] = <var>0x80</var>;</td></tr>
+<tr><th id="227">227</th><td>    <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block" title='cmac_ctx_st::block' data-ref="cmac_ctx_st::block">block</a> + <a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a> + <var>1</var>, <var>0</var>,</td></tr>
+<tr><th id="228">228</th><td>           <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a> - (<a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block_used" title='cmac_ctx_st::block_used' data-ref="cmac_ctx_st::block_used">block_used</a> + <var>1</var>));</td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td>    <a class="local col1 ref" href="#51mask" title='mask' data-ref="51mask">mask</a> = <a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::k2" title='cmac_ctx_st::k2' data-ref="cmac_ctx_st::k2">k2</a>;</td></tr>
+<tr><th id="231">231</th><td>  }</td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td>  <em>unsigned</em> <dfn class="local col2 decl" id="52i" title='i' data-type='unsigned int' data-ref="52i">i</dfn>;</td></tr>
+<tr><th id="234">234</th><td>  <b>for</b> (<a class="local col2 ref" href="#52i" title='i' data-ref="52i">i</a> = <var>0</var>; <a class="local col2 ref" href="#52i" title='i' data-ref="52i">i</a> &lt; <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>; <a class="local col2 ref" href="#52i" title='i' data-ref="52i">i</a>++) {</td></tr>
+<tr><th id="235">235</th><td>    <a class="local col9 ref" href="#49out" title='out' data-ref="49out">out</a>[<a class="local col2 ref" href="#52i" title='i' data-ref="52i">i</a>] = <a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::block" title='cmac_ctx_st::block' data-ref="cmac_ctx_st::block">block</a>[<a class="local col2 ref" href="#52i" title='i' data-ref="52i">i</a>] ^ <a class="local col1 ref" href="#51mask" title='mask' data-ref="51mask">mask</a>[<a class="local col2 ref" href="#52i" title='i' data-ref="52i">i</a>];</td></tr>
+<tr><th id="236">236</th><td>  }</td></tr>
+<tr><th id="237">237</th><td></td></tr>
+<tr><th id="238">238</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/cipher.h.html#EVP_Cipher" title='EVP_Cipher' data-ref="EVP_Cipher">EVP_Cipher</a>(&amp;<a class="local col8 ref" href="#48ctx" title='ctx' data-ref="48ctx">ctx</a>-&gt;<a class="ref" href="#cmac_ctx_st::cipher_ctx" title='cmac_ctx_st::cipher_ctx' data-ref="cmac_ctx_st::cipher_ctx">cipher_ctx</a>, <a class="local col9 ref" href="#49out" title='out' data-ref="49out">out</a>, <a class="local col9 ref" href="#49out" title='out' data-ref="49out">out</a>, <a class="macro" href="../../include/openssl/aes.h.html#68" title="16" data-ref="_M/AES_BLOCK_SIZE">AES_BLOCK_SIZE</a>);</td></tr>
+<tr><th id="239">239</th><td>}</td></tr>
+<tr><th id="240">240</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

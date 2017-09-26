@@ -1,0 +1,26 @@
+<dec f='codebrowser/system/core/include/cutils/sockets.h' l='106' type='int socket_loopback_client(int port, int type)'/>
+<use f='codebrowser/system/core/adb/sysdeps.h' l='647' u='c' c='_Z23network_loopback_clientiiPNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE'/>
+<doc f='codebrowser/system/core/include/cutils/sockets.h' l='87'>/*
+ * Functions to create sockets for some common usages.
+ *
+ * All these functions are implemented for Unix, but only a few are implemented
+ * for Windows. Those which are can be identified by the cutils_socket_t
+ * return type. The idea is to be able to use this return value with the
+ * standard Unix socket functions on any platform.
+ *
+ * On Unix the returned cutils_socket_t is a standard int file descriptor and
+ * can always be used as normal with all file descriptor functions.
+ *
+ * On Windows utils_socket_t is an unsigned int pointer, and is only valid
+ * with functions that specifically take a socket, e.g. send(), sendto(),
+ * recv(), and recvfrom(). General file descriptor functions such as read(),
+ * write(), and close() will not work with utils_socket_t and will require
+ * special handling.
+ *
+ * These functions return INVALID_SOCKET (-1) on failure for all platforms.
+ */</doc>
+<def f='codebrowser/system/core/libcutils/socket_loopback_client_unix.c' l='36' ll='56' type='int socket_loopback_client(int port, int type)'/>
+<doc f='codebrowser/system/core/libcutils/socket_loopback_client_unix.c' l='32'>/* Connect to port on the loopback IP interface. type is
+ * SOCK_STREAM or SOCK_DGRAM. 
+ * return is a file descriptor or -1 on error
+ */</doc>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>curve25519.h source code [codebrowser/external/boringssl/src/include/openssl/curve25519.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/curve25519.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='curve25519.h.html'>curve25519.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2015, Google Inc.</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Permission to use, copy, modify, and/or distribute this software for any</i></td></tr>
+<tr><th id="4">4</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="5">5</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="8">8</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="9">9</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY</i></td></tr>
+<tr><th id="10">10</th><td><i> * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION</i></td></tr>
+<tr><th id="12">12</th><td><i> * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN</i></td></tr>
+<tr><th id="13">13</th><td><i> * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */</i></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#<span data-ppcond="15">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_CURVE25519_H">OPENSSL_HEADER_CURVE25519_H</span></u></td></tr>
+<tr><th id="16">16</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_CURVE25519_H" data-ref="_M/OPENSSL_HEADER_CURVE25519_H">OPENSSL_HEADER_CURVE25519_H</dfn></u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#<span data-ppcond="20">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="21">21</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="22">22</th><td><u>#<span data-ppcond="20">endif</span></u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><i>/* Curve25519.</i></td></tr>
+<tr><th id="26">26</th><td><i> *</i></td></tr>
+<tr><th id="27">27</th><td><i> * Curve25519 is an elliptic curve. See</i></td></tr>
+<tr><th id="28">28</th><td><i> * <a href="https://tools.ietf.org/html/draft-irtf-cfrg-curves-11">https://tools.ietf.org/html/draft-irtf-cfrg-curves-11</a>. */</i></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><i>/* X25519.</i></td></tr>
+<tr><th id="32">32</th><td><i> *</i></td></tr>
+<tr><th id="33">33</th><td><i> * Curve25519 is an elliptic curve. The same name is also sometimes used for</i></td></tr>
+<tr><th id="34">34</th><td><i> * the Diffie-Hellman primitive built from it but “X25519” is a more precise</i></td></tr>
+<tr><th id="35">35</th><td><i> * name for that, which is the one used here. See <a href="http://cr.yp.to/ecdh.html">http://cr.yp.to/ecdh.html</a> and</i></td></tr>
+<tr><th id="36">36</th><td><i> * <a href="https://tools.ietf.org/html/draft-irtf-cfrg-curves-11">https://tools.ietf.org/html/draft-irtf-cfrg-curves-11</a>. */</i></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i>/* X25519_keypair sets |out_public_value| and |out_private_key| to a freshly</i></td></tr>
+<tr><th id="39">39</th><td><i> * generated, public–private key pair. */</i></td></tr>
+<tr><th id="40">40</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <a class="decl" href="../../crypto/curve25519/curve25519.c.html#X25519_keypair" title='X25519_keypair' data-ref="X25519_keypair" id="X25519_keypair">X25519_keypair</a>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col1 decl" id="1out_public_value" title='out_public_value' data-type='uint8_t *' data-ref="1out_public_value">out_public_value</dfn>[<var>32</var>],</td></tr>
+<tr><th id="41">41</th><td>                                   <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col2 decl" id="2out_private_key" title='out_private_key' data-type='uint8_t *' data-ref="2out_private_key">out_private_key</dfn>[<var>32</var>]);</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><i>/* X25519 writes a shared key to |out_shared_key| that is calculated from the</i></td></tr>
+<tr><th id="44">44</th><td><i> * given private key and the peer's public value. It returns one on success and</i></td></tr>
+<tr><th id="45">45</th><td><i> * zero on error.</i></td></tr>
+<tr><th id="46">46</th><td><i> *</i></td></tr>
+<tr><th id="47">47</th><td><i> * Don't use the shared key directly, rather use a KDF and also include the two</i></td></tr>
+<tr><th id="48">48</th><td><i> * public values as inputs. */</i></td></tr>
+<tr><th id="49">49</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <a class="decl" href="../../crypto/curve25519/curve25519.c.html#X25519" title='X25519' data-ref="X25519" id="X25519">X25519</a>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col3 decl" id="3out_shared_key" title='out_shared_key' data-type='uint8_t *' data-ref="3out_shared_key">out_shared_key</dfn>[<var>32</var>],</td></tr>
+<tr><th id="50">50</th><td>                          <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col4 decl" id="4private_key" title='private_key' data-type='const uint8_t *' data-ref="4private_key">private_key</dfn>[<var>32</var>],</td></tr>
+<tr><th id="51">51</th><td>                          <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col5 decl" id="5peers_public_value" title='peers_public_value' data-type='const uint8_t *' data-ref="5peers_public_value">peers_public_value</dfn>[<var>32</var>]);</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><i>/* X25519_public_from_private calculates a Diffie-Hellman public value from the</i></td></tr>
+<tr><th id="54">54</th><td><i> * given private key and writes it to |out_public_value|. */</i></td></tr>
+<tr><th id="55">55</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <a class="decl" href="../../crypto/curve25519/curve25519.c.html#X25519_public_from_private" title='X25519_public_from_private' data-ref="X25519_public_from_private" id="X25519_public_from_private">X25519_public_from_private</a>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col6 decl" id="6out_public_value" title='out_public_value' data-type='uint8_t *' data-ref="6out_public_value">out_public_value</dfn>[<var>32</var>],</td></tr>
+<tr><th id="56">56</th><td>                                               <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col7 decl" id="7private_key" title='private_key' data-type='const uint8_t *' data-ref="7private_key">private_key</dfn>[<var>32</var>]);</td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><i>/* Ed25519.</i></td></tr>
+<tr><th id="60">60</th><td><i> *</i></td></tr>
+<tr><th id="61">61</th><td><i> * Ed25519 is a signature scheme using a twisted-Edwards curve that is</i></td></tr>
+<tr><th id="62">62</th><td><i> * birationally equivalent to curve25519. */</i></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><u>#define <dfn class="macro" id="_M/ED25519_PRIVATE_KEY_LEN" data-ref="_M/ED25519_PRIVATE_KEY_LEN">ED25519_PRIVATE_KEY_LEN</dfn> 64</u></td></tr>
+<tr><th id="65">65</th><td><u>#define <dfn class="macro" id="_M/ED25519_PUBLIC_KEY_LEN" data-ref="_M/ED25519_PUBLIC_KEY_LEN">ED25519_PUBLIC_KEY_LEN</dfn> 32</u></td></tr>
+<tr><th id="66">66</th><td><u>#define <dfn class="macro" id="_M/ED25519_SIGNATURE_LEN" data-ref="_M/ED25519_SIGNATURE_LEN">ED25519_SIGNATURE_LEN</dfn> 64</u></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><i>/* ED25519_keypair sets |out_public_key| and |out_private_key| to a freshly</i></td></tr>
+<tr><th id="69">69</th><td><i> * generated, public–private key pair. */</i></td></tr>
+<tr><th id="70">70</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <a class="decl" href="../../crypto/curve25519/curve25519.c.html#ED25519_keypair" title='ED25519_keypair' data-ref="ED25519_keypair" id="ED25519_keypair">ED25519_keypair</a>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col8 decl" id="8out_public_key" title='out_public_key' data-type='uint8_t *' data-ref="8out_public_key">out_public_key</dfn>[<var>32</var>],</td></tr>
+<tr><th id="71">71</th><td>                                    <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col9 decl" id="9out_private_key" title='out_private_key' data-type='uint8_t *' data-ref="9out_private_key">out_private_key</dfn>[<var>64</var>]);</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><i>/* ED25519_sign sets |out_sig| to be a signature of |message_len| bytes from</i></td></tr>
+<tr><th id="74">74</th><td><i> * |message| using |private_key|. It returns one on success or zero on</i></td></tr>
+<tr><th id="75">75</th><td><i> * error. */</i></td></tr>
+<tr><th id="76">76</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <a class="decl" href="../../crypto/curve25519/curve25519.c.html#ED25519_sign" title='ED25519_sign' data-ref="ED25519_sign" id="ED25519_sign">ED25519_sign</a>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col0 decl" id="10out_sig" title='out_sig' data-type='uint8_t *' data-ref="10out_sig">out_sig</dfn>[<var>64</var>], <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="11message" title='message' data-type='const uint8_t *' data-ref="11message">message</dfn>,</td></tr>
+<tr><th id="77">77</th><td>                                <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="12message_len" title='message_len' data-type='size_t' data-ref="12message_len">message_len</dfn>,</td></tr>
+<tr><th id="78">78</th><td>                                <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col3 decl" id="13private_key" title='private_key' data-type='const uint8_t *' data-ref="13private_key">private_key</dfn>[<var>64</var>]);</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><i>/* ED25519_verify returns one iff |signature| is a valid signature, by</i></td></tr>
+<tr><th id="81">81</th><td><i> * |public_key| of |message_len| bytes from |message|. It returns zero</i></td></tr>
+<tr><th id="82">82</th><td><i> * otherwise. */</i></td></tr>
+<tr><th id="83">83</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <a class="decl" href="../../crypto/curve25519/curve25519.c.html#ED25519_verify" title='ED25519_verify' data-ref="ED25519_verify" id="ED25519_verify">ED25519_verify</a>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="14message" title='message' data-type='const uint8_t *' data-ref="14message">message</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="15message_len" title='message_len' data-type='size_t' data-ref="15message_len">message_len</dfn>,</td></tr>
+<tr><th id="84">84</th><td>                                  <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col6 decl" id="16signature" title='signature' data-type='const uint8_t *' data-ref="16signature">signature</dfn>[<var>64</var>],</td></tr>
+<tr><th id="85">85</th><td>                                  <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col7 decl" id="17public_key" title='public_key' data-type='const uint8_t *' data-ref="17public_key">public_key</dfn>[<var>32</var>]);</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><u>#<span data-ppcond="88">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="89">89</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="90">90</th><td><u>#<span data-ppcond="88">endif</span></u></td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td><u>#<span data-ppcond="15">endif</span>  /* OPENSSL_HEADER_CURVE25519_H */</u></td></tr>
+<tr><th id="93">93</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../crypto/curve25519/curve25519.c.html'>codebrowser/external/boringssl/src/crypto/curve25519/curve25519.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>typeinfo.cpp source code [codebrowser/external/libcxx/src/typeinfo.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libcxx/src/typeinfo.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libcxx</a>/<a href='./'>src</a>/<a href='typeinfo.cpp.html'>typeinfo.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>//===------------------------- typeinfo.cpp -------------------------------===//</i></td></tr>
+<tr><th id="2">2</th><td><i>//</i></td></tr>
+<tr><th id="3">3</th><td><i>//                     The LLVM Compiler Infrastructure</i></td></tr>
+<tr><th id="4">4</th><td><i>//</i></td></tr>
+<tr><th id="5">5</th><td><i>// This file is dual licensed under the MIT and the University of Illinois Open</i></td></tr>
+<tr><th id="6">6</th><td><i>// Source Licenses. See LICENSE.TXT for details.</i></td></tr>
+<tr><th id="7">7</th><td><i>//</i></td></tr>
+<tr><th id="8">8</th><td><i>//===----------------------------------------------------------------------===//</i></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><u>#<span data-ppcond="11">ifndef</span> <span class="macro" data-ref="_M/__has_include">__has_include</span></u></td></tr>
+<tr><th id="12">12</th><td><u>#define __has_include(inc) 0</u></td></tr>
+<tr><th id="13">13</th><td><u>#<span data-ppcond="11">endif</span></u></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#<span data-ppcond="15">ifdef</span> <span class="macro" data-ref="_M/__APPLE__">__APPLE__</span></u></td></tr>
+<tr><th id="16">16</th><td><u>#include &lt;cxxabi.h&gt;</u></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="15">elif</span> defined(<span class="macro" data-ref="_M/LIBCXXRT">LIBCXXRT</span>) || <span class="macro" title="" data-ref="_M/__has_include">__has_include</span>(&lt;cxxabi.h&gt;)</u></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="../../libcxxabi/include/cxxabi.h.html">&lt;cxxabi.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td><u>#<span data-ppcond="15">endif</span></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../include/typeinfo.html">"typeinfo"</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="23">if</span> !defined(<span class="macro" data-ref="_M/LIBCXXRT">LIBCXXRT</span>) &amp;&amp; !defined(<a class="macro" href="../../libcxxabi/include/cxxabi.h.html#23" data-ref="_M/_LIBCPPABI_VERSION">_LIBCPPABI_VERSION</a>)</u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td>std::bad_cast::bad_cast() _NOEXCEPT</td></tr>
+<tr><th id="26">26</th><td>{</td></tr>
+<tr><th id="27">27</th><td>}</td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td>std::bad_typeid::bad_typeid() _NOEXCEPT</td></tr>
+<tr><th id="30">30</th><td>{</td></tr>
+<tr><th id="31">31</th><td>}</td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#ifndef __GLIBCXX__</u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td>std::bad_cast::~bad_cast() _NOEXCEPT</td></tr>
+<tr><th id="36">36</th><td>{</td></tr>
+<tr><th id="37">37</th><td>}</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><em>const</em> <em>char</em>*</td></tr>
+<tr><th id="40">40</th><td>std::bad_cast::what() <em>const</em> _NOEXCEPT</td></tr>
+<tr><th id="41">41</th><td>{</td></tr>
+<tr><th id="42">42</th><td>  <b>return</b> <q>"std::bad_cast"</q>;</td></tr>
+<tr><th id="43">43</th><td>}</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td>std::bad_typeid::~bad_typeid() _NOEXCEPT</td></tr>
+<tr><th id="46">46</th><td>{</td></tr>
+<tr><th id="47">47</th><td>}</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><em>const</em> <em>char</em>*</td></tr>
+<tr><th id="50">50</th><td>std::bad_typeid::what() <em>const</em> _NOEXCEPT</td></tr>
+<tr><th id="51">51</th><td>{</td></tr>
+<tr><th id="52">52</th><td>  <b>return</b> <q>"std::bad_typeid"</q>;</td></tr>
+<tr><th id="53">53</th><td>}</td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><u>#ifdef __APPLE__</u></td></tr>
+<tr><th id="56">56</th><td>  <i>// On Darwin, the cxa_bad_* functions cannot be in the lower level library</i></td></tr>
+<tr><th id="57">57</th><td><i>  // because bad_cast and bad_typeid are defined in his higher level library</i></td></tr>
+<tr><th id="58">58</th><td>  <em>void</em> __cxxabiv1::__cxa_bad_typeid()</td></tr>
+<tr><th id="59">59</th><td>  {</td></tr>
+<tr><th id="60">60</th><td><u>#ifndef _LIBCPP_NO_EXCEPTIONS</u></td></tr>
+<tr><th id="61">61</th><td>     <b>throw</b> std::bad_typeid();</td></tr>
+<tr><th id="62">62</th><td><u>#endif</u></td></tr>
+<tr><th id="63">63</th><td>  }</td></tr>
+<tr><th id="64">64</th><td>  <em>void</em> __cxxabiv1::__cxa_bad_cast()</td></tr>
+<tr><th id="65">65</th><td>  {</td></tr>
+<tr><th id="66">66</th><td><u>#ifndef _LIBCPP_NO_EXCEPTIONS</u></td></tr>
+<tr><th id="67">67</th><td>      <b>throw</b> std::bad_cast();</td></tr>
+<tr><th id="68">68</th><td><u>#endif</u></td></tr>
+<tr><th id="69">69</th><td>  }</td></tr>
+<tr><th id="70">70</th><td><u>#endif</u></td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><u>#endif  // !__GLIBCXX__</u></td></tr>
+<tr><th id="73">73</th><td><u>#<span data-ppcond="23">endif</span>  // !LIBCXXRT &amp;&amp; !_LIBCPPABI_VERSION</u></td></tr>
+<tr><th id="74">74</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

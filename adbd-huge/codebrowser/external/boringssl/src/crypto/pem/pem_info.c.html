@@ -1,0 +1,422 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>pem_info.c source code [codebrowser/external/boringssl/src/crypto/pem/pem_info.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/pem/pem_info.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>pem</a>/<a href='pem_info.c.html'>pem_info.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* crypto/pem/pem_info.c */</i></td></tr>
+<tr><th id="2">2</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="6">6</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="7">7</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="8">8</th><td><i> * </i></td></tr>
+<tr><th id="9">9</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="10">10</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="11">11</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="12">12</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="13">13</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="14">14</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="15">15</th><td><i> * </i></td></tr>
+<tr><th id="16">16</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="17">17</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="18">18</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="19">19</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="20">20</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="21">21</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="22">22</th><td><i> * </i></td></tr>
+<tr><th id="23">23</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="24">24</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="25">25</th><td><i> * are met:</i></td></tr>
+<tr><th id="26">26</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="27">27</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="28">28</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="29">29</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="30">30</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="31">31</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="32">32</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="33">33</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="34">34</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="35">35</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="36">36</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="37">37</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from </i></td></tr>
+<tr><th id="38">38</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="39">39</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="40">40</th><td><i> * </i></td></tr>
+<tr><th id="41">41</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="42">42</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="43">43</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="44">44</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="45">45</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="46">46</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="47">47</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="48">48</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="49">49</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="50">50</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="51">51</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="52">52</th><td><i> * </i></td></tr>
+<tr><th id="53">53</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="54">54</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="55">55</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="56">56</th><td><i> * [including the GNU Public Licence.]</i></td></tr>
+<tr><th id="57">57</th><td><i> */</i></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../include/openssl/pem.h.html">&lt;openssl/pem.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/assert.h.html">&lt;assert.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><u>#include <a href="../../include/openssl/buf.h.html">&lt;openssl/buf.h&gt;</a></u></td></tr>
+<tr><th id="66">66</th><td><u>#include <a href="../../include/openssl/dsa.h.html">&lt;openssl/dsa.h&gt;</a></u></td></tr>
+<tr><th id="67">67</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="68">68</th><td><u>#include <a href="../../include/openssl/evp.h.html">&lt;openssl/evp.h&gt;</a></u></td></tr>
+<tr><th id="69">69</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="70">70</th><td><u>#include <a href="../../include/openssl/obj.h.html">&lt;openssl/obj.h&gt;</a></u></td></tr>
+<tr><th id="71">71</th><td><u>#include <a href="../../include/openssl/rsa.h.html">&lt;openssl/rsa.h&gt;</a></u></td></tr>
+<tr><th id="72">72</th><td><u>#include <a href="../../include/openssl/x509.h.html">&lt;openssl/x509.h&gt;</a></u></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><u>#<span data-ppcond="75">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_NO_FP_API">OPENSSL_NO_FP_API</span></u></td></tr>
+<tr><th id="76">76</th><td><a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_INFO" data-ref="_M/STACK_OF">STACK_OF</a>(X509_INFO) *<dfn class="decl def" id="PEM_X509_INFO_read" title='PEM_X509_INFO_read' data-ref="PEM_X509_INFO_read">PEM_X509_INFO_read</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col1 decl" id="1fp" title='fp' data-type='FILE *' data-ref="1fp">fp</dfn>, <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_INFO" data-ref="_M/STACK_OF">STACK_OF</a>(X509_INFO) *<dfn class="local col2 decl" id="2sk" title='sk' data-type='struct stack_st_X509_INFO *' data-ref="2sk">sk</dfn>, <a class="typedef" href="../../include/openssl/pem.h.html#pem_password_cb" title='pem_password_cb' data-type='int (char *, int, int, void *)' data-ref="pem_password_cb">pem_password_cb</a> *<dfn class="local col3 decl" id="3cb" title='cb' data-type='pem_password_cb *' data-ref="3cb">cb</dfn>, <em>void</em> *<dfn class="local col4 decl" id="4u" title='u' data-type='void *' data-ref="4u">u</dfn>)</td></tr>
+<tr><th id="77">77</th><td>	{</td></tr>
+<tr><th id="78">78</th><td>        <a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col5 decl" id="5b" title='b' data-type='BIO *' data-ref="5b">b</dfn>;</td></tr>
+<tr><th id="79">79</th><td>        <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_INFO" data-ref="_M/STACK_OF">STACK_OF</a>(X509_INFO) *<dfn class="local col6 decl" id="6ret" title='ret' data-type='struct stack_st_X509_INFO *' data-ref="6ret">ret</dfn>;</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td>        <b>if</b> ((<a class="local col5 ref" href="#5b" title='b' data-ref="5b">b</a>=<a class="ref" href="../../include/openssl/bio.h.html#BIO_new" title='BIO_new' data-ref="BIO_new">BIO_new</a>(<a class="ref" href="../../include/openssl/bio.h.html#BIO_s_file" title='BIO_s_file' data-ref="BIO_s_file">BIO_s_file</a>())) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="82">82</th><td>		{</td></tr>
+<tr><th id="83">83</th><td>		<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_PEM, 0, ERR_LIB_BUF, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/pem/pem_info.c&quot;, 83)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(PEM, <a class="macro" href="../../include/openssl/err.h.html#427" title="ERR_LIB_BUF" data-ref="_M/ERR_R_BUF_LIB">ERR_R_BUF_LIB</a>);</td></tr>
+<tr><th id="84">84</th><td>                <b>return</b>(<var>0</var>);</td></tr>
+<tr><th id="85">85</th><td>		}</td></tr>
+<tr><th id="86">86</th><td>        <a class="ref" href="../../include/openssl/bio.h.html#BIO_set_fp" title='BIO_set_fp' data-ref="BIO_set_fp">BIO_set_fp</a>(<a class="local col5 ref" href="#5b" title='b' data-ref="5b">b</a>,<a class="local col1 ref" href="#1fp" title='fp' data-ref="1fp">fp</a>,<a class="macro" href="../../include/openssl/bio.h.html#689" title="0" data-ref="_M/BIO_NOCLOSE">BIO_NOCLOSE</a>);</td></tr>
+<tr><th id="87">87</th><td>        <a class="local col6 ref" href="#6ret" title='ret' data-ref="6ret">ret</a>=<a class="ref" href="#PEM_X509_INFO_read_bio" title='PEM_X509_INFO_read_bio' data-ref="PEM_X509_INFO_read_bio">PEM_X509_INFO_read_bio</a>(<a class="local col5 ref" href="#5b" title='b' data-ref="5b">b</a>,<a class="local col2 ref" href="#2sk" title='sk' data-ref="2sk">sk</a>,<a class="local col3 ref" href="#3cb" title='cb' data-ref="3cb">cb</a>,<a class="local col4 ref" href="#4u" title='u' data-ref="4u">u</a>);</td></tr>
+<tr><th id="88">88</th><td>        <a class="ref" href="../../include/openssl/bio.h.html#BIO_free" title='BIO_free' data-ref="BIO_free">BIO_free</a>(<a class="local col5 ref" href="#5b" title='b' data-ref="5b">b</a>);</td></tr>
+<tr><th id="89">89</th><td>        <b>return</b>(<a class="local col6 ref" href="#6ret" title='ret' data-ref="6ret">ret</a>);</td></tr>
+<tr><th id="90">90</th><td>	}</td></tr>
+<tr><th id="91">91</th><td><u>#<span data-ppcond="75">endif</span></u></td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_INFO" data-ref="_M/STACK_OF">STACK_OF</a>(X509_INFO) *<dfn class="decl def" id="PEM_X509_INFO_read_bio" title='PEM_X509_INFO_read_bio' data-ref="PEM_X509_INFO_read_bio">PEM_X509_INFO_read_bio</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col7 decl" id="7bp" title='bp' data-type='BIO *' data-ref="7bp">bp</dfn>, <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_INFO" data-ref="_M/STACK_OF">STACK_OF</a>(X509_INFO) *<dfn class="local col8 decl" id="8sk" title='sk' data-type='struct stack_st_X509_INFO *' data-ref="8sk">sk</dfn>, <a class="typedef" href="../../include/openssl/pem.h.html#pem_password_cb" title='pem_password_cb' data-type='int (char *, int, int, void *)' data-ref="pem_password_cb">pem_password_cb</a> *<dfn class="local col9 decl" id="9cb" title='cb' data-type='pem_password_cb *' data-ref="9cb">cb</dfn>, <em>void</em> *<dfn class="local col0 decl" id="10u" title='u' data-type='void *' data-ref="10u">u</dfn>)</td></tr>
+<tr><th id="94">94</th><td>	{</td></tr>
+<tr><th id="95">95</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#X509_INFO" title='X509_INFO' data-type='struct X509_info_st' data-ref="X509_INFO">X509_INFO</a> *<dfn class="local col1 decl" id="11xi" title='xi' data-type='X509_INFO *' data-ref="11xi">xi</dfn>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="96">96</th><td>	<em>char</em> *<dfn class="local col2 decl" id="12name" title='name' data-type='char *' data-ref="12name">name</dfn>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,*<dfn class="local col3 decl" id="13header" title='header' data-type='char *' data-ref="13header">header</dfn>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="97">97</th><td>	<em>void</em> *<dfn class="local col4 decl" id="14pp" title='pp' data-type='void *' data-ref="14pp">pp</dfn>;</td></tr>
+<tr><th id="98">98</th><td>	<em>unsigned</em> <em>char</em> *<dfn class="local col5 decl" id="15data" title='data' data-type='unsigned char *' data-ref="15data">data</dfn>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="99">99</th><td>	<em>const</em> <em>unsigned</em> <em>char</em> *<dfn class="local col6 decl" id="16p" title='p' data-type='const unsigned char *' data-ref="16p">p</dfn>;</td></tr>
+<tr><th id="100">100</th><td>	<em>long</em> <dfn class="local col7 decl" id="17len" title='len' data-type='long' data-ref="17len">len</dfn>,<dfn class="local col8 decl" id="18error" title='error' data-type='long' data-ref="18error">error</dfn>=<var>0</var>;</td></tr>
+<tr><th id="101">101</th><td>	<em>int</em> <dfn class="local col9 decl" id="19ok" title='ok' data-type='int' data-ref="19ok">ok</dfn>=<var>0</var>;</td></tr>
+<tr><th id="102">102</th><td>	<a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_X509_INFO" data-ref="_M/STACK_OF">STACK_OF</a>(X509_INFO) *<dfn class="local col0 decl" id="20ret" title='ret' data-type='struct stack_st_X509_INFO *' data-ref="20ret">ret</dfn>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="103">103</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col1 decl" id="21i" title='i' data-type='unsigned int' data-ref="21i">i</dfn>,<dfn class="local col2 decl" id="22raw" title='raw' data-type='unsigned int' data-ref="22raw">raw</dfn>,<dfn class="local col3 decl" id="23ptype" title='ptype' data-type='unsigned int' data-ref="23ptype">ptype</dfn>;</td></tr>
+<tr><th id="104">104</th><td>	<a class="typedef" href="../../include/openssl/asn1.h.html#343" title='d2i_of_void' data-type='void *(void **, const unsigned char **, long)' data-ref="d2i_of_void">d2i_of_void</a> *<dfn class="local col4 decl" id="24d2i" title='d2i' data-type='d2i_of_void *' data-ref="24d2i">d2i</dfn> = <var>0</var>;</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td>	<b>if</b> (<a class="local col8 ref" href="#8sk" title='sk' data-ref="8sk">sk</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="107">107</th><td>		{</td></tr>
+<tr><th id="108">108</th><td>		<b>if</b> ((<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>=<a class="macro" href="../../include/openssl/stack_macros.h.html#2608" title="((struct stack_st_X509_INFO *)sk_new_null())" data-ref="_M/sk_X509_INFO_new_null">sk_X509_INFO_new_null</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="109">109</th><td>			{</td></tr>
+<tr><th id="110">110</th><td>			<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_PEM, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/pem/pem_info.c&quot;, 110)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(PEM, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="111">111</th><td>			<b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="112">112</th><td>			}</td></tr>
+<tr><th id="113">113</th><td>		}</td></tr>
+<tr><th id="114">114</th><td>	<b>else</b></td></tr>
+<tr><th id="115">115</th><td>		<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>=<a class="local col8 ref" href="#8sk" title='sk' data-ref="8sk">sk</a>;</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td>	<b>if</b> ((<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_INFO_new" title='X509_INFO_new' data-ref="X509_INFO_new">X509_INFO_new</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="118">118</th><td>	<b>for</b> (;;)</td></tr>
+<tr><th id="119">119</th><td>		{</td></tr>
+<tr><th id="120">120</th><td>		<a class="local col2 ref" href="#22raw" title='raw' data-ref="22raw">raw</a>=<var>0</var>;</td></tr>
+<tr><th id="121">121</th><td>		<a class="local col3 ref" href="#23ptype" title='ptype' data-ref="23ptype">ptype</a> = <var>0</var>;</td></tr>
+<tr><th id="122">122</th><td>		<a class="local col1 ref" href="#21i" title='i' data-ref="21i">i</a>=<a class="ref" href="../../include/openssl/pem.h.html#PEM_read_bio" title='PEM_read_bio' data-ref="PEM_read_bio">PEM_read_bio</a>(<a class="local col7 ref" href="#7bp" title='bp' data-ref="7bp">bp</a>,&amp;<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>,&amp;<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a>,&amp;<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a>,&amp;<a class="local col7 ref" href="#17len" title='len' data-ref="17len">len</a>);</td></tr>
+<tr><th id="123">123</th><td>		<b>if</b> (<a class="local col1 ref" href="#21i" title='i' data-ref="21i">i</a> == <var>0</var>)</td></tr>
+<tr><th id="124">124</th><td>			{</td></tr>
+<tr><th id="125">125</th><td>			<a class="local col8 ref" href="#18error" title='error' data-ref="18error">error</a>=<a class="macro" href="../../include/openssl/err.h.html#473" title="((int)((ERR_peek_last_error()) &amp; 0xfff))" data-ref="_M/ERR_GET_REASON">ERR_GET_REASON</a>(<a class="ref" href="../../include/openssl/err.h.html#ERR_peek_last_error" title='ERR_peek_last_error' data-ref="ERR_peek_last_error">ERR_peek_last_error</a>());</td></tr>
+<tr><th id="126">126</th><td>			<b>if</b> (<a class="local col8 ref" href="#18error" title='error' data-ref="18error">error</a> == <a class="macro" href="../../include/openssl/pem.h.html#511" title="110" data-ref="_M/PEM_R_NO_START_LINE">PEM_R_NO_START_LINE</a>)</td></tr>
+<tr><th id="127">127</th><td>				{</td></tr>
+<tr><th id="128">128</th><td>				<a class="ref" href="../../include/openssl/err.h.html#ERR_clear_error" title='ERR_clear_error' data-ref="ERR_clear_error">ERR_clear_error</a>();</td></tr>
+<tr><th id="129">129</th><td>				<b>break</b>;</td></tr>
+<tr><th id="130">130</th><td>				}</td></tr>
+<tr><th id="131">131</th><td>			<b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="132">132</th><td>			}</td></tr>
+<tr><th id="133">133</th><td><dfn class="lbl" id="26start" data-ref="26start">start</dfn>:</td></tr>
+<tr><th id="134">134</th><td>		<b>if</b> (	(<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>,<a class="macro" href="../../include/openssl/pem.h.html#111" title="&quot;CERTIFICATE&quot;" data-ref="_M/PEM_STRING_X509">PEM_STRING_X509</a>) == <var>0</var>) ||</td></tr>
+<tr><th id="135">135</th><td>			(<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>,<a class="macro" href="../../include/openssl/pem.h.html#110" title="&quot;X509 CERTIFICATE&quot;" data-ref="_M/PEM_STRING_X509_OLD">PEM_STRING_X509_OLD</a>) == <var>0</var>))</td></tr>
+<tr><th id="136">136</th><td>			{</td></tr>
+<tr><th id="137">137</th><td>			<a class="local col4 ref" href="#24d2i" title='d2i' data-ref="24d2i">d2i</a>=(<a class="macro" href="../../include/openssl/asn1.h.html#326" title="void *(*)(void **,const unsigned char **,long)" data-ref="_M/D2I_OF">D2I_OF</a>(<em>void</em>))<a class="ref" href="../../include/openssl/x509.h.html#779" title='d2i_X509' data-ref="d2i_X509">d2i_X509</a>;</td></tr>
+<tr><th id="138">138</th><td>			<b>if</b> (<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x509" title='X509_info_st::x509' data-ref="X509_info_st::x509">x509</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="139">139</th><td>				{</td></tr>
+<tr><th id="140">140</th><td>				<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#2652" title="sk_push(((_STACK *) (1 ? (ret) : (struct stack_st_X509_INFO *)0)), ((void *) (1 ? (xi) : (X509_INFO *)0)))" data-ref="_M/sk_X509_INFO_push">sk_X509_INFO_push</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>,<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>)) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="141">141</th><td>				<b>if</b> ((<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_INFO_new" title='X509_INFO_new' data-ref="X509_INFO_new">X509_INFO_new</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="142">142</th><td>				<b>goto</b> <a class="lbl" href="#26start" data-ref="26start">start</a>;</td></tr>
+<tr><th id="143">143</th><td>				}</td></tr>
+<tr><th id="144">144</th><td>			<a class="local col4 ref" href="#14pp" title='pp' data-ref="14pp">pp</a>=&amp;(<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x509" title='X509_info_st::x509' data-ref="X509_info_st::x509">x509</a>);</td></tr>
+<tr><th id="145">145</th><td>			}</td></tr>
+<tr><th id="146">146</th><td>		<b>else</b> <b>if</b> ((<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>,<a class="macro" href="../../include/openssl/pem.h.html#113" title="&quot;TRUSTED CERTIFICATE&quot;" data-ref="_M/PEM_STRING_X509_TRUSTED">PEM_STRING_X509_TRUSTED</a>) == <var>0</var>))</td></tr>
+<tr><th id="147">147</th><td>			{</td></tr>
+<tr><th id="148">148</th><td>			<a class="local col4 ref" href="#24d2i" title='d2i' data-ref="24d2i">d2i</a>=(<a class="macro" href="../../include/openssl/asn1.h.html#326" title="void *(*)(void **,const unsigned char **,long)" data-ref="_M/D2I_OF">D2I_OF</a>(<em>void</em>))<a class="ref" href="../../include/openssl/x509.h.html#d2i_X509_AUX" title='d2i_X509_AUX' data-ref="d2i_X509_AUX">d2i_X509_AUX</a>;</td></tr>
+<tr><th id="149">149</th><td>			<b>if</b> (<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x509" title='X509_info_st::x509' data-ref="X509_info_st::x509">x509</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="150">150</th><td>				{</td></tr>
+<tr><th id="151">151</th><td>				<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#2652" title="sk_push(((_STACK *) (1 ? (ret) : (struct stack_st_X509_INFO *)0)), ((void *) (1 ? (xi) : (X509_INFO *)0)))" data-ref="_M/sk_X509_INFO_push">sk_X509_INFO_push</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>,<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>)) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="152">152</th><td>				<b>if</b> ((<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_INFO_new" title='X509_INFO_new' data-ref="X509_INFO_new">X509_INFO_new</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="153">153</th><td>				<b>goto</b> <a class="lbl" href="#26start" data-ref="26start">start</a>;</td></tr>
+<tr><th id="154">154</th><td>				}</td></tr>
+<tr><th id="155">155</th><td>			<a class="local col4 ref" href="#14pp" title='pp' data-ref="14pp">pp</a>=&amp;(<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x509" title='X509_info_st::x509' data-ref="X509_info_st::x509">x509</a>);</td></tr>
+<tr><th id="156">156</th><td>			}</td></tr>
+<tr><th id="157">157</th><td>		<b>else</b> <b>if</b> (<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>,<a class="macro" href="../../include/openssl/pem.h.html#116" title="&quot;X509 CRL&quot;" data-ref="_M/PEM_STRING_X509_CRL">PEM_STRING_X509_CRL</a>) == <var>0</var>)</td></tr>
+<tr><th id="158">158</th><td>			{</td></tr>
+<tr><th id="159">159</th><td>			<a class="local col4 ref" href="#24d2i" title='d2i' data-ref="24d2i">d2i</a>=(<a class="macro" href="../../include/openssl/asn1.h.html#326" title="void *(*)(void **,const unsigned char **,long)" data-ref="_M/D2I_OF">D2I_OF</a>(<em>void</em>))<a class="ref" href="../../include/openssl/x509.h.html#812" title='d2i_X509_CRL' data-ref="d2i_X509_CRL">d2i_X509_CRL</a>;</td></tr>
+<tr><th id="160">160</th><td>			<b>if</b> (<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::crl" title='X509_info_st::crl' data-ref="X509_info_st::crl">crl</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="161">161</th><td>				{</td></tr>
+<tr><th id="162">162</th><td>				<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#2652" title="sk_push(((_STACK *) (1 ? (ret) : (struct stack_st_X509_INFO *)0)), ((void *) (1 ? (xi) : (X509_INFO *)0)))" data-ref="_M/sk_X509_INFO_push">sk_X509_INFO_push</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>,<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>)) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="163">163</th><td>				<b>if</b> ((<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_INFO_new" title='X509_INFO_new' data-ref="X509_INFO_new">X509_INFO_new</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="164">164</th><td>				<b>goto</b> <a class="lbl" href="#26start" data-ref="26start">start</a>;</td></tr>
+<tr><th id="165">165</th><td>				}</td></tr>
+<tr><th id="166">166</th><td>			<a class="local col4 ref" href="#14pp" title='pp' data-ref="14pp">pp</a>=&amp;(<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::crl" title='X509_info_st::crl' data-ref="X509_info_st::crl">crl</a>);</td></tr>
+<tr><th id="167">167</th><td>			}</td></tr>
+<tr><th id="168">168</th><td>		<b>else</b></td></tr>
+<tr><th id="169">169</th><td>			<b>if</b> (<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>,<a class="macro" href="../../include/openssl/pem.h.html#119" title="&quot;RSA PRIVATE KEY&quot;" data-ref="_M/PEM_STRING_RSA">PEM_STRING_RSA</a>) == <var>0</var>)</td></tr>
+<tr><th id="170">170</th><td>			{</td></tr>
+<tr><th id="171">171</th><td>			<a class="local col4 ref" href="#24d2i" title='d2i' data-ref="24d2i">d2i</a>=(<a class="macro" href="../../include/openssl/asn1.h.html#326" title="void *(*)(void **,const unsigned char **,long)" data-ref="_M/D2I_OF">D2I_OF</a>(<em>void</em>))<a class="ref" href="../../include/openssl/rsa.h.html#d2i_RSAPrivateKey" title='d2i_RSAPrivateKey' data-ref="d2i_RSAPrivateKey">d2i_RSAPrivateKey</a>;</td></tr>
+<tr><th id="172">172</th><td>			<b>if</b> (<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) </td></tr>
+<tr><th id="173">173</th><td>				{</td></tr>
+<tr><th id="174">174</th><td>				<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#2652" title="sk_push(((_STACK *) (1 ? (ret) : (struct stack_st_X509_INFO *)0)), ((void *) (1 ? (xi) : (X509_INFO *)0)))" data-ref="_M/sk_X509_INFO_push">sk_X509_INFO_push</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>,<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>)) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="175">175</th><td>				<b>if</b> ((<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_INFO_new" title='X509_INFO_new' data-ref="X509_INFO_new">X509_INFO_new</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="176">176</th><td>				<b>goto</b> <a class="lbl" href="#26start" data-ref="26start">start</a>;</td></tr>
+<tr><th id="177">177</th><td>				}</td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td>			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_data" title='X509_info_st::enc_data' data-ref="X509_info_st::enc_data">enc_data</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="180">180</th><td>			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_len" title='X509_info_st::enc_len' data-ref="X509_info_st::enc_len">enc_len</a>=<var>0</var>;</td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td>			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_PKEY_new" title='X509_PKEY_new' data-ref="X509_PKEY_new">X509_PKEY_new</a>();</td></tr>
+<tr><th id="183">183</th><td>			<a class="local col3 ref" href="#23ptype" title='ptype' data-ref="23ptype">ptype</a>=<a class="macro" href="../../include/openssl/evp.h.html#167" title="6" data-ref="_M/EVP_PKEY_RSA">EVP_PKEY_RSA</a>;</td></tr>
+<tr><th id="184">184</th><td>			<a class="local col4 ref" href="#14pp" title='pp' data-ref="14pp">pp</a>=&amp;<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#private_key_st::dec_pkey" title='private_key_st::dec_pkey' data-ref="private_key_st::dec_pkey">dec_pkey</a>;</td></tr>
+<tr><th id="185">185</th><td>			<b>if</b> ((<em>int</em>)<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a>) &gt; <var>10</var>) <i>/* assume encrypted */</i></td></tr>
+<tr><th id="186">186</th><td>				<a class="local col2 ref" href="#22raw" title='raw' data-ref="22raw">raw</a>=<var>1</var>;</td></tr>
+<tr><th id="187">187</th><td>			}</td></tr>
+<tr><th id="188">188</th><td>		<b>else</b></td></tr>
+<tr><th id="189">189</th><td><u>#<span data-ppcond="189">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_NO_DSA">OPENSSL_NO_DSA</span></u></td></tr>
+<tr><th id="190">190</th><td>			<b>if</b> (<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>,<a class="macro" href="../../include/openssl/pem.h.html#121" title="&quot;DSA PRIVATE KEY&quot;" data-ref="_M/PEM_STRING_DSA">PEM_STRING_DSA</a>) == <var>0</var>)</td></tr>
+<tr><th id="191">191</th><td>			{</td></tr>
+<tr><th id="192">192</th><td>			<a class="local col4 ref" href="#24d2i" title='d2i' data-ref="24d2i">d2i</a>=(<a class="macro" href="../../include/openssl/asn1.h.html#326" title="void *(*)(void **,const unsigned char **,long)" data-ref="_M/D2I_OF">D2I_OF</a>(<em>void</em>))<a class="ref" href="../../include/openssl/dsa.h.html#d2i_DSAPrivateKey" title='d2i_DSAPrivateKey' data-ref="d2i_DSAPrivateKey">d2i_DSAPrivateKey</a>;</td></tr>
+<tr><th id="193">193</th><td>			<b>if</b> (<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) </td></tr>
+<tr><th id="194">194</th><td>				{</td></tr>
+<tr><th id="195">195</th><td>				<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#2652" title="sk_push(((_STACK *) (1 ? (ret) : (struct stack_st_X509_INFO *)0)), ((void *) (1 ? (xi) : (X509_INFO *)0)))" data-ref="_M/sk_X509_INFO_push">sk_X509_INFO_push</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>,<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>)) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="196">196</th><td>				<b>if</b> ((<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_INFO_new" title='X509_INFO_new' data-ref="X509_INFO_new">X509_INFO_new</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="197">197</th><td>				<b>goto</b> <a class="lbl" href="#26start" data-ref="26start">start</a>;</td></tr>
+<tr><th id="198">198</th><td>				}</td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td>			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_data" title='X509_info_st::enc_data' data-ref="X509_info_st::enc_data">enc_data</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="201">201</th><td>			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_len" title='X509_info_st::enc_len' data-ref="X509_info_st::enc_len">enc_len</a>=<var>0</var>;</td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td>			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_PKEY_new" title='X509_PKEY_new' data-ref="X509_PKEY_new">X509_PKEY_new</a>();</td></tr>
+<tr><th id="204">204</th><td>			<a class="local col3 ref" href="#23ptype" title='ptype' data-ref="23ptype">ptype</a> = <a class="macro" href="../../include/openssl/evp.h.html#169" title="116" data-ref="_M/EVP_PKEY_DSA">EVP_PKEY_DSA</a>;</td></tr>
+<tr><th id="205">205</th><td>			<a class="local col4 ref" href="#14pp" title='pp' data-ref="14pp">pp</a>=&amp;<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#private_key_st::dec_pkey" title='private_key_st::dec_pkey' data-ref="private_key_st::dec_pkey">dec_pkey</a>;</td></tr>
+<tr><th id="206">206</th><td>			<b>if</b> ((<em>int</em>)<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a>) &gt; <var>10</var>) <i>/* assume encrypted */</i></td></tr>
+<tr><th id="207">207</th><td>				<a class="local col2 ref" href="#22raw" title='raw' data-ref="22raw">raw</a>=<var>1</var>;</td></tr>
+<tr><th id="208">208</th><td>			}</td></tr>
+<tr><th id="209">209</th><td>		<b>else</b></td></tr>
+<tr><th id="210">210</th><td><u>#<span data-ppcond="189">endif</span></u></td></tr>
+<tr><th id="211">211</th><td> 			<b>if</b> (<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>,<a class="macro" href="../../include/openssl/pem.h.html#131" title="&quot;EC PRIVATE KEY&quot;" data-ref="_M/PEM_STRING_ECPRIVATEKEY">PEM_STRING_ECPRIVATEKEY</a>) == <var>0</var>)</td></tr>
+<tr><th id="212">212</th><td> 			{</td></tr>
+<tr><th id="213">213</th><td> 				<a class="local col4 ref" href="#24d2i" title='d2i' data-ref="24d2i">d2i</a>=(<a class="macro" href="../../include/openssl/asn1.h.html#326" title="void *(*)(void **,const unsigned char **,long)" data-ref="_M/D2I_OF">D2I_OF</a>(<em>void</em>))<a class="ref" href="../../include/openssl/ec_key.h.html#d2i_ECPrivateKey" title='d2i_ECPrivateKey' data-ref="d2i_ECPrivateKey">d2i_ECPrivateKey</a>;</td></tr>
+<tr><th id="214">214</th><td> 				<b>if</b> (<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) </td></tr>
+<tr><th id="215">215</th><td> 				{</td></tr>
+<tr><th id="216">216</th><td> 					<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#2652" title="sk_push(((_STACK *) (1 ? (ret) : (struct stack_st_X509_INFO *)0)), ((void *) (1 ? (xi) : (X509_INFO *)0)))" data-ref="_M/sk_X509_INFO_push">sk_X509_INFO_push</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>,<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>)) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="217">217</th><td> 					<b>if</b> ((<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_INFO_new" title='X509_INFO_new' data-ref="X509_INFO_new">X509_INFO_new</a>()) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="218">218</th><td> 						<b>goto</b> <a class="lbl" href="#26start" data-ref="26start">start</a>;</td></tr>
+<tr><th id="219">219</th><td> 				}</td></tr>
+<tr><th id="220">220</th><td> </td></tr>
+<tr><th id="221">221</th><td> 			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_data" title='X509_info_st::enc_data' data-ref="X509_info_st::enc_data">enc_data</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="222">222</th><td> 			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_len" title='X509_info_st::enc_len' data-ref="X509_info_st::enc_len">enc_len</a>=<var>0</var>;</td></tr>
+<tr><th id="223">223</th><td> </td></tr>
+<tr><th id="224">224</th><td> 			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a>=<a class="ref" href="../../include/openssl/x509.h.html#X509_PKEY_new" title='X509_PKEY_new' data-ref="X509_PKEY_new">X509_PKEY_new</a>();</td></tr>
+<tr><th id="225">225</th><td>			<a class="local col3 ref" href="#23ptype" title='ptype' data-ref="23ptype">ptype</a> = <a class="macro" href="../../include/openssl/evp.h.html#170" title="408" data-ref="_M/EVP_PKEY_EC">EVP_PKEY_EC</a>;</td></tr>
+<tr><th id="226">226</th><td> 			<a class="local col4 ref" href="#14pp" title='pp' data-ref="14pp">pp</a>=&amp;<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#private_key_st::dec_pkey" title='private_key_st::dec_pkey' data-ref="private_key_st::dec_pkey">dec_pkey</a>;</td></tr>
+<tr><th id="227">227</th><td> 			<b>if</b> ((<em>int</em>)<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a>) &gt; <var>10</var>) <i>/* assume encrypted */</i></td></tr>
+<tr><th id="228">228</th><td> 				<a class="local col2 ref" href="#22raw" title='raw' data-ref="22raw">raw</a>=<var>1</var>;</td></tr>
+<tr><th id="229">229</th><td>			}</td></tr>
+<tr><th id="230">230</th><td>		<b>else</b></td></tr>
+<tr><th id="231">231</th><td>			{</td></tr>
+<tr><th id="232">232</th><td>			<a class="local col4 ref" href="#24d2i" title='d2i' data-ref="24d2i">d2i</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="233">233</th><td>			<a class="local col4 ref" href="#14pp" title='pp' data-ref="14pp">pp</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="234">234</th><td>			}</td></tr>
+<tr><th id="235">235</th><td></td></tr>
+<tr><th id="236">236</th><td>		<b>if</b> (<a class="local col4 ref" href="#24d2i" title='d2i' data-ref="24d2i">d2i</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="237">237</th><td>			{</td></tr>
+<tr><th id="238">238</th><td>			<b>if</b> (!<a class="local col2 ref" href="#22raw" title='raw' data-ref="22raw">raw</a>)</td></tr>
+<tr><th id="239">239</th><td>				{</td></tr>
+<tr><th id="240">240</th><td>				<a class="typedef" href="../../include/openssl/cipher.h.html#EVP_CIPHER_INFO" title='EVP_CIPHER_INFO' data-type='struct evp_cipher_info_st' data-ref="EVP_CIPHER_INFO">EVP_CIPHER_INFO</a> <dfn class="local col7 decl" id="27cipher" title='cipher' data-type='EVP_CIPHER_INFO' data-ref="27cipher">cipher</dfn>;</td></tr>
+<tr><th id="241">241</th><td></td></tr>
+<tr><th id="242">242</th><td>				<b>if</b> (!<a class="ref" href="../../include/openssl/pem.h.html#PEM_get_EVP_CIPHER_INFO" title='PEM_get_EVP_CIPHER_INFO' data-ref="PEM_get_EVP_CIPHER_INFO">PEM_get_EVP_CIPHER_INFO</a>(<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a>,&amp;<a class="local col7 ref" href="#27cipher" title='cipher' data-ref="27cipher">cipher</a>))</td></tr>
+<tr><th id="243">243</th><td>					<b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="244">244</th><td>				<b>if</b> (!<a class="ref" href="../../include/openssl/pem.h.html#PEM_do_header" title='PEM_do_header' data-ref="PEM_do_header">PEM_do_header</a>(&amp;<a class="local col7 ref" href="#27cipher" title='cipher' data-ref="27cipher">cipher</a>,<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a>,&amp;<a class="local col7 ref" href="#17len" title='len' data-ref="17len">len</a>,<a class="local col9 ref" href="#9cb" title='cb' data-ref="9cb">cb</a>,<a class="local col0 ref" href="#10u" title='u' data-ref="10u">u</a>))</td></tr>
+<tr><th id="245">245</th><td>					<b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="246">246</th><td>				<a class="local col6 ref" href="#16p" title='p' data-ref="16p">p</a>=<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a>;</td></tr>
+<tr><th id="247">247</th><td>				<b>if</b> (<a class="local col3 ref" href="#23ptype" title='ptype' data-ref="23ptype">ptype</a>)</td></tr>
+<tr><th id="248">248</th><td>					{</td></tr>
+<tr><th id="249">249</th><td>					<b>if</b> (!<a class="ref" href="../../include/openssl/evp.h.html#d2i_PrivateKey" title='d2i_PrivateKey' data-ref="d2i_PrivateKey">d2i_PrivateKey</a>(<a class="local col3 ref" href="#23ptype" title='ptype' data-ref="23ptype">ptype</a>, <a class="local col4 ref" href="#14pp" title='pp' data-ref="14pp">pp</a>, &amp;<a class="local col6 ref" href="#16p" title='p' data-ref="16p">p</a>, <a class="local col7 ref" href="#17len" title='len' data-ref="17len">len</a>))</td></tr>
+<tr><th id="250">250</th><td>						{</td></tr>
+<tr><th id="251">251</th><td>						<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_PEM, 0, ERR_LIB_ASN1, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/pem/pem_info.c&quot;, 251)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(PEM, <a class="macro" href="../../include/openssl/err.h.html#432" title="ERR_LIB_ASN1" data-ref="_M/ERR_R_ASN1_LIB">ERR_R_ASN1_LIB</a>);</td></tr>
+<tr><th id="252">252</th><td>						<b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="253">253</th><td>						}</td></tr>
+<tr><th id="254">254</th><td>					}</td></tr>
+<tr><th id="255">255</th><td>				<b>else</b> <b>if</b> (<a class="local col4 ref" href="#24d2i" title='d2i' data-ref="24d2i">d2i</a>(<a class="local col4 ref" href="#14pp" title='pp' data-ref="14pp">pp</a>,&amp;<a class="local col6 ref" href="#16p" title='p' data-ref="16p">p</a>,<a class="local col7 ref" href="#17len" title='len' data-ref="17len">len</a>) == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="256">256</th><td>					{</td></tr>
+<tr><th id="257">257</th><td>					<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_PEM, 0, ERR_LIB_ASN1, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/pem/pem_info.c&quot;, 257)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(PEM, <a class="macro" href="../../include/openssl/err.h.html#432" title="ERR_LIB_ASN1" data-ref="_M/ERR_R_ASN1_LIB">ERR_R_ASN1_LIB</a>);</td></tr>
+<tr><th id="258">258</th><td>					<b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="259">259</th><td>					}</td></tr>
+<tr><th id="260">260</th><td>				}</td></tr>
+<tr><th id="261">261</th><td>			<b>else</b></td></tr>
+<tr><th id="262">262</th><td>				{ <i>/* encrypted RSA data */</i></td></tr>
+<tr><th id="263">263</th><td>				<b>if</b> (!<a class="ref" href="../../include/openssl/pem.h.html#PEM_get_EVP_CIPHER_INFO" title='PEM_get_EVP_CIPHER_INFO' data-ref="PEM_get_EVP_CIPHER_INFO">PEM_get_EVP_CIPHER_INFO</a>(<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a>,</td></tr>
+<tr><th id="264">264</th><td>					&amp;<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_cipher" title='X509_info_st::enc_cipher' data-ref="X509_info_st::enc_cipher">enc_cipher</a>)) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="265">265</th><td>				<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_data" title='X509_info_st::enc_data' data-ref="X509_info_st::enc_data">enc_data</a>=(<em>char</em> *)<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a>;</td></tr>
+<tr><th id="266">266</th><td>				<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_len" title='X509_info_st::enc_len' data-ref="X509_info_st::enc_len">enc_len</a>=(<em>int</em>)<a class="local col7 ref" href="#17len" title='len' data-ref="17len">len</a>;</td></tr>
+<tr><th id="267">267</th><td>				<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="268">268</th><td>				}</td></tr>
+<tr><th id="269">269</th><td>			}</td></tr>
+<tr><th id="270">270</th><td>		<b>else</b>	{</td></tr>
+<tr><th id="271">271</th><td>			<i>/* unknown */</i></td></tr>
+<tr><th id="272">272</th><td>			}</td></tr>
+<tr><th id="273">273</th><td>		<b>if</b> (<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>);</td></tr>
+<tr><th id="274">274</th><td>		<b>if</b> (<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a>);</td></tr>
+<tr><th id="275">275</th><td>		<b>if</b> (<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a>);</td></tr>
+<tr><th id="276">276</th><td>		<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="277">277</th><td>		<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="278">278</th><td>		<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="279">279</th><td>		}</td></tr>
+<tr><th id="280">280</th><td></td></tr>
+<tr><th id="281">281</th><td>	<i>/* if the last one hasn't been pushed yet and there is anything</i></td></tr>
+<tr><th id="282">282</th><td><i>	 * in it then add it to the stack ... </i></td></tr>
+<tr><th id="283">283</th><td><i>	 */</i></td></tr>
+<tr><th id="284">284</th><td>	<b>if</b> ((<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x509" title='X509_info_st::x509' data-ref="X509_info_st::x509">x509</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) || (<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::crl" title='X509_info_st::crl' data-ref="X509_info_st::crl">crl</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) ||</td></tr>
+<tr><th id="285">285</th><td>		(<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) || (<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_data" title='X509_info_st::enc_data' data-ref="X509_info_st::enc_data">enc_data</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>))</td></tr>
+<tr><th id="286">286</th><td>		{</td></tr>
+<tr><th id="287">287</th><td>		<b>if</b> (!<a class="macro" href="../../include/openssl/stack_macros.h.html#2652" title="sk_push(((_STACK *) (1 ? (ret) : (struct stack_st_X509_INFO *)0)), ((void *) (1 ? (xi) : (X509_INFO *)0)))" data-ref="_M/sk_X509_INFO_push">sk_X509_INFO_push</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>,<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>)) <b>goto</b> <a class="lbl" href="#25err" data-ref="25err">err</a>;</td></tr>
+<tr><th id="288">288</th><td>		<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="289">289</th><td>		}</td></tr>
+<tr><th id="290">290</th><td>	<a class="local col9 ref" href="#19ok" title='ok' data-ref="19ok">ok</a>=<var>1</var>;</td></tr>
+<tr><th id="291">291</th><td><dfn class="lbl" id="25err" data-ref="25err">err</dfn>:</td></tr>
+<tr><th id="292">292</th><td>	<b>if</b> (<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <a class="ref" href="../../include/openssl/x509.h.html#X509_INFO_free" title='X509_INFO_free' data-ref="X509_INFO_free">X509_INFO_free</a>(<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>);</td></tr>
+<tr><th id="293">293</th><td>	<b>if</b> (!<a class="local col9 ref" href="#19ok" title='ok' data-ref="19ok">ok</a>)</td></tr>
+<tr><th id="294">294</th><td>		{</td></tr>
+<tr><th id="295">295</th><td>		<b>for</b> (<a class="local col1 ref" href="#21i" title='i' data-ref="21i">i</a>=<var>0</var>; <a class="local col1 ref" href="#21i" title='i' data-ref="21i">i</a>&lt;<a class="macro" href="../../include/openssl/stack_macros.h.html#2610" title="sk_num(((_STACK *) (1 ? (ret) : (struct stack_st_X509_INFO *)0)))" data-ref="_M/sk_X509_INFO_num">sk_X509_INFO_num</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>); <a class="local col1 ref" href="#21i" title='i' data-ref="21i">i</a>++)</td></tr>
+<tr><th id="296">296</th><td>			{</td></tr>
+<tr><th id="297">297</th><td>			<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>=<a class="macro" href="../../include/openssl/stack_macros.h.html#2616" title="((X509_INFO *)sk_value( ((_STACK *) (1 ? (ret) : (const struct stack_st_X509_INFO *)0)), (i)))" data-ref="_M/sk_X509_INFO_value">sk_X509_INFO_value</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>,<a class="local col1 ref" href="#21i" title='i' data-ref="21i">i</a>);</td></tr>
+<tr><th id="298">298</th><td>			<a class="ref" href="../../include/openssl/x509.h.html#X509_INFO_free" title='X509_INFO_free' data-ref="X509_INFO_free">X509_INFO_free</a>(<a class="local col1 ref" href="#11xi" title='xi' data-ref="11xi">xi</a>);</td></tr>
+<tr><th id="299">299</th><td>			}</td></tr>
+<tr><th id="300">300</th><td>		<b>if</b> (<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a> != <a class="local col8 ref" href="#8sk" title='sk' data-ref="8sk">sk</a>) <a class="macro" href="../../include/openssl/stack_macros.h.html#2624" title="sk_free(((_STACK *) (1 ? (ret) : (struct stack_st_X509_INFO *)0)))" data-ref="_M/sk_X509_INFO_free">sk_X509_INFO_free</a>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>);</td></tr>
+<tr><th id="301">301</th><td>		<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="302">302</th><td>		}</td></tr>
+<tr><th id="303">303</th><td>		</td></tr>
+<tr><th id="304">304</th><td>	<b>if</b> (<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col2 ref" href="#12name" title='name' data-ref="12name">name</a>);</td></tr>
+<tr><th id="305">305</th><td>	<b>if</b> (<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col3 ref" href="#13header" title='header' data-ref="13header">header</a>);</td></tr>
+<tr><th id="306">306</th><td>	<b>if</b> (<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col5 ref" href="#15data" title='data' data-ref="15data">data</a>);</td></tr>
+<tr><th id="307">307</th><td>	<b>return</b>(<a class="local col0 ref" href="#20ret" title='ret' data-ref="20ret">ret</a>);</td></tr>
+<tr><th id="308">308</th><td>	}</td></tr>
+<tr><th id="309">309</th><td></td></tr>
+<tr><th id="310">310</th><td></td></tr>
+<tr><th id="311">311</th><td><i>/* A TJH addition */</i></td></tr>
+<tr><th id="312">312</th><td><em>int</em> <dfn class="decl def" id="PEM_X509_INFO_write_bio" title='PEM_X509_INFO_write_bio' data-ref="PEM_X509_INFO_write_bio">PEM_X509_INFO_write_bio</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col8 decl" id="28bp" title='bp' data-type='BIO *' data-ref="28bp">bp</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#X509_INFO" title='X509_INFO' data-type='struct X509_info_st' data-ref="X509_INFO">X509_INFO</a> *<dfn class="local col9 decl" id="29xi" title='xi' data-type='X509_INFO *' data-ref="29xi">xi</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#EVP_CIPHER" title='EVP_CIPHER' data-type='struct evp_cipher_st' data-ref="EVP_CIPHER">EVP_CIPHER</a> *<dfn class="local col0 decl" id="30enc" title='enc' data-type='EVP_CIPHER *' data-ref="30enc">enc</dfn>,</td></tr>
+<tr><th id="313">313</th><td>	     <em>unsigned</em> <em>char</em> *<dfn class="local col1 decl" id="31kstr" title='kstr' data-type='unsigned char *' data-ref="31kstr">kstr</dfn>, <em>int</em> <dfn class="local col2 decl" id="32klen" title='klen' data-type='int' data-ref="32klen">klen</dfn>, <a class="typedef" href="../../include/openssl/pem.h.html#pem_password_cb" title='pem_password_cb' data-type='int (char *, int, int, void *)' data-ref="pem_password_cb">pem_password_cb</a> *<dfn class="local col3 decl" id="33cb" title='cb' data-type='pem_password_cb *' data-ref="33cb">cb</dfn>, <em>void</em> *<dfn class="local col4 decl" id="34u" title='u' data-type='void *' data-ref="34u">u</dfn>)</td></tr>
+<tr><th id="314">314</th><td>	{</td></tr>
+<tr><th id="315">315</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#EVP_CIPHER_CTX" title='EVP_CIPHER_CTX' data-type='struct evp_cipher_ctx_st' data-ref="EVP_CIPHER_CTX">EVP_CIPHER_CTX</a> <dfn class="local col5 decl" id="35ctx" title='ctx' data-type='EVP_CIPHER_CTX' data-ref="35ctx">ctx</dfn>;</td></tr>
+<tr><th id="316">316</th><td>	<em>int</em> <dfn class="local col6 decl" id="36i" title='i' data-type='int' data-ref="36i">i</dfn>,<dfn class="local col7 decl" id="37ret" title='ret' data-type='int' data-ref="37ret">ret</dfn>=<var>0</var>;</td></tr>
+<tr><th id="317">317</th><td>	<em>unsigned</em> <em>char</em> *<dfn class="local col8 decl" id="38data" title='data' data-type='unsigned char *' data-ref="38data">data</dfn>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="318">318</th><td>	<em>const</em> <em>char</em> *<dfn class="local col9 decl" id="39objstr" title='objstr' data-type='const char *' data-ref="39objstr">objstr</dfn>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="319">319</th><td>	<em>char</em> <dfn class="local col0 decl" id="40buf" title='buf' data-type='char [1024]' data-ref="40buf">buf</dfn>[<a class="macro" href="../../include/openssl/pem.h.html#73" title="1024" data-ref="_M/PEM_BUFSIZE">PEM_BUFSIZE</a>];</td></tr>
+<tr><th id="320">320</th><td>	<em>unsigned</em> <em>char</em> *<dfn class="local col1 decl" id="41iv" title='iv' data-type='unsigned char *' data-ref="41iv">iv</dfn>=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="321">321</th><td>	<em>unsigned</em> <dfn class="local col2 decl" id="42iv_len" title='iv_len' data-type='unsigned int' data-ref="42iv_len">iv_len</dfn> = <var>0</var>;</td></tr>
+<tr><th id="322">322</th><td>	</td></tr>
+<tr><th id="323">323</th><td>	<b>if</b> (<a class="local col0 ref" href="#30enc" title='enc' data-ref="30enc">enc</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="324">324</th><td>		{</td></tr>
+<tr><th id="325">325</th><td>		<a class="local col2 ref" href="#42iv_len" title='iv_len' data-ref="42iv_len">iv_len</a> = <a class="ref" href="../../include/openssl/cipher.h.html#EVP_CIPHER_iv_length" title='EVP_CIPHER_iv_length' data-ref="EVP_CIPHER_iv_length">EVP_CIPHER_iv_length</a>(<a class="local col0 ref" href="#30enc" title='enc' data-ref="30enc">enc</a>);</td></tr>
+<tr><th id="326">326</th><td>		<a class="local col9 ref" href="#39objstr" title='objstr' data-ref="39objstr">objstr</a>=<a class="ref" href="../../include/openssl/obj.h.html#OBJ_nid2sn" title='OBJ_nid2sn' data-ref="OBJ_nid2sn">OBJ_nid2sn</a>(<a class="ref" href="../../include/openssl/cipher.h.html#EVP_CIPHER_nid" title='EVP_CIPHER_nid' data-ref="EVP_CIPHER_nid">EVP_CIPHER_nid</a>(<a class="local col0 ref" href="#30enc" title='enc' data-ref="30enc">enc</a>));</td></tr>
+<tr><th id="327">327</th><td>		<b>if</b> (<a class="local col9 ref" href="#39objstr" title='objstr' data-ref="39objstr">objstr</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="328">328</th><td>			{</td></tr>
+<tr><th id="329">329</th><td>			<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_PEM, 0, 113, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/pem/pem_info.c&quot;, 329)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(PEM, <a class="macro" href="../../include/openssl/pem.h.html#514" title="113" data-ref="_M/PEM_R_UNSUPPORTED_CIPHER">PEM_R_UNSUPPORTED_CIPHER</a>);</td></tr>
+<tr><th id="330">330</th><td>			<b>goto</b> <a class="lbl" href="#43err" data-ref="43err">err</a>;</td></tr>
+<tr><th id="331">331</th><td>			}</td></tr>
+<tr><th id="332">332</th><td>		}</td></tr>
+<tr><th id="333">333</th><td></td></tr>
+<tr><th id="334">334</th><td>	<i>/* now for the fun part ... if we have a private key then </i></td></tr>
+<tr><th id="335">335</th><td><i>	 * we have to be able to handle a not-yet-decrypted key</i></td></tr>
+<tr><th id="336">336</th><td><i>	 * being written out correctly ... if it is decrypted or</i></td></tr>
+<tr><th id="337">337</th><td><i>	 * it is non-encrypted then we use the base code</i></td></tr>
+<tr><th id="338">338</th><td><i>	 */</i></td></tr>
+<tr><th id="339">339</th><td>	<b>if</b> (<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a>!=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="340">340</th><td>		{</td></tr>
+<tr><th id="341">341</th><td>		<b>if</b> ( (<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_data" title='X509_info_st::enc_data' data-ref="X509_info_st::enc_data">enc_data</a>!=<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) &amp;&amp; (<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_len" title='X509_info_st::enc_len' data-ref="X509_info_st::enc_len">enc_len</a>&gt;<var>0</var>) )</td></tr>
+<tr><th id="342">342</th><td>			{</td></tr>
+<tr><th id="343">343</th><td>			<b>if</b> (<a class="local col0 ref" href="#30enc" title='enc' data-ref="30enc">enc</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="344">344</th><td>				{</td></tr>
+<tr><th id="345">345</th><td>				<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_PEM, 0, 105, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/pem/pem_info.c&quot;, 345)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(PEM, <a class="macro" href="../../include/openssl/pem.h.html#506" title="105" data-ref="_M/PEM_R_CIPHER_IS_NULL">PEM_R_CIPHER_IS_NULL</a>);</td></tr>
+<tr><th id="346">346</th><td>				<b>goto</b> <a class="lbl" href="#43err" data-ref="43err">err</a>;</td></tr>
+<tr><th id="347">347</th><td>				}</td></tr>
+<tr><th id="348">348</th><td></td></tr>
+<tr><th id="349">349</th><td>			<i>/* copy from weirdo names into more normal things */</i></td></tr>
+<tr><th id="350">350</th><td>			<a class="local col1 ref" href="#41iv" title='iv' data-ref="41iv">iv</a>=<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_cipher" title='X509_info_st::enc_cipher' data-ref="X509_info_st::enc_cipher">enc_cipher</a>.<a class="ref" href="../../include/openssl/cipher.h.html#evp_cipher_info_st::iv" title='evp_cipher_info_st::iv' data-ref="evp_cipher_info_st::iv">iv</a>;</td></tr>
+<tr><th id="351">351</th><td>			<a class="local col8 ref" href="#38data" title='data' data-ref="38data">data</a>=(<em>unsigned</em> <em>char</em> *)<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_data" title='X509_info_st::enc_data' data-ref="X509_info_st::enc_data">enc_data</a>;</td></tr>
+<tr><th id="352">352</th><td>			<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>=<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_len" title='X509_info_st::enc_len' data-ref="X509_info_st::enc_len">enc_len</a>;</td></tr>
+<tr><th id="353">353</th><td></td></tr>
+<tr><th id="354">354</th><td>			<i>/* we take the encryption data from the</i></td></tr>
+<tr><th id="355">355</th><td><i>			 * internal stuff rather than what the</i></td></tr>
+<tr><th id="356">356</th><td><i>			 * user has passed us ... as we have to </i></td></tr>
+<tr><th id="357">357</th><td><i>			 * match exactly for some strange reason</i></td></tr>
+<tr><th id="358">358</th><td><i>			 */</i></td></tr>
+<tr><th id="359">359</th><td>			<a class="local col9 ref" href="#39objstr" title='objstr' data-ref="39objstr">objstr</a>=<a class="ref" href="../../include/openssl/obj.h.html#OBJ_nid2sn" title='OBJ_nid2sn' data-ref="OBJ_nid2sn">OBJ_nid2sn</a>(</td></tr>
+<tr><th id="360">360</th><td>				<a class="ref" href="../../include/openssl/cipher.h.html#EVP_CIPHER_nid" title='EVP_CIPHER_nid' data-ref="EVP_CIPHER_nid">EVP_CIPHER_nid</a>(<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::enc_cipher" title='X509_info_st::enc_cipher' data-ref="X509_info_st::enc_cipher">enc_cipher</a>.<a class="ref" href="../../include/openssl/cipher.h.html#evp_cipher_info_st::cipher" title='evp_cipher_info_st::cipher' data-ref="evp_cipher_info_st::cipher">cipher</a>));</td></tr>
+<tr><th id="361">361</th><td>			<b>if</b> (<a class="local col9 ref" href="#39objstr" title='objstr' data-ref="39objstr">objstr</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="362">362</th><td>				{</td></tr>
+<tr><th id="363">363</th><td>				<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_PEM, 0, 113, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/pem/pem_info.c&quot;, 363)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(PEM, <a class="macro" href="../../include/openssl/pem.h.html#514" title="113" data-ref="_M/PEM_R_UNSUPPORTED_CIPHER">PEM_R_UNSUPPORTED_CIPHER</a>);</td></tr>
+<tr><th id="364">364</th><td>				<b>goto</b> <a class="lbl" href="#43err" data-ref="43err">err</a>;</td></tr>
+<tr><th id="365">365</th><td>				}</td></tr>
+<tr><th id="366">366</th><td></td></tr>
+<tr><th id="367">367</th><td>			<i>/* create the right magic header stuff */</i></td></tr>
+<tr><th id="368">368</th><td>			<a class="macro" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/assert.h.html#51" title="((void)0)" data-ref="_M/assert">assert</a>(strlen(objstr)+<var>23</var>+<var>2</var>*iv_len+<var>13</var> &lt;= <b>sizeof</b> buf);</td></tr>
+<tr><th id="369">369</th><td>			<a class="local col0 ref" href="#40buf" title='buf' data-ref="40buf">buf</a>[<var>0</var>]=<kbd>'\0'</kbd>;</td></tr>
+<tr><th id="370">370</th><td>			<a class="ref" href="../../include/openssl/pem.h.html#PEM_proc_type" title='PEM_proc_type' data-ref="PEM_proc_type">PEM_proc_type</a>(<a class="local col0 ref" href="#40buf" title='buf' data-ref="40buf">buf</a>,<a class="macro" href="../../include/openssl/pem.h.html#145" title="10" data-ref="_M/PEM_TYPE_ENCRYPTED">PEM_TYPE_ENCRYPTED</a>);</td></tr>
+<tr><th id="371">371</th><td>			<a class="ref" href="../../include/openssl/pem.h.html#PEM_dek_info" title='PEM_dek_info' data-ref="PEM_dek_info">PEM_dek_info</a>(<a class="local col0 ref" href="#40buf" title='buf' data-ref="40buf">buf</a>,<a class="local col9 ref" href="#39objstr" title='objstr' data-ref="39objstr">objstr</a>,<a class="local col2 ref" href="#42iv_len" title='iv_len' data-ref="42iv_len">iv_len</a>,(<em>char</em> *)<a class="local col1 ref" href="#41iv" title='iv' data-ref="41iv">iv</a>);</td></tr>
+<tr><th id="372">372</th><td></td></tr>
+<tr><th id="373">373</th><td>			<i>/* use the normal code to write things out */</i></td></tr>
+<tr><th id="374">374</th><td>			<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>=<a class="ref" href="../../include/openssl/pem.h.html#PEM_write_bio" title='PEM_write_bio' data-ref="PEM_write_bio">PEM_write_bio</a>(<a class="local col8 ref" href="#28bp" title='bp' data-ref="28bp">bp</a>,<a class="macro" href="../../include/openssl/pem.h.html#119" title="&quot;RSA PRIVATE KEY&quot;" data-ref="_M/PEM_STRING_RSA">PEM_STRING_RSA</a>,<a class="local col0 ref" href="#40buf" title='buf' data-ref="40buf">buf</a>,<a class="local col8 ref" href="#38data" title='data' data-ref="38data">data</a>,<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>);</td></tr>
+<tr><th id="375">375</th><td>			<b>if</b> (<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> &lt;= <var>0</var>) <b>goto</b> <a class="lbl" href="#43err" data-ref="43err">err</a>;</td></tr>
+<tr><th id="376">376</th><td>			}</td></tr>
+<tr><th id="377">377</th><td>		<b>else</b></td></tr>
+<tr><th id="378">378</th><td>			{</td></tr>
+<tr><th id="379">379</th><td>			<i>/* Add DSA/DH */</i></td></tr>
+<tr><th id="380">380</th><td>			<i>/* normal optionally encrypted stuff */</i></td></tr>
+<tr><th id="381">381</th><td>			<b>if</b> (<a class="ref" href="../../include/openssl/pem.h.html#440" title='PEM_write_bio_RSAPrivateKey' data-ref="PEM_write_bio_RSAPrivateKey">PEM_write_bio_RSAPrivateKey</a>(<a class="local col8 ref" href="#28bp" title='bp' data-ref="28bp">bp</a>,</td></tr>
+<tr><th id="382">382</th><td>				<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x_pkey" title='X509_info_st::x_pkey' data-ref="X509_info_st::x_pkey">x_pkey</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#private_key_st::dec_pkey" title='private_key_st::dec_pkey' data-ref="private_key_st::dec_pkey">dec_pkey</a>-&gt;<a class="ref" href="../../include/openssl/evp.h.html#evp_pkey_st::pkey" title='evp_pkey_st::pkey' data-ref="evp_pkey_st::pkey">pkey</a>.<a class="ref" href="../../include/openssl/evp.h.html#evp_pkey_st::(anonymous)::rsa" title='evp_pkey_st::(anonymous union)::rsa' data-ref="evp_pkey_st::(anonymous)::rsa">rsa</a>,</td></tr>
+<tr><th id="383">383</th><td>				<a class="local col0 ref" href="#30enc" title='enc' data-ref="30enc">enc</a>,<a class="local col1 ref" href="#31kstr" title='kstr' data-ref="31kstr">kstr</a>,<a class="local col2 ref" href="#32klen" title='klen' data-ref="32klen">klen</a>,<a class="local col3 ref" href="#33cb" title='cb' data-ref="33cb">cb</a>,<a class="local col4 ref" href="#34u" title='u' data-ref="34u">u</a>)&lt;=<var>0</var>)</td></tr>
+<tr><th id="384">384</th><td>				<b>goto</b> <a class="lbl" href="#43err" data-ref="43err">err</a>;</td></tr>
+<tr><th id="385">385</th><td>			}</td></tr>
+<tr><th id="386">386</th><td>		}</td></tr>
+<tr><th id="387">387</th><td></td></tr>
+<tr><th id="388">388</th><td>	<i>/* if we have a certificate then write it out now */</i></td></tr>
+<tr><th id="389">389</th><td>	<b>if</b> ((<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x509" title='X509_info_st::x509' data-ref="X509_info_st::x509">x509</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) &amp;&amp; (<a class="ref" href="../../include/openssl/pem.h.html#421" title='PEM_write_bio_X509' data-ref="PEM_write_bio_X509">PEM_write_bio_X509</a>(<a class="local col8 ref" href="#28bp" title='bp' data-ref="28bp">bp</a>,<a class="local col9 ref" href="#29xi" title='xi' data-ref="29xi">xi</a>-&gt;<a class="ref" href="../../include/openssl/x509.h.html#X509_info_st::x509" title='X509_info_st::x509' data-ref="X509_info_st::x509">x509</a>) &lt;= <var>0</var>))</td></tr>
+<tr><th id="390">390</th><td>		<b>goto</b> <a class="lbl" href="#43err" data-ref="43err">err</a>;</td></tr>
+<tr><th id="391">391</th><td></td></tr>
+<tr><th id="392">392</th><td>	<i>/* we are ignoring anything else that is loaded into the X509_INFO</i></td></tr>
+<tr><th id="393">393</th><td><i>	 * structure for the moment ... as I don't need it so I'm not</i></td></tr>
+<tr><th id="394">394</th><td><i>	 * coding it here and Eric can do it when this makes it into the</i></td></tr>
+<tr><th id="395">395</th><td><i>	 * base library --tjh</i></td></tr>
+<tr><th id="396">396</th><td><i>	 */</i></td></tr>
+<tr><th id="397">397</th><td></td></tr>
+<tr><th id="398">398</th><td>	<a class="local col7 ref" href="#37ret" title='ret' data-ref="37ret">ret</a>=<var>1</var>;</td></tr>
+<tr><th id="399">399</th><td></td></tr>
+<tr><th id="400">400</th><td><dfn class="lbl" id="43err" data-ref="43err">err</dfn>:</td></tr>
+<tr><th id="401">401</th><td>	<a class="ref" href="../../include/openssl/mem.h.html#OPENSSL_cleanse" title='OPENSSL_cleanse' data-ref="OPENSSL_cleanse">OPENSSL_cleanse</a>((<em>char</em> *)&amp;<a class="local col5 ref" href="#35ctx" title='ctx' data-ref="35ctx">ctx</a>,<b>sizeof</b>(<a class="local col5 ref" href="#35ctx" title='ctx' data-ref="35ctx">ctx</a>));</td></tr>
+<tr><th id="402">402</th><td>	<a class="ref" href="../../include/openssl/mem.h.html#OPENSSL_cleanse" title='OPENSSL_cleanse' data-ref="OPENSSL_cleanse">OPENSSL_cleanse</a>(<a class="local col0 ref" href="#40buf" title='buf' data-ref="40buf">buf</a>,<a class="macro" href="../../include/openssl/pem.h.html#73" title="1024" data-ref="_M/PEM_BUFSIZE">PEM_BUFSIZE</a>);</td></tr>
+<tr><th id="403">403</th><td>	<b>return</b>(<a class="local col7 ref" href="#37ret" title='ret' data-ref="37ret">ret</a>);</td></tr>
+<tr><th id="404">404</th><td>	}</td></tr>
+<tr><th id="405">405</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,16 @@
+<dec f='codebrowser/external/libselinux/include/selinux/avc.h' l='54' type='int avc_context_to_sid(const char * ctx, security_id_t * sid)'/>
+<doc f='codebrowser/external/libselinux/include/selinux/avc.h' l='43'>/**
+ * avc_context_to_sid - get SID for context.
+ * @ctx: input security context
+ * @sid: pointer to SID reference
+ *
+ * Look up security context @ctx in SID table, making
+ * a new entry if @ctx is not found.  Increment the
+ * reference counter for the SID.  Store a pointer
+ * to the SID structure into the memory referenced by @sid, 
+ * returning %0 on success or -%1 on error with @errno set.  
+ */</doc>
+<def f='codebrowser/external/libselinux/src/avc.c' l='70' ll='80' type='int avc_context_to_sid(const char * ctx, security_id_t * sid)'/>
+<use f='codebrowser/external/libselinux/src/avc.c' l='101' u='c' c='avc_get_initial_sid'/>
+<use f='codebrowser/external/libselinux/src/checkAccess.c' l='32' u='c' c='selinux_check_access'/>
+<use f='codebrowser/external/libselinux/src/checkAccess.c' l='36' u='c' c='selinux_check_access'/>

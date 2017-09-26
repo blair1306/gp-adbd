@@ -1,0 +1,18 @@
+<dec f='codebrowser/external/libselinux/include/selinux/avc.h' l='187' type='int avc_init(const char * msgprefix, const struct avc_memory_callback * mem_callbacks, const struct avc_log_callback * log_callbacks, const struct avc_thread_callback * thread_callbacks, const struct avc_lock_callback * lock_callbacks)'/>
+<doc f='codebrowser/external/libselinux/include/selinux/avc.h' l='172'>/**
+ * avc_init - Initialize the AVC.
+ * @msgprefix: prefix for log messages
+ * @mem_callbacks: user-supplied memory callbacks
+ * @log_callbacks: user-supplied logging callbacks
+ * @thread_callbacks: user-supplied threading callbacks
+ * @lock_callbacks: user-supplied locking callbacks
+ *
+ * Initialize the access vector cache.  Return %0 on
+ * success or -%1 with @errno set on failure.  
+ * If @msgprefix is NULL, use &quot;uavc&quot;.  If any callback 
+ * structure references are NULL, use default methods 
+ * for those callbacks (see the definition of the callback
+ * structures above).
+ */</doc>
+<use f='codebrowser/external/libselinux/src/avc.c' l='120' u='c' c='avc_open'/>
+<def f='codebrowser/external/libselinux/src/avc.c' l='123' ll='207' type='int avc_init(const char * prefix, const struct avc_memory_callback * mem_cb, const struct avc_log_callback * log_cb, const struct avc_thread_callback * thread_cb, const struct avc_lock_callback * lock_cb)'/>

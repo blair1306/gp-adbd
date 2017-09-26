@@ -1,0 +1,20 @@
+<def f='codebrowser/bionic/libc/bionic/system_properties.cpp' l='82' ll='117'/>
+<size>20</size>
+<doc f='codebrowser/bionic/libc/bionic/system_properties.cpp' l='64'>/*
+ * Properties are stored in a hybrid trie/binary tree structure.
+ * Each property&apos;s name is delimited at &apos;.&apos; characters, and the tokens are put
+ * into a trie structure.  Siblings at each level of the trie are stored in a
+ * binary tree.  For instance, &quot;ro.secure&quot;=&quot;1&quot; could be stored as follows:
+ *
+ * +-----+   children    +----+   children    +--------+
+ * |     |--------------&gt;| ro |--------------&gt;| secure |
+ * +-----+               +----+               +--------+
+ *                       /    \                /   |
+ *                 left /      \ right   left /    |  prop   +===========+
+ *                     v        v            v     +--------&gt;| ro.secure |
+ *                  +-----+   +-----+     +-----+            +-----------+
+ *                  | net |   | sys |     | com |            |     1     |
+ *                  +-----+   +-----+     +-----+            +===========+
+ */
+
+// Represents a node in the trie.</doc>

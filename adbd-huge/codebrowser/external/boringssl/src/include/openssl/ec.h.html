@@ -1,0 +1,373 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ec.h source code [codebrowser/external/boringssl/src/include/openssl/ec.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/ec.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='ec.h.html'>ec.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Originally written by Bodo Moeller for the OpenSSL project.</i></td></tr>
+<tr><th id="2">2</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright (c) 1998-2005 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *</i></td></tr>
+<tr><th id="9">9</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="10">10</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="11">11</th><td><i> *</i></td></tr>
+<tr><th id="12">12</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="13">13</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="14">14</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="15">15</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="16">16</th><td><i> *</i></td></tr>
+<tr><th id="17">17</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="18">18</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="19">19</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="20">20</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="23">23</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="24">24</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="25">25</th><td><i> *    openssl-core@openssl.org.</i></td></tr>
+<tr><th id="26">26</th><td><i> *</i></td></tr>
+<tr><th id="27">27</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="28">28</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="29">29</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="30">30</th><td><i> *</i></td></tr>
+<tr><th id="31">31</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="32">32</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="33">33</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="34">34</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="35">35</th><td><i> *</i></td></tr>
+<tr><th id="36">36</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="37">37</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="38">38</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="39">39</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="40">40</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="41">41</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="42">42</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="43">43</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="44">44</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="45">45</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="46">46</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="47">47</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="48">48</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="49">49</th><td><i> *</i></td></tr>
+<tr><th id="50">50</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="51">51</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="52">52</th><td><i> * Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="53">53</th><td><i> *</i></td></tr>
+<tr><th id="54">54</th><td><i> */</i></td></tr>
+<tr><th id="55">55</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="56">56</th><td><i> * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.</i></td></tr>
+<tr><th id="57">57</th><td><i> *</i></td></tr>
+<tr><th id="58">58</th><td><i> * Portions of the attached software ("Contribution") are developed by</i></td></tr>
+<tr><th id="59">59</th><td><i> * SUN MICROSYSTEMS, INC., and are contributed to the OpenSSL project.</i></td></tr>
+<tr><th id="60">60</th><td><i> *</i></td></tr>
+<tr><th id="61">61</th><td><i> * The Contribution is licensed pursuant to the OpenSSL open source</i></td></tr>
+<tr><th id="62">62</th><td><i> * license provided above.</i></td></tr>
+<tr><th id="63">63</th><td><i> *</i></td></tr>
+<tr><th id="64">64</th><td><i> * The elliptic curve binary polynomial software is originally written by</i></td></tr>
+<tr><th id="65">65</th><td><i> * Sheueling Chang Shantz and Douglas Stebila of Sun Microsystems</i></td></tr>
+<tr><th id="66">66</th><td><i> * Laboratories. */</i></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="68">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_EC_H">OPENSSL_HEADER_EC_H</span></u></td></tr>
+<tr><th id="69">69</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_EC_H" data-ref="_M/OPENSSL_HEADER_EC_H">OPENSSL_HEADER_EC_H</dfn></u></td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><u>#<span data-ppcond="73">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="74">74</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="75">75</th><td><u>#<span data-ppcond="73">endif</span></u></td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td><i>/* Low-level operations on elliptic curves. */</i></td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><b>typedef</b> <b>struct</b> <dfn class="type" id="ec_group_st" title='ec_group_st' data-ref="ec_group_st"><a class="type" href="#ec_group_st" title='ec_group_st' data-ref="ec_group_st">ec_group_st</a></dfn> <dfn class="typedef" id="EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</dfn>;</td></tr>
+<tr><th id="82">82</th><td><b>typedef</b> <b>struct</b> <dfn class="type" id="ec_point_st" title='ec_point_st' data-ref="ec_point_st"><a class="type" href="#ec_point_st" title='ec_point_st' data-ref="ec_point_st">ec_point_st</a></dfn> <dfn class="typedef" id="EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</dfn>;</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><i class="doc">/** Enum for the point conversion form as defined in X9.62 (ECDSA)</i></td></tr>
+<tr><th id="85">85</th><td><i class="doc"> *  for the encoding of a elliptic curve point (x,y) */</i></td></tr>
+<tr><th id="86">86</th><td><b>typedef</b> <b>enum</b> {</td></tr>
+<tr><th id="87">87</th><td>	<i class="doc">/** the point is encoded as z||x, where the octet z specifies </i></td></tr>
+<tr><th id="88">88</th><td><i class="doc">	 *  which solution of the quadratic equation y is  */</i></td></tr>
+<tr><th id="89">89</th><td>	<dfn class="enum" id="POINT_CONVERSION_COMPRESSED" title='POINT_CONVERSION_COMPRESSED' data-ref="POINT_CONVERSION_COMPRESSED">POINT_CONVERSION_COMPRESSED</dfn> = <var>2</var>,</td></tr>
+<tr><th id="90">90</th><td>	<i class="doc">/** the point is encoded as z||x||y, where z is the octet 0x04  */</i></td></tr>
+<tr><th id="91">91</th><td>	<dfn class="enum" id="POINT_CONVERSION_UNCOMPRESSED" title='POINT_CONVERSION_UNCOMPRESSED' data-ref="POINT_CONVERSION_UNCOMPRESSED">POINT_CONVERSION_UNCOMPRESSED</dfn> = <var>4</var></td></tr>
+<tr><th id="92">92</th><td>} <dfn class="typedef" id="point_conversion_form_t" title='point_conversion_form_t' data-type='enum point_conversion_form_t' data-ref="point_conversion_form_t">point_conversion_form_t</dfn>;</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><i>/* Elliptic curve groups. */</i></td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><i>/* EC_GROUP_new_by_curve_name returns a fresh EC_GROUP object for the elliptic</i></td></tr>
+<tr><th id="98">98</th><td><i> * curve specified by |nid|, or NULL on error.</i></td></tr>
+<tr><th id="99">99</th><td><i> *</i></td></tr>
+<tr><th id="100">100</th><td><i> * The supported NIDs are:</i></td></tr>
+<tr><th id="101">101</th><td><i> *   NID_secp224r1,</i></td></tr>
+<tr><th id="102">102</th><td><i> *   NID_X9_62_prime256v1,</i></td></tr>
+<tr><th id="103">103</th><td><i> *   NID_secp384r1,</i></td></tr>
+<tr><th id="104">104</th><td><i> *   NID_secp521r1 */</i></td></tr>
+<tr><th id="105">105</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="decl" id="EC_GROUP_new_by_curve_name" title='EC_GROUP_new_by_curve_name' data-ref="EC_GROUP_new_by_curve_name">EC_GROUP_new_by_curve_name</dfn>(<em>int</em> <dfn class="local col3 decl" id="1903nid" title='nid' data-type='int' data-ref="1903nid">nid</dfn>);</td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><i>/* EC_GROUP_free frees |group| and the data that it points to. */</i></td></tr>
+<tr><th id="108">108</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EC_GROUP_free" title='EC_GROUP_free' data-ref="EC_GROUP_free">EC_GROUP_free</dfn>(<a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col4 decl" id="1904group" title='group' data-type='EC_GROUP *' data-ref="1904group">group</dfn>);</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><i>/* EC_GROUP_dup returns a fresh |EC_GROUP| which is equal to |a| or NULL on</i></td></tr>
+<tr><th id="111">111</th><td><i> * error. */</i></td></tr>
+<tr><th id="112">112</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="decl" id="EC_GROUP_dup" title='EC_GROUP_dup' data-ref="EC_GROUP_dup">EC_GROUP_dup</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col5 decl" id="1905a" title='a' data-type='const EC_GROUP *' data-ref="1905a">a</dfn>);</td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><i>/* EC_GROUP_cmp returns zero if |a| and |b| are the same group and non-zero</i></td></tr>
+<tr><th id="115">115</th><td><i> * otherwise. */</i></td></tr>
+<tr><th id="116">116</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_GROUP_cmp" title='EC_GROUP_cmp' data-ref="EC_GROUP_cmp">EC_GROUP_cmp</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col6 decl" id="1906a" title='a' data-type='const EC_GROUP *' data-ref="1906a">a</dfn>, <em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col7 decl" id="1907b" title='b' data-type='const EC_GROUP *' data-ref="1907b">b</dfn>,</td></tr>
+<tr><th id="117">117</th><td>                                <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col8 decl" id="1908ignored" title='ignored' data-type='BN_CTX *' data-ref="1908ignored">ignored</dfn>);</td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td><i>/* EC_GROUP_get0_generator returns a pointer to the internal |EC_POINT| object</i></td></tr>
+<tr><th id="120">120</th><td><i> * in |group| that specifies the generator for the group. */</i></td></tr>
+<tr><th id="121">121</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="decl" id="EC_GROUP_get0_generator" title='EC_GROUP_get0_generator' data-ref="EC_GROUP_get0_generator">EC_GROUP_get0_generator</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col9 decl" id="1909group" title='group' data-type='const EC_GROUP *' data-ref="1909group">group</dfn>);</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><i>/* EC_GROUP_get0_order returns a pointer to the internal |BIGNUM| object in</i></td></tr>
+<tr><th id="124">124</th><td><i> * |group| that specifies the order of the group. */</i></td></tr>
+<tr><th id="125">125</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="decl" id="EC_GROUP_get0_order" title='EC_GROUP_get0_order' data-ref="EC_GROUP_get0_order">EC_GROUP_get0_order</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col0 decl" id="1910group" title='group' data-type='const EC_GROUP *' data-ref="1910group">group</dfn>);</td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><i>/* EC_GROUP_get_cofactor sets |*cofactor| to the cofactor of |group| using</i></td></tr>
+<tr><th id="128">128</th><td><i> * |ctx|, if it's not NULL. It returns one on success and zero otherwise. */</i></td></tr>
+<tr><th id="129">129</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_GROUP_get_cofactor" title='EC_GROUP_get_cofactor' data-ref="EC_GROUP_get_cofactor">EC_GROUP_get_cofactor</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col1 decl" id="1911group" title='group' data-type='const EC_GROUP *' data-ref="1911group">group</dfn>,</td></tr>
+<tr><th id="130">130</th><td>                                         <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="1912cofactor" title='cofactor' data-type='BIGNUM *' data-ref="1912cofactor">cofactor</dfn>, <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col3 decl" id="1913ctx" title='ctx' data-type='BN_CTX *' data-ref="1913ctx">ctx</dfn>);</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><i>/* EC_GROUP_get_curve_GFp gets various parameters about a group. It sets</i></td></tr>
+<tr><th id="133">133</th><td><i> * |*out_p| to the order of the coordinate field and |*out_a| and |*out_b| to</i></td></tr>
+<tr><th id="134">134</th><td><i> * the parameters of the curve when expressed as y² = x³ + ax + b. Any of the</i></td></tr>
+<tr><th id="135">135</th><td><i> * output parameters can be NULL. It returns one on success and zero on</i></td></tr>
+<tr><th id="136">136</th><td><i> * error. */</i></td></tr>
+<tr><th id="137">137</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_GROUP_get_curve_GFp" title='EC_GROUP_get_curve_GFp' data-ref="EC_GROUP_get_curve_GFp">EC_GROUP_get_curve_GFp</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col4 decl" id="1914group" title='group' data-type='const EC_GROUP *' data-ref="1914group">group</dfn>, <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col5 decl" id="1915out_p" title='out_p' data-type='BIGNUM *' data-ref="1915out_p">out_p</dfn>,</td></tr>
+<tr><th id="138">138</th><td>                                          <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col6 decl" id="1916out_a" title='out_a' data-type='BIGNUM *' data-ref="1916out_a">out_a</dfn>, <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col7 decl" id="1917out_b" title='out_b' data-type='BIGNUM *' data-ref="1917out_b">out_b</dfn>,</td></tr>
+<tr><th id="139">139</th><td>                                          <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col8 decl" id="1918ctx" title='ctx' data-type='BN_CTX *' data-ref="1918ctx">ctx</dfn>);</td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><i>/* EC_GROUP_get_curve_name returns a NID that identifies |group|. */</i></td></tr>
+<tr><th id="142">142</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_GROUP_get_curve_name" title='EC_GROUP_get_curve_name' data-ref="EC_GROUP_get_curve_name">EC_GROUP_get_curve_name</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col9 decl" id="1919group" title='group' data-type='const EC_GROUP *' data-ref="1919group">group</dfn>);</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td><i>/* EC_GROUP_get_degree returns the number of bits needed to represent an</i></td></tr>
+<tr><th id="145">145</th><td><i> * element of the field underlying |group|. */</i></td></tr>
+<tr><th id="146">146</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>unsigned</em> <dfn class="decl" id="EC_GROUP_get_degree" title='EC_GROUP_get_degree' data-ref="EC_GROUP_get_degree">EC_GROUP_get_degree</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col0 decl" id="1920group" title='group' data-type='const EC_GROUP *' data-ref="1920group">group</dfn>);</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td><i>/* Points on elliptic curves. */</i></td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><i>/* EC_POINT_new returns a fresh |EC_POINT| object in the given group, or NULL</i></td></tr>
+<tr><th id="152">152</th><td><i> * on error. */</i></td></tr>
+<tr><th id="153">153</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="decl" id="EC_POINT_new" title='EC_POINT_new' data-ref="EC_POINT_new">EC_POINT_new</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col1 decl" id="1921group" title='group' data-type='const EC_GROUP *' data-ref="1921group">group</dfn>);</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td><i>/* EC_POINT_free frees |point| and the data that it points to. */</i></td></tr>
+<tr><th id="156">156</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EC_POINT_free" title='EC_POINT_free' data-ref="EC_POINT_free">EC_POINT_free</dfn>(<a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col2 decl" id="1922point" title='point' data-type='EC_POINT *' data-ref="1922point">point</dfn>);</td></tr>
+<tr><th id="157">157</th><td></td></tr>
+<tr><th id="158">158</th><td><i>/* EC_POINT_clear_free clears the data that |point| points to, frees it and</i></td></tr>
+<tr><th id="159">159</th><td><i> * then frees |point| itself. */</i></td></tr>
+<tr><th id="160">160</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EC_POINT_clear_free" title='EC_POINT_clear_free' data-ref="EC_POINT_clear_free">EC_POINT_clear_free</dfn>(<a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col3 decl" id="1923point" title='point' data-type='EC_POINT *' data-ref="1923point">point</dfn>);</td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td><i>/* EC_POINT_copy sets |*dest| equal to |*src|. It returns one on success and</i></td></tr>
+<tr><th id="163">163</th><td><i> * zero otherwise. */</i></td></tr>
+<tr><th id="164">164</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_copy" title='EC_POINT_copy' data-ref="EC_POINT_copy">EC_POINT_copy</dfn>(<a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col4 decl" id="1924dest" title='dest' data-type='EC_POINT *' data-ref="1924dest">dest</dfn>, <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col5 decl" id="1925src" title='src' data-type='const EC_POINT *' data-ref="1925src">src</dfn>);</td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td><i>/* EC_POINT_dup returns a fresh |EC_POINT| that contains the same values as</i></td></tr>
+<tr><th id="167">167</th><td><i> * |src|, or NULL on error. */</i></td></tr>
+<tr><th id="168">168</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="decl" id="EC_POINT_dup" title='EC_POINT_dup' data-ref="EC_POINT_dup">EC_POINT_dup</dfn>(<em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col6 decl" id="1926src" title='src' data-type='const EC_POINT *' data-ref="1926src">src</dfn>,</td></tr>
+<tr><th id="169">169</th><td>                                      <em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col7 decl" id="1927group" title='group' data-type='const EC_GROUP *' data-ref="1927group">group</dfn>);</td></tr>
+<tr><th id="170">170</th><td></td></tr>
+<tr><th id="171">171</th><td><i>/* EC_POINT_set_to_infinity sets |point| to be the "point at infinity" for the</i></td></tr>
+<tr><th id="172">172</th><td><i> * given group. */</i></td></tr>
+<tr><th id="173">173</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_set_to_infinity" title='EC_POINT_set_to_infinity' data-ref="EC_POINT_set_to_infinity">EC_POINT_set_to_infinity</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col8 decl" id="1928group" title='group' data-type='const EC_GROUP *' data-ref="1928group">group</dfn>,</td></tr>
+<tr><th id="174">174</th><td>                                            <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col9 decl" id="1929point" title='point' data-type='EC_POINT *' data-ref="1929point">point</dfn>);</td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td><i>/* EC_POINT_is_at_infinity returns one iff |point| is the point at infinity and</i></td></tr>
+<tr><th id="177">177</th><td><i> * zero otherwise. */</i></td></tr>
+<tr><th id="178">178</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_is_at_infinity" title='EC_POINT_is_at_infinity' data-ref="EC_POINT_is_at_infinity">EC_POINT_is_at_infinity</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col0 decl" id="1930group" title='group' data-type='const EC_GROUP *' data-ref="1930group">group</dfn>,</td></tr>
+<tr><th id="179">179</th><td>                                           <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col1 decl" id="1931point" title='point' data-type='const EC_POINT *' data-ref="1931point">point</dfn>);</td></tr>
+<tr><th id="180">180</th><td></td></tr>
+<tr><th id="181">181</th><td><i>/* EC_POINT_is_on_curve returns one if |point| is an element of |group| and</i></td></tr>
+<tr><th id="182">182</th><td><i> * zero otheriwse. If |ctx| is non-NULL, it may be used. */</i></td></tr>
+<tr><th id="183">183</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_is_on_curve" title='EC_POINT_is_on_curve' data-ref="EC_POINT_is_on_curve">EC_POINT_is_on_curve</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col2 decl" id="1932group" title='group' data-type='const EC_GROUP *' data-ref="1932group">group</dfn>,</td></tr>
+<tr><th id="184">184</th><td>                                        <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col3 decl" id="1933point" title='point' data-type='const EC_POINT *' data-ref="1933point">point</dfn>, <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col4 decl" id="1934ctx" title='ctx' data-type='BN_CTX *' data-ref="1934ctx">ctx</dfn>);</td></tr>
+<tr><th id="185">185</th><td></td></tr>
+<tr><th id="186">186</th><td><i>/* EC_POINT_cmp returns zero if |a| is equal to |b|, greater than zero is</i></td></tr>
+<tr><th id="187">187</th><td><i> * non-equal and -1 on error. If |ctx| is not NULL, it may be used. */</i></td></tr>
+<tr><th id="188">188</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_cmp" title='EC_POINT_cmp' data-ref="EC_POINT_cmp">EC_POINT_cmp</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col5 decl" id="1935group" title='group' data-type='const EC_GROUP *' data-ref="1935group">group</dfn>, <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col6 decl" id="1936a" title='a' data-type='const EC_POINT *' data-ref="1936a">a</dfn>,</td></tr>
+<tr><th id="189">189</th><td>                                <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col7 decl" id="1937b" title='b' data-type='const EC_POINT *' data-ref="1937b">b</dfn>, <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col8 decl" id="1938ctx" title='ctx' data-type='BN_CTX *' data-ref="1938ctx">ctx</dfn>);</td></tr>
+<tr><th id="190">190</th><td></td></tr>
+<tr><th id="191">191</th><td><i>/* EC_POINT_make_affine converts |point| to affine form, internally. It returns</i></td></tr>
+<tr><th id="192">192</th><td><i> * one on success and zero otherwise. If |ctx| is not NULL, it may be used. */</i></td></tr>
+<tr><th id="193">193</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_make_affine" title='EC_POINT_make_affine' data-ref="EC_POINT_make_affine">EC_POINT_make_affine</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col9 decl" id="1939group" title='group' data-type='const EC_GROUP *' data-ref="1939group">group</dfn>, <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col0 decl" id="1940point" title='point' data-type='EC_POINT *' data-ref="1940point">point</dfn>,</td></tr>
+<tr><th id="194">194</th><td>                                        <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col1 decl" id="1941ctx" title='ctx' data-type='BN_CTX *' data-ref="1941ctx">ctx</dfn>);</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td><i>/* EC_POINTs_make_affine converts |num| points from |points| to affine form,</i></td></tr>
+<tr><th id="197">197</th><td><i> * internally. It returns one on success and zero otherwise. If |ctx| is not</i></td></tr>
+<tr><th id="198">198</th><td><i> * NULL, it may be used. */</i></td></tr>
+<tr><th id="199">199</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINTs_make_affine" title='EC_POINTs_make_affine' data-ref="EC_POINTs_make_affine">EC_POINTs_make_affine</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col2 decl" id="1942group" title='group' data-type='const EC_GROUP *' data-ref="1942group">group</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="1943num" title='num' data-type='size_t' data-ref="1943num">num</dfn>,</td></tr>
+<tr><th id="200">200</th><td>                                         <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col4 decl" id="1944points" title='points' data-type='EC_POINT **' data-ref="1944points">points</dfn>[], <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col5 decl" id="1945ctx" title='ctx' data-type='BN_CTX *' data-ref="1945ctx">ctx</dfn>);</td></tr>
+<tr><th id="201">201</th><td></td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td><i>/* Point conversion. */</i></td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><i>/* EC_POINT_get_affine_coordinates_GFp sets |x| and |y| to the affine value of</i></td></tr>
+<tr><th id="206">206</th><td><i> * |point| using |ctx|, if it's not NULL. It returns one on success and zero</i></td></tr>
+<tr><th id="207">207</th><td><i> * otherwise. */</i></td></tr>
+<tr><th id="208">208</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_get_affine_coordinates_GFp" title='EC_POINT_get_affine_coordinates_GFp' data-ref="EC_POINT_get_affine_coordinates_GFp">EC_POINT_get_affine_coordinates_GFp</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col6 decl" id="1946group" title='group' data-type='const EC_GROUP *' data-ref="1946group">group</dfn>,</td></tr>
+<tr><th id="209">209</th><td>                                                       <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col7 decl" id="1947point" title='point' data-type='const EC_POINT *' data-ref="1947point">point</dfn>,</td></tr>
+<tr><th id="210">210</th><td>                                                       <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col8 decl" id="1948x" title='x' data-type='BIGNUM *' data-ref="1948x">x</dfn>, <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="1949y" title='y' data-type='BIGNUM *' data-ref="1949y">y</dfn>,</td></tr>
+<tr><th id="211">211</th><td>                                                       <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col0 decl" id="1950ctx" title='ctx' data-type='BN_CTX *' data-ref="1950ctx">ctx</dfn>);</td></tr>
+<tr><th id="212">212</th><td></td></tr>
+<tr><th id="213">213</th><td><i>/* EC_POINT_set_affine_coordinates_GFp sets the value of |p| to be (|x|, |y|).</i></td></tr>
+<tr><th id="214">214</th><td><i> * The |ctx| argument may be used if not NULL. It returns one on success or</i></td></tr>
+<tr><th id="215">215</th><td><i> * zero on error. Note that, unlike with OpenSSL, it's considered an error if</i></td></tr>
+<tr><th id="216">216</th><td><i> * the point is not on the curve. */</i></td></tr>
+<tr><th id="217">217</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_set_affine_coordinates_GFp" title='EC_POINT_set_affine_coordinates_GFp' data-ref="EC_POINT_set_affine_coordinates_GFp">EC_POINT_set_affine_coordinates_GFp</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col1 decl" id="1951group" title='group' data-type='const EC_GROUP *' data-ref="1951group">group</dfn>,</td></tr>
+<tr><th id="218">218</th><td>                                                       <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col2 decl" id="1952point" title='point' data-type='EC_POINT *' data-ref="1952point">point</dfn>,</td></tr>
+<tr><th id="219">219</th><td>                                                       <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="1953x" title='x' data-type='const BIGNUM *' data-ref="1953x">x</dfn>,</td></tr>
+<tr><th id="220">220</th><td>                                                       <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col4 decl" id="1954y" title='y' data-type='const BIGNUM *' data-ref="1954y">y</dfn>,</td></tr>
+<tr><th id="221">221</th><td>                                                       <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col5 decl" id="1955ctx" title='ctx' data-type='BN_CTX *' data-ref="1955ctx">ctx</dfn>);</td></tr>
+<tr><th id="222">222</th><td></td></tr>
+<tr><th id="223">223</th><td><i>/* EC_POINT_point2oct serialises |point| into the X9.62 form given by |form|</i></td></tr>
+<tr><th id="224">224</th><td><i> * into, at most, |len| bytes at |buf|. It returns the number of bytes written</i></td></tr>
+<tr><th id="225">225</th><td><i> * or zero on error if |buf| is non-NULL, else the number of bytes needed. The</i></td></tr>
+<tr><th id="226">226</th><td><i> * |ctx| argument may be used if not NULL. */</i></td></tr>
+<tr><th id="227">227</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="EC_POINT_point2oct" title='EC_POINT_point2oct' data-ref="EC_POINT_point2oct">EC_POINT_point2oct</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col6 decl" id="1956group" title='group' data-type='const EC_GROUP *' data-ref="1956group">group</dfn>,</td></tr>
+<tr><th id="228">228</th><td>                                         <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col7 decl" id="1957point" title='point' data-type='const EC_POINT *' data-ref="1957point">point</dfn>,</td></tr>
+<tr><th id="229">229</th><td>                                         <a class="typedef" href="#point_conversion_form_t" title='point_conversion_form_t' data-type='enum point_conversion_form_t' data-ref="point_conversion_form_t">point_conversion_form_t</a> <dfn class="local col8 decl" id="1958form" title='form' data-type='point_conversion_form_t' data-ref="1958form">form</dfn>,</td></tr>
+<tr><th id="230">230</th><td>                                         <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="1959buf" title='buf' data-type='uint8_t *' data-ref="1959buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="1960len" title='len' data-type='size_t' data-ref="1960len">len</dfn>, <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col1 decl" id="1961ctx" title='ctx' data-type='BN_CTX *' data-ref="1961ctx">ctx</dfn>);</td></tr>
+<tr><th id="231">231</th><td></td></tr>
+<tr><th id="232">232</th><td><i>/* EC_POINT_oct2point sets |point| from |len| bytes of X9.62 format</i></td></tr>
+<tr><th id="233">233</th><td><i> * serialisation in |buf|. It returns one on success and zero otherwise. The</i></td></tr>
+<tr><th id="234">234</th><td><i> * |ctx| argument may be used if not NULL. */</i></td></tr>
+<tr><th id="235">235</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_oct2point" title='EC_POINT_oct2point' data-ref="EC_POINT_oct2point">EC_POINT_oct2point</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col2 decl" id="1962group" title='group' data-type='const EC_GROUP *' data-ref="1962group">group</dfn>, <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col3 decl" id="1963point" title='point' data-type='EC_POINT *' data-ref="1963point">point</dfn>,</td></tr>
+<tr><th id="236">236</th><td>                                      <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="1964buf" title='buf' data-type='const uint8_t *' data-ref="1964buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="1965len" title='len' data-type='size_t' data-ref="1965len">len</dfn>,</td></tr>
+<tr><th id="237">237</th><td>                                      <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col6 decl" id="1966ctx" title='ctx' data-type='BN_CTX *' data-ref="1966ctx">ctx</dfn>);</td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td><i>/* EC_POINT_set_compressed_coordinates_GFp sets |point| to equal the point with</i></td></tr>
+<tr><th id="240">240</th><td><i> * the given |x| coordinate and the y coordinate specified by |y_bit| (see</i></td></tr>
+<tr><th id="241">241</th><td><i> * X9.62). It returns one on success and zero otherwise. */</i></td></tr>
+<tr><th id="242">242</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_set_compressed_coordinates_GFp" title='EC_POINT_set_compressed_coordinates_GFp' data-ref="EC_POINT_set_compressed_coordinates_GFp">EC_POINT_set_compressed_coordinates_GFp</dfn>(</td></tr>
+<tr><th id="243">243</th><td>    <em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col7 decl" id="1967group" title='group' data-type='const EC_GROUP *' data-ref="1967group">group</dfn>, <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col8 decl" id="1968point" title='point' data-type='EC_POINT *' data-ref="1968point">point</dfn>, <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="1969x" title='x' data-type='const BIGNUM *' data-ref="1969x">x</dfn>, <em>int</em> <dfn class="local col0 decl" id="1970y_bit" title='y_bit' data-type='int' data-ref="1970y_bit">y_bit</dfn>,</td></tr>
+<tr><th id="244">244</th><td>    <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col1 decl" id="1971ctx" title='ctx' data-type='BN_CTX *' data-ref="1971ctx">ctx</dfn>);</td></tr>
+<tr><th id="245">245</th><td></td></tr>
+<tr><th id="246">246</th><td></td></tr>
+<tr><th id="247">247</th><td><i>/* Group operations. */</i></td></tr>
+<tr><th id="248">248</th><td></td></tr>
+<tr><th id="249">249</th><td><i>/* EC_POINT_add sets |r| equal to |a| plus |b|. It returns one on success and</i></td></tr>
+<tr><th id="250">250</th><td><i> * zero otherwise. If |ctx| is not NULL, it may be used. */</i></td></tr>
+<tr><th id="251">251</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_add" title='EC_POINT_add' data-ref="EC_POINT_add">EC_POINT_add</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col2 decl" id="1972group" title='group' data-type='const EC_GROUP *' data-ref="1972group">group</dfn>, <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col3 decl" id="1973r" title='r' data-type='EC_POINT *' data-ref="1973r">r</dfn>,</td></tr>
+<tr><th id="252">252</th><td>                                <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col4 decl" id="1974a" title='a' data-type='const EC_POINT *' data-ref="1974a">a</dfn>, <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col5 decl" id="1975b" title='b' data-type='const EC_POINT *' data-ref="1975b">b</dfn>,</td></tr>
+<tr><th id="253">253</th><td>                                <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col6 decl" id="1976ctx" title='ctx' data-type='BN_CTX *' data-ref="1976ctx">ctx</dfn>);</td></tr>
+<tr><th id="254">254</th><td></td></tr>
+<tr><th id="255">255</th><td><i>/* EC_POINT_dbl sets |r| equal to |a| plus |a|. It returns one on success and</i></td></tr>
+<tr><th id="256">256</th><td><i> * zero otherwise. If |ctx| is not NULL, it may be used. */</i></td></tr>
+<tr><th id="257">257</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_dbl" title='EC_POINT_dbl' data-ref="EC_POINT_dbl">EC_POINT_dbl</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col7 decl" id="1977group" title='group' data-type='const EC_GROUP *' data-ref="1977group">group</dfn>, <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col8 decl" id="1978r" title='r' data-type='EC_POINT *' data-ref="1978r">r</dfn>,</td></tr>
+<tr><th id="258">258</th><td>                                <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col9 decl" id="1979a" title='a' data-type='const EC_POINT *' data-ref="1979a">a</dfn>, <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col0 decl" id="1980ctx" title='ctx' data-type='BN_CTX *' data-ref="1980ctx">ctx</dfn>);</td></tr>
+<tr><th id="259">259</th><td></td></tr>
+<tr><th id="260">260</th><td><i>/* EC_POINT_invert sets |a| equal to minus |a|. It returns one on success and zero</i></td></tr>
+<tr><th id="261">261</th><td><i> * otherwise. If |ctx| is not NULL, it may be used. */</i></td></tr>
+<tr><th id="262">262</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_invert" title='EC_POINT_invert' data-ref="EC_POINT_invert">EC_POINT_invert</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col1 decl" id="1981group" title='group' data-type='const EC_GROUP *' data-ref="1981group">group</dfn>, <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col2 decl" id="1982a" title='a' data-type='EC_POINT *' data-ref="1982a">a</dfn>,</td></tr>
+<tr><th id="263">263</th><td>                                   <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col3 decl" id="1983ctx" title='ctx' data-type='BN_CTX *' data-ref="1983ctx">ctx</dfn>);</td></tr>
+<tr><th id="264">264</th><td></td></tr>
+<tr><th id="265">265</th><td><i>/* EC_POINT_mul sets r = generator*n + q*m. It returns one on success and zero</i></td></tr>
+<tr><th id="266">266</th><td><i> * otherwise. If |ctx| is not NULL, it may be used. */</i></td></tr>
+<tr><th id="267">267</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_POINT_mul" title='EC_POINT_mul' data-ref="EC_POINT_mul">EC_POINT_mul</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col4 decl" id="1984group" title='group' data-type='const EC_GROUP *' data-ref="1984group">group</dfn>, <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col5 decl" id="1985r" title='r' data-type='EC_POINT *' data-ref="1985r">r</dfn>,</td></tr>
+<tr><th id="268">268</th><td>                                <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col6 decl" id="1986n" title='n' data-type='const BIGNUM *' data-ref="1986n">n</dfn>, <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col7 decl" id="1987q" title='q' data-type='const EC_POINT *' data-ref="1987q">q</dfn>,</td></tr>
+<tr><th id="269">269</th><td>                                <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col8 decl" id="1988m" title='m' data-type='const BIGNUM *' data-ref="1988m">m</dfn>, <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col9 decl" id="1989ctx" title='ctx' data-type='BN_CTX *' data-ref="1989ctx">ctx</dfn>);</td></tr>
+<tr><th id="270">270</th><td></td></tr>
+<tr><th id="271">271</th><td></td></tr>
+<tr><th id="272">272</th><td><i>/* Deprecated functions. */</i></td></tr>
+<tr><th id="273">273</th><td></td></tr>
+<tr><th id="274">274</th><td><i>/* EC_GROUP_new_curve_GFp creates a new, arbitrary elliptic curve group based</i></td></tr>
+<tr><th id="275">275</th><td><i> * on the equation y² = x³ + a·x + b. It returns the new group or NULL on</i></td></tr>
+<tr><th id="276">276</th><td><i> * error.</i></td></tr>
+<tr><th id="277">277</th><td><i> *</i></td></tr>
+<tr><th id="278">278</th><td><i> * |EC_GROUP|s returned by this function will always compare as unequal via</i></td></tr>
+<tr><th id="279">279</th><td><i> * |EC_GROUP_cmp| (even to themselves). |EC_GROUP_get_curve_name| will always</i></td></tr>
+<tr><th id="280">280</th><td><i> * return |NID_undef|. */</i></td></tr>
+<tr><th id="281">281</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="decl" id="EC_GROUP_new_curve_GFp" title='EC_GROUP_new_curve_GFp' data-ref="EC_GROUP_new_curve_GFp">EC_GROUP_new_curve_GFp</dfn>(<em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col0 decl" id="1990p" title='p' data-type='const BIGNUM *' data-ref="1990p">p</dfn>,</td></tr>
+<tr><th id="282">282</th><td>                                                <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="1991a" title='a' data-type='const BIGNUM *' data-ref="1991a">a</dfn>,</td></tr>
+<tr><th id="283">283</th><td>                                                <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="1992b" title='b' data-type='const BIGNUM *' data-ref="1992b">b</dfn>, <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col3 decl" id="1993ctx" title='ctx' data-type='BN_CTX *' data-ref="1993ctx">ctx</dfn>);</td></tr>
+<tr><th id="284">284</th><td></td></tr>
+<tr><th id="285">285</th><td><i>/* EC_GROUP_get_order sets |*order| to the order of |group|, if it's not</i></td></tr>
+<tr><th id="286">286</th><td><i> * NULL. It returns one on success and zero otherwise. |ctx| is ignored. Use</i></td></tr>
+<tr><th id="287">287</th><td><i> * |EC_GROUP_get0_order| instead. */</i></td></tr>
+<tr><th id="288">288</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_GROUP_get_order" title='EC_GROUP_get_order' data-ref="EC_GROUP_get_order">EC_GROUP_get_order</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col4 decl" id="1994group" title='group' data-type='const EC_GROUP *' data-ref="1994group">group</dfn>, <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col5 decl" id="1995order" title='order' data-type='BIGNUM *' data-ref="1995order">order</dfn>,</td></tr>
+<tr><th id="289">289</th><td>                                      <a class="typedef" href="base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col6 decl" id="1996ctx" title='ctx' data-type='BN_CTX *' data-ref="1996ctx">ctx</dfn>);</td></tr>
+<tr><th id="290">290</th><td></td></tr>
+<tr><th id="291">291</th><td><i>/* EC_GROUP_set_generator sets the generator for |group| to |generator|, which</i></td></tr>
+<tr><th id="292">292</th><td><i> * must have the given order and cofactor. This should only be used with</i></td></tr>
+<tr><th id="293">293</th><td><i> * |EC_GROUP| objects returned by |EC_GROUP_new_curve_GFp|. */</i></td></tr>
+<tr><th id="294">294</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_GROUP_set_generator" title='EC_GROUP_set_generator' data-ref="EC_GROUP_set_generator">EC_GROUP_set_generator</dfn>(<a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col7 decl" id="1997group" title='group' data-type='EC_GROUP *' data-ref="1997group">group</dfn>,</td></tr>
+<tr><th id="295">295</th><td>                                          <em>const</em> <a class="typedef" href="#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col8 decl" id="1998generator" title='generator' data-type='const EC_POINT *' data-ref="1998generator">generator</dfn>,</td></tr>
+<tr><th id="296">296</th><td>                                          <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="1999order" title='order' data-type='const BIGNUM *' data-ref="1999order">order</dfn>,</td></tr>
+<tr><th id="297">297</th><td>                                          <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col0 decl" id="2000cofactor" title='cofactor' data-type='const BIGNUM *' data-ref="2000cofactor">cofactor</dfn>);</td></tr>
+<tr><th id="298">298</th><td></td></tr>
+<tr><th id="299">299</th><td><i>/* EC_GROUP_set_asn1_flag does nothing. */</i></td></tr>
+<tr><th id="300">300</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EC_GROUP_set_asn1_flag" title='EC_GROUP_set_asn1_flag' data-ref="EC_GROUP_set_asn1_flag">EC_GROUP_set_asn1_flag</dfn>(<a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col1 decl" id="2001group" title='group' data-type='EC_GROUP *' data-ref="2001group">group</dfn>, <em>int</em> <dfn class="local col2 decl" id="2002flag" title='flag' data-type='int' data-ref="2002flag">flag</dfn>);</td></tr>
+<tr><th id="301">301</th><td></td></tr>
+<tr><th id="302">302</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_EC_NAMED_CURVE" data-ref="_M/OPENSSL_EC_NAMED_CURVE">OPENSSL_EC_NAMED_CURVE</dfn> 0</u></td></tr>
+<tr><th id="303">303</th><td></td></tr>
+<tr><th id="304">304</th><td><b>typedef</b> <b>struct</b> <dfn class="type" id="ec_method_st" title='ec_method_st' data-ref="ec_method_st"><a class="type" href="#ec_method_st" title='ec_method_st' data-ref="ec_method_st">ec_method_st</a></dfn> <dfn class="typedef" id="EC_METHOD" title='EC_METHOD' data-type='struct ec_method_st' data-ref="EC_METHOD">EC_METHOD</dfn>;</td></tr>
+<tr><th id="305">305</th><td></td></tr>
+<tr><th id="306">306</th><td><i>/* EC_GROUP_method_of returns NULL. */</i></td></tr>
+<tr><th id="307">307</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>const</em> <a class="typedef" href="#EC_METHOD" title='EC_METHOD' data-type='struct ec_method_st' data-ref="EC_METHOD">EC_METHOD</a> *<dfn class="decl" id="EC_GROUP_method_of" title='EC_GROUP_method_of' data-ref="EC_GROUP_method_of">EC_GROUP_method_of</dfn>(<em>const</em> <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col3 decl" id="2003group" title='group' data-type='const EC_GROUP *' data-ref="2003group">group</dfn>);</td></tr>
+<tr><th id="308">308</th><td></td></tr>
+<tr><th id="309">309</th><td><i>/* EC_METHOD_get_field_type returns NID_X9_62_prime_field. */</i></td></tr>
+<tr><th id="310">310</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_METHOD_get_field_type" title='EC_METHOD_get_field_type' data-ref="EC_METHOD_get_field_type">EC_METHOD_get_field_type</dfn>(<em>const</em> <a class="typedef" href="#EC_METHOD" title='EC_METHOD' data-type='struct ec_method_st' data-ref="EC_METHOD">EC_METHOD</a> *<dfn class="local col4 decl" id="2004meth" title='meth' data-type='const EC_METHOD *' data-ref="2004meth">meth</dfn>);</td></tr>
+<tr><th id="311">311</th><td></td></tr>
+<tr><th id="312">312</th><td><i>/* EC_GROUP_set_point_conversion_form aborts the process if |form| is not</i></td></tr>
+<tr><th id="313">313</th><td><i> * |POINT_CONVERSION_UNCOMPRESSED| and otherwise does nothing. */</i></td></tr>
+<tr><th id="314">314</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EC_GROUP_set_point_conversion_form" title='EC_GROUP_set_point_conversion_form' data-ref="EC_GROUP_set_point_conversion_form">EC_GROUP_set_point_conversion_form</dfn>(</td></tr>
+<tr><th id="315">315</th><td>    <a class="typedef" href="#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col5 decl" id="2005group" title='group' data-type='EC_GROUP *' data-ref="2005group">group</dfn>, <a class="typedef" href="#point_conversion_form_t" title='point_conversion_form_t' data-type='enum point_conversion_form_t' data-ref="point_conversion_form_t">point_conversion_form_t</a> <dfn class="local col6 decl" id="2006form" title='form' data-type='point_conversion_form_t' data-ref="2006form">form</dfn>);</td></tr>
+<tr><th id="316">316</th><td></td></tr>
+<tr><th id="317">317</th><td></td></tr>
+<tr><th id="318">318</th><td><i>/* Old code expects to get EC_KEY from ec.h. */</i></td></tr>
+<tr><th id="319">319</th><td><u>#include <a href="ec_key.h.html">&lt;openssl/ec_key.h&gt;</a></u></td></tr>
+<tr><th id="320">320</th><td></td></tr>
+<tr><th id="321">321</th><td></td></tr>
+<tr><th id="322">322</th><td><u>#<span data-ppcond="322">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="323">323</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="324">324</th><td><u>#<span data-ppcond="322">endif</span></u></td></tr>
+<tr><th id="325">325</th><td></td></tr>
+<tr><th id="326">326</th><td><u>#define <dfn class="macro" id="_M/EC_R_BUFFER_TOO_SMALL" data-ref="_M/EC_R_BUFFER_TOO_SMALL">EC_R_BUFFER_TOO_SMALL</dfn> 100</u></td></tr>
+<tr><th id="327">327</th><td><u>#define <dfn class="macro" id="_M/EC_R_COORDINATES_OUT_OF_RANGE" data-ref="_M/EC_R_COORDINATES_OUT_OF_RANGE">EC_R_COORDINATES_OUT_OF_RANGE</dfn> 101</u></td></tr>
+<tr><th id="328">328</th><td><u>#define <dfn class="macro" id="_M/EC_R_D2I_ECPKPARAMETERS_FAILURE" data-ref="_M/EC_R_D2I_ECPKPARAMETERS_FAILURE">EC_R_D2I_ECPKPARAMETERS_FAILURE</dfn> 102</u></td></tr>
+<tr><th id="329">329</th><td><u>#define <dfn class="macro" id="_M/EC_R_EC_GROUP_NEW_BY_NAME_FAILURE" data-ref="_M/EC_R_EC_GROUP_NEW_BY_NAME_FAILURE">EC_R_EC_GROUP_NEW_BY_NAME_FAILURE</dfn> 103</u></td></tr>
+<tr><th id="330">330</th><td><u>#define <dfn class="macro" id="_M/EC_R_GROUP2PKPARAMETERS_FAILURE" data-ref="_M/EC_R_GROUP2PKPARAMETERS_FAILURE">EC_R_GROUP2PKPARAMETERS_FAILURE</dfn> 104</u></td></tr>
+<tr><th id="331">331</th><td><u>#define <dfn class="macro" id="_M/EC_R_I2D_ECPKPARAMETERS_FAILURE" data-ref="_M/EC_R_I2D_ECPKPARAMETERS_FAILURE">EC_R_I2D_ECPKPARAMETERS_FAILURE</dfn> 105</u></td></tr>
+<tr><th id="332">332</th><td><u>#define <dfn class="macro" id="_M/EC_R_INCOMPATIBLE_OBJECTS" data-ref="_M/EC_R_INCOMPATIBLE_OBJECTS">EC_R_INCOMPATIBLE_OBJECTS</dfn> 106</u></td></tr>
+<tr><th id="333">333</th><td><u>#define <dfn class="macro" id="_M/EC_R_INVALID_COMPRESSED_POINT" data-ref="_M/EC_R_INVALID_COMPRESSED_POINT">EC_R_INVALID_COMPRESSED_POINT</dfn> 107</u></td></tr>
+<tr><th id="334">334</th><td><u>#define <dfn class="macro" id="_M/EC_R_INVALID_COMPRESSION_BIT" data-ref="_M/EC_R_INVALID_COMPRESSION_BIT">EC_R_INVALID_COMPRESSION_BIT</dfn> 108</u></td></tr>
+<tr><th id="335">335</th><td><u>#define <dfn class="macro" id="_M/EC_R_INVALID_ENCODING" data-ref="_M/EC_R_INVALID_ENCODING">EC_R_INVALID_ENCODING</dfn> 109</u></td></tr>
+<tr><th id="336">336</th><td><u>#define <dfn class="macro" id="_M/EC_R_INVALID_FIELD" data-ref="_M/EC_R_INVALID_FIELD">EC_R_INVALID_FIELD</dfn> 110</u></td></tr>
+<tr><th id="337">337</th><td><u>#define <dfn class="macro" id="_M/EC_R_INVALID_FORM" data-ref="_M/EC_R_INVALID_FORM">EC_R_INVALID_FORM</dfn> 111</u></td></tr>
+<tr><th id="338">338</th><td><u>#define <dfn class="macro" id="_M/EC_R_INVALID_GROUP_ORDER" data-ref="_M/EC_R_INVALID_GROUP_ORDER">EC_R_INVALID_GROUP_ORDER</dfn> 112</u></td></tr>
+<tr><th id="339">339</th><td><u>#define <dfn class="macro" id="_M/EC_R_INVALID_PRIVATE_KEY" data-ref="_M/EC_R_INVALID_PRIVATE_KEY">EC_R_INVALID_PRIVATE_KEY</dfn> 113</u></td></tr>
+<tr><th id="340">340</th><td><u>#define <dfn class="macro" id="_M/EC_R_MISSING_PARAMETERS" data-ref="_M/EC_R_MISSING_PARAMETERS">EC_R_MISSING_PARAMETERS</dfn> 114</u></td></tr>
+<tr><th id="341">341</th><td><u>#define <dfn class="macro" id="_M/EC_R_MISSING_PRIVATE_KEY" data-ref="_M/EC_R_MISSING_PRIVATE_KEY">EC_R_MISSING_PRIVATE_KEY</dfn> 115</u></td></tr>
+<tr><th id="342">342</th><td><u>#define <dfn class="macro" id="_M/EC_R_NON_NAMED_CURVE" data-ref="_M/EC_R_NON_NAMED_CURVE">EC_R_NON_NAMED_CURVE</dfn> 116</u></td></tr>
+<tr><th id="343">343</th><td><u>#define <dfn class="macro" id="_M/EC_R_NOT_INITIALIZED" data-ref="_M/EC_R_NOT_INITIALIZED">EC_R_NOT_INITIALIZED</dfn> 117</u></td></tr>
+<tr><th id="344">344</th><td><u>#define <dfn class="macro" id="_M/EC_R_PKPARAMETERS2GROUP_FAILURE" data-ref="_M/EC_R_PKPARAMETERS2GROUP_FAILURE">EC_R_PKPARAMETERS2GROUP_FAILURE</dfn> 118</u></td></tr>
+<tr><th id="345">345</th><td><u>#define <dfn class="macro" id="_M/EC_R_POINT_AT_INFINITY" data-ref="_M/EC_R_POINT_AT_INFINITY">EC_R_POINT_AT_INFINITY</dfn> 119</u></td></tr>
+<tr><th id="346">346</th><td><u>#define <dfn class="macro" id="_M/EC_R_POINT_IS_NOT_ON_CURVE" data-ref="_M/EC_R_POINT_IS_NOT_ON_CURVE">EC_R_POINT_IS_NOT_ON_CURVE</dfn> 120</u></td></tr>
+<tr><th id="347">347</th><td><u>#define <dfn class="macro" id="_M/EC_R_SLOT_FULL" data-ref="_M/EC_R_SLOT_FULL">EC_R_SLOT_FULL</dfn> 121</u></td></tr>
+<tr><th id="348">348</th><td><u>#define <dfn class="macro" id="_M/EC_R_UNDEFINED_GENERATOR" data-ref="_M/EC_R_UNDEFINED_GENERATOR">EC_R_UNDEFINED_GENERATOR</dfn> 122</u></td></tr>
+<tr><th id="349">349</th><td><u>#define <dfn class="macro" id="_M/EC_R_UNKNOWN_GROUP" data-ref="_M/EC_R_UNKNOWN_GROUP">EC_R_UNKNOWN_GROUP</dfn> 123</u></td></tr>
+<tr><th id="350">350</th><td><u>#define <dfn class="macro" id="_M/EC_R_UNKNOWN_ORDER" data-ref="_M/EC_R_UNKNOWN_ORDER">EC_R_UNKNOWN_ORDER</dfn> 124</u></td></tr>
+<tr><th id="351">351</th><td><u>#define <dfn class="macro" id="_M/EC_R_WRONG_ORDER" data-ref="_M/EC_R_WRONG_ORDER">EC_R_WRONG_ORDER</dfn> 125</u></td></tr>
+<tr><th id="352">352</th><td><u>#define <dfn class="macro" id="_M/EC_R_BIGNUM_OUT_OF_RANGE" data-ref="_M/EC_R_BIGNUM_OUT_OF_RANGE">EC_R_BIGNUM_OUT_OF_RANGE</dfn> 126</u></td></tr>
+<tr><th id="353">353</th><td><u>#define <dfn class="macro" id="_M/EC_R_WRONG_CURVE_PARAMETERS" data-ref="_M/EC_R_WRONG_CURVE_PARAMETERS">EC_R_WRONG_CURVE_PARAMETERS</dfn> 127</u></td></tr>
+<tr><th id="354">354</th><td></td></tr>
+<tr><th id="355">355</th><td><u>#<span data-ppcond="68">endif</span>  /* OPENSSL_HEADER_EC_H */</u></td></tr>
+<tr><th id="356">356</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../android_compat_hacks.c.html'>codebrowser/external/boringssl/android_compat_hacks.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

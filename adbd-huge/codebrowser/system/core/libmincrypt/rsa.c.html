@@ -1,0 +1,326 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>rsa.c source code [codebrowser/system/core/libmincrypt/rsa.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/libmincrypt/rsa.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>libmincrypt</a>/<a href='rsa.c.html'>rsa.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* rsa.c</i></td></tr>
+<tr><th id="2">2</th><td><i>**</i></td></tr>
+<tr><th id="3">3</th><td><i>** Copyright 2012, The Android Open Source Project</i></td></tr>
+<tr><th id="4">4</th><td><i>**</i></td></tr>
+<tr><th id="5">5</th><td><i>** Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i>** modification, are permitted provided that the following conditions are met:</i></td></tr>
+<tr><th id="7">7</th><td><i>**     * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="8">8</th><td><i>**       notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="9">9</th><td><i>**     * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="10">10</th><td><i>**       notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="11">11</th><td><i>**       documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="12">12</th><td><i>**     * Neither the name of Google Inc. nor the names of its contributors may</i></td></tr>
+<tr><th id="13">13</th><td><i>**       be used to endorse or promote products derived from this software</i></td></tr>
+<tr><th id="14">14</th><td><i>**       without specific prior written permission.</i></td></tr>
+<tr><th id="15">15</th><td><i>**</i></td></tr>
+<tr><th id="16">16</th><td><i>** THIS SOFTWARE IS PROVIDED BY Google Inc. ``AS IS'' AND ANY EXPRESS OR</i></td></tr>
+<tr><th id="17">17</th><td><i>** IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="18">18</th><td><i>** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO</i></td></tr>
+<tr><th id="19">19</th><td><i>** EVENT SHALL Google Inc. BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="20">20</th><td><i>** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</i></td></tr>
+<tr><th id="21">21</th><td><i>** PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</i></td></tr>
+<tr><th id="22">22</th><td><i>** OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,</i></td></tr>
+<tr><th id="23">23</th><td><i>** WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR</i></td></tr>
+<tr><th id="24">24</th><td><i>** OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF</i></td></tr>
+<tr><th id="25">25</th><td><i>** ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="26">26</th><td><i>*/</i></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../include/mincrypt/rsa.h.html">"mincrypt/rsa.h"</a></u></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../include/mincrypt/sha.h.html">"mincrypt/sha.h"</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../include/mincrypt/sha256.h.html">"mincrypt/sha256.h"</a></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><i  data-doc="subM">// a[] -= mod</i></td></tr>
+<tr><th id="33">33</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="subM" title='subM' data-type='void subM(const RSAPublicKey * key, uint32_t * a)' data-ref="subM">subM</dfn>(<em>const</em> <a class="typedef" href="../include/mincrypt/rsa.h.html#RSAPublicKey" title='RSAPublicKey' data-type='struct RSAPublicKey' data-ref="RSAPublicKey">RSAPublicKey</a>* <dfn class="local col1 decl" id="1key" title='key' data-type='const RSAPublicKey *' data-ref="1key">key</dfn>,</td></tr>
+<tr><th id="34">34</th><td>                 <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>* <dfn class="local col2 decl" id="2a" title='a' data-type='uint32_t *' data-ref="2a">a</dfn>) {</td></tr>
+<tr><th id="35">35</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#int64_t" title='int64_t' data-type='__int64_t' data-ref="int64_t">int64_t</a> <dfn class="local col3 decl" id="3A" title='A' data-type='int64_t' data-ref="3A">A</dfn> = <var>0</var>;</td></tr>
+<tr><th id="36">36</th><td>    <em>int</em> <dfn class="local col4 decl" id="4i" title='i' data-type='int' data-ref="4i">i</dfn>;</td></tr>
+<tr><th id="37">37</th><td>    <b>for</b> (<a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a> = <var>0</var>; <a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a> &lt; <a class="local col1 ref" href="#1key" title='key' data-ref="1key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a>; ++<a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a>) {</td></tr>
+<tr><th id="38">38</th><td>        <a class="local col3 ref" href="#3A" title='A' data-ref="3A">A</a> += (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>)<a class="local col2 ref" href="#2a" title='a' data-ref="2a">a</a>[<a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a>] - <a class="local col1 ref" href="#1key" title='key' data-ref="1key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::n" title='RSAPublicKey::n' data-ref="RSAPublicKey::n">n</a>[<a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a>];</td></tr>
+<tr><th id="39">39</th><td>        <a class="local col2 ref" href="#2a" title='a' data-ref="2a">a</a>[<a class="local col4 ref" href="#4i" title='i' data-ref="4i">i</a>] = (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>)<a class="local col3 ref" href="#3A" title='A' data-ref="3A">A</a>;</td></tr>
+<tr><th id="40">40</th><td>        <a class="local col3 ref" href="#3A" title='A' data-ref="3A">A</a> &gt;&gt;= <var>32</var>;</td></tr>
+<tr><th id="41">41</th><td>    }</td></tr>
+<tr><th id="42">42</th><td>}</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><i  data-doc="geM">// return a[] &gt;= mod</i></td></tr>
+<tr><th id="45">45</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="geM" title='geM' data-type='int geM(const RSAPublicKey * key, const uint32_t * a)' data-ref="geM">geM</dfn>(<em>const</em> <a class="typedef" href="../include/mincrypt/rsa.h.html#RSAPublicKey" title='RSAPublicKey' data-type='struct RSAPublicKey' data-ref="RSAPublicKey">RSAPublicKey</a>* <dfn class="local col5 decl" id="5key" title='key' data-type='const RSAPublicKey *' data-ref="5key">key</dfn>,</td></tr>
+<tr><th id="46">46</th><td>               <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>* <dfn class="local col6 decl" id="6a" title='a' data-type='const uint32_t *' data-ref="6a">a</dfn>) {</td></tr>
+<tr><th id="47">47</th><td>    <em>int</em> <dfn class="local col7 decl" id="7i" title='i' data-type='int' data-ref="7i">i</dfn>;</td></tr>
+<tr><th id="48">48</th><td>    <b>for</b> (<a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a> = <a class="local col5 ref" href="#5key" title='key' data-ref="5key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a>; <a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a>;) {</td></tr>
+<tr><th id="49">49</th><td>        --<a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a>;</td></tr>
+<tr><th id="50">50</th><td>        <b>if</b> (<a class="local col6 ref" href="#6a" title='a' data-ref="6a">a</a>[<a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a>] &lt; <a class="local col5 ref" href="#5key" title='key' data-ref="5key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::n" title='RSAPublicKey::n' data-ref="RSAPublicKey::n">n</a>[<a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a>]) <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="51">51</th><td>        <b>if</b> (<a class="local col6 ref" href="#6a" title='a' data-ref="6a">a</a>[<a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a>] &gt; <a class="local col5 ref" href="#5key" title='key' data-ref="5key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::n" title='RSAPublicKey::n' data-ref="RSAPublicKey::n">n</a>[<a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a>]) <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="52">52</th><td>    }</td></tr>
+<tr><th id="53">53</th><td>    <b>return</b> <var>1</var>;  <i>// equal</i></td></tr>
+<tr><th id="54">54</th><td>}</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><i  data-doc="montMulAdd">// montgomery c[] += a * b[] / R % mod</i></td></tr>
+<tr><th id="57">57</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="montMulAdd" title='montMulAdd' data-type='void montMulAdd(const RSAPublicKey * key, uint32_t * c, const uint32_t a, const uint32_t * b)' data-ref="montMulAdd">montMulAdd</dfn>(<em>const</em> <a class="typedef" href="../include/mincrypt/rsa.h.html#RSAPublicKey" title='RSAPublicKey' data-type='struct RSAPublicKey' data-ref="RSAPublicKey">RSAPublicKey</a>* <dfn class="local col8 decl" id="8key" title='key' data-type='const RSAPublicKey *' data-ref="8key">key</dfn>,</td></tr>
+<tr><th id="58">58</th><td>                       <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>* <dfn class="local col9 decl" id="9c" title='c' data-type='uint32_t *' data-ref="9c">c</dfn>,</td></tr>
+<tr><th id="59">59</th><td>                       <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col0 decl" id="10a" title='a' data-type='const uint32_t' data-ref="10a">a</dfn>,</td></tr>
+<tr><th id="60">60</th><td>                       <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>* <dfn class="local col1 decl" id="11b" title='b' data-type='const uint32_t *' data-ref="11b">b</dfn>) {</td></tr>
+<tr><th id="61">61</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col2 decl" id="12A" title='A' data-type='uint64_t' data-ref="12A">A</dfn> = (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>)<a class="local col0 ref" href="#10a" title='a' data-ref="10a">a</a> * <a class="local col1 ref" href="#11b" title='b' data-ref="11b">b</a>[<var>0</var>] + <a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a>[<var>0</var>];</td></tr>
+<tr><th id="62">62</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col3 decl" id="13d0" title='d0' data-type='uint32_t' data-ref="13d0">d0</dfn> = (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>)<a class="local col2 ref" href="#12A" title='A' data-ref="12A">A</a> * <a class="local col8 ref" href="#8key" title='key' data-ref="8key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::n0inv" title='RSAPublicKey::n0inv' data-ref="RSAPublicKey::n0inv">n0inv</a>;</td></tr>
+<tr><th id="63">63</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col4 decl" id="14B" title='B' data-type='uint64_t' data-ref="14B">B</dfn> = (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>)<a class="local col3 ref" href="#13d0" title='d0' data-ref="13d0">d0</a> * <a class="local col8 ref" href="#8key" title='key' data-ref="8key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::n" title='RSAPublicKey::n' data-ref="RSAPublicKey::n">n</a>[<var>0</var>] + (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>)<a class="local col2 ref" href="#12A" title='A' data-ref="12A">A</a>;</td></tr>
+<tr><th id="64">64</th><td>    <em>int</em> <dfn class="local col5 decl" id="15i" title='i' data-type='int' data-ref="15i">i</dfn>;</td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td>    <b>for</b> (<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> = <var>1</var>; <a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> &lt; <a class="local col8 ref" href="#8key" title='key' data-ref="8key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a>; ++<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>) {</td></tr>
+<tr><th id="67">67</th><td>        <a class="local col2 ref" href="#12A" title='A' data-ref="12A">A</a> = (<a class="local col2 ref" href="#12A" title='A' data-ref="12A">A</a> &gt;&gt; <var>32</var>) + (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>)<a class="local col0 ref" href="#10a" title='a' data-ref="10a">a</a> * <a class="local col1 ref" href="#11b" title='b' data-ref="11b">b</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>] + <a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>];</td></tr>
+<tr><th id="68">68</th><td>        <a class="local col4 ref" href="#14B" title='B' data-ref="14B">B</a> = (<a class="local col4 ref" href="#14B" title='B' data-ref="14B">B</a> &gt;&gt; <var>32</var>) + (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>)<a class="local col3 ref" href="#13d0" title='d0' data-ref="13d0">d0</a> * <a class="local col8 ref" href="#8key" title='key' data-ref="8key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::n" title='RSAPublicKey::n' data-ref="RSAPublicKey::n">n</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>] + (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>)<a class="local col2 ref" href="#12A" title='A' data-ref="12A">A</a>;</td></tr>
+<tr><th id="69">69</th><td>        <a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> - <var>1</var>] = (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>)<a class="local col4 ref" href="#14B" title='B' data-ref="14B">B</a>;</td></tr>
+<tr><th id="70">70</th><td>    }</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td>    <a class="local col2 ref" href="#12A" title='A' data-ref="12A">A</a> = (<a class="local col2 ref" href="#12A" title='A' data-ref="12A">A</a> &gt;&gt; <var>32</var>) + (<a class="local col4 ref" href="#14B" title='B' data-ref="14B">B</a> &gt;&gt; <var>32</var>);</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>    <a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> - <var>1</var>] = (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>)<a class="local col2 ref" href="#12A" title='A' data-ref="12A">A</a>;</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td>    <b>if</b> (<a class="local col2 ref" href="#12A" title='A' data-ref="12A">A</a> &gt;&gt; <var>32</var>) {</td></tr>
+<tr><th id="77">77</th><td>        <a class="tu ref" href="#subM" title='subM' data-use='c' data-ref="subM">subM</a>(<a class="local col8 ref" href="#8key" title='key' data-ref="8key">key</a>, <a class="local col9 ref" href="#9c" title='c' data-ref="9c">c</a>);</td></tr>
+<tr><th id="78">78</th><td>    }</td></tr>
+<tr><th id="79">79</th><td>}</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><i  data-doc="montMul">// montgomery c[] = a[] * b[] / R % mod</i></td></tr>
+<tr><th id="82">82</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="montMul" title='montMul' data-type='void montMul(const RSAPublicKey * key, uint32_t * c, const uint32_t * a, const uint32_t * b)' data-ref="montMul">montMul</dfn>(<em>const</em> <a class="typedef" href="../include/mincrypt/rsa.h.html#RSAPublicKey" title='RSAPublicKey' data-type='struct RSAPublicKey' data-ref="RSAPublicKey">RSAPublicKey</a>* <dfn class="local col6 decl" id="16key" title='key' data-type='const RSAPublicKey *' data-ref="16key">key</dfn>,</td></tr>
+<tr><th id="83">83</th><td>                    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>* <dfn class="local col7 decl" id="17c" title='c' data-type='uint32_t *' data-ref="17c">c</dfn>,</td></tr>
+<tr><th id="84">84</th><td>                    <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>* <dfn class="local col8 decl" id="18a" title='a' data-type='const uint32_t *' data-ref="18a">a</dfn>,</td></tr>
+<tr><th id="85">85</th><td>                    <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>* <dfn class="local col9 decl" id="19b" title='b' data-type='const uint32_t *' data-ref="19b">b</dfn>) {</td></tr>
+<tr><th id="86">86</th><td>    <em>int</em> <dfn class="local col0 decl" id="20i" title='i' data-type='int' data-ref="20i">i</dfn>;</td></tr>
+<tr><th id="87">87</th><td>    <b>for</b> (<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a> = <var>0</var>; <a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a> &lt; <a class="local col6 ref" href="#16key" title='key' data-ref="16key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a>; ++<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>) {</td></tr>
+<tr><th id="88">88</th><td>        <a class="local col7 ref" href="#17c" title='c' data-ref="17c">c</a>[<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>] = <var>0</var>;</td></tr>
+<tr><th id="89">89</th><td>    }</td></tr>
+<tr><th id="90">90</th><td>    <b>for</b> (<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a> = <var>0</var>; <a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a> &lt; <a class="local col6 ref" href="#16key" title='key' data-ref="16key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a>; ++<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>) {</td></tr>
+<tr><th id="91">91</th><td>        <a class="tu ref" href="#montMulAdd" title='montMulAdd' data-use='c' data-ref="montMulAdd">montMulAdd</a>(<a class="local col6 ref" href="#16key" title='key' data-ref="16key">key</a>, <a class="local col7 ref" href="#17c" title='c' data-ref="17c">c</a>, <a class="local col8 ref" href="#18a" title='a' data-ref="18a">a</a>[<a class="local col0 ref" href="#20i" title='i' data-ref="20i">i</a>], <a class="local col9 ref" href="#19b" title='b' data-ref="19b">b</a>);</td></tr>
+<tr><th id="92">92</th><td>    }</td></tr>
+<tr><th id="93">93</th><td>}</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><i  data-doc="modpow">// In-place public exponentiation.</i></td></tr>
+<tr><th id="96">96</th><td><i  data-doc="modpow">// Input and output big-endian byte array in inout.</i></td></tr>
+<tr><th id="97">97</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="modpow" title='modpow' data-type='void modpow(const RSAPublicKey * key, uint8_t * inout)' data-ref="modpow">modpow</dfn>(<em>const</em> <a class="typedef" href="../include/mincrypt/rsa.h.html#RSAPublicKey" title='RSAPublicKey' data-type='struct RSAPublicKey' data-ref="RSAPublicKey">RSAPublicKey</a>* <dfn class="local col1 decl" id="21key" title='key' data-type='const RSAPublicKey *' data-ref="21key">key</dfn>,</td></tr>
+<tr><th id="98">98</th><td>                   <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a>* <dfn class="local col2 decl" id="22inout" title='inout' data-type='uint8_t *' data-ref="22inout">inout</dfn>) {</td></tr>
+<tr><th id="99">99</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col3 decl" id="23a" title='a' data-type='uint32_t [64]' data-ref="23a">a</dfn>[<a class="macro" href="../include/mincrypt/rsa.h.html#38" title="(256 / sizeof(uint32_t))" data-ref="_M/RSANUMWORDS">RSANUMWORDS</a>];</td></tr>
+<tr><th id="100">100</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col4 decl" id="24aR" title='aR' data-type='uint32_t [64]' data-ref="24aR">aR</dfn>[<a class="macro" href="../include/mincrypt/rsa.h.html#38" title="(256 / sizeof(uint32_t))" data-ref="_M/RSANUMWORDS">RSANUMWORDS</a>];</td></tr>
+<tr><th id="101">101</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col5 decl" id="25aaR" title='aaR' data-type='uint32_t [64]' data-ref="25aaR">aaR</dfn>[<a class="macro" href="../include/mincrypt/rsa.h.html#38" title="(256 / sizeof(uint32_t))" data-ref="_M/RSANUMWORDS">RSANUMWORDS</a>];</td></tr>
+<tr><th id="102">102</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a>* <dfn class="local col6 decl" id="26aaa" title='aaa' data-type='uint32_t *' data-ref="26aaa">aaa</dfn> = <var>0</var>;</td></tr>
+<tr><th id="103">103</th><td>    <em>int</em> <dfn class="local col7 decl" id="27i" title='i' data-type='int' data-ref="27i">i</dfn>;</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td>    <i>// Convert from big endian byte array to little endian word array.</i></td></tr>
+<tr><th id="106">106</th><td>    <b>for</b> (<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> = <var>0</var>; <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> &lt; <a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a>; ++<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>) {</td></tr>
+<tr><th id="107">107</th><td>        <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col8 decl" id="28tmp" title='tmp' data-type='uint32_t' data-ref="28tmp">tmp</dfn> =</td></tr>
+<tr><th id="108">108</th><td>            (<a class="local col2 ref" href="#22inout" title='inout' data-ref="22inout">inout</a>[((<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a> - <var>1</var> - <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>) * <var>4</var>) + <var>0</var>] &lt;&lt; <var>24</var>) |</td></tr>
+<tr><th id="109">109</th><td>            (<a class="local col2 ref" href="#22inout" title='inout' data-ref="22inout">inout</a>[((<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a> - <var>1</var> - <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>) * <var>4</var>) + <var>1</var>] &lt;&lt; <var>16</var>) |</td></tr>
+<tr><th id="110">110</th><td>            (<a class="local col2 ref" href="#22inout" title='inout' data-ref="22inout">inout</a>[((<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a> - <var>1</var> - <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>) * <var>4</var>) + <var>2</var>] &lt;&lt; <var>8</var>) |</td></tr>
+<tr><th id="111">111</th><td>            (<a class="local col2 ref" href="#22inout" title='inout' data-ref="22inout">inout</a>[((<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a> - <var>1</var> - <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>) * <var>4</var>) + <var>3</var>] &lt;&lt; <var>0</var>);</td></tr>
+<tr><th id="112">112</th><td>        <a class="local col3 ref" href="#23a" title='a' data-ref="23a">a</a>[<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>] = <a class="local col8 ref" href="#28tmp" title='tmp' data-ref="28tmp">tmp</a>;</td></tr>
+<tr><th id="113">113</th><td>    }</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td>    <b>if</b> (<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::exponent" title='RSAPublicKey::exponent' data-ref="RSAPublicKey::exponent">exponent</a> == <var>65537</var>) {</td></tr>
+<tr><th id="116">116</th><td>        <a class="local col6 ref" href="#26aaa" title='aaa' data-ref="26aaa">aaa</a> = <a class="local col5 ref" href="#25aaR" title='aaR' data-ref="25aaR">aaR</a>;  <i>// Re-use location.</i></td></tr>
+<tr><th id="117">117</th><td>        <a class="tu ref" href="#montMul" title='montMul' data-use='c' data-ref="montMul">montMul</a>(<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col4 ref" href="#24aR" title='aR' data-ref="24aR">aR</a>, <a class="local col3 ref" href="#23a" title='a' data-ref="23a">a</a>, <a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::rr" title='RSAPublicKey::rr' data-ref="RSAPublicKey::rr">rr</a>);  <i>// aR = a * RR / R mod M</i></td></tr>
+<tr><th id="118">118</th><td>        <b>for</b> (<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> = <var>0</var>; <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> &lt; <var>16</var>; <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> += <var>2</var>) {</td></tr>
+<tr><th id="119">119</th><td>            <a class="tu ref" href="#montMul" title='montMul' data-use='c' data-ref="montMul">montMul</a>(<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col5 ref" href="#25aaR" title='aaR' data-ref="25aaR">aaR</a>, <a class="local col4 ref" href="#24aR" title='aR' data-ref="24aR">aR</a>, <a class="local col4 ref" href="#24aR" title='aR' data-ref="24aR">aR</a>);  <i>// aaR = aR * aR / R mod M</i></td></tr>
+<tr><th id="120">120</th><td>            <a class="tu ref" href="#montMul" title='montMul' data-use='c' data-ref="montMul">montMul</a>(<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col4 ref" href="#24aR" title='aR' data-ref="24aR">aR</a>, <a class="local col5 ref" href="#25aaR" title='aaR' data-ref="25aaR">aaR</a>, <a class="local col5 ref" href="#25aaR" title='aaR' data-ref="25aaR">aaR</a>);  <i>// aR = aaR * aaR / R mod M</i></td></tr>
+<tr><th id="121">121</th><td>        }</td></tr>
+<tr><th id="122">122</th><td>        <a class="tu ref" href="#montMul" title='montMul' data-use='c' data-ref="montMul">montMul</a>(<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col6 ref" href="#26aaa" title='aaa' data-ref="26aaa">aaa</a>, <a class="local col4 ref" href="#24aR" title='aR' data-ref="24aR">aR</a>, <a class="local col3 ref" href="#23a" title='a' data-ref="23a">a</a>);  <i>// aaa = aR * a / R mod M</i></td></tr>
+<tr><th id="123">123</th><td>    } <b>else</b> <b>if</b> (<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::exponent" title='RSAPublicKey::exponent' data-ref="RSAPublicKey::exponent">exponent</a> == <var>3</var>) {</td></tr>
+<tr><th id="124">124</th><td>        <a class="local col6 ref" href="#26aaa" title='aaa' data-ref="26aaa">aaa</a> = <a class="local col4 ref" href="#24aR" title='aR' data-ref="24aR">aR</a>;  <i>// Re-use location.</i></td></tr>
+<tr><th id="125">125</th><td>        <a class="tu ref" href="#montMul" title='montMul' data-use='c' data-ref="montMul">montMul</a>(<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col4 ref" href="#24aR" title='aR' data-ref="24aR">aR</a>, <a class="local col3 ref" href="#23a" title='a' data-ref="23a">a</a>, <a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::rr" title='RSAPublicKey::rr' data-ref="RSAPublicKey::rr">rr</a>);  <i>/* aR = a * RR / R mod M   */</i></td></tr>
+<tr><th id="126">126</th><td>        <a class="tu ref" href="#montMul" title='montMul' data-use='c' data-ref="montMul">montMul</a>(<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col5 ref" href="#25aaR" title='aaR' data-ref="25aaR">aaR</a>, <a class="local col4 ref" href="#24aR" title='aR' data-ref="24aR">aR</a>, <a class="local col4 ref" href="#24aR" title='aR' data-ref="24aR">aR</a>);     <i>/* aaR = aR * aR / R mod M */</i></td></tr>
+<tr><th id="127">127</th><td>        <a class="tu ref" href="#montMul" title='montMul' data-use='c' data-ref="montMul">montMul</a>(<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col6 ref" href="#26aaa" title='aaa' data-ref="26aaa">aaa</a>, <a class="local col5 ref" href="#25aaR" title='aaR' data-ref="25aaR">aaR</a>, <a class="local col3 ref" href="#23a" title='a' data-ref="23a">a</a>);     <i>/* aaa = aaR * a / R mod M */</i></td></tr>
+<tr><th id="128">128</th><td>    }</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td>    <i>// Make sure aaa &lt; mod; aaa is at most 1x mod too large.</i></td></tr>
+<tr><th id="131">131</th><td>    <b>if</b> (<a class="tu ref" href="#geM" title='geM' data-use='c' data-ref="geM">geM</a>(<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col6 ref" href="#26aaa" title='aaa' data-ref="26aaa">aaa</a>)) {</td></tr>
+<tr><th id="132">132</th><td>        <a class="tu ref" href="#subM" title='subM' data-use='c' data-ref="subM">subM</a>(<a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>, <a class="local col6 ref" href="#26aaa" title='aaa' data-ref="26aaa">aaa</a>);</td></tr>
+<tr><th id="133">133</th><td>    }</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td>    <i>// Convert to bigendian byte array</i></td></tr>
+<tr><th id="136">136</th><td>    <b>for</b> (<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> = <a class="local col1 ref" href="#21key" title='key' data-ref="21key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a> - <var>1</var>; <a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a> &gt;= <var>0</var>; --<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>) {</td></tr>
+<tr><th id="137">137</th><td>        <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="local col9 decl" id="29tmp" title='tmp' data-type='uint32_t' data-ref="29tmp">tmp</dfn> = <a class="local col6 ref" href="#26aaa" title='aaa' data-ref="26aaa">aaa</a>[<a class="local col7 ref" href="#27i" title='i' data-ref="27i">i</a>];</td></tr>
+<tr><th id="138">138</th><td>        *<a class="local col2 ref" href="#22inout" title='inout' data-ref="22inout">inout</a>++ = <a class="local col9 ref" href="#29tmp" title='tmp' data-ref="29tmp">tmp</a> &gt;&gt; <var>24</var>;</td></tr>
+<tr><th id="139">139</th><td>        *<a class="local col2 ref" href="#22inout" title='inout' data-ref="22inout">inout</a>++ = <a class="local col9 ref" href="#29tmp" title='tmp' data-ref="29tmp">tmp</a> &gt;&gt; <var>16</var>;</td></tr>
+<tr><th id="140">140</th><td>        *<a class="local col2 ref" href="#22inout" title='inout' data-ref="22inout">inout</a>++ = <a class="local col9 ref" href="#29tmp" title='tmp' data-ref="29tmp">tmp</a> &gt;&gt; <var>8</var>;</td></tr>
+<tr><th id="141">141</th><td>        *<a class="local col2 ref" href="#22inout" title='inout' data-ref="22inout">inout</a>++ = <a class="local col9 ref" href="#29tmp" title='tmp' data-ref="29tmp">tmp</a> &gt;&gt; <var>0</var>;</td></tr>
+<tr><th id="142">142</th><td>    }</td></tr>
+<tr><th id="143">143</th><td>}</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><i>// Expected PKCS1.5 signature padding bytes, for a keytool RSA signature.</i></td></tr>
+<tr><th id="146">146</th><td><i>// Has the 0-length optional parameter encoded in the ASN1 (as opposed to the</i></td></tr>
+<tr><th id="147">147</th><td><i>// other flavor which omits the optional parameter entirely). This code does not</i></td></tr>
+<tr><th id="148">148</th><td><i>// accept signatures without the optional parameter.</i></td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><i  data-doc="kExpectedPadShaRsa2048">/*</i></td></tr>
+<tr><th id="151">151</th><td><i  data-doc="kExpectedPadShaRsa2048">static const uint8_t sha_padding[RSANUMBYTES] = {</i></td></tr>
+<tr><th id="152">152</th><td><i  data-doc="kExpectedPadShaRsa2048">    0x00, 0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="153">153</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="154">154</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="155">155</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="156">156</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="157">157</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="158">158</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="159">159</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="160">160</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="161">161</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="162">162</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="163">163</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="164">164</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="165">165</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="166">166</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="167">167</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="168">168</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="169">169</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="170">170</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="171">171</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="172">172</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="173">173</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="174">174</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="175">175</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="176">176</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="177">177</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="178">178</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="179">179</th><td><i  data-doc="kExpectedPadShaRsa2048">    0xff, 0xff, 0xff, 0xff, 0x00, 0x30, 0x21, 0x30,</i></td></tr>
+<tr><th id="180">180</th><td><i  data-doc="kExpectedPadShaRsa2048">    0x09, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a,</i></td></tr>
+<tr><th id="181">181</th><td><i  data-doc="kExpectedPadShaRsa2048">    0x05, 0x00, 0x04, 0x14,</i></td></tr>
+<tr><th id="182">182</th><td><i  data-doc="kExpectedPadShaRsa2048"></i></td></tr>
+<tr><th id="183">183</th><td><i  data-doc="kExpectedPadShaRsa2048">    // 20 bytes of hash go here.</i></td></tr>
+<tr><th id="184">184</th><td><i  data-doc="kExpectedPadShaRsa2048">    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</i></td></tr>
+<tr><th id="185">185</th><td><i  data-doc="kExpectedPadShaRsa2048">};</i></td></tr>
+<tr><th id="186">186</th><td><i  data-doc="kExpectedPadShaRsa2048">*/</i></td></tr>
+<tr><th id="187">187</th><td><i  data-doc="kExpectedPadShaRsa2048"></i></td></tr>
+<tr><th id="188">188</th><td><i  data-doc="kExpectedPadShaRsa2048">// SHA-1 of PKCS1.5 signature sha_padding for 2048 bit, as above.</i></td></tr>
+<tr><th id="189">189</th><td><i  data-doc="kExpectedPadShaRsa2048">// At the location of the bytes of the hash all 00 are hashed.</i></td></tr>
+<tr><th id="190">190</th><td><em>static</em> <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="tu decl def" id="kExpectedPadShaRsa2048" title='kExpectedPadShaRsa2048' data-type='const uint8_t [20]' data-ref="kExpectedPadShaRsa2048">kExpectedPadShaRsa2048</dfn>[<a class="macro" href="../include/mincrypt/sha.h.html#46" title="20" data-ref="_M/SHA_DIGEST_SIZE">SHA_DIGEST_SIZE</a>] = {</td></tr>
+<tr><th id="191">191</th><td>    <var>0xdc</var>, <var>0xbd</var>, <var>0xbe</var>, <var>0x42</var>, <var>0xd5</var>, <var>0xf5</var>, <var>0xa7</var>, <var>0x2e</var>,</td></tr>
+<tr><th id="192">192</th><td>    <var>0x6e</var>, <var>0xfc</var>, <var>0xf5</var>, <var>0x5d</var>, <var>0xaf</var>, <var>0x9d</var>, <var>0xea</var>, <var>0x68</var>,</td></tr>
+<tr><th id="193">193</th><td>    <var>0x7c</var>, <var>0xfb</var>, <var>0xf1</var>, <var>0x67</var></td></tr>
+<tr><th id="194">194</th><td>};</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td><i  data-doc="kExpectedPadSha256Rsa2048">/*</i></td></tr>
+<tr><th id="197">197</th><td><i  data-doc="kExpectedPadSha256Rsa2048">static const uint8_t sha256_padding[RSANUMBYTES] = {</i></td></tr>
+<tr><th id="198">198</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0x00, 0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="199">199</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="200">200</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="201">201</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="202">202</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="203">203</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="204">204</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="205">205</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="206">206</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="207">207</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="208">208</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="209">209</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="210">210</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="211">211</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="212">212</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="213">213</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="214">214</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="215">215</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="216">216</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="217">217</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="218">218</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="219">219</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="220">220</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="221">221</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="222">222</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,</i></td></tr>
+<tr><th id="223">223</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0xff, 0xff, 0xff, 0xff, 0x00, 0x30, 0x31, 0x30,</i></td></tr>
+<tr><th id="224">224</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65,</i></td></tr>
+<tr><th id="225">225</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20,</i></td></tr>
+<tr><th id="226">226</th><td><i  data-doc="kExpectedPadSha256Rsa2048"></i></td></tr>
+<tr><th id="227">227</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    // 32 bytes of hash go here.</i></td></tr>
+<tr><th id="228">228</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,</i></td></tr>
+<tr><th id="229">229</th><td><i  data-doc="kExpectedPadSha256Rsa2048">    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,</i></td></tr>
+<tr><th id="230">230</th><td><i  data-doc="kExpectedPadSha256Rsa2048">};</i></td></tr>
+<tr><th id="231">231</th><td><i  data-doc="kExpectedPadSha256Rsa2048">*/</i></td></tr>
+<tr><th id="232">232</th><td><i  data-doc="kExpectedPadSha256Rsa2048"></i></td></tr>
+<tr><th id="233">233</th><td><i  data-doc="kExpectedPadSha256Rsa2048">// SHA-256 of PKCS1.5 signature sha256_padding for 2048 bit, as above.</i></td></tr>
+<tr><th id="234">234</th><td><i  data-doc="kExpectedPadSha256Rsa2048">// At the location of the bytes of the hash all 00 are hashed.</i></td></tr>
+<tr><th id="235">235</th><td><em>static</em> <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="tu decl def" id="kExpectedPadSha256Rsa2048" title='kExpectedPadSha256Rsa2048' data-type='const uint8_t [32]' data-ref="kExpectedPadSha256Rsa2048">kExpectedPadSha256Rsa2048</dfn>[<a class="macro" href="../include/mincrypt/sha256.h.html#46" title="32" data-ref="_M/SHA256_DIGEST_SIZE">SHA256_DIGEST_SIZE</a>] = {</td></tr>
+<tr><th id="236">236</th><td>    <var>0xab</var>, <var>0x28</var>, <var>0x8d</var>, <var>0x8a</var>, <var>0xd7</var>, <var>0xd9</var>, <var>0x59</var>, <var>0x92</var>,</td></tr>
+<tr><th id="237">237</th><td>    <var>0xba</var>, <var>0xcc</var>, <var>0xf8</var>, <var>0x67</var>, <var>0x20</var>, <var>0xe1</var>, <var>0x15</var>, <var>0x2e</var>,</td></tr>
+<tr><th id="238">238</th><td>    <var>0x39</var>, <var>0x8d</var>, <var>0x80</var>, <var>0x36</var>, <var>0xd6</var>, <var>0x6f</var>, <var>0xf0</var>, <var>0xfd</var>,</td></tr>
+<tr><th id="239">239</th><td>    <var>0x90</var>, <var>0xe8</var>, <var>0x7d</var>, <var>0x8b</var>, <var>0xe1</var>, <var>0x7c</var>, <var>0x87</var>, <var>0x59</var>,</td></tr>
+<tr><th id="240">240</th><td>};</td></tr>
+<tr><th id="241">241</th><td></td></tr>
+<tr><th id="242">242</th><td><i>// Verify a 2048-bit RSA PKCS1.5 signature against an expected hash.</i></td></tr>
+<tr><th id="243">243</th><td><i>// Both e=3 and e=65537 are supported.  hash_len may be</i></td></tr>
+<tr><th id="244">244</th><td><i>// SHA_DIGEST_SIZE (== 20) to indicate a SHA-1 hash, or</i></td></tr>
+<tr><th id="245">245</th><td><i>// SHA256_DIGEST_SIZE (== 32) to indicate a SHA-256 hash.  No other</i></td></tr>
+<tr><th id="246">246</th><td><i>// values are supported.</i></td></tr>
+<tr><th id="247">247</th><td><i>//</i></td></tr>
+<tr><th id="248">248</th><td><i>// Returns 1 on successful verification, 0 on failure.</i></td></tr>
+<tr><th id="249">249</th><td><em>int</em> <dfn class="decl def" id="RSA_verify" title='RSA_verify' data-ref="RSA_verify">RSA_verify</dfn>(<em>const</em> <a class="typedef" href="../include/mincrypt/rsa.h.html#RSAPublicKey" title='RSAPublicKey' data-type='struct RSAPublicKey' data-ref="RSAPublicKey">RSAPublicKey</a> *<dfn class="local col0 decl" id="30key" title='key' data-type='const RSAPublicKey *' data-ref="30key">key</dfn>,</td></tr>
+<tr><th id="250">250</th><td>               <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="31signature" title='signature' data-type='const uint8_t *' data-ref="31signature">signature</dfn>,</td></tr>
+<tr><th id="251">251</th><td>               <em>const</em> <em>int</em> <dfn class="local col2 decl" id="32len" title='len' data-type='const int' data-ref="32len">len</dfn>,</td></tr>
+<tr><th id="252">252</th><td>               <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="33hash" title='hash' data-type='const uint8_t *' data-ref="33hash">hash</dfn>,</td></tr>
+<tr><th id="253">253</th><td>               <em>const</em> <em>int</em> <dfn class="local col4 decl" id="34hash_len" title='hash_len' data-type='const int' data-ref="34hash_len">hash_len</dfn>) {</td></tr>
+<tr><th id="254">254</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col5 decl" id="35buf" title='buf' data-type='uint8_t [256]' data-ref="35buf">buf</dfn>[<a class="macro" href="../include/mincrypt/rsa.h.html#37" title="256" data-ref="_M/RSANUMBYTES">RSANUMBYTES</a>];</td></tr>
+<tr><th id="255">255</th><td>    <em>int</em> <dfn class="local col6 decl" id="36i" title='i' data-type='int' data-ref="36i">i</dfn>;</td></tr>
+<tr><th id="256">256</th><td>    <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a>* <dfn class="local col7 decl" id="37padding_hash" title='padding_hash' data-type='const uint8_t *' data-ref="37padding_hash">padding_hash</dfn>;</td></tr>
+<tr><th id="257">257</th><td></td></tr>
+<tr><th id="258">258</th><td>    <b>if</b> (<a class="local col0 ref" href="#30key" title='key' data-ref="30key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::len" title='RSAPublicKey::len' data-ref="RSAPublicKey::len">len</a> != <a class="macro" href="../include/mincrypt/rsa.h.html#38" title="(256 / sizeof(uint32_t))" data-ref="_M/RSANUMWORDS">RSANUMWORDS</a>) {</td></tr>
+<tr><th id="259">259</th><td>        <b>return</b> <var>0</var>;  <i>// Wrong key passed in.</i></td></tr>
+<tr><th id="260">260</th><td>    }</td></tr>
+<tr><th id="261">261</th><td></td></tr>
+<tr><th id="262">262</th><td>    <b>if</b> (<a class="local col2 ref" href="#32len" title='len' data-ref="32len">len</a> != <b>sizeof</b>(<a class="local col5 ref" href="#35buf" title='buf' data-ref="35buf">buf</a>)) {</td></tr>
+<tr><th id="263">263</th><td>        <b>return</b> <var>0</var>;  <i>// Wrong input length.</i></td></tr>
+<tr><th id="264">264</th><td>    }</td></tr>
+<tr><th id="265">265</th><td></td></tr>
+<tr><th id="266">266</th><td>    <b>if</b> (<a class="local col4 ref" href="#34hash_len" title='hash_len' data-ref="34hash_len">hash_len</a> != <a class="macro" href="../include/mincrypt/sha.h.html#46" title="20" data-ref="_M/SHA_DIGEST_SIZE">SHA_DIGEST_SIZE</a> &amp;&amp;</td></tr>
+<tr><th id="267">267</th><td>        <a class="local col4 ref" href="#34hash_len" title='hash_len' data-ref="34hash_len">hash_len</a> != <a class="macro" href="../include/mincrypt/sha256.h.html#46" title="32" data-ref="_M/SHA256_DIGEST_SIZE">SHA256_DIGEST_SIZE</a>) {</td></tr>
+<tr><th id="268">268</th><td>        <b>return</b> <var>0</var>;  <i>// Unsupported hash.</i></td></tr>
+<tr><th id="269">269</th><td>    }</td></tr>
+<tr><th id="270">270</th><td></td></tr>
+<tr><th id="271">271</th><td>    <b>if</b> (<a class="local col0 ref" href="#30key" title='key' data-ref="30key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::exponent" title='RSAPublicKey::exponent' data-ref="RSAPublicKey::exponent">exponent</a> != <var>3</var> &amp;&amp; <a class="local col0 ref" href="#30key" title='key' data-ref="30key">key</a>-&gt;<a class="ref" href="../include/mincrypt/rsa.h.html#RSAPublicKey::exponent" title='RSAPublicKey::exponent' data-ref="RSAPublicKey::exponent">exponent</a> != <var>65537</var>) {</td></tr>
+<tr><th id="272">272</th><td>        <b>return</b> <var>0</var>;  <i>// Unsupported exponent.</i></td></tr>
+<tr><th id="273">273</th><td>    }</td></tr>
+<tr><th id="274">274</th><td></td></tr>
+<tr><th id="275">275</th><td>    <b>for</b> (<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> = <var>0</var>; <a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> &lt; <a class="local col2 ref" href="#32len" title='len' data-ref="32len">len</a>; ++<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>) {  <i>// Copy input to local workspace.</i></td></tr>
+<tr><th id="276">276</th><td>        <a class="local col5 ref" href="#35buf" title='buf' data-ref="35buf">buf</a>[<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>] = <a class="local col1 ref" href="#31signature" title='signature' data-ref="31signature">signature</a>[<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>];</td></tr>
+<tr><th id="277">277</th><td>    }</td></tr>
+<tr><th id="278">278</th><td></td></tr>
+<tr><th id="279">279</th><td>    <a class="tu ref" href="#modpow" title='modpow' data-use='c' data-ref="modpow">modpow</a>(<a class="local col0 ref" href="#30key" title='key' data-ref="30key">key</a>, <a class="local col5 ref" href="#35buf" title='buf' data-ref="35buf">buf</a>);  <i>// In-place exponentiation.</i></td></tr>
+<tr><th id="280">280</th><td></td></tr>
+<tr><th id="281">281</th><td>    <i>// Xor sha portion, so it all becomes 00 iff equal.</i></td></tr>
+<tr><th id="282">282</th><td>    <b>for</b> (<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> = <a class="local col2 ref" href="#32len" title='len' data-ref="32len">len</a> - <a class="local col4 ref" href="#34hash_len" title='hash_len' data-ref="34hash_len">hash_len</a>; <a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> &lt; <a class="local col2 ref" href="#32len" title='len' data-ref="32len">len</a>; ++<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>) {</td></tr>
+<tr><th id="283">283</th><td>        <a class="local col5 ref" href="#35buf" title='buf' data-ref="35buf">buf</a>[<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>] ^= *<a class="local col3 ref" href="#33hash" title='hash' data-ref="33hash">hash</a>++;</td></tr>
+<tr><th id="284">284</th><td>    }</td></tr>
+<tr><th id="285">285</th><td></td></tr>
+<tr><th id="286">286</th><td>    <i>// Hash resulting buf, in-place.</i></td></tr>
+<tr><th id="287">287</th><td>    <b>switch</b> (<a class="local col4 ref" href="#34hash_len" title='hash_len' data-ref="34hash_len">hash_len</a>) {</td></tr>
+<tr><th id="288">288</th><td>        <b>case</b> <a class="macro" href="../include/mincrypt/sha.h.html#46" title="20" data-ref="_M/SHA_DIGEST_SIZE">SHA_DIGEST_SIZE</a>:</td></tr>
+<tr><th id="289">289</th><td>            <a class="local col7 ref" href="#37padding_hash" title='padding_hash' data-ref="37padding_hash">padding_hash</a> = <a class="tu ref" href="#kExpectedPadShaRsa2048" title='kExpectedPadShaRsa2048' data-use='r' data-ref="kExpectedPadShaRsa2048">kExpectedPadShaRsa2048</a>;</td></tr>
+<tr><th id="290">290</th><td>            <a class="ref" href="../include/mincrypt/sha.h.html#SHA_hash" title='SHA_hash' data-ref="SHA_hash">SHA_hash</a>(<a class="local col5 ref" href="#35buf" title='buf' data-ref="35buf">buf</a>, <a class="local col2 ref" href="#32len" title='len' data-ref="32len">len</a>, <a class="local col5 ref" href="#35buf" title='buf' data-ref="35buf">buf</a>);</td></tr>
+<tr><th id="291">291</th><td>            <b>break</b>;</td></tr>
+<tr><th id="292">292</th><td>        <b>case</b> <a class="macro" href="../include/mincrypt/sha256.h.html#46" title="32" data-ref="_M/SHA256_DIGEST_SIZE">SHA256_DIGEST_SIZE</a>:</td></tr>
+<tr><th id="293">293</th><td>            <a class="local col7 ref" href="#37padding_hash" title='padding_hash' data-ref="37padding_hash">padding_hash</a> = <a class="tu ref" href="#kExpectedPadSha256Rsa2048" title='kExpectedPadSha256Rsa2048' data-use='r' data-ref="kExpectedPadSha256Rsa2048">kExpectedPadSha256Rsa2048</a>;</td></tr>
+<tr><th id="294">294</th><td>            <a class="ref" href="../include/mincrypt/sha256.h.html#SHA256_hash" title='SHA256_hash' data-ref="SHA256_hash">SHA256_hash</a>(<a class="local col5 ref" href="#35buf" title='buf' data-ref="35buf">buf</a>, <a class="local col2 ref" href="#32len" title='len' data-ref="32len">len</a>, <a class="local col5 ref" href="#35buf" title='buf' data-ref="35buf">buf</a>);</td></tr>
+<tr><th id="295">295</th><td>            <b>break</b>;</td></tr>
+<tr><th id="296">296</th><td>        <b>default</b>:</td></tr>
+<tr><th id="297">297</th><td>            <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="298">298</th><td>    }</td></tr>
+<tr><th id="299">299</th><td></td></tr>
+<tr><th id="300">300</th><td>    <i>// Compare against expected hash value.</i></td></tr>
+<tr><th id="301">301</th><td>    <b>for</b> (<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> = <var>0</var>; <a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a> &lt; <a class="local col4 ref" href="#34hash_len" title='hash_len' data-ref="34hash_len">hash_len</a>; ++<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>) {</td></tr>
+<tr><th id="302">302</th><td>        <b>if</b> (<a class="local col5 ref" href="#35buf" title='buf' data-ref="35buf">buf</a>[<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>] != <a class="local col7 ref" href="#37padding_hash" title='padding_hash' data-ref="37padding_hash">padding_hash</a>[<a class="local col6 ref" href="#36i" title='i' data-ref="36i">i</a>]) {</td></tr>
+<tr><th id="303">303</th><td>            <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="304">304</th><td>        }</td></tr>
+<tr><th id="305">305</th><td>    }</td></tr>
+<tr><th id="306">306</th><td></td></tr>
+<tr><th id="307">307</th><td>    <b>return</b> <var>1</var>;  <i>// All checked out OK.</i></td></tr>
+<tr><th id="308">308</th><td>}</td></tr>
+<tr><th id="309">309</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

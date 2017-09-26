@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>gdtoa.h source code [codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/gdtoa.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="FPI "/>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/gdtoa.h'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libc</a>/<a href='../../..'>upstream-openbsd</a>/<a href='../..'>lib</a>/<a href='..'>libc</a>/<a href='./'>gdtoa</a>/<a href='gdtoa.h.html'>gdtoa.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/****************************************************************</i></td></tr>
+<tr><th id="2">2</th><td><i></i></td></tr>
+<tr><th id="3">3</th><td><i>The author of this software is David M. Gay.</i></td></tr>
+<tr><th id="4">4</th><td><i></i></td></tr>
+<tr><th id="5">5</th><td><i>Copyright (C) 1998 by Lucent Technologies</i></td></tr>
+<tr><th id="6">6</th><td><i>All Rights Reserved</i></td></tr>
+<tr><th id="7">7</th><td><i></i></td></tr>
+<tr><th id="8">8</th><td><i>Permission to use, copy, modify, and distribute this software and</i></td></tr>
+<tr><th id="9">9</th><td><i>its documentation for any purpose and without fee is hereby</i></td></tr>
+<tr><th id="10">10</th><td><i>granted, provided that the above copyright notice appear in all</i></td></tr>
+<tr><th id="11">11</th><td><i>copies and that both that the copyright notice and this</i></td></tr>
+<tr><th id="12">12</th><td><i>permission notice and warranty disclaimer appear in supporting</i></td></tr>
+<tr><th id="13">13</th><td><i>documentation, and that the name of Lucent or any of its entities</i></td></tr>
+<tr><th id="14">14</th><td><i>not be used in advertising or publicity pertaining to</i></td></tr>
+<tr><th id="15">15</th><td><i>distribution of the software without specific, written prior</i></td></tr>
+<tr><th id="16">16</th><td><i>permission.</i></td></tr>
+<tr><th id="17">17</th><td><i></i></td></tr>
+<tr><th id="18">18</th><td><i>LUCENT DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,</i></td></tr>
+<tr><th id="19">19</th><td><i>INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.</i></td></tr>
+<tr><th id="20">20</th><td><i>IN NO EVENT SHALL LUCENT OR ANY OF ITS ENTITIES BE LIABLE FOR ANY</i></td></tr>
+<tr><th id="21">21</th><td><i>SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="22">22</th><td><i>WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER</i></td></tr>
+<tr><th id="23">23</th><td><i>IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,</i></td></tr>
+<tr><th id="24">24</th><td><i>ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF</i></td></tr>
+<tr><th id="25">25</th><td><i>THIS SOFTWARE.</i></td></tr>
+<tr><th id="26">26</th><td><i></i></td></tr>
+<tr><th id="27">27</th><td><i>****************************************************************/</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><i>/* Please send bug reports to David M. Gay (dmg at acm dot org,</i></td></tr>
+<tr><th id="30">30</th><td><i> * with " at " changed at "@" and " dot " changed to ".").	*/</i></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#<span data-ppcond="32">ifndef</span> <span class="macro" data-ref="_M/GDTOA_H_INCLUDED">GDTOA_H_INCLUDED</span></u></td></tr>
+<tr><th id="33">33</th><td><u>#define <dfn class="macro" id="_M/GDTOA_H_INCLUDED" data-ref="_M/GDTOA_H_INCLUDED">GDTOA_H_INCLUDED</dfn></u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="../../../android/include/arith.h.html">"arith.h"</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include &lt;stddef.h&gt; /* for size_t */</u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#<span data-ppcond="38">ifndef</span> <a class="macro" href="../../../android/include/arith.h.html#20" data-ref="_M/Long">Long</a></u></td></tr>
+<tr><th id="39">39</th><td><u>#define Long int</u></td></tr>
+<tr><th id="40">40</th><td><u>#<span data-ppcond="38">endif</span></u></td></tr>
+<tr><th id="41">41</th><td><u>#<span data-ppcond="41">ifndef</span> <span class="macro" data-ref="_M/ULong">ULong</span></u></td></tr>
+<tr><th id="42">42</th><td><b>typedef</b> <em>unsigned</em> <a class="macro" href="../../../android/include/arith.h.html#20" title="int" data-ref="_M/Long">Long</a> <dfn class="typedef" id="ULong" title='ULong' data-type='unsigned int' data-ref="ULong">ULong</dfn>;</td></tr>
+<tr><th id="43">43</th><td><u>#<span data-ppcond="41">endif</span></u></td></tr>
+<tr><th id="44">44</th><td><u>#<span data-ppcond="44">ifndef</span> <span class="macro" data-ref="_M/UShort">UShort</span></u></td></tr>
+<tr><th id="45">45</th><td><b>typedef</b> <em>unsigned</em> <em>short</em> <dfn class="typedef" id="UShort" title='UShort' data-type='unsigned short' data-ref="UShort">UShort</dfn>;</td></tr>
+<tr><th id="46">46</th><td><u>#<span data-ppcond="44">endif</span></u></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><u>#<span data-ppcond="48">ifndef</span> <span class="macro" data-ref="_M/ANSI">ANSI</span></u></td></tr>
+<tr><th id="49">49</th><td><u>#<span data-ppcond="49">ifdef</span> <span class="macro" data-ref="_M/KR_headers">KR_headers</span></u></td></tr>
+<tr><th id="50">50</th><td><u>#define ANSI(x) ()</u></td></tr>
+<tr><th id="51">51</th><td><u>#define Void /*nothing*/</u></td></tr>
+<tr><th id="52">52</th><td><u>#<span data-ppcond="49">else</span></u></td></tr>
+<tr><th id="53">53</th><td><u>#define <dfn class="macro" id="_M/ANSI" data-ref="_M/ANSI">ANSI</dfn>(x) x</u></td></tr>
+<tr><th id="54">54</th><td><u>#define <dfn class="macro" id="_M/Void" data-ref="_M/Void">Void</dfn> void</u></td></tr>
+<tr><th id="55">55</th><td><u>#<span data-ppcond="49">endif</span></u></td></tr>
+<tr><th id="56">56</th><td><u>#<span data-ppcond="48">endif</span> /* ANSI */</u></td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td><u>#<span data-ppcond="58">ifndef</span> <span class="macro" data-ref="_M/CONST">CONST</span></u></td></tr>
+<tr><th id="59">59</th><td><u>#<span data-ppcond="59">ifdef</span> <span class="macro" data-ref="_M/KR_headers">KR_headers</span></u></td></tr>
+<tr><th id="60">60</th><td><u>#define CONST /* blank */</u></td></tr>
+<tr><th id="61">61</th><td><u>#<span data-ppcond="59">else</span></u></td></tr>
+<tr><th id="62">62</th><td><u>#define <dfn class="macro" id="_M/CONST" data-ref="_M/CONST">CONST</dfn> const</u></td></tr>
+<tr><th id="63">63</th><td><u>#<span data-ppcond="59">endif</span></u></td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="58">endif</span> /* CONST */</u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td> <b>enum</b> {	<i>/* return values from strtodg */</i></td></tr>
+<tr><th id="67">67</th><td>	<dfn class="enum" id="STRTOG_Zero" title='STRTOG_Zero' data-ref="STRTOG_Zero">STRTOG_Zero</dfn>	= <var>0x000</var>,</td></tr>
+<tr><th id="68">68</th><td>	<dfn class="enum" id="STRTOG_Normal" title='STRTOG_Normal' data-ref="STRTOG_Normal">STRTOG_Normal</dfn>	= <var>0x001</var>,</td></tr>
+<tr><th id="69">69</th><td>	<dfn class="enum" id="STRTOG_Denormal" title='STRTOG_Denormal' data-ref="STRTOG_Denormal">STRTOG_Denormal</dfn>	= <var>0x002</var>,</td></tr>
+<tr><th id="70">70</th><td>	<dfn class="enum" id="STRTOG_Infinite" title='STRTOG_Infinite' data-ref="STRTOG_Infinite">STRTOG_Infinite</dfn>	= <var>0x003</var>,</td></tr>
+<tr><th id="71">71</th><td>	<dfn class="enum" id="STRTOG_NaN" title='STRTOG_NaN' data-ref="STRTOG_NaN">STRTOG_NaN</dfn>	= <var>0x004</var>,</td></tr>
+<tr><th id="72">72</th><td>	<dfn class="enum" id="STRTOG_NaNbits" title='STRTOG_NaNbits' data-ref="STRTOG_NaNbits">STRTOG_NaNbits</dfn>	= <var>0x005</var>,</td></tr>
+<tr><th id="73">73</th><td>	<dfn class="enum" id="STRTOG_NoNumber" title='STRTOG_NoNumber' data-ref="STRTOG_NoNumber">STRTOG_NoNumber</dfn>	= <var>0x006</var>,</td></tr>
+<tr><th id="74">74</th><td>	<dfn class="enum" id="STRTOG_NoMemory" title='STRTOG_NoMemory' data-ref="STRTOG_NoMemory">STRTOG_NoMemory</dfn> = <var>0x007</var>,</td></tr>
+<tr><th id="75">75</th><td>	<dfn class="enum" id="STRTOG_Retmask" title='STRTOG_Retmask' data-ref="STRTOG_Retmask">STRTOG_Retmask</dfn>	= <var>0x00f</var>,</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td>	<i>/* The following may be or-ed into one of the above values. */</i></td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td>	<dfn class="enum" id="STRTOG_Inexlo" title='STRTOG_Inexlo' data-ref="STRTOG_Inexlo">STRTOG_Inexlo</dfn>	= <var>0x010</var>, <i>/* returned result rounded toward zero */</i></td></tr>
+<tr><th id="80">80</th><td>	<dfn class="enum" id="STRTOG_Inexhi" title='STRTOG_Inexhi' data-ref="STRTOG_Inexhi">STRTOG_Inexhi</dfn>	= <var>0x020</var>, <i>/* returned result rounded away from zero */</i></td></tr>
+<tr><th id="81">81</th><td>	<dfn class="enum" id="STRTOG_Inexact" title='STRTOG_Inexact' data-ref="STRTOG_Inexact">STRTOG_Inexact</dfn>	= <var>0x030</var>,</td></tr>
+<tr><th id="82">82</th><td>	<dfn class="enum" id="STRTOG_Underflow" title='STRTOG_Underflow' data-ref="STRTOG_Underflow">STRTOG_Underflow</dfn>= <var>0x040</var>,</td></tr>
+<tr><th id="83">83</th><td>	<dfn class="enum" id="STRTOG_Overflow" title='STRTOG_Overflow' data-ref="STRTOG_Overflow">STRTOG_Overflow</dfn>	= <var>0x080</var>,</td></tr>
+<tr><th id="84">84</th><td>	<dfn class="enum" id="STRTOG_Neg" title='STRTOG_Neg' data-ref="STRTOG_Neg">STRTOG_Neg</dfn>	= <var>0x100</var> <i>/* does not affect STRTOG_Inexlo or STRTOG_Inexhi */</i></td></tr>
+<tr><th id="85">85</th><td>	};</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td> <b>typedef</b> <b>struct</b></td></tr>
+<tr><th id="88">88</th><td><dfn class="type def" id="FPI" title='FPI' data-ref="FPI"><a class="type" href="#FPI" title='FPI' data-ref="FPI">FPI</a></dfn> {</td></tr>
+<tr><th id="89">89</th><td>	<em>int</em> <dfn class="decl" id="FPI::nbits" title='FPI::nbits' data-ref="FPI::nbits">nbits</dfn>;</td></tr>
+<tr><th id="90">90</th><td>	<em>int</em> <dfn class="decl" id="FPI::emin" title='FPI::emin' data-ref="FPI::emin">emin</dfn>;</td></tr>
+<tr><th id="91">91</th><td>	<em>int</em> <dfn class="decl" id="FPI::emax" title='FPI::emax' data-ref="FPI::emax">emax</dfn>;</td></tr>
+<tr><th id="92">92</th><td>	<em>int</em> <dfn class="decl" id="FPI::rounding" title='FPI::rounding' data-ref="FPI::rounding">rounding</dfn>;</td></tr>
+<tr><th id="93">93</th><td>	<em>int</em> <dfn class="decl" id="FPI::sudden_underflow" title='FPI::sudden_underflow' data-ref="FPI::sudden_underflow">sudden_underflow</dfn>;</td></tr>
+<tr><th id="94">94</th><td>	} <dfn class="typedef" id="FPI" title='FPI' data-type='struct FPI' data-ref="FPI">FPI</dfn>;</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><b>enum</b> {	<i>/* FPI.rounding values: same as FLT_ROUNDS */</i></td></tr>
+<tr><th id="97">97</th><td>	<dfn class="enum" id="FPI_Round_zero" title='FPI_Round_zero' data-ref="FPI_Round_zero">FPI_Round_zero</dfn> = <var>0</var>,</td></tr>
+<tr><th id="98">98</th><td>	<dfn class="enum" id="FPI_Round_near" title='FPI_Round_near' data-ref="FPI_Round_near">FPI_Round_near</dfn> = <var>1</var>,</td></tr>
+<tr><th id="99">99</th><td>	<dfn class="enum" id="FPI_Round_up" title='FPI_Round_up' data-ref="FPI_Round_up">FPI_Round_up</dfn> = <var>2</var>,</td></tr>
+<tr><th id="100">100</th><td>	<dfn class="enum" id="FPI_Round_down" title='FPI_Round_down' data-ref="FPI_Round_down">FPI_Round_down</dfn> = <var>3</var></td></tr>
+<tr><th id="101">101</th><td>	};</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><u>#<span data-ppcond="103">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="104">104</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="105">105</th><td><u>#<span data-ppcond="103">endif</span></u></td></tr>
+<tr><th id="106">106</th><td></td></tr>
+<tr><th id="107">107</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="__dtoa" title='__dtoa' data-ref="__dtoa">__dtoa</dfn>  <a class="macro" href="#53" title="(double d, int mode, int ndigits, int *decpt, int *sign, char **rve)" data-ref="_M/ANSI">ANSI</a>((<em>double</em> <dfn class="local col1 decl" id="1d" title='d' data-type='double' data-ref="1d">d</dfn>, <em>int</em> <dfn class="local col2 decl" id="2mode" title='mode' data-type='int' data-ref="2mode">mode</dfn>, <em>int</em> <dfn class="local col3 decl" id="3ndigits" title='ndigits' data-type='int' data-ref="3ndigits">ndigits</dfn>, <em>int</em> *<dfn class="local col4 decl" id="4decpt" title='decpt' data-type='int *' data-ref="4decpt">decpt</dfn>,</td></tr>
+<tr><th id="108">108</th><td>			<em>int</em> *<dfn class="local col5 decl" id="5sign" title='sign' data-type='int *' data-ref="5sign">sign</dfn>, <em>char</em> **<dfn class="local col6 decl" id="6rve" title='rve' data-type='char **' data-ref="6rve">rve</dfn>));</td></tr>
+<tr><th id="109">109</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="__gdtoa" title='__gdtoa' data-ref="__gdtoa">__gdtoa</dfn> <a class="macro" href="#53" title="(FPI *fpi, int be, ULong *bits, int *kindp, int mode, int ndigits, int *decpt, char **rve)" data-ref="_M/ANSI">ANSI</a>((<a class="typedef" href="#FPI" title='FPI' data-type='struct FPI' data-ref="FPI">FPI</a> *<dfn class="local col7 decl" id="7fpi" title='fpi' data-type='FPI *' data-ref="7fpi">fpi</dfn>, <em>int</em> <dfn class="local col8 decl" id="8be" title='be' data-type='int' data-ref="8be">be</dfn>, <a class="typedef" href="#ULong" title='ULong' data-type='unsigned int' data-ref="ULong">ULong</a> *<dfn class="local col9 decl" id="9bits" title='bits' data-type='ULong *' data-ref="9bits">bits</dfn>, <em>int</em> *<dfn class="local col0 decl" id="10kindp" title='kindp' data-type='int *' data-ref="10kindp">kindp</dfn>,</td></tr>
+<tr><th id="110">110</th><td>			<em>int</em> <dfn class="local col1 decl" id="11mode" title='mode' data-type='int' data-ref="11mode">mode</dfn>, <em>int</em> <dfn class="local col2 decl" id="12ndigits" title='ndigits' data-type='int' data-ref="12ndigits">ndigits</dfn>, <em>int</em> *<dfn class="local col3 decl" id="13decpt" title='decpt' data-type='int *' data-ref="13decpt">decpt</dfn>, <em>char</em> **<dfn class="local col4 decl" id="14rve" title='rve' data-type='char **' data-ref="14rve">rve</dfn>));</td></tr>
+<tr><th id="111">111</th><td><b>extern</b> <em>void</em> <a class="decl" href="dmisc.c.html#96" title='__freedtoa' data-ref="__freedtoa" id="__freedtoa">__freedtoa</a> <a class="macro" href="#53" title="(char*)" data-ref="_M/ANSI">ANSI</a>((<em>char</em>*));</td></tr>
+<tr><th id="112">112</th><td><b>extern</b> <em>float</em>  <dfn class="decl" id="strtof" title='strtof' data-ref="strtof">strtof</dfn> <a class="macro" href="#53" title="(const char *, char **)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em> *, <em>char</em> **));</td></tr>
+<tr><th id="113">113</th><td><b>extern</b> <em>double</em> <dfn class="decl" id="strtod" title='strtod' data-ref="strtod">strtod</dfn> <a class="macro" href="#53" title="(const char *, char **)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em> *, <em>char</em> **));</td></tr>
+<tr><th id="114">114</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="__strtodg" title='__strtodg' data-ref="__strtodg">__strtodg</dfn> <a class="macro" href="#53" title="(const char*, char**, FPI*, int*, ULong*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <a class="typedef" href="#FPI" title='FPI' data-type='struct FPI' data-ref="FPI">FPI</a>*, <a class="macro" href="../../../android/include/arith.h.html#20" title="int" data-ref="_M/Long">Long</a>*, <a class="typedef" href="#ULong" title='ULong' data-type='unsigned int' data-ref="ULong">ULong</a>*));</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><b>extern</b> <em>char</em>*	<dfn class="decl" id="__g_ddfmt" title='__g_ddfmt' data-ref="__g_ddfmt">__g_ddfmt</dfn>  <a class="macro" href="#53" title="(char*, double*, int, size_t)" data-ref="_M/ANSI">ANSI</a>((<em>char</em>*, <em>double</em>*, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>));</td></tr>
+<tr><th id="117">117</th><td><b>extern</b> <em>char</em>*	<dfn class="decl" id="__g_dfmt" title='__g_dfmt' data-ref="__g_dfmt">__g_dfmt</dfn>   <a class="macro" href="#53" title="(char*, double*, int, size_t)" data-ref="_M/ANSI">ANSI</a>((<em>char</em>*, <em>double</em>*, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>));</td></tr>
+<tr><th id="118">118</th><td><b>extern</b> <em>char</em>*	<dfn class="decl" id="__g_ffmt" title='__g_ffmt' data-ref="__g_ffmt">__g_ffmt</dfn>   <a class="macro" href="#53" title="(char*, float*, int, size_t)" data-ref="_M/ANSI">ANSI</a>((<em>char</em>*, <em>float</em>*,  <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>));</td></tr>
+<tr><th id="119">119</th><td><b>extern</b> <em>char</em>*	<dfn class="decl" id="__g_Qfmt" title='__g_Qfmt' data-ref="__g_Qfmt">__g_Qfmt</dfn>   <a class="macro" href="#53" title="(char*, void*, int, size_t)" data-ref="_M/ANSI">ANSI</a>((<em>char</em>*, <em>void</em>*,   <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>));</td></tr>
+<tr><th id="120">120</th><td><b>extern</b> <em>char</em>*	<dfn class="decl" id="__g_xfmt" title='__g_xfmt' data-ref="__g_xfmt">__g_xfmt</dfn>   <a class="macro" href="#53" title="(char*, void*, int, size_t)" data-ref="_M/ANSI">ANSI</a>((<em>char</em>*, <em>void</em>*,   <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>));</td></tr>
+<tr><th id="121">121</th><td><b>extern</b> <em>char</em>*	<dfn class="decl" id="__g_xLfmt" title='__g_xLfmt' data-ref="__g_xLfmt">__g_xLfmt</dfn>  <a class="macro" href="#53" title="(char*, void*, int, size_t)" data-ref="_M/ANSI">ANSI</a>((<em>char</em>*, <em>void</em>*,   <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>));</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtoId" title='__strtoId' data-ref="__strtoId">__strtoId</dfn>  <a class="macro" href="#53" title="(const char*, char**, double*, double*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>double</em>*, <em>double</em>*));</td></tr>
+<tr><th id="124">124</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtoIdd" title='__strtoIdd' data-ref="__strtoIdd">__strtoIdd</dfn> <a class="macro" href="#53" title="(const char*, char**, double*, double*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>double</em>*, <em>double</em>*));</td></tr>
+<tr><th id="125">125</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtoIf" title='__strtoIf' data-ref="__strtoIf">__strtoIf</dfn>  <a class="macro" href="#53" title="(const char*, char**, float*, float*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>float</em>*, <em>float</em>*));</td></tr>
+<tr><th id="126">126</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtoIQ" title='__strtoIQ' data-ref="__strtoIQ">__strtoIQ</dfn>  <a class="macro" href="#53" title="(const char*, char**, void*, void*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>void</em>*, <em>void</em>*));</td></tr>
+<tr><th id="127">127</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtoIx" title='__strtoIx' data-ref="__strtoIx">__strtoIx</dfn>  <a class="macro" href="#53" title="(const char*, char**, void*, void*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>void</em>*, <em>void</em>*));</td></tr>
+<tr><th id="128">128</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtoIxL" title='__strtoIxL' data-ref="__strtoIxL">__strtoIxL</dfn> <a class="macro" href="#53" title="(const char*, char**, void*, void*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>void</em>*, <em>void</em>*));</td></tr>
+<tr><th id="129">129</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtord" title='__strtord' data-ref="__strtord">__strtord</dfn>  <a class="macro" href="#53" title="(const char*, char**, int, double*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>int</em>, <em>double</em>*));</td></tr>
+<tr><th id="130">130</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtordd" title='__strtordd' data-ref="__strtordd">__strtordd</dfn> <a class="macro" href="#53" title="(const char*, char**, int, double*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>int</em>, <em>double</em>*));</td></tr>
+<tr><th id="131">131</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtorf" title='__strtorf' data-ref="__strtorf">__strtorf</dfn>  <a class="macro" href="#53" title="(const char*, char**, int, float*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>int</em>, <em>float</em>*));</td></tr>
+<tr><th id="132">132</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtorQ" title='__strtorQ' data-ref="__strtorQ">__strtorQ</dfn>  <a class="macro" href="#53" title="(const char*, char**, int, void*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>int</em>, <em>void</em>*));</td></tr>
+<tr><th id="133">133</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtorx" title='__strtorx' data-ref="__strtorx">__strtorx</dfn>  <a class="macro" href="#53" title="(const char*, char**, int, void*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>int</em>, <em>void</em>*));</td></tr>
+<tr><th id="134">134</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtorxL" title='__strtorxL' data-ref="__strtorxL">__strtorxL</dfn> <a class="macro" href="#53" title="(const char*, char**, int, void*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>int</em>, <em>void</em>*));</td></tr>
+<tr><th id="135">135</th><td><u>#<span data-ppcond="135">if</span> 1</u></td></tr>
+<tr><th id="136">136</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtodI" title='__strtodI' data-ref="__strtodI">__strtodI</dfn>  <a class="macro" href="#53" title="(const char*, char**, double*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>double</em>*));</td></tr>
+<tr><th id="137">137</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtopd" title='__strtopd' data-ref="__strtopd">__strtopd</dfn>  <a class="macro" href="#53" title="(const char*, char**, double*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>double</em>*));</td></tr>
+<tr><th id="138">138</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtopdd" title='__strtopdd' data-ref="__strtopdd">__strtopdd</dfn> <a class="macro" href="#53" title="(const char*, char**, double*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>double</em>*));</td></tr>
+<tr><th id="139">139</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtopf" title='__strtopf' data-ref="__strtopf">__strtopf</dfn>  <a class="macro" href="#53" title="(const char*, char**, float*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>float</em>*));</td></tr>
+<tr><th id="140">140</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtopQ" title='__strtopQ' data-ref="__strtopQ">__strtopQ</dfn>  <a class="macro" href="#53" title="(const char*, char**, void*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>void</em>*));</td></tr>
+<tr><th id="141">141</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtopx" title='__strtopx' data-ref="__strtopx">__strtopx</dfn>  <a class="macro" href="#53" title="(const char*, char**, void*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>void</em>*));</td></tr>
+<tr><th id="142">142</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="__strtopxL" title='__strtopxL' data-ref="__strtopxL">__strtopxL</dfn> <a class="macro" href="#53" title="(const char*, char**, void*)" data-ref="_M/ANSI">ANSI</a>((<a class="macro" href="#62" title="const" data-ref="_M/CONST">CONST</a> <em>char</em>*, <em>char</em>**, <em>void</em>*));</td></tr>
+<tr><th id="143">143</th><td><u>#<span data-ppcond="135">else</span></u></td></tr>
+<tr><th id="144">144</th><td><u>#define __strtopd(s,se,x) strtord(s,se,1,x)</u></td></tr>
+<tr><th id="145">145</th><td><u>#define __strtopdd(s,se,x) strtordd(s,se,1,x)</u></td></tr>
+<tr><th id="146">146</th><td><u>#define __strtopf(s,se,x) strtorf(s,se,1,x)</u></td></tr>
+<tr><th id="147">147</th><td><u>#define __strtopQ(s,se,x) strtorQ(s,se,1,x)</u></td></tr>
+<tr><th id="148">148</th><td><u>#define __strtopx(s,se,x) strtorx(s,se,1,x)</u></td></tr>
+<tr><th id="149">149</th><td><u>#define __strtopxL(s,se,x) strtorxL(s,se,1,x)</u></td></tr>
+<tr><th id="150">150</th><td><u>#<span data-ppcond="135">endif</span></u></td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><u>#<span data-ppcond="152">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="153">153</th><td>}</td></tr>
+<tr><th id="154">154</th><td><u>#<span data-ppcond="152">endif</span></u></td></tr>
+<tr><th id="155">155</th><td><u>#<span data-ppcond="32">endif</span> /* GDTOA_H_INCLUDED */</u></td></tr>
+<tr><th id="156">156</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='dmisc.c.html'>codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/dmisc.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

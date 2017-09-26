@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>avc_sidtab.c source code [codebrowser/external/libselinux/src/avc_sidtab.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/avc_sidtab.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='avc_sidtab.c.html'>avc_sidtab.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Implementation of the userspace SID hashtable.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Author : Eamon Walsh, &lt;ewalsh@epoch.ncsc.mil&gt;</i></td></tr>
+<tr><th id="5">5</th><td><i> */</i></td></tr>
+<tr><th id="6">6</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="../../../bionic/libc/include/stdint.h.html">&lt;stdint.h&gt;</a></u></td></tr>
+<tr><th id="10">10</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="11">11</th><td><u>#include <a href="selinux_internal.h.html">"selinux_internal.h"</a></u></td></tr>
+<tr><th id="12">12</th><td><u>#include <a href="../include/selinux/avc.h.html">&lt;selinux/avc.h&gt;</a></u></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="avc_sidtab.h.html">"avc_sidtab.h"</a></u></td></tr>
+<tr><th id="14">14</th><td><u>#include <a href="avc_internal.h.html">"avc_internal.h"</a></u></td></tr>
+<tr><th id="15">15</th><td></td></tr>
+<tr><th id="16">16</th><td><em>static</em> <b>inline</b> <em>unsigned</em> <dfn class="tu decl def" id="sidtab_hash" title='sidtab_hash' data-type='unsigned int sidtab_hash(const char * key)' data-ref="sidtab_hash">sidtab_hash</dfn>(<em>const</em> <em>char</em> * <dfn class="local col1 decl" id="1key" title='key' data-type='const char *' data-ref="1key">key</dfn>)</td></tr>
+<tr><th id="17">17</th><td>{</td></tr>
+<tr><th id="18">18</th><td>	<em>char</em> *<dfn class="local col2 decl" id="2p" title='p' data-type='char *' data-ref="2p">p</dfn>, *<dfn class="local col3 decl" id="3keyp" title='keyp' data-type='char *' data-ref="3keyp">keyp</dfn>;</td></tr>
+<tr><th id="19">19</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col4 decl" id="4size" title='size' data-type='unsigned int' data-ref="4size">size</dfn>;</td></tr>
+<tr><th id="20">20</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col5 decl" id="5val" title='val' data-type='unsigned int' data-ref="5val">val</dfn>;</td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td>	<a class="local col5 ref" href="#5val" title='val' data-ref="5val">val</a> = <var>0</var>;</td></tr>
+<tr><th id="23">23</th><td>	<a class="local col3 ref" href="#3keyp" title='keyp' data-ref="3keyp">keyp</a> = (<em>char</em> *)<a class="local col1 ref" href="#1key" title='key' data-ref="1key">key</a>;</td></tr>
+<tr><th id="24">24</th><td>	<a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col3 ref" href="#3keyp" title='keyp' data-ref="3keyp">keyp</a>);</td></tr>
+<tr><th id="25">25</th><td>	<b>for</b> (<a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a> = <a class="local col3 ref" href="#3keyp" title='keyp' data-ref="3keyp">keyp</a>; (<em>unsigned</em> <em>int</em>)(<a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a> - <a class="local col3 ref" href="#3keyp" title='keyp' data-ref="3keyp">keyp</a>) &lt; <a class="local col4 ref" href="#4size" title='size' data-ref="4size">size</a>; <a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>++)</td></tr>
+<tr><th id="26">26</th><td>		<a class="local col5 ref" href="#5val" title='val' data-ref="5val">val</a> =</td></tr>
+<tr><th id="27">27</th><td>		    (<a class="local col5 ref" href="#5val" title='val' data-ref="5val">val</a> &lt;&lt; <var>4</var> | (<a class="local col5 ref" href="#5val" title='val' data-ref="5val">val</a> &gt;&gt; (<var>8</var> * <b>sizeof</b>(<em>unsigned</em> <em>int</em>) - <var>4</var>))) ^ (*<a class="local col2 ref" href="#2p" title='p' data-ref="2p">p</a>);</td></tr>
+<tr><th id="28">28</th><td>	<b>return</b> <a class="local col5 ref" href="#5val" title='val' data-ref="5val">val</a> &amp; (<a class="macro" href="avc_sidtab.h.html#20" title="(1 &lt;&lt; 7)" data-ref="_M/SIDTAB_SIZE">SIDTAB_SIZE</a> - <var>1</var>);</td></tr>
+<tr><th id="29">29</th><td>}</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><em>int</em> <dfn class="decl def" id="sidtab_init" title='sidtab_init' data-ref="sidtab_init">sidtab_init</dfn>(<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab" title='sidtab' data-ref="sidtab">sidtab</a> *<dfn class="local col6 decl" id="6s" title='s' data-type='struct sidtab *' data-ref="6s">s</dfn>)</td></tr>
+<tr><th id="32">32</th><td>{</td></tr>
+<tr><th id="33">33</th><td>	<em>int</em> <dfn class="local col7 decl" id="7i" title='i' data-type='int' data-ref="7i">i</dfn>, <dfn class="local col8 decl" id="8rc" title='rc' data-type='int' data-ref="8rc">rc</dfn> = <var>0</var>;</td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td>	<a class="local col6 ref" href="#6s" title='s' data-ref="6s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a> = (<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab_node" title='sidtab_node' data-ref="sidtab_node">sidtab_node</a> **)<a class="ref" href="avc_internal.h.html#avc_malloc" title='avc_malloc' data-ref="avc_malloc">avc_malloc</a></td></tr>
+<tr><th id="36">36</th><td>	    (<b>sizeof</b>(<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab_node" title='sidtab_node' data-ref="sidtab_node">sidtab_node</a> *) * <a class="macro" href="avc_sidtab.h.html#20" title="(1 &lt;&lt; 7)" data-ref="_M/SIDTAB_SIZE">SIDTAB_SIZE</a>);</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td>	<b>if</b> (!<a class="local col6 ref" href="#6s" title='s' data-ref="6s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a>) {</td></tr>
+<tr><th id="39">39</th><td>		<a class="local col8 ref" href="#8rc" title='rc' data-ref="8rc">rc</a> = -<var>1</var>;</td></tr>
+<tr><th id="40">40</th><td>		<b>goto</b> <a class="lbl" href="#9out" data-ref="9out">out</a>;</td></tr>
+<tr><th id="41">41</th><td>	}</td></tr>
+<tr><th id="42">42</th><td>	<b>for</b> (<a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a> = <var>0</var>; <a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a> &lt; <a class="macro" href="avc_sidtab.h.html#20" title="(1 &lt;&lt; 7)" data-ref="_M/SIDTAB_SIZE">SIDTAB_SIZE</a>; <a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a>++)</td></tr>
+<tr><th id="43">43</th><td>		<a class="local col6 ref" href="#6s" title='s' data-ref="6s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a>[<a class="local col7 ref" href="#7i" title='i' data-ref="7i">i</a>] = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="44">44</th><td>	<a class="local col6 ref" href="#6s" title='s' data-ref="6s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::nel" title='sidtab::nel' data-ref="sidtab::nel">nel</a> = <var>0</var>;</td></tr>
+<tr><th id="45">45</th><td>      <dfn class="lbl" id="9out" data-ref="9out">out</dfn>:</td></tr>
+<tr><th id="46">46</th><td>	<b>return</b> <a class="local col8 ref" href="#8rc" title='rc' data-ref="8rc">rc</a>;</td></tr>
+<tr><th id="47">47</th><td>}</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><em>int</em> <dfn class="decl def" id="sidtab_insert" title='sidtab_insert' data-ref="sidtab_insert">sidtab_insert</dfn>(<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab" title='sidtab' data-ref="sidtab">sidtab</a> *<dfn class="local col0 decl" id="10s" title='s' data-type='struct sidtab *' data-ref="10s">s</dfn>, <em>const</em> <em>char</em> * <dfn class="local col1 decl" id="11ctx" title='ctx' data-type='const char *' data-ref="11ctx">ctx</dfn>)</td></tr>
+<tr><th id="50">50</th><td>{</td></tr>
+<tr><th id="51">51</th><td>	<em>int</em> <dfn class="local col2 decl" id="12hvalue" title='hvalue' data-type='int' data-ref="12hvalue">hvalue</dfn>, <dfn class="local col3 decl" id="13rc" title='rc' data-type='int' data-ref="13rc">rc</dfn> = <var>0</var>;</td></tr>
+<tr><th id="52">52</th><td>	<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab_node" title='sidtab_node' data-ref="sidtab_node">sidtab_node</a> *<dfn class="local col4 decl" id="14newnode" title='newnode' data-type='struct sidtab_node *' data-ref="14newnode">newnode</dfn>;</td></tr>
+<tr><th id="53">53</th><td>	<em>char</em> * <dfn class="local col5 decl" id="15newctx" title='newctx' data-type='char *' data-ref="15newctx">newctx</dfn>;</td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td>	<a class="local col4 ref" href="#14newnode" title='newnode' data-ref="14newnode">newnode</a> = (<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab_node" title='sidtab_node' data-ref="sidtab_node">sidtab_node</a> *)<a class="ref" href="avc_internal.h.html#avc_malloc" title='avc_malloc' data-ref="avc_malloc">avc_malloc</a>(<b>sizeof</b>(*<a class="local col4 ref" href="#14newnode" title='newnode' data-ref="14newnode">newnode</a>));</td></tr>
+<tr><th id="56">56</th><td>	<b>if</b> (!<a class="local col4 ref" href="#14newnode" title='newnode' data-ref="14newnode">newnode</a>) {</td></tr>
+<tr><th id="57">57</th><td>		<a class="local col3 ref" href="#13rc" title='rc' data-ref="13rc">rc</a> = -<var>1</var>;</td></tr>
+<tr><th id="58">58</th><td>		<b>goto</b> <a class="lbl" href="#16out" data-ref="16out">out</a>;</td></tr>
+<tr><th id="59">59</th><td>	}</td></tr>
+<tr><th id="60">60</th><td>	<a class="local col5 ref" href="#15newctx" title='newctx' data-ref="15newctx">newctx</a> = (<em>char</em> *) <a class="ref" href="../../../bionic/libc/include/string.h.html#strdup" title='strdup' data-ref="strdup">strdup</a>(<a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>);</td></tr>
+<tr><th id="61">61</th><td>	<b>if</b> (!<a class="local col5 ref" href="#15newctx" title='newctx' data-ref="15newctx">newctx</a>) {</td></tr>
+<tr><th id="62">62</th><td>		<a class="local col3 ref" href="#13rc" title='rc' data-ref="13rc">rc</a> = -<var>1</var>;</td></tr>
+<tr><th id="63">63</th><td>		<a class="ref" href="avc_internal.h.html#avc_free" title='avc_free' data-ref="avc_free">avc_free</a>(<a class="local col4 ref" href="#14newnode" title='newnode' data-ref="14newnode">newnode</a>);</td></tr>
+<tr><th id="64">64</th><td>		<b>goto</b> <a class="lbl" href="#16out" data-ref="16out">out</a>;</td></tr>
+<tr><th id="65">65</th><td>	}</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td>	<a class="local col2 ref" href="#12hvalue" title='hvalue' data-ref="12hvalue">hvalue</a> = <a class="tu ref" href="#sidtab_hash" title='sidtab_hash' data-use='c' data-ref="sidtab_hash">sidtab_hash</a>(<a class="local col5 ref" href="#15newctx" title='newctx' data-ref="15newctx">newctx</a>);</td></tr>
+<tr><th id="68">68</th><td>	<a class="local col4 ref" href="#14newnode" title='newnode' data-ref="14newnode">newnode</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab_node::next" title='sidtab_node::next' data-ref="sidtab_node::next">next</a> = <a class="local col0 ref" href="#10s" title='s' data-ref="10s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a>[<a class="local col2 ref" href="#12hvalue" title='hvalue' data-ref="12hvalue">hvalue</a>];</td></tr>
+<tr><th id="69">69</th><td>	<a class="local col4 ref" href="#14newnode" title='newnode' data-ref="14newnode">newnode</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab_node::sid_s" title='sidtab_node::sid_s' data-ref="sidtab_node::sid_s">sid_s</a>.<a class="ref" href="../include/selinux/avc.h.html#security_id::ctx" title='security_id::ctx' data-ref="security_id::ctx">ctx</a> = <a class="local col5 ref" href="#15newctx" title='newctx' data-ref="15newctx">newctx</a>;</td></tr>
+<tr><th id="70">70</th><td>	<a class="local col4 ref" href="#14newnode" title='newnode' data-ref="14newnode">newnode</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab_node::sid_s" title='sidtab_node::sid_s' data-ref="sidtab_node::sid_s">sid_s</a>.<a class="ref" href="../include/selinux/avc.h.html#security_id::refcnt" title='security_id::refcnt' data-ref="security_id::refcnt">refcnt</a> = <var>1</var>;	<i>/* unused */</i></td></tr>
+<tr><th id="71">71</th><td>	<a class="local col0 ref" href="#10s" title='s' data-ref="10s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a>[<a class="local col2 ref" href="#12hvalue" title='hvalue' data-ref="12hvalue">hvalue</a>] = <a class="local col4 ref" href="#14newnode" title='newnode' data-ref="14newnode">newnode</a>;</td></tr>
+<tr><th id="72">72</th><td>	<a class="local col0 ref" href="#10s" title='s' data-ref="10s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::nel" title='sidtab::nel' data-ref="sidtab::nel">nel</a>++;</td></tr>
+<tr><th id="73">73</th><td>      <dfn class="lbl" id="16out" data-ref="16out">out</dfn>:</td></tr>
+<tr><th id="74">74</th><td>	<b>return</b> <a class="local col3 ref" href="#13rc" title='rc' data-ref="13rc">rc</a>;</td></tr>
+<tr><th id="75">75</th><td>}</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><em>int</em></td></tr>
+<tr><th id="78">78</th><td><dfn class="decl def" id="sidtab_context_to_sid" title='sidtab_context_to_sid' data-ref="sidtab_context_to_sid">sidtab_context_to_sid</dfn>(<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab" title='sidtab' data-ref="sidtab">sidtab</a> *<dfn class="local col7 decl" id="17s" title='s' data-type='struct sidtab *' data-ref="17s">s</dfn>,</td></tr>
+<tr><th id="79">79</th><td>		      <em>const</em> <em>char</em> * <dfn class="local col8 decl" id="18ctx" title='ctx' data-type='const char *' data-ref="18ctx">ctx</dfn>, <a class="typedef" href="../include/selinux/avc.h.html#security_id_t" title='security_id_t' data-type='struct security_id *' data-ref="security_id_t">security_id_t</a> * <dfn class="local col9 decl" id="19sid" title='sid' data-type='security_id_t *' data-ref="19sid">sid</dfn>)</td></tr>
+<tr><th id="80">80</th><td>{</td></tr>
+<tr><th id="81">81</th><td>	<em>int</em> <dfn class="local col0 decl" id="20hvalue" title='hvalue' data-type='int' data-ref="20hvalue">hvalue</dfn>, <dfn class="local col1 decl" id="21rc" title='rc' data-type='int' data-ref="21rc">rc</dfn> = <var>0</var>;</td></tr>
+<tr><th id="82">82</th><td>	<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab_node" title='sidtab_node' data-ref="sidtab_node">sidtab_node</a> *<dfn class="local col2 decl" id="22cur" title='cur' data-type='struct sidtab_node *' data-ref="22cur">cur</dfn>;</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td>	*<a class="local col9 ref" href="#19sid" title='sid' data-ref="19sid">sid</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="85">85</th><td>	<a class="local col0 ref" href="#20hvalue" title='hvalue' data-ref="20hvalue">hvalue</a> = <a class="tu ref" href="#sidtab_hash" title='sidtab_hash' data-use='c' data-ref="sidtab_hash">sidtab_hash</a>(<a class="local col8 ref" href="#18ctx" title='ctx' data-ref="18ctx">ctx</a>);</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td>      <dfn class="lbl" id="23loop" data-ref="23loop">loop</dfn>:</td></tr>
+<tr><th id="88">88</th><td>	<a class="local col2 ref" href="#22cur" title='cur' data-ref="22cur">cur</a> = <a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a>[<a class="local col0 ref" href="#20hvalue" title='hvalue' data-ref="20hvalue">hvalue</a>];</td></tr>
+<tr><th id="89">89</th><td>	<b>while</b> (<a class="local col2 ref" href="#22cur" title='cur' data-ref="22cur">cur</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> &amp;&amp; <a class="ref" href="../../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col2 ref" href="#22cur" title='cur' data-ref="22cur">cur</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab_node::sid_s" title='sidtab_node::sid_s' data-ref="sidtab_node::sid_s">sid_s</a>.<a class="ref" href="../include/selinux/avc.h.html#security_id::ctx" title='security_id::ctx' data-ref="security_id::ctx">ctx</a>, <a class="local col8 ref" href="#18ctx" title='ctx' data-ref="18ctx">ctx</a>))</td></tr>
+<tr><th id="90">90</th><td>		<a class="local col2 ref" href="#22cur" title='cur' data-ref="22cur">cur</a> = <a class="local col2 ref" href="#22cur" title='cur' data-ref="22cur">cur</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab_node::next" title='sidtab_node::next' data-ref="sidtab_node::next">next</a>;</td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td>	<b>if</b> (<a class="local col2 ref" href="#22cur" title='cur' data-ref="22cur">cur</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {	<i>/* need to make a new entry */</i></td></tr>
+<tr><th id="93">93</th><td>		<a class="local col1 ref" href="#21rc" title='rc' data-ref="21rc">rc</a> = <a class="ref" href="#sidtab_insert" title='sidtab_insert' data-ref="sidtab_insert">sidtab_insert</a>(<a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a>, <a class="local col8 ref" href="#18ctx" title='ctx' data-ref="18ctx">ctx</a>);</td></tr>
+<tr><th id="94">94</th><td>		<b>if</b> (<a class="local col1 ref" href="#21rc" title='rc' data-ref="21rc">rc</a>)</td></tr>
+<tr><th id="95">95</th><td>			<b>goto</b> <a class="lbl" href="#24out" data-ref="24out">out</a>;</td></tr>
+<tr><th id="96">96</th><td>		<b>goto</b> <a class="lbl" href="#23loop" data-ref="23loop">loop</a>;	<i>/* find the newly inserted node */</i></td></tr>
+<tr><th id="97">97</th><td>	}</td></tr>
+<tr><th id="98">98</th><td></td></tr>
+<tr><th id="99">99</th><td>	*<a class="local col9 ref" href="#19sid" title='sid' data-ref="19sid">sid</a> = &amp;<a class="local col2 ref" href="#22cur" title='cur' data-ref="22cur">cur</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab_node::sid_s" title='sidtab_node::sid_s' data-ref="sidtab_node::sid_s">sid_s</a>;</td></tr>
+<tr><th id="100">100</th><td>      <dfn class="lbl" id="24out" data-ref="24out">out</dfn>:</td></tr>
+<tr><th id="101">101</th><td>	<b>return</b> <a class="local col1 ref" href="#21rc" title='rc' data-ref="21rc">rc</a>;</td></tr>
+<tr><th id="102">102</th><td>}</td></tr>
+<tr><th id="103">103</th><td></td></tr>
+<tr><th id="104">104</th><td><em>void</em> <dfn class="decl def" id="sidtab_sid_stats" title='sidtab_sid_stats' data-ref="sidtab_sid_stats">sidtab_sid_stats</dfn>(<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab" title='sidtab' data-ref="sidtab">sidtab</a> *<dfn class="local col5 decl" id="25h" title='h' data-type='struct sidtab *' data-ref="25h">h</dfn>, <em>char</em> *<dfn class="local col6 decl" id="26buf" title='buf' data-type='char *' data-ref="26buf">buf</dfn>, <em>int</em> <dfn class="local col7 decl" id="27buflen" title='buflen' data-type='int' data-ref="27buflen">buflen</dfn>)</td></tr>
+<tr><th id="105">105</th><td>{</td></tr>
+<tr><th id="106">106</th><td>	<em>int</em> <dfn class="local col8 decl" id="28i" title='i' data-type='int' data-ref="28i">i</dfn>, <dfn class="local col9 decl" id="29chain_len" title='chain_len' data-type='int' data-ref="29chain_len">chain_len</dfn>, <dfn class="local col0 decl" id="30slots_used" title='slots_used' data-type='int' data-ref="30slots_used">slots_used</dfn>, <dfn class="local col1 decl" id="31max_chain_len" title='max_chain_len' data-type='int' data-ref="31max_chain_len">max_chain_len</dfn>;</td></tr>
+<tr><th id="107">107</th><td>	<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab_node" title='sidtab_node' data-ref="sidtab_node">sidtab_node</a> *<dfn class="local col2 decl" id="32cur" title='cur' data-type='struct sidtab_node *' data-ref="32cur">cur</dfn>;</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td>	<a class="local col0 ref" href="#30slots_used" title='slots_used' data-ref="30slots_used">slots_used</a> = <var>0</var>;</td></tr>
+<tr><th id="110">110</th><td>	<a class="local col1 ref" href="#31max_chain_len" title='max_chain_len' data-ref="31max_chain_len">max_chain_len</a> = <var>0</var>;</td></tr>
+<tr><th id="111">111</th><td>	<b>for</b> (<a class="local col8 ref" href="#28i" title='i' data-ref="28i">i</a> = <var>0</var>; <a class="local col8 ref" href="#28i" title='i' data-ref="28i">i</a> &lt; <a class="macro" href="avc_sidtab.h.html#20" title="(1 &lt;&lt; 7)" data-ref="_M/SIDTAB_SIZE">SIDTAB_SIZE</a>; <a class="local col8 ref" href="#28i" title='i' data-ref="28i">i</a>++) {</td></tr>
+<tr><th id="112">112</th><td>		<a class="local col2 ref" href="#32cur" title='cur' data-ref="32cur">cur</a> = <a class="local col5 ref" href="#25h" title='h' data-ref="25h">h</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a>[<a class="local col8 ref" href="#28i" title='i' data-ref="28i">i</a>];</td></tr>
+<tr><th id="113">113</th><td>		<b>if</b> (<a class="local col2 ref" href="#32cur" title='cur' data-ref="32cur">cur</a>) {</td></tr>
+<tr><th id="114">114</th><td>			<a class="local col0 ref" href="#30slots_used" title='slots_used' data-ref="30slots_used">slots_used</a>++;</td></tr>
+<tr><th id="115">115</th><td>			<a class="local col9 ref" href="#29chain_len" title='chain_len' data-ref="29chain_len">chain_len</a> = <var>0</var>;</td></tr>
+<tr><th id="116">116</th><td>			<b>while</b> (<a class="local col2 ref" href="#32cur" title='cur' data-ref="32cur">cur</a>) {</td></tr>
+<tr><th id="117">117</th><td>				<a class="local col9 ref" href="#29chain_len" title='chain_len' data-ref="29chain_len">chain_len</a>++;</td></tr>
+<tr><th id="118">118</th><td>				<a class="local col2 ref" href="#32cur" title='cur' data-ref="32cur">cur</a> = <a class="local col2 ref" href="#32cur" title='cur' data-ref="32cur">cur</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab_node::next" title='sidtab_node::next' data-ref="sidtab_node::next">next</a>;</td></tr>
+<tr><th id="119">119</th><td>			}</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td>			<b>if</b> (<a class="local col9 ref" href="#29chain_len" title='chain_len' data-ref="29chain_len">chain_len</a> &gt; <a class="local col1 ref" href="#31max_chain_len" title='max_chain_len' data-ref="31max_chain_len">max_chain_len</a>)</td></tr>
+<tr><th id="122">122</th><td>				<a class="local col1 ref" href="#31max_chain_len" title='max_chain_len' data-ref="31max_chain_len">max_chain_len</a> = <a class="local col9 ref" href="#29chain_len" title='chain_len' data-ref="29chain_len">chain_len</a>;</td></tr>
+<tr><th id="123">123</th><td>		}</td></tr>
+<tr><th id="124">124</th><td>	}</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td>	<a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(buf, buflen, 0, __builtin_object_size((buf), 1), &quot;%s:  %d SID entries and %d/%d buckets used, longest &quot; &quot;chain length %d\n&quot;, avc_prefix, h-&gt;nel, slots_used, (1 &lt;&lt; 7), max_chain_len)" data-ref="_M/snprintf">snprintf</a>(<a class="local col6 ref" href="#26buf" title='buf' data-ref="26buf">buf</a>, <a class="local col7 ref" href="#27buflen" title='buflen' data-ref="27buflen">buflen</a>,</td></tr>
+<tr><th id="127">127</th><td>		 <q>"%s:  %d SID entries and %d/%d buckets used, longest "</q></td></tr>
+<tr><th id="128">128</th><td>		 <q>"chain length %d\n"</q>, <a class="ref" href="avc_internal.h.html#avc_prefix" title='avc_prefix' data-ref="avc_prefix">avc_prefix</a>, <a class="local col5 ref" href="#25h" title='h' data-ref="25h">h</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::nel" title='sidtab::nel' data-ref="sidtab::nel">nel</a>, <a class="local col0 ref" href="#30slots_used" title='slots_used' data-ref="30slots_used">slots_used</a>,</td></tr>
+<tr><th id="129">129</th><td>		 <a class="macro" href="avc_sidtab.h.html#20" title="(1 &lt;&lt; 7)" data-ref="_M/SIDTAB_SIZE">SIDTAB_SIZE</a>, <a class="local col1 ref" href="#31max_chain_len" title='max_chain_len' data-ref="31max_chain_len">max_chain_len</a>);</td></tr>
+<tr><th id="130">130</th><td>}</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><em>void</em> <dfn class="decl def" id="sidtab_destroy" title='sidtab_destroy' data-ref="sidtab_destroy">sidtab_destroy</dfn>(<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab" title='sidtab' data-ref="sidtab">sidtab</a> *<dfn class="local col3 decl" id="33s" title='s' data-type='struct sidtab *' data-ref="33s">s</dfn>)</td></tr>
+<tr><th id="133">133</th><td>{</td></tr>
+<tr><th id="134">134</th><td>	<em>int</em> <dfn class="local col4 decl" id="34i" title='i' data-type='int' data-ref="34i">i</dfn>;</td></tr>
+<tr><th id="135">135</th><td>	<b>struct</b> <a class="type" href="avc_sidtab.h.html#sidtab_node" title='sidtab_node' data-ref="sidtab_node">sidtab_node</a> *<dfn class="local col5 decl" id="35cur" title='cur' data-type='struct sidtab_node *' data-ref="35cur">cur</dfn>, *<dfn class="local col6 decl" id="36temp" title='temp' data-type='struct sidtab_node *' data-ref="36temp">temp</dfn>;</td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td>	<b>if</b> (!<a class="local col3 ref" href="#33s" title='s' data-ref="33s">s</a>)</td></tr>
+<tr><th id="138">138</th><td>		<b>return</b>;</td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td>	<b>for</b> (<a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a> = <var>0</var>; <a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a> &lt; <a class="macro" href="avc_sidtab.h.html#20" title="(1 &lt;&lt; 7)" data-ref="_M/SIDTAB_SIZE">SIDTAB_SIZE</a>; <a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a>++) {</td></tr>
+<tr><th id="141">141</th><td>		<a class="local col5 ref" href="#35cur" title='cur' data-ref="35cur">cur</a> = <a class="local col3 ref" href="#33s" title='s' data-ref="33s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a>[<a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a>];</td></tr>
+<tr><th id="142">142</th><td>		<b>while</b> (<a class="local col5 ref" href="#35cur" title='cur' data-ref="35cur">cur</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="143">143</th><td>			<a class="local col6 ref" href="#36temp" title='temp' data-ref="36temp">temp</a> = <a class="local col5 ref" href="#35cur" title='cur' data-ref="35cur">cur</a>;</td></tr>
+<tr><th id="144">144</th><td>			<a class="local col5 ref" href="#35cur" title='cur' data-ref="35cur">cur</a> = <a class="local col5 ref" href="#35cur" title='cur' data-ref="35cur">cur</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab_node::next" title='sidtab_node::next' data-ref="sidtab_node::next">next</a>;</td></tr>
+<tr><th id="145">145</th><td>			<a class="ref" href="../include/selinux/selinux.h.html#freecon" title='freecon' data-ref="freecon">freecon</a>(<a class="local col6 ref" href="#36temp" title='temp' data-ref="36temp">temp</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab_node::sid_s" title='sidtab_node::sid_s' data-ref="sidtab_node::sid_s">sid_s</a>.<a class="ref" href="../include/selinux/avc.h.html#security_id::ctx" title='security_id::ctx' data-ref="security_id::ctx">ctx</a>);</td></tr>
+<tr><th id="146">146</th><td>			<a class="ref" href="avc_internal.h.html#avc_free" title='avc_free' data-ref="avc_free">avc_free</a>(<a class="local col6 ref" href="#36temp" title='temp' data-ref="36temp">temp</a>);</td></tr>
+<tr><th id="147">147</th><td>		}</td></tr>
+<tr><th id="148">148</th><td>		<a class="local col3 ref" href="#33s" title='s' data-ref="33s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a>[<a class="local col4 ref" href="#34i" title='i' data-ref="34i">i</a>] = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="149">149</th><td>	}</td></tr>
+<tr><th id="150">150</th><td>	<a class="ref" href="avc_internal.h.html#avc_free" title='avc_free' data-ref="avc_free">avc_free</a>(<a class="local col3 ref" href="#33s" title='s' data-ref="33s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a>);</td></tr>
+<tr><th id="151">151</th><td>	<a class="local col3 ref" href="#33s" title='s' data-ref="33s">s</a>-&gt;<a class="ref" href="avc_sidtab.h.html#sidtab::htable" title='sidtab::htable' data-ref="sidtab::htable">htable</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="152">152</th><td>}</td></tr>
+<tr><th id="153">153</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

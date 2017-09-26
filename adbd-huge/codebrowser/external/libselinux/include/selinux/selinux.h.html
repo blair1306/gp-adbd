@@ -1,0 +1,310 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>selinux.h source code [codebrowser/external/libselinux/include/selinux/selinux.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="av_decision,security_class_mapping,selinux_callback,selinux_opt "/>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/include/selinux/selinux.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>external</a>/<a href='../..'>libselinux</a>/<a href='..'>include</a>/<a href='./'>selinux</a>/<a href='selinux.h.html'>selinux.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#<span data-ppcond="1">ifndef</span> <span class="macro" data-ref="_M/_SELINUX_H_">_SELINUX_H_</span></u></td></tr>
+<tr><th id="2">2</th><td><u>#define <dfn class="macro" id="_M/_SELINUX_H_" data-ref="_M/_SELINUX_H_">_SELINUX_H_</dfn></u></td></tr>
+<tr><th id="3">3</th><td></td></tr>
+<tr><th id="4">4</th><td><u>#include <a href="../../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="5">5</th><td><u>#include &lt;stdarg.h&gt;</u></td></tr>
+<tr><th id="6">6</th><td></td></tr>
+<tr><th id="7">7</th><td><u>#<span data-ppcond="7">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="8">8</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="9">9</th><td><u>#<span data-ppcond="7">endif</span></u></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><i>/* Return 1 if we are running on a SELinux kernel, or 0 if not or -1 if we get an error. */</i></td></tr>
+<tr><th id="12">12</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="is_selinux_enabled" title='is_selinux_enabled' data-ref="is_selinux_enabled">is_selinux_enabled</dfn>(<em>void</em>);</td></tr>
+<tr><th id="13">13</th><td><i>/* Return 1 if we are running on a SELinux MLS kernel, or 0 otherwise. */</i></td></tr>
+<tr><th id="14">14</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="is_selinux_mls_enabled" title='is_selinux_mls_enabled' data-ref="is_selinux_mls_enabled">is_selinux_mls_enabled</dfn>(<em>void</em>);</td></tr>
+<tr><th id="15">15</th><td></td></tr>
+<tr><th id="16">16</th><td><i>/* No longer used; here for compatibility with legacy callers. */</i></td></tr>
+<tr><th id="17">17</th><td><b>typedef</b> <em>char</em> *<dfn class="typedef" id="security_context_t" title='security_context_t' data-type='char *' data-ref="security_context_t">security_context_t</dfn>;</td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><i>/* Free the memory allocated for a context by any of the below get* calls. */</i></td></tr>
+<tr><th id="20">20</th><td><b>extern</b> <em>void</em> <dfn class="decl" id="freecon" title='freecon' data-ref="freecon">freecon</dfn>(<em>char</em> * <dfn class="local col1 decl" id="1con" title='con' data-type='char *' data-ref="1con">con</dfn>);</td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><i>/* Free the memory allocated for a context array by security_compute_user. */</i></td></tr>
+<tr><th id="23">23</th><td><b>extern</b> <em>void</em> <dfn class="decl" id="freeconary" title='freeconary' data-ref="freeconary">freeconary</dfn>(<em>char</em> ** <dfn class="local col2 decl" id="2con" title='con' data-type='char **' data-ref="2con">con</dfn>);</td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><i>/* Wrappers for the /proc/pid/attr API. */</i></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><i>/* Get current context, and set *con to refer to it.</i></td></tr>
+<tr><th id="28">28</th><td><i>   Caller must free via freecon. */</i></td></tr>
+<tr><th id="29">29</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getcon" title='getcon' data-ref="getcon">getcon</dfn>(<em>char</em> ** <dfn class="local col3 decl" id="3con" title='con' data-type='char **' data-ref="3con">con</dfn>);</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><i>/* Set the current security context to con.  </i></td></tr>
+<tr><th id="32">32</th><td><i>   Note that use of this function requires that the entire application</i></td></tr>
+<tr><th id="33">33</th><td><i>   be trusted to maintain any desired separation between the old and new </i></td></tr>
+<tr><th id="34">34</th><td><i>   security contexts, unlike exec-based transitions performed via setexeccon.  </i></td></tr>
+<tr><th id="35">35</th><td><i>   When possible, decompose your application and use setexeccon()+execve() </i></td></tr>
+<tr><th id="36">36</th><td><i>   instead. Note that the application may lose access to its open descriptors</i></td></tr>
+<tr><th id="37">37</th><td><i>   as a result of a setcon() unless policy allows it to use descriptors opened</i></td></tr>
+<tr><th id="38">38</th><td><i>   by the old context. */</i></td></tr>
+<tr><th id="39">39</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setcon" title='setcon' data-ref="setcon">setcon</dfn>(<em>const</em> <em>char</em> * <dfn class="local col4 decl" id="4con" title='con' data-type='const char *' data-ref="4con">con</dfn>);</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><i>/* Get context of process identified by pid, and </i></td></tr>
+<tr><th id="42">42</th><td><i>   set *con to refer to it.  Caller must free via freecon. */</i></td></tr>
+<tr><th id="43">43</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getpidcon" title='getpidcon' data-ref="getpidcon">getpidcon</dfn>(<a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col5 decl" id="5pid" title='pid' data-type='pid_t' data-ref="5pid">pid</dfn>, <em>char</em> ** <dfn class="local col6 decl" id="6con" title='con' data-type='char **' data-ref="6con">con</dfn>);</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><i>/* Get previous context (prior to last exec), and set *con to refer to it.</i></td></tr>
+<tr><th id="46">46</th><td><i>   Caller must free via freecon. */</i></td></tr>
+<tr><th id="47">47</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getprevcon" title='getprevcon' data-ref="getprevcon">getprevcon</dfn>(<em>char</em> ** <dfn class="local col7 decl" id="7con" title='con' data-type='char **' data-ref="7con">con</dfn>);</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><i>/* Get exec context, and set *con to refer to it.</i></td></tr>
+<tr><th id="50">50</th><td><i>   Sets *con to NULL if no exec context has been set, i.e. using default.</i></td></tr>
+<tr><th id="51">51</th><td><i>   If non-NULL, caller must free via freecon. */</i></td></tr>
+<tr><th id="52">52</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getexeccon" title='getexeccon' data-ref="getexeccon">getexeccon</dfn>(<em>char</em> ** <dfn class="local col8 decl" id="8con" title='con' data-type='char **' data-ref="8con">con</dfn>);</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><i>/* Set exec security context for the next execve. </i></td></tr>
+<tr><th id="55">55</th><td><i>   Call with NULL if you want to reset to the default. */</i></td></tr>
+<tr><th id="56">56</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setexeccon" title='setexeccon' data-ref="setexeccon">setexeccon</dfn>(<em>const</em> <em>char</em> * <dfn class="local col9 decl" id="9con" title='con' data-type='const char *' data-ref="9con">con</dfn>);</td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td><i>/* Get fscreate context, and set *con to refer to it.</i></td></tr>
+<tr><th id="59">59</th><td><i>   Sets *con to NULL if no fs create context has been set, i.e. using default.</i></td></tr>
+<tr><th id="60">60</th><td><i>   If non-NULL, caller must free via freecon. */</i></td></tr>
+<tr><th id="61">61</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getfscreatecon" title='getfscreatecon' data-ref="getfscreatecon">getfscreatecon</dfn>(<em>char</em> ** <dfn class="local col0 decl" id="10con" title='con' data-type='char **' data-ref="10con">con</dfn>);</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><i>/* Set the fscreate security context for subsequent file creations.</i></td></tr>
+<tr><th id="64">64</th><td><i>   Call with NULL if you want to reset to the default. */</i></td></tr>
+<tr><th id="65">65</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setfscreatecon" title='setfscreatecon' data-ref="setfscreatecon">setfscreatecon</dfn>(<em>const</em> <em>char</em> * <dfn class="local col1 decl" id="11context" title='context' data-type='const char *' data-ref="11context">context</dfn>);</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><i>/* Get keycreate context, and set *con to refer to it.</i></td></tr>
+<tr><th id="68">68</th><td><i>   Sets *con to NULL if no key create context has been set, i.e. using default.</i></td></tr>
+<tr><th id="69">69</th><td><i>   If non-NULL, caller must free via freecon. */</i></td></tr>
+<tr><th id="70">70</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getkeycreatecon" title='getkeycreatecon' data-ref="getkeycreatecon">getkeycreatecon</dfn>(<em>char</em> ** <dfn class="local col2 decl" id="12con" title='con' data-type='char **' data-ref="12con">con</dfn>);</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><i>/* Set the keycreate security context for subsequent key creations.</i></td></tr>
+<tr><th id="73">73</th><td><i>   Call with NULL if you want to reset to the default. */</i></td></tr>
+<tr><th id="74">74</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setkeycreatecon" title='setkeycreatecon' data-ref="setkeycreatecon">setkeycreatecon</dfn>(<em>const</em> <em>char</em> * <dfn class="local col3 decl" id="13context" title='context' data-type='const char *' data-ref="13context">context</dfn>);</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><i>/* Get sockcreate context, and set *con to refer to it.</i></td></tr>
+<tr><th id="77">77</th><td><i>   Sets *con to NULL if no socket create context has been set, i.e. using default.</i></td></tr>
+<tr><th id="78">78</th><td><i>   If non-NULL, caller must free via freecon. */</i></td></tr>
+<tr><th id="79">79</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getsockcreatecon" title='getsockcreatecon' data-ref="getsockcreatecon">getsockcreatecon</dfn>(<em>char</em> ** <dfn class="local col4 decl" id="14con" title='con' data-type='char **' data-ref="14con">con</dfn>);</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><i>/* Set the sockcreate security context for subsequent socket creations.</i></td></tr>
+<tr><th id="82">82</th><td><i>   Call with NULL if you want to reset to the default. */</i></td></tr>
+<tr><th id="83">83</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setsockcreatecon" title='setsockcreatecon' data-ref="setsockcreatecon">setsockcreatecon</dfn>(<em>const</em> <em>char</em> * <dfn class="local col5 decl" id="15context" title='context' data-type='const char *' data-ref="15context">context</dfn>);</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><i>/* Wrappers for the xattr API. */</i></td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td><i>/* Get file context, and set *con to refer to it.</i></td></tr>
+<tr><th id="88">88</th><td><i>   Caller must free via freecon. */</i></td></tr>
+<tr><th id="89">89</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getfilecon" title='getfilecon' data-ref="getfilecon">getfilecon</dfn>(<em>const</em> <em>char</em> *<dfn class="local col6 decl" id="16path" title='path' data-type='const char *' data-ref="16path">path</dfn>, <em>char</em> ** <dfn class="local col7 decl" id="17con" title='con' data-type='char **' data-ref="17con">con</dfn>);</td></tr>
+<tr><th id="90">90</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="lgetfilecon" title='lgetfilecon' data-ref="lgetfilecon">lgetfilecon</dfn>(<em>const</em> <em>char</em> *<dfn class="local col8 decl" id="18path" title='path' data-type='const char *' data-ref="18path">path</dfn>, <em>char</em> ** <dfn class="local col9 decl" id="19con" title='con' data-type='char **' data-ref="19con">con</dfn>);</td></tr>
+<tr><th id="91">91</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fgetfilecon" title='fgetfilecon' data-ref="fgetfilecon">fgetfilecon</dfn>(<em>int</em> <dfn class="local col0 decl" id="20fd" title='fd' data-type='int' data-ref="20fd">fd</dfn>, <em>char</em> ** <dfn class="local col1 decl" id="21con" title='con' data-type='char **' data-ref="21con">con</dfn>);</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><i>/* Set file context */</i></td></tr>
+<tr><th id="94">94</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setfilecon" title='setfilecon' data-ref="setfilecon">setfilecon</dfn>(<em>const</em> <em>char</em> *<dfn class="local col2 decl" id="22path" title='path' data-type='const char *' data-ref="22path">path</dfn>, <em>const</em> <em>char</em> *<dfn class="local col3 decl" id="23con" title='con' data-type='const char *' data-ref="23con">con</dfn>);</td></tr>
+<tr><th id="95">95</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="lsetfilecon" title='lsetfilecon' data-ref="lsetfilecon">lsetfilecon</dfn>(<em>const</em> <em>char</em> *<dfn class="local col4 decl" id="24path" title='path' data-type='const char *' data-ref="24path">path</dfn>, <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="25con" title='con' data-type='const char *' data-ref="25con">con</dfn>);</td></tr>
+<tr><th id="96">96</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fsetfilecon" title='fsetfilecon' data-ref="fsetfilecon">fsetfilecon</dfn>(<em>int</em> <dfn class="local col6 decl" id="26fd" title='fd' data-type='int' data-ref="26fd">fd</dfn>, <em>const</em> <em>char</em> *<dfn class="local col7 decl" id="27con" title='con' data-type='const char *' data-ref="27con">con</dfn>);</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><i>/* Wrappers for the socket API */</i></td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><i>/* Get context of peer socket, and set *con to refer to it.</i></td></tr>
+<tr><th id="101">101</th><td><i>   Caller must free via freecon. */</i></td></tr>
+<tr><th id="102">102</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="getpeercon" title='getpeercon' data-ref="getpeercon">getpeercon</dfn>(<em>int</em> <dfn class="local col8 decl" id="28fd" title='fd' data-type='int' data-ref="28fd">fd</dfn>, <em>char</em> ** <dfn class="local col9 decl" id="29con" title='con' data-type='char **' data-ref="29con">con</dfn>);</td></tr>
+<tr><th id="103">103</th><td></td></tr>
+<tr><th id="104">104</th><td><i>/* Wrappers for the selinuxfs (policy) API. */</i></td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><b>typedef</b> <em>unsigned</em> <em>int</em> <dfn class="typedef" id="access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</dfn>;</td></tr>
+<tr><th id="107">107</th><td><b>typedef</b> <em>unsigned</em> <em>short</em> <dfn class="typedef" id="security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</dfn>;</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><b>struct</b> <dfn class="type def" id="av_decision" title='av_decision' data-ref="av_decision">av_decision</dfn> {</td></tr>
+<tr><th id="110">110</th><td>	<a class="typedef" href="#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="decl" id="av_decision::allowed" title='av_decision::allowed' data-ref="av_decision::allowed">allowed</dfn>;</td></tr>
+<tr><th id="111">111</th><td>	<a class="typedef" href="#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="decl" id="av_decision::decided" title='av_decision::decided' data-ref="av_decision::decided">decided</dfn>;</td></tr>
+<tr><th id="112">112</th><td>	<a class="typedef" href="#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="decl" id="av_decision::auditallow" title='av_decision::auditallow' data-ref="av_decision::auditallow">auditallow</dfn>;</td></tr>
+<tr><th id="113">113</th><td>	<a class="typedef" href="#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="decl" id="av_decision::auditdeny" title='av_decision::auditdeny' data-ref="av_decision::auditdeny">auditdeny</dfn>;</td></tr>
+<tr><th id="114">114</th><td>	<em>unsigned</em> <em>int</em> <dfn class="decl" id="av_decision::seqno" title='av_decision::seqno' data-ref="av_decision::seqno">seqno</dfn>;</td></tr>
+<tr><th id="115">115</th><td>	<em>unsigned</em> <em>int</em> <dfn class="decl" id="av_decision::flags" title='av_decision::flags' data-ref="av_decision::flags">flags</dfn>;</td></tr>
+<tr><th id="116">116</th><td>};</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><i>/* Definitions of av_decision.flags */</i></td></tr>
+<tr><th id="119">119</th><td><u>#define <dfn class="macro" id="_M/SELINUX_AVD_FLAGS_PERMISSIVE" data-ref="_M/SELINUX_AVD_FLAGS_PERMISSIVE">SELINUX_AVD_FLAGS_PERMISSIVE</dfn>	0x0001</u></td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><i>/* Structure for passing options, used by AVC and label subsystems */</i></td></tr>
+<tr><th id="122">122</th><td><b>struct</b> <dfn class="type def" id="selinux_opt" title='selinux_opt' data-ref="selinux_opt">selinux_opt</dfn> {</td></tr>
+<tr><th id="123">123</th><td>	<em>int</em> <dfn class="decl" id="selinux_opt::type" title='selinux_opt::type' data-ref="selinux_opt::type">type</dfn>;</td></tr>
+<tr><th id="124">124</th><td>	<em>const</em> <em>char</em> *<dfn class="decl" id="selinux_opt::value" title='selinux_opt::value' data-ref="selinux_opt::value">value</dfn>;</td></tr>
+<tr><th id="125">125</th><td>};</td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><i>/* Callback facilities */</i></td></tr>
+<tr><th id="128">128</th><td><b>union</b> <dfn class="type def" id="selinux_callback" title='selinux_callback' data-ref="selinux_callback">selinux_callback</dfn> {</td></tr>
+<tr><th id="129">129</th><td>	<i>/* log the printf-style format and arguments,</i></td></tr>
+<tr><th id="130">130</th><td><i>	   with the type code indicating the type of message */</i></td></tr>
+<tr><th id="131">131</th><td>	<em>int</em> </td></tr>
+<tr><th id="132">132</th><td><u>#<span data-ppcond="132">ifdef</span> <span class="macro" data-ref="_M/__GNUC__">__GNUC__</span></u></td></tr>
+<tr><th id="133">133</th><td><b>__attribute__</b> ((format(printf, <var>2</var>, <var>3</var>)))</td></tr>
+<tr><th id="134">134</th><td><u>#<span data-ppcond="132">endif</span></u></td></tr>
+<tr><th id="135">135</th><td>	(*<dfn class="decl" id="selinux_callback::func_log" title='selinux_callback::func_log' data-ref="selinux_callback::func_log">func_log</dfn>) (<em>int</em> <dfn class="local col0 decl" id="30type" title='type' data-type='int' data-ref="30type">type</dfn>, <em>const</em> <em>char</em> *<dfn class="local col1 decl" id="31fmt" title='fmt' data-type='const char *' data-ref="31fmt">fmt</dfn>, ...);</td></tr>
+<tr><th id="136">136</th><td>	<i>/* store a string representation of auditdata (corresponding</i></td></tr>
+<tr><th id="137">137</th><td><i>	   to the given security class) into msgbuf. */</i></td></tr>
+<tr><th id="138">138</th><td>	<em>int</em> (*<dfn class="decl" id="selinux_callback::func_audit" title='selinux_callback::func_audit' data-ref="selinux_callback::func_audit">func_audit</dfn>) (<em>void</em> *<dfn class="local col2 decl" id="32auditdata" title='auditdata' data-type='void *' data-ref="32auditdata">auditdata</dfn>, <a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col3 decl" id="33cls" title='cls' data-type='security_class_t' data-ref="33cls">cls</dfn>,</td></tr>
+<tr><th id="139">139</th><td>			   <em>char</em> *<dfn class="local col4 decl" id="34msgbuf" title='msgbuf' data-type='char *' data-ref="34msgbuf">msgbuf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="35msgbufsize" title='msgbufsize' data-type='size_t' data-ref="35msgbufsize">msgbufsize</dfn>);</td></tr>
+<tr><th id="140">140</th><td>	<i>/* validate the supplied context, modifying if necessary */</i></td></tr>
+<tr><th id="141">141</th><td>	<em>int</em> (*<dfn class="decl" id="selinux_callback::func_validate" title='selinux_callback::func_validate' data-ref="selinux_callback::func_validate">func_validate</dfn>) (<em>char</em> **<dfn class="local col6 decl" id="36ctx" title='ctx' data-type='char **' data-ref="36ctx">ctx</dfn>);</td></tr>
+<tr><th id="142">142</th><td>	<i>/* netlink callback for setenforce message */</i></td></tr>
+<tr><th id="143">143</th><td>	<em>int</em> (*<dfn class="decl" id="selinux_callback::func_setenforce" title='selinux_callback::func_setenforce' data-ref="selinux_callback::func_setenforce">func_setenforce</dfn>) (<em>int</em> <dfn class="local col7 decl" id="37enforcing" title='enforcing' data-type='int' data-ref="37enforcing">enforcing</dfn>);</td></tr>
+<tr><th id="144">144</th><td>	<i>/* netlink callback for policyload message */</i></td></tr>
+<tr><th id="145">145</th><td>	<em>int</em> (*<dfn class="decl" id="selinux_callback::func_policyload" title='selinux_callback::func_policyload' data-ref="selinux_callback::func_policyload">func_policyload</dfn>) (<em>int</em> <dfn class="local col8 decl" id="38seqno" title='seqno' data-type='int' data-ref="38seqno">seqno</dfn>);</td></tr>
+<tr><th id="146">146</th><td>};</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td><u>#define <dfn class="macro" id="_M/SELINUX_CB_LOG" data-ref="_M/SELINUX_CB_LOG">SELINUX_CB_LOG</dfn>		0</u></td></tr>
+<tr><th id="149">149</th><td><u>#define <dfn class="macro" id="_M/SELINUX_CB_AUDIT" data-ref="_M/SELINUX_CB_AUDIT">SELINUX_CB_AUDIT</dfn>	1</u></td></tr>
+<tr><th id="150">150</th><td><u>#define <dfn class="macro" id="_M/SELINUX_CB_VALIDATE" data-ref="_M/SELINUX_CB_VALIDATE">SELINUX_CB_VALIDATE</dfn>	2</u></td></tr>
+<tr><th id="151">151</th><td><u>#define <dfn class="macro" id="_M/SELINUX_CB_SETENFORCE" data-ref="_M/SELINUX_CB_SETENFORCE">SELINUX_CB_SETENFORCE</dfn>	3</u></td></tr>
+<tr><th id="152">152</th><td><u>#define <dfn class="macro" id="_M/SELINUX_CB_POLICYLOAD" data-ref="_M/SELINUX_CB_POLICYLOAD">SELINUX_CB_POLICYLOAD</dfn>	4</u></td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td><b>extern</b> <b>union</b> <a class="type" href="#selinux_callback" title='selinux_callback' data-ref="selinux_callback">selinux_callback</a> <dfn class="decl" id="selinux_get_callback" title='selinux_get_callback' data-ref="selinux_get_callback">selinux_get_callback</dfn>(<em>int</em> <dfn class="local col9 decl" id="39type" title='type' data-type='int' data-ref="39type">type</dfn>);</td></tr>
+<tr><th id="155">155</th><td><b>extern</b> <em>void</em> <dfn class="decl" id="selinux_set_callback" title='selinux_set_callback' data-ref="selinux_set_callback">selinux_set_callback</dfn>(<em>int</em> <dfn class="local col0 decl" id="40type" title='type' data-type='int' data-ref="40type">type</dfn>, <b>union</b> <a class="type" href="#selinux_callback" title='selinux_callback' data-ref="selinux_callback">selinux_callback</a> <dfn class="local col1 decl" id="41cb" title='cb' data-type='union selinux_callback' data-ref="41cb">cb</dfn>);</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td>	<i>/* Logging type codes, passed to the logging callback */</i></td></tr>
+<tr><th id="158">158</th><td><u>#define <dfn class="macro" id="_M/SELINUX_ERROR" data-ref="_M/SELINUX_ERROR">SELINUX_ERROR</dfn>	        0</u></td></tr>
+<tr><th id="159">159</th><td><u>#define <dfn class="macro" id="_M/SELINUX_WARNING" data-ref="_M/SELINUX_WARNING">SELINUX_WARNING</dfn>		1</u></td></tr>
+<tr><th id="160">160</th><td><u>#define <dfn class="macro" id="_M/SELINUX_INFO" data-ref="_M/SELINUX_INFO">SELINUX_INFO</dfn>		2</u></td></tr>
+<tr><th id="161">161</th><td><u>#define <dfn class="macro" id="_M/SELINUX_AVC" data-ref="_M/SELINUX_AVC">SELINUX_AVC</dfn>		3</u></td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td><i>/* Compute an access decision. */</i></td></tr>
+<tr><th id="164">164</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_compute_av" title='security_compute_av' data-ref="security_compute_av">security_compute_av</dfn>(<em>const</em> <em>char</em> * <dfn class="local col2 decl" id="42scon" title='scon' data-type='const char *' data-ref="42scon">scon</dfn>,</td></tr>
+<tr><th id="165">165</th><td>			       <em>const</em> <em>char</em> * <dfn class="local col3 decl" id="43tcon" title='tcon' data-type='const char *' data-ref="43tcon">tcon</dfn>,</td></tr>
+<tr><th id="166">166</th><td>			       <a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col4 decl" id="44tclass" title='tclass' data-type='security_class_t' data-ref="44tclass">tclass</dfn>,</td></tr>
+<tr><th id="167">167</th><td>			       <a class="typedef" href="#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="local col5 decl" id="45requested" title='requested' data-type='access_vector_t' data-ref="45requested">requested</dfn>,</td></tr>
+<tr><th id="168">168</th><td>			       <b>struct</b> <a class="type" href="#av_decision" title='av_decision' data-ref="av_decision">av_decision</a> *<dfn class="local col6 decl" id="46avd" title='avd' data-type='struct av_decision *' data-ref="46avd">avd</dfn>);</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td><i>/* Compute a labeling decision and set *newcon to refer to it.</i></td></tr>
+<tr><th id="171">171</th><td><i>   Caller must free via freecon. */</i></td></tr>
+<tr><th id="172">172</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_compute_create" title='security_compute_create' data-ref="security_compute_create">security_compute_create</dfn>(<em>const</em> <em>char</em> * <dfn class="local col7 decl" id="47scon" title='scon' data-type='const char *' data-ref="47scon">scon</dfn>,</td></tr>
+<tr><th id="173">173</th><td>				   <em>const</em> <em>char</em> * <dfn class="local col8 decl" id="48tcon" title='tcon' data-type='const char *' data-ref="48tcon">tcon</dfn>,</td></tr>
+<tr><th id="174">174</th><td>				   <a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col9 decl" id="49tclass" title='tclass' data-type='security_class_t' data-ref="49tclass">tclass</dfn>,</td></tr>
+<tr><th id="175">175</th><td>				   <em>char</em> ** <dfn class="local col0 decl" id="50newcon" title='newcon' data-type='char **' data-ref="50newcon">newcon</dfn>);</td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td><i>/* Compute a relabeling decision and set *newcon to refer to it.</i></td></tr>
+<tr><th id="178">178</th><td><i>   Caller must free via freecon. */</i></td></tr>
+<tr><th id="179">179</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_compute_relabel" title='security_compute_relabel' data-ref="security_compute_relabel">security_compute_relabel</dfn>(<em>const</em> <em>char</em> * <dfn class="local col1 decl" id="51scon" title='scon' data-type='const char *' data-ref="51scon">scon</dfn>,</td></tr>
+<tr><th id="180">180</th><td>				    <em>const</em> <em>char</em> * <dfn class="local col2 decl" id="52tcon" title='tcon' data-type='const char *' data-ref="52tcon">tcon</dfn>,</td></tr>
+<tr><th id="181">181</th><td>				    <a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col3 decl" id="53tclass" title='tclass' data-type='security_class_t' data-ref="53tclass">tclass</dfn>,</td></tr>
+<tr><th id="182">182</th><td>				    <em>char</em> ** <dfn class="local col4 decl" id="54newcon" title='newcon' data-type='char **' data-ref="54newcon">newcon</dfn>);</td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td><i>/* Compute a polyinstantiation member decision and set *newcon to refer to it.</i></td></tr>
+<tr><th id="185">185</th><td><i>   Caller must free via freecon. */</i></td></tr>
+<tr><th id="186">186</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_compute_member" title='security_compute_member' data-ref="security_compute_member">security_compute_member</dfn>(<em>const</em> <em>char</em> * <dfn class="local col5 decl" id="55scon" title='scon' data-type='const char *' data-ref="55scon">scon</dfn>,</td></tr>
+<tr><th id="187">187</th><td>				   <em>const</em> <em>char</em> * <dfn class="local col6 decl" id="56tcon" title='tcon' data-type='const char *' data-ref="56tcon">tcon</dfn>,</td></tr>
+<tr><th id="188">188</th><td>				   <a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col7 decl" id="57tclass" title='tclass' data-type='security_class_t' data-ref="57tclass">tclass</dfn>,</td></tr>
+<tr><th id="189">189</th><td>				   <em>char</em> ** <dfn class="local col8 decl" id="58newcon" title='newcon' data-type='char **' data-ref="58newcon">newcon</dfn>);</td></tr>
+<tr><th id="190">190</th><td></td></tr>
+<tr><th id="191">191</th><td><i>/* Compute the set of reachable user contexts and set *con to refer to </i></td></tr>
+<tr><th id="192">192</th><td><i>   the NULL-terminated array of contexts.  Caller must free via freeconary. */</i></td></tr>
+<tr><th id="193">193</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_compute_user" title='security_compute_user' data-ref="security_compute_user">security_compute_user</dfn>(<em>const</em> <em>char</em> * <dfn class="local col9 decl" id="59scon" title='scon' data-type='const char *' data-ref="59scon">scon</dfn>,</td></tr>
+<tr><th id="194">194</th><td>				 <em>const</em> <em>char</em> *<dfn class="local col0 decl" id="60username" title='username' data-type='const char *' data-ref="60username">username</dfn>,</td></tr>
+<tr><th id="195">195</th><td>				 <em>char</em> *** <dfn class="local col1 decl" id="61con" title='con' data-type='char ***' data-ref="61con">con</dfn>);</td></tr>
+<tr><th id="196">196</th><td></td></tr>
+<tr><th id="197">197</th><td><i>/* Load a policy configuration. */</i></td></tr>
+<tr><th id="198">198</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_load_policy" title='security_load_policy' data-ref="security_load_policy">security_load_policy</dfn>(<em>void</em> *<dfn class="local col2 decl" id="62data" title='data' data-type='void *' data-ref="62data">data</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="63len" title='len' data-type='size_t' data-ref="63len">len</dfn>);</td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td><i>/* Get the context of an initial kernel security identifier by name.  </i></td></tr>
+<tr><th id="201">201</th><td><i>   Caller must free via freecon */</i></td></tr>
+<tr><th id="202">202</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_get_initial_context" title='security_get_initial_context' data-ref="security_get_initial_context">security_get_initial_context</dfn>(<em>const</em> <em>char</em> *<dfn class="local col4 decl" id="64name" title='name' data-type='const char *' data-ref="64name">name</dfn>,</td></tr>
+<tr><th id="203">203</th><td>					<em>char</em> ** <dfn class="local col5 decl" id="65con" title='con' data-type='char **' data-ref="65con">con</dfn>);</td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><i>/* Translate boolean strict to name value pair. */</i></td></tr>
+<tr><th id="206">206</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="207">207</th><td>	<em>const</em> <em>char</em> *<dfn class="decl" id="(anonymous)::name" title='(anonymous struct)::name' data-ref="(anonymous)::name">name</dfn>;</td></tr>
+<tr><th id="208">208</th><td>	<em>int</em> <dfn class="decl" id="(anonymous)::value" title='(anonymous struct)::value' data-ref="(anonymous)::value">value</dfn>;</td></tr>
+<tr><th id="209">209</th><td>} <dfn class="typedef" id="SELboolean" title='SELboolean' data-type='struct SELboolean' data-ref="SELboolean">SELboolean</dfn>;</td></tr>
+<tr><th id="210">210</th><td><i>/* save a list of booleans in a single transaction.  */</i></td></tr>
+<tr><th id="211">211</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_set_boolean_list" title='security_set_boolean_list' data-ref="security_set_boolean_list">security_set_boolean_list</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="66boolcnt" title='boolcnt' data-type='size_t' data-ref="66boolcnt">boolcnt</dfn>,</td></tr>
+<tr><th id="212">212</th><td>				     <a class="typedef" href="#SELboolean" title='SELboolean' data-type='struct SELboolean' data-ref="SELboolean">SELboolean</a> * <em>const</em> <dfn class="local col7 decl" id="67boollist" title='boollist' data-type='SELboolean *const' data-ref="67boollist">boollist</dfn>, <em>int</em> <dfn class="local col8 decl" id="68permanent" title='permanent' data-type='int' data-ref="68permanent">permanent</dfn>);</td></tr>
+<tr><th id="213">213</th><td></td></tr>
+<tr><th id="214">214</th><td><i>/* Check the validity of a security context. */</i></td></tr>
+<tr><th id="215">215</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_check_context" title='security_check_context' data-ref="security_check_context">security_check_context</dfn>(<em>const</em> <em>char</em> * <dfn class="local col9 decl" id="69con" title='con' data-type='const char *' data-ref="69con">con</dfn>);</td></tr>
+<tr><th id="216">216</th><td></td></tr>
+<tr><th id="217">217</th><td><i>/* Canonicalize a security context. */</i></td></tr>
+<tr><th id="218">218</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_canonicalize_context" title='security_canonicalize_context' data-ref="security_canonicalize_context">security_canonicalize_context</dfn>(<em>const</em> <em>char</em> * <dfn class="local col0 decl" id="70con" title='con' data-type='const char *' data-ref="70con">con</dfn>,</td></tr>
+<tr><th id="219">219</th><td>					 <em>char</em> ** <dfn class="local col1 decl" id="71canoncon" title='canoncon' data-type='char **' data-ref="71canoncon">canoncon</dfn>);</td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td><i>/* Get the enforce flag value. */</i></td></tr>
+<tr><th id="222">222</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_getenforce" title='security_getenforce' data-ref="security_getenforce">security_getenforce</dfn>(<em>void</em>);</td></tr>
+<tr><th id="223">223</th><td></td></tr>
+<tr><th id="224">224</th><td><i>/* Set the enforce flag value. */</i></td></tr>
+<tr><th id="225">225</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_setenforce" title='security_setenforce' data-ref="security_setenforce">security_setenforce</dfn>(<em>int</em> <dfn class="local col2 decl" id="72value" title='value' data-type='int' data-ref="72value">value</dfn>);</td></tr>
+<tr><th id="226">226</th><td></td></tr>
+<tr><th id="227">227</th><td><i>/* Get the behavior for undefined classes/permissions */</i></td></tr>
+<tr><th id="228">228</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_deny_unknown" title='security_deny_unknown' data-ref="security_deny_unknown">security_deny_unknown</dfn>(<em>void</em>);</td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td><i>/* Disable SELinux at runtime (must be done prior to initial policy load). */</i></td></tr>
+<tr><th id="231">231</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_disable" title='security_disable' data-ref="security_disable">security_disable</dfn>(<em>void</em>);</td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td><i>/* Get the policy version number. */</i></td></tr>
+<tr><th id="234">234</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_policyvers" title='security_policyvers' data-ref="security_policyvers">security_policyvers</dfn>(<em>void</em>);</td></tr>
+<tr><th id="235">235</th><td></td></tr>
+<tr><th id="236">236</th><td><i>/* Get the boolean names */</i></td></tr>
+<tr><th id="237">237</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_get_boolean_names" title='security_get_boolean_names' data-ref="security_get_boolean_names">security_get_boolean_names</dfn>(<em>char</em> ***<dfn class="local col3 decl" id="73names" title='names' data-type='char ***' data-ref="73names">names</dfn>, <em>int</em> *<dfn class="local col4 decl" id="74len" title='len' data-type='int *' data-ref="74len">len</dfn>);</td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td><i>/* Get the pending value for the boolean */</i></td></tr>
+<tr><th id="240">240</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_get_boolean_pending" title='security_get_boolean_pending' data-ref="security_get_boolean_pending">security_get_boolean_pending</dfn>(<em>const</em> <em>char</em> *<dfn class="local col5 decl" id="75name" title='name' data-type='const char *' data-ref="75name">name</dfn>);</td></tr>
+<tr><th id="241">241</th><td></td></tr>
+<tr><th id="242">242</th><td><i>/* Get the active value for the boolean */</i></td></tr>
+<tr><th id="243">243</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_get_boolean_active" title='security_get_boolean_active' data-ref="security_get_boolean_active">security_get_boolean_active</dfn>(<em>const</em> <em>char</em> *<dfn class="local col6 decl" id="76name" title='name' data-type='const char *' data-ref="76name">name</dfn>);</td></tr>
+<tr><th id="244">244</th><td></td></tr>
+<tr><th id="245">245</th><td><i>/* Set the pending value for the boolean */</i></td></tr>
+<tr><th id="246">246</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_set_boolean" title='security_set_boolean' data-ref="security_set_boolean">security_set_boolean</dfn>(<em>const</em> <em>char</em> *<dfn class="local col7 decl" id="77name" title='name' data-type='const char *' data-ref="77name">name</dfn>, <em>int</em> <dfn class="local col8 decl" id="78value" title='value' data-type='int' data-ref="78value">value</dfn>);</td></tr>
+<tr><th id="247">247</th><td></td></tr>
+<tr><th id="248">248</th><td><i>/* Commit the pending values for the booleans */</i></td></tr>
+<tr><th id="249">249</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_commit_booleans" title='security_commit_booleans' data-ref="security_commit_booleans">security_commit_booleans</dfn>(<em>void</em>);</td></tr>
+<tr><th id="250">250</th><td></td></tr>
+<tr><th id="251">251</th><td><i>/* Userspace class mapping support */</i></td></tr>
+<tr><th id="252">252</th><td><b>struct</b> <dfn class="type def" id="security_class_mapping" title='security_class_mapping' data-ref="security_class_mapping">security_class_mapping</dfn> {</td></tr>
+<tr><th id="253">253</th><td>	<em>const</em> <em>char</em> *<dfn class="decl" id="security_class_mapping::name" title='security_class_mapping::name' data-ref="security_class_mapping::name">name</dfn>;</td></tr>
+<tr><th id="254">254</th><td>	<em>const</em> <em>char</em> *<dfn class="decl" id="security_class_mapping::perms" title='security_class_mapping::perms' data-ref="security_class_mapping::perms">perms</dfn>[<b>sizeof</b>(<a class="typedef" href="#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a>) * <var>8</var> + <var>1</var>];</td></tr>
+<tr><th id="255">255</th><td>};</td></tr>
+<tr><th id="256">256</th><td></td></tr>
+<tr><th id="257">257</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="selinux_set_mapping" title='selinux_set_mapping' data-ref="selinux_set_mapping">selinux_set_mapping</dfn>(<b>struct</b> <a class="type" href="#security_class_mapping" title='security_class_mapping' data-ref="security_class_mapping">security_class_mapping</a> *<dfn class="local col9 decl" id="79map" title='map' data-type='struct security_class_mapping *' data-ref="79map">map</dfn>);</td></tr>
+<tr><th id="258">258</th><td></td></tr>
+<tr><th id="259">259</th><td><i>/* Common helpers */</i></td></tr>
+<tr><th id="260">260</th><td></td></tr>
+<tr><th id="261">261</th><td><i>/* Convert between security class values and string names */</i></td></tr>
+<tr><th id="262">262</th><td><b>extern</b> <a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="decl" id="string_to_security_class" title='string_to_security_class' data-ref="string_to_security_class">string_to_security_class</dfn>(<em>const</em> <em>char</em> *<dfn class="local col0 decl" id="80name" title='name' data-type='const char *' data-ref="80name">name</dfn>);</td></tr>
+<tr><th id="263">263</th><td><b>extern</b> <em>const</em> <em>char</em> *<dfn class="decl" id="security_class_to_string" title='security_class_to_string' data-ref="security_class_to_string">security_class_to_string</dfn>(<a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col1 decl" id="81cls" title='cls' data-type='security_class_t' data-ref="81cls">cls</dfn>);</td></tr>
+<tr><th id="264">264</th><td></td></tr>
+<tr><th id="265">265</th><td><i>/* Convert between individual access vector permissions and string names */</i></td></tr>
+<tr><th id="266">266</th><td><b>extern</b> <em>const</em> <em>char</em> *<dfn class="decl" id="security_av_perm_to_string" title='security_av_perm_to_string' data-ref="security_av_perm_to_string">security_av_perm_to_string</dfn>(<a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col2 decl" id="82tclass" title='tclass' data-type='security_class_t' data-ref="82tclass">tclass</dfn>,</td></tr>
+<tr><th id="267">267</th><td>					      <a class="typedef" href="#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="local col3 decl" id="83perm" title='perm' data-type='access_vector_t' data-ref="83perm">perm</dfn>);</td></tr>
+<tr><th id="268">268</th><td><b>extern</b> <a class="typedef" href="#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="decl" id="string_to_av_perm" title='string_to_av_perm' data-ref="string_to_av_perm">string_to_av_perm</dfn>(<a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col4 decl" id="84tclass" title='tclass' data-type='security_class_t' data-ref="84tclass">tclass</dfn>,</td></tr>
+<tr><th id="269">269</th><td>					 <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="85name" title='name' data-type='const char *' data-ref="85name">name</dfn>);</td></tr>
+<tr><th id="270">270</th><td></td></tr>
+<tr><th id="271">271</th><td><i>/* Returns an access vector in a string representation.  User must free the</i></td></tr>
+<tr><th id="272">272</th><td><i> * returned string via free(). */</i></td></tr>
+<tr><th id="273">273</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="security_av_string" title='security_av_string' data-ref="security_av_string">security_av_string</dfn>(<a class="typedef" href="#security_class_t" title='security_class_t' data-type='unsigned short' data-ref="security_class_t">security_class_t</a> <dfn class="local col6 decl" id="86tclass" title='tclass' data-type='security_class_t' data-ref="86tclass">tclass</dfn>,</td></tr>
+<tr><th id="274">274</th><td>			      <a class="typedef" href="#access_vector_t" title='access_vector_t' data-type='unsigned int' data-ref="access_vector_t">access_vector_t</a> <dfn class="local col7 decl" id="87av" title='av' data-type='access_vector_t' data-ref="87av">av</dfn>, <em>char</em> **<dfn class="local col8 decl" id="88result" title='result' data-type='char **' data-ref="88result">result</dfn>);</td></tr>
+<tr><th id="275">275</th><td></td></tr>
+<tr><th id="276">276</th><td><i>/* Check permissions and perform appropriate auditing. */</i></td></tr>
+<tr><th id="277">277</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="selinux_check_access" title='selinux_check_access' data-ref="selinux_check_access">selinux_check_access</dfn>(<em>const</em> <em>char</em> * <dfn class="local col9 decl" id="89scon" title='scon' data-type='const char *' data-ref="89scon">scon</dfn>,</td></tr>
+<tr><th id="278">278</th><td>				<em>const</em> <em>char</em> * <dfn class="local col0 decl" id="90tcon" title='tcon' data-type='const char *' data-ref="90tcon">tcon</dfn>,</td></tr>
+<tr><th id="279">279</th><td>				<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="91tclass" title='tclass' data-type='const char *' data-ref="91tclass">tclass</dfn>,</td></tr>
+<tr><th id="280">280</th><td>				<em>const</em> <em>char</em> *<dfn class="local col2 decl" id="92perm" title='perm' data-type='const char *' data-ref="92perm">perm</dfn>, <em>void</em> *<dfn class="local col3 decl" id="93aux" title='aux' data-type='void *' data-ref="93aux">aux</dfn>);</td></tr>
+<tr><th id="281">281</th><td></td></tr>
+<tr><th id="282">282</th><td><i>/* Set the path to the selinuxfs mount point explicitly.</i></td></tr>
+<tr><th id="283">283</th><td><i>   Normally, this is determined automatically during libselinux </i></td></tr>
+<tr><th id="284">284</th><td><i>   initialization, but this is not always possible, e.g. for /sbin/init</i></td></tr>
+<tr><th id="285">285</th><td><i>   which performs the initial mount of selinuxfs. */</i></td></tr>
+<tr><th id="286">286</th><td><em>void</em> <dfn class="decl" id="set_selinuxmnt" title='set_selinuxmnt' data-ref="set_selinuxmnt">set_selinuxmnt</dfn>(<em>const</em> <em>char</em> *<dfn class="local col4 decl" id="94mnt" title='mnt' data-type='const char *' data-ref="94mnt">mnt</dfn>);</td></tr>
+<tr><th id="287">287</th><td></td></tr>
+<tr><th id="288">288</th><td><u>#<span data-ppcond="288">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="289">289</th><td>}</td></tr>
+<tr><th id="290">290</th><td><u>#<span data-ppcond="288">endif</span></u></td></tr>
+<tr><th id="291">291</th><td><u>#<span data-ppcond="1">endif</span></u></td></tr>
+<tr><th id="292">292</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../src/android.c.html'>codebrowser/external/libselinux/src/android.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

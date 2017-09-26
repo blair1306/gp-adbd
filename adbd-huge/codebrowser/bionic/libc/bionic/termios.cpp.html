@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>termios.cpp source code [codebrowser/bionic/libc/bionic/termios.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/termios.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='termios.cpp.html'>termios.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../include/termios.h.html">&lt;termios.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><em>static</em> <a class="typedef" href="../kernel/uapi/asm-generic/termbits.h.html#speed_t" title='speed_t' data-type='unsigned int' data-ref="speed_t">speed_t</a> <dfn class="tu decl def" id="_ZL10cfgetspeedPK7termios" title='cfgetspeed' data-type='speed_t cfgetspeed(const termios * s)' data-ref="_ZL10cfgetspeedPK7termios">cfgetspeed</dfn>(<em>const</em> <a class="type" href="../kernel/uapi/asm-generic/termbits.h.html#termios" title='termios' data-ref="termios">termios</a>* <dfn class="local col1 decl" id="1s" title='s' data-type='const termios *' data-ref="1s">s</dfn>) {</td></tr>
+<tr><th id="34">34</th><td>  <b>return</b> (<a class="local col1 ref" href="#1s" title='s' data-ref="1s">s</a>-&gt;<a class="ref" href="../kernel/uapi/asm-generic/termbits.h.html#termios::c_cflag" title='termios::c_cflag' data-ref="termios::c_cflag">c_cflag</a> &amp; <a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#141" title="0010017" data-ref="_M/CBAUD">CBAUD</a>);</td></tr>
+<tr><th id="35">35</th><td>}</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td><a class="typedef" href="../kernel/uapi/asm-generic/termbits.h.html#speed_t" title='speed_t' data-type='unsigned int' data-ref="speed_t">speed_t</a> <dfn class="decl def" id="cfgetispeed" title='cfgetispeed' data-ref="cfgetispeed">cfgetispeed</dfn>(<em>const</em> <a class="type" href="../kernel/uapi/asm-generic/termbits.h.html#termios" title='termios' data-ref="termios">termios</a>* <dfn class="local col2 decl" id="2s" title='s' data-type='const termios *' data-ref="2s">s</dfn>) {</td></tr>
+<tr><th id="38">38</th><td>  <b>return</b> <a class="tu ref" href="#_ZL10cfgetspeedPK7termios" title='cfgetspeed' data-use='c' data-ref="_ZL10cfgetspeedPK7termios">cfgetspeed</a>(<a class="local col2 ref" href="#2s" title='s' data-ref="2s">s</a>);</td></tr>
+<tr><th id="39">39</th><td>}</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><a class="typedef" href="../kernel/uapi/asm-generic/termbits.h.html#speed_t" title='speed_t' data-type='unsigned int' data-ref="speed_t">speed_t</a> <dfn class="decl def" id="cfgetospeed" title='cfgetospeed' data-ref="cfgetospeed">cfgetospeed</dfn>(<em>const</em> <a class="type" href="../kernel/uapi/asm-generic/termbits.h.html#termios" title='termios' data-ref="termios">termios</a>* <dfn class="local col3 decl" id="3s" title='s' data-type='const termios *' data-ref="3s">s</dfn>) {</td></tr>
+<tr><th id="42">42</th><td>  <b>return</b> <a class="tu ref" href="#_ZL10cfgetspeedPK7termios" title='cfgetspeed' data-use='c' data-ref="_ZL10cfgetspeedPK7termios">cfgetspeed</a>(<a class="local col3 ref" href="#3s" title='s' data-ref="3s">s</a>);</td></tr>
+<tr><th id="43">43</th><td>}</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><em>void</em> <dfn class="decl def" id="cfmakeraw" title='cfmakeraw' data-ref="cfmakeraw">cfmakeraw</dfn>(<a class="type" href="../kernel/uapi/asm-generic/termbits.h.html#termios" title='termios' data-ref="termios">termios</a>* <dfn class="local col4 decl" id="4s" title='s' data-type='termios *' data-ref="4s">s</dfn>) {</td></tr>
+<tr><th id="46">46</th><td>  <a class="local col4 ref" href="#4s" title='s' data-ref="4s">s</a>-&gt;<a class="ref" href="../kernel/uapi/asm-generic/termbits.h.html#termios::c_iflag" title='termios::c_iflag' data-ref="termios::c_iflag">c_iflag</a> &amp;= ~(<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#84" title="0000001" data-ref="_M/IGNBRK">IGNBRK</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#85" title="0000002" data-ref="_M/BRKINT">BRKINT</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#87" title="0000010" data-ref="_M/PARMRK">PARMRK</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#90" title="0000040" data-ref="_M/ISTRIP">ISTRIP</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#91" title="0000100" data-ref="_M/INLCR">INLCR</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#92" title="0000200" data-ref="_M/IGNCR">IGNCR</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#94" title="0000400" data-ref="_M/ICRNL">ICRNL</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#96" title="0002000" data-ref="_M/IXON">IXON</a>);</td></tr>
+<tr><th id="47">47</th><td>  <a class="local col4 ref" href="#4s" title='s' data-ref="4s">s</a>-&gt;<a class="ref" href="../kernel/uapi/asm-generic/termbits.h.html#termios::c_oflag" title='termios::c_oflag' data-ref="termios::c_oflag">c_oflag</a> &amp;= ~<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#102" title="0000001" data-ref="_M/OPOST">OPOST</a>;</td></tr>
+<tr><th id="48">48</th><td>  <a class="local col4 ref" href="#4s" title='s' data-ref="4s">s</a>-&gt;<a class="ref" href="../kernel/uapi/asm-generic/termbits.h.html#termios::c_lflag" title='termios::c_lflag' data-ref="termios::c_lflag">c_lflag</a> &amp;= ~(<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#209" title="0000010" data-ref="_M/ECHO">ECHO</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#212" title="0000100" data-ref="_M/ECHONL">ECHONL</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#206" title="0000002" data-ref="_M/ICANON">ICANON</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#205" title="0000001" data-ref="_M/ISIG">ISIG</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#222" title="0100000" data-ref="_M/IEXTEN">IEXTEN</a>);</td></tr>
+<tr><th id="49">49</th><td>  <a class="local col4 ref" href="#4s" title='s' data-ref="4s">s</a>-&gt;<a class="ref" href="../kernel/uapi/asm-generic/termbits.h.html#termios::c_cflag" title='termios::c_cflag' data-ref="termios::c_cflag">c_cflag</a> &amp;= ~(<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#165" title="0000060" data-ref="_M/CSIZE">CSIZE</a>|<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#174" title="0000400" data-ref="_M/PARENB">PARENB</a>);</td></tr>
+<tr><th id="50">50</th><td>  <a class="local col4 ref" href="#4s" title='s' data-ref="4s">s</a>-&gt;<a class="ref" href="../kernel/uapi/asm-generic/termbits.h.html#termios::c_cflag" title='termios::c_cflag' data-ref="termios::c_cflag">c_cflag</a> |= <a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#170" title="0000060" data-ref="_M/CS8">CS8</a>;</td></tr>
+<tr><th id="51">51</th><td>}</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><em>int</em> <dfn class="decl def" id="cfsetispeed" title='cfsetispeed' data-ref="cfsetispeed">cfsetispeed</dfn>(<a class="type" href="../kernel/uapi/asm-generic/termbits.h.html#termios" title='termios' data-ref="termios">termios</a>* <dfn class="local col5 decl" id="5s" title='s' data-type='termios *' data-ref="5s">s</dfn>, <a class="typedef" href="../kernel/uapi/asm-generic/termbits.h.html#speed_t" title='speed_t' data-type='unsigned int' data-ref="speed_t">speed_t</a> <dfn class="local col6 decl" id="6speed" title='speed' data-type='speed_t' data-ref="6speed">speed</dfn>) {</td></tr>
+<tr><th id="54">54</th><td>  <b>return</b> <a class="ref" href="#cfsetspeed" title='cfsetspeed' data-ref="cfsetspeed">cfsetspeed</a>(<a class="local col5 ref" href="#5s" title='s' data-ref="5s">s</a>, <a class="local col6 ref" href="#6speed" title='speed' data-ref="6speed">speed</a>);</td></tr>
+<tr><th id="55">55</th><td>}</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><em>int</em> <dfn class="decl def" id="cfsetospeed" title='cfsetospeed' data-ref="cfsetospeed">cfsetospeed</dfn>(<a class="type" href="../kernel/uapi/asm-generic/termbits.h.html#termios" title='termios' data-ref="termios">termios</a>* <dfn class="local col7 decl" id="7s" title='s' data-type='termios *' data-ref="7s">s</dfn>, <a class="typedef" href="../kernel/uapi/asm-generic/termbits.h.html#speed_t" title='speed_t' data-type='unsigned int' data-ref="speed_t">speed_t</a> <dfn class="local col8 decl" id="8speed" title='speed' data-type='speed_t' data-ref="8speed">speed</dfn>) {</td></tr>
+<tr><th id="58">58</th><td>  <b>return</b> <a class="ref" href="#cfsetspeed" title='cfsetspeed' data-ref="cfsetspeed">cfsetspeed</a>(<a class="local col7 ref" href="#7s" title='s' data-ref="7s">s</a>, <a class="local col8 ref" href="#8speed" title='speed' data-ref="8speed">speed</a>);</td></tr>
+<tr><th id="59">59</th><td>}</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><em>int</em> <dfn class="decl def" id="cfsetspeed" title='cfsetspeed' data-ref="cfsetspeed">cfsetspeed</dfn>(<a class="type" href="../kernel/uapi/asm-generic/termbits.h.html#termios" title='termios' data-ref="termios">termios</a>* <dfn class="local col9 decl" id="9s" title='s' data-type='termios *' data-ref="9s">s</dfn>, <a class="typedef" href="../kernel/uapi/asm-generic/termbits.h.html#speed_t" title='speed_t' data-type='unsigned int' data-ref="speed_t">speed_t</a> <dfn class="local col0 decl" id="10speed" title='speed' data-type='speed_t' data-ref="10speed">speed</dfn>) {</td></tr>
+<tr><th id="62">62</th><td>  <i>// TODO: check 'speed' is valid.</i></td></tr>
+<tr><th id="63">63</th><td>  <a class="local col9 ref" href="#9s" title='s' data-ref="9s">s</a>-&gt;<a class="ref" href="../kernel/uapi/asm-generic/termbits.h.html#termios::c_cflag" title='termios::c_cflag' data-ref="termios::c_cflag">c_cflag</a> = (<a class="local col9 ref" href="#9s" title='s' data-ref="9s">s</a>-&gt;<a class="ref" href="../kernel/uapi/asm-generic/termbits.h.html#termios::c_cflag" title='termios::c_cflag' data-ref="termios::c_cflag">c_cflag</a> &amp; ~<a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#141" title="0010017" data-ref="_M/CBAUD">CBAUD</a>) | (<a class="local col0 ref" href="#10speed" title='speed' data-ref="10speed">speed</a> &amp; <a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#141" title="0010017" data-ref="_M/CBAUD">CBAUD</a>);</td></tr>
+<tr><th id="64">64</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="65">65</th><td>}</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><em>int</em> <dfn class="decl def" id="tcdrain" title='tcdrain' data-ref="tcdrain">tcdrain</dfn>(<em>int</em> <dfn class="local col1 decl" id="11fd" title='fd' data-type='int' data-ref="11fd">fd</dfn>) {</td></tr>
+<tr><th id="68">68</th><td>  <i>// A non-zero argument to TCSBRK means "don't send a break".</i></td></tr>
+<tr><th id="69">69</th><td><i>  // The drain is a side-effect of the ioctl!</i></td></tr>
+<tr><th id="70">70</th><td>  <b>return</b> <a class="ref" href="../include/sys/ioctl.h.html#ioctl" title='ioctl' data-ref="ioctl">ioctl</a>(<a class="local col1 ref" href="#11fd" title='fd' data-ref="11fd">fd</a>, <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#32" title="0x5409" data-ref="_M/TCSBRK">TCSBRK</a>, <b>static_cast</b>&lt;<em>unsigned</em> <em>long</em>&gt;(<var>1</var>));</td></tr>
+<tr><th id="71">71</th><td>}</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><em>int</em> <dfn class="decl def" id="tcflow" title='tcflow' data-ref="tcflow">tcflow</dfn>(<em>int</em> <dfn class="local col2 decl" id="12fd" title='fd' data-type='int' data-ref="12fd">fd</dfn>, <em>int</em> <dfn class="local col3 decl" id="13action" title='action' data-type='int' data-ref="13action">action</dfn>) {</td></tr>
+<tr><th id="74">74</th><td>  <b>return</b> <a class="ref" href="../include/sys/ioctl.h.html#ioctl" title='ioctl' data-ref="ioctl">ioctl</a>(<a class="local col2 ref" href="#12fd" title='fd' data-ref="12fd">fd</a>, <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#34" title="0x540A" data-ref="_M/TCXONC">TCXONC</a>, <b>static_cast</b>&lt;<em>unsigned</em> <em>long</em>&gt;(<a class="local col3 ref" href="#13action" title='action' data-ref="13action">action</a>));</td></tr>
+<tr><th id="75">75</th><td>}</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><em>int</em> <dfn class="decl def" id="tcflush" title='tcflush' data-ref="tcflush">tcflush</dfn>(<em>int</em> <dfn class="local col4 decl" id="14fd" title='fd' data-type='int' data-ref="14fd">fd</dfn>, <em>int</em> <dfn class="local col5 decl" id="15queue" title='queue' data-type='int' data-ref="15queue">queue</dfn>) {</td></tr>
+<tr><th id="78">78</th><td>  <b>return</b> <a class="ref" href="../include/sys/ioctl.h.html#ioctl" title='ioctl' data-ref="ioctl">ioctl</a>(<a class="local col4 ref" href="#14fd" title='fd' data-ref="14fd">fd</a>, <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#35" title="0x540B" data-ref="_M/TCFLSH">TCFLSH</a>, <b>static_cast</b>&lt;<em>unsigned</em> <em>long</em>&gt;(<a class="local col5 ref" href="#15queue" title='queue' data-ref="15queue">queue</a>));</td></tr>
+<tr><th id="79">79</th><td>}</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><em>int</em> <dfn class="decl def" id="tcgetattr" title='tcgetattr' data-ref="tcgetattr">tcgetattr</dfn>(<em>int</em> <dfn class="local col6 decl" id="16fd" title='fd' data-type='int' data-ref="16fd">fd</dfn>, <a class="type" href="../kernel/uapi/asm-generic/termbits.h.html#termios" title='termios' data-ref="termios">termios</a>* <dfn class="local col7 decl" id="17s" title='s' data-type='termios *' data-ref="17s">s</dfn>) {</td></tr>
+<tr><th id="82">82</th><td>  <b>return</b> <a class="ref" href="../include/sys/ioctl.h.html#ioctl" title='ioctl' data-ref="ioctl">ioctl</a>(<a class="local col6 ref" href="#16fd" title='fd' data-ref="16fd">fd</a>, <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#22" title="0x5401" data-ref="_M/TCGETS">TCGETS</a>, <a class="local col7 ref" href="#17s" title='s' data-ref="17s">s</a>);</td></tr>
+<tr><th id="83">83</th><td>}</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="decl def" id="tcgetsid" title='tcgetsid' data-ref="tcgetsid">tcgetsid</dfn>(<em>int</em> <dfn class="local col8 decl" id="18fd" title='fd' data-type='int' data-ref="18fd">fd</dfn>) {</td></tr>
+<tr><th id="86">86</th><td>  <a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col9 decl" id="19sid" title='sid' data-type='pid_t' data-ref="19sid">sid</dfn>;</td></tr>
+<tr><th id="87">87</th><td>  <b>if</b> (<a class="ref" href="../include/sys/ioctl.h.html#ioctl" title='ioctl' data-ref="ioctl">ioctl</a>(<a class="local col8 ref" href="#18fd" title='fd' data-ref="18fd">fd</a>, <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#72" title="0x5429" data-ref="_M/TIOCGSID">TIOCGSID</a>, &amp;<a class="local col9 ref" href="#19sid" title='sid' data-ref="19sid">sid</a>) == -<var>1</var>) {</td></tr>
+<tr><th id="88">88</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="89">89</th><td>  }</td></tr>
+<tr><th id="90">90</th><td>  <b>return</b> <a class="local col9 ref" href="#19sid" title='sid' data-ref="19sid">sid</a>;</td></tr>
+<tr><th id="91">91</th><td>}</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><em>int</em> <dfn class="decl def" id="tcsendbreak" title='tcsendbreak' data-ref="tcsendbreak">tcsendbreak</dfn>(<em>int</em> <dfn class="local col0 decl" id="20fd" title='fd' data-type='int' data-ref="20fd">fd</dfn>, <em>int</em> <dfn class="local col1 decl" id="21duration" title='duration' data-type='int' data-ref="21duration">duration</dfn>) {</td></tr>
+<tr><th id="94">94</th><td>  <b>return</b> <a class="ref" href="../include/sys/ioctl.h.html#ioctl" title='ioctl' data-ref="ioctl">ioctl</a>(<a class="local col0 ref" href="#20fd" title='fd' data-ref="20fd">fd</a>, <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#69" title="0x5425" data-ref="_M/TCSBRKP">TCSBRKP</a>, <b>static_cast</b>&lt;<em>unsigned</em> <em>long</em>&gt;(<a class="local col1 ref" href="#21duration" title='duration' data-ref="21duration">duration</a>));</td></tr>
+<tr><th id="95">95</th><td>}</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><em>int</em> <dfn class="decl def" id="tcsetattr" title='tcsetattr' data-ref="tcsetattr">tcsetattr</dfn>(<em>int</em> <dfn class="local col2 decl" id="22fd" title='fd' data-type='int' data-ref="22fd">fd</dfn>, <em>int</em> <dfn class="local col3 decl" id="23optional_actions" title='optional_actions' data-type='int' data-ref="23optional_actions">optional_actions</dfn>, <em>const</em> <a class="type" href="../kernel/uapi/asm-generic/termbits.h.html#termios" title='termios' data-ref="termios">termios</a>* <dfn class="local col4 decl" id="24s" title='s' data-type='const termios *' data-ref="24s">s</dfn>) {</td></tr>
+<tr><th id="98">98</th><td>  <em>int</em> <dfn class="local col5 decl" id="25cmd" title='cmd' data-type='int' data-ref="25cmd">cmd</dfn>;</td></tr>
+<tr><th id="99">99</th><td>  <b>switch</b> (<a class="local col3 ref" href="#23optional_actions" title='optional_actions' data-ref="23optional_actions">optional_actions</a>) {</td></tr>
+<tr><th id="100">100</th><td>    <b>case</b> <a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#234" title="0" data-ref="_M/TCSANOW">TCSANOW</a>: <a class="local col5 ref" href="#25cmd" title='cmd' data-ref="25cmd">cmd</a> = <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#24" title="0x5402" data-ref="_M/TCSETS">TCSETS</a>; <b>break</b>;</td></tr>
+<tr><th id="101">101</th><td>    <b>case</b> <a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#235" title="1" data-ref="_M/TCSADRAIN">TCSADRAIN</a>: <a class="local col5 ref" href="#25cmd" title='cmd' data-ref="25cmd">cmd</a> = <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#25" title="0x5403" data-ref="_M/TCSETSW">TCSETSW</a>; <b>break</b>;</td></tr>
+<tr><th id="102">102</th><td>    <b>case</b> <a class="macro" href="../kernel/uapi/asm-generic/termbits.h.html#236" title="2" data-ref="_M/TCSAFLUSH">TCSAFLUSH</a>: <a class="local col5 ref" href="#25cmd" title='cmd' data-ref="25cmd">cmd</a> = <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#26" title="0x5404" data-ref="_M/TCSETSF">TCSETSF</a>; <b>break</b>;</td></tr>
+<tr><th id="103">103</th><td>    <b>default</b>: <a class="macro" href="../include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>; <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="104">104</th><td>  }</td></tr>
+<tr><th id="105">105</th><td>  <b>return</b> <a class="ref" href="../include/sys/ioctl.h.html#ioctl" title='ioctl' data-ref="ioctl">ioctl</a>(<a class="local col2 ref" href="#22fd" title='fd' data-ref="22fd">fd</a>, <a class="local col5 ref" href="#25cmd" title='cmd' data-ref="25cmd">cmd</a>, <a class="local col4 ref" href="#24s" title='s' data-ref="24s">s</a>);</td></tr>
+<tr><th id="106">106</th><td>}</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td><a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="decl def" id="tcgetpgrp" title='tcgetpgrp' data-ref="tcgetpgrp">tcgetpgrp</dfn>(<em>int</em> <dfn class="local col6 decl" id="26fd" title='fd' data-type='int' data-ref="26fd">fd</dfn>) {</td></tr>
+<tr><th id="109">109</th><td>  <a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col7 decl" id="27pid" title='pid' data-type='pid_t' data-ref="27pid">pid</dfn>;</td></tr>
+<tr><th id="110">110</th><td>  <b>if</b> (<a class="ref" href="../include/sys/ioctl.h.html#ioctl" title='ioctl' data-ref="ioctl">ioctl</a>(<a class="local col6 ref" href="#26fd" title='fd' data-ref="26fd">fd</a>, <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#40" title="0x540F" data-ref="_M/TIOCGPGRP">TIOCGPGRP</a>, &amp;<a class="local col7 ref" href="#27pid" title='pid' data-ref="27pid">pid</a>) == -<var>1</var>) {</td></tr>
+<tr><th id="111">111</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="112">112</th><td>  }</td></tr>
+<tr><th id="113">113</th><td>  <b>return</b> <a class="local col7 ref" href="#27pid" title='pid' data-ref="27pid">pid</a>;</td></tr>
+<tr><th id="114">114</th><td>}</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><em>int</em> <dfn class="decl def" id="tcsetpgrp" title='tcsetpgrp' data-ref="tcsetpgrp">tcsetpgrp</dfn>(<em>int</em> <dfn class="local col8 decl" id="28fd" title='fd' data-type='int' data-ref="28fd">fd</dfn>, <a class="typedef" href="../include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col9 decl" id="29pid" title='pid' data-type='pid_t' data-ref="29pid">pid</dfn>) {</td></tr>
+<tr><th id="117">117</th><td>  <b>return</b> <a class="ref" href="../include/sys/ioctl.h.html#ioctl" title='ioctl' data-ref="ioctl">ioctl</a>(<a class="local col8 ref" href="#28fd" title='fd' data-ref="28fd">fd</a>, <a class="macro" href="../kernel/uapi/asm-generic/ioctls.h.html#41" title="0x5410" data-ref="_M/TIOCSPGRP">TIOCSPGRP</a>, &amp;<a class="local col9 ref" href="#29pid" title='pid' data-ref="29pid">pid</a>);</td></tr>
+<tr><th id="118">118</th><td>}</td></tr>
+<tr><th id="119">119</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

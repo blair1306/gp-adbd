@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>search.h source code [codebrowser/bionic/libc/include/search.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="node "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/search.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>include</a>/<a href='search.h.html'>search.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*-</i></td></tr>
+<tr><th id="2">2</th><td><i> * Written by J.T. Conklin &lt;jtc@netbsd.org&gt;</i></td></tr>
+<tr><th id="3">3</th><td><i> * Public domain.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> *	$NetBSD: search.h,v 1.12 1999/02/22 10:34:28 christos Exp $</i></td></tr>
+<tr><th id="6">6</th><td><i> * $FreeBSD: release/9.0.0/include/search.h 105250 2002-10-16 14:29:23Z robert $</i></td></tr>
+<tr><th id="7">7</th><td><i> */</i></td></tr>
+<tr><th id="8">8</th><td></td></tr>
+<tr><th id="9">9</th><td><u>#<span data-ppcond="9">ifndef</span> <span class="macro" data-ref="_M/_SEARCH_H_">_SEARCH_H_</span></u></td></tr>
+<tr><th id="10">10</th><td><u>#define <dfn class="macro" id="_M/_SEARCH_H_" data-ref="_M/_SEARCH_H_">_SEARCH_H_</dfn></u></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><b>typedef</b> <b>enum</b> {</td></tr>
+<tr><th id="16">16</th><td>  <dfn class="enum" id="preorder" title='preorder' data-ref="preorder">preorder</dfn>,</td></tr>
+<tr><th id="17">17</th><td>  <dfn class="enum" id="postorder" title='postorder' data-ref="postorder">postorder</dfn>,</td></tr>
+<tr><th id="18">18</th><td>  <dfn class="enum" id="endorder" title='endorder' data-ref="endorder">endorder</dfn>,</td></tr>
+<tr><th id="19">19</th><td>  <dfn class="enum" id="leaf" title='leaf' data-ref="leaf">leaf</dfn></td></tr>
+<tr><th id="20">20</th><td>} <dfn class="typedef" id="VISIT" title='VISIT' data-type='enum VISIT' data-ref="VISIT">VISIT</dfn>;</td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><u>#<span data-ppcond="22">ifdef</span> <a class="macro" href="../bionic/tdestroy.cpp.html#17" data-ref="_M/_SEARCH_PRIVATE">_SEARCH_PRIVATE</a></u></td></tr>
+<tr><th id="23">23</th><td><b>typedef</b> <b>struct</b> <dfn class="type def" id="node" title='node' data-ref="node"><a class="type" href="#node" title='node' data-ref="node">node</a></dfn> {</td></tr>
+<tr><th id="24">24</th><td>  <em>char</em>* <dfn class="decl" id="node::key" title='node::key' data-ref="node::key">key</dfn>;</td></tr>
+<tr><th id="25">25</th><td>  <b>struct</b> <a class="type" href="#node" title='node' data-ref="node">node</a>* <dfn class="decl" id="node::llink" title='node::llink' data-ref="node::llink">llink</dfn>;</td></tr>
+<tr><th id="26">26</th><td>  <b>struct</b> <a class="type" href="#node" title='node' data-ref="node">node</a>* <dfn class="decl" id="node::rlink" title='node::rlink' data-ref="node::rlink">rlink</dfn>;</td></tr>
+<tr><th id="27">27</th><td>} <dfn class="typedef" id="node_t" title='node_t' data-type='struct node' data-ref="node_t">node_t</dfn>;</td></tr>
+<tr><th id="28">28</th><td><u>#<span data-ppcond="22">endif</span></u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><a class="macro" href="sys/cdefs.h.html#85" title="extern &quot;C&quot; {" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><em>void</em> <dfn class="decl" id="insque" title='insque' data-ref="insque">insque</dfn>(<em>void</em>*, <em>void</em>*);</td></tr>
+<tr><th id="33">33</th><td><em>void</em> <dfn class="decl" id="remque" title='remque' data-ref="remque">remque</dfn>(<em>void</em>*);</td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><em>void</em>* <dfn class="decl" id="lfind" title='lfind' data-ref="lfind">lfind</dfn>(<em>const</em> <em>void</em>*, <em>const</em> <em>void</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>int</em> (*)(<em>const</em> <em>void</em>*, <em>const</em> <em>void</em>*));</td></tr>
+<tr><th id="36">36</th><td><em>void</em>* <dfn class="decl" id="lsearch" title='lsearch' data-ref="lsearch">lsearch</dfn>(<em>const</em> <em>void</em>*, <em>void</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>int</em> (*)(<em>const</em> <em>void</em>*, <em>const</em> <em>void</em>*));</td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><em>void</em>* <dfn class="decl" id="tdelete" title='tdelete' data-ref="tdelete">tdelete</dfn>(<em>const</em> <em>void</em>* <b>__restrict</b>, <em>void</em>** <b>__restrict</b>, <em>int</em> (*)(<em>const</em> <em>void</em>*, <em>const</em> <em>void</em>*));</td></tr>
+<tr><th id="39">39</th><td><em>void</em> <a class="decl" href="../bionic/tdestroy.cpp.html#tdestroy" title='tdestroy' data-ref="tdestroy" id="tdestroy">tdestroy</a>(<em>void</em>*, <em>void</em> (*)(<em>void</em>*));</td></tr>
+<tr><th id="40">40</th><td><em>void</em>* <dfn class="decl" id="tfind" title='tfind' data-ref="tfind">tfind</dfn>(<em>const</em> <em>void</em>*, <em>void</em>* <em>const</em>*, <em>int</em> (*)(<em>const</em> <em>void</em>*, <em>const</em> <em>void</em>*));</td></tr>
+<tr><th id="41">41</th><td><em>void</em>* <dfn class="decl" id="tsearch" title='tsearch' data-ref="tsearch">tsearch</dfn>(<em>const</em> <em>void</em>*, <em>void</em>**, <em>int</em> (*)(<em>const</em> <em>void</em>*, <em>const</em> <em>void</em>*));</td></tr>
+<tr><th id="42">42</th><td><em>void</em> <dfn class="decl" id="twalk" title='twalk' data-ref="twalk">twalk</dfn>(<em>const</em> <em>void</em>*, <em>void</em> (*)(<em>const</em> <em>void</em>*, <a class="typedef" href="#VISIT" title='VISIT' data-type='enum VISIT' data-ref="VISIT">VISIT</a>, <em>int</em>));</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><a class="macro" href="sys/cdefs.h.html#86" title="}" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><u>#<span data-ppcond="9">endif</span> /* !_SEARCH_H_ */</u></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/tdestroy.cpp.html'>codebrowser/bionic/libc/bionic/tdestroy.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

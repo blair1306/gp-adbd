@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>base64.h source code [codebrowser/external/boringssl/src/include/openssl/base64.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="evp_encode_ctx_st "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/base64.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='base64.h.html'>base64.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#<span data-ppcond="57">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_BASE64_H">OPENSSL_HEADER_BASE64_H</span></u></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_BASE64_H" data-ref="_M/OPENSSL_HEADER_BASE64_H">OPENSSL_HEADER_BASE64_H</dfn></u></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><u>#<span data-ppcond="62">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="63">63</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="62">endif</span></u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><i>/* base64 functions.</i></td></tr>
+<tr><th id="68">68</th><td><i> *</i></td></tr>
+<tr><th id="69">69</th><td><i> * For historical reasons, these functions have the EVP_ prefix but just do</i></td></tr>
+<tr><th id="70">70</th><td><i> * base64 encoding and decoding. */</i></td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><i>/* Encoding */</i></td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><i>/* EVP_EncodeBlock encodes |src_len| bytes from |src| and writes the</i></td></tr>
+<tr><th id="76">76</th><td><i> * result to |dst| with a trailing NUL. It returns the number of bytes</i></td></tr>
+<tr><th id="77">77</th><td><i> * written, not including this trailing NUL. */</i></td></tr>
+<tr><th id="78">78</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="EVP_EncodeBlock" title='EVP_EncodeBlock' data-ref="EVP_EncodeBlock">EVP_EncodeBlock</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="817dst" title='dst' data-type='uint8_t *' data-ref="817dst">dst</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="818src" title='src' data-type='const uint8_t *' data-ref="818src">src</dfn>,</td></tr>
+<tr><th id="79">79</th><td>                                      <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="819src_len" title='src_len' data-type='size_t' data-ref="819src_len">src_len</dfn>);</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><i>/* EVP_EncodedLength sets |*out_len| to the number of bytes that will be needed</i></td></tr>
+<tr><th id="82">82</th><td><i> * to call |EVP_EncodeBlock| on an input of length |len|. This includes the</i></td></tr>
+<tr><th id="83">83</th><td><i> * final NUL that |EVP_EncodeBlock| writes. It returns one on success or zero</i></td></tr>
+<tr><th id="84">84</th><td><i> * on error. */</i></td></tr>
+<tr><th id="85">85</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_EncodedLength" title='EVP_EncodedLength' data-ref="EVP_EncodedLength">EVP_EncodedLength</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col0 decl" id="820out_len" title='out_len' data-type='size_t *' data-ref="820out_len">out_len</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="821len" title='len' data-type='size_t' data-ref="821len">len</dfn>);</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><i>/* Decoding */</i></td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td><i>/* EVP_DecodedLength sets |*out_len| to the maximum number of bytes</i></td></tr>
+<tr><th id="91">91</th><td><i> * that will be needed to call |EVP_DecodeBase64| on an input of</i></td></tr>
+<tr><th id="92">92</th><td><i> * length |len|. */</i></td></tr>
+<tr><th id="93">93</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DecodedLength" title='EVP_DecodedLength' data-ref="EVP_DecodedLength">EVP_DecodedLength</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col2 decl" id="822out_len" title='out_len' data-type='size_t *' data-ref="822out_len">out_len</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="823len" title='len' data-type='size_t' data-ref="823len">len</dfn>);</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><i>/* EVP_DecodeBase64 decodes |in_len| bytes from base64 and writes</i></td></tr>
+<tr><th id="96">96</th><td><i> * |*out_len| bytes to |out|. |max_out| is the size of the output</i></td></tr>
+<tr><th id="97">97</th><td><i> * buffer. If it is not enough for the maximum output size, the</i></td></tr>
+<tr><th id="98">98</th><td><i> * operation fails. */</i></td></tr>
+<tr><th id="99">99</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DecodeBase64" title='EVP_DecodeBase64' data-ref="EVP_DecodeBase64">EVP_DecodeBase64</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="824out" title='out' data-type='uint8_t *' data-ref="824out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col5 decl" id="825out_len" title='out_len' data-type='size_t *' data-ref="825out_len">out_len</dfn>,</td></tr>
+<tr><th id="100">100</th><td>                                    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="826max_out" title='max_out' data-type='size_t' data-ref="826max_out">max_out</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="827in" title='in' data-type='const uint8_t *' data-ref="827in">in</dfn>,</td></tr>
+<tr><th id="101">101</th><td>                                    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="828in_len" title='in_len' data-type='size_t' data-ref="828in_len">in_len</dfn>);</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td></td></tr>
+<tr><th id="104">104</th><td><i>/* Deprecated functions.</i></td></tr>
+<tr><th id="105">105</th><td><i> *</i></td></tr>
+<tr><th id="106">106</th><td><i> * OpenSSL provides a streaming base64 implementation, however its behavior is</i></td></tr>
+<tr><th id="107">107</th><td><i> * very specific to PEM. It is also very lenient of invalid input. Use of any of</i></td></tr>
+<tr><th id="108">108</th><td><i> * these functions is thus deprecated.</i></td></tr>
+<tr><th id="109">109</th><td><i> *</i></td></tr>
+<tr><th id="110">110</th><td><i> * TODO(davidben): Import upstream's rewrite that rejects the invalid input. */</i></td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><i>/* EVP_EncodeInit initialises |*ctx|, which is typically stack</i></td></tr>
+<tr><th id="113">113</th><td><i> * allocated, for an encoding operation.</i></td></tr>
+<tr><th id="114">114</th><td><i> *</i></td></tr>
+<tr><th id="115">115</th><td><i> * NOTE: The encoding operation breaks its output with newlines every</i></td></tr>
+<tr><th id="116">116</th><td><i> * 64 characters of output (48 characters of input). Use</i></td></tr>
+<tr><th id="117">117</th><td><i> * EVP_EncodeBlock to encode raw base64. */</i></td></tr>
+<tr><th id="118">118</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EVP_EncodeInit" title='EVP_EncodeInit' data-ref="EVP_EncodeInit">EVP_EncodeInit</dfn>(<a class="typedef" href="base.h.html#EVP_ENCODE_CTX" title='EVP_ENCODE_CTX' data-type='struct evp_encode_ctx_st' data-ref="EVP_ENCODE_CTX">EVP_ENCODE_CTX</a> *<dfn class="local col9 decl" id="829ctx" title='ctx' data-type='EVP_ENCODE_CTX *' data-ref="829ctx">ctx</dfn>);</td></tr>
+<tr><th id="119">119</th><td></td></tr>
+<tr><th id="120">120</th><td><i>/* EVP_EncodeUpdate encodes |in_len| bytes from |in| and writes an encoded</i></td></tr>
+<tr><th id="121">121</th><td><i> * version of them to |out| and sets |*out_len| to the number of bytes written.</i></td></tr>
+<tr><th id="122">122</th><td><i> * Some state may be contained in |ctx| so |EVP_EncodeFinal| must be used to</i></td></tr>
+<tr><th id="123">123</th><td><i> * flush it before using the encoded data. */</i></td></tr>
+<tr><th id="124">124</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EVP_EncodeUpdate" title='EVP_EncodeUpdate' data-ref="EVP_EncodeUpdate">EVP_EncodeUpdate</dfn>(<a class="typedef" href="base.h.html#EVP_ENCODE_CTX" title='EVP_ENCODE_CTX' data-type='struct evp_encode_ctx_st' data-ref="EVP_ENCODE_CTX">EVP_ENCODE_CTX</a> *<dfn class="local col0 decl" id="830ctx" title='ctx' data-type='EVP_ENCODE_CTX *' data-ref="830ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="831out" title='out' data-type='uint8_t *' data-ref="831out">out</dfn>,</td></tr>
+<tr><th id="125">125</th><td>                                     <em>int</em> *<dfn class="local col2 decl" id="832out_len" title='out_len' data-type='int *' data-ref="832out_len">out_len</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="833in" title='in' data-type='const uint8_t *' data-ref="833in">in</dfn>,</td></tr>
+<tr><th id="126">126</th><td>                                     <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="834in_len" title='in_len' data-type='size_t' data-ref="834in_len">in_len</dfn>);</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td><i>/* EVP_EncodeFinal flushes any remaining output bytes from |ctx| to |out| and</i></td></tr>
+<tr><th id="129">129</th><td><i> * sets |*out_len| to the number of bytes written. */</i></td></tr>
+<tr><th id="130">130</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EVP_EncodeFinal" title='EVP_EncodeFinal' data-ref="EVP_EncodeFinal">EVP_EncodeFinal</dfn>(<a class="typedef" href="base.h.html#EVP_ENCODE_CTX" title='EVP_ENCODE_CTX' data-type='struct evp_encode_ctx_st' data-ref="EVP_ENCODE_CTX">EVP_ENCODE_CTX</a> *<dfn class="local col5 decl" id="835ctx" title='ctx' data-type='EVP_ENCODE_CTX *' data-ref="835ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="836out" title='out' data-type='uint8_t *' data-ref="836out">out</dfn>,</td></tr>
+<tr><th id="131">131</th><td>                                    <em>int</em> *<dfn class="local col7 decl" id="837out_len" title='out_len' data-type='int *' data-ref="837out_len">out_len</dfn>);</td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td><i>/* EVP_DecodeInit initialises |*ctx|, which is typically stack allocated, for</i></td></tr>
+<tr><th id="134">134</th><td><i> * a decoding operation.</i></td></tr>
+<tr><th id="135">135</th><td><i> *</i></td></tr>
+<tr><th id="136">136</th><td><i> * TODO(davidben): This isn't a straight-up base64 decode either. Document</i></td></tr>
+<tr><th id="137">137</th><td><i> * and/or fix exactly what's going on here; maximum line length and such. */</i></td></tr>
+<tr><th id="138">138</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EVP_DecodeInit" title='EVP_DecodeInit' data-ref="EVP_DecodeInit">EVP_DecodeInit</dfn>(<a class="typedef" href="base.h.html#EVP_ENCODE_CTX" title='EVP_ENCODE_CTX' data-type='struct evp_encode_ctx_st' data-ref="EVP_ENCODE_CTX">EVP_ENCODE_CTX</a> *<dfn class="local col8 decl" id="838ctx" title='ctx' data-type='EVP_ENCODE_CTX *' data-ref="838ctx">ctx</dfn>);</td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td><i>/* EVP_DecodeUpdate decodes |in_len| bytes from |in| and writes the decoded</i></td></tr>
+<tr><th id="141">141</th><td><i> * data to |out| and sets |*out_len| to the number of bytes written. Some state</i></td></tr>
+<tr><th id="142">142</th><td><i> * may be contained in |ctx| so |EVP_DecodeFinal| must be used to flush it</i></td></tr>
+<tr><th id="143">143</th><td><i> * before using the encoded data.</i></td></tr>
+<tr><th id="144">144</th><td><i> *</i></td></tr>
+<tr><th id="145">145</th><td><i> * It returns -1 on error, one if a full line of input was processed and zero</i></td></tr>
+<tr><th id="146">146</th><td><i> * if the line was short (i.e. it was the last line). */</i></td></tr>
+<tr><th id="147">147</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DecodeUpdate" title='EVP_DecodeUpdate' data-ref="EVP_DecodeUpdate">EVP_DecodeUpdate</dfn>(<a class="typedef" href="base.h.html#EVP_ENCODE_CTX" title='EVP_ENCODE_CTX' data-type='struct evp_encode_ctx_st' data-ref="EVP_ENCODE_CTX">EVP_ENCODE_CTX</a> *<dfn class="local col9 decl" id="839ctx" title='ctx' data-type='EVP_ENCODE_CTX *' data-ref="839ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col0 decl" id="840out" title='out' data-type='uint8_t *' data-ref="840out">out</dfn>,</td></tr>
+<tr><th id="148">148</th><td>                                    <em>int</em> *<dfn class="local col1 decl" id="841out_len" title='out_len' data-type='int *' data-ref="841out_len">out_len</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col2 decl" id="842in" title='in' data-type='const uint8_t *' data-ref="842in">in</dfn>,</td></tr>
+<tr><th id="149">149</th><td>                                    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="843in_len" title='in_len' data-type='size_t' data-ref="843in_len">in_len</dfn>);</td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><i>/* EVP_DecodeFinal flushes any remaining output bytes from |ctx| to |out| and</i></td></tr>
+<tr><th id="152">152</th><td><i> * sets |*out_len| to the number of bytes written. It returns one on success</i></td></tr>
+<tr><th id="153">153</th><td><i> * and minus one on error. */</i></td></tr>
+<tr><th id="154">154</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DecodeFinal" title='EVP_DecodeFinal' data-ref="EVP_DecodeFinal">EVP_DecodeFinal</dfn>(<a class="typedef" href="base.h.html#EVP_ENCODE_CTX" title='EVP_ENCODE_CTX' data-type='struct evp_encode_ctx_st' data-ref="EVP_ENCODE_CTX">EVP_ENCODE_CTX</a> *<dfn class="local col4 decl" id="844ctx" title='ctx' data-type='EVP_ENCODE_CTX *' data-ref="844ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="845out" title='out' data-type='uint8_t *' data-ref="845out">out</dfn>,</td></tr>
+<tr><th id="155">155</th><td>                                   <em>int</em> *<dfn class="local col6 decl" id="846out_len" title='out_len' data-type='int *' data-ref="846out_len">out_len</dfn>);</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><i>/* EVP_DecodeBlock encodes |src_len| bytes from |src| and writes the result to</i></td></tr>
+<tr><th id="158">158</th><td><i> * |dst|. It returns the number of bytes written or -1 on error.</i></td></tr>
+<tr><th id="159">159</th><td><i> *</i></td></tr>
+<tr><th id="160">160</th><td><i> * WARNING: EVP_DecodeBlock's return value does not take padding into</i></td></tr>
+<tr><th id="161">161</th><td><i> * account. It also strips leading whitespace and trailing</i></td></tr>
+<tr><th id="162">162</th><td><i> * whitespace. */</i></td></tr>
+<tr><th id="163">163</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EVP_DecodeBlock" title='EVP_DecodeBlock' data-ref="EVP_DecodeBlock">EVP_DecodeBlock</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="847dst" title='dst' data-type='uint8_t *' data-ref="847dst">dst</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="848src" title='src' data-type='const uint8_t *' data-ref="848src">src</dfn>,</td></tr>
+<tr><th id="164">164</th><td>                                   <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="849src_len" title='src_len' data-type='size_t' data-ref="849src_len">src_len</dfn>);</td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><b>struct</b> <dfn class="type def" id="evp_encode_ctx_st" title='evp_encode_ctx_st' data-ref="evp_encode_ctx_st">evp_encode_ctx_st</dfn> {</td></tr>
+<tr><th id="168">168</th><td>  <em>unsigned</em> <dfn class="decl" id="evp_encode_ctx_st::num" title='evp_encode_ctx_st::num' data-ref="evp_encode_ctx_st::num">num</dfn>;    <i>/* number saved in a partial encode/decode */</i></td></tr>
+<tr><th id="169">169</th><td>  <em>unsigned</em> <dfn class="decl" id="evp_encode_ctx_st::length" title='evp_encode_ctx_st::length' data-ref="evp_encode_ctx_st::length">length</dfn>; <i>/* The length is either the output line length</i></td></tr>
+<tr><th id="170">170</th><td><i>               * (in input bytes) or the shortest input line</i></td></tr>
+<tr><th id="171">171</th><td><i>               * length that is ok.  Once decoding begins,</i></td></tr>
+<tr><th id="172">172</th><td><i>               * the length is adjusted up each time a longer</i></td></tr>
+<tr><th id="173">173</th><td><i>               * line is decoded */</i></td></tr>
+<tr><th id="174">174</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="evp_encode_ctx_st::enc_data" title='evp_encode_ctx_st::enc_data' data-ref="evp_encode_ctx_st::enc_data">enc_data</dfn>[<var>80</var>]; <i>/* data to encode */</i></td></tr>
+<tr><th id="175">175</th><td>  <em>unsigned</em> <dfn class="decl" id="evp_encode_ctx_st::line_num" title='evp_encode_ctx_st::line_num' data-ref="evp_encode_ctx_st::line_num">line_num</dfn>;    <i>/* number read on current line */</i></td></tr>
+<tr><th id="176">176</th><td>  <em>int</em> <dfn class="decl" id="evp_encode_ctx_st::expect_nl" title='evp_encode_ctx_st::expect_nl' data-ref="evp_encode_ctx_st::expect_nl">expect_nl</dfn>;</td></tr>
+<tr><th id="177">177</th><td>};</td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td><u>#<span data-ppcond="180">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="181">181</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="182">182</th><td><u>#<span data-ppcond="180">endif</span></u></td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td><u>#<span data-ppcond="57">endif</span>  /* OPENSSL_HEADER_BASE64_H */</u></td></tr>
+<tr><th id="185">185</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../android_compat_hacks.c.html'>codebrowser/external/boringssl/android_compat_hacks.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

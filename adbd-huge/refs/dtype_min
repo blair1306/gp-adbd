@@ -1,0 +1,10 @@
+<def f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_lround.c' l='50' type='const double'/>
+<use f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_lround.c' l='53' u='r' c='llround'/>
+<doc f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_lround.c' l='42'>/*
+ * If type has more precision than dtype, the endpoints dtype_(min|max) are
+ * of the form xxx.5; they are &quot;out of range&quot; because lround() rounds away
+ * from 0.  On the other hand, if type has less precision than dtype, then
+ * all values that are out of range are integral, so we might as well assume
+ * that everything is in range.  At compile time, INRANGE(x) should reduce to
+ * two floating-point comparisons in the former case, or TRUE otherwise.
+ */</doc>

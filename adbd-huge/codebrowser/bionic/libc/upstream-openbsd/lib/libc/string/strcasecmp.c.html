@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>strcasecmp.c source code [codebrowser/bionic/libc/upstream-openbsd/lib/libc/string/strcasecmp.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/upstream-openbsd/lib/libc/string/strcasecmp.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libc</a>/<a href='../../..'>upstream-openbsd</a>/<a href='../..'>lib</a>/<a href='..'>libc</a>/<a href='./'>string</a>/<a href='strcasecmp.c.html'>strcasecmp.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$OpenBSD: strcasecmp.c,v 1.6 2005/08/08 08:05:37 espie Exp $	*/</i></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><i>/*</i></td></tr>
+<tr><th id="4">4</th><td><i> * Copyright (c) 1987, 1993</i></td></tr>
+<tr><th id="5">5</th><td><i> *	The Regents of the University of California.  All rights reserved.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="8">8</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="9">9</th><td><i> * are met:</i></td></tr>
+<tr><th id="10">10</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="12">12</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="13">13</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="14">14</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="15">15</th><td><i> * 3. Neither the name of the University nor the names of its contributors</i></td></tr>
+<tr><th id="16">16</th><td><i> *    may be used to endorse or promote products derived from this software</i></td></tr>
+<tr><th id="17">17</th><td><i> *    without specific prior written permission.</i></td></tr>
+<tr><th id="18">18</th><td><i> *</i></td></tr>
+<tr><th id="19">19</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND</i></td></tr>
+<tr><th id="20">20</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="21">21</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="22">22</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="23">23</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="24">24</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="25">25</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="26">26</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="27">27</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="28">28</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="29">29</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="30">30</th><td><i> */</i></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../../../../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><b>typedef</b> <em>unsigned</em> <em>char</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char" id="u_char">u_char</a>;</td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><i  data-doc="charmap">/*</i></td></tr>
+<tr><th id="37">37</th><td><i  data-doc="charmap"> * This array is designed for mapping upper and lower case letter</i></td></tr>
+<tr><th id="38">38</th><td><i  data-doc="charmap"> * together for a case independent comparison.  The mappings are</i></td></tr>
+<tr><th id="39">39</th><td><i  data-doc="charmap"> * based upon ascii character sequences.</i></td></tr>
+<tr><th id="40">40</th><td><i  data-doc="charmap"> */</i></td></tr>
+<tr><th id="41">41</th><td><em>static</em> <em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> <dfn class="tu decl def" id="charmap" title='charmap' data-type='const u_char [256]' data-ref="charmap">charmap</dfn>[] = {</td></tr>
+<tr><th id="42">42</th><td>	<kbd>'\000'</kbd>, <kbd>'\001'</kbd>, <kbd>'\002'</kbd>, <kbd>'\003'</kbd>, <kbd>'\004'</kbd>, <kbd>'\005'</kbd>, <kbd>'\006'</kbd>, <kbd>'\007'</kbd>,</td></tr>
+<tr><th id="43">43</th><td>	<kbd>'\010'</kbd>, <kbd>'\011'</kbd>, <kbd>'\012'</kbd>, <kbd>'\013'</kbd>, <kbd>'\014'</kbd>, <kbd>'\015'</kbd>, <kbd>'\016'</kbd>, <kbd>'\017'</kbd>,</td></tr>
+<tr><th id="44">44</th><td>	<kbd>'\020'</kbd>, <kbd>'\021'</kbd>, <kbd>'\022'</kbd>, <kbd>'\023'</kbd>, <kbd>'\024'</kbd>, <kbd>'\025'</kbd>, <kbd>'\026'</kbd>, <kbd>'\027'</kbd>,</td></tr>
+<tr><th id="45">45</th><td>	<kbd>'\030'</kbd>, <kbd>'\031'</kbd>, <kbd>'\032'</kbd>, <kbd>'\033'</kbd>, <kbd>'\034'</kbd>, <kbd>'\035'</kbd>, <kbd>'\036'</kbd>, <kbd>'\037'</kbd>,</td></tr>
+<tr><th id="46">46</th><td>	<kbd>'\040'</kbd>, <kbd>'\041'</kbd>, <kbd>'\042'</kbd>, <kbd>'\043'</kbd>, <kbd>'\044'</kbd>, <kbd>'\045'</kbd>, <kbd>'\046'</kbd>, <kbd>'\047'</kbd>,</td></tr>
+<tr><th id="47">47</th><td>	<kbd>'\050'</kbd>, <kbd>'\051'</kbd>, <kbd>'\052'</kbd>, <kbd>'\053'</kbd>, <kbd>'\054'</kbd>, <kbd>'\055'</kbd>, <kbd>'\056'</kbd>, <kbd>'\057'</kbd>,</td></tr>
+<tr><th id="48">48</th><td>	<kbd>'\060'</kbd>, <kbd>'\061'</kbd>, <kbd>'\062'</kbd>, <kbd>'\063'</kbd>, <kbd>'\064'</kbd>, <kbd>'\065'</kbd>, <kbd>'\066'</kbd>, <kbd>'\067'</kbd>,</td></tr>
+<tr><th id="49">49</th><td>	<kbd>'\070'</kbd>, <kbd>'\071'</kbd>, <kbd>'\072'</kbd>, <kbd>'\073'</kbd>, <kbd>'\074'</kbd>, <kbd>'\075'</kbd>, <kbd>'\076'</kbd>, <kbd>'\077'</kbd>,</td></tr>
+<tr><th id="50">50</th><td>	<kbd>'\100'</kbd>, <kbd>'\141'</kbd>, <kbd>'\142'</kbd>, <kbd>'\143'</kbd>, <kbd>'\144'</kbd>, <kbd>'\145'</kbd>, <kbd>'\146'</kbd>, <kbd>'\147'</kbd>,</td></tr>
+<tr><th id="51">51</th><td>	<kbd>'\150'</kbd>, <kbd>'\151'</kbd>, <kbd>'\152'</kbd>, <kbd>'\153'</kbd>, <kbd>'\154'</kbd>, <kbd>'\155'</kbd>, <kbd>'\156'</kbd>, <kbd>'\157'</kbd>,</td></tr>
+<tr><th id="52">52</th><td>	<kbd>'\160'</kbd>, <kbd>'\161'</kbd>, <kbd>'\162'</kbd>, <kbd>'\163'</kbd>, <kbd>'\164'</kbd>, <kbd>'\165'</kbd>, <kbd>'\166'</kbd>, <kbd>'\167'</kbd>,</td></tr>
+<tr><th id="53">53</th><td>	<kbd>'\170'</kbd>, <kbd>'\171'</kbd>, <kbd>'\172'</kbd>, <kbd>'\133'</kbd>, <kbd>'\134'</kbd>, <kbd>'\135'</kbd>, <kbd>'\136'</kbd>, <kbd>'\137'</kbd>,</td></tr>
+<tr><th id="54">54</th><td>	<kbd>'\140'</kbd>, <kbd>'\141'</kbd>, <kbd>'\142'</kbd>, <kbd>'\143'</kbd>, <kbd>'\144'</kbd>, <kbd>'\145'</kbd>, <kbd>'\146'</kbd>, <kbd>'\147'</kbd>,</td></tr>
+<tr><th id="55">55</th><td>	<kbd>'\150'</kbd>, <kbd>'\151'</kbd>, <kbd>'\152'</kbd>, <kbd>'\153'</kbd>, <kbd>'\154'</kbd>, <kbd>'\155'</kbd>, <kbd>'\156'</kbd>, <kbd>'\157'</kbd>,</td></tr>
+<tr><th id="56">56</th><td>	<kbd>'\160'</kbd>, <kbd>'\161'</kbd>, <kbd>'\162'</kbd>, <kbd>'\163'</kbd>, <kbd>'\164'</kbd>, <kbd>'\165'</kbd>, <kbd>'\166'</kbd>, <kbd>'\167'</kbd>,</td></tr>
+<tr><th id="57">57</th><td>	<kbd>'\170'</kbd>, <kbd>'\171'</kbd>, <kbd>'\172'</kbd>, <kbd>'\173'</kbd>, <kbd>'\174'</kbd>, <kbd>'\175'</kbd>, <kbd>'\176'</kbd>, <kbd>'\177'</kbd>,</td></tr>
+<tr><th id="58">58</th><td>	<kbd>'\200'</kbd>, <kbd>'\201'</kbd>, <kbd>'\202'</kbd>, <kbd>'\203'</kbd>, <kbd>'\204'</kbd>, <kbd>'\205'</kbd>, <kbd>'\206'</kbd>, <kbd>'\207'</kbd>,</td></tr>
+<tr><th id="59">59</th><td>	<kbd>'\210'</kbd>, <kbd>'\211'</kbd>, <kbd>'\212'</kbd>, <kbd>'\213'</kbd>, <kbd>'\214'</kbd>, <kbd>'\215'</kbd>, <kbd>'\216'</kbd>, <kbd>'\217'</kbd>,</td></tr>
+<tr><th id="60">60</th><td>	<kbd>'\220'</kbd>, <kbd>'\221'</kbd>, <kbd>'\222'</kbd>, <kbd>'\223'</kbd>, <kbd>'\224'</kbd>, <kbd>'\225'</kbd>, <kbd>'\226'</kbd>, <kbd>'\227'</kbd>,</td></tr>
+<tr><th id="61">61</th><td>	<kbd>'\230'</kbd>, <kbd>'\231'</kbd>, <kbd>'\232'</kbd>, <kbd>'\233'</kbd>, <kbd>'\234'</kbd>, <kbd>'\235'</kbd>, <kbd>'\236'</kbd>, <kbd>'\237'</kbd>,</td></tr>
+<tr><th id="62">62</th><td>	<kbd>'\240'</kbd>, <kbd>'\241'</kbd>, <kbd>'\242'</kbd>, <kbd>'\243'</kbd>, <kbd>'\244'</kbd>, <kbd>'\245'</kbd>, <kbd>'\246'</kbd>, <kbd>'\247'</kbd>,</td></tr>
+<tr><th id="63">63</th><td>	<kbd>'\250'</kbd>, <kbd>'\251'</kbd>, <kbd>'\252'</kbd>, <kbd>'\253'</kbd>, <kbd>'\254'</kbd>, <kbd>'\255'</kbd>, <kbd>'\256'</kbd>, <kbd>'\257'</kbd>,</td></tr>
+<tr><th id="64">64</th><td>	<kbd>'\260'</kbd>, <kbd>'\261'</kbd>, <kbd>'\262'</kbd>, <kbd>'\263'</kbd>, <kbd>'\264'</kbd>, <kbd>'\265'</kbd>, <kbd>'\266'</kbd>, <kbd>'\267'</kbd>,</td></tr>
+<tr><th id="65">65</th><td>	<kbd>'\270'</kbd>, <kbd>'\271'</kbd>, <kbd>'\272'</kbd>, <kbd>'\273'</kbd>, <kbd>'\274'</kbd>, <kbd>'\275'</kbd>, <kbd>'\276'</kbd>, <kbd>'\277'</kbd>,</td></tr>
+<tr><th id="66">66</th><td>	<kbd>'\300'</kbd>, <kbd>'\301'</kbd>, <kbd>'\302'</kbd>, <kbd>'\303'</kbd>, <kbd>'\304'</kbd>, <kbd>'\305'</kbd>, <kbd>'\306'</kbd>, <kbd>'\307'</kbd>,</td></tr>
+<tr><th id="67">67</th><td>	<kbd>'\310'</kbd>, <kbd>'\311'</kbd>, <kbd>'\312'</kbd>, <kbd>'\313'</kbd>, <kbd>'\314'</kbd>, <kbd>'\315'</kbd>, <kbd>'\316'</kbd>, <kbd>'\317'</kbd>,</td></tr>
+<tr><th id="68">68</th><td>	<kbd>'\320'</kbd>, <kbd>'\321'</kbd>, <kbd>'\322'</kbd>, <kbd>'\323'</kbd>, <kbd>'\324'</kbd>, <kbd>'\325'</kbd>, <kbd>'\326'</kbd>, <kbd>'\327'</kbd>,</td></tr>
+<tr><th id="69">69</th><td>	<kbd>'\330'</kbd>, <kbd>'\331'</kbd>, <kbd>'\332'</kbd>, <kbd>'\333'</kbd>, <kbd>'\334'</kbd>, <kbd>'\335'</kbd>, <kbd>'\336'</kbd>, <kbd>'\337'</kbd>,</td></tr>
+<tr><th id="70">70</th><td>	<kbd>'\340'</kbd>, <kbd>'\341'</kbd>, <kbd>'\342'</kbd>, <kbd>'\343'</kbd>, <kbd>'\344'</kbd>, <kbd>'\345'</kbd>, <kbd>'\346'</kbd>, <kbd>'\347'</kbd>,</td></tr>
+<tr><th id="71">71</th><td>	<kbd>'\350'</kbd>, <kbd>'\351'</kbd>, <kbd>'\352'</kbd>, <kbd>'\353'</kbd>, <kbd>'\354'</kbd>, <kbd>'\355'</kbd>, <kbd>'\356'</kbd>, <kbd>'\357'</kbd>,</td></tr>
+<tr><th id="72">72</th><td>	<kbd>'\360'</kbd>, <kbd>'\361'</kbd>, <kbd>'\362'</kbd>, <kbd>'\363'</kbd>, <kbd>'\364'</kbd>, <kbd>'\365'</kbd>, <kbd>'\366'</kbd>, <kbd>'\367'</kbd>,</td></tr>
+<tr><th id="73">73</th><td>	<kbd>'\370'</kbd>, <kbd>'\371'</kbd>, <kbd>'\372'</kbd>, <kbd>'\373'</kbd>, <kbd>'\374'</kbd>, <kbd>'\375'</kbd>, <kbd>'\376'</kbd>, <kbd>'\377'</kbd>,</td></tr>
+<tr><th id="74">74</th><td>};</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><em>int</em></td></tr>
+<tr><th id="77">77</th><td><dfn class="decl def" id="strcasecmp" title='strcasecmp' data-ref="strcasecmp">strcasecmp</dfn>(<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="1s1" title='s1' data-type='const char *' data-ref="1s1">s1</dfn>, <em>const</em> <em>char</em> *<dfn class="local col2 decl" id="2s2" title='s2' data-type='const char *' data-ref="2s2">s2</dfn>)</td></tr>
+<tr><th id="78">78</th><td>{</td></tr>
+<tr><th id="79">79</th><td>	<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col3 decl" id="3cm" title='cm' data-type='const u_char *' data-ref="3cm">cm</dfn> = <a class="tu ref" href="#charmap" title='charmap' data-use='r' data-ref="charmap">charmap</a>;</td></tr>
+<tr><th id="80">80</th><td>	<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col4 decl" id="4us1" title='us1' data-type='const u_char *' data-ref="4us1">us1</dfn> = (<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *)<a class="local col1 ref" href="#1s1" title='s1' data-ref="1s1">s1</a>;</td></tr>
+<tr><th id="81">81</th><td>	<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col5 decl" id="5us2" title='us2' data-type='const u_char *' data-ref="5us2">us2</dfn> = (<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *)<a class="local col2 ref" href="#2s2" title='s2' data-ref="2s2">s2</a>;</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td>	<b>while</b> (<a class="local col3 ref" href="#3cm" title='cm' data-ref="3cm">cm</a>[*<a class="local col4 ref" href="#4us1" title='us1' data-ref="4us1">us1</a>] == <a class="local col3 ref" href="#3cm" title='cm' data-ref="3cm">cm</a>[*<a class="local col5 ref" href="#5us2" title='us2' data-ref="5us2">us2</a>++])</td></tr>
+<tr><th id="84">84</th><td>		<b>if</b> (*<a class="local col4 ref" href="#4us1" title='us1' data-ref="4us1">us1</a>++ == <kbd>'\0'</kbd>)</td></tr>
+<tr><th id="85">85</th><td>			<b>return</b> (<var>0</var>);</td></tr>
+<tr><th id="86">86</th><td>	<b>return</b> (<a class="local col3 ref" href="#3cm" title='cm' data-ref="3cm">cm</a>[*<a class="local col4 ref" href="#4us1" title='us1' data-ref="4us1">us1</a>] - <a class="local col3 ref" href="#3cm" title='cm' data-ref="3cm">cm</a>[*--<a class="local col5 ref" href="#5us2" title='us2' data-ref="5us2">us2</a>]);</td></tr>
+<tr><th id="87">87</th><td>}</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><em>int</em></td></tr>
+<tr><th id="90">90</th><td><dfn class="decl def" id="strncasecmp" title='strncasecmp' data-ref="strncasecmp">strncasecmp</dfn>(<em>const</em> <em>char</em> *<dfn class="local col6 decl" id="6s1" title='s1' data-type='const char *' data-ref="6s1">s1</dfn>, <em>const</em> <em>char</em> *<dfn class="local col7 decl" id="7s2" title='s2' data-type='const char *' data-ref="7s2">s2</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="8n" title='n' data-type='size_t' data-ref="8n">n</dfn>)</td></tr>
+<tr><th id="91">91</th><td>{</td></tr>
+<tr><th id="92">92</th><td>	<b>if</b> (<a class="local col8 ref" href="#8n" title='n' data-ref="8n">n</a> != <var>0</var>) {</td></tr>
+<tr><th id="93">93</th><td>		<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col9 decl" id="9cm" title='cm' data-type='const u_char *' data-ref="9cm">cm</dfn> = <a class="tu ref" href="#charmap" title='charmap' data-use='r' data-ref="charmap">charmap</a>;</td></tr>
+<tr><th id="94">94</th><td>		<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col0 decl" id="10us1" title='us1' data-type='const u_char *' data-ref="10us1">us1</dfn> = (<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *)<a class="local col6 ref" href="#6s1" title='s1' data-ref="6s1">s1</a>;</td></tr>
+<tr><th id="95">95</th><td>		<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *<dfn class="local col1 decl" id="11us2" title='us2' data-type='const u_char *' data-ref="11us2">us2</dfn> = (<em>const</em> <a class="typedef" href="../../../../include/sys/types.h.html#u_char" title='u_char' data-type='unsigned char' data-ref="u_char">u_char</a> *)<a class="local col7 ref" href="#7s2" title='s2' data-ref="7s2">s2</a>;</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td>		<b>do</b> {</td></tr>
+<tr><th id="98">98</th><td>			<b>if</b> (<a class="local col9 ref" href="#9cm" title='cm' data-ref="9cm">cm</a>[*<a class="local col0 ref" href="#10us1" title='us1' data-ref="10us1">us1</a>] != <a class="local col9 ref" href="#9cm" title='cm' data-ref="9cm">cm</a>[*<a class="local col1 ref" href="#11us2" title='us2' data-ref="11us2">us2</a>++])</td></tr>
+<tr><th id="99">99</th><td>				<b>return</b> (<a class="local col9 ref" href="#9cm" title='cm' data-ref="9cm">cm</a>[*<a class="local col0 ref" href="#10us1" title='us1' data-ref="10us1">us1</a>] - <a class="local col9 ref" href="#9cm" title='cm' data-ref="9cm">cm</a>[*--<a class="local col1 ref" href="#11us2" title='us2' data-ref="11us2">us2</a>]);</td></tr>
+<tr><th id="100">100</th><td>			<b>if</b> (*<a class="local col0 ref" href="#10us1" title='us1' data-ref="10us1">us1</a>++ == <kbd>'\0'</kbd>)</td></tr>
+<tr><th id="101">101</th><td>				<b>break</b>;</td></tr>
+<tr><th id="102">102</th><td>		} <b>while</b> (--<a class="local col8 ref" href="#8n" title='n' data-ref="8n">n</a> != <var>0</var>);</td></tr>
+<tr><th id="103">103</th><td>	}</td></tr>
+<tr><th id="104">104</th><td>	<b>return</b> (<var>0</var>);</td></tr>
+<tr><th id="105">105</th><td>}</td></tr>
+<tr><th id="106">106</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

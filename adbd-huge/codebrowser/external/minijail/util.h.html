@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>util.h source code [codebrowser/external/minijail/util.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/minijail/util.h'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>minijail</a>/<a href='util.h.html'>util.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* util.h</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 2012 The Chromium OS Authors. All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> * Use of this source code is governed by a BSD-style license that can be</i></td></tr>
+<tr><th id="4">4</th><td><i> * found in the LICENSE file.</i></td></tr>
+<tr><th id="5">5</th><td><i> *</i></td></tr>
+<tr><th id="6">6</th><td><i> * Logging and other utility functions.</i></td></tr>
+<tr><th id="7">7</th><td><i> */</i></td></tr>
+<tr><th id="8">8</th><td></td></tr>
+<tr><th id="9">9</th><td><u>#<span data-ppcond="9">ifndef</span> <span class="macro" data-ref="_M/_UTIL_H_">_UTIL_H_</span></u></td></tr>
+<tr><th id="10">10</th><td><u>#define <dfn class="macro" id="_M/_UTIL_H_" data-ref="_M/_UTIL_H_">_UTIL_H_</dfn></u></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><u>#include <a href="../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="13">13</th><td><u>#include <a href="../../bionic/libc/include/syslog.h.html">&lt;syslog.h&gt;</a></u></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#define <dfn class="macro" id="_M/die" data-ref="_M/die">die</dfn>(_msg, ...) do { \</u></td></tr>
+<tr><th id="16">16</th><td><u>	syslog(LOG_ERR, "libminijail: " _msg, ## __VA_ARGS__); \</u></td></tr>
+<tr><th id="17">17</th><td><u>	abort(); \</u></td></tr>
+<tr><th id="18">18</th><td><u>} while (0)</u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#define <dfn class="macro" id="_M/pdie" data-ref="_M/pdie">pdie</dfn>(_msg, ...) \</u></td></tr>
+<tr><th id="21">21</th><td><u>	die(_msg ": %m", ## __VA_ARGS__)</u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#define <dfn class="macro" id="_M/warn" data-ref="_M/warn">warn</dfn>(_msg, ...) \</u></td></tr>
+<tr><th id="24">24</th><td><u>	syslog(LOG_WARNING, "libminijail: " _msg, ## __VA_ARGS__)</u></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><u>#define <dfn class="macro" id="_M/info" data-ref="_M/info">info</dfn>(_msg, ...) \</u></td></tr>
+<tr><th id="27">27</th><td><u>	syslog(LOG_INFO, "libminijail: " _msg, ## __VA_ARGS__)</u></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><b>extern</b> <em>const</em> <em>char</em> *<dfn class="decl" id="log_syscalls" title='log_syscalls' data-ref="log_syscalls">log_syscalls</dfn>[];</td></tr>
+<tr><th id="30">30</th><td><b>extern</b> <em>const</em> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="log_syscalls_len" title='log_syscalls_len' data-ref="log_syscalls_len">log_syscalls_len</dfn>;</td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="is_android" title='is_android' data-ref="is_android">is_android</dfn>() {</td></tr>
+<tr><th id="33">33</th><td><u>#<span data-ppcond="33">if</span> defined(<span class="macro" data-ref="_M/__ANDROID__">__ANDROID__</span>)</u></td></tr>
+<tr><th id="34">34</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="35">35</th><td><u>#<span data-ppcond="33">else</span></u></td></tr>
+<tr><th id="36">36</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="37">37</th><td><u>#<span data-ppcond="33">endif</span></u></td></tr>
+<tr><th id="38">38</th><td>}</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><em>int</em> <dfn class="decl" id="lookup_syscall" title='lookup_syscall' data-ref="lookup_syscall">lookup_syscall</dfn>(<em>const</em> <em>char</em> *<dfn class="local col9 decl" id="119name" title='name' data-type='const char *' data-ref="119name">name</dfn>);</td></tr>
+<tr><th id="41">41</th><td><em>const</em> <em>char</em> *<dfn class="decl" id="lookup_syscall_name" title='lookup_syscall_name' data-ref="lookup_syscall_name">lookup_syscall_name</dfn>(<em>int</em> <dfn class="local col0 decl" id="120nr" title='nr' data-type='int' data-ref="120nr">nr</dfn>);</td></tr>
+<tr><th id="42">42</th><td><em>long</em> <em>int</em> <dfn class="decl" id="parse_constant" title='parse_constant' data-ref="parse_constant">parse_constant</dfn>(<em>char</em> *<dfn class="local col1 decl" id="121constant_str" title='constant_str' data-type='char *' data-ref="121constant_str">constant_str</dfn>, <em>char</em> **<dfn class="local col2 decl" id="122endptr" title='endptr' data-type='char **' data-ref="122endptr">endptr</dfn>);</td></tr>
+<tr><th id="43">43</th><td><em>char</em> *<dfn class="decl" id="strip" title='strip' data-ref="strip">strip</dfn>(<em>char</em> *<dfn class="local col3 decl" id="123s" title='s' data-type='char *' data-ref="123s">s</dfn>);</td></tr>
+<tr><th id="44">44</th><td><em>char</em> *<dfn class="decl" id="tokenize" title='tokenize' data-ref="tokenize">tokenize</dfn>(<em>char</em> **<dfn class="local col4 decl" id="124stringp" title='stringp' data-type='char **' data-ref="124stringp">stringp</dfn>, <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="125delim" title='delim' data-type='const char *' data-ref="125delim">delim</dfn>);</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><u>#<span data-ppcond="9">endif</span> /* _UTIL_H_ */</u></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='libminijail.c.html'>codebrowser/external/minijail/libminijail.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

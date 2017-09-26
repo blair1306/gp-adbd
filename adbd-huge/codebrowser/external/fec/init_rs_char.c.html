@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>init_rs_char.c source code [codebrowser/external/fec/init_rs_char.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/fec/init_rs_char.c'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>fec</a>/<a href='init_rs_char.c.html'>init_rs_char.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Initialize a RS codec</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright 2002 Phil Karn, KA9Q</i></td></tr>
+<tr><th id="4">4</th><td><i> * May be used under the terms of the GNU Lesser General Public License (LGPL)</i></td></tr>
+<tr><th id="5">5</th><td><i> */</i></td></tr>
+<tr><th id="6">6</th><td><u>#include <a href="../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="7">7</th><td></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="char.h.html">"char.h"</a></u></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="rs-common.h.html">"rs-common.h"</a></u></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><em>void</em> <dfn class="decl def" id="free_rs_char" title='free_rs_char' data-ref="free_rs_char">free_rs_char</dfn>(<em>void</em> *<dfn class="local col1 decl" id="1p" title='p' data-type='void *' data-ref="1p">p</dfn>){</td></tr>
+<tr><th id="12">12</th><td>  <b>struct</b> <a class="type" href="rs-common.h.html#rs" title='rs' data-ref="rs">rs</a> *<dfn class="local col2 decl" id="2rs" title='rs' data-type='struct rs *' data-ref="2rs">rs</dfn> = (<b>struct</b> <a class="type" href="rs-common.h.html#rs" title='rs' data-ref="rs">rs</a> *)<a class="local col1 ref" href="#1p" title='p' data-ref="1p">p</a>;</td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td>  <a class="ref" href="../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col2 ref" href="#2rs" title='rs' data-ref="2rs">rs</a>-&gt;<a class="ref" href="rs-common.h.html#rs::alpha_to" title='rs::alpha_to' data-ref="rs::alpha_to">alpha_to</a>);</td></tr>
+<tr><th id="15">15</th><td>  <a class="ref" href="../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col2 ref" href="#2rs" title='rs' data-ref="2rs">rs</a>-&gt;<a class="ref" href="rs-common.h.html#rs::index_of" title='rs::index_of' data-ref="rs::index_of">index_of</a>);</td></tr>
+<tr><th id="16">16</th><td>  <a class="ref" href="../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col2 ref" href="#2rs" title='rs' data-ref="2rs">rs</a>-&gt;<a class="ref" href="rs-common.h.html#rs::genpoly" title='rs::genpoly' data-ref="rs::genpoly">genpoly</a>);</td></tr>
+<tr><th id="17">17</th><td>  <a class="ref" href="../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col2 ref" href="#2rs" title='rs' data-ref="2rs">rs</a>);</td></tr>
+<tr><th id="18">18</th><td>}</td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><i>/* Initialize a Reed-Solomon codec</i></td></tr>
+<tr><th id="21">21</th><td><i> * symsize = symbol size, bits</i></td></tr>
+<tr><th id="22">22</th><td><i> * gfpoly = Field generator polynomial coefficients</i></td></tr>
+<tr><th id="23">23</th><td><i> * fcr = first root of RS code generator polynomial, index form</i></td></tr>
+<tr><th id="24">24</th><td><i> * prim = primitive element to generate polynomial roots</i></td></tr>
+<tr><th id="25">25</th><td><i> * nroots = RS code generator polynomial degree (number of roots)</i></td></tr>
+<tr><th id="26">26</th><td><i> * pad = padding bytes at front of shortened block</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><em>void</em> *<dfn class="decl def" id="init_rs_char" title='init_rs_char' data-ref="init_rs_char">init_rs_char</dfn>(<em>int</em> <dfn class="local col3 decl" id="3symsize" title='symsize' data-type='int' data-ref="3symsize">symsize</dfn>,<em>int</em> <dfn class="local col4 decl" id="4gfpoly" title='gfpoly' data-type='int' data-ref="4gfpoly">gfpoly</dfn>,<em>int</em> <dfn class="local col5 decl" id="5fcr" title='fcr' data-type='int' data-ref="5fcr">fcr</dfn>,<em>int</em> <dfn class="local col6 decl" id="6prim" title='prim' data-type='int' data-ref="6prim">prim</dfn>,</td></tr>
+<tr><th id="29">29</th><td>	<em>int</em> <dfn class="local col7 decl" id="7nroots" title='nroots' data-type='int' data-ref="7nroots">nroots</dfn>,<em>int</em> <dfn class="local col8 decl" id="8pad" title='pad' data-type='int' data-ref="8pad">pad</dfn>){</td></tr>
+<tr><th id="30">30</th><td>  <b>struct</b> <a class="type" href="rs-common.h.html#rs" title='rs' data-ref="rs">rs</a> *<dfn class="local col9 decl" id="9rs" title='rs' data-type='struct rs *' data-ref="9rs">rs</dfn>;</td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="init_rs.h.html">"init_rs.h"</a></u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td>  <b>return</b> <a class="local col9 ref" href="#9rs" title='rs' data-ref="9rs">rs</a>;</td></tr>
+<tr><th id="35">35</th><td>}</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

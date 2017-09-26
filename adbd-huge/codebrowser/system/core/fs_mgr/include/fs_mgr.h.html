@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>fs_mgr.h source code [codebrowser/system/core/fs_mgr/include/fs_mgr.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/fs_mgr/include/fs_mgr.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>system</a>/<a href='../..'>core</a>/<a href='..'>fs_mgr</a>/<a href='./'>include</a>/<a href='fs_mgr.h.html'>fs_mgr.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2012 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/__CORE_FS_MGR_H">__CORE_FS_MGR_H</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/__CORE_FS_MGR_H" data-ref="_M/__CORE_FS_MGR_H">__CORE_FS_MGR_H</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../../bionic/libc/include/stdint.h.html">&lt;stdint.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../../bionic/libc/kernel/uapi/linux/dm-ioctl.h.html">&lt;linux/dm-ioctl.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><i>// Magic number at start of verity metadata</i></td></tr>
+<tr><th id="24">24</th><td><u>#define <dfn class="macro" id="_M/VERITY_METADATA_MAGIC_NUMBER" data-ref="_M/VERITY_METADATA_MAGIC_NUMBER">VERITY_METADATA_MAGIC_NUMBER</dfn> 0xb001b001</u></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><i>// Replacement magic number at start of verity metadata to cleanly</i></td></tr>
+<tr><th id="27">27</th><td><i>// turn verity off in userdebug builds.</i></td></tr>
+<tr><th id="28">28</th><td><u>#define <dfn class="macro" id="_M/VERITY_METADATA_MAGIC_DISABLE" data-ref="_M/VERITY_METADATA_MAGIC_DISABLE">VERITY_METADATA_MAGIC_DISABLE</dfn> 0x46464f56 // "VOFF"</u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#<span data-ppcond="30">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="31">31</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="32">32</th><td><u>#<span data-ppcond="30">endif</span></u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><i>// Verity modes</i></td></tr>
+<tr><th id="35">35</th><td><b>enum</b> <dfn class="type def" id="verity_mode" title='verity_mode' data-ref="verity_mode">verity_mode</dfn> {</td></tr>
+<tr><th id="36">36</th><td>    <dfn class="enum" id="verity_mode::VERITY_MODE_EIO" title='verity_mode::VERITY_MODE_EIO' data-ref="verity_mode::VERITY_MODE_EIO">VERITY_MODE_EIO</dfn> = <var>0</var>,</td></tr>
+<tr><th id="37">37</th><td>    <dfn class="enum" id="verity_mode::VERITY_MODE_LOGGING" title='verity_mode::VERITY_MODE_LOGGING' data-ref="verity_mode::VERITY_MODE_LOGGING">VERITY_MODE_LOGGING</dfn> = <var>1</var>,</td></tr>
+<tr><th id="38">38</th><td>    <dfn class="enum" id="verity_mode::VERITY_MODE_RESTART" title='verity_mode::VERITY_MODE_RESTART' data-ref="verity_mode::VERITY_MODE_RESTART">VERITY_MODE_RESTART</dfn> = <var>2</var>,</td></tr>
+<tr><th id="39">39</th><td>    <dfn class="enum" id="verity_mode::VERITY_MODE_LAST" title='verity_mode::VERITY_MODE_LAST' data-ref="verity_mode::VERITY_MODE_LAST">VERITY_MODE_LAST</dfn> = <a class="enum" href="#verity_mode::VERITY_MODE_RESTART" title='verity_mode::VERITY_MODE_RESTART' data-ref="verity_mode::VERITY_MODE_RESTART">VERITY_MODE_RESTART</a>,</td></tr>
+<tr><th id="40">40</th><td>    <dfn class="enum" id="verity_mode::VERITY_MODE_DEFAULT" title='verity_mode::VERITY_MODE_DEFAULT' data-ref="verity_mode::VERITY_MODE_DEFAULT">VERITY_MODE_DEFAULT</dfn> = <a class="enum" href="#verity_mode::VERITY_MODE_RESTART" title='verity_mode::VERITY_MODE_RESTART' data-ref="verity_mode::VERITY_MODE_RESTART">VERITY_MODE_RESTART</a></td></tr>
+<tr><th id="41">41</th><td>};</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><i>/*</i></td></tr>
+<tr><th id="44">44</th><td><i> * The entries must be kept in the same order as they were seen in the fstab.</i></td></tr>
+<tr><th id="45">45</th><td><i> * Unless explicitly requested, a lookup on mount point should always</i></td></tr>
+<tr><th id="46">46</th><td><i> * return the 1st one.</i></td></tr>
+<tr><th id="47">47</th><td><i> */</i></td></tr>
+<tr><th id="48">48</th><td><b>struct</b> <dfn class="type def" id="fstab" title='fstab' data-ref="fstab">fstab</dfn> {</td></tr>
+<tr><th id="49">49</th><td>    <em>int</em> <dfn class="decl" id="fstab::num_entries" title='fstab::num_entries' data-ref="fstab::num_entries">num_entries</dfn>;</td></tr>
+<tr><th id="50">50</th><td>    <b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="decl" id="fstab::recs" title='fstab::recs' data-ref="fstab::recs">recs</dfn>;</td></tr>
+<tr><th id="51">51</th><td>    <em>char</em> *<dfn class="decl" id="fstab::fstab_filename" title='fstab::fstab_filename' data-ref="fstab::fstab_filename">fstab_filename</dfn>;</td></tr>
+<tr><th id="52">52</th><td>};</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><b>struct</b> <dfn class="type def" id="fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</dfn> {</td></tr>
+<tr><th id="55">55</th><td>    <em>char</em> *<dfn class="decl" id="fstab_rec::blk_device" title='fstab_rec::blk_device' data-ref="fstab_rec::blk_device">blk_device</dfn>;</td></tr>
+<tr><th id="56">56</th><td>    <em>char</em> *<dfn class="decl" id="fstab_rec::mount_point" title='fstab_rec::mount_point' data-ref="fstab_rec::mount_point">mount_point</dfn>;</td></tr>
+<tr><th id="57">57</th><td>    <em>char</em> *<dfn class="decl" id="fstab_rec::fs_type" title='fstab_rec::fs_type' data-ref="fstab_rec::fs_type">fs_type</dfn>;</td></tr>
+<tr><th id="58">58</th><td>    <em>unsigned</em> <em>long</em> <dfn class="decl" id="fstab_rec::flags" title='fstab_rec::flags' data-ref="fstab_rec::flags">flags</dfn>;</td></tr>
+<tr><th id="59">59</th><td>    <em>char</em> *<dfn class="decl" id="fstab_rec::fs_options" title='fstab_rec::fs_options' data-ref="fstab_rec::fs_options">fs_options</dfn>;</td></tr>
+<tr><th id="60">60</th><td>    <em>int</em> <dfn class="decl" id="fstab_rec::fs_mgr_flags" title='fstab_rec::fs_mgr_flags' data-ref="fstab_rec::fs_mgr_flags">fs_mgr_flags</dfn>;</td></tr>
+<tr><th id="61">61</th><td>    <em>char</em> *<dfn class="decl" id="fstab_rec::key_loc" title='fstab_rec::key_loc' data-ref="fstab_rec::key_loc">key_loc</dfn>;</td></tr>
+<tr><th id="62">62</th><td>    <em>char</em> *<dfn class="decl" id="fstab_rec::verity_loc" title='fstab_rec::verity_loc' data-ref="fstab_rec::verity_loc">verity_loc</dfn>;</td></tr>
+<tr><th id="63">63</th><td>    <em>long</em> <em>long</em> <dfn class="decl" id="fstab_rec::length" title='fstab_rec::length' data-ref="fstab_rec::length">length</dfn>;</td></tr>
+<tr><th id="64">64</th><td>    <em>char</em> *<dfn class="decl" id="fstab_rec::label" title='fstab_rec::label' data-ref="fstab_rec::label">label</dfn>;</td></tr>
+<tr><th id="65">65</th><td>    <em>int</em> <dfn class="decl" id="fstab_rec::partnum" title='fstab_rec::partnum' data-ref="fstab_rec::partnum">partnum</dfn>;</td></tr>
+<tr><th id="66">66</th><td>    <em>int</em> <dfn class="decl" id="fstab_rec::swap_prio" title='fstab_rec::swap_prio' data-ref="fstab_rec::swap_prio">swap_prio</dfn>;</td></tr>
+<tr><th id="67">67</th><td>    <em>unsigned</em> <em>int</em> <dfn class="decl" id="fstab_rec::zram_size" title='fstab_rec::zram_size' data-ref="fstab_rec::zram_size">zram_size</dfn>;</td></tr>
+<tr><th id="68">68</th><td>};</td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><i>// Callback function for verity status</i></td></tr>
+<tr><th id="71">71</th><td><b>typedef</b> <em>void</em> (*<dfn class="typedef" id="fs_mgr_verity_state_callback" title='fs_mgr_verity_state_callback' data-type='void (*)(struct fstab_rec *, const char *, int, int)' data-ref="fs_mgr_verity_state_callback">fs_mgr_verity_state_callback</dfn>)(<b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col1 decl" id="1fstab" title='fstab' data-type='struct fstab_rec *' data-ref="1fstab">fstab</dfn>,</td></tr>
+<tr><th id="72">72</th><td>        <em>const</em> <em>char</em> *<dfn class="local col2 decl" id="2mount_point" title='mount_point' data-type='const char *' data-ref="2mount_point">mount_point</dfn>, <em>int</em> <dfn class="local col3 decl" id="3mode" title='mode' data-type='int' data-ref="3mode">mode</dfn>, <em>int</em> <dfn class="local col4 decl" id="4status" title='status' data-type='int' data-ref="4status">status</dfn>);</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><b>struct</b> <a class="type" href="#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="decl" id="fs_mgr_read_fstab" title='fs_mgr_read_fstab' data-ref="fs_mgr_read_fstab">fs_mgr_read_fstab</dfn>(<em>const</em> <em>char</em> *<dfn class="local col5 decl" id="5fstab_path" title='fstab_path' data-type='const char *' data-ref="5fstab_path">fstab_path</dfn>);</td></tr>
+<tr><th id="75">75</th><td><em>void</em> <dfn class="decl" id="fs_mgr_free_fstab" title='fs_mgr_free_fstab' data-ref="fs_mgr_free_fstab">fs_mgr_free_fstab</dfn>(<b>struct</b> <a class="type" href="#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col6 decl" id="6fstab" title='fstab' data-type='struct fstab *' data-ref="6fstab">fstab</dfn>);</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><u>#define <dfn class="macro" id="_M/FS_MGR_MNTALL_DEV_NON_DEFAULT_FILE_ENCRYPTED" data-ref="_M/FS_MGR_MNTALL_DEV_NON_DEFAULT_FILE_ENCRYPTED">FS_MGR_MNTALL_DEV_NON_DEFAULT_FILE_ENCRYPTED</dfn> 5</u></td></tr>
+<tr><th id="78">78</th><td><u>#define <dfn class="macro" id="_M/FS_MGR_MNTALL_DEV_DEFAULT_FILE_ENCRYPTED" data-ref="_M/FS_MGR_MNTALL_DEV_DEFAULT_FILE_ENCRYPTED">FS_MGR_MNTALL_DEV_DEFAULT_FILE_ENCRYPTED</dfn> 4</u></td></tr>
+<tr><th id="79">79</th><td><u>#define <dfn class="macro" id="_M/FS_MGR_MNTALL_DEV_NEEDS_RECOVERY" data-ref="_M/FS_MGR_MNTALL_DEV_NEEDS_RECOVERY">FS_MGR_MNTALL_DEV_NEEDS_RECOVERY</dfn> 3</u></td></tr>
+<tr><th id="80">80</th><td><u>#define <dfn class="macro" id="_M/FS_MGR_MNTALL_DEV_NEEDS_ENCRYPTION" data-ref="_M/FS_MGR_MNTALL_DEV_NEEDS_ENCRYPTION">FS_MGR_MNTALL_DEV_NEEDS_ENCRYPTION</dfn> 2</u></td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/FS_MGR_MNTALL_DEV_MIGHT_BE_ENCRYPTED" data-ref="_M/FS_MGR_MNTALL_DEV_MIGHT_BE_ENCRYPTED">FS_MGR_MNTALL_DEV_MIGHT_BE_ENCRYPTED</dfn> 1</u></td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/FS_MGR_MNTALL_DEV_NOT_ENCRYPTED" data-ref="_M/FS_MGR_MNTALL_DEV_NOT_ENCRYPTED">FS_MGR_MNTALL_DEV_NOT_ENCRYPTED</dfn> 0</u></td></tr>
+<tr><th id="83">83</th><td><u>#define <dfn class="macro" id="_M/FS_MGR_MNTALL_FAIL" data-ref="_M/FS_MGR_MNTALL_FAIL">FS_MGR_MNTALL_FAIL</dfn> -1</u></td></tr>
+<tr><th id="84">84</th><td><em>int</em> <dfn class="decl" id="fs_mgr_mount_all" title='fs_mgr_mount_all' data-ref="fs_mgr_mount_all">fs_mgr_mount_all</dfn>(<b>struct</b> <a class="type" href="#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col7 decl" id="7fstab" title='fstab' data-type='struct fstab *' data-ref="7fstab">fstab</dfn>);</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><u>#define <dfn class="macro" id="_M/FS_MGR_DOMNT_FAILED" data-ref="_M/FS_MGR_DOMNT_FAILED">FS_MGR_DOMNT_FAILED</dfn> -1</u></td></tr>
+<tr><th id="87">87</th><td><u>#define <dfn class="macro" id="_M/FS_MGR_DOMNT_BUSY" data-ref="_M/FS_MGR_DOMNT_BUSY">FS_MGR_DOMNT_BUSY</dfn> -2</u></td></tr>
+<tr><th id="88">88</th><td><em>int</em> <dfn class="decl" id="fs_mgr_do_mount" title='fs_mgr_do_mount' data-ref="fs_mgr_do_mount">fs_mgr_do_mount</dfn>(<b>struct</b> <a class="type" href="#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col8 decl" id="8fstab" title='fstab' data-type='struct fstab *' data-ref="8fstab">fstab</dfn>, <em>char</em> *<dfn class="local col9 decl" id="9n_name" title='n_name' data-type='char *' data-ref="9n_name">n_name</dfn>, <em>char</em> *<dfn class="local col0 decl" id="10n_blk_device" title='n_blk_device' data-type='char *' data-ref="10n_blk_device">n_blk_device</dfn>,</td></tr>
+<tr><th id="89">89</th><td>                    <em>char</em> *<dfn class="local col1 decl" id="11tmp_mount_point" title='tmp_mount_point' data-type='char *' data-ref="11tmp_mount_point">tmp_mount_point</dfn>);</td></tr>
+<tr><th id="90">90</th><td><em>int</em> <dfn class="decl" id="fs_mgr_do_tmpfs_mount" title='fs_mgr_do_tmpfs_mount' data-ref="fs_mgr_do_tmpfs_mount">fs_mgr_do_tmpfs_mount</dfn>(<em>char</em> *<dfn class="local col2 decl" id="12n_name" title='n_name' data-type='char *' data-ref="12n_name">n_name</dfn>);</td></tr>
+<tr><th id="91">91</th><td><em>int</em> <dfn class="decl" id="fs_mgr_unmount_all" title='fs_mgr_unmount_all' data-ref="fs_mgr_unmount_all">fs_mgr_unmount_all</dfn>(<b>struct</b> <a class="type" href="#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col3 decl" id="13fstab" title='fstab' data-type='struct fstab *' data-ref="13fstab">fstab</dfn>);</td></tr>
+<tr><th id="92">92</th><td><em>int</em> <dfn class="decl" id="fs_mgr_get_crypt_info" title='fs_mgr_get_crypt_info' data-ref="fs_mgr_get_crypt_info">fs_mgr_get_crypt_info</dfn>(<b>struct</b> <a class="type" href="#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col4 decl" id="14fstab" title='fstab' data-type='struct fstab *' data-ref="14fstab">fstab</dfn>, <em>char</em> *<dfn class="local col5 decl" id="15key_loc" title='key_loc' data-type='char *' data-ref="15key_loc">key_loc</dfn>,</td></tr>
+<tr><th id="93">93</th><td>                          <em>char</em> *<dfn class="local col6 decl" id="16real_blk_device" title='real_blk_device' data-type='char *' data-ref="16real_blk_device">real_blk_device</dfn>, <em>int</em> <dfn class="local col7 decl" id="17size" title='size' data-type='int' data-ref="17size">size</dfn>);</td></tr>
+<tr><th id="94">94</th><td><em>int</em> <dfn class="decl" id="fs_mgr_load_verity_state" title='fs_mgr_load_verity_state' data-ref="fs_mgr_load_verity_state">fs_mgr_load_verity_state</dfn>(<em>int</em> *<dfn class="local col8 decl" id="18mode" title='mode' data-type='int *' data-ref="18mode">mode</dfn>);</td></tr>
+<tr><th id="95">95</th><td><em>int</em> <dfn class="decl" id="fs_mgr_update_verity_state" title='fs_mgr_update_verity_state' data-ref="fs_mgr_update_verity_state">fs_mgr_update_verity_state</dfn>(<a class="typedef" href="#fs_mgr_verity_state_callback" title='fs_mgr_verity_state_callback' data-type='void (*)(struct fstab_rec *, const char *, int, int)' data-ref="fs_mgr_verity_state_callback">fs_mgr_verity_state_callback</a> <dfn class="local col9 decl" id="19callback" title='callback' data-type='fs_mgr_verity_state_callback' data-ref="19callback">callback</dfn>);</td></tr>
+<tr><th id="96">96</th><td><em>int</em> <dfn class="decl" id="fs_mgr_add_entry" title='fs_mgr_add_entry' data-ref="fs_mgr_add_entry">fs_mgr_add_entry</dfn>(<b>struct</b> <a class="type" href="#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col0 decl" id="20fstab" title='fstab' data-type='struct fstab *' data-ref="20fstab">fstab</dfn>,</td></tr>
+<tr><th id="97">97</th><td>                     <em>const</em> <em>char</em> *<dfn class="local col1 decl" id="21mount_point" title='mount_point' data-type='const char *' data-ref="21mount_point">mount_point</dfn>, <em>const</em> <em>char</em> *<dfn class="local col2 decl" id="22fs_type" title='fs_type' data-type='const char *' data-ref="22fs_type">fs_type</dfn>,</td></tr>
+<tr><th id="98">98</th><td>                     <em>const</em> <em>char</em> *<dfn class="local col3 decl" id="23blk_device" title='blk_device' data-type='const char *' data-ref="23blk_device">blk_device</dfn>);</td></tr>
+<tr><th id="99">99</th><td><b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="decl" id="fs_mgr_get_entry_for_mount_point" title='fs_mgr_get_entry_for_mount_point' data-ref="fs_mgr_get_entry_for_mount_point">fs_mgr_get_entry_for_mount_point</dfn>(<b>struct</b> <a class="type" href="#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col4 decl" id="24fstab" title='fstab' data-type='struct fstab *' data-ref="24fstab">fstab</dfn>, <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="25path" title='path' data-type='const char *' data-ref="25path">path</dfn>);</td></tr>
+<tr><th id="100">100</th><td><em>int</em> <dfn class="decl" id="fs_mgr_is_voldmanaged" title='fs_mgr_is_voldmanaged' data-ref="fs_mgr_is_voldmanaged">fs_mgr_is_voldmanaged</dfn>(<em>const</em> <b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col6 decl" id="26fstab" title='fstab' data-type='const struct fstab_rec *' data-ref="26fstab">fstab</dfn>);</td></tr>
+<tr><th id="101">101</th><td><em>int</em> <dfn class="decl" id="fs_mgr_is_nonremovable" title='fs_mgr_is_nonremovable' data-ref="fs_mgr_is_nonremovable">fs_mgr_is_nonremovable</dfn>(<em>const</em> <b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col7 decl" id="27fstab" title='fstab' data-type='const struct fstab_rec *' data-ref="27fstab">fstab</dfn>);</td></tr>
+<tr><th id="102">102</th><td><em>int</em> <dfn class="decl" id="fs_mgr_is_verified" title='fs_mgr_is_verified' data-ref="fs_mgr_is_verified">fs_mgr_is_verified</dfn>(<em>const</em> <b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col8 decl" id="28fstab" title='fstab' data-type='const struct fstab_rec *' data-ref="28fstab">fstab</dfn>);</td></tr>
+<tr><th id="103">103</th><td><em>int</em> <dfn class="decl" id="fs_mgr_is_encryptable" title='fs_mgr_is_encryptable' data-ref="fs_mgr_is_encryptable">fs_mgr_is_encryptable</dfn>(<em>const</em> <b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col9 decl" id="29fstab" title='fstab' data-type='const struct fstab_rec *' data-ref="29fstab">fstab</dfn>);</td></tr>
+<tr><th id="104">104</th><td><em>int</em> <dfn class="decl" id="fs_mgr_is_file_encrypted" title='fs_mgr_is_file_encrypted' data-ref="fs_mgr_is_file_encrypted">fs_mgr_is_file_encrypted</dfn>(<em>const</em> <b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col0 decl" id="30fstab" title='fstab' data-type='const struct fstab_rec *' data-ref="30fstab">fstab</dfn>);</td></tr>
+<tr><th id="105">105</th><td><em>int</em> <dfn class="decl" id="fs_mgr_is_noemulatedsd" title='fs_mgr_is_noemulatedsd' data-ref="fs_mgr_is_noemulatedsd">fs_mgr_is_noemulatedsd</dfn>(<em>const</em> <b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col1 decl" id="31fstab" title='fstab' data-type='const struct fstab_rec *' data-ref="31fstab">fstab</dfn>);</td></tr>
+<tr><th id="106">106</th><td><em>int</em> <dfn class="decl" id="fs_mgr_is_notrim" title='fs_mgr_is_notrim' data-ref="fs_mgr_is_notrim">fs_mgr_is_notrim</dfn>(<b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col2 decl" id="32fstab" title='fstab' data-type='struct fstab_rec *' data-ref="32fstab">fstab</dfn>);</td></tr>
+<tr><th id="107">107</th><td><em>int</em> <dfn class="decl" id="fs_mgr_is_formattable" title='fs_mgr_is_formattable' data-ref="fs_mgr_is_formattable">fs_mgr_is_formattable</dfn>(<b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col3 decl" id="33fstab" title='fstab' data-type='struct fstab_rec *' data-ref="33fstab">fstab</dfn>);</td></tr>
+<tr><th id="108">108</th><td><em>int</em> <dfn class="decl" id="fs_mgr_swapon_all" title='fs_mgr_swapon_all' data-ref="fs_mgr_swapon_all">fs_mgr_swapon_all</dfn>(<b>struct</b> <a class="type" href="#fstab" title='fstab' data-ref="fstab">fstab</a> *<dfn class="local col4 decl" id="34fstab" title='fstab' data-type='struct fstab *' data-ref="34fstab">fstab</dfn>);</td></tr>
+<tr><th id="109">109</th><td></td></tr>
+<tr><th id="110">110</th><td><em>int</em> <dfn class="decl" id="fs_mgr_do_format" title='fs_mgr_do_format' data-ref="fs_mgr_do_format">fs_mgr_do_format</dfn>(<b>struct</b> <a class="type" href="#fstab_rec" title='fstab_rec' data-ref="fstab_rec">fstab_rec</a> *<dfn class="local col5 decl" id="35fstab" title='fstab' data-type='struct fstab_rec *' data-ref="35fstab">fstab</dfn>);</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><u>#<span data-ppcond="112">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="113">113</th><td>}</td></tr>
+<tr><th id="114">114</th><td><u>#<span data-ppcond="112">endif</span></u></td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><u>#<span data-ppcond="17">endif</span> /* __CORE_FS_MGR_H */</u></td></tr>
+<tr><th id="117">117</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../adb/remount_service.cpp.html'>codebrowser/system/core/adb/remount_service.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,57 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/asn1t.h' l='570'/>
+<doc f='codebrowser/external/boringssl/src/include/openssl/asn1t.h' l='526'>/* These are values for the itype field and
+ * determine how the type is interpreted.
+ *
+ * For PRIMITIVE types the underlying type
+ * determines the behaviour if items is NULL.
+ *
+ * Otherwise templates must contain a single 
+ * template and the type is treated in the
+ * same way as the type specified in the template.
+ *
+ * For SEQUENCE types the templates field points
+ * to the members, the size field is the
+ * structure size.
+ *
+ * For CHOICE types the templates field points
+ * to each possible member (typically a union)
+ * and the &apos;size&apos; field is the offset of the
+ * selector.
+ *
+ * The &apos;funcs&apos; field is used for application
+ * specific functions. 
+ *
+ * For COMPAT types the funcs field gives a
+ * set of functions that handle this type, this
+ * supports the old d2i, i2d convention.
+ *
+ * The EXTERN type uses a new style d2i/i2d.
+ * The new style should be used where possible
+ * because it avoids things like the d2i IMPLICIT
+ * hack.
+ *
+ * MSTRING is a multiple string type, it is used
+ * for a CHOICE of character strings where the
+ * actual strings all occupy an ASN1_STRING
+ * structure. In this case the &apos;utype&apos; field
+ * has a special meaning, it is used as a mask
+ * of acceptable types using the B_ASN1 constants.
+ *
+ * NDEF_SEQUENCE is the same as SEQUENCE except
+ * that it will use indefinite length constructed
+ * encoding if requested.
+ *
+ */</doc>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/tasn_dec.c' l='182' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/tasn_enc.c' l='139' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/tasn_enc.c' l='148' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/tasn_enc.c' l='585' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/tasn_fre.c' l='87' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/tasn_fre.c' l='97' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/tasn_new.c' l='129' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/tasn_new.c' l='244' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/tasn_prn.c' l='226' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/x_bignum.c' l='88' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/x_bignum.c' l='92' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/x_long.c' l='90' u='c'/>
+<use f='codebrowser/external/boringssl/src/crypto/asn1/x_long.c' l='94' u='c'/>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>v3_ia5.c source code [codebrowser/external/boringssl/src/crypto/x509v3/v3_ia5.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/x509v3/v3_ia5.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>x509v3</a>/<a href='v3_ia5.c.html'>v3_ia5.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* v3_ia5.c */</i></td></tr>
+<tr><th id="2">2</th><td><i>/* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL</i></td></tr>
+<tr><th id="3">3</th><td><i> * project 1999.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="6">6</th><td><i> * Copyright (c) 1999 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="9">9</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * are met:</i></td></tr>
+<tr><th id="11">11</th><td><i> *</i></td></tr>
+<tr><th id="12">12</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="13">13</th><td><i> *    notice, this list of conditions and the following disclaimer. </i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="16">16</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="17">17</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="18">18</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="19">19</th><td><i> *</i></td></tr>
+<tr><th id="20">20</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="21">21</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="22">22</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="23">23</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="24">24</th><td><i> *</i></td></tr>
+<tr><th id="25">25</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="26">26</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="27">27</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="28">28</th><td><i> *    licensing@OpenSSL.org.</i></td></tr>
+<tr><th id="29">29</th><td><i> *</i></td></tr>
+<tr><th id="30">30</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="31">31</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="32">32</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="33">33</th><td><i> *</i></td></tr>
+<tr><th id="34">34</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="35">35</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="36">36</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="37">37</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="38">38</th><td><i> *</i></td></tr>
+<tr><th id="39">39</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="40">40</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="41">41</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="42">42</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="43">43</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="44">44</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="45">45</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="46">46</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="48">48</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="49">49</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="50">50</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="52">52</th><td><i> *</i></td></tr>
+<tr><th id="53">53</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="54">54</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="55">55</th><td><i> * Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="56">56</th><td><i> *</i></td></tr>
+<tr><th id="57">57</th><td><i> */</i></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/asn1.h.html">&lt;openssl/asn1.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../include/openssl/conf.h.html">&lt;openssl/conf.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="65">65</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="66">66</th><td><u>#include <a href="../../include/openssl/obj.h.html">&lt;openssl/obj.h&gt;</a></u></td></tr>
+<tr><th id="67">67</th><td><u>#include <a href="../../include/openssl/x509v3.h.html">&lt;openssl/x509v3.h&gt;</a></u></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><em>static</em> <em>char</em> *<a class="tu decl" href="#i2s_ASN1_IA5STRING" title='i2s_ASN1_IA5STRING' data-type='char * i2s_ASN1_IA5STRING(X509V3_EXT_METHOD * method, ASN1_IA5STRING * ia5)' data-ref="i2s_ASN1_IA5STRING">i2s_ASN1_IA5STRING</a>(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> *<dfn class="local col1 decl" id="1method" title='method' data-type='X509V3_EXT_METHOD *' data-ref="1method">method</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#ASN1_IA5STRING" title='ASN1_IA5STRING' data-type='struct asn1_string_st' data-ref="ASN1_IA5STRING">ASN1_IA5STRING</a> *<dfn class="local col2 decl" id="2ia5" title='ia5' data-type='ASN1_IA5STRING *' data-ref="2ia5">ia5</dfn>);</td></tr>
+<tr><th id="71">71</th><td><em>static</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_IA5STRING" title='ASN1_IA5STRING' data-type='struct asn1_string_st' data-ref="ASN1_IA5STRING">ASN1_IA5STRING</a> *<a class="tu decl" href="#s2i_ASN1_IA5STRING" title='s2i_ASN1_IA5STRING' data-type='ASN1_IA5STRING * s2i_ASN1_IA5STRING(X509V3_EXT_METHOD * method, X509V3_CTX * ctx, char * str)' data-ref="s2i_ASN1_IA5STRING">s2i_ASN1_IA5STRING</a>(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> *<dfn class="local col3 decl" id="3method" title='method' data-type='X509V3_EXT_METHOD *' data-ref="3method">method</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#X509V3_CTX" title='X509V3_CTX' data-type='struct v3_ext_ctx' data-ref="X509V3_CTX">X509V3_CTX</a> *<dfn class="local col4 decl" id="4ctx" title='ctx' data-type='X509V3_CTX *' data-ref="4ctx">ctx</dfn>, <em>char</em> *<dfn class="local col5 decl" id="5str" title='str' data-type='char *' data-ref="5str">str</dfn>);</td></tr>
+<tr><th id="72">72</th><td><em>const</em> <a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> <dfn class="decl def" id="v3_ns_ia5_list" title='v3_ns_ia5_list' data-ref="v3_ns_ia5_list">v3_ns_ia5_list</dfn>[] = { </td></tr>
+<tr><th id="73">73</th><td><a class="macro" href="../../include/openssl/x509v3.h.html#394" title="{ 72, 0, (&amp;(ASN1_IA5STRING_it)), 0,0,0,0, (X509V3_EXT_I2S)i2s_ASN1_IA5STRING, (X509V3_EXT_S2I)s2i_ASN1_IA5STRING, 0,0,0,0, ((void*)0)}" data-ref="_M/EXT_IA5STRING">EXT_IA5STRING</a>(<a class="macro" href="../../include/openssl/obj_mac.h.html#2450" title="72" data-ref="_M/NID_netscape_base_url">NID_netscape_base_url</a>),</td></tr>
+<tr><th id="74">74</th><td><a class="macro" href="../../include/openssl/x509v3.h.html#394" title="{ 73, 0, (&amp;(ASN1_IA5STRING_it)), 0,0,0,0, (X509V3_EXT_I2S)i2s_ASN1_IA5STRING, (X509V3_EXT_S2I)s2i_ASN1_IA5STRING, 0,0,0,0, ((void*)0)}" data-ref="_M/EXT_IA5STRING">EXT_IA5STRING</a>(<a class="macro" href="../../include/openssl/obj_mac.h.html#2455" title="73" data-ref="_M/NID_netscape_revocation_url">NID_netscape_revocation_url</a>),</td></tr>
+<tr><th id="75">75</th><td><a class="macro" href="../../include/openssl/x509v3.h.html#394" title="{ 74, 0, (&amp;(ASN1_IA5STRING_it)), 0,0,0,0, (X509V3_EXT_I2S)i2s_ASN1_IA5STRING, (X509V3_EXT_S2I)s2i_ASN1_IA5STRING, 0,0,0,0, ((void*)0)}" data-ref="_M/EXT_IA5STRING">EXT_IA5STRING</a>(<a class="macro" href="../../include/openssl/obj_mac.h.html#2460" title="74" data-ref="_M/NID_netscape_ca_revocation_url">NID_netscape_ca_revocation_url</a>),</td></tr>
+<tr><th id="76">76</th><td><a class="macro" href="../../include/openssl/x509v3.h.html#394" title="{ 75, 0, (&amp;(ASN1_IA5STRING_it)), 0,0,0,0, (X509V3_EXT_I2S)i2s_ASN1_IA5STRING, (X509V3_EXT_S2I)s2i_ASN1_IA5STRING, 0,0,0,0, ((void*)0)}" data-ref="_M/EXT_IA5STRING">EXT_IA5STRING</a>(<a class="macro" href="../../include/openssl/obj_mac.h.html#2465" title="75" data-ref="_M/NID_netscape_renewal_url">NID_netscape_renewal_url</a>),</td></tr>
+<tr><th id="77">77</th><td><a class="macro" href="../../include/openssl/x509v3.h.html#394" title="{ 76, 0, (&amp;(ASN1_IA5STRING_it)), 0,0,0,0, (X509V3_EXT_I2S)i2s_ASN1_IA5STRING, (X509V3_EXT_S2I)s2i_ASN1_IA5STRING, 0,0,0,0, ((void*)0)}" data-ref="_M/EXT_IA5STRING">EXT_IA5STRING</a>(<a class="macro" href="../../include/openssl/obj_mac.h.html#2470" title="76" data-ref="_M/NID_netscape_ca_policy_url">NID_netscape_ca_policy_url</a>),</td></tr>
+<tr><th id="78">78</th><td><a class="macro" href="../../include/openssl/x509v3.h.html#394" title="{ 77, 0, (&amp;(ASN1_IA5STRING_it)), 0,0,0,0, (X509V3_EXT_I2S)i2s_ASN1_IA5STRING, (X509V3_EXT_S2I)s2i_ASN1_IA5STRING, 0,0,0,0, ((void*)0)}" data-ref="_M/EXT_IA5STRING">EXT_IA5STRING</a>(<a class="macro" href="../../include/openssl/obj_mac.h.html#2475" title="77" data-ref="_M/NID_netscape_ssl_server_name">NID_netscape_ssl_server_name</a>),</td></tr>
+<tr><th id="79">79</th><td><a class="macro" href="../../include/openssl/x509v3.h.html#394" title="{ 78, 0, (&amp;(ASN1_IA5STRING_it)), 0,0,0,0, (X509V3_EXT_I2S)i2s_ASN1_IA5STRING, (X509V3_EXT_S2I)s2i_ASN1_IA5STRING, 0,0,0,0, ((void*)0)}" data-ref="_M/EXT_IA5STRING">EXT_IA5STRING</a>(<a class="macro" href="../../include/openssl/obj_mac.h.html#2480" title="78" data-ref="_M/NID_netscape_comment">NID_netscape_comment</a>),</td></tr>
+<tr><th id="80">80</th><td><a class="macro" href="../../include/openssl/x509v3.h.html#401" title="{ -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}" data-ref="_M/EXT_END">EXT_END</a></td></tr>
+<tr><th id="81">81</th><td>};</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><em>static</em> <em>char</em> *<dfn class="tu decl def" id="i2s_ASN1_IA5STRING" title='i2s_ASN1_IA5STRING' data-type='char * i2s_ASN1_IA5STRING(X509V3_EXT_METHOD * method, ASN1_IA5STRING * ia5)' data-ref="i2s_ASN1_IA5STRING">i2s_ASN1_IA5STRING</dfn>(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> *<dfn class="local col6 decl" id="6method" title='method' data-type='X509V3_EXT_METHOD *' data-ref="6method">method</dfn>,</td></tr>
+<tr><th id="85">85</th><td>	     <a class="typedef" href="../../include/openssl/base.h.html#ASN1_IA5STRING" title='ASN1_IA5STRING' data-type='struct asn1_string_st' data-ref="ASN1_IA5STRING">ASN1_IA5STRING</a> *<dfn class="local col7 decl" id="7ia5" title='ia5' data-type='ASN1_IA5STRING *' data-ref="7ia5">ia5</dfn>)</td></tr>
+<tr><th id="86">86</th><td>{</td></tr>
+<tr><th id="87">87</th><td>	<em>char</em> *<dfn class="local col8 decl" id="8tmp" title='tmp' data-type='char *' data-ref="8tmp">tmp</dfn>;</td></tr>
+<tr><th id="88">88</th><td>	<b>if</b>(!<a class="local col7 ref" href="#7ia5" title='ia5' data-ref="7ia5">ia5</a> || !<a class="local col7 ref" href="#7ia5" title='ia5' data-ref="7ia5">ia5</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>) <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="89">89</th><td>	<b>if</b>(!(<a class="local col8 ref" href="#8tmp" title='tmp' data-ref="8tmp">tmp</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<a class="local col7 ref" href="#7ia5" title='ia5' data-ref="7ia5">ia5</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a> + <var>1</var>))) {</td></tr>
+<tr><th id="90">90</th><td>		<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509V3, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509v3/v3_ia5.c&quot;, 90)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509V3, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="91">91</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="92">92</th><td>	}</td></tr>
+<tr><th id="93">93</th><td>	<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col8 ref" href="#8tmp" title='tmp' data-ref="8tmp">tmp</a>, <a class="local col7 ref" href="#7ia5" title='ia5' data-ref="7ia5">ia5</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>, <a class="local col7 ref" href="#7ia5" title='ia5' data-ref="7ia5">ia5</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>);</td></tr>
+<tr><th id="94">94</th><td>	<a class="local col8 ref" href="#8tmp" title='tmp' data-ref="8tmp">tmp</a>[<a class="local col7 ref" href="#7ia5" title='ia5' data-ref="7ia5">ia5</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>] = <var>0</var>;</td></tr>
+<tr><th id="95">95</th><td>	<b>return</b> <a class="local col8 ref" href="#8tmp" title='tmp' data-ref="8tmp">tmp</a>;</td></tr>
+<tr><th id="96">96</th><td>}</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><em>static</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_IA5STRING" title='ASN1_IA5STRING' data-type='struct asn1_string_st' data-ref="ASN1_IA5STRING">ASN1_IA5STRING</a> *<dfn class="tu decl def" id="s2i_ASN1_IA5STRING" title='s2i_ASN1_IA5STRING' data-type='ASN1_IA5STRING * s2i_ASN1_IA5STRING(X509V3_EXT_METHOD * method, X509V3_CTX * ctx, char * str)' data-ref="s2i_ASN1_IA5STRING">s2i_ASN1_IA5STRING</dfn>(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> *<dfn class="local col9 decl" id="9method" title='method' data-type='X509V3_EXT_METHOD *' data-ref="9method">method</dfn>,</td></tr>
+<tr><th id="99">99</th><td>	     <a class="typedef" href="../../include/openssl/base.h.html#X509V3_CTX" title='X509V3_CTX' data-type='struct v3_ext_ctx' data-ref="X509V3_CTX">X509V3_CTX</a> *<dfn class="local col0 decl" id="10ctx" title='ctx' data-type='X509V3_CTX *' data-ref="10ctx">ctx</dfn>, <em>char</em> *<dfn class="local col1 decl" id="11str" title='str' data-type='char *' data-ref="11str">str</dfn>)</td></tr>
+<tr><th id="100">100</th><td>{</td></tr>
+<tr><th id="101">101</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#ASN1_IA5STRING" title='ASN1_IA5STRING' data-type='struct asn1_string_st' data-ref="ASN1_IA5STRING">ASN1_IA5STRING</a> *<dfn class="local col2 decl" id="12ia5" title='ia5' data-type='ASN1_IA5STRING *' data-ref="12ia5">ia5</dfn>;</td></tr>
+<tr><th id="102">102</th><td>	<b>if</b>(!<a class="local col1 ref" href="#11str" title='str' data-ref="11str">str</a>) {</td></tr>
+<tr><th id="103">103</th><td>		<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509V3, 0, 124, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509v3/v3_ia5.c&quot;, 103)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509V3, <a class="macro" href="../../include/openssl/x509v3.h.html#758" title="124" data-ref="_M/X509V3_R_INVALID_NULL_ARGUMENT">X509V3_R_INVALID_NULL_ARGUMENT</a>);</td></tr>
+<tr><th id="104">104</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="105">105</th><td>	}</td></tr>
+<tr><th id="106">106</th><td>	<b>if</b>(!(<a class="local col2 ref" href="#12ia5" title='ia5' data-ref="12ia5">ia5</a> = <a class="macro" href="../../include/openssl/asn1.h.html#651" title="(ASN1_IA5STRING *) ASN1_STRING_type_new(22)" data-ref="_M/M_ASN1_IA5STRING_new">M_ASN1_IA5STRING_new</a>())) <b>goto</b> <a class="lbl" href="#13err" data-ref="13err">err</a>;</td></tr>
+<tr><th id="107">107</th><td>	<b>if</b>(!<a class="ref" href="../../include/openssl/asn1.h.html#ASN1_STRING_set" title='ASN1_STRING_set' data-ref="ASN1_STRING_set">ASN1_STRING_set</a>((<a class="typedef" href="../../include/openssl/base.h.html#ASN1_STRING" title='ASN1_STRING' data-type='struct asn1_string_st' data-ref="ASN1_STRING">ASN1_STRING</a> *)<a class="local col2 ref" href="#12ia5" title='ia5' data-ref="12ia5">ia5</a>, (<em>unsigned</em> <em>char</em>*)<a class="local col1 ref" href="#11str" title='str' data-ref="11str">str</a>,</td></tr>
+<tr><th id="108">108</th><td>			    <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col1 ref" href="#11str" title='str' data-ref="11str">str</a>))) {</td></tr>
+<tr><th id="109">109</th><td>		<a class="macro" href="../../include/openssl/asn1.h.html#653" title="ASN1_STRING_free((ASN1_STRING *)ia5)" data-ref="_M/M_ASN1_IA5STRING_free">M_ASN1_IA5STRING_free</a>(<a class="local col2 ref" href="#12ia5" title='ia5' data-ref="12ia5">ia5</a>);</td></tr>
+<tr><th id="110">110</th><td>		<b>goto</b> <a class="lbl" href="#13err" data-ref="13err">err</a>;</td></tr>
+<tr><th id="111">111</th><td>	}</td></tr>
+<tr><th id="112">112</th><td>	<b>return</b> <a class="local col2 ref" href="#12ia5" title='ia5' data-ref="12ia5">ia5</a>;</td></tr>
+<tr><th id="113">113</th><td>	<dfn class="lbl" id="13err" data-ref="13err">err</dfn>:</td></tr>
+<tr><th id="114">114</th><td>	<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509V3, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509v3/v3_ia5.c&quot;, 114)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509V3, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="115">115</th><td>	<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="116">116</th><td>}</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

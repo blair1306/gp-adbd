@@ -1,0 +1,12 @@
+<dec f='codebrowser/system/core/include/cutils/uevent.h' l='29' type='ssize_t uevent_kernel_multicast_uid_recv(int socket, void * buffer, size_t length, uid_t * uid)'/>
+<use f='codebrowser/system/core/libcutils/uevent.c' l='35' u='c' c='uevent_kernel_multicast_recv'/>
+<def f='codebrowser/system/core/libcutils/uevent.c' l='47' ll='50' type='ssize_t uevent_kernel_multicast_uid_recv(int socket, void * buffer, size_t length, uid_t * uid)'/>
+<doc f='codebrowser/system/core/libcutils/uevent.c' l='38'>/**
+ * Like the above, but passes a uid_t in by pointer. In the event that this
+ * fails due to a bad uid check, the uid_t will be set to the uid of the
+ * socket&apos;s peer.
+ *
+ * If this method rejects a netlink message from outside the kernel, it
+ * returns -1, sets errno to EIO, and sets &quot;user&quot; to the UID associated with the
+ * message. If the peer UID cannot be determined, &quot;user&quot; is set to -1.&quot;
+ */</doc>

@@ -1,0 +1,756 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>s_logl.c source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/s_logl.c] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ld "/>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/s_logl.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>ld128</a>/<a href='s_logl.c.html'>s_logl.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*-</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 2007-2013 Bruce D. Evans</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice unmodified, this list of conditions, and the following</i></td></tr>
+<tr><th id="10">10</th><td><i> *    disclaimer.</i></td></tr>
+<tr><th id="11">11</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="12">12</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR</i></td></tr>
+<tr><th id="16">16</th><td><i> * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES</i></td></tr>
+<tr><th id="17">17</th><td><i> * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.</i></td></tr>
+<tr><th id="18">18</th><td><i> * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="19">19</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="20">20</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,</i></td></tr>
+<tr><th id="21">21</th><td><i> * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY</i></td></tr>
+<tr><th id="22">22</th><td><i> * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</i></td></tr>
+<tr><th id="23">23</th><td><i> * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF</i></td></tr>
+<tr><th id="24">24</th><td><i> * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="25">25</th><td><i> */</i></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD$"</q>);</td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="31">31</th><td><i class="doc"> * Implementation of the natural logarithm of x for 128-bit format.</i></td></tr>
+<tr><th id="32">32</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="33">33</th><td><i class="doc"> * First decompose x into its base 2 representation:</i></td></tr>
+<tr><th id="34">34</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="35">35</th><td><i class="doc"> *    log(x) = log(X * 2**k), where X is in [1, 2)</i></td></tr>
+<tr><th id="36">36</th><td><i class="doc"> *           = log(X) + k * log(2).</i></td></tr>
+<tr><th id="37">37</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="38">38</th><td><i class="doc"> * Let X = X_i + e, where X_i is the center of one of the intervals</i></td></tr>
+<tr><th id="39">39</th><td><i class="doc"> * [-1.0/256, 1.0/256), [1.0/256, 3.0/256), .... [2.0-1.0/256, 2.0+1.0/256)</i></td></tr>
+<tr><th id="40">40</th><td><i class="doc"> * and X is in this interval.  Then</i></td></tr>
+<tr><th id="41">41</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="42">42</th><td><i class="doc"> *    log(X) = log(X_i + e)</i></td></tr>
+<tr><th id="43">43</th><td><i class="doc"> *           = log(X_i * (1 + e / X_i))</i></td></tr>
+<tr><th id="44">44</th><td><i class="doc"> *           = log(X_i) + log(1 + e / X_i).</i></td></tr>
+<tr><th id="45">45</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="46">46</th><td><i class="doc"> * The values log(X_i) are tabulated below.  Let d = e / X_i and use</i></td></tr>
+<tr><th id="47">47</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="48">48</th><td><i class="doc"> *    log(1 + d) = p(d)</i></td></tr>
+<tr><th id="49">49</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="50">50</th><td><i class="doc"> * where p(d) = d - 0.5*d*d + ... is a special minimax polynomial of</i></td></tr>
+<tr><th id="51">51</th><td><i class="doc"> * suitably high degree.</i></td></tr>
+<tr><th id="52">52</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="53">53</th><td><i class="doc"> * To get sufficiently small roundoff errors, k * log(2), log(X_i), and</i></td></tr>
+<tr><th id="54">54</th><td><i class="doc"> * sometimes (if |k| is not large) the first term in p(d) must be evaluated</i></td></tr>
+<tr><th id="55">55</th><td><i class="doc"> * and added up in extra precision.  Extra precision is not needed for the</i></td></tr>
+<tr><th id="56">56</th><td><i class="doc"> * rest of p(d).  In the worst case when k = 0 and log(X_i) is 0, the final</i></td></tr>
+<tr><th id="57">57</th><td><i class="doc"> * error is controlled mainly by the error in the second term in p(d).  The</i></td></tr>
+<tr><th id="58">58</th><td><i class="doc"> * error in this term itself is at most 0.5 ulps from the d*d operation in</i></td></tr>
+<tr><th id="59">59</th><td><i class="doc"> * it.  The error in this term relative to the first term is thus at most</i></td></tr>
+<tr><th id="60">60</th><td><i class="doc"> * 0.5 * |-0.5| * |d| &lt; 1.0/1024 ulps.  We aim for an accumulated error of</i></td></tr>
+<tr><th id="61">61</th><td><i class="doc"> * at most twice this at the point of the final rounding step.  Thus the</i></td></tr>
+<tr><th id="62">62</th><td><i class="doc"> * final error should be at most 0.5 + 1.0/512 = 0.5020 ulps.  Exhaustive</i></td></tr>
+<tr><th id="63">63</th><td><i class="doc"> * testing of a float variant of this function showed a maximum final error</i></td></tr>
+<tr><th id="64">64</th><td><i class="doc"> * of 0.5008 ulps.  Non-exhaustive testing of a double variant of this</i></td></tr>
+<tr><th id="65">65</th><td><i class="doc"> * function showed a maximum final error of 0.5078 ulps (near 1+1.0/256).</i></td></tr>
+<tr><th id="66">66</th><td><i class="doc"> *</i></td></tr>
+<tr><th id="67">67</th><td><i class="doc"> * We made the maximum of |d| (and thus the total relative error and the</i></td></tr>
+<tr><th id="68">68</th><td><i class="doc"> * degree of p(d)) small by using a large number of intervals.  Using</i></td></tr>
+<tr><th id="69">69</th><td><i class="doc"> * centers of intervals instead of endpoints reduces this maximum by a</i></td></tr>
+<tr><th id="70">70</th><td><i class="doc"> * factor of 2 for a given number of intervals.  p(d) is special only</i></td></tr>
+<tr><th id="71">71</th><td><i class="doc"> * in beginning with the Taylor coefficients 0 + 1*d, which tends to happen</i></td></tr>
+<tr><th id="72">72</th><td><i class="doc"> * naturally.  The most accurate minimax polynomial of a given degree might</i></td></tr>
+<tr><th id="73">73</th><td><i class="doc"> * be different, but then we wouldn't want it since we would have to do</i></td></tr>
+<tr><th id="74">74</th><td><i class="doc"> * extra work to avoid roundoff error (especially for P0*d instead of d).</i></td></tr>
+<tr><th id="75">75</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><u>#<span data-ppcond="77">ifdef</span> <span class="macro" data-ref="_M/DEBUG">DEBUG</span></u></td></tr>
+<tr><th id="78">78</th><td><u>#include &lt;assert.h&gt;</u></td></tr>
+<tr><th id="79">79</th><td><u>#include &lt;fenv.h&gt;</u></td></tr>
+<tr><th id="80">80</th><td><u>#<span data-ppcond="77">endif</span></u></td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><u>#include <a href="../../../../fpmath.h.html">"fpmath.h"</a></u></td></tr>
+<tr><th id="83">83</th><td><u>#include <a href="../../../../../libc/include/math.h.html">"math.h"</a></u></td></tr>
+<tr><th id="84">84</th><td><u>#<span data-ppcond="84">ifndef</span> <span class="macro" data-ref="_M/NO_STRUCT_RETURN">NO_STRUCT_RETURN</span></u></td></tr>
+<tr><th id="85">85</th><td><u>#define	<dfn class="macro" id="_M/STRUCT_RETURN" data-ref="_M/STRUCT_RETURN">STRUCT_RETURN</dfn></u></td></tr>
+<tr><th id="86">86</th><td><u>#<span data-ppcond="84">endif</span></u></td></tr>
+<tr><th id="87">87</th><td><u>#include <a href="../src/math_private.h.html">"math_private.h"</a></u></td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><u>#<span data-ppcond="89">if</span> !defined(<span class="macro" data-ref="_M/NO_UTAB">NO_UTAB</span>) &amp;&amp; !defined(<span class="macro" data-ref="_M/NO_UTABL">NO_UTABL</span>)</u></td></tr>
+<tr><th id="90">90</th><td><u>#define	<dfn class="macro" id="_M/USE_UTAB" data-ref="_M/USE_UTAB">USE_UTAB</dfn></u></td></tr>
+<tr><th id="91">91</th><td><u>#<span data-ppcond="89">endif</span></u></td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><i>/*</i></td></tr>
+<tr><th id="94">94</th><td><i> * Domain [-0.005280, 0.004838], range ~[-1.1577e-37, 1.1582e-37]:</i></td></tr>
+<tr><th id="95">95</th><td><i> * |log(1 + d)/d - p(d)| &lt; 2**-122.7</i></td></tr>
+<tr><th id="96">96</th><td><i> */</i></td></tr>
+<tr><th id="97">97</th><td><em>static</em> <em>const</em> <em>long</em> <em>double</em></td></tr>
+<tr><th id="98">98</th><td><dfn class="tu decl def" id="P2" title='P2' data-type='const long double' data-ref="P2">P2</dfn> = -<var>0.5L</var>,</td></tr>
+<tr><th id="99">99</th><td><dfn class="tu decl def" id="P3" title='P3' data-type='const long double' data-ref="P3">P3</dfn> =  <var>3.33333333333333333333333333333233795e-1L</var>,	<i>/*  0x15555555555555555555555554d42.0p-114L */</i></td></tr>
+<tr><th id="100">100</th><td><dfn class="tu decl def" id="P4" title='P4' data-type='const long double' data-ref="P4">P4</dfn> = -<var>2.49999999999999999999999999941139296e-1L</var>,	<i>/* -0x1ffffffffffffffffffffffdab14e.0p-115L */</i></td></tr>
+<tr><th id="101">101</th><td><dfn class="tu decl def" id="P5" title='P5' data-type='const long double' data-ref="P5">P5</dfn> =  <var>2.00000000000000000000000085468039943e-1L</var>,	<i>/*  0x19999999999999999999a6d3567f4.0p-115L */</i></td></tr>
+<tr><th id="102">102</th><td><dfn class="tu decl def" id="P6" title='P6' data-type='const long double' data-ref="P6">P6</dfn> = -<var>1.66666666666666666666696142372698408e-1L</var>,	<i>/* -0x15555555555555555567267a58e13.0p-115L */</i></td></tr>
+<tr><th id="103">103</th><td><dfn class="tu decl def" id="P7" title='P7' data-type='const long double' data-ref="P7">P7</dfn> =  <var>1.42857142857142857119522943477166120e-1L</var>,	<i>/*  0x1249249249249248ed79a0ae434de.0p-115L */</i></td></tr>
+<tr><th id="104">104</th><td><dfn class="tu decl def" id="P8" title='P8' data-type='const long double' data-ref="P8">P8</dfn> = -<var>1.24999999999999994863289015033581301e-1L</var>;	<i>/* -0x1fffffffffffffa13e91765e46140.0p-116L */</i></td></tr>
+<tr><th id="105">105</th><td><i>/* Double precision gives ~ 53 + log2(P9 * max(|d|)**8) ~= 120 bits. */</i></td></tr>
+<tr><th id="106">106</th><td><em>static</em> <em>const</em> <em>double</em></td></tr>
+<tr><th id="107">107</th><td><dfn class="tu decl def" id="P9" title='P9' data-type='const double' data-ref="P9">P9</dfn> =  <var>1.1111111111111401e-1</var>,		<i>/*  0x1c71c71c71c7ed.0p-56 */</i></td></tr>
+<tr><th id="108">108</th><td><dfn class="tu decl def" id="P10" title='P10' data-type='const double' data-ref="P10">P10</dfn> = -<var>1.0000000000040135e-1</var>,		<i>/* -0x199999999a0a92.0p-56 */</i></td></tr>
+<tr><th id="109">109</th><td><dfn class="tu decl def" id="P11" title='P11' data-type='const double' data-ref="P11">P11</dfn> =  <var>9.0909090728136258e-2</var>,		<i>/*  0x1745d173962111.0p-56 */</i></td></tr>
+<tr><th id="110">110</th><td><dfn class="tu decl def" id="P12" title='P12' data-type='const double' data-ref="P12">P12</dfn> = -<var>8.3333318851855284e-2</var>,		<i>/* -0x1555551722c7a3.0p-56 */</i></td></tr>
+<tr><th id="111">111</th><td><dfn class="tu decl def" id="P13" title='P13' data-type='const double' data-ref="P13">P13</dfn> =  <var>7.6928634666404178e-2</var>,		<i>/*  0x13b1985204a4ae.0p-56 */</i></td></tr>
+<tr><th id="112">112</th><td><dfn class="tu decl def" id="P14" title='P14' data-type='const double' data-ref="P14">P14</dfn> = -<var>7.1626810078462499e-2</var>;		<i>/* -0x12562276cdc5d0.0p-56 */</i></td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><em>static</em> <em>volatile</em> <em>const</em> <em>double</em> <dfn class="tu decl def" id="zero" title='zero' data-type='const volatile double' data-ref="zero">zero</dfn> = <var>0</var>;</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><u>#define	<dfn class="macro" id="_M/INTERVALS" data-ref="_M/INTERVALS">INTERVALS</dfn>	128</u></td></tr>
+<tr><th id="117">117</th><td><u>#define	<dfn class="macro" id="_M/LOG2_INTERVALS" data-ref="_M/LOG2_INTERVALS">LOG2_INTERVALS</dfn>	7</u></td></tr>
+<tr><th id="118">118</th><td><u>#define	<dfn class="macro" id="_M/TSIZE" data-ref="_M/TSIZE">TSIZE</dfn>		(INTERVALS + 1)</u></td></tr>
+<tr><th id="119">119</th><td><u>#define	<dfn class="macro" id="_M/G" data-ref="_M/G">G</dfn>(i)		(<a class="tu ref" href="#T" title='T' data-use='m' data-ref="T">T</a>[(i)].<a class="local col1 ref" href="#1G" title='G' data-ref="1G">G</a>)</u></td></tr>
+<tr><th id="120">120</th><td><u>#define	<dfn class="macro" id="_M/F_hi" data-ref="_M/F_hi">F_hi</dfn>(i)		(<a class="tu ref" href="#T" title='T' data-use='m' data-ref="T">T</a>[(i)].<a class="local col2 ref" href="#2F_hi" title='F_hi' data-ref="2F_hi">F_hi</a>)</u></td></tr>
+<tr><th id="121">121</th><td><u>#define	<dfn class="macro" id="_M/F_lo" data-ref="_M/F_lo">F_lo</dfn>(i)		(<a class="tu ref" href="#T" title='T' data-use='m' data-ref="T">T</a>[(i)].<a class="local col3 ref" href="#3F_lo" title='F_lo' data-ref="3F_lo">F_lo</a>)</u></td></tr>
+<tr><th id="122">122</th><td><u>#define	<dfn class="macro" id="_M/ln2_hi" data-ref="_M/ln2_hi">ln2_hi</dfn>		F_hi(TSIZE - 1)</u></td></tr>
+<tr><th id="123">123</th><td><u>#define	<dfn class="macro" id="_M/ln2_lo" data-ref="_M/ln2_lo">ln2_lo</dfn>		F_lo(TSIZE - 1)</u></td></tr>
+<tr><th id="124">124</th><td><u>#define	<dfn class="macro" id="_M/E" data-ref="_M/E">E</dfn>(i)		(<a class="tu ref" href="#U" title='U' data-use='m' data-ref="U">U</a>[(i)].<a class="local col5 ref" href="#5E" title='E' data-ref="5E">E</a>)</u></td></tr>
+<tr><th id="125">125</th><td><u>#define	<dfn class="macro" id="_M/H" data-ref="_M/H">H</dfn>(i)		(<a class="tu ref" href="#U" title='U' data-use='m' data-ref="U">U</a>[(i)].<a class="local col4 ref" href="#4H" title='H' data-ref="4H">H</a>)</u></td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><em>static</em> <em>const</em> <b>struct</b> {</td></tr>
+<tr><th id="128">128</th><td>	<em>float</em>	<dfn class="local col1 decl" id="1G" title='G' data-type='float' data-ref="1G">G</dfn>;			<i>/* 1/(1 + i/128) rounded to 8/9 bits */</i></td></tr>
+<tr><th id="129">129</th><td>	<em>float</em>	<dfn class="local col2 decl" id="2F_hi" title='F_hi' data-type='float' data-ref="2F_hi">F_hi</dfn>;			<i>/* log(1 / G_i) rounded (see below) */</i></td></tr>
+<tr><th id="130">130</th><td>	<i>/* The compiler will insert 8 bytes of padding here. */</i></td></tr>
+<tr><th id="131">131</th><td>	<em>long</em> <em>double</em> <dfn class="local col3 decl" id="3F_lo" title='F_lo' data-type='long double' data-ref="3F_lo">F_lo</dfn>;		<i>/* next 113 bits for log(1 / G_i) */</i></td></tr>
+<tr><th id="132">132</th><td>} <dfn class="tu decl def" id="T" title='T' data-type='const struct (anonymous struct at /home/jon/workspace/vandroid/bionic/libm/upstream-freebsd/lib/msun/ld128/s_logl.c:127:14) [129]' data-ref="T">T</dfn>[<a class="macro" href="#118" title="(128 + 1)" data-ref="_M/TSIZE">TSIZE</a>] = {</td></tr>
+<tr><th id="133">133</th><td>	<i>/*</i></td></tr>
+<tr><th id="134">134</th><td><i>	 * ln2_hi and each F_hi(i) are rounded to a number of bits that</i></td></tr>
+<tr><th id="135">135</th><td><i>	 * makes F_hi(i) + dk*ln2_hi exact for all i and all dk.</i></td></tr>
+<tr><th id="136">136</th><td><i>	 *</i></td></tr>
+<tr><th id="137">137</th><td><i>	 * The last entry (for X just below 2) is used to define ln2_hi</i></td></tr>
+<tr><th id="138">138</th><td><i>	 * and ln2_lo, to ensure that F_hi(i) and F_lo(i) cancel exactly</i></td></tr>
+<tr><th id="139">139</th><td><i>	 * with dk*ln2_hi and dk*ln2_lo, respectively, when dk = -1.</i></td></tr>
+<tr><th id="140">140</th><td><i>	 * This is needed for accuracy when x is just below 1.  (To avoid</i></td></tr>
+<tr><th id="141">141</th><td><i>	 * special cases, such x are "reduced" strangely to X just below</i></td></tr>
+<tr><th id="142">142</th><td><i>	 * 2 and dk = -1, and then the exact cancellation is needed</i></td></tr>
+<tr><th id="143">143</th><td><i>	 * because any the error from any non-exactness would be too</i></td></tr>
+<tr><th id="144">144</th><td><i>	 * large).</i></td></tr>
+<tr><th id="145">145</th><td><i>	 *</i></td></tr>
+<tr><th id="146">146</th><td><i>	 * The relevant range of dk is [-16445, 16383].  The maximum number</i></td></tr>
+<tr><th id="147">147</th><td><i>	 * of bits in F_hi(i) that works is very dependent on i but has</i></td></tr>
+<tr><th id="148">148</th><td><i>	 * a minimum of 93.  We only need about 12 bits in F_hi(i) for</i></td></tr>
+<tr><th id="149">149</th><td><i>	 * it to provide enough extra precision.</i></td></tr>
+<tr><th id="150">150</th><td><i>	 *</i></td></tr>
+<tr><th id="151">151</th><td><i>	 * We round F_hi(i) to 24 bits so that it can have type float,</i></td></tr>
+<tr><th id="152">152</th><td><i>	 * mainly to minimize the size of the table.  Using all 24 bits</i></td></tr>
+<tr><th id="153">153</th><td><i>	 * in a float for it automatically satisfies the above constraints.</i></td></tr>
+<tr><th id="154">154</th><td><i>	 */</i></td></tr>
+<tr><th id="155">155</th><td>     <var>0x800000.0p-23</var>,  <var>0</var>,               <var>0</var>,</td></tr>
+<tr><th id="156">156</th><td>     <var>0xfe0000.0p-24</var>,  <var>0x8080ac.0p-30</var>, -<var>0x14ee431dae6674afa0c4bfe16e8fd.0p-144L</var>,</td></tr>
+<tr><th id="157">157</th><td>     <var>0xfc0000.0p-24</var>,  <var>0x8102b3.0p-29</var>, -<var>0x1db29ee2d83717be918e1119642ab.0p-144L</var>,</td></tr>
+<tr><th id="158">158</th><td>     <var>0xfa0000.0p-24</var>,  <var>0xc24929.0p-29</var>,  <var>0x1191957d173697cf302cc9476f561.0p-143L</var>,</td></tr>
+<tr><th id="159">159</th><td>     <var>0xf80000.0p-24</var>,  <var>0x820aec.0p-28</var>,  <var>0x13ce8888e02e78eba9b1113bc1c18.0p-142L</var>,</td></tr>
+<tr><th id="160">160</th><td>     <var>0xf60000.0p-24</var>,  <var>0xa33577.0p-28</var>, -<var>0x17a4382ce6eb7bfa509bec8da5f22.0p-142L</var>,</td></tr>
+<tr><th id="161">161</th><td>     <var>0xf48000.0p-24</var>,  <var>0xbc42cb.0p-28</var>, -<var>0x172a21161a107674986dcdca6709c.0p-143L</var>,</td></tr>
+<tr><th id="162">162</th><td>     <var>0xf30000.0p-24</var>,  <var>0xd57797.0p-28</var>, -<var>0x1e09de07cb958897a3ea46e84abb3.0p-142L</var>,</td></tr>
+<tr><th id="163">163</th><td>     <var>0xf10000.0p-24</var>,  <var>0xf7518e.0p-28</var>,  <var>0x1ae1eec1b036c484993c549c4bf40.0p-151L</var>,</td></tr>
+<tr><th id="164">164</th><td>     <var>0xef0000.0p-24</var>,  <var>0x8cb9df.0p-27</var>, -<var>0x1d7355325d560d9e9ab3d6ebab580.0p-141L</var>,</td></tr>
+<tr><th id="165">165</th><td>     <var>0xed8000.0p-24</var>,  <var>0x999ec0.0p-27</var>, -<var>0x1f9f02d256d5037108f4ec21e48cd.0p-142L</var>,</td></tr>
+<tr><th id="166">166</th><td>     <var>0xec0000.0p-24</var>,  <var>0xa6988b.0p-27</var>, -<var>0x16fc0a9d12c17a70f7a684c596b12.0p-143L</var>,</td></tr>
+<tr><th id="167">167</th><td>     <var>0xea0000.0p-24</var>,  <var>0xb80698.0p-27</var>,  <var>0x15d581c1e8da99ded322fb08b8462.0p-141L</var>,</td></tr>
+<tr><th id="168">168</th><td>     <var>0xe80000.0p-24</var>,  <var>0xc99af3.0p-27</var>, -<var>0x1535b3ba8f150ae09996d7bb4653e.0p-143L</var>,</td></tr>
+<tr><th id="169">169</th><td>     <var>0xe70000.0p-24</var>,  <var>0xd273b2.0p-27</var>,  <var>0x163786f5251aefe0ded34c8318f52.0p-145L</var>,</td></tr>
+<tr><th id="170">170</th><td>     <var>0xe50000.0p-24</var>,  <var>0xe442c0.0p-27</var>,  <var>0x1bc4b2368e32d56699c1799a244d4.0p-144L</var>,</td></tr>
+<tr><th id="171">171</th><td>     <var>0xe38000.0p-24</var>,  <var>0xf1b83f.0p-27</var>,  <var>0x1c6090f684e6766abceccab1d7174.0p-141L</var>,</td></tr>
+<tr><th id="172">172</th><td>     <var>0xe20000.0p-24</var>,  <var>0xff448a.0p-27</var>, -<var>0x1890aa69ac9f4215f93936b709efb.0p-142L</var>,</td></tr>
+<tr><th id="173">173</th><td>     <var>0xe08000.0p-24</var>,  <var>0x8673f6.0p-26</var>,  <var>0x1b9985194b6affd511b534b72a28e.0p-140L</var>,</td></tr>
+<tr><th id="174">174</th><td>     <var>0xdf0000.0p-24</var>,  <var>0x8d515c.0p-26</var>, -<var>0x1dc08d61c6ef1d9b2ef7e68680598.0p-143L</var>,</td></tr>
+<tr><th id="175">175</th><td>     <var>0xdd8000.0p-24</var>,  <var>0x943a9e.0p-26</var>, -<var>0x1f72a2dac729b3f46662238a9425a.0p-142L</var>,</td></tr>
+<tr><th id="176">176</th><td>     <var>0xdc0000.0p-24</var>,  <var>0x9b2fe6.0p-26</var>, -<var>0x1fd4dfd3a0afb9691aed4d5e3df94.0p-140L</var>,</td></tr>
+<tr><th id="177">177</th><td>     <var>0xda8000.0p-24</var>,  <var>0xa2315d.0p-26</var>, -<var>0x11b26121629c46c186384993e1c93.0p-142L</var>,</td></tr>
+<tr><th id="178">178</th><td>     <var>0xd90000.0p-24</var>,  <var>0xa93f2f.0p-26</var>,  <var>0x1286d633e8e5697dc6a402a56fce1.0p-141L</var>,</td></tr>
+<tr><th id="179">179</th><td>     <var>0xd78000.0p-24</var>,  <var>0xb05988.0p-26</var>,  <var>0x16128eba9367707ebfa540e45350c.0p-144L</var>,</td></tr>
+<tr><th id="180">180</th><td>     <var>0xd60000.0p-24</var>,  <var>0xb78094.0p-26</var>,  <var>0x16ead577390d31ef0f4c9d43f79b2.0p-140L</var>,</td></tr>
+<tr><th id="181">181</th><td>     <var>0xd50000.0p-24</var>,  <var>0xbc4c6c.0p-26</var>,  <var>0x151131ccf7c7b75e7d900b521c48d.0p-141L</var>,</td></tr>
+<tr><th id="182">182</th><td>     <var>0xd38000.0p-24</var>,  <var>0xc3890a.0p-26</var>, -<var>0x115e2cd714bd06508aeb00d2ae3e9.0p-140L</var>,</td></tr>
+<tr><th id="183">183</th><td>     <var>0xd20000.0p-24</var>,  <var>0xcad2d7.0p-26</var>, -<var>0x1847f406ebd3af80485c2f409633c.0p-142L</var>,</td></tr>
+<tr><th id="184">184</th><td>     <var>0xd10000.0p-24</var>,  <var>0xcfb620.0p-26</var>,  <var>0x1c2259904d686581799fbce0b5f19.0p-141L</var>,</td></tr>
+<tr><th id="185">185</th><td>     <var>0xcf8000.0p-24</var>,  <var>0xd71653.0p-26</var>,  <var>0x1ece57a8d5ae54f550444ecf8b995.0p-140L</var>,</td></tr>
+<tr><th id="186">186</th><td>     <var>0xce0000.0p-24</var>,  <var>0xde843a.0p-26</var>, -<var>0x1f109d4bc4595412b5d2517aaac13.0p-141L</var>,</td></tr>
+<tr><th id="187">187</th><td>     <var>0xcd0000.0p-24</var>,  <var>0xe37fde.0p-26</var>,  <var>0x1bc03dc271a74d3a85b5b43c0e727.0p-141L</var>,</td></tr>
+<tr><th id="188">188</th><td>     <var>0xcb8000.0p-24</var>,  <var>0xeb050c.0p-26</var>, -<var>0x1bf2badc0df841a71b79dd5645b46.0p-145L</var>,</td></tr>
+<tr><th id="189">189</th><td>     <var>0xca0000.0p-24</var>,  <var>0xf29878.0p-26</var>, -<var>0x18efededd89fbe0bcfbe6d6db9f66.0p-147L</var>,</td></tr>
+<tr><th id="190">190</th><td>     <var>0xc90000.0p-24</var>,  <var>0xf7ad6f.0p-26</var>,  <var>0x1373ff977baa6911c7bafcb4d84fb.0p-141L</var>,</td></tr>
+<tr><th id="191">191</th><td>     <var>0xc80000.0p-24</var>,  <var>0xfcc8e3.0p-26</var>,  <var>0x196766f2fb328337cc050c6d83b22.0p-140L</var>,</td></tr>
+<tr><th id="192">192</th><td>     <var>0xc68000.0p-24</var>,  <var>0x823f30.0p-25</var>,  <var>0x19bd076f7c434e5fcf1a212e2a91e.0p-139L</var>,</td></tr>
+<tr><th id="193">193</th><td>     <var>0xc58000.0p-24</var>,  <var>0x84d52c.0p-25</var>, -<var>0x1a327257af0f465e5ecab5f2a6f81.0p-139L</var>,</td></tr>
+<tr><th id="194">194</th><td>     <var>0xc40000.0p-24</var>,  <var>0x88bc74.0p-25</var>,  <var>0x113f23def19c5a0fe396f40f1dda9.0p-141L</var>,</td></tr>
+<tr><th id="195">195</th><td>     <var>0xc30000.0p-24</var>,  <var>0x8b5ae6.0p-25</var>,  <var>0x1759f6e6b37de945a049a962e66c6.0p-139L</var>,</td></tr>
+<tr><th id="196">196</th><td>     <var>0xc20000.0p-24</var>,  <var>0x8dfccb.0p-25</var>,  <var>0x1ad35ca6ed5147bdb6ddcaf59c425.0p-141L</var>,</td></tr>
+<tr><th id="197">197</th><td>     <var>0xc10000.0p-24</var>,  <var>0x90a22b.0p-25</var>,  <var>0x1a1d71a87deba46bae9827221dc98.0p-139L</var>,</td></tr>
+<tr><th id="198">198</th><td>     <var>0xbf8000.0p-24</var>,  <var>0x94a0d8.0p-25</var>, -<var>0x139e5210c2b730e28aba001a9b5e0.0p-140L</var>,</td></tr>
+<tr><th id="199">199</th><td>     <var>0xbe8000.0p-24</var>,  <var>0x974f16.0p-25</var>, -<var>0x18f6ebcff3ed72e23e13431adc4a5.0p-141L</var>,</td></tr>
+<tr><th id="200">200</th><td>     <var>0xbd8000.0p-24</var>,  <var>0x9a00f1.0p-25</var>, -<var>0x1aa268be39aab7148e8d80caa10b7.0p-139L</var>,</td></tr>
+<tr><th id="201">201</th><td>     <var>0xbc8000.0p-24</var>,  <var>0x9cb672.0p-25</var>, -<var>0x14c8815839c5663663d15faed7771.0p-139L</var>,</td></tr>
+<tr><th id="202">202</th><td>     <var>0xbb0000.0p-24</var>,  <var>0xa0cda1.0p-25</var>,  <var>0x1eaf46390dbb2438273918db7df5c.0p-141L</var>,</td></tr>
+<tr><th id="203">203</th><td>     <var>0xba0000.0p-24</var>,  <var>0xa38c6e.0p-25</var>,  <var>0x138e20d831f698298adddd7f32686.0p-141L</var>,</td></tr>
+<tr><th id="204">204</th><td>     <var>0xb90000.0p-24</var>,  <var>0xa64f05.0p-25</var>, -<var>0x1e8d3c41123615b147a5d47bc208f.0p-142L</var>,</td></tr>
+<tr><th id="205">205</th><td>     <var>0xb80000.0p-24</var>,  <var>0xa91570.0p-25</var>,  <var>0x1ce28f5f3840b263acb4351104631.0p-140L</var>,</td></tr>
+<tr><th id="206">206</th><td>     <var>0xb70000.0p-24</var>,  <var>0xabdfbb.0p-25</var>, -<var>0x186e5c0a42423457e22d8c650b355.0p-139L</var>,</td></tr>
+<tr><th id="207">207</th><td>     <var>0xb60000.0p-24</var>,  <var>0xaeadef.0p-25</var>, -<var>0x14d41a0b2a08a465dc513b13f567d.0p-143L</var>,</td></tr>
+<tr><th id="208">208</th><td>     <var>0xb50000.0p-24</var>,  <var>0xb18018.0p-25</var>,  <var>0x16755892770633947ffe651e7352f.0p-139L</var>,</td></tr>
+<tr><th id="209">209</th><td>     <var>0xb40000.0p-24</var>,  <var>0xb45642.0p-25</var>, -<var>0x16395ebe59b15228bfe8798d10ff0.0p-142L</var>,</td></tr>
+<tr><th id="210">210</th><td>     <var>0xb30000.0p-24</var>,  <var>0xb73077.0p-25</var>,  <var>0x1abc65c8595f088b61a335f5b688c.0p-140L</var>,</td></tr>
+<tr><th id="211">211</th><td>     <var>0xb20000.0p-24</var>,  <var>0xba0ec4.0p-25</var>, -<var>0x1273089d3dad88e7d353e9967d548.0p-139L</var>,</td></tr>
+<tr><th id="212">212</th><td>     <var>0xb10000.0p-24</var>,  <var>0xbcf133.0p-25</var>,  <var>0x10f9f67b1f4bbf45de06ecebfaf6d.0p-139L</var>,</td></tr>
+<tr><th id="213">213</th><td>     <var>0xb00000.0p-24</var>,  <var>0xbfd7d2.0p-25</var>, -<var>0x109fab904864092b34edda19a831e.0p-140L</var>,</td></tr>
+<tr><th id="214">214</th><td>     <var>0xaf0000.0p-24</var>,  <var>0xc2c2ac.0p-25</var>, -<var>0x1124680aa43333221d8a9b475a6ba.0p-139L</var>,</td></tr>
+<tr><th id="215">215</th><td>     <var>0xae8000.0p-24</var>,  <var>0xc439b3.0p-25</var>, -<var>0x1f360cc4710fbfe24b633f4e8d84d.0p-140L</var>,</td></tr>
+<tr><th id="216">216</th><td>     <var>0xad8000.0p-24</var>,  <var>0xc72afd.0p-25</var>, -<var>0x132d91f21d89c89c45003fc5d7807.0p-140L</var>,</td></tr>
+<tr><th id="217">217</th><td>     <var>0xac8000.0p-24</var>,  <var>0xca20a2.0p-25</var>, -<var>0x16bf9b4d1f8da8002f2449e174504.0p-139L</var>,</td></tr>
+<tr><th id="218">218</th><td>     <var>0xab8000.0p-24</var>,  <var>0xcd1aae.0p-25</var>,  <var>0x19deb5ce6a6a8717d5626e16acc7d.0p-141L</var>,</td></tr>
+<tr><th id="219">219</th><td>     <var>0xaa8000.0p-24</var>,  <var>0xd0192f.0p-25</var>,  <var>0x1a29fb48f7d3ca87dabf351aa41f4.0p-139L</var>,</td></tr>
+<tr><th id="220">220</th><td>     <var>0xaa0000.0p-24</var>,  <var>0xd19a20.0p-25</var>,  <var>0x1127d3c6457f9d79f51dcc73014c9.0p-141L</var>,</td></tr>
+<tr><th id="221">221</th><td>     <var>0xa90000.0p-24</var>,  <var>0xd49f6a.0p-25</var>, -<var>0x1ba930e486a0ac42d1bf9199188e7.0p-141L</var>,</td></tr>
+<tr><th id="222">222</th><td>     <var>0xa80000.0p-24</var>,  <var>0xd7a94b.0p-25</var>, -<var>0x1b6e645f31549dd1160bcc45c7e2c.0p-139L</var>,</td></tr>
+<tr><th id="223">223</th><td>     <var>0xa70000.0p-24</var>,  <var>0xdab7d0.0p-25</var>,  <var>0x1118a425494b610665377f15625b6.0p-140L</var>,</td></tr>
+<tr><th id="224">224</th><td>     <var>0xa68000.0p-24</var>,  <var>0xdc40d5.0p-25</var>,  <var>0x1966f24d29d3a2d1b2176010478be.0p-140L</var>,</td></tr>
+<tr><th id="225">225</th><td>     <var>0xa58000.0p-24</var>,  <var>0xdf566d.0p-25</var>, -<var>0x1d8e52eb2248f0c95dd83626d7333.0p-142L</var>,</td></tr>
+<tr><th id="226">226</th><td>     <var>0xa48000.0p-24</var>,  <var>0xe270ce.0p-25</var>, -<var>0x1ee370f96e6b67ccb006a5b9890ea.0p-140L</var>,</td></tr>
+<tr><th id="227">227</th><td>     <var>0xa40000.0p-24</var>,  <var>0xe3ffce.0p-25</var>,  <var>0x1d155324911f56db28da4d629d00a.0p-140L</var>,</td></tr>
+<tr><th id="228">228</th><td>     <var>0xa30000.0p-24</var>,  <var>0xe72179.0p-25</var>, -<var>0x1fe6e2f2f867d8f4d60c713346641.0p-140L</var>,</td></tr>
+<tr><th id="229">229</th><td>     <var>0xa20000.0p-24</var>,  <var>0xea4812.0p-25</var>,  <var>0x1b7be9add7f4d3b3d406b6cbf3ce5.0p-140L</var>,</td></tr>
+<tr><th id="230">230</th><td>     <var>0xa18000.0p-24</var>,  <var>0xebdd3d.0p-25</var>,  <var>0x1b3cfb3f7511dd73692609040ccc2.0p-139L</var>,</td></tr>
+<tr><th id="231">231</th><td>     <var>0xa08000.0p-24</var>,  <var>0xef0b5b.0p-25</var>, -<var>0x1220de1f7301901b8ad85c25afd09.0p-139L</var>,</td></tr>
+<tr><th id="232">232</th><td>     <var>0xa00000.0p-24</var>,  <var>0xf0a451.0p-25</var>, -<var>0x176364c9ac81cc8a4dfb804de6867.0p-140L</var>,</td></tr>
+<tr><th id="233">233</th><td>     <var>0x9f0000.0p-24</var>,  <var>0xf3da16.0p-25</var>,  <var>0x1eed6b9aafac8d42f78d3e65d3727.0p-141L</var>,</td></tr>
+<tr><th id="234">234</th><td>     <var>0x9e8000.0p-24</var>,  <var>0xf576e9.0p-25</var>,  <var>0x1d593218675af269647b783d88999.0p-139L</var>,</td></tr>
+<tr><th id="235">235</th><td>     <var>0x9d8000.0p-24</var>,  <var>0xf8b47c.0p-25</var>, -<var>0x13e8eb7da053e063714615f7cc91d.0p-144L</var>,</td></tr>
+<tr><th id="236">236</th><td>     <var>0x9d0000.0p-24</var>,  <var>0xfa553f.0p-25</var>,  <var>0x1c063259bcade02951686d5373aec.0p-139L</var>,</td></tr>
+<tr><th id="237">237</th><td>     <var>0x9c0000.0p-24</var>,  <var>0xfd9ac5.0p-25</var>,  <var>0x1ef491085fa3c1649349630531502.0p-139L</var>,</td></tr>
+<tr><th id="238">238</th><td>     <var>0x9b8000.0p-24</var>,  <var>0xff3f8c.0p-25</var>,  <var>0x1d607a7c2b8c5320619fb9433d841.0p-139L</var>,</td></tr>
+<tr><th id="239">239</th><td>     <var>0x9a8000.0p-24</var>,  <var>0x814697.0p-24</var>, -<var>0x12ad3817004f3f0bdff99f932b273.0p-138L</var>,</td></tr>
+<tr><th id="240">240</th><td>     <var>0x9a0000.0p-24</var>,  <var>0x821b06.0p-24</var>, -<var>0x189fc53117f9e54e78103a2bc1767.0p-141L</var>,</td></tr>
+<tr><th id="241">241</th><td>     <var>0x990000.0p-24</var>,  <var>0x83c5f8.0p-24</var>,  <var>0x14cf15a048907b7d7f47ddb45c5a3.0p-139L</var>,</td></tr>
+<tr><th id="242">242</th><td>     <var>0x988000.0p-24</var>,  <var>0x849c7d.0p-24</var>,  <var>0x1cbb1d35fb82873b04a9af1dd692c.0p-138L</var>,</td></tr>
+<tr><th id="243">243</th><td>     <var>0x978000.0p-24</var>,  <var>0x864ba6.0p-24</var>,  <var>0x1128639b814f9b9770d8cb6573540.0p-138L</var>,</td></tr>
+<tr><th id="244">244</th><td>     <var>0x970000.0p-24</var>,  <var>0x87244c.0p-24</var>,  <var>0x184733853300f002e836dfd47bd41.0p-139L</var>,</td></tr>
+<tr><th id="245">245</th><td>     <var>0x968000.0p-24</var>,  <var>0x87fdaa.0p-24</var>,  <var>0x109d23aef77dd5cd7cc94306fb3ff.0p-140L</var>,</td></tr>
+<tr><th id="246">246</th><td>     <var>0x958000.0p-24</var>,  <var>0x89b293.0p-24</var>, -<var>0x1a81ef367a59de2b41eeebd550702.0p-138L</var>,</td></tr>
+<tr><th id="247">247</th><td>     <var>0x950000.0p-24</var>,  <var>0x8a8e20.0p-24</var>, -<var>0x121ad3dbb2f45275c917a30df4ac9.0p-138L</var>,</td></tr>
+<tr><th id="248">248</th><td>     <var>0x948000.0p-24</var>,  <var>0x8b6a6a.0p-24</var>, -<var>0x1cfb981628af71a89df4e6df2e93b.0p-139L</var>,</td></tr>
+<tr><th id="249">249</th><td>     <var>0x938000.0p-24</var>,  <var>0x8d253a.0p-24</var>, -<var>0x1d21730ea76cfdec367828734cae5.0p-139L</var>,</td></tr>
+<tr><th id="250">250</th><td>     <var>0x930000.0p-24</var>,  <var>0x8e03c2.0p-24</var>,  <var>0x135cc00e566f76b87333891e0dec4.0p-138L</var>,</td></tr>
+<tr><th id="251">251</th><td>     <var>0x928000.0p-24</var>,  <var>0x8ee30d.0p-24</var>, -<var>0x10fcb5df257a263e3bf446c6e3f69.0p-140L</var>,</td></tr>
+<tr><th id="252">252</th><td>     <var>0x918000.0p-24</var>,  <var>0x90a3ee.0p-24</var>, -<var>0x16e171b15433d723a4c7380a448d8.0p-139L</var>,</td></tr>
+<tr><th id="253">253</th><td>     <var>0x910000.0p-24</var>,  <var>0x918587.0p-24</var>, -<var>0x1d050da07f3236f330972da2a7a87.0p-139L</var>,</td></tr>
+<tr><th id="254">254</th><td>     <var>0x908000.0p-24</var>,  <var>0x9267e7.0p-24</var>,  <var>0x1be03669a5268d21148c6002becd3.0p-139L</var>,</td></tr>
+<tr><th id="255">255</th><td>     <var>0x8f8000.0p-24</var>,  <var>0x942f04.0p-24</var>,  <var>0x10b28e0e26c336af90e00533323ba.0p-139L</var>,</td></tr>
+<tr><th id="256">256</th><td>     <var>0x8f0000.0p-24</var>,  <var>0x9513c3.0p-24</var>,  <var>0x1a1d820da57cf2f105a89060046aa.0p-138L</var>,</td></tr>
+<tr><th id="257">257</th><td>     <var>0x8e8000.0p-24</var>,  <var>0x95f950.0p-24</var>, -<var>0x19ef8f13ae3cf162409d8ea99d4c0.0p-139L</var>,</td></tr>
+<tr><th id="258">258</th><td>     <var>0x8e0000.0p-24</var>,  <var>0x96dfab.0p-24</var>, -<var>0x109e417a6e507b9dc10dac743ad7a.0p-138L</var>,</td></tr>
+<tr><th id="259">259</th><td>     <var>0x8d0000.0p-24</var>,  <var>0x98aed2.0p-24</var>,  <var>0x10d01a2c5b0e97c4990b23d9ac1f5.0p-139L</var>,</td></tr>
+<tr><th id="260">260</th><td>     <var>0x8c8000.0p-24</var>,  <var>0x9997a2.0p-24</var>, -<var>0x1d6a50d4b61ea74540bdd2aa99a42.0p-138L</var>,</td></tr>
+<tr><th id="261">261</th><td>     <var>0x8c0000.0p-24</var>,  <var>0x9a8145.0p-24</var>,  <var>0x1b3b190b83f9527e6aba8f2d783c1.0p-138L</var>,</td></tr>
+<tr><th id="262">262</th><td>     <var>0x8b8000.0p-24</var>,  <var>0x9b6bbf.0p-24</var>,  <var>0x13a69fad7e7abe7ba81c664c107e0.0p-138L</var>,</td></tr>
+<tr><th id="263">263</th><td>     <var>0x8b0000.0p-24</var>,  <var>0x9c5711.0p-24</var>, -<var>0x11cd12316f576aad348ae79867223.0p-138L</var>,</td></tr>
+<tr><th id="264">264</th><td>     <var>0x8a8000.0p-24</var>,  <var>0x9d433b.0p-24</var>,  <var>0x1c95c444b807a246726b304ccae56.0p-139L</var>,</td></tr>
+<tr><th id="265">265</th><td>     <var>0x898000.0p-24</var>,  <var>0x9f1e22.0p-24</var>, -<var>0x1b9c224ea698c2f9b47466d6123fe.0p-139L</var>,</td></tr>
+<tr><th id="266">266</th><td>     <var>0x890000.0p-24</var>,  <var>0xa00ce1.0p-24</var>,  <var>0x125ca93186cf0f38b4619a2483399.0p-141L</var>,</td></tr>
+<tr><th id="267">267</th><td>     <var>0x888000.0p-24</var>,  <var>0xa0fc80.0p-24</var>, -<var>0x1ee38a7bc228b3597043be78eaf49.0p-139L</var>,</td></tr>
+<tr><th id="268">268</th><td>     <var>0x880000.0p-24</var>,  <var>0xa1ed00.0p-24</var>, -<var>0x1a0db876613d204147dc69a07a649.0p-138L</var>,</td></tr>
+<tr><th id="269">269</th><td>     <var>0x878000.0p-24</var>,  <var>0xa2de62.0p-24</var>,  <var>0x193224e8516c008d3602a7b41c6e8.0p-139L</var>,</td></tr>
+<tr><th id="270">270</th><td>     <var>0x870000.0p-24</var>,  <var>0xa3d0a9.0p-24</var>,  <var>0x1fa28b4d2541aca7d5844606b2421.0p-139L</var>,</td></tr>
+<tr><th id="271">271</th><td>     <var>0x868000.0p-24</var>,  <var>0xa4c3d6.0p-24</var>,  <var>0x1c1b5760fb4571acbcfb03f16daf4.0p-138L</var>,</td></tr>
+<tr><th id="272">272</th><td>     <var>0x858000.0p-24</var>,  <var>0xa6acea.0p-24</var>,  <var>0x1fed5d0f65949c0a345ad743ae1ae.0p-140L</var>,</td></tr>
+<tr><th id="273">273</th><td>     <var>0x850000.0p-24</var>,  <var>0xa7a2d4.0p-24</var>,  <var>0x1ad270c9d749362382a7688479e24.0p-140L</var>,</td></tr>
+<tr><th id="274">274</th><td>     <var>0x848000.0p-24</var>,  <var>0xa899ab.0p-24</var>,  <var>0x199ff15ce532661ea9643a3a2d378.0p-139L</var>,</td></tr>
+<tr><th id="275">275</th><td>     <var>0x840000.0p-24</var>,  <var>0xa99171.0p-24</var>,  <var>0x1a19e15ccc45d257530a682b80490.0p-139L</var>,</td></tr>
+<tr><th id="276">276</th><td>     <var>0x838000.0p-24</var>,  <var>0xaa8a28.0p-24</var>, -<var>0x121a14ec532b35ba3e1f868fd0b5e.0p-140L</var>,</td></tr>
+<tr><th id="277">277</th><td>     <var>0x830000.0p-24</var>,  <var>0xab83d1.0p-24</var>,  <var>0x1aee319980bff3303dd481779df69.0p-139L</var>,</td></tr>
+<tr><th id="278">278</th><td>     <var>0x828000.0p-24</var>,  <var>0xac7e6f.0p-24</var>, -<var>0x18ffd9e3900345a85d2d86161742e.0p-140L</var>,</td></tr>
+<tr><th id="279">279</th><td>     <var>0x820000.0p-24</var>,  <var>0xad7a03.0p-24</var>, -<var>0x1e4db102ce29f79b026b64b42caa1.0p-140L</var>,</td></tr>
+<tr><th id="280">280</th><td>     <var>0x818000.0p-24</var>,  <var>0xae768f.0p-24</var>,  <var>0x17c35c55a04a82ab19f77652d977a.0p-141L</var>,</td></tr>
+<tr><th id="281">281</th><td>     <var>0x810000.0p-24</var>,  <var>0xaf7415.0p-24</var>,  <var>0x1448324047019b48d7b98c1cf7234.0p-138L</var>,</td></tr>
+<tr><th id="282">282</th><td>     <var>0x808000.0p-24</var>,  <var>0xb07298.0p-24</var>, -<var>0x1750ee3915a197e9c7359dd94152f.0p-138L</var>,</td></tr>
+<tr><th id="283">283</th><td>     <var>0x800000.0p-24</var>,  <var>0xb17218.0p-24</var>, -<var>0x105c610ca86c3898cff81a12a17e2.0p-141L</var>,</td></tr>
+<tr><th id="284">284</th><td>};</td></tr>
+<tr><th id="285">285</th><td></td></tr>
+<tr><th id="286">286</th><td><u>#<span data-ppcond="286">ifdef</span> <a class="macro" href="#90" data-ref="_M/USE_UTAB">USE_UTAB</a></u></td></tr>
+<tr><th id="287">287</th><td><em>static</em> <em>const</em> <b>struct</b> {</td></tr>
+<tr><th id="288">288</th><td>	<em>float</em>	<dfn class="local col4 decl" id="4H" title='H' data-type='float' data-ref="4H">H</dfn>;			<i>/* 1 + i/INTERVALS (exact) */</i></td></tr>
+<tr><th id="289">289</th><td>	<em>float</em>	<dfn class="local col5 decl" id="5E" title='E' data-type='float' data-ref="5E">E</dfn>;			<i>/* H(i) * G(i) - 1 (exact) */</i></td></tr>
+<tr><th id="290">290</th><td>} <dfn class="tu decl def" id="U" title='U' data-type='const struct (anonymous struct at /home/jon/workspace/vandroid/bionic/libm/upstream-freebsd/lib/msun/ld128/s_logl.c:287:14) [129]' data-ref="U">U</dfn>[<a class="macro" href="#118" title="(128 + 1)" data-ref="_M/TSIZE">TSIZE</a>] = {</td></tr>
+<tr><th id="291">291</th><td>	 <var>0x800000.0p-23</var>,  <var>0</var>,</td></tr>
+<tr><th id="292">292</th><td>	 <var>0x810000.0p-23</var>, -<var>0x800000.0p-37</var>,</td></tr>
+<tr><th id="293">293</th><td>	 <var>0x820000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="294">294</th><td>	 <var>0x830000.0p-23</var>, -<var>0x900000.0p-34</var>,</td></tr>
+<tr><th id="295">295</th><td>	 <var>0x840000.0p-23</var>, -<var>0x800000.0p-33</var>,</td></tr>
+<tr><th id="296">296</th><td>	 <var>0x850000.0p-23</var>, -<var>0xc80000.0p-33</var>,</td></tr>
+<tr><th id="297">297</th><td>	 <var>0x860000.0p-23</var>, -<var>0xa00000.0p-36</var>,</td></tr>
+<tr><th id="298">298</th><td>	 <var>0x870000.0p-23</var>,  <var>0x940000.0p-33</var>,</td></tr>
+<tr><th id="299">299</th><td>	 <var>0x880000.0p-23</var>,  <var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="300">300</th><td>	 <var>0x890000.0p-23</var>, -<var>0xc80000.0p-34</var>,</td></tr>
+<tr><th id="301">301</th><td>	 <var>0x8a0000.0p-23</var>,  <var>0xe00000.0p-36</var>,</td></tr>
+<tr><th id="302">302</th><td>	 <var>0x8b0000.0p-23</var>,  <var>0x900000.0p-33</var>,</td></tr>
+<tr><th id="303">303</th><td>	 <var>0x8c0000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="304">304</th><td>	 <var>0x8d0000.0p-23</var>, -<var>0xe00000.0p-33</var>,</td></tr>
+<tr><th id="305">305</th><td>	 <var>0x8e0000.0p-23</var>,  <var>0x880000.0p-33</var>,</td></tr>
+<tr><th id="306">306</th><td>	 <var>0x8f0000.0p-23</var>, -<var>0xa80000.0p-34</var>,</td></tr>
+<tr><th id="307">307</th><td>	 <var>0x900000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="308">308</th><td>	 <var>0x910000.0p-23</var>,  <var>0x800000.0p-37</var>,</td></tr>
+<tr><th id="309">309</th><td>	 <var>0x920000.0p-23</var>,  <var>0x900000.0p-35</var>,</td></tr>
+<tr><th id="310">310</th><td>	 <var>0x930000.0p-23</var>,  <var>0xd00000.0p-35</var>,</td></tr>
+<tr><th id="311">311</th><td>	 <var>0x940000.0p-23</var>,  <var>0xe00000.0p-35</var>,</td></tr>
+<tr><th id="312">312</th><td>	 <var>0x950000.0p-23</var>,  <var>0xc00000.0p-35</var>,</td></tr>
+<tr><th id="313">313</th><td>	 <var>0x960000.0p-23</var>,  <var>0xe00000.0p-36</var>,</td></tr>
+<tr><th id="314">314</th><td>	 <var>0x970000.0p-23</var>, -<var>0x800000.0p-38</var>,</td></tr>
+<tr><th id="315">315</th><td>	 <var>0x980000.0p-23</var>, -<var>0xc00000.0p-35</var>,</td></tr>
+<tr><th id="316">316</th><td>	 <var>0x990000.0p-23</var>, -<var>0xd00000.0p-34</var>,</td></tr>
+<tr><th id="317">317</th><td>	 <var>0x9a0000.0p-23</var>,  <var>0x880000.0p-33</var>,</td></tr>
+<tr><th id="318">318</th><td>	 <var>0x9b0000.0p-23</var>,  <var>0xe80000.0p-35</var>,</td></tr>
+<tr><th id="319">319</th><td>	 <var>0x9c0000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="320">320</th><td>	 <var>0x9d0000.0p-23</var>,  <var>0xb40000.0p-33</var>,</td></tr>
+<tr><th id="321">321</th><td>	 <var>0x9e0000.0p-23</var>,  <var>0x880000.0p-34</var>,</td></tr>
+<tr><th id="322">322</th><td>	 <var>0x9f0000.0p-23</var>, -<var>0xe00000.0p-35</var>,</td></tr>
+<tr><th id="323">323</th><td>	 <var>0xa00000.0p-23</var>,  <var>0x800000.0p-33</var>,</td></tr>
+<tr><th id="324">324</th><td>	 <var>0xa10000.0p-23</var>, -<var>0x900000.0p-36</var>,</td></tr>
+<tr><th id="325">325</th><td>	 <var>0xa20000.0p-23</var>, -<var>0xb00000.0p-33</var>,</td></tr>
+<tr><th id="326">326</th><td>	 <var>0xa30000.0p-23</var>, -<var>0xa00000.0p-36</var>,</td></tr>
+<tr><th id="327">327</th><td>	 <var>0xa40000.0p-23</var>,  <var>0x800000.0p-33</var>,</td></tr>
+<tr><th id="328">328</th><td>	 <var>0xa50000.0p-23</var>, -<var>0xf80000.0p-35</var>,</td></tr>
+<tr><th id="329">329</th><td>	 <var>0xa60000.0p-23</var>,  <var>0x880000.0p-34</var>,</td></tr>
+<tr><th id="330">330</th><td>	 <var>0xa70000.0p-23</var>, -<var>0x900000.0p-33</var>,</td></tr>
+<tr><th id="331">331</th><td>	 <var>0xa80000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="332">332</th><td>	 <var>0xa90000.0p-23</var>,  <var>0x900000.0p-34</var>,</td></tr>
+<tr><th id="333">333</th><td>	 <var>0xaa0000.0p-23</var>,  <var>0xa80000.0p-33</var>,</td></tr>
+<tr><th id="334">334</th><td>	 <var>0xab0000.0p-23</var>, -<var>0xac0000.0p-34</var>,</td></tr>
+<tr><th id="335">335</th><td>	 <var>0xac0000.0p-23</var>, -<var>0x800000.0p-37</var>,</td></tr>
+<tr><th id="336">336</th><td>	 <var>0xad0000.0p-23</var>,  <var>0xf80000.0p-35</var>,</td></tr>
+<tr><th id="337">337</th><td>	 <var>0xae0000.0p-23</var>,  <var>0xf80000.0p-34</var>,</td></tr>
+<tr><th id="338">338</th><td>	 <var>0xaf0000.0p-23</var>, -<var>0xac0000.0p-33</var>,</td></tr>
+<tr><th id="339">339</th><td>	 <var>0xb00000.0p-23</var>, -<var>0x800000.0p-33</var>,</td></tr>
+<tr><th id="340">340</th><td>	 <var>0xb10000.0p-23</var>, -<var>0xb80000.0p-34</var>,</td></tr>
+<tr><th id="341">341</th><td>	 <var>0xb20000.0p-23</var>, -<var>0x800000.0p-34</var>,</td></tr>
+<tr><th id="342">342</th><td>	 <var>0xb30000.0p-23</var>, -<var>0xb00000.0p-35</var>,</td></tr>
+<tr><th id="343">343</th><td>	 <var>0xb40000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="344">344</th><td>	 <var>0xb50000.0p-23</var>, -<var>0xe00000.0p-36</var>,</td></tr>
+<tr><th id="345">345</th><td>	 <var>0xb60000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="346">346</th><td>	 <var>0xb70000.0p-23</var>, -<var>0xb00000.0p-35</var>,</td></tr>
+<tr><th id="347">347</th><td>	 <var>0xb80000.0p-23</var>, -<var>0x800000.0p-34</var>,</td></tr>
+<tr><th id="348">348</th><td>	 <var>0xb90000.0p-23</var>, -<var>0xb80000.0p-34</var>,</td></tr>
+<tr><th id="349">349</th><td>	 <var>0xba0000.0p-23</var>, -<var>0x800000.0p-33</var>,</td></tr>
+<tr><th id="350">350</th><td>	 <var>0xbb0000.0p-23</var>, -<var>0xac0000.0p-33</var>,</td></tr>
+<tr><th id="351">351</th><td>	 <var>0xbc0000.0p-23</var>,  <var>0x980000.0p-33</var>,</td></tr>
+<tr><th id="352">352</th><td>	 <var>0xbd0000.0p-23</var>,  <var>0xbc0000.0p-34</var>,</td></tr>
+<tr><th id="353">353</th><td>	 <var>0xbe0000.0p-23</var>,  <var>0xe00000.0p-36</var>,</td></tr>
+<tr><th id="354">354</th><td>	 <var>0xbf0000.0p-23</var>, -<var>0xb80000.0p-35</var>,</td></tr>
+<tr><th id="355">355</th><td>	 <var>0xc00000.0p-23</var>, -<var>0x800000.0p-33</var>,</td></tr>
+<tr><th id="356">356</th><td>	 <var>0xc10000.0p-23</var>,  <var>0xa80000.0p-33</var>,</td></tr>
+<tr><th id="357">357</th><td>	 <var>0xc20000.0p-23</var>,  <var>0x900000.0p-34</var>,</td></tr>
+<tr><th id="358">358</th><td>	 <var>0xc30000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="359">359</th><td>	 <var>0xc40000.0p-23</var>, -<var>0x900000.0p-33</var>,</td></tr>
+<tr><th id="360">360</th><td>	 <var>0xc50000.0p-23</var>,  <var>0x820000.0p-33</var>,</td></tr>
+<tr><th id="361">361</th><td>	 <var>0xc60000.0p-23</var>,  <var>0x800000.0p-38</var>,</td></tr>
+<tr><th id="362">362</th><td>	 <var>0xc70000.0p-23</var>, -<var>0x820000.0p-33</var>,</td></tr>
+<tr><th id="363">363</th><td>	 <var>0xc80000.0p-23</var>,  <var>0x800000.0p-33</var>,</td></tr>
+<tr><th id="364">364</th><td>	 <var>0xc90000.0p-23</var>, -<var>0xa00000.0p-36</var>,</td></tr>
+<tr><th id="365">365</th><td>	 <var>0xca0000.0p-23</var>, -<var>0xb00000.0p-33</var>,</td></tr>
+<tr><th id="366">366</th><td>	 <var>0xcb0000.0p-23</var>,  <var>0x840000.0p-34</var>,</td></tr>
+<tr><th id="367">367</th><td>	 <var>0xcc0000.0p-23</var>, -<var>0xd00000.0p-34</var>,</td></tr>
+<tr><th id="368">368</th><td>	 <var>0xcd0000.0p-23</var>,  <var>0x800000.0p-33</var>,</td></tr>
+<tr><th id="369">369</th><td>	 <var>0xce0000.0p-23</var>, -<var>0xe00000.0p-35</var>,</td></tr>
+<tr><th id="370">370</th><td>	 <var>0xcf0000.0p-23</var>,  <var>0xa60000.0p-33</var>,</td></tr>
+<tr><th id="371">371</th><td>	 <var>0xd00000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="372">372</th><td>	 <var>0xd10000.0p-23</var>,  <var>0xb40000.0p-33</var>,</td></tr>
+<tr><th id="373">373</th><td>	 <var>0xd20000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="374">374</th><td>	 <var>0xd30000.0p-23</var>,  <var>0xaa0000.0p-33</var>,</td></tr>
+<tr><th id="375">375</th><td>	 <var>0xd40000.0p-23</var>, -<var>0xe00000.0p-35</var>,</td></tr>
+<tr><th id="376">376</th><td>	 <var>0xd50000.0p-23</var>,  <var>0x880000.0p-33</var>,</td></tr>
+<tr><th id="377">377</th><td>	 <var>0xd60000.0p-23</var>, -<var>0xd00000.0p-34</var>,</td></tr>
+<tr><th id="378">378</th><td>	 <var>0xd70000.0p-23</var>,  <var>0x9c0000.0p-34</var>,</td></tr>
+<tr><th id="379">379</th><td>	 <var>0xd80000.0p-23</var>, -<var>0xb00000.0p-33</var>,</td></tr>
+<tr><th id="380">380</th><td>	 <var>0xd90000.0p-23</var>, -<var>0x800000.0p-38</var>,</td></tr>
+<tr><th id="381">381</th><td>	 <var>0xda0000.0p-23</var>,  <var>0xa40000.0p-33</var>,</td></tr>
+<tr><th id="382">382</th><td>	 <var>0xdb0000.0p-23</var>, -<var>0xdc0000.0p-34</var>,</td></tr>
+<tr><th id="383">383</th><td>	 <var>0xdc0000.0p-23</var>,  <var>0xc00000.0p-35</var>,</td></tr>
+<tr><th id="384">384</th><td>	 <var>0xdd0000.0p-23</var>,  <var>0xca0000.0p-33</var>,</td></tr>
+<tr><th id="385">385</th><td>	 <var>0xde0000.0p-23</var>, -<var>0xb80000.0p-34</var>,</td></tr>
+<tr><th id="386">386</th><td>	 <var>0xdf0000.0p-23</var>,  <var>0xd00000.0p-35</var>,</td></tr>
+<tr><th id="387">387</th><td>	 <var>0xe00000.0p-23</var>,  <var>0xc00000.0p-33</var>,</td></tr>
+<tr><th id="388">388</th><td>	 <var>0xe10000.0p-23</var>, -<var>0xf40000.0p-34</var>,</td></tr>
+<tr><th id="389">389</th><td>	 <var>0xe20000.0p-23</var>,  <var>0x800000.0p-37</var>,</td></tr>
+<tr><th id="390">390</th><td>	 <var>0xe30000.0p-23</var>,  <var>0x860000.0p-33</var>,</td></tr>
+<tr><th id="391">391</th><td>	 <var>0xe40000.0p-23</var>, -<var>0xc80000.0p-33</var>,</td></tr>
+<tr><th id="392">392</th><td>	 <var>0xe50000.0p-23</var>, -<var>0xa80000.0p-34</var>,</td></tr>
+<tr><th id="393">393</th><td>	 <var>0xe60000.0p-23</var>,  <var>0xe00000.0p-36</var>,</td></tr>
+<tr><th id="394">394</th><td>	 <var>0xe70000.0p-23</var>,  <var>0x880000.0p-33</var>,</td></tr>
+<tr><th id="395">395</th><td>	 <var>0xe80000.0p-23</var>, -<var>0xe00000.0p-33</var>,</td></tr>
+<tr><th id="396">396</th><td>	 <var>0xe90000.0p-23</var>, -<var>0xfc0000.0p-34</var>,</td></tr>
+<tr><th id="397">397</th><td>	 <var>0xea0000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="398">398</th><td>	 <var>0xeb0000.0p-23</var>,  <var>0xe80000.0p-35</var>,</td></tr>
+<tr><th id="399">399</th><td>	 <var>0xec0000.0p-23</var>,  <var>0x900000.0p-33</var>,</td></tr>
+<tr><th id="400">400</th><td>	 <var>0xed0000.0p-23</var>,  <var>0xe20000.0p-33</var>,</td></tr>
+<tr><th id="401">401</th><td>	 <var>0xee0000.0p-23</var>, -<var>0xac0000.0p-33</var>,</td></tr>
+<tr><th id="402">402</th><td>	 <var>0xef0000.0p-23</var>, -<var>0xc80000.0p-34</var>,</td></tr>
+<tr><th id="403">403</th><td>	 <var>0xf00000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="404">404</th><td>	 <var>0xf10000.0p-23</var>,  <var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="405">405</th><td>	 <var>0xf20000.0p-23</var>,  <var>0xb80000.0p-34</var>,</td></tr>
+<tr><th id="406">406</th><td>	 <var>0xf30000.0p-23</var>,  <var>0x940000.0p-33</var>,</td></tr>
+<tr><th id="407">407</th><td>	 <var>0xf40000.0p-23</var>,  <var>0xc80000.0p-33</var>,</td></tr>
+<tr><th id="408">408</th><td>	 <var>0xf50000.0p-23</var>, -<var>0xf20000.0p-33</var>,</td></tr>
+<tr><th id="409">409</th><td>	 <var>0xf60000.0p-23</var>, -<var>0xc80000.0p-33</var>,</td></tr>
+<tr><th id="410">410</th><td>	 <var>0xf70000.0p-23</var>, -<var>0xa20000.0p-33</var>,</td></tr>
+<tr><th id="411">411</th><td>	 <var>0xf80000.0p-23</var>, -<var>0x800000.0p-33</var>,</td></tr>
+<tr><th id="412">412</th><td>	 <var>0xf90000.0p-23</var>, -<var>0xc40000.0p-34</var>,</td></tr>
+<tr><th id="413">413</th><td>	 <var>0xfa0000.0p-23</var>, -<var>0x900000.0p-34</var>,</td></tr>
+<tr><th id="414">414</th><td>	 <var>0xfb0000.0p-23</var>, -<var>0xc80000.0p-35</var>,</td></tr>
+<tr><th id="415">415</th><td>	 <var>0xfc0000.0p-23</var>, -<var>0x800000.0p-35</var>,</td></tr>
+<tr><th id="416">416</th><td>	 <var>0xfd0000.0p-23</var>, -<var>0x900000.0p-36</var>,</td></tr>
+<tr><th id="417">417</th><td>	 <var>0xfe0000.0p-23</var>, -<var>0x800000.0p-37</var>,</td></tr>
+<tr><th id="418">418</th><td>	 <var>0xff0000.0p-23</var>, -<var>0x800000.0p-39</var>,</td></tr>
+<tr><th id="419">419</th><td>	 <var>0x800000.0p-22</var>,  <var>0</var>,</td></tr>
+<tr><th id="420">420</th><td>};</td></tr>
+<tr><th id="421">421</th><td><u>#<span data-ppcond="286">endif</span> /* USE_UTAB */</u></td></tr>
+<tr><th id="422">422</th><td></td></tr>
+<tr><th id="423">423</th><td><u>#<span data-ppcond="423">ifdef</span> <a class="macro" href="#85" data-ref="_M/STRUCT_RETURN">STRUCT_RETURN</a></u></td></tr>
+<tr><th id="424">424</th><td><u>#define	<dfn class="macro" id="_M/RETURN1" data-ref="_M/RETURN1">RETURN1</dfn>(rp, v) do {	\</u></td></tr>
+<tr><th id="425">425</th><td><u>	(rp)-&gt;<a class="tu ref" href="#ld::hi" title='ld::hi' data-use='w' data-ref="ld::hi">hi</a> = (v);		\</u></td></tr>
+<tr><th id="426">426</th><td><u>	(rp)-&gt;<a class="tu ref" href="#ld::lo_set" title='ld::lo_set' data-use='w' data-ref="ld::lo_set">lo_set</a> = 0;	\</u></td></tr>
+<tr><th id="427">427</th><td><u>	return;			\</u></td></tr>
+<tr><th id="428">428</th><td><u>} while (0)</u></td></tr>
+<tr><th id="429">429</th><td></td></tr>
+<tr><th id="430">430</th><td><u>#define	<dfn class="macro" id="_M/RETURN2" data-ref="_M/RETURN2">RETURN2</dfn>(rp, h, l) do {	\</u></td></tr>
+<tr><th id="431">431</th><td><u>	(rp)-&gt;<a class="tu ref" href="#ld::hi" title='ld::hi' data-use='w' data-ref="ld::hi">hi</a> = (h);		\</u></td></tr>
+<tr><th id="432">432</th><td><u>	(rp)-&gt;<a class="tu ref" href="#ld::lo" title='ld::lo' data-use='w' data-ref="ld::lo">lo</a> = (l);		\</u></td></tr>
+<tr><th id="433">433</th><td><u>	(rp)-&gt;<a class="tu ref" href="#ld::lo_set" title='ld::lo_set' data-use='w' data-ref="ld::lo_set">lo_set</a> = 1;	\</u></td></tr>
+<tr><th id="434">434</th><td><u>	return;			\</u></td></tr>
+<tr><th id="435">435</th><td><u>} while (0)</u></td></tr>
+<tr><th id="436">436</th><td></td></tr>
+<tr><th id="437">437</th><td><b>struct</b> <dfn class="type def" id="ld" title='ld' data-ref="ld">ld</dfn> {</td></tr>
+<tr><th id="438">438</th><td>	<em>long</em> <em>double</em> <dfn class="tu decl" id="ld::hi" title='ld::hi' data-type='long double' data-ref="ld::hi">hi</dfn>;</td></tr>
+<tr><th id="439">439</th><td>	<em>long</em> <em>double</em> <dfn class="tu decl" id="ld::lo" title='ld::lo' data-type='long double' data-ref="ld::lo">lo</dfn>;</td></tr>
+<tr><th id="440">440</th><td>	<em>int</em>	<dfn class="tu decl" id="ld::lo_set" title='ld::lo_set' data-type='int' data-ref="ld::lo_set">lo_set</dfn>;</td></tr>
+<tr><th id="441">441</th><td>};</td></tr>
+<tr><th id="442">442</th><td><u>#<span data-ppcond="423">else</span></u></td></tr>
+<tr><th id="443">443</th><td><u>#define	RETURN1(rp, v)	RETURNF(v)</u></td></tr>
+<tr><th id="444">444</th><td><u>#define	RETURN2(rp, h, l)	RETURNI((h) + (l))</u></td></tr>
+<tr><th id="445">445</th><td><u>#<span data-ppcond="423">endif</span></u></td></tr>
+<tr><th id="446">446</th><td></td></tr>
+<tr><th id="447">447</th><td><u>#<span data-ppcond="447">ifdef</span> <a class="macro" href="#85" data-ref="_M/STRUCT_RETURN">STRUCT_RETURN</a></u></td></tr>
+<tr><th id="448">448</th><td><em>static</em> <b>inline</b> <a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#214" title="__attribute__((__always_inline__))" data-ref="_M/__always_inline">__always_inline</a> <em>void</em></td></tr>
+<tr><th id="449">449</th><td><dfn class="tu decl def" id="k_logl" title='k_logl' data-type='void k_logl(long double x, struct ld * rp)' data-ref="k_logl">k_logl</dfn>(<em>long</em> <em>double</em> <dfn class="local col6 decl" id="6x" title='x' data-type='long double' data-ref="6x">x</dfn>, <b>struct</b> <a class="type" href="#ld" title='ld' data-ref="ld">ld</a> *<dfn class="local col7 decl" id="7rp" title='rp' data-type='struct ld *' data-ref="7rp">rp</dfn>)</td></tr>
+<tr><th id="450">450</th><td><u>#<span data-ppcond="447">else</span></u></td></tr>
+<tr><th id="451">451</th><td><em>long</em> <em>double</em></td></tr>
+<tr><th id="452">452</th><td>logl(<em>long</em> <em>double</em> x)</td></tr>
+<tr><th id="453">453</th><td><u>#<span data-ppcond="447">endif</span></u></td></tr>
+<tr><th id="454">454</th><td>{</td></tr>
+<tr><th id="455">455</th><td>	<em>long</em> <em>double</em> <dfn class="local col8 decl" id="8d" title='d' data-type='long double' data-ref="8d">d</dfn>, <dfn class="local col9 decl" id="9val_hi" title='val_hi' data-type='long double' data-ref="9val_hi">val_hi</dfn>, <dfn class="local col0 decl" id="10val_lo" title='val_lo' data-type='long double' data-ref="10val_lo">val_lo</dfn>;</td></tr>
+<tr><th id="456">456</th><td>	<em>double</em> <dfn class="local col1 decl" id="11dd" title='dd' data-type='double' data-ref="11dd">dd</dfn>, <dfn class="local col2 decl" id="12dk" title='dk' data-type='double' data-ref="12dk">dk</dfn>;</td></tr>
+<tr><th id="457">457</th><td>	<a class="typedef" href="../../../../../libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col3 decl" id="13lx" title='lx' data-type='uint64_t' data-ref="13lx">lx</dfn>, <dfn class="local col4 decl" id="14llx" title='llx' data-type='uint64_t' data-ref="14llx">llx</dfn>;</td></tr>
+<tr><th id="458">458</th><td>	<em>int</em> <dfn class="local col5 decl" id="15i" title='i' data-type='int' data-ref="15i">i</dfn>, <dfn class="local col6 decl" id="16k" title='k' data-type='int' data-ref="16k">k</dfn>;</td></tr>
+<tr><th id="459">459</th><td>	<a class="typedef" href="../../../../../libc/include/stdint.h.html#uint16_t" title='uint16_t' data-type='__uint16_t' data-ref="uint16_t">uint16_t</a> <dfn class="local col7 decl" id="17hx" title='hx' data-type='uint16_t' data-ref="17hx">hx</dfn>;</td></tr>
+<tr><th id="460">460</th><td></td></tr>
+<tr><th id="461">461</th><td>	<a class="macro" href="../src/math_private.h.html#209" title="do { union IEEEl2bits ew_u; ew_u.e = (x); (hx) = ew_u.xbits.expsign; (lx) = ew_u.xbits.manh; (llx) = ew_u.xbits.manl; } while (0)" data-ref="_M/EXTRACT_LDBL128_WORDS">EXTRACT_LDBL128_WORDS</a>(<a class="local col7 ref" href="#17hx" title='hx' data-ref="17hx">hx</a>, <a class="local col3 ref" href="#13lx" title='lx' data-ref="13lx">lx</a>, <a class="local col4 ref" href="#14llx" title='llx' data-ref="14llx">llx</a>, <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="462">462</th><td>	<a class="local col6 ref" href="#16k" title='k' data-ref="16k">k</a> = -<var>16383</var>;</td></tr>
+<tr><th id="463">463</th><td><u>#<span data-ppcond="463">if</span> 0 /* Hard to do efficiently.  Don't do it until we support all modes. */</u></td></tr>
+<tr><th id="464">464</th><td>	<b>if</b> (x == <var>1</var>)</td></tr>
+<tr><th id="465">465</th><td>		RETURN1(rp, <var>0</var>);		<i>/* log(1) = +0 in all rounding modes */</i></td></tr>
+<tr><th id="466">466</th><td><u>#<span data-ppcond="463">endif</span></u></td></tr>
+<tr><th id="467">467</th><td>	<b>if</b> (<a class="local col7 ref" href="#17hx" title='hx' data-ref="17hx">hx</a> == <var>0</var> || <a class="local col7 ref" href="#17hx" title='hx' data-ref="17hx">hx</a> &gt;= <var>0x8000</var>) {	<i>/* zero, negative or subnormal? */</i></td></tr>
+<tr><th id="468">468</th><td>		<b>if</b> (((<a class="local col7 ref" href="#17hx" title='hx' data-ref="17hx">hx</a> &amp; <var>0x7fff</var>) | <a class="local col3 ref" href="#13lx" title='lx' data-ref="13lx">lx</a> | <a class="local col4 ref" href="#14llx" title='llx' data-ref="14llx">llx</a>) == <var>0</var>)</td></tr>
+<tr><th id="469">469</th><td>			<a class="macro" href="#424" title="do { (rp)-&gt;hi = (-1 / zero); (rp)-&gt;lo_set = 0; return; } while (0)" data-ref="_M/RETURN1">RETURN1</a>(<a class="local col7 ref" href="#7rp" title='rp' data-ref="7rp">rp</a>, -<var>1</var> / <a class="tu ref" href="#zero" title='zero' data-use='r' data-ref="zero">zero</a>);	<i>/* log(+-0) = -Inf */</i></td></tr>
+<tr><th id="470">470</th><td>		<b>if</b> (<a class="local col7 ref" href="#17hx" title='hx' data-ref="17hx">hx</a> != <var>0</var>)</td></tr>
+<tr><th id="471">471</th><td>			<i>/* log(neg or NaN) = qNaN: */</i></td></tr>
+<tr><th id="472">472</th><td>			<a class="macro" href="#424" title="do { (rp)-&gt;hi = ((x - x) / zero); (rp)-&gt;lo_set = 0; return; } while (0)" data-ref="_M/RETURN1">RETURN1</a>(<a class="local col7 ref" href="#7rp" title='rp' data-ref="7rp">rp</a>, (<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a> - <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>) / <a class="tu ref" href="#zero" title='zero' data-use='r' data-ref="zero">zero</a>);</td></tr>
+<tr><th id="473">473</th><td>		<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a> *= <var>0x1.0p113</var>;		<i>/* subnormal; scale up x */</i></td></tr>
+<tr><th id="474">474</th><td>		<a class="macro" href="../src/math_private.h.html#209" title="do { union IEEEl2bits ew_u; ew_u.e = (x); (hx) = ew_u.xbits.expsign; (lx) = ew_u.xbits.manh; (llx) = ew_u.xbits.manl; } while (0)" data-ref="_M/EXTRACT_LDBL128_WORDS">EXTRACT_LDBL128_WORDS</a>(<a class="local col7 ref" href="#17hx" title='hx' data-ref="17hx">hx</a>, <a class="local col3 ref" href="#13lx" title='lx' data-ref="13lx">lx</a>, <a class="local col4 ref" href="#14llx" title='llx' data-ref="14llx">llx</a>, <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);</td></tr>
+<tr><th id="475">475</th><td>		<a class="local col6 ref" href="#16k" title='k' data-ref="16k">k</a> = -<var>16383</var> - <var>113</var>;</td></tr>
+<tr><th id="476">476</th><td>	} <b>else</b> <b>if</b> (<a class="local col7 ref" href="#17hx" title='hx' data-ref="17hx">hx</a> &gt;= <var>0x7fff</var>)</td></tr>
+<tr><th id="477">477</th><td>		<a class="macro" href="#424" title="do { (rp)-&gt;hi = (x + x); (rp)-&gt;lo_set = 0; return; } while (0)" data-ref="_M/RETURN1">RETURN1</a>(<a class="local col7 ref" href="#7rp" title='rp' data-ref="7rp">rp</a>, <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a> + <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>);	<i>/* log(Inf or NaN) = Inf or qNaN */</i></td></tr>
+<tr><th id="478">478</th><td><u>#<span data-ppcond="478">ifndef</span> <a class="macro" href="#85" data-ref="_M/STRUCT_RETURN">STRUCT_RETURN</a></u></td></tr>
+<tr><th id="479">479</th><td>	ENTERI();</td></tr>
+<tr><th id="480">480</th><td><u>#<span data-ppcond="478">endif</span></u></td></tr>
+<tr><th id="481">481</th><td>	<a class="local col6 ref" href="#16k" title='k' data-ref="16k">k</a> += <a class="local col7 ref" href="#17hx" title='hx' data-ref="17hx">hx</a>;</td></tr>
+<tr><th id="482">482</th><td>	<a class="local col2 ref" href="#12dk" title='dk' data-ref="12dk">dk</a> = <a class="local col6 ref" href="#16k" title='k' data-ref="16k">k</a>;</td></tr>
+<tr><th id="483">483</th><td></td></tr>
+<tr><th id="484">484</th><td>	<i>/* Scale x to be in [1, 2). */</i></td></tr>
+<tr><th id="485">485</th><td>	<a class="macro" href="../src/math_private.h.html#256" title="do { union IEEEl2bits se_u; se_u.e = (x); se_u.xbits.expsign = (0x3fff); (x) = se_u.e; } while (0)" data-ref="_M/SET_LDBL_EXPSIGN">SET_LDBL_EXPSIGN</a>(<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a>, <var>0x3fff</var>);</td></tr>
+<tr><th id="486">486</th><td></td></tr>
+<tr><th id="487">487</th><td>	<i>/* 0 &lt;= i &lt;= INTERVALS: */</i></td></tr>
+<tr><th id="488">488</th><td><u>#define	<dfn class="macro" id="_M/L2I" data-ref="_M/L2I">L2I</dfn>	(49 - LOG2_INTERVALS)</u></td></tr>
+<tr><th id="489">489</th><td>	<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> = (<a class="local col3 ref" href="#13lx" title='lx' data-ref="13lx">lx</a> + (<var>1LL</var> &lt;&lt; (<a class="macro" href="#488" title="(49 - 7)" data-ref="_M/L2I">L2I</a> - <var>2</var>))) &gt;&gt; (<a class="macro" href="#488" title="(49 - 7)" data-ref="_M/L2I">L2I</a> - <var>1</var>);</td></tr>
+<tr><th id="490">490</th><td></td></tr>
+<tr><th id="491">491</th><td>	<i>/*</i></td></tr>
+<tr><th id="492">492</th><td><i>	 * -0.005280 &lt; d &lt; 0.004838.  In particular, the infinite-</i></td></tr>
+<tr><th id="493">493</th><td><i>	 * precision |d| is &lt;= 2**-7.  Rounding of G(i) to 8 bits</i></td></tr>
+<tr><th id="494">494</th><td><i>	 * ensures that d is representable without extra precision for</i></td></tr>
+<tr><th id="495">495</th><td><i>	 * this bound on |d| (since when this calculation is expressed</i></td></tr>
+<tr><th id="496">496</th><td><i>	 * as x*G(i)-1, the multiplication needs as many extra bits as</i></td></tr>
+<tr><th id="497">497</th><td><i>	 * G(i) has and the subtraction cancels 8 bits).  But for</i></td></tr>
+<tr><th id="498">498</th><td><i>	 * most i (107 cases out of 129), the infinite-precision |d|</i></td></tr>
+<tr><th id="499">499</th><td><i>	 * is &lt;= 2**-8.  G(i) is rounded to 9 bits for such i to give</i></td></tr>
+<tr><th id="500">500</th><td><i>	 * better accuracy (this works by improving the bound on |d|,</i></td></tr>
+<tr><th id="501">501</th><td><i>	 * which in turn allows rounding to 9 bits in more cases).</i></td></tr>
+<tr><th id="502">502</th><td><i>	 * This is only important when the original x is near 1 -- it</i></td></tr>
+<tr><th id="503">503</th><td><i>	 * lets us avoid using a special method to give the desired</i></td></tr>
+<tr><th id="504">504</th><td><i>	 * accuracy for such x.</i></td></tr>
+<tr><th id="505">505</th><td><i>	 */</i></td></tr>
+<tr><th id="506">506</th><td>	<b>if</b> (<var>0</var>)</td></tr>
+<tr><th id="507">507</th><td>		<a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> = <a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a> * <a class="macro" href="#119" title="(T[(i)].G)" data-ref="_M/G">G</a>(<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>) - <var>1</var>;</td></tr>
+<tr><th id="508">508</th><td>	<b>else</b> {</td></tr>
+<tr><th id="509">509</th><td><u>#<span data-ppcond="509">ifdef</span> <a class="macro" href="#90" data-ref="_M/USE_UTAB">USE_UTAB</a></u></td></tr>
+<tr><th id="510">510</th><td>		<a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> = (<a class="local col6 ref" href="#6x" title='x' data-ref="6x">x</a> - <a class="macro" href="#125" title="(U[(i)].H)" data-ref="_M/H">H</a>(<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>)) * <a class="macro" href="#119" title="(T[(i)].G)" data-ref="_M/G">G</a>(<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>) + <a class="macro" href="#124" title="(U[(i)].E)" data-ref="_M/E">E</a>(<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>);</td></tr>
+<tr><th id="511">511</th><td><u>#<span data-ppcond="509">else</span></u></td></tr>
+<tr><th id="512">512</th><td>		<em>long</em> <em>double</em> x_hi;</td></tr>
+<tr><th id="513">513</th><td>		<em>double</em> x_lo;</td></tr>
+<tr><th id="514">514</th><td></td></tr>
+<tr><th id="515">515</th><td>		<i>/*</i></td></tr>
+<tr><th id="516">516</th><td><i>		 * Split x into x_hi + x_lo to calculate x*G(i)-1 exactly.</i></td></tr>
+<tr><th id="517">517</th><td><i>		 * G(i) has at most 9 bits, so the splitting point is not</i></td></tr>
+<tr><th id="518">518</th><td><i>		 * critical.</i></td></tr>
+<tr><th id="519">519</th><td><i>		 */</i></td></tr>
+<tr><th id="520">520</th><td>		INSERT_LDBL128_WORDS(x_hi, <var>0x3fff</var>, lx,</td></tr>
+<tr><th id="521">521</th><td>		    llx &amp; <var>0xffffffffff000000ULL</var>);</td></tr>
+<tr><th id="522">522</th><td>		x_lo = x - x_hi;</td></tr>
+<tr><th id="523">523</th><td>		d = x_hi * G(i) - <var>1</var> + x_lo * G(i);</td></tr>
+<tr><th id="524">524</th><td><u>#<span data-ppcond="509">endif</span></u></td></tr>
+<tr><th id="525">525</th><td>	}</td></tr>
+<tr><th id="526">526</th><td></td></tr>
+<tr><th id="527">527</th><td>	<i>/*</i></td></tr>
+<tr><th id="528">528</th><td><i>	 * Our algorithm depends on exact cancellation of F_lo(i) and</i></td></tr>
+<tr><th id="529">529</th><td><i>	 * F_hi(i) with dk*ln_2_lo and dk*ln2_hi when k is -1 and i is</i></td></tr>
+<tr><th id="530">530</th><td><i>	 * at the end of the table.  This and other technical complications</i></td></tr>
+<tr><th id="531">531</th><td><i>	 * make it difficult to avoid the double scaling in (dk*ln2) *</i></td></tr>
+<tr><th id="532">532</th><td><i>	 * log(base) for base != e without losing more accuracy and/or</i></td></tr>
+<tr><th id="533">533</th><td><i>	 * efficiency than is gained.</i></td></tr>
+<tr><th id="534">534</th><td><i>	 */</i></td></tr>
+<tr><th id="535">535</th><td>	<i>/*</i></td></tr>
+<tr><th id="536">536</th><td><i>	 * Use double precision operations wherever possible, since long</i></td></tr>
+<tr><th id="537">537</th><td><i>	 * double operations are emulated and are very slow on the only</i></td></tr>
+<tr><th id="538">538</th><td><i>	 * known machines that support ld128 (sparc64).  Also, don't try</i></td></tr>
+<tr><th id="539">539</th><td><i>	 * to improve parallelism by increasing the number of operations,</i></td></tr>
+<tr><th id="540">540</th><td><i>	 * since any parallelism on such machines is needed for the</i></td></tr>
+<tr><th id="541">541</th><td><i>	 * emulation.  Horner's method is good for this, and is also good</i></td></tr>
+<tr><th id="542">542</th><td><i>	 * for accuracy.  Horner's method doesn't handle the `lo' term</i></td></tr>
+<tr><th id="543">543</th><td><i>	 * well, either for efficiency or accuracy.  However, for accuracy</i></td></tr>
+<tr><th id="544">544</th><td><i>	 * we evaluate d * d * P2 separately to take advantage of</i></td></tr>
+<tr><th id="545">545</th><td><i>	 * by P2 being exact, and this gives a good place to sum the 'lo'</i></td></tr>
+<tr><th id="546">546</th><td><i>	 * term too.</i></td></tr>
+<tr><th id="547">547</th><td><i>	 */</i></td></tr>
+<tr><th id="548">548</th><td>	<a class="local col1 ref" href="#11dd" title='dd' data-ref="11dd">dd</a> = (<em>double</em>)<a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a>;</td></tr>
+<tr><th id="549">549</th><td>	<a class="local col0 ref" href="#10val_lo" title='val_lo' data-ref="10val_lo">val_lo</a> = <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * (<a class="tu ref" href="#P3" title='P3' data-use='r' data-ref="P3">P3</a> +</td></tr>
+<tr><th id="550">550</th><td>	    <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * (<a class="tu ref" href="#P4" title='P4' data-use='r' data-ref="P4">P4</a> + <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * (<a class="tu ref" href="#P5" title='P5' data-use='r' data-ref="P5">P5</a> + <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * (<a class="tu ref" href="#P6" title='P6' data-use='r' data-ref="P6">P6</a> + <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * (<a class="tu ref" href="#P7" title='P7' data-use='r' data-ref="P7">P7</a> + <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * (<a class="tu ref" href="#P8" title='P8' data-use='r' data-ref="P8">P8</a> +</td></tr>
+<tr><th id="551">551</th><td>	    <a class="local col1 ref" href="#11dd" title='dd' data-ref="11dd">dd</a> * (<a class="tu ref" href="#P9" title='P9' data-use='r' data-ref="P9">P9</a> + <a class="local col1 ref" href="#11dd" title='dd' data-ref="11dd">dd</a> * (<a class="tu ref" href="#P10" title='P10' data-use='r' data-ref="P10">P10</a> + <a class="local col1 ref" href="#11dd" title='dd' data-ref="11dd">dd</a> * (<a class="tu ref" href="#P11" title='P11' data-use='r' data-ref="P11">P11</a> + <a class="local col1 ref" href="#11dd" title='dd' data-ref="11dd">dd</a> * (<a class="tu ref" href="#P12" title='P12' data-use='r' data-ref="P12">P12</a> + <a class="local col1 ref" href="#11dd" title='dd' data-ref="11dd">dd</a> * (<a class="tu ref" href="#P13" title='P13' data-use='r' data-ref="P13">P13</a> +</td></tr>
+<tr><th id="552">552</th><td>	    <a class="local col1 ref" href="#11dd" title='dd' data-ref="11dd">dd</a> * <a class="tu ref" href="#P14" title='P14' data-use='r' data-ref="P14">P14</a>))))))))))) + (<a class="macro" href="#121" title="(T[(i)].F_lo)" data-ref="_M/F_lo">F_lo</a>(<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>) + <a class="local col2 ref" href="#12dk" title='dk' data-ref="12dk">dk</a> * <a class="macro" href="#123" title="(T[((128 + 1) - 1)].F_lo)" data-ref="_M/ln2_lo">ln2_lo</a>) + <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a> * <a class="tu ref" href="#P2" title='P2' data-use='r' data-ref="P2">P2</a>;</td></tr>
+<tr><th id="553">553</th><td>	<a class="local col9 ref" href="#9val_hi" title='val_hi' data-ref="9val_hi">val_hi</a> = <a class="local col8 ref" href="#8d" title='d' data-ref="8d">d</a>;</td></tr>
+<tr><th id="554">554</th><td><u>#<span data-ppcond="554">ifdef</span> <span class="macro" data-ref="_M/DEBUG">DEBUG</span></u></td></tr>
+<tr><th id="555">555</th><td>	<b>if</b> (fetestexcept(FE_UNDERFLOW))</td></tr>
+<tr><th id="556">556</th><td>		breakpoint();</td></tr>
+<tr><th id="557">557</th><td><u>#<span data-ppcond="554">endif</span></u></td></tr>
+<tr><th id="558">558</th><td></td></tr>
+<tr><th id="559">559</th><td>	<a class="macro" href="../src/math_private.h.html#412" title="do { __typeof(val_hi) __tmp; __tmp = ((T[(i)].F_hi) + dk * (T[((128 + 1) - 1)].F_hi)); do { __typeof(__tmp) __w; __w = (__tmp) + ((val_hi)); ((val_hi)) = ((__tmp) - __w) + ((val_hi)); (__tmp) = __w; } while (0); (val_lo) += (val_hi); (val_hi) = __tmp; } while (0)" data-ref="_M/_3sumF">_3sumF</a>(<a class="local col9 ref" href="#9val_hi" title='val_hi' data-ref="9val_hi">val_hi</a>, <a class="local col0 ref" href="#10val_lo" title='val_lo' data-ref="10val_lo">val_lo</a>, <a class="macro" href="#120" title="(T[(i)].F_hi)" data-ref="_M/F_hi">F_hi</a>(<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>) + <a class="local col2 ref" href="#12dk" title='dk' data-ref="12dk">dk</a> * <a class="macro" href="#122" title="(T[((128 + 1) - 1)].F_hi)" data-ref="_M/ln2_hi">ln2_hi</a>);</td></tr>
+<tr><th id="560">560</th><td>	<a class="macro" href="#430" title="do { (rp)-&gt;hi = (val_hi); (rp)-&gt;lo = (val_lo); (rp)-&gt;lo_set = 1; return; } while (0)" data-ref="_M/RETURN2">RETURN2</a>(<a class="local col7 ref" href="#7rp" title='rp' data-ref="7rp">rp</a>, <a class="local col9 ref" href="#9val_hi" title='val_hi' data-ref="9val_hi">val_hi</a>, <a class="local col0 ref" href="#10val_lo" title='val_lo' data-ref="10val_lo">val_lo</a>);</td></tr>
+<tr><th id="561">561</th><td>}</td></tr>
+<tr><th id="562">562</th><td></td></tr>
+<tr><th id="563">563</th><td><em>long</em> <em>double</em></td></tr>
+<tr><th id="564">564</th><td><dfn class="decl def" id="log1pl" title='log1pl' data-ref="log1pl">log1pl</dfn>(<em>long</em> <em>double</em> <dfn class="local col8 decl" id="18x" title='x' data-type='long double' data-ref="18x">x</dfn>)</td></tr>
+<tr><th id="565">565</th><td>{</td></tr>
+<tr><th id="566">566</th><td>	<em>long</em> <em>double</em> <dfn class="local col9 decl" id="19d" title='d' data-type='long double' data-ref="19d">d</dfn>, <dfn class="local col0 decl" id="20d_hi" title='d_hi' data-type='long double' data-ref="20d_hi">d_hi</dfn>, <dfn class="local col1 decl" id="21f_lo" title='f_lo' data-type='long double' data-ref="21f_lo">f_lo</dfn>, <dfn class="local col2 decl" id="22val_hi" title='val_hi' data-type='long double' data-ref="22val_hi">val_hi</dfn>, <dfn class="local col3 decl" id="23val_lo" title='val_lo' data-type='long double' data-ref="23val_lo">val_lo</dfn>;</td></tr>
+<tr><th id="567">567</th><td>	<em>long</em> <em>double</em> <dfn class="local col4 decl" id="24f_hi" title='f_hi' data-type='long double' data-ref="24f_hi">f_hi</dfn>, <dfn class="local col5 decl" id="25twopminusk" title='twopminusk' data-type='long double' data-ref="25twopminusk">twopminusk</dfn>;</td></tr>
+<tr><th id="568">568</th><td>	<em>double</em> <dfn class="local col6 decl" id="26d_lo" title='d_lo' data-type='double' data-ref="26d_lo">d_lo</dfn>, <dfn class="local col7 decl" id="27dd" title='dd' data-type='double' data-ref="27dd">dd</dfn>, <dfn class="local col8 decl" id="28dk" title='dk' data-type='double' data-ref="28dk">dk</dfn>;</td></tr>
+<tr><th id="569">569</th><td>	<a class="typedef" href="../../../../../libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col9 decl" id="29lx" title='lx' data-type='uint64_t' data-ref="29lx">lx</dfn>, <dfn class="local col0 decl" id="30llx" title='llx' data-type='uint64_t' data-ref="30llx">llx</dfn>;</td></tr>
+<tr><th id="570">570</th><td>	<em>int</em> <dfn class="local col1 decl" id="31i" title='i' data-type='int' data-ref="31i">i</dfn>, <dfn class="local col2 decl" id="32k" title='k' data-type='int' data-ref="32k">k</dfn>;</td></tr>
+<tr><th id="571">571</th><td>	<a class="typedef" href="../../../../../libc/include/stdint.h.html#int16_t" title='int16_t' data-type='__int16_t' data-ref="int16_t">int16_t</a> <dfn class="local col3 decl" id="33ax" title='ax' data-type='int16_t' data-ref="33ax">ax</dfn>, <dfn class="local col4 decl" id="34hx" title='hx' data-type='int16_t' data-ref="34hx">hx</dfn>;</td></tr>
+<tr><th id="572">572</th><td></td></tr>
+<tr><th id="573">573</th><td>	<a class="macro" href="../src/math_private.h.html#636" title="" data-ref="_M/DOPRINT_START">DOPRINT_START</a>(&amp;x);</td></tr>
+<tr><th id="574">574</th><td>	<a class="macro" href="../src/math_private.h.html#209" title="do { union IEEEl2bits ew_u; ew_u.e = (x); (hx) = ew_u.xbits.expsign; (lx) = ew_u.xbits.manh; (llx) = ew_u.xbits.manl; } while (0)" data-ref="_M/EXTRACT_LDBL128_WORDS">EXTRACT_LDBL128_WORDS</a>(<a class="local col4 ref" href="#34hx" title='hx' data-ref="34hx">hx</a>, <a class="local col9 ref" href="#29lx" title='lx' data-ref="29lx">lx</a>, <a class="local col0 ref" href="#30llx" title='llx' data-ref="30llx">llx</a>, <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>);</td></tr>
+<tr><th id="575">575</th><td>	<b>if</b> (<a class="local col4 ref" href="#34hx" title='hx' data-ref="34hx">hx</a> &lt; <var>0x3fff</var>) {		<i>/* x &lt; 1, or x neg NaN */</i></td></tr>
+<tr><th id="576">576</th><td>		<a class="local col3 ref" href="#33ax" title='ax' data-ref="33ax">ax</a> = <a class="local col4 ref" href="#34hx" title='hx' data-ref="34hx">hx</a> &amp; <var>0x7fff</var>;</td></tr>
+<tr><th id="577">577</th><td>		<b>if</b> (<a class="local col3 ref" href="#33ax" title='ax' data-ref="33ax">ax</a> &gt;= <var>0x3fff</var>) {	<i>/* x &lt;= -1, or x neg NaN */</i></td></tr>
+<tr><th id="578">578</th><td>			<b>if</b> (<a class="local col3 ref" href="#33ax" title='ax' data-ref="33ax">ax</a> == <var>0x3fff</var> &amp;&amp; (<a class="local col9 ref" href="#29lx" title='lx' data-ref="29lx">lx</a> | <a class="local col0 ref" href="#30llx" title='llx' data-ref="30llx">llx</a>) == <var>0</var>)</td></tr>
+<tr><th id="579">579</th><td>				<a class="macro" href="../src/math_private.h.html#641" title="do { ; return (-1 / zero); } while (0)" data-ref="_M/RETURNP">RETURNP</a>(-<var>1</var> / <a class="tu ref" href="#zero" title='zero' data-use='r' data-ref="zero">zero</a>);	<i>/* log1p(-1) = -Inf */</i></td></tr>
+<tr><th id="580">580</th><td>			<i>/* log1p(x &lt; 1, or x NaN) = qNaN: */</i></td></tr>
+<tr><th id="581">581</th><td>			<a class="macro" href="../src/math_private.h.html#641" title="do { ; return ((x - x) / (x - x)); } while (0)" data-ref="_M/RETURNP">RETURNP</a>((<a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a> - <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>) / (<a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a> - <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>));</td></tr>
+<tr><th id="582">582</th><td>		}</td></tr>
+<tr><th id="583">583</th><td>		<b>if</b> (<a class="local col3 ref" href="#33ax" title='ax' data-ref="33ax">ax</a> &lt;= <var>0x3f8d</var>) {	<i>/* |x| &lt; 2**-113 */</i></td></tr>
+<tr><th id="584">584</th><td>			<b>if</b> ((<em>int</em>)<a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a> == <var>0</var>)</td></tr>
+<tr><th id="585">585</th><td>				<a class="macro" href="../src/math_private.h.html#641" title="do { ; return (x); } while (0)" data-ref="_M/RETURNP">RETURNP</a>(<a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>);	<i>/* x with inexact if x != 0 */</i></td></tr>
+<tr><th id="586">586</th><td>		}</td></tr>
+<tr><th id="587">587</th><td>		<a class="local col4 ref" href="#24f_hi" title='f_hi' data-ref="24f_hi">f_hi</a> = <var>1</var>;</td></tr>
+<tr><th id="588">588</th><td>		<a class="local col1 ref" href="#21f_lo" title='f_lo' data-ref="21f_lo">f_lo</a> = <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>;</td></tr>
+<tr><th id="589">589</th><td>	} <b>else</b> <b>if</b> (<a class="local col4 ref" href="#34hx" title='hx' data-ref="34hx">hx</a> &gt;= <var>0x7fff</var>) {	<i>/* x +Inf or non-neg NaN */</i></td></tr>
+<tr><th id="590">590</th><td>		<a class="macro" href="../src/math_private.h.html#641" title="do { ; return (x + x); } while (0)" data-ref="_M/RETURNP">RETURNP</a>(<a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a> + <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>);		<i>/* log1p(Inf or NaN) = Inf or qNaN */</i></td></tr>
+<tr><th id="591">591</th><td>	} <b>else</b> <b>if</b> (<a class="local col4 ref" href="#34hx" title='hx' data-ref="34hx">hx</a> &lt; <var>0x40e1</var>) {	<i>/* 1 &lt;= x &lt; 2**226 */</i></td></tr>
+<tr><th id="592">592</th><td>		<a class="local col4 ref" href="#24f_hi" title='f_hi' data-ref="24f_hi">f_hi</a> = <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>;</td></tr>
+<tr><th id="593">593</th><td>		<a class="local col1 ref" href="#21f_lo" title='f_lo' data-ref="21f_lo">f_lo</a> = <var>1</var>;</td></tr>
+<tr><th id="594">594</th><td>	} <b>else</b> {			<i>/* 2**226 &lt;= x &lt; +Inf */</i></td></tr>
+<tr><th id="595">595</th><td>		<a class="local col4 ref" href="#24f_hi" title='f_hi' data-ref="24f_hi">f_hi</a> = <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>;</td></tr>
+<tr><th id="596">596</th><td>		<a class="local col1 ref" href="#21f_lo" title='f_lo' data-ref="21f_lo">f_lo</a> = <var>0</var>;		<i>/* avoid underflow of the P3 term */</i></td></tr>
+<tr><th id="597">597</th><td>	}</td></tr>
+<tr><th id="598">598</th><td>	<a class="macro" href="../src/math_private.h.html#310" title="" data-ref="_M/ENTERI">ENTERI</a>();</td></tr>
+<tr><th id="599">599</th><td>	<a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a> = <a class="local col4 ref" href="#24f_hi" title='f_hi' data-ref="24f_hi">f_hi</a> + <a class="local col1 ref" href="#21f_lo" title='f_lo' data-ref="21f_lo">f_lo</a>;</td></tr>
+<tr><th id="600">600</th><td>	<a class="local col1 ref" href="#21f_lo" title='f_lo' data-ref="21f_lo">f_lo</a> = (<a class="local col4 ref" href="#24f_hi" title='f_hi' data-ref="24f_hi">f_hi</a> - <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>) + <a class="local col1 ref" href="#21f_lo" title='f_lo' data-ref="21f_lo">f_lo</a>;</td></tr>
+<tr><th id="601">601</th><td></td></tr>
+<tr><th id="602">602</th><td>	<a class="macro" href="../src/math_private.h.html#209" title="do { union IEEEl2bits ew_u; ew_u.e = (x); (hx) = ew_u.xbits.expsign; (lx) = ew_u.xbits.manh; (llx) = ew_u.xbits.manl; } while (0)" data-ref="_M/EXTRACT_LDBL128_WORDS">EXTRACT_LDBL128_WORDS</a>(<a class="local col4 ref" href="#34hx" title='hx' data-ref="34hx">hx</a>, <a class="local col9 ref" href="#29lx" title='lx' data-ref="29lx">lx</a>, <a class="local col0 ref" href="#30llx" title='llx' data-ref="30llx">llx</a>, <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>);</td></tr>
+<tr><th id="603">603</th><td>	<a class="local col2 ref" href="#32k" title='k' data-ref="32k">k</a> = -<var>16383</var>;</td></tr>
+<tr><th id="604">604</th><td></td></tr>
+<tr><th id="605">605</th><td>	<a class="local col2 ref" href="#32k" title='k' data-ref="32k">k</a> += <a class="local col4 ref" href="#34hx" title='hx' data-ref="34hx">hx</a>;</td></tr>
+<tr><th id="606">606</th><td>	<a class="local col8 ref" href="#28dk" title='dk' data-ref="28dk">dk</a> = <a class="local col2 ref" href="#32k" title='k' data-ref="32k">k</a>;</td></tr>
+<tr><th id="607">607</th><td></td></tr>
+<tr><th id="608">608</th><td>	<a class="macro" href="../src/math_private.h.html#256" title="do { union IEEEl2bits se_u; se_u.e = (x); se_u.xbits.expsign = (0x3fff); (x) = se_u.e; } while (0)" data-ref="_M/SET_LDBL_EXPSIGN">SET_LDBL_EXPSIGN</a>(<a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a>, <var>0x3fff</var>);</td></tr>
+<tr><th id="609">609</th><td>	<a class="local col5 ref" href="#25twopminusk" title='twopminusk' data-ref="25twopminusk">twopminusk</a> = <var>1</var>;</td></tr>
+<tr><th id="610">610</th><td>	<a class="macro" href="../src/math_private.h.html#256" title="do { union IEEEl2bits se_u; se_u.e = (twopminusk); se_u.xbits.expsign = (0x7ffe - (hx &amp; 0x7fff)); (twopminusk) = se_u.e; } while (0)" data-ref="_M/SET_LDBL_EXPSIGN">SET_LDBL_EXPSIGN</a>(<a class="local col5 ref" href="#25twopminusk" title='twopminusk' data-ref="25twopminusk">twopminusk</a>, <var>0x7ffe</var> - (<a class="local col4 ref" href="#34hx" title='hx' data-ref="34hx">hx</a> &amp; <var>0x7fff</var>));</td></tr>
+<tr><th id="611">611</th><td>	<a class="local col1 ref" href="#21f_lo" title='f_lo' data-ref="21f_lo">f_lo</a> *= <a class="local col5 ref" href="#25twopminusk" title='twopminusk' data-ref="25twopminusk">twopminusk</a>;</td></tr>
+<tr><th id="612">612</th><td></td></tr>
+<tr><th id="613">613</th><td>	<a class="local col1 ref" href="#31i" title='i' data-ref="31i">i</a> = (<a class="local col9 ref" href="#29lx" title='lx' data-ref="29lx">lx</a> + (<var>1LL</var> &lt;&lt; (<a class="macro" href="#488" title="(49 - 7)" data-ref="_M/L2I">L2I</a> - <var>2</var>))) &gt;&gt; (<a class="macro" href="#488" title="(49 - 7)" data-ref="_M/L2I">L2I</a> - <var>1</var>);</td></tr>
+<tr><th id="614">614</th><td></td></tr>
+<tr><th id="615">615</th><td>	<i>/*</i></td></tr>
+<tr><th id="616">616</th><td><i>	 * x*G(i)-1 (with a reduced x) can be represented exactly, as</i></td></tr>
+<tr><th id="617">617</th><td><i>	 * above, but now we need to evaluate the polynomial on d =</i></td></tr>
+<tr><th id="618">618</th><td><i>	 * (x+f_lo)*G(i)-1 and extra precision is needed for that.</i></td></tr>
+<tr><th id="619">619</th><td><i>	 * Since x+x_lo is a hi+lo decomposition and subtracting 1</i></td></tr>
+<tr><th id="620">620</th><td><i>	 * doesn't lose too many bits, an inexact calculation for</i></td></tr>
+<tr><th id="621">621</th><td><i>	 * f_lo*G(i) is good enough.</i></td></tr>
+<tr><th id="622">622</th><td><i>	 */</i></td></tr>
+<tr><th id="623">623</th><td>	<b>if</b> (<var>0</var>)</td></tr>
+<tr><th id="624">624</th><td>		<a class="local col0 ref" href="#20d_hi" title='d_hi' data-ref="20d_hi">d_hi</a> = <a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a> * <a class="macro" href="#119" title="(T[(i)].G)" data-ref="_M/G">G</a>(<a class="local col1 ref" href="#31i" title='i' data-ref="31i">i</a>) - <var>1</var>;</td></tr>
+<tr><th id="625">625</th><td>	<b>else</b> {</td></tr>
+<tr><th id="626">626</th><td><u>#<span data-ppcond="626">ifdef</span> <a class="macro" href="#90" data-ref="_M/USE_UTAB">USE_UTAB</a></u></td></tr>
+<tr><th id="627">627</th><td>		<a class="local col0 ref" href="#20d_hi" title='d_hi' data-ref="20d_hi">d_hi</a> = (<a class="local col8 ref" href="#18x" title='x' data-ref="18x">x</a> - <a class="macro" href="#125" title="(U[(i)].H)" data-ref="_M/H">H</a>(<a class="local col1 ref" href="#31i" title='i' data-ref="31i">i</a>)) * <a class="macro" href="#119" title="(T[(i)].G)" data-ref="_M/G">G</a>(<a class="local col1 ref" href="#31i" title='i' data-ref="31i">i</a>) + <a class="macro" href="#124" title="(U[(i)].E)" data-ref="_M/E">E</a>(<a class="local col1 ref" href="#31i" title='i' data-ref="31i">i</a>);</td></tr>
+<tr><th id="628">628</th><td><u>#<span data-ppcond="626">else</span></u></td></tr>
+<tr><th id="629">629</th><td>		<em>long</em> <em>double</em> x_hi;</td></tr>
+<tr><th id="630">630</th><td>		<em>double</em> x_lo;</td></tr>
+<tr><th id="631">631</th><td></td></tr>
+<tr><th id="632">632</th><td>		INSERT_LDBL128_WORDS(x_hi, <var>0x3fff</var>, lx,</td></tr>
+<tr><th id="633">633</th><td>		    llx &amp; <var>0xffffffffff000000ULL</var>);</td></tr>
+<tr><th id="634">634</th><td>		x_lo = x - x_hi;</td></tr>
+<tr><th id="635">635</th><td>		d_hi = x_hi * G(i) - <var>1</var> + x_lo * G(i);</td></tr>
+<tr><th id="636">636</th><td><u>#<span data-ppcond="626">endif</span></u></td></tr>
+<tr><th id="637">637</th><td>	}</td></tr>
+<tr><th id="638">638</th><td>	<a class="local col6 ref" href="#26d_lo" title='d_lo' data-ref="26d_lo">d_lo</a> = <a class="local col1 ref" href="#21f_lo" title='f_lo' data-ref="21f_lo">f_lo</a> * <a class="macro" href="#119" title="(T[(i)].G)" data-ref="_M/G">G</a>(<a class="local col1 ref" href="#31i" title='i' data-ref="31i">i</a>);</td></tr>
+<tr><th id="639">639</th><td></td></tr>
+<tr><th id="640">640</th><td>	<i>/*</i></td></tr>
+<tr><th id="641">641</th><td><i>	 * This is _2sumF(d_hi, d_lo) inlined.  The condition</i></td></tr>
+<tr><th id="642">642</th><td><i>	 * (d_hi == 0 || |d_hi| &gt;= |d_lo|) for using _2sumF() is not</i></td></tr>
+<tr><th id="643">643</th><td><i>	 * always satisifed, so it is not clear that this works, but</i></td></tr>
+<tr><th id="644">644</th><td><i>	 * it works in practice.  It works even if it gives a wrong</i></td></tr>
+<tr><th id="645">645</th><td><i>	 * normalized d_lo, since |d_lo| &gt; |d_hi| implies that i is</i></td></tr>
+<tr><th id="646">646</th><td><i>	 * nonzero and d is tiny, so the F(i) term dominates d_lo.</i></td></tr>
+<tr><th id="647">647</th><td><i>	 * In float precision:</i></td></tr>
+<tr><th id="648">648</th><td><i>	 * (By exhaustive testing, the worst case is d_hi = 0x1.bp-25.</i></td></tr>
+<tr><th id="649">649</th><td><i>	 * And if d is only a little tinier than that, we would have</i></td></tr>
+<tr><th id="650">650</th><td><i>	 * another underflow problem for the P3 term; this is also ruled</i></td></tr>
+<tr><th id="651">651</th><td><i>	 * out by exhaustive testing.)</i></td></tr>
+<tr><th id="652">652</th><td><i>	 */</i></td></tr>
+<tr><th id="653">653</th><td>	<a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> = <a class="local col0 ref" href="#20d_hi" title='d_hi' data-ref="20d_hi">d_hi</a> + <a class="local col6 ref" href="#26d_lo" title='d_lo' data-ref="26d_lo">d_lo</a>;</td></tr>
+<tr><th id="654">654</th><td>	<a class="local col6 ref" href="#26d_lo" title='d_lo' data-ref="26d_lo">d_lo</a> = <a class="local col0 ref" href="#20d_hi" title='d_hi' data-ref="20d_hi">d_hi</a> - <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> + <a class="local col6 ref" href="#26d_lo" title='d_lo' data-ref="26d_lo">d_lo</a>;</td></tr>
+<tr><th id="655">655</th><td>	<a class="local col0 ref" href="#20d_hi" title='d_hi' data-ref="20d_hi">d_hi</a> = <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a>;</td></tr>
+<tr><th id="656">656</th><td></td></tr>
+<tr><th id="657">657</th><td>	<a class="local col7 ref" href="#27dd" title='dd' data-ref="27dd">dd</a> = (<em>double</em>)<a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a>;</td></tr>
+<tr><th id="658">658</th><td>	<a class="local col3 ref" href="#23val_lo" title='val_lo' data-ref="23val_lo">val_lo</a> = <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * (<a class="tu ref" href="#P3" title='P3' data-use='r' data-ref="P3">P3</a> +</td></tr>
+<tr><th id="659">659</th><td>	    <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * (<a class="tu ref" href="#P4" title='P4' data-use='r' data-ref="P4">P4</a> + <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * (<a class="tu ref" href="#P5" title='P5' data-use='r' data-ref="P5">P5</a> + <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * (<a class="tu ref" href="#P6" title='P6' data-use='r' data-ref="P6">P6</a> + <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * (<a class="tu ref" href="#P7" title='P7' data-use='r' data-ref="P7">P7</a> + <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * (<a class="tu ref" href="#P8" title='P8' data-use='r' data-ref="P8">P8</a> +</td></tr>
+<tr><th id="660">660</th><td>	    <a class="local col7 ref" href="#27dd" title='dd' data-ref="27dd">dd</a> * (<a class="tu ref" href="#P9" title='P9' data-use='r' data-ref="P9">P9</a> + <a class="local col7 ref" href="#27dd" title='dd' data-ref="27dd">dd</a> * (<a class="tu ref" href="#P10" title='P10' data-use='r' data-ref="P10">P10</a> + <a class="local col7 ref" href="#27dd" title='dd' data-ref="27dd">dd</a> * (<a class="tu ref" href="#P11" title='P11' data-use='r' data-ref="P11">P11</a> + <a class="local col7 ref" href="#27dd" title='dd' data-ref="27dd">dd</a> * (<a class="tu ref" href="#P12" title='P12' data-use='r' data-ref="P12">P12</a> + <a class="local col7 ref" href="#27dd" title='dd' data-ref="27dd">dd</a> * (<a class="tu ref" href="#P13" title='P13' data-use='r' data-ref="P13">P13</a> +</td></tr>
+<tr><th id="661">661</th><td>	    <a class="local col7 ref" href="#27dd" title='dd' data-ref="27dd">dd</a> * <a class="tu ref" href="#P14" title='P14' data-use='r' data-ref="P14">P14</a>))))))))))) + (<a class="macro" href="#121" title="(T[(i)].F_lo)" data-ref="_M/F_lo">F_lo</a>(<a class="local col1 ref" href="#31i" title='i' data-ref="31i">i</a>) + <a class="local col8 ref" href="#28dk" title='dk' data-ref="28dk">dk</a> * <a class="macro" href="#123" title="(T[((128 + 1) - 1)].F_lo)" data-ref="_M/ln2_lo">ln2_lo</a> + <a class="local col6 ref" href="#26d_lo" title='d_lo' data-ref="26d_lo">d_lo</a>) + <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * <a class="local col9 ref" href="#19d" title='d' data-ref="19d">d</a> * <a class="tu ref" href="#P2" title='P2' data-use='r' data-ref="P2">P2</a>;</td></tr>
+<tr><th id="662">662</th><td>	<a class="local col2 ref" href="#22val_hi" title='val_hi' data-ref="22val_hi">val_hi</a> = <a class="local col0 ref" href="#20d_hi" title='d_hi' data-ref="20d_hi">d_hi</a>;</td></tr>
+<tr><th id="663">663</th><td><u>#<span data-ppcond="663">ifdef</span> <span class="macro" data-ref="_M/DEBUG">DEBUG</span></u></td></tr>
+<tr><th id="664">664</th><td>	<b>if</b> (fetestexcept(FE_UNDERFLOW))</td></tr>
+<tr><th id="665">665</th><td>		breakpoint();</td></tr>
+<tr><th id="666">666</th><td><u>#<span data-ppcond="663">endif</span></u></td></tr>
+<tr><th id="667">667</th><td></td></tr>
+<tr><th id="668">668</th><td>	<a class="macro" href="../src/math_private.h.html#412" title="do { __typeof(val_hi) __tmp; __tmp = ((T[(i)].F_hi) + dk * (T[((128 + 1) - 1)].F_hi)); do { __typeof(__tmp) __w; __w = (__tmp) + ((val_hi)); ((val_hi)) = ((__tmp) - __w) + ((val_hi)); (__tmp) = __w; } while (0); (val_lo) += (val_hi); (val_hi) = __tmp; } while (0)" data-ref="_M/_3sumF">_3sumF</a>(<a class="local col2 ref" href="#22val_hi" title='val_hi' data-ref="22val_hi">val_hi</a>, <a class="local col3 ref" href="#23val_lo" title='val_lo' data-ref="23val_lo">val_lo</a>, <a class="macro" href="#120" title="(T[(i)].F_hi)" data-ref="_M/F_hi">F_hi</a>(<a class="local col1 ref" href="#31i" title='i' data-ref="31i">i</a>) + <a class="local col8 ref" href="#28dk" title='dk' data-ref="28dk">dk</a> * <a class="macro" href="#122" title="(T[((128 + 1) - 1)].F_hi)" data-ref="_M/ln2_hi">ln2_hi</a>);</td></tr>
+<tr><th id="669">669</th><td>	<a class="macro" href="../src/math_private.h.html#653" title="do { ; return ((val_hi) + (val_lo)); } while (0)" data-ref="_M/RETURN2PI">RETURN2PI</a>(<a class="local col2 ref" href="#22val_hi" title='val_hi' data-ref="22val_hi">val_hi</a>, <a class="local col3 ref" href="#23val_lo" title='val_lo' data-ref="23val_lo">val_lo</a>);</td></tr>
+<tr><th id="670">670</th><td>}</td></tr>
+<tr><th id="671">671</th><td></td></tr>
+<tr><th id="672">672</th><td><u>#<span data-ppcond="672">ifdef</span> <a class="macro" href="#85" data-ref="_M/STRUCT_RETURN">STRUCT_RETURN</a></u></td></tr>
+<tr><th id="673">673</th><td></td></tr>
+<tr><th id="674">674</th><td><em>long</em> <em>double</em></td></tr>
+<tr><th id="675">675</th><td><dfn class="decl def" id="logl" title='logl' data-ref="logl">logl</dfn>(<em>long</em> <em>double</em> <dfn class="local col5 decl" id="35x" title='x' data-type='long double' data-ref="35x">x</dfn>)</td></tr>
+<tr><th id="676">676</th><td>{</td></tr>
+<tr><th id="677">677</th><td>	<b>struct</b> <a class="type" href="#ld" title='ld' data-ref="ld">ld</a> <dfn class="local col6 decl" id="36r" title='r' data-type='struct ld' data-ref="36r">r</dfn>;</td></tr>
+<tr><th id="678">678</th><td></td></tr>
+<tr><th id="679">679</th><td>	<a class="macro" href="../src/math_private.h.html#310" title="" data-ref="_M/ENTERI">ENTERI</a>();</td></tr>
+<tr><th id="680">680</th><td>	<a class="macro" href="../src/math_private.h.html#636" title="" data-ref="_M/DOPRINT_START">DOPRINT_START</a>(&amp;x);</td></tr>
+<tr><th id="681">681</th><td>	<a class="tu ref" href="#k_logl" title='k_logl' data-use='c' data-ref="k_logl">k_logl</a>(<a class="local col5 ref" href="#35x" title='x' data-ref="35x">x</a>, &amp;<a class="local col6 ref" href="#36r" title='r' data-ref="36r">r</a>);</td></tr>
+<tr><th id="682">682</th><td>	<a class="macro" href="../src/math_private.h.html#663" title="do { if (!(&amp;r)-&gt;lo_set) do { ; return ((&amp;r)-&gt;hi); } while (0); do { ; return (((&amp;r)-&gt;hi) + ((&amp;r)-&gt;lo)); } while (0); } while (0)" data-ref="_M/RETURNSPI">RETURNSPI</a>(&amp;<a class="local col6 ref" href="#36r" title='r' data-ref="36r">r</a>);</td></tr>
+<tr><th id="683">683</th><td>}</td></tr>
+<tr><th id="684">684</th><td></td></tr>
+<tr><th id="685">685</th><td><i>/*</i></td></tr>
+<tr><th id="686">686</th><td><i> * 29+113 bit decompositions.  The bits are distributed so that the products</i></td></tr>
+<tr><th id="687">687</th><td><i> * of the hi terms are exact in double precision.  The types are chosen so</i></td></tr>
+<tr><th id="688">688</th><td><i> * that the products of the hi terms are done in at least double precision,</i></td></tr>
+<tr><th id="689">689</th><td><i> * without any explicit conversions.  More natural choices would require a</i></td></tr>
+<tr><th id="690">690</th><td><i> * slow long double precision multiplication.</i></td></tr>
+<tr><th id="691">691</th><td><i> */</i></td></tr>
+<tr><th id="692">692</th><td><em>static</em> <em>const</em> <em>double</em></td></tr>
+<tr><th id="693">693</th><td><dfn class="tu decl def" id="invln10_hi" title='invln10_hi' data-type='const double' data-ref="invln10_hi">invln10_hi</dfn> =  <var>4.3429448176175356e-1</var>,		<i>/*  0x1bcb7b15000000.0p-54 */</i></td></tr>
+<tr><th id="694">694</th><td><dfn class="tu decl def" id="invln2_hi" title='invln2_hi' data-type='const double' data-ref="invln2_hi">invln2_hi</dfn> =  <var>1.4426950402557850e0</var>;		<i>/*  0x17154765000000.0p-52 */</i></td></tr>
+<tr><th id="695">695</th><td><em>static</em> <em>const</em> <em>long</em> <em>double</em></td></tr>
+<tr><th id="696">696</th><td><dfn class="tu decl def" id="invln10_lo" title='invln10_lo' data-type='const long double' data-ref="invln10_lo">invln10_lo</dfn> =  <var>1.41498268538580090791605082294397000e-10L</var>,	<i>/*  0x137287195355baaafad33dc323ee3.0p-145L */</i></td></tr>
+<tr><th id="697">697</th><td><dfn class="tu decl def" id="invln2_lo" title='invln2_lo' data-type='const long double' data-ref="invln2_lo">invln2_lo</dfn> =  <var>6.33178418956604368501892137426645911e-10L</var>;	<i>/*  0x15c17f0bbbe87fed0691d3e88eb57.0p-143L */</i></td></tr>
+<tr><th id="698">698</th><td></td></tr>
+<tr><th id="699">699</th><td><em>long</em> <em>double</em></td></tr>
+<tr><th id="700">700</th><td><dfn class="decl def" id="log10l" title='log10l' data-ref="log10l">log10l</dfn>(<em>long</em> <em>double</em> <dfn class="local col7 decl" id="37x" title='x' data-type='long double' data-ref="37x">x</dfn>)</td></tr>
+<tr><th id="701">701</th><td>{</td></tr>
+<tr><th id="702">702</th><td>	<b>struct</b> <a class="type" href="#ld" title='ld' data-ref="ld">ld</a> <dfn class="local col8 decl" id="38r" title='r' data-type='struct ld' data-ref="38r">r</dfn>;</td></tr>
+<tr><th id="703">703</th><td>	<em>long</em> <em>double</em> <dfn class="local col9 decl" id="39lo" title='lo' data-type='long double' data-ref="39lo">lo</dfn>;</td></tr>
+<tr><th id="704">704</th><td>	<em>float</em> <dfn class="local col0 decl" id="40hi" title='hi' data-type='float' data-ref="40hi">hi</dfn>;</td></tr>
+<tr><th id="705">705</th><td></td></tr>
+<tr><th id="706">706</th><td>	<a class="macro" href="../src/math_private.h.html#310" title="" data-ref="_M/ENTERI">ENTERI</a>();</td></tr>
+<tr><th id="707">707</th><td>	<a class="macro" href="../src/math_private.h.html#636" title="" data-ref="_M/DOPRINT_START">DOPRINT_START</a>(&amp;x);</td></tr>
+<tr><th id="708">708</th><td>	<a class="tu ref" href="#k_logl" title='k_logl' data-use='c' data-ref="k_logl">k_logl</a>(<a class="local col7 ref" href="#37x" title='x' data-ref="37x">x</a>, &amp;<a class="local col8 ref" href="#38r" title='r' data-ref="38r">r</a>);</td></tr>
+<tr><th id="709">709</th><td>	<b>if</b> (!<a class="local col8 ref" href="#38r" title='r' data-ref="38r">r</a>.<a class="tu ref" href="#ld::lo_set" title='ld::lo_set' data-use='r' data-ref="ld::lo_set">lo_set</a>)</td></tr>
+<tr><th id="710">710</th><td>		<a class="macro" href="../src/math_private.h.html#645" title="do { ; return (r.hi); } while (0)" data-ref="_M/RETURNPI">RETURNPI</a>(<a class="local col8 ref" href="#38r" title='r' data-ref="38r">r</a>.<a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi">hi</a>);</td></tr>
+<tr><th id="711">711</th><td>	<a class="macro" href="../src/math_private.h.html#379" title="do { __typeof(r.hi) __w; __w = (r.hi) + (r.lo); (r.lo) = ((r.hi) - __w) + (r.lo); (r.hi) = __w; } while (0)" data-ref="_M/_2sumF">_2sumF</a>(<a class="local col8 ref" href="#38r" title='r' data-ref="38r">r</a>.<a class="tu ref" href="#ld::hi" title='ld::hi' data-ref="ld::hi"><a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi"><a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi"><a class="tu ref" href="#ld::hi" title='ld::hi' data-use='w' data-ref="ld::hi">hi</a></a></a></a>, <a class="local col8 ref" href="#38r" title='r' data-ref="38r">r</a>.<a class="tu ref" href="#ld::lo" title='ld::lo' data-use='r' data-ref="ld::lo"><a class="tu ref" href="#ld::lo" title='ld::lo' data-use='w' data-ref="ld::lo">lo</a></a>);</td></tr>
+<tr><th id="712">712</th><td>	<a class="local col0 ref" href="#40hi" title='hi' data-ref="40hi">hi</a> = <a class="local col8 ref" href="#38r" title='r' data-ref="38r">r</a>.<a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi">hi</a>;</td></tr>
+<tr><th id="713">713</th><td>	<a class="local col9 ref" href="#39lo" title='lo' data-ref="39lo">lo</a> = <a class="local col8 ref" href="#38r" title='r' data-ref="38r">r</a>.<a class="tu ref" href="#ld::lo" title='ld::lo' data-use='r' data-ref="ld::lo">lo</a> + (<a class="local col8 ref" href="#38r" title='r' data-ref="38r">r</a>.<a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi">hi</a> - <a class="local col0 ref" href="#40hi" title='hi' data-ref="40hi">hi</a>);</td></tr>
+<tr><th id="714">714</th><td>	<a class="macro" href="../src/math_private.h.html#653" title="do { ; return ((invln10_hi * hi) + ((invln10_lo + invln10_hi) * lo + invln10_lo * hi)); } while (0)" data-ref="_M/RETURN2PI">RETURN2PI</a>(<a class="tu ref" href="#invln10_hi" title='invln10_hi' data-use='r' data-ref="invln10_hi">invln10_hi</a> * <a class="local col0 ref" href="#40hi" title='hi' data-ref="40hi">hi</a>,</td></tr>
+<tr><th id="715">715</th><td>	    (<a class="tu ref" href="#invln10_lo" title='invln10_lo' data-use='r' data-ref="invln10_lo">invln10_lo</a> + <a class="tu ref" href="#invln10_hi" title='invln10_hi' data-use='r' data-ref="invln10_hi">invln10_hi</a>) * <a class="local col9 ref" href="#39lo" title='lo' data-ref="39lo">lo</a> + <a class="tu ref" href="#invln10_lo" title='invln10_lo' data-use='r' data-ref="invln10_lo">invln10_lo</a> * <a class="local col0 ref" href="#40hi" title='hi' data-ref="40hi">hi</a>);</td></tr>
+<tr><th id="716">716</th><td>}</td></tr>
+<tr><th id="717">717</th><td></td></tr>
+<tr><th id="718">718</th><td><em>long</em> <em>double</em></td></tr>
+<tr><th id="719">719</th><td><dfn class="decl def" id="log2l" title='log2l' data-ref="log2l">log2l</dfn>(<em>long</em> <em>double</em> <dfn class="local col1 decl" id="41x" title='x' data-type='long double' data-ref="41x">x</dfn>)</td></tr>
+<tr><th id="720">720</th><td>{</td></tr>
+<tr><th id="721">721</th><td>	<b>struct</b> <a class="type" href="#ld" title='ld' data-ref="ld">ld</a> <dfn class="local col2 decl" id="42r" title='r' data-type='struct ld' data-ref="42r">r</dfn>;</td></tr>
+<tr><th id="722">722</th><td>	<em>long</em> <em>double</em> <dfn class="local col3 decl" id="43lo" title='lo' data-type='long double' data-ref="43lo">lo</dfn>;</td></tr>
+<tr><th id="723">723</th><td>	<em>float</em> <dfn class="local col4 decl" id="44hi" title='hi' data-type='float' data-ref="44hi">hi</dfn>;</td></tr>
+<tr><th id="724">724</th><td></td></tr>
+<tr><th id="725">725</th><td>	<a class="macro" href="../src/math_private.h.html#310" title="" data-ref="_M/ENTERI">ENTERI</a>();</td></tr>
+<tr><th id="726">726</th><td>	<a class="macro" href="../src/math_private.h.html#636" title="" data-ref="_M/DOPRINT_START">DOPRINT_START</a>(&amp;x);</td></tr>
+<tr><th id="727">727</th><td>	<a class="tu ref" href="#k_logl" title='k_logl' data-use='c' data-ref="k_logl">k_logl</a>(<a class="local col1 ref" href="#41x" title='x' data-ref="41x">x</a>, &amp;<a class="local col2 ref" href="#42r" title='r' data-ref="42r">r</a>);</td></tr>
+<tr><th id="728">728</th><td>	<b>if</b> (!<a class="local col2 ref" href="#42r" title='r' data-ref="42r">r</a>.<a class="tu ref" href="#ld::lo_set" title='ld::lo_set' data-use='r' data-ref="ld::lo_set">lo_set</a>)</td></tr>
+<tr><th id="729">729</th><td>		<a class="macro" href="../src/math_private.h.html#645" title="do { ; return (r.hi); } while (0)" data-ref="_M/RETURNPI">RETURNPI</a>(<a class="local col2 ref" href="#42r" title='r' data-ref="42r">r</a>.<a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi">hi</a>);</td></tr>
+<tr><th id="730">730</th><td>	<a class="macro" href="../src/math_private.h.html#379" title="do { __typeof(r.hi) __w; __w = (r.hi) + (r.lo); (r.lo) = ((r.hi) - __w) + (r.lo); (r.hi) = __w; } while (0)" data-ref="_M/_2sumF">_2sumF</a>(<a class="local col2 ref" href="#42r" title='r' data-ref="42r">r</a>.<a class="tu ref" href="#ld::hi" title='ld::hi' data-ref="ld::hi"><a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi"><a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi"><a class="tu ref" href="#ld::hi" title='ld::hi' data-use='w' data-ref="ld::hi">hi</a></a></a></a>, <a class="local col2 ref" href="#42r" title='r' data-ref="42r">r</a>.<a class="tu ref" href="#ld::lo" title='ld::lo' data-use='r' data-ref="ld::lo"><a class="tu ref" href="#ld::lo" title='ld::lo' data-use='w' data-ref="ld::lo">lo</a></a>);</td></tr>
+<tr><th id="731">731</th><td>	<a class="local col4 ref" href="#44hi" title='hi' data-ref="44hi">hi</a> = <a class="local col2 ref" href="#42r" title='r' data-ref="42r">r</a>.<a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi">hi</a>;</td></tr>
+<tr><th id="732">732</th><td>	<a class="local col3 ref" href="#43lo" title='lo' data-ref="43lo">lo</a> = <a class="local col2 ref" href="#42r" title='r' data-ref="42r">r</a>.<a class="tu ref" href="#ld::lo" title='ld::lo' data-use='r' data-ref="ld::lo">lo</a> + (<a class="local col2 ref" href="#42r" title='r' data-ref="42r">r</a>.<a class="tu ref" href="#ld::hi" title='ld::hi' data-use='r' data-ref="ld::hi">hi</a> - <a class="local col4 ref" href="#44hi" title='hi' data-ref="44hi">hi</a>);</td></tr>
+<tr><th id="733">733</th><td>	<a class="macro" href="../src/math_private.h.html#653" title="do { ; return ((invln2_hi * hi) + ((invln2_lo + invln2_hi) * lo + invln2_lo * hi)); } while (0)" data-ref="_M/RETURN2PI">RETURN2PI</a>(<a class="tu ref" href="#invln2_hi" title='invln2_hi' data-use='r' data-ref="invln2_hi">invln2_hi</a> * <a class="local col4 ref" href="#44hi" title='hi' data-ref="44hi">hi</a>,</td></tr>
+<tr><th id="734">734</th><td>	    (<a class="tu ref" href="#invln2_lo" title='invln2_lo' data-use='r' data-ref="invln2_lo">invln2_lo</a> + <a class="tu ref" href="#invln2_hi" title='invln2_hi' data-use='r' data-ref="invln2_hi">invln2_hi</a>) * <a class="local col3 ref" href="#43lo" title='lo' data-ref="43lo">lo</a> + <a class="tu ref" href="#invln2_lo" title='invln2_lo' data-use='r' data-ref="invln2_lo">invln2_lo</a> * <a class="local col4 ref" href="#44hi" title='hi' data-ref="44hi">hi</a>);</td></tr>
+<tr><th id="735">735</th><td>}</td></tr>
+<tr><th id="736">736</th><td></td></tr>
+<tr><th id="737">737</th><td><u>#<span data-ppcond="672">endif</span> /* STRUCT_RETURN */</u></td></tr>
+<tr><th id="738">738</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

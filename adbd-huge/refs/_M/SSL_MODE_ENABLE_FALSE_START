@@ -1,0 +1,11 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/ssl.h' l='622'/>
+<doc f='codebrowser/external/boringssl/src/include/openssl/ssl.h' l='612'>/* SSL_MODE_ENABLE_FALSE_START allows clients to send application data before
+ * receipt of ChangeCipherSpec and Finished. This mode enables full-handshakes
+ * to &apos;complete&apos; in one RTT. See draft-bmoeller-tls-falsestart-01.
+ *
+ * When False Start is enabled, |SSL_do_handshake| may succeed before the
+ * handshake has completely finished. |SSL_write| will function at this point,
+ * and |SSL_read| will transparently wait for the final handshake leg before
+ * returning application data. To determine if False Start occurred or when the
+ * handshake is completely finished, see |SSL_in_false_start|, |SSL_in_init|,
+ * and |SSL_CB_HANDSHAKE_DONE| from |SSL_CTX_set_info_callback|. */</doc>

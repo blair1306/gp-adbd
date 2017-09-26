@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>logwrap.h source code [codebrowser/system/core/logwrapper/include/logwrap/logwrap.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="AndroidForkExecvpOption "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/logwrapper/include/logwrap/logwrap.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>system</a>/<a href='../../..'>core</a>/<a href='../..'>logwrapper</a>/<a href='..'>include</a>/<a href='./'>logwrap</a>/<a href='logwrap.h.html'>logwrap.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* system/core/include/logwrap/logwrap.h</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright 2013, The Android Open Source Project</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="6">6</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="7">7</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="8">8</th><td><i> *</i></td></tr>
+<tr><th id="9">9</th><td><i> *     <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="10">10</th><td><i> *</i></td></tr>
+<tr><th id="11">11</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="12">12</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="13">13</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="14">14</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="15">15</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="16">16</th><td><i> */</i></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><u>#<span data-ppcond="18">ifndef</span> <span class="macro" data-ref="_M/__LIBS_LOGWRAP_H">__LIBS_LOGWRAP_H</span></u></td></tr>
+<tr><th id="19">19</th><td><u>#define <dfn class="macro" id="_M/__LIBS_LOGWRAP_H" data-ref="_M/__LIBS_LOGWRAP_H">__LIBS_LOGWRAP_H</dfn></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include &lt;stdbool.h&gt;</u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../../../bionic/libc/include/stdint.h.html">&lt;stdint.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><a class="macro" href="../../../../../bionic/libc/include/sys/cdefs.h.html#89" title="" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><i>/*</i></td></tr>
+<tr><th id="27">27</th><td><i> * Run a command while logging its stdout and stderr</i></td></tr>
+<tr><th id="28">28</th><td><i> *</i></td></tr>
+<tr><th id="29">29</th><td><i> * WARNING: while this function is running it will clear all SIGCHLD handlers</i></td></tr>
+<tr><th id="30">30</th><td><i> * if you rely on SIGCHLD in the caller there is a chance zombies will be</i></td></tr>
+<tr><th id="31">31</th><td><i> * created if you're not calling waitpid after calling this. This function will</i></td></tr>
+<tr><th id="32">32</th><td><i> * log a warning when it clears SIGCHLD for processes other than the child it</i></td></tr>
+<tr><th id="33">33</th><td><i> * created.</i></td></tr>
+<tr><th id="34">34</th><td><i> *</i></td></tr>
+<tr><th id="35">35</th><td><i> * Arguments:</i></td></tr>
+<tr><th id="36">36</th><td><i> *   argc:   the number of elements in argv</i></td></tr>
+<tr><th id="37">37</th><td><i> *   argv:   an array of strings containing the command to be executed and its</i></td></tr>
+<tr><th id="38">38</th><td><i> *           arguments as separate strings. argv does not need to be</i></td></tr>
+<tr><th id="39">39</th><td><i> *           NULL-terminated</i></td></tr>
+<tr><th id="40">40</th><td><i> *   status: the equivalent child status as populated by wait(status). This</i></td></tr>
+<tr><th id="41">41</th><td><i> *           value is only valid when logwrap successfully completes. If NULL</i></td></tr>
+<tr><th id="42">42</th><td><i> *           the return value of the child will be the function's return value.</i></td></tr>
+<tr><th id="43">43</th><td><i> *   ignore_int_quit: set to true if you want to completely ignore SIGINT and</i></td></tr>
+<tr><th id="44">44</th><td><i> *           SIGQUIT while logwrap is running. This may force the end-user to</i></td></tr>
+<tr><th id="45">45</th><td><i> *           send a signal twice to signal the caller (once for the child, and</i></td></tr>
+<tr><th id="46">46</th><td><i> *           once for the caller)</i></td></tr>
+<tr><th id="47">47</th><td><i> *   log_target: Specify where to log the output of the child, either LOG_NONE,</i></td></tr>
+<tr><th id="48">48</th><td><i> *           LOG_ALOG (for the Android system log), LOG_KLOG (for the kernel</i></td></tr>
+<tr><th id="49">49</th><td><i> *           log), or LOG_FILE (and you need to specify a pathname in the</i></td></tr>
+<tr><th id="50">50</th><td><i> *           file_path argument, otherwise pass NULL).  These are bit fields,</i></td></tr>
+<tr><th id="51">51</th><td><i> *           and can be OR'ed together to log to multiple places.</i></td></tr>
+<tr><th id="52">52</th><td><i> *   abbreviated: If true, capture up to the first 100 lines and last 4K of</i></td></tr>
+<tr><th id="53">53</th><td><i> *           output from the child.  The abbreviated output is not dumped to</i></td></tr>
+<tr><th id="54">54</th><td><i> *           the specified log until the child has exited.</i></td></tr>
+<tr><th id="55">55</th><td><i> *   file_path: if log_target has the LOG_FILE bit set, then this parameter</i></td></tr>
+<tr><th id="56">56</th><td><i> *           must be set to the pathname of the file to log to.</i></td></tr>
+<tr><th id="57">57</th><td><i> *   opts: set to non-NULL if you want to use one or more of the</i></td></tr>
+<tr><th id="58">58</th><td><i> *           FORK_EXECVP_OPTION_* features.</i></td></tr>
+<tr><th id="59">59</th><td><i> *   opts_len: the length of the opts array. When opts is NULL, pass 0.</i></td></tr>
+<tr><th id="60">60</th><td><i> *</i></td></tr>
+<tr><th id="61">61</th><td><i> * Return value:</i></td></tr>
+<tr><th id="62">62</th><td><i> *   0 when logwrap successfully run the child process and captured its status</i></td></tr>
+<tr><th id="63">63</th><td><i> *   -1 when an internal error occurred</i></td></tr>
+<tr><th id="64">64</th><td><i> *   -ECHILD if status is NULL and the child didn't exit properly</i></td></tr>
+<tr><th id="65">65</th><td><i> *   the return value of the child if it exited properly and status is NULL</i></td></tr>
+<tr><th id="66">66</th><td><i> *</i></td></tr>
+<tr><th id="67">67</th><td><i> */</i></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><i>/* Values for the log_target parameter android_fork_execvp_ext() */</i></td></tr>
+<tr><th id="70">70</th><td><u>#define <dfn class="macro" id="_M/LOG_NONE" data-ref="_M/LOG_NONE">LOG_NONE</dfn>        0</u></td></tr>
+<tr><th id="71">71</th><td><u>#define <dfn class="macro" id="_M/LOG_ALOG" data-ref="_M/LOG_ALOG">LOG_ALOG</dfn>        1</u></td></tr>
+<tr><th id="72">72</th><td><u>#define <dfn class="macro" id="_M/LOG_KLOG" data-ref="_M/LOG_KLOG">LOG_KLOG</dfn>        2</u></td></tr>
+<tr><th id="73">73</th><td><u>#define <dfn class="macro" id="_M/LOG_FILE" data-ref="_M/LOG_FILE">LOG_FILE</dfn>        4</u></td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><i>/* Write data to child's stdin. */</i></td></tr>
+<tr><th id="76">76</th><td><u>#define <dfn class="macro" id="_M/FORK_EXECVP_OPTION_INPUT" data-ref="_M/FORK_EXECVP_OPTION_INPUT">FORK_EXECVP_OPTION_INPUT</dfn>             0</u></td></tr>
+<tr><th id="77">77</th><td><i>/* Capture data from child's stdout and stderr. */</i></td></tr>
+<tr><th id="78">78</th><td><u>#define <dfn class="macro" id="_M/FORK_EXECVP_OPTION_CAPTURE_OUTPUT" data-ref="_M/FORK_EXECVP_OPTION_CAPTURE_OUTPUT">FORK_EXECVP_OPTION_CAPTURE_OUTPUT</dfn>    1</u></td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><b>struct</b> <dfn class="type def" id="AndroidForkExecvpOption" title='AndroidForkExecvpOption' data-ref="AndroidForkExecvpOption">AndroidForkExecvpOption</dfn> {</td></tr>
+<tr><th id="81">81</th><td>    <em>int</em> <dfn class="decl" id="AndroidForkExecvpOption::opt_type" title='AndroidForkExecvpOption::opt_type' data-ref="AndroidForkExecvpOption::opt_type">opt_type</dfn>;</td></tr>
+<tr><th id="82">82</th><td>    <b>union</b> {</td></tr>
+<tr><th id="83">83</th><td>        <b>struct</b> {</td></tr>
+<tr><th id="84">84</th><td>            <em>const</em> <a class="typedef" href="../../../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a>* <dfn class="decl" id="AndroidForkExecvpOption::(anonymousunion)::(anonymous)::input" title='AndroidForkExecvpOption::(anonymous union)::(anonymous struct)::input' data-ref="AndroidForkExecvpOption::(anonymousunion)::(anonymous)::input">input</dfn>;</td></tr>
+<tr><th id="85">85</th><td>            <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="AndroidForkExecvpOption::(anonymousunion)::(anonymous)::input_len" title='AndroidForkExecvpOption::(anonymous union)::(anonymous struct)::input_len' data-ref="AndroidForkExecvpOption::(anonymousunion)::(anonymous)::input_len">input_len</dfn>;</td></tr>
+<tr><th id="86">86</th><td>        } <dfn class="decl" id="AndroidForkExecvpOption::(anonymous)::opt_input" title='AndroidForkExecvpOption::(anonymous union)::opt_input' data-ref="AndroidForkExecvpOption::(anonymous)::opt_input">opt_input</dfn>;</td></tr>
+<tr><th id="87">87</th><td>        <b>struct</b> {</td></tr>
+<tr><th id="88">88</th><td>            <em>void</em> (*<dfn class="decl" id="AndroidForkExecvpOption::(anonymousunion)::(anonymous)::on_output" title='AndroidForkExecvpOption::(anonymous union)::(anonymous struct)::on_output' data-ref="AndroidForkExecvpOption::(anonymousunion)::(anonymous)::on_output">on_output</dfn>)(<em>const</em> <a class="typedef" href="../../../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a>* <i>/*output*/</i>,</td></tr>
+<tr><th id="89">89</th><td>                              <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <i>/*output_len*/</i>,</td></tr>
+<tr><th id="90">90</th><td>                              <em>void</em>* <i>/* user_pointer */</i>);</td></tr>
+<tr><th id="91">91</th><td>            <em>void</em>* <dfn class="decl" id="AndroidForkExecvpOption::(anonymousunion)::(anonymous)::user_pointer" title='AndroidForkExecvpOption::(anonymous union)::(anonymous struct)::user_pointer' data-ref="AndroidForkExecvpOption::(anonymousunion)::(anonymous)::user_pointer">user_pointer</dfn>;</td></tr>
+<tr><th id="92">92</th><td>        } <dfn class="decl" id="AndroidForkExecvpOption::(anonymous)::opt_capture_output" title='AndroidForkExecvpOption::(anonymous union)::opt_capture_output' data-ref="AndroidForkExecvpOption::(anonymous)::opt_capture_output">opt_capture_output</dfn>;</td></tr>
+<tr><th id="93">93</th><td>    };</td></tr>
+<tr><th id="94">94</th><td>};</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><em>int</em> <dfn class="decl" id="android_fork_execvp_ext" title='android_fork_execvp_ext' data-ref="android_fork_execvp_ext">android_fork_execvp_ext</dfn>(<em>int</em> <dfn class="local col3 decl" id="13argc" title='argc' data-type='int' data-ref="13argc">argc</dfn>, <em>char</em>* <dfn class="local col4 decl" id="14argv" title='argv' data-type='char **' data-ref="14argv">argv</dfn>[], <em>int</em> *<dfn class="local col5 decl" id="15status" title='status' data-type='int *' data-ref="15status">status</dfn>, <span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <dfn class="local col6 decl" id="16ignore_int_quit" title='ignore_int_quit' data-type='_Bool' data-ref="16ignore_int_quit">ignore_int_quit</dfn>,</td></tr>
+<tr><th id="97">97</th><td>        <em>int</em> <dfn class="local col7 decl" id="17log_target" title='log_target' data-type='int' data-ref="17log_target">log_target</dfn>, <span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <dfn class="local col8 decl" id="18abbreviated" title='abbreviated' data-type='_Bool' data-ref="18abbreviated">abbreviated</dfn>, <em>char</em> *<dfn class="local col9 decl" id="19file_path" title='file_path' data-type='char *' data-ref="19file_path">file_path</dfn>,</td></tr>
+<tr><th id="98">98</th><td>        <em>const</em> <b>struct</b> <a class="type" href="#AndroidForkExecvpOption" title='AndroidForkExecvpOption' data-ref="AndroidForkExecvpOption">AndroidForkExecvpOption</a>* <dfn class="local col0 decl" id="20opts" title='opts' data-type='const struct AndroidForkExecvpOption *' data-ref="20opts">opts</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="21opts_len" title='opts_len' data-type='size_t' data-ref="21opts_len">opts_len</dfn>);</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><i>/* Similar to above, except abbreviated logging is not available, and if logwrap</i></td></tr>
+<tr><th id="101">101</th><td><i> * is true, logging is to the Android system log, and if false, there is no</i></td></tr>
+<tr><th id="102">102</th><td><i> * logging.</i></td></tr>
+<tr><th id="103">103</th><td><i> */</i></td></tr>
+<tr><th id="104">104</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="android_fork_execvp" title='android_fork_execvp' data-ref="android_fork_execvp">android_fork_execvp</dfn>(<em>int</em> <dfn class="local col2 decl" id="22argc" title='argc' data-type='int' data-ref="22argc">argc</dfn>, <em>char</em>* <dfn class="local col3 decl" id="23argv" title='argv' data-type='char **' data-ref="23argv">argv</dfn>[], <em>int</em> *<dfn class="local col4 decl" id="24status" title='status' data-type='int *' data-ref="24status">status</dfn>,</td></tr>
+<tr><th id="105">105</th><td>                                     <span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <dfn class="local col5 decl" id="25ignore_int_quit" title='ignore_int_quit' data-type='_Bool' data-ref="25ignore_int_quit">ignore_int_quit</dfn>, <span class="macro" title="_Bool" data-ref="_M/bool">bool</span> <dfn class="local col6 decl" id="26logwrap" title='logwrap' data-type='_Bool' data-ref="26logwrap">logwrap</dfn>)</td></tr>
+<tr><th id="106">106</th><td>{</td></tr>
+<tr><th id="107">107</th><td>    <b>return</b> <a class="ref" href="#android_fork_execvp_ext" title='android_fork_execvp_ext' data-ref="android_fork_execvp_ext">android_fork_execvp_ext</a>(<a class="local col2 ref" href="#22argc" title='argc' data-ref="22argc">argc</a>, <a class="local col3 ref" href="#23argv" title='argv' data-ref="23argv">argv</a>, <a class="local col4 ref" href="#24status" title='status' data-ref="24status">status</a>, <a class="local col5 ref" href="#25ignore_int_quit" title='ignore_int_quit' data-ref="25ignore_int_quit">ignore_int_quit</a>,</td></tr>
+<tr><th id="108">108</th><td>                                   (<a class="local col6 ref" href="#26logwrap" title='logwrap' data-ref="26logwrap">logwrap</a> ? <a class="macro" href="#71" title="1" data-ref="_M/LOG_ALOG">LOG_ALOG</a> : <a class="macro" href="#70" title="0" data-ref="_M/LOG_NONE">LOG_NONE</a>), <span class="macro" title="0" data-ref="_M/false">false</span>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,</td></tr>
+<tr><th id="109">109</th><td>                                   <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <var>0</var>);</td></tr>
+<tr><th id="110">110</th><td>}</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><a class="macro" href="../../../../../bionic/libc/include/sys/cdefs.h.html#90" title="" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><u>#<span data-ppcond="18">endif</span> /* __LIBS_LOGWRAP_H */</u></td></tr>
+<tr><th id="115">115</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../fs_mgr/fs_mgr.c.html'>codebrowser/system/core/fs_mgr/fs_mgr.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

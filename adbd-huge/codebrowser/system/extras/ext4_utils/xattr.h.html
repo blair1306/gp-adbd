@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>xattr.h source code [codebrowser/system/extras/ext4_utils/xattr.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ext4_xattr_entry,ext4_xattr_header,ext4_xattr_ibody_header "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/extras/ext4_utils/xattr.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>extras</a>/<a href='./'>ext4_utils</a>/<a href='xattr.h.html'>xattr.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><u>#<span data-ppcond="3">ifndef</span> <span class="macro" data-ref="_M/_SYSTEM_EXTRAS_EXT4_UTILS_XATTR_H">_SYSTEM_EXTRAS_EXT4_UTILS_XATTR_H</span></u></td></tr>
+<tr><th id="4">4</th><td><u>#define <dfn class="macro" id="_M/_SYSTEM_EXTRAS_EXT4_UTILS_XATTR_H" data-ref="_M/_SYSTEM_EXTRAS_EXT4_UTILS_XATTR_H">_SYSTEM_EXTRAS_EXT4_UTILS_XATTR_H</dfn> 1</u></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><u>#define <dfn class="macro" id="_M/EXT4_XATTR_MAGIC" data-ref="_M/EXT4_XATTR_MAGIC">EXT4_XATTR_MAGIC</dfn> 0xEA020000</u></td></tr>
+<tr><th id="7">7</th><td><u>#define <dfn class="macro" id="_M/EXT4_XATTR_INDEX_SECURITY" data-ref="_M/EXT4_XATTR_INDEX_SECURITY">EXT4_XATTR_INDEX_SECURITY</dfn> 6</u></td></tr>
+<tr><th id="8">8</th><td></td></tr>
+<tr><th id="9">9</th><td><b>struct</b> <dfn class="type def" id="ext4_xattr_header" title='ext4_xattr_header' data-ref="ext4_xattr_header">ext4_xattr_header</dfn> {</td></tr>
+<tr><th id="10">10</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a>  <dfn class="decl" id="ext4_xattr_header::h_magic" title='ext4_xattr_header::h_magic' data-ref="ext4_xattr_header::h_magic">h_magic</dfn>;</td></tr>
+<tr><th id="11">11</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a>  <dfn class="decl" id="ext4_xattr_header::h_refcount" title='ext4_xattr_header::h_refcount' data-ref="ext4_xattr_header::h_refcount">h_refcount</dfn>;</td></tr>
+<tr><th id="12">12</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a>  <dfn class="decl" id="ext4_xattr_header::h_blocks" title='ext4_xattr_header::h_blocks' data-ref="ext4_xattr_header::h_blocks">h_blocks</dfn>;</td></tr>
+<tr><th id="13">13</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a>  <dfn class="decl" id="ext4_xattr_header::h_hash" title='ext4_xattr_header::h_hash' data-ref="ext4_xattr_header::h_hash">h_hash</dfn>;</td></tr>
+<tr><th id="14">14</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a>  <dfn class="decl" id="ext4_xattr_header::h_checksum" title='ext4_xattr_header::h_checksum' data-ref="ext4_xattr_header::h_checksum">h_checksum</dfn>;</td></tr>
+<tr><th id="15">15</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a>   <dfn class="decl" id="ext4_xattr_header::h_reserved" title='ext4_xattr_header::h_reserved' data-ref="ext4_xattr_header::h_reserved">h_reserved</dfn>[<var>3</var>];</td></tr>
+<tr><th id="16">16</th><td>};</td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><b>struct</b> <dfn class="type def" id="ext4_xattr_ibody_header" title='ext4_xattr_ibody_header' data-ref="ext4_xattr_ibody_header">ext4_xattr_ibody_header</dfn> {</td></tr>
+<tr><th id="19">19</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a>  <dfn class="decl" id="ext4_xattr_ibody_header::h_magic" title='ext4_xattr_ibody_header::h_magic' data-ref="ext4_xattr_ibody_header::h_magic">h_magic</dfn>;</td></tr>
+<tr><th id="20">20</th><td>};</td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><b>struct</b> <dfn class="type def" id="ext4_xattr_entry" title='ext4_xattr_entry' data-ref="ext4_xattr_entry">ext4_xattr_entry</dfn> {</td></tr>
+<tr><th id="23">23</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_xattr_entry::e_name_len" title='ext4_xattr_entry::e_name_len' data-ref="ext4_xattr_entry::e_name_len">e_name_len</dfn>;</td></tr>
+<tr><th id="24">24</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_xattr_entry::e_name_index" title='ext4_xattr_entry::e_name_index' data-ref="ext4_xattr_entry::e_name_index">e_name_index</dfn>;</td></tr>
+<tr><th id="25">25</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_xattr_entry::e_value_offs" title='ext4_xattr_entry::e_value_offs' data-ref="ext4_xattr_entry::e_value_offs">e_value_offs</dfn>;</td></tr>
+<tr><th id="26">26</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_xattr_entry::e_value_block" title='ext4_xattr_entry::e_value_block' data-ref="ext4_xattr_entry::e_value_block">e_value_block</dfn>;</td></tr>
+<tr><th id="27">27</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_xattr_entry::e_value_size" title='ext4_xattr_entry::e_value_size' data-ref="ext4_xattr_entry::e_value_size">e_value_size</dfn>;</td></tr>
+<tr><th id="28">28</th><td>    <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_xattr_entry::e_hash" title='ext4_xattr_entry::e_hash' data-ref="ext4_xattr_entry::e_hash">e_hash</dfn>;</td></tr>
+<tr><th id="29">29</th><td>    <em>char</em> <dfn class="decl" id="ext4_xattr_entry::e_name" title='ext4_xattr_entry::e_name' data-ref="ext4_xattr_entry::e_name">e_name</dfn>[<var>0</var>];</td></tr>
+<tr><th id="30">30</th><td>};</td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#define <dfn class="macro" id="_M/EXT4_XATTR_PAD_BITS" data-ref="_M/EXT4_XATTR_PAD_BITS">EXT4_XATTR_PAD_BITS</dfn> 2</u></td></tr>
+<tr><th id="33">33</th><td><u>#define <dfn class="macro" id="_M/EXT4_XATTR_PAD" data-ref="_M/EXT4_XATTR_PAD">EXT4_XATTR_PAD</dfn> (1&lt;&lt;EXT4_XATTR_PAD_BITS)</u></td></tr>
+<tr><th id="34">34</th><td><u>#define <dfn class="macro" id="_M/EXT4_XATTR_ROUND" data-ref="_M/EXT4_XATTR_ROUND">EXT4_XATTR_ROUND</dfn> (EXT4_XATTR_PAD-1)</u></td></tr>
+<tr><th id="35">35</th><td><u>#define <dfn class="macro" id="_M/EXT4_XATTR_LEN" data-ref="_M/EXT4_XATTR_LEN">EXT4_XATTR_LEN</dfn>(name_len) \</u></td></tr>
+<tr><th id="36">36</th><td><u>    (((name_len) + EXT4_XATTR_ROUND + \</u></td></tr>
+<tr><th id="37">37</th><td><u>    sizeof(struct ext4_xattr_entry)) &amp; ~EXT4_XATTR_ROUND)</u></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/EXT4_XATTR_NEXT" data-ref="_M/EXT4_XATTR_NEXT">EXT4_XATTR_NEXT</dfn>(entry) \</u></td></tr>
+<tr><th id="39">39</th><td><u>    ((struct ext4_xattr_entry *)( \</u></td></tr>
+<tr><th id="40">40</th><td><u>     (char *)(entry) + EXT4_XATTR_LEN((entry)-&gt;e_name_len)))</u></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/EXT4_XATTR_SIZE" data-ref="_M/EXT4_XATTR_SIZE">EXT4_XATTR_SIZE</dfn>(size) \</u></td></tr>
+<tr><th id="42">42</th><td><u>    (((size) + EXT4_XATTR_ROUND) &amp; ~EXT4_XATTR_ROUND)</u></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/IS_LAST_ENTRY" data-ref="_M/IS_LAST_ENTRY">IS_LAST_ENTRY</dfn>(entry) (*(uint32_t *)(entry) == 0)</u></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><u>#<span data-ppcond="3">endif</span> /* !_SYSTEM_EXTRAS_EXT4_UTILS_XATTR_H */</u></td></tr>
+<tr><th id="46">46</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../core/fs_mgr/fs_mgr.c.html'>codebrowser/system/core/fs_mgr/fs_mgr.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

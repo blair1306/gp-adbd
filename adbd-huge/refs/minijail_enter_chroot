@@ -1,0 +1,13 @@
+<dec f='codebrowser/external/minijail/libminijail.h' l='106' type='int minijail_enter_chroot(struct minijail * j, const char * dir)'/>
+<def f='codebrowser/external/minijail/libminijail.c' l='505' ll='514' type='int minijail_enter_chroot(struct minijail * j, const char * dir)'/>
+<doc f='codebrowser/external/minijail/libminijail.h' l='95'>/*
+ * minijail_enter_chroot: enables chroot() restriction for @j
+ * @j   minijail to apply restriction to
+ * @dir directory to chroot() to. Owned by caller.
+ *
+ * Enters @dir, binding all bind mounts specified with minijail_bind() into
+ * place. Requires @dir to contain all necessary directories for bind mounts
+ * (i.e., if you have requested a bind mount at /etc, /etc must exist in @dir.)
+ *
+ * Returns 0 on success.
+ */</doc>

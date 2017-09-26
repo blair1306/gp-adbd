@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>fec_private.h source code [codebrowser/system/extras/libfec/fec_private.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ecc_info,fec_handle,verity_block_info,verity_header,verity_info "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/extras/libfec/fec_private.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>extras</a>/<a href='./'>libfec</a>/<a href='fec_private.h.html'>fec_private.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2015 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/__FEC_PRIVATE_H__">__FEC_PRIVATE_H__</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/__FEC_PRIVATE_H__" data-ref="_M/__FEC_PRIVATE_H__">__FEC_PRIVATE_H__</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../external/libcxx/include/memory.html">&lt;memory&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../external/libcxx/include/new.html">&lt;new&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../../../bionic/libc/include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="../../../external/libcxx/include/string.html">&lt;string&gt;</a></u></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../../../bionic/libc/include/sys/syscall.h.html">&lt;sys/syscall.h&gt;</a></u></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../../../external/libcxx/include/vector.html">&lt;vector&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../../core/include/utils/Compat.h.html">&lt;utils/Compat.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../../core/include/mincrypt/rsa.h.html">&lt;mincrypt/rsa.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../../../external/boringssl/src/include/openssl/sha.h.html">&lt;openssl/sha.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="include/fec/io.h.html">&lt;fec/io.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="include/fec/ecc.h.html">&lt;fec/ecc.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i>/* processing parameters */</i></td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/WORK_MIN_THREADS" data-ref="_M/WORK_MIN_THREADS">WORK_MIN_THREADS</dfn> 1</u></td></tr>
+<tr><th id="40">40</th><td><u>#define <dfn class="macro" id="_M/WORK_MAX_THREADS" data-ref="_M/WORK_MAX_THREADS">WORK_MAX_THREADS</dfn> 64</u></td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><i>/* verity parameters */</i></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/VERITY_CACHE_BLOCKS" data-ref="_M/VERITY_CACHE_BLOCKS">VERITY_CACHE_BLOCKS</dfn> 4096</u></td></tr>
+<tr><th id="44">44</th><td><u>#define <dfn class="macro" id="_M/VERITY_NO_CACHE" data-ref="_M/VERITY_NO_CACHE">VERITY_NO_CACHE</dfn> UINT64_MAX</u></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><i>/* verity definitions */</i></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/VERITY_METADATA_SIZE" data-ref="_M/VERITY_METADATA_SIZE">VERITY_METADATA_SIZE</dfn> (8 * FEC_BLOCKSIZE)</u></td></tr>
+<tr><th id="48">48</th><td><u>#define <dfn class="macro" id="_M/VERITY_TABLE_ARGS" data-ref="_M/VERITY_TABLE_ARGS">VERITY_TABLE_ARGS</dfn> 10 /* mandatory arguments */</u></td></tr>
+<tr><th id="49">49</th><td><u>#define <dfn class="macro" id="_M/VERITY_MIN_TABLE_SIZE" data-ref="_M/VERITY_MIN_TABLE_SIZE">VERITY_MIN_TABLE_SIZE</dfn> (VERITY_TABLE_ARGS * 2) /* for a sanity check */</u></td></tr>
+<tr><th id="50">50</th><td><u>#define <dfn class="macro" id="_M/VERITY_MAX_TABLE_SIZE" data-ref="_M/VERITY_MAX_TABLE_SIZE">VERITY_MAX_TABLE_SIZE</dfn> (VERITY_METADATA_SIZE - sizeof(verity_header))</u></td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><i>/* verity header and metadata */</i></td></tr>
+<tr><th id="53">53</th><td><u>#define <dfn class="macro" id="_M/VERITY_MAGIC" data-ref="_M/VERITY_MAGIC">VERITY_MAGIC</dfn> 0xB001B001</u></td></tr>
+<tr><th id="54">54</th><td><u>#define <dfn class="macro" id="_M/VERITY_MAGIC_DISABLE" data-ref="_M/VERITY_MAGIC_DISABLE">VERITY_MAGIC_DISABLE</dfn> 0x46464F56</u></td></tr>
+<tr><th id="55">55</th><td><u>#define <dfn class="macro" id="_M/VERITY_VERSION" data-ref="_M/VERITY_VERSION">VERITY_VERSION</dfn> 0</u></td></tr>
+<tr><th id="56">56</th><td><u>#define <dfn class="macro" id="_M/VERITY_TABLE_FIELDS" data-ref="_M/VERITY_TABLE_FIELDS">VERITY_TABLE_FIELDS</dfn> 10</u></td></tr>
+<tr><th id="57">57</th><td><u>#define <dfn class="macro" id="_M/VERITY_TABLE_VERSION" data-ref="_M/VERITY_TABLE_VERSION">VERITY_TABLE_VERSION</dfn> 1</u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><b>struct</b> <dfn class="type def" id="verity_header" title='verity_header' data-ref="verity_header">verity_header</dfn> {</td></tr>
+<tr><th id="60">60</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="verity_header::magic" title='verity_header::magic' data-ref="verity_header::magic">magic</dfn>;</td></tr>
+<tr><th id="61">61</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="verity_header::version" title='verity_header::version' data-ref="verity_header::version">version</dfn>;</td></tr>
+<tr><th id="62">62</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="verity_header::signature" title='verity_header::signature' data-ref="verity_header::signature">signature</dfn>[<a class="macro" href="../../core/include/mincrypt/rsa.h.html#37" title="256" data-ref="_M/RSANUMBYTES">RSANUMBYTES</a>];</td></tr>
+<tr><th id="63">63</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="verity_header::length" title='verity_header::length' data-ref="verity_header::length">length</dfn>;</td></tr>
+<tr><th id="64">64</th><td>};</td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><i>/* file handle */</i></td></tr>
+<tr><th id="67">67</th><td><b>struct</b> <dfn class="type def" id="ecc_info" title='ecc_info' data-ref="ecc_info">ecc_info</dfn> {</td></tr>
+<tr><th id="68">68</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="ecc_info::valid" title='ecc_info::valid' data-ref="ecc_info::valid">valid</dfn>;</td></tr>
+<tr><th id="69">69</th><td>    <em>int</em> <dfn class="decl" id="ecc_info::roots" title='ecc_info::roots' data-ref="ecc_info::roots">roots</dfn>;</td></tr>
+<tr><th id="70">70</th><td>    <em>int</em> <dfn class="decl" id="ecc_info::rsn" title='ecc_info::rsn' data-ref="ecc_info::rsn">rsn</dfn>;</td></tr>
+<tr><th id="71">71</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="ecc_info::size" title='ecc_info::size' data-ref="ecc_info::size">size</dfn>;</td></tr>
+<tr><th id="72">72</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="ecc_info::blocks" title='ecc_info::blocks' data-ref="ecc_info::blocks">blocks</dfn>;</td></tr>
+<tr><th id="73">73</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="ecc_info::rounds" title='ecc_info::rounds' data-ref="ecc_info::rounds">rounds</dfn>;</td></tr>
+<tr><th id="74">74</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="ecc_info::start" title='ecc_info::start' data-ref="ecc_info::start">start</dfn>; <i>/* offset in file */</i></td></tr>
+<tr><th id="75">75</th><td>};</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><b>struct</b> <dfn class="type def" id="verity_info" title='verity_info' data-ref="verity_info">verity_info</dfn> {</td></tr>
+<tr><th id="78">78</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="verity_info::disabled" title='verity_info::disabled' data-ref="verity_info::disabled">disabled</dfn>;</td></tr>
+<tr><th id="79">79</th><td>    <em>char</em> *<dfn class="decl" id="verity_info::table" title='verity_info::table' data-ref="verity_info::table">table</dfn>;</td></tr>
+<tr><th id="80">80</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="verity_info::hash_data_blocks" title='verity_info::hash_data_blocks' data-ref="verity_info::hash_data_blocks">hash_data_blocks</dfn>;</td></tr>
+<tr><th id="81">81</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="verity_info::hash_size" title='verity_info::hash_size' data-ref="verity_info::hash_size">hash_size</dfn>;</td></tr>
+<tr><th id="82">82</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="verity_info::hash_data_offset" title='verity_info::hash_data_offset' data-ref="verity_info::hash_data_offset">hash_data_offset</dfn>;</td></tr>
+<tr><th id="83">83</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="verity_info::hash_start" title='verity_info::hash_start' data-ref="verity_info::hash_start">hash_start</dfn>;</td></tr>
+<tr><th id="84">84</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="decl" id="verity_info::hash" title='verity_info::hash' data-ref="verity_info::hash">hash</dfn>;</td></tr>
+<tr><th id="85">85</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="verity_info::salt_size" title='verity_info::salt_size' data-ref="verity_info::salt_size">salt_size</dfn>;</td></tr>
+<tr><th id="86">86</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="decl" id="verity_info::salt" title='verity_info::salt' data-ref="verity_info::salt">salt</dfn>;</td></tr>
+<tr><th id="87">87</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="verity_info::data_blocks" title='verity_info::data_blocks' data-ref="verity_info::data_blocks">data_blocks</dfn>;</td></tr>
+<tr><th id="88">88</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="verity_info::metadata_start" title='verity_info::metadata_start' data-ref="verity_info::metadata_start">metadata_start</dfn>; <i>/* offset in file */</i></td></tr>
+<tr><th id="89">89</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="verity_info::zero_hash" title='verity_info::zero_hash' data-ref="verity_info::zero_hash">zero_hash</dfn>[<a class="macro" href="../../../external/boringssl/src/include/openssl/sha.h.html#154" title="32" data-ref="_M/SHA256_DIGEST_LENGTH">SHA256_DIGEST_LENGTH</a>];</td></tr>
+<tr><th id="90">90</th><td>    <a class="type" href="#verity_header" title='verity_header' data-ref="verity_header">verity_header</a> <dfn class="decl" id="verity_info::header" title='verity_info::header' data-ref="verity_info::header">header</dfn>;</td></tr>
+<tr><th id="91">91</th><td>};</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><b>struct</b> <dfn class="type def" id="verity_block_info" title='verity_block_info' data-ref="verity_block_info">verity_block_info</dfn> {</td></tr>
+<tr><th id="94">94</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="verity_block_info::index" title='verity_block_info::index' data-ref="verity_block_info::index">index</dfn>;</td></tr>
+<tr><th id="95">95</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="verity_block_info::valid" title='verity_block_info::valid' data-ref="verity_block_info::valid">valid</dfn>;</td></tr>
+<tr><th id="96">96</th><td>};</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><b>struct</b> <dfn class="type def" id="fec_handle" title='fec_handle' data-ref="fec_handle">fec_handle</dfn> {</td></tr>
+<tr><th id="99">99</th><td>    <a class="type" href="#ecc_info" title='ecc_info' data-ref="ecc_info">ecc_info</a> <dfn class="decl" id="fec_handle::ecc" title='fec_handle::ecc' data-ref="fec_handle::ecc">ecc</dfn>;</td></tr>
+<tr><th id="100">100</th><td>    <em>int</em> <dfn class="decl" id="fec_handle::fd" title='fec_handle::fd' data-ref="fec_handle::fd">fd</dfn>;</td></tr>
+<tr><th id="101">101</th><td>    <em>int</em> <dfn class="decl" id="fec_handle::flags" title='fec_handle::flags' data-ref="fec_handle::flags">flags</dfn>; <i>/* additional flags passed to fec_open */</i></td></tr>
+<tr><th id="102">102</th><td>    <em>int</em> <dfn class="decl" id="fec_handle::mode" title='fec_handle::mode' data-ref="fec_handle::mode">mode</dfn>; <i>/* mode for open(2) */</i></td></tr>
+<tr><th id="103">103</th><td>    <a class="typedef" href="../../../bionic/libc/include/pthread.h.html#pthread_mutex_t" title='pthread_mutex_t' data-type='struct pthread_mutex_t' data-ref="pthread_mutex_t">pthread_mutex_t</a> <dfn class="decl" id="fec_handle::mutex" title='fec_handle::mutex' data-ref="fec_handle::mutex">mutex</dfn>;</td></tr>
+<tr><th id="104">104</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="fec_handle::errors" title='fec_handle::errors' data-ref="fec_handle::errors">errors</dfn>;</td></tr>
+<tr><th id="105">105</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="fec_handle::data_size" title='fec_handle::data_size' data-ref="fec_handle::data_size">data_size</dfn>;</td></tr>
+<tr><th id="106">106</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="fec_handle::pos" title='fec_handle::pos' data-ref="fec_handle::pos">pos</dfn>;</td></tr>
+<tr><th id="107">107</th><td>    <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="fec_handle::size" title='fec_handle::size' data-ref="fec_handle::size">size</dfn>;</td></tr>
+<tr><th id="108">108</th><td>    <a class="type" href="#verity_info" title='verity_info' data-ref="verity_info">verity_info</a> <dfn class="decl" id="fec_handle::verity" title='fec_handle::verity' data-ref="fec_handle::verity">verity</dfn>;</td></tr>
+<tr><th id="109">109</th><td>};</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><i>/* I/O helpers */</i></td></tr>
+<tr><th id="112">112</th><td><b>extern</b> <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="_Z9raw_preadP10fec_handlePvmm" title='raw_pread' data-ref="_Z9raw_preadP10fec_handlePvmm">raw_pread</dfn>(<a class="type" href="#fec_handle" title='fec_handle' data-ref="fec_handle">fec_handle</a> *<dfn class="local col4 decl" id="14f" title='f' data-type='fec_handle *' data-ref="14f">f</dfn>, <em>void</em> *<dfn class="local col5 decl" id="15buf" title='buf' data-type='void *' data-ref="15buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="16count" title='count' data-type='size_t' data-ref="16count">count</dfn>,</td></tr>
+<tr><th id="113">113</th><td>        <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col7 decl" id="17offset" title='offset' data-type='uint64_t' data-ref="17offset">offset</dfn>);</td></tr>
+<tr><th id="114">114</th><td><b>extern</b> <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="_Z10raw_pwriteP10fec_handlePKvmm" title='raw_pwrite' data-ref="_Z10raw_pwriteP10fec_handlePKvmm">raw_pwrite</dfn>(<a class="type" href="#fec_handle" title='fec_handle' data-ref="fec_handle">fec_handle</a> *<dfn class="local col8 decl" id="18f" title='f' data-type='fec_handle *' data-ref="18f">f</dfn>, <em>const</em> <em>void</em> *<dfn class="local col9 decl" id="19buf" title='buf' data-type='const void *' data-ref="19buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="20count" title='count' data-type='size_t' data-ref="20count">count</dfn>,</td></tr>
+<tr><th id="115">115</th><td>        <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col1 decl" id="21offset" title='offset' data-type='uint64_t' data-ref="21offset">offset</dfn>);</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><i>/* processing functions */</i></td></tr>
+<tr><th id="118">118</th><td><b>typedef</b> <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> (*<dfn class="typedef" id="read_func" title='read_func' data-type='ssize_t (*)(fec_handle *, uint8_t *, size_t, uint64_t, size_t *)' data-ref="read_func">read_func</dfn>)(<a class="type" href="#fec_handle" title='fec_handle' data-ref="fec_handle">fec_handle</a> *<dfn class="local col2 decl" id="22f" title='f' data-type='fec_handle *' data-ref="22f">f</dfn>, <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="23dest" title='dest' data-type='uint8_t *' data-ref="23dest">dest</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="24count" title='count' data-type='size_t' data-ref="24count">count</dfn>,</td></tr>
+<tr><th id="119">119</th><td>        <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col5 decl" id="25offset" title='offset' data-type='uint64_t' data-ref="25offset">offset</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *<dfn class="local col6 decl" id="26errors" title='errors' data-type='size_t *' data-ref="26errors">errors</dfn>);</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><b>extern</b> <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="_Z7processP10fec_handlePhmmPFlS0_S1_mmPmE" title='process' data-ref="_Z7processP10fec_handlePhmmPFlS0_S1_mmPmE">process</dfn>(<a class="type" href="#fec_handle" title='fec_handle' data-ref="fec_handle">fec_handle</a> *<dfn class="local col7 decl" id="27f" title='f' data-type='fec_handle *' data-ref="27f">f</dfn>, <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="28buf" title='buf' data-type='uint8_t *' data-ref="28buf">buf</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="29count" title='count' data-type='size_t' data-ref="29count">count</dfn>,</td></tr>
+<tr><th id="122">122</th><td>        <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col0 decl" id="30offset" title='offset' data-type='uint64_t' data-ref="30offset">offset</dfn>, <a class="typedef" href="#read_func" title='read_func' data-type='ssize_t (*)(fec_handle *, uint8_t *, size_t, uint64_t, size_t *)' data-ref="read_func">read_func</a> <dfn class="local col1 decl" id="31func" title='func' data-type='read_func' data-ref="31func">func</dfn>);</td></tr>
+<tr><th id="123">123</th><td></td></tr>
+<tr><th id="124">124</th><td><i>/* verity functions */</i></td></tr>
+<tr><th id="125">125</th><td><b>extern</b> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="_Z15verity_get_sizemPjS_" title='verity_get_size' data-ref="_Z15verity_get_sizemPjS_">verity_get_size</dfn>(<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col2 decl" id="32file_size" title='file_size' data-type='uint64_t' data-ref="32file_size">file_size</dfn>, <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> *<dfn class="local col3 decl" id="33verity_levels" title='verity_levels' data-type='uint32_t *' data-ref="33verity_levels">verity_levels</dfn>,</td></tr>
+<tr><th id="126">126</th><td>        <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> *<dfn class="local col4 decl" id="34level_hashes" title='level_hashes' data-type='uint32_t *' data-ref="34level_hashes">level_hashes</dfn>);</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="_Z19verity_parse_headerP10fec_handlem" title='verity_parse_header' data-ref="_Z19verity_parse_headerP10fec_handlem">verity_parse_header</dfn>(<a class="type" href="#fec_handle" title='fec_handle' data-ref="fec_handle">fec_handle</a> *<dfn class="local col5 decl" id="35f" title='f' data-type='fec_handle *' data-ref="35f">f</dfn>, <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col6 decl" id="36offset" title='offset' data-type='uint64_t' data-ref="36offset">offset</dfn>);</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td><b>extern</b> <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="_Z18verity_check_blockP10fec_handlePKhS2_" title='verity_check_block' data-ref="_Z18verity_check_blockP10fec_handlePKhS2_">verity_check_block</dfn>(<a class="type" href="#fec_handle" title='fec_handle' data-ref="fec_handle">fec_handle</a> *<dfn class="local col7 decl" id="37f" title='f' data-type='fec_handle *' data-ref="37f">f</dfn>, <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="38expected" title='expected' data-type='const uint8_t *' data-ref="38expected">expected</dfn>,</td></tr>
+<tr><th id="131">131</th><td>        <em>const</em> <a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="39block" title='block' data-type='const uint8_t *' data-ref="39block">block</dfn>);</td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td><i>/* helper macros */</i></td></tr>
+<tr><th id="134">134</th><td><u>#<span data-ppcond="134">ifndef</span> <span class="macro" data-ref="_M/unlikely">unlikely</span></u></td></tr>
+<tr><th id="135">135</th><td>    <u>#define <dfn class="macro" id="_M/unlikely" data-ref="_M/unlikely">unlikely</dfn>(x) __builtin_expect(!!(x), 0)</u></td></tr>
+<tr><th id="136">136</th><td>    <u>#define <dfn class="macro" id="_M/likely" data-ref="_M/likely">likely</dfn>(x)   __builtin_expect(!!(x), 1)</u></td></tr>
+<tr><th id="137">137</th><td><u>#<span data-ppcond="134">endif</span></u></td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td><u>#<span data-ppcond="139">ifndef</span> <span class="macro" data-ref="_M/stringify">stringify</span></u></td></tr>
+<tr><th id="140">140</th><td>    <u>#define <dfn class="macro" id="_M/__stringify" data-ref="_M/__stringify">__stringify</dfn>(x) #x</u></td></tr>
+<tr><th id="141">141</th><td>    <u>#define <dfn class="macro" id="_M/stringify" data-ref="_M/stringify">stringify</dfn>(x) __stringify(x)</u></td></tr>
+<tr><th id="142">142</th><td><u>#<span data-ppcond="139">endif</span></u></td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td><i>/*  warnings, errors, debug output */</i></td></tr>
+<tr><th id="145">145</th><td><u>#<span data-ppcond="145">ifdef</span> <span class="macro" data-ref="_M/FEC_NO_KLOG">FEC_NO_KLOG</span></u></td></tr>
+<tr><th id="146">146</th><td>    <u>#define __log(func, type, format, args...) \</u></td></tr>
+<tr><th id="147">147</th><td><u>        fprintf(stderr, "fec: &lt;%d&gt; " type ": %s: " format "\n", \</u></td></tr>
+<tr><th id="148">148</th><td><u>            (int)syscall(SYS_gettid), __FUNCTION__,  ##args)</u></td></tr>
+<tr><th id="149">149</th><td><u>#<span data-ppcond="145">else</span></u></td></tr>
+<tr><th id="150">150</th><td>    <u>#include <a href="../../core/include/cutils/klog.h.html">&lt;cutils/klog.h&gt;</a></u></td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td>    <u>#define <dfn class="macro" id="_M/__log" data-ref="_M/__log">__log</dfn>(func, type, format, args...) \</u></td></tr>
+<tr><th id="153">153</th><td><u>        KLOG_##func("fec", "&lt;%d&gt; " type ": %s: " format "\n", \</u></td></tr>
+<tr><th id="154">154</th><td><u>            (int)syscall(SYS_gettid), __FUNCTION__, ##args)</u></td></tr>
+<tr><th id="155">155</th><td><u>#<span data-ppcond="145">endif</span></u></td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><u>#<span data-ppcond="157">ifdef</span> <span class="macro" data-ref="_M/NDEBUG">NDEBUG</span></u></td></tr>
+<tr><th id="158">158</th><td>    <u>#define <dfn class="macro" id="_M/debug" data-ref="_M/debug">debug</dfn>(format, args...)</u></td></tr>
+<tr><th id="159">159</th><td><u>#<span data-ppcond="157">else</span></u></td></tr>
+<tr><th id="160">160</th><td>    <u>#define debug(format, args...) __log(DEBUG, "debug", format, ##args)</u></td></tr>
+<tr><th id="161">161</th><td><u>#<span data-ppcond="157">endif</span></u></td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td><u>#define <dfn class="macro" id="_M/warn" data-ref="_M/warn">warn</dfn>(format, args...) __log(WARNING, "warning", format, ##args)</u></td></tr>
+<tr><th id="164">164</th><td><u>#define <dfn class="macro" id="_M/error" data-ref="_M/error">error</dfn>(format, args...) __log(ERROR, "error", format, ##args)</u></td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td><u>#define <dfn class="macro" id="_M/check" data-ref="_M/check">check</dfn>(p) \</u></td></tr>
+<tr><th id="167">167</th><td><u>    if (unlikely(!(p))) { \</u></td></tr>
+<tr><th id="168">168</th><td><u>        error("`%s' failed", #p); \</u></td></tr>
+<tr><th id="169">169</th><td><u>        errno = EFAULT; \</u></td></tr>
+<tr><th id="170">170</th><td><u>        return -1; \</u></td></tr>
+<tr><th id="171">171</th><td><u>    }</u></td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td><u>#<span data-ppcond="17">endif</span> /* __FEC_PRIVATE_H__ */</u></td></tr>
+<tr><th id="174">174</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='fec_open.cpp.html'>codebrowser/system/extras/libfec/fec_open.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

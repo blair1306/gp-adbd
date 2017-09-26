@@ -1,0 +1,16 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/ssl.h' l='955' type='enum ssl_private_key_result_t (*)(SSL *, uint8_t *, size_t *, size_t, const EVP_MD *, const uint8_t *, size_t)'/>
+<offset>128</offset>
+<doc f='codebrowser/external/boringssl/src/include/openssl/ssl.h' l='941'>/* sign signs |in_len| bytes of digest from |in|. |md| is the hash function
+   * used to calculate |in|. On success, it returns |ssl_private_key_success|
+   * and writes at most |max_out| bytes of signature data to |out|. On failure,
+   * it returns |ssl_private_key_failure|. If the operation has not completed,
+   * it returns |ssl_private_key_retry|. |sign| should arrange for the
+   * high-level operation on |ssl| to be retried when the operation is
+   * completed. This will result in a call to |sign_complete|.
+   *
+   * If the key is an RSA key, implementations must use PKCS#1 padding. |in| is
+   * the digest itself, so the DigestInfo prefix, if any, must be prepended by
+   * |sign|. If |md| is |EVP_md5_sha1|, there is no prefix.
+   *
+   * It is an error to call |sign| while another private key operation is in
+   * progress on |ssl|. */</doc>

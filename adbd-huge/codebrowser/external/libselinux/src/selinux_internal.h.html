@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>selinux_internal.h source code [codebrowser/external/libselinux/src/selinux_internal.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/selinux_internal.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='selinux_internal.h.html'>selinux_internal.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#include <a href="../include/selinux/selinux.h.html">&lt;selinux/selinux.h&gt;</a></u></td></tr>
+<tr><th id="2">2</th><td><u>#include <a href="../../../bionic/libc/include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="3">3</th><td><u>#include <a href="dso.h.html">"dso.h"</a></u></td></tr>
+<tr><th id="4">4</th><td></td></tr>
+<tr><th id="5">5</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_mkload_policy)</td></tr>
+<tr><th id="6">6</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(set_selinuxmnt)</td></tr>
+<tr><th id="7">7</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_disable)</td></tr>
+<tr><th id="8">8</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_policyvers)</td></tr>
+<tr><th id="9">9</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_load_policy)</td></tr>
+<tr><th id="10">10</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_get_boolean_active)</td></tr>
+<tr><th id="11">11</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_get_boolean_names)</td></tr>
+<tr><th id="12">12</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_set_boolean)</td></tr>
+<tr><th id="13">13</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_commit_booleans)</td></tr>
+<tr><th id="14">14</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_check_context)</td></tr>
+<tr><th id="15">15</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_check_context_raw)</td></tr>
+<tr><th id="16">16</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_canonicalize_context)</td></tr>
+<tr><th id="17">17</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_canonicalize_context_raw)</td></tr>
+<tr><th id="18">18</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_av)</td></tr>
+<tr><th id="19">19</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_av_raw)</td></tr>
+<tr><th id="20">20</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_av_flags)</td></tr>
+<tr><th id="21">21</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_av_flags_raw)</td></tr>
+<tr><th id="22">22</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_user)</td></tr>
+<tr><th id="23">23</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_user_raw)</td></tr>
+<tr><th id="24">24</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_create)</td></tr>
+<tr><th id="25">25</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_create_raw)</td></tr>
+<tr><th id="26">26</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_member_raw)</td></tr>
+<tr><th id="27">27</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_compute_relabel_raw)</td></tr>
+<tr><th id="28">28</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(is_selinux_enabled)</td></tr>
+<tr><th id="29">29</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(is_selinux_mls_enabled)</td></tr>
+<tr><th id="30">30</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(freecon)</td></tr>
+<tr><th id="31">31</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(freeconary)</td></tr>
+<tr><th id="32">32</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getprevcon)</td></tr>
+<tr><th id="33">33</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getprevcon_raw)</td></tr>
+<tr><th id="34">34</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getcon)</td></tr>
+<tr><th id="35">35</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getcon_raw)</td></tr>
+<tr><th id="36">36</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(setcon_raw)</td></tr>
+<tr><th id="37">37</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getpeercon_raw)</td></tr>
+<tr><th id="38">38</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getpidcon_raw)</td></tr>
+<tr><th id="39">39</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getexeccon_raw)</td></tr>
+<tr><th id="40">40</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getfilecon)</td></tr>
+<tr><th id="41">41</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getfilecon_raw)</td></tr>
+<tr><th id="42">42</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(lgetfilecon_raw)</td></tr>
+<tr><th id="43">43</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(fgetfilecon_raw)</td></tr>
+<tr><th id="44">44</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(setfilecon_raw)</td></tr>
+<tr><th id="45">45</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(lsetfilecon_raw)</td></tr>
+<tr><th id="46">46</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(fsetfilecon_raw)</td></tr>
+<tr><th id="47">47</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(setexeccon)</td></tr>
+<tr><th id="48">48</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(setexeccon_raw)</td></tr>
+<tr><th id="49">49</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getfscreatecon_raw)</td></tr>
+<tr><th id="50">50</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getkeycreatecon_raw)</td></tr>
+<tr><th id="51">51</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(getsockcreatecon_raw)</td></tr>
+<tr><th id="52">52</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(setfscreatecon_raw)</td></tr>
+<tr><th id="53">53</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(setkeycreatecon_raw)</td></tr>
+<tr><th id="54">54</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(setsockcreatecon_raw)</td></tr>
+<tr><th id="55">55</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_getenforce)</td></tr>
+<tr><th id="56">56</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_setenforce)</td></tr>
+<tr><th id="57">57</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_deny_unknown)</td></tr>
+<tr><th id="58">58</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_binary_policy_path)</td></tr>
+<tr><th id="59">59</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_default_context_path)</td></tr>
+<tr><th id="60">60</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_securetty_types_path)</td></tr>
+<tr><th id="61">61</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_failsafe_context_path)</td></tr>
+<tr><th id="62">62</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_removable_context_path)</td></tr>
+<tr><th id="63">63</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_virtual_domain_context_path)</td></tr>
+<tr><th id="64">64</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_virtual_image_context_path)</td></tr>
+<tr><th id="65">65</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_file_context_path)</td></tr>
+<tr><th id="66">66</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_file_context_homedir_path)</td></tr>
+<tr><th id="67">67</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_file_context_local_path)</td></tr>
+<tr><th id="68">68</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_file_context_subs_path)</td></tr>
+<tr><th id="69">69</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_netfilter_context_path)</td></tr>
+<tr><th id="70">70</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_homedir_context_path)</td></tr>
+<tr><th id="71">71</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_user_contexts_path)</td></tr>
+<tr><th id="72">72</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_booleans_path)</td></tr>
+<tr><th id="73">73</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_customizable_types_path)</td></tr>
+<tr><th id="74">74</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_media_context_path)</td></tr>
+<tr><th id="75">75</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_x_context_path)</td></tr>
+<tr><th id="76">76</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_sepgsql_context_path)</td></tr>
+<tr><th id="77">77</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_path)</td></tr>
+<tr><th id="78">78</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_check_passwd_access)</td></tr>
+<tr><th id="79">79</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_check_securetty_context)</td></tr>
+<tr><th id="80">80</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(matchpathcon_init_prefix)</td></tr>
+<tr><th id="81">81</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_users_path)</td></tr>
+<tr><th id="82">82</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_usersconf_path);</td></tr>
+<tr><th id="83">83</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_translations_path);</td></tr>
+<tr><th id="84">84</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_colors_path);</td></tr>
+<tr><th id="85">85</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_getenforcemode);</td></tr>
+<tr><th id="86">86</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_getpolicytype);</td></tr>
+<tr><th id="87">87</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_raw_to_trans_context);</td></tr>
+<tr><th id="88">88</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_trans_to_raw_context);</td></tr>
+<tr><th id="89">89</th><td>    <a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_raw_context_to_color);</td></tr>
+<tr><th id="90">90</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_get_initial_context);</td></tr>
+<tr><th id="91">91</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(security_get_initial_context_raw);</td></tr>
+<tr><th id="92">92</th><td><a class="macro" href="dso.h.html#19" title="" data-ref="_M/hidden_proto">hidden_proto</a>(selinux_reset_config);</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="selinux_page_size" title='selinux_page_size' data-ref="selinux_page_size">selinux_page_size</dfn> <a class="macro" href="dso.h.html#18" title="" data-ref="_M/hidden">hidden</a>;</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><i>/* Make pthread_once optional */</i></td></tr>
+<tr><th id="97">97</th><td><u>#pragma weak pthread_once</u></td></tr>
+<tr><th id="98">98</th><td><u>#pragma weak pthread_key_create</u></td></tr>
+<tr><th id="99">99</th><td><u>#pragma weak pthread_key_delete</u></td></tr>
+<tr><th id="100">100</th><td><u>#pragma weak pthread_setspecific</u></td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td><i>/* Call handler iff the first call.  */</i></td></tr>
+<tr><th id="103">103</th><td><u>#define <dfn class="macro" id="_M/__selinux_once" data-ref="_M/__selinux_once">__selinux_once</dfn>(ONCE_CONTROL, INIT_FUNCTION)	\</u></td></tr>
+<tr><th id="104">104</th><td><u>	do {						\</u></td></tr>
+<tr><th id="105">105</th><td><u>		if (pthread_once != NULL)		\</u></td></tr>
+<tr><th id="106">106</th><td><u>			pthread_once (&amp;(ONCE_CONTROL), (INIT_FUNCTION));  \</u></td></tr>
+<tr><th id="107">107</th><td><u>		else if ((ONCE_CONTROL) == PTHREAD_ONCE_INIT) {		  \</u></td></tr>
+<tr><th id="108">108</th><td><u>			INIT_FUNCTION ();		\</u></td></tr>
+<tr><th id="109">109</th><td><u>			(ONCE_CONTROL) = 2;		\</u></td></tr>
+<tr><th id="110">110</th><td><u>		}					\</u></td></tr>
+<tr><th id="111">111</th><td><u>	} while (0)</u></td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><i>/* Pthread key macros */</i></td></tr>
+<tr><th id="114">114</th><td><u>#define <dfn class="macro" id="_M/__selinux_key_create" data-ref="_M/__selinux_key_create">__selinux_key_create</dfn>(KEY, DESTRUCTOR)			\</u></td></tr>
+<tr><th id="115">115</th><td><u>	do {							\</u></td></tr>
+<tr><th id="116">116</th><td><u>		if (pthread_key_create != NULL)			\</u></td></tr>
+<tr><th id="117">117</th><td><u>			pthread_key_create(KEY, DESTRUCTOR);	\</u></td></tr>
+<tr><th id="118">118</th><td><u>	} while (0)</u></td></tr>
+<tr><th id="119">119</th><td></td></tr>
+<tr><th id="120">120</th><td><u>#define <dfn class="macro" id="_M/__selinux_key_delete" data-ref="_M/__selinux_key_delete">__selinux_key_delete</dfn>(KEY)				\</u></td></tr>
+<tr><th id="121">121</th><td><u>	do {							\</u></td></tr>
+<tr><th id="122">122</th><td><u>		if (pthread_key_delete != NULL)			\</u></td></tr>
+<tr><th id="123">123</th><td><u>			pthread_key_delete(KEY);		\</u></td></tr>
+<tr><th id="124">124</th><td><u>	} while (0)</u></td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td><u>#define <dfn class="macro" id="_M/__selinux_setspecific" data-ref="_M/__selinux_setspecific">__selinux_setspecific</dfn>(KEY, VALUE)			\</u></td></tr>
+<tr><th id="127">127</th><td><u>	do {							\</u></td></tr>
+<tr><th id="128">128</th><td><u>		if (pthread_setspecific != NULL)		\</u></td></tr>
+<tr><th id="129">129</th><td><u>			pthread_setspecific(KEY, VALUE);	\</u></td></tr>
+<tr><th id="130">130</th><td><u>	} while (0)</u></td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='android.c.html'>codebrowser/external/libselinux/src/android.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

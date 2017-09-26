@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>jbd2.h source code [codebrowser/system/extras/ext4_utils/jbd2.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="commit_header,jbd2_journal_revoke_header_s,journal_block_tag_s,journal_header_s,journal_superblock_s "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/extras/ext4_utils/jbd2.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>extras</a>/<a href='./'>ext4_utils</a>/<a href='jbd2.h.html'>jbd2.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/****************************************************************************</i></td></tr>
+<tr><th id="2">2</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="3">3</th><td><i> ***</i></td></tr>
+<tr><th id="4">4</th><td><i> ***   This header was automatically generated from a Linux kernel header</i></td></tr>
+<tr><th id="5">5</th><td><i> ***   of the same name, to make information necessary for userspace to</i></td></tr>
+<tr><th id="6">6</th><td><i> ***   call into the kernel available to libc.  It contains only constants,</i></td></tr>
+<tr><th id="7">7</th><td><i> ***   structures, and macros generated from the original header, and thus,</i></td></tr>
+<tr><th id="8">8</th><td><i> ***   contains no copyrightable information.</i></td></tr>
+<tr><th id="9">9</th><td><i> ***</i></td></tr>
+<tr><th id="10">10</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="11">11</th><td><i> ****************************************************************************/</i></td></tr>
+<tr><th id="12">12</th><td><u>#<span data-ppcond="12">ifndef</span> <span class="macro" data-ref="_M/_LINUX_JBD2_H">_LINUX_JBD2_H</span></u></td></tr>
+<tr><th id="13">13</th><td><u>#define <dfn class="macro" id="_M/_LINUX_JBD2_H" data-ref="_M/_LINUX_JBD2_H">_LINUX_JBD2_H</dfn></u></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#define <dfn class="macro" id="_M/JBD2_DEBUG" data-ref="_M/JBD2_DEBUG">JBD2_DEBUG</dfn></u></td></tr>
+<tr><th id="16">16</th><td><u>#define <dfn class="macro" id="_M/jfs_debug" data-ref="_M/jfs_debug">jfs_debug</dfn> jbd_debug</u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/journal_oom_retry" data-ref="_M/journal_oom_retry">journal_oom_retry</dfn> 1</u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#undef <span class="macro" data-ref="_M/JBD2_PARANOID_IOFAIL">JBD2_PARANOID_IOFAIL</span></u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><u>#define <dfn class="macro" id="_M/JBD2_DEFAULT_MAX_COMMIT_AGE" data-ref="_M/JBD2_DEFAULT_MAX_COMMIT_AGE">JBD2_DEFAULT_MAX_COMMIT_AGE</dfn> 5</u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><u>#define <dfn class="macro" id="_M/jbd_debug" data-ref="_M/jbd_debug">jbd_debug</dfn>(f, a...)</u>  </td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><u>#define <dfn class="macro" id="_M/JBD2_MIN_JOURNAL_BLOCKS" data-ref="_M/JBD2_MIN_JOURNAL_BLOCKS">JBD2_MIN_JOURNAL_BLOCKS</dfn> 1024</u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><u>#define <dfn class="macro" id="_M/JBD2_MAGIC_NUMBER" data-ref="_M/JBD2_MAGIC_NUMBER">JBD2_MAGIC_NUMBER</dfn> 0xc03b3998U</u>  </td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/JBD2_DESCRIPTOR_BLOCK" data-ref="_M/JBD2_DESCRIPTOR_BLOCK">JBD2_DESCRIPTOR_BLOCK</dfn> 1</u></td></tr>
+<tr><th id="31">31</th><td><u>#define <dfn class="macro" id="_M/JBD2_COMMIT_BLOCK" data-ref="_M/JBD2_COMMIT_BLOCK">JBD2_COMMIT_BLOCK</dfn> 2</u></td></tr>
+<tr><th id="32">32</th><td><u>#define <dfn class="macro" id="_M/JBD2_SUPERBLOCK_V1" data-ref="_M/JBD2_SUPERBLOCK_V1">JBD2_SUPERBLOCK_V1</dfn> 3</u></td></tr>
+<tr><th id="33">33</th><td><u>#define <dfn class="macro" id="_M/JBD2_SUPERBLOCK_V2" data-ref="_M/JBD2_SUPERBLOCK_V2">JBD2_SUPERBLOCK_V2</dfn> 4</u></td></tr>
+<tr><th id="34">34</th><td><u>#define <dfn class="macro" id="_M/JBD2_REVOKE_BLOCK" data-ref="_M/JBD2_REVOKE_BLOCK">JBD2_REVOKE_BLOCK</dfn> 5</u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><b>typedef</b> <b>struct</b> <dfn class="type def" id="journal_header_s" title='journal_header_s' data-ref="journal_header_s"><a class="type" href="#journal_header_s" title='journal_header_s' data-ref="journal_header_s">journal_header_s</a></dfn></td></tr>
+<tr><th id="37">37</th><td>{</td></tr>
+<tr><th id="38">38</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_header_s::h_magic" title='journal_header_s::h_magic' data-ref="journal_header_s::h_magic">h_magic</dfn>;</td></tr>
+<tr><th id="39">39</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_header_s::h_blocktype" title='journal_header_s::h_blocktype' data-ref="journal_header_s::h_blocktype">h_blocktype</dfn>;</td></tr>
+<tr><th id="40">40</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_header_s::h_sequence" title='journal_header_s::h_sequence' data-ref="journal_header_s::h_sequence">h_sequence</dfn>;</td></tr>
+<tr><th id="41">41</th><td>} <dfn class="typedef" id="journal_header_t" title='journal_header_t' data-type='struct journal_header_s' data-ref="journal_header_t">journal_header_t</dfn>;</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/JBD2_CRC32_CHKSUM" data-ref="_M/JBD2_CRC32_CHKSUM">JBD2_CRC32_CHKSUM</dfn> 1</u></td></tr>
+<tr><th id="44">44</th><td><u>#define <dfn class="macro" id="_M/JBD2_MD5_CHKSUM" data-ref="_M/JBD2_MD5_CHKSUM">JBD2_MD5_CHKSUM</dfn> 2</u></td></tr>
+<tr><th id="45">45</th><td><u>#define <dfn class="macro" id="_M/JBD2_SHA1_CHKSUM" data-ref="_M/JBD2_SHA1_CHKSUM">JBD2_SHA1_CHKSUM</dfn> 3</u></td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/JBD2_CRC32_CHKSUM_SIZE" data-ref="_M/JBD2_CRC32_CHKSUM_SIZE">JBD2_CRC32_CHKSUM_SIZE</dfn> 4</u></td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><u>#define <dfn class="macro" id="_M/JBD2_CHECKSUM_BYTES" data-ref="_M/JBD2_CHECKSUM_BYTES">JBD2_CHECKSUM_BYTES</dfn> (32 / sizeof(<a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a>))</u></td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td><b>struct</b> <dfn class="type def" id="commit_header" title='commit_header' data-ref="commit_header">commit_header</dfn> {</td></tr>
+<tr><th id="52">52</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="commit_header::h_magic" title='commit_header::h_magic' data-ref="commit_header::h_magic">h_magic</dfn>;</td></tr>
+<tr><th id="53">53</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="commit_header::h_blocktype" title='commit_header::h_blocktype' data-ref="commit_header::h_blocktype">h_blocktype</dfn>;</td></tr>
+<tr><th id="54">54</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="commit_header::h_sequence" title='commit_header::h_sequence' data-ref="commit_header::h_sequence">h_sequence</dfn>;</td></tr>
+<tr><th id="55">55</th><td> <em>unsigned</em> <em>char</em> <dfn class="decl" id="commit_header::h_chksum_type" title='commit_header::h_chksum_type' data-ref="commit_header::h_chksum_type">h_chksum_type</dfn>;</td></tr>
+<tr><th id="56">56</th><td> <em>unsigned</em> <em>char</em> <dfn class="decl" id="commit_header::h_chksum_size" title='commit_header::h_chksum_size' data-ref="commit_header::h_chksum_size">h_chksum_size</dfn>;</td></tr>
+<tr><th id="57">57</th><td> <em>unsigned</em> <em>char</em> <dfn class="decl" id="commit_header::h_padding" title='commit_header::h_padding' data-ref="commit_header::h_padding">h_padding</dfn>[<var>2</var>];</td></tr>
+<tr><th id="58">58</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="commit_header::h_chksum" title='commit_header::h_chksum' data-ref="commit_header::h_chksum">h_chksum</dfn>[<a class="macro" href="#49" title="(32 / sizeof(__u32))" data-ref="_M/JBD2_CHECKSUM_BYTES">JBD2_CHECKSUM_BYTES</a>];</td></tr>
+<tr><th id="59">59</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be64" title='__be64' data-type='__u64' data-ref="__be64">__be64</a> <dfn class="decl" id="commit_header::h_commit_sec" title='commit_header::h_commit_sec' data-ref="commit_header::h_commit_sec">h_commit_sec</dfn>;</td></tr>
+<tr><th id="60">60</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="commit_header::h_commit_nsec" title='commit_header::h_commit_nsec' data-ref="commit_header::h_commit_nsec">h_commit_nsec</dfn>;</td></tr>
+<tr><th id="61">61</th><td>};</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><b>typedef</b> <b>struct</b> <dfn class="type def" id="journal_block_tag_s" title='journal_block_tag_s' data-ref="journal_block_tag_s"><a class="type" href="#journal_block_tag_s" title='journal_block_tag_s' data-ref="journal_block_tag_s">journal_block_tag_s</a></dfn></td></tr>
+<tr><th id="64">64</th><td>{</td></tr>
+<tr><th id="65">65</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_block_tag_s::t_blocknr" title='journal_block_tag_s::t_blocknr' data-ref="journal_block_tag_s::t_blocknr">t_blocknr</dfn>;</td></tr>
+<tr><th id="66">66</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_block_tag_s::t_flags" title='journal_block_tag_s::t_flags' data-ref="journal_block_tag_s::t_flags">t_flags</dfn>;</td></tr>
+<tr><th id="67">67</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_block_tag_s::t_blocknr_high" title='journal_block_tag_s::t_blocknr_high' data-ref="journal_block_tag_s::t_blocknr_high">t_blocknr_high</dfn>;</td></tr>
+<tr><th id="68">68</th><td>} <dfn class="typedef" id="journal_block_tag_t" title='journal_block_tag_t' data-type='struct journal_block_tag_s' data-ref="journal_block_tag_t">journal_block_tag_t</dfn>;</td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><u>#define <dfn class="macro" id="_M/JBD2_TAG_SIZE32" data-ref="_M/JBD2_TAG_SIZE32">JBD2_TAG_SIZE32</dfn> (offsetof(journal_block_tag_t, t_blocknr_high))</u></td></tr>
+<tr><th id="71">71</th><td><u>#define <dfn class="macro" id="_M/JBD2_TAG_SIZE64" data-ref="_M/JBD2_TAG_SIZE64">JBD2_TAG_SIZE64</dfn> (sizeof(journal_block_tag_t))</u></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><b>typedef</b> <b>struct</b> <dfn class="type def" id="jbd2_journal_revoke_header_s" title='jbd2_journal_revoke_header_s' data-ref="jbd2_journal_revoke_header_s"><a class="type" href="#jbd2_journal_revoke_header_s" title='jbd2_journal_revoke_header_s' data-ref="jbd2_journal_revoke_header_s">jbd2_journal_revoke_header_s</a></dfn></td></tr>
+<tr><th id="74">74</th><td>{</td></tr>
+<tr><th id="75">75</th><td> <a class="typedef" href="#journal_header_t" title='journal_header_t' data-type='struct journal_header_s' data-ref="journal_header_t">journal_header_t</a> <dfn class="decl" id="jbd2_journal_revoke_header_s::r_header" title='jbd2_journal_revoke_header_s::r_header' data-ref="jbd2_journal_revoke_header_s::r_header">r_header</dfn>;</td></tr>
+<tr><th id="76">76</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="jbd2_journal_revoke_header_s::r_count" title='jbd2_journal_revoke_header_s::r_count' data-ref="jbd2_journal_revoke_header_s::r_count">r_count</dfn>;</td></tr>
+<tr><th id="77">77</th><td>} <dfn class="typedef" id="jbd2_journal_revoke_header_t" title='jbd2_journal_revoke_header_t' data-type='struct jbd2_journal_revoke_header_s' data-ref="jbd2_journal_revoke_header_t">jbd2_journal_revoke_header_t</dfn>;</td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><u>#define <dfn class="macro" id="_M/JBD2_FLAG_ESCAPE" data-ref="_M/JBD2_FLAG_ESCAPE">JBD2_FLAG_ESCAPE</dfn> 1</u>  </td></tr>
+<tr><th id="80">80</th><td><u>#define <dfn class="macro" id="_M/JBD2_FLAG_SAME_UUID" data-ref="_M/JBD2_FLAG_SAME_UUID">JBD2_FLAG_SAME_UUID</dfn> 2</u>  </td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/JBD2_FLAG_DELETED" data-ref="_M/JBD2_FLAG_DELETED">JBD2_FLAG_DELETED</dfn> 4</u>  </td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/JBD2_FLAG_LAST_TAG" data-ref="_M/JBD2_FLAG_LAST_TAG">JBD2_FLAG_LAST_TAG</dfn> 8</u>  </td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><b>typedef</b> <b>struct</b> <dfn class="type def" id="journal_superblock_s" title='journal_superblock_s' data-ref="journal_superblock_s"><a class="type" href="#journal_superblock_s" title='journal_superblock_s' data-ref="journal_superblock_s">journal_superblock_s</a></dfn></td></tr>
+<tr><th id="85">85</th><td>{</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td> <a class="typedef" href="#journal_header_t" title='journal_header_t' data-type='struct journal_header_s' data-ref="journal_header_t">journal_header_t</a> <dfn class="decl" id="journal_superblock_s::s_header" title='journal_superblock_s::s_header' data-ref="journal_superblock_s::s_header">s_header</dfn>;</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_blocksize" title='journal_superblock_s::s_blocksize' data-ref="journal_superblock_s::s_blocksize">s_blocksize</dfn>;</td></tr>
+<tr><th id="90">90</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_maxlen" title='journal_superblock_s::s_maxlen' data-ref="journal_superblock_s::s_maxlen">s_maxlen</dfn>;</td></tr>
+<tr><th id="91">91</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_first" title='journal_superblock_s::s_first' data-ref="journal_superblock_s::s_first">s_first</dfn>;</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_sequence" title='journal_superblock_s::s_sequence' data-ref="journal_superblock_s::s_sequence">s_sequence</dfn>;</td></tr>
+<tr><th id="94">94</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_start" title='journal_superblock_s::s_start' data-ref="journal_superblock_s::s_start">s_start</dfn>;</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_errno" title='journal_superblock_s::s_errno' data-ref="journal_superblock_s::s_errno">s_errno</dfn>;</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_feature_compat" title='journal_superblock_s::s_feature_compat' data-ref="journal_superblock_s::s_feature_compat">s_feature_compat</dfn>;</td></tr>
+<tr><th id="99">99</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_feature_incompat" title='journal_superblock_s::s_feature_incompat' data-ref="journal_superblock_s::s_feature_incompat">s_feature_incompat</dfn>;</td></tr>
+<tr><th id="100">100</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_feature_ro_compat" title='journal_superblock_s::s_feature_ro_compat' data-ref="journal_superblock_s::s_feature_ro_compat">s_feature_ro_compat</dfn>;</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="journal_superblock_s::s_uuid" title='journal_superblock_s::s_uuid' data-ref="journal_superblock_s::s_uuid">s_uuid</dfn>[<var>16</var>];</td></tr>
+<tr><th id="103">103</th><td></td></tr>
+<tr><th id="104">104</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_nr_users" title='journal_superblock_s::s_nr_users' data-ref="journal_superblock_s::s_nr_users">s_nr_users</dfn>;</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_dynsuper" title='journal_superblock_s::s_dynsuper' data-ref="journal_superblock_s::s_dynsuper">s_dynsuper</dfn>;</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_max_transaction" title='journal_superblock_s::s_max_transaction' data-ref="journal_superblock_s::s_max_transaction">s_max_transaction</dfn>;</td></tr>
+<tr><th id="109">109</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__be32" title='__be32' data-type='__u32' data-ref="__be32">__be32</a> <dfn class="decl" id="journal_superblock_s::s_max_trans_data" title='journal_superblock_s::s_max_trans_data' data-ref="journal_superblock_s::s_max_trans_data">s_max_trans_data</dfn>;</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="journal_superblock_s::s_padding" title='journal_superblock_s::s_padding' data-ref="journal_superblock_s::s_padding">s_padding</dfn>[<var>44</var>];</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="journal_superblock_s::s_users" title='journal_superblock_s::s_users' data-ref="journal_superblock_s::s_users">s_users</dfn>[<var>16</var>*<var>48</var>];</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td>} <dfn class="typedef" id="journal_superblock_t" title='journal_superblock_t' data-type='struct journal_superblock_s' data-ref="journal_superblock_t">journal_superblock_t</dfn>;</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><u>#define <dfn class="macro" id="_M/JBD2_HAS_COMPAT_FEATURE" data-ref="_M/JBD2_HAS_COMPAT_FEATURE">JBD2_HAS_COMPAT_FEATURE</dfn>(j,mask)   ((j)-&gt;j_format_version &gt;= 2 &amp;&amp;   ((j)-&gt;j_superblock-&gt;s_feature_compat &amp; cpu_to_be32((mask))))</u></td></tr>
+<tr><th id="118">118</th><td><u>#define <dfn class="macro" id="_M/JBD2_HAS_RO_COMPAT_FEATURE" data-ref="_M/JBD2_HAS_RO_COMPAT_FEATURE">JBD2_HAS_RO_COMPAT_FEATURE</dfn>(j,mask)   ((j)-&gt;j_format_version &gt;= 2 &amp;&amp;   ((j)-&gt;j_superblock-&gt;s_feature_ro_compat &amp; cpu_to_be32((mask))))</u></td></tr>
+<tr><th id="119">119</th><td><u>#define <dfn class="macro" id="_M/JBD2_HAS_INCOMPAT_FEATURE" data-ref="_M/JBD2_HAS_INCOMPAT_FEATURE">JBD2_HAS_INCOMPAT_FEATURE</dfn>(j,mask)   ((j)-&gt;j_format_version &gt;= 2 &amp;&amp;   ((j)-&gt;j_superblock-&gt;s_feature_incompat &amp; cpu_to_be32((mask))))</u></td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><u>#define <dfn class="macro" id="_M/JBD2_FEATURE_COMPAT_CHECKSUM" data-ref="_M/JBD2_FEATURE_COMPAT_CHECKSUM">JBD2_FEATURE_COMPAT_CHECKSUM</dfn> 0x00000001</u></td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><u>#define <dfn class="macro" id="_M/JBD2_FEATURE_INCOMPAT_REVOKE" data-ref="_M/JBD2_FEATURE_INCOMPAT_REVOKE">JBD2_FEATURE_INCOMPAT_REVOKE</dfn> 0x00000001</u></td></tr>
+<tr><th id="124">124</th><td><u>#define <dfn class="macro" id="_M/JBD2_FEATURE_INCOMPAT_64BIT" data-ref="_M/JBD2_FEATURE_INCOMPAT_64BIT">JBD2_FEATURE_INCOMPAT_64BIT</dfn> 0x00000002</u></td></tr>
+<tr><th id="125">125</th><td><u>#define <dfn class="macro" id="_M/JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT" data-ref="_M/JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT">JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT</dfn> 0x00000004</u></td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><u>#define <dfn class="macro" id="_M/JBD2_KNOWN_COMPAT_FEATURES" data-ref="_M/JBD2_KNOWN_COMPAT_FEATURES">JBD2_KNOWN_COMPAT_FEATURES</dfn> JBD2_FEATURE_COMPAT_CHECKSUM</u></td></tr>
+<tr><th id="128">128</th><td><u>#define <dfn class="macro" id="_M/JBD2_KNOWN_ROCOMPAT_FEATURES" data-ref="_M/JBD2_KNOWN_ROCOMPAT_FEATURES">JBD2_KNOWN_ROCOMPAT_FEATURES</dfn> 0</u></td></tr>
+<tr><th id="129">129</th><td><u>#define <dfn class="macro" id="_M/JBD2_KNOWN_INCOMPAT_FEATURES" data-ref="_M/JBD2_KNOWN_INCOMPAT_FEATURES">JBD2_KNOWN_INCOMPAT_FEATURES</dfn> (JBD2_FEATURE_INCOMPAT_REVOKE |   JBD2_FEATURE_INCOMPAT_64BIT |   JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT)</u></td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td><u>#define <dfn class="macro" id="_M/BJ_None" data-ref="_M/BJ_None">BJ_None</dfn> 0</u>  </td></tr>
+<tr><th id="132">132</th><td><u>#define <dfn class="macro" id="_M/BJ_Metadata" data-ref="_M/BJ_Metadata">BJ_Metadata</dfn> 1</u>  </td></tr>
+<tr><th id="133">133</th><td><u>#define <dfn class="macro" id="_M/BJ_Forget" data-ref="_M/BJ_Forget">BJ_Forget</dfn> 2</u>  </td></tr>
+<tr><th id="134">134</th><td><u>#define <dfn class="macro" id="_M/BJ_IO" data-ref="_M/BJ_IO">BJ_IO</dfn> 3</u>  </td></tr>
+<tr><th id="135">135</th><td><u>#define <dfn class="macro" id="_M/BJ_Shadow" data-ref="_M/BJ_Shadow">BJ_Shadow</dfn> 4</u>  </td></tr>
+<tr><th id="136">136</th><td><u>#define <dfn class="macro" id="_M/BJ_LogCtl" data-ref="_M/BJ_LogCtl">BJ_LogCtl</dfn> 5</u>  </td></tr>
+<tr><th id="137">137</th><td><u>#define <dfn class="macro" id="_M/BJ_Reserved" data-ref="_M/BJ_Reserved">BJ_Reserved</dfn> 6</u>  </td></tr>
+<tr><th id="138">138</th><td><u>#define <dfn class="macro" id="_M/BJ_Types" data-ref="_M/BJ_Types">BJ_Types</dfn> 7</u></td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td><u>#<span data-ppcond="12">endif</span></u></td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../core/fs_mgr/fs_mgr.c.html'>codebrowser/system/core/fs_mgr/fs_mgr.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

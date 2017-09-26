@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ctime source code [codebrowser/external/libcxx/include/ctime] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libcxx/include/ctime'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libcxx</a>/<a href='./'>include</a>/<a href='ctime.html'>ctime</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>// -*- C++ -*-</i></td></tr>
+<tr><th id="2">2</th><td><i>//===---------------------------- ctime -----------------------------------===//</i></td></tr>
+<tr><th id="3">3</th><td><i>//</i></td></tr>
+<tr><th id="4">4</th><td><i>//                     The LLVM Compiler Infrastructure</i></td></tr>
+<tr><th id="5">5</th><td><i>//</i></td></tr>
+<tr><th id="6">6</th><td><i>// This file is dual licensed under the MIT and the University of Illinois Open</i></td></tr>
+<tr><th id="7">7</th><td><i>// Source Licenses. See LICENSE.TXT for details.</i></td></tr>
+<tr><th id="8">8</th><td><i>//</i></td></tr>
+<tr><th id="9">9</th><td><i>//===----------------------------------------------------------------------===//</i></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><u>#<span data-ppcond="11">ifndef</span> <span class="macro" data-ref="_M/_LIBCPP_CTIME">_LIBCPP_CTIME</span></u></td></tr>
+<tr><th id="12">12</th><td><u>#define <dfn class="macro" id="_M/_LIBCPP_CTIME" data-ref="_M/_LIBCPP_CTIME">_LIBCPP_CTIME</dfn></u></td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td><i>/*</i></td></tr>
+<tr><th id="15">15</th><td><i>    ctime synopsis</i></td></tr>
+<tr><th id="16">16</th><td><i></i></td></tr>
+<tr><th id="17">17</th><td><i>Macros:</i></td></tr>
+<tr><th id="18">18</th><td><i></i></td></tr>
+<tr><th id="19">19</th><td><i>    NULL</i></td></tr>
+<tr><th id="20">20</th><td><i>    CLOCKS_PER_SEC</i></td></tr>
+<tr><th id="21">21</th><td><i></i></td></tr>
+<tr><th id="22">22</th><td><i>namespace std</i></td></tr>
+<tr><th id="23">23</th><td><i>{</i></td></tr>
+<tr><th id="24">24</th><td><i></i></td></tr>
+<tr><th id="25">25</th><td><i>Types:</i></td></tr>
+<tr><th id="26">26</th><td><i></i></td></tr>
+<tr><th id="27">27</th><td><i>    clock_t</i></td></tr>
+<tr><th id="28">28</th><td><i>    size_t</i></td></tr>
+<tr><th id="29">29</th><td><i>    time_t</i></td></tr>
+<tr><th id="30">30</th><td><i>    tm</i></td></tr>
+<tr><th id="31">31</th><td><i></i></td></tr>
+<tr><th id="32">32</th><td><i>clock_t clock();</i></td></tr>
+<tr><th id="33">33</th><td><i>double difftime(time_t time1, time_t time0);</i></td></tr>
+<tr><th id="34">34</th><td><i>time_t mktime(tm* timeptr);</i></td></tr>
+<tr><th id="35">35</th><td><i>time_t time(time_t* timer);</i></td></tr>
+<tr><th id="36">36</th><td><i>char* asctime(const tm* timeptr);</i></td></tr>
+<tr><th id="37">37</th><td><i>char* ctime(const time_t* timer);</i></td></tr>
+<tr><th id="38">38</th><td><i>tm*    gmtime(const time_t* timer);</i></td></tr>
+<tr><th id="39">39</th><td><i>tm* localtime(const time_t* timer);</i></td></tr>
+<tr><th id="40">40</th><td><i>size_t strftime(char* restrict s, size_t maxsize, const char* restrict format,</i></td></tr>
+<tr><th id="41">41</th><td><i>                const tm* restrict timeptr);</i></td></tr>
+<tr><th id="42">42</th><td><i></i></td></tr>
+<tr><th id="43">43</th><td><i>}  // std</i></td></tr>
+<tr><th id="44">44</th><td><i></i></td></tr>
+<tr><th id="45">45</th><td><i>*/</i></td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td><u>#include <a href="__config.html">&lt;__config&gt;</a></u></td></tr>
+<tr><th id="48">48</th><td><u>#include <a href="../../../bionic/libc/include/time.h.html">&lt;time.h&gt;</a></u></td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td><u>#<span data-ppcond="50">if</span> !defined(<span class="macro" data-ref="_M/_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER">_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER</span>)</u></td></tr>
+<tr><th id="51">51</th><td><u>#pragma GCC system_header</u></td></tr>
+<tr><th id="52">52</th><td><u>#<span data-ppcond="50">endif</span></u></td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><a class="macro" href="__config.html#386" title="namespace std {inline namespace __1 {" data-ref="_M/_LIBCPP_BEGIN_NAMESPACE_STD">_LIBCPP_BEGIN_NAMESPACE_STD</a></td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><b>using</b> ::clock_t;</td></tr>
+<tr><th id="57">57</th><td><b>using</b> ::size_t;</td></tr>
+<tr><th id="58">58</th><td><b>using</b> ::time_t;</td></tr>
+<tr><th id="59">59</th><td><b>using</b> ::tm;</td></tr>
+<tr><th id="60">60</th><td><b>using</b> ::clock;</td></tr>
+<tr><th id="61">61</th><td><b>using</b> ::difftime;</td></tr>
+<tr><th id="62">62</th><td><b>using</b> ::mktime;</td></tr>
+<tr><th id="63">63</th><td><b>using</b> ::time;</td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="64">ifndef</span> <span class="macro" data-ref="_M/_LIBCPP_HAS_NO_THREAD_UNSAFE_C_FUNCTIONS">_LIBCPP_HAS_NO_THREAD_UNSAFE_C_FUNCTIONS</span></u></td></tr>
+<tr><th id="65">65</th><td><b>using</b> ::asctime;</td></tr>
+<tr><th id="66">66</th><td><b>using</b> ::ctime;</td></tr>
+<tr><th id="67">67</th><td><b>using</b> ::gmtime;</td></tr>
+<tr><th id="68">68</th><td><b>using</b> ::localtime;</td></tr>
+<tr><th id="69">69</th><td><u>#<span data-ppcond="64">endif</span></u></td></tr>
+<tr><th id="70">70</th><td><b>using</b> ::strftime;</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><a class="macro" href="__config.html#387" title="} }" data-ref="_M/_LIBCPP_END_NAMESPACE_STD">_LIBCPP_END_NAMESPACE_STD</a></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><u>#<span data-ppcond="11">endif</span>  // _LIBCPP_CTIME</u></td></tr>
+<tr><th id="75">75</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../src/algorithm.cpp.html'>codebrowser/external/libcxx/src/algorithm.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

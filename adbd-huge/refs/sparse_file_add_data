@@ -1,0 +1,34 @@
+<dec f='codebrowser/system/core/libsparse/include/sparse/sparse.h' l='72' type='int sparse_file_add_data(struct sparse_file * s, void * data, unsigned int len, unsigned int block)'/>
+<use f='codebrowser/system/extras/ext4_utils/allocate.c' l='184' u='c' c='allocate_bg_inode_table'/>
+<use f='codebrowser/system/extras/ext4_utils/allocate.c' l='302' u='c' c='init_bg'/>
+<use f='codebrowser/system/extras/ext4_utils/allocate.c' l='688' u='c' c='get_xattr_block_for_inode'/>
+<doc f='codebrowser/system/core/libsparse/include/sparse/sparse.h' l='54'>/**
+ * sparse_file_add_data - associate a data chunk with a sparse file
+ *
+ * @s - sparse file cookie
+ * @data - pointer to data block
+ * @len - length of the data block
+ * @block - offset in blocks into the sparse file to place the data chunk
+ *
+ * Associates a data chunk with a sparse file cookie.  The region
+ * [block * block_size : block * block_size + len) must not already be used in
+ * the sparse file. If len is not a multiple of the block size the data
+ * will be padded with zeros.
+ *
+ * The data pointer must remain valid until the sparse file is closed or the
+ * data block is removed from the sparse file.
+ *
+ * Returns 0 on success, negative errno on error.
+ */</doc>
+<use f='codebrowser/system/extras/ext4_utils/ext4_utils.c' l='372' u='c' c='ext4_fill_in_sb'/>
+<use f='codebrowser/system/extras/ext4_utils/ext4_utils.c' l='402' u='c' c='ext4_queue_sb'/>
+<use f='codebrowser/system/extras/ext4_utils/extent.c' l='45' u='c' c='extent_create_backing'/>
+<use f='codebrowser/system/extras/ext4_utils/extent.c' l='127' u='c' c='do_inode_allocate_extents'/>
+<use f='codebrowser/system/extras/ext4_utils/indirect.c' l='47' u='c' c='create_backing'/>
+<use f='codebrowser/system/extras/ext4_utils/indirect.c' l='124' u='c' c='fill_dindirect_block'/>
+<use f='codebrowser/system/extras/ext4_utils/indirect.c' l='154' u='c' c='fill_tindirect_block'/>
+<use f='codebrowser/system/extras/ext4_utils/indirect.c' l='203' u='c' c='inode_attach_indirect_blocks'/>
+<use f='codebrowser/system/extras/ext4_utils/indirect.c' l='235' u='c' c='inode_attach_dindirect_blocks'/>
+<use f='codebrowser/system/extras/ext4_utils/indirect.c' l='267' u='c' c='inode_attach_tindirect_blocks'/>
+<use f='codebrowser/system/extras/ext4_utils/indirect.c' l='447' u='c' c='inode_attach_resize'/>
+<use f='codebrowser/system/extras/ext4_utils/indirect.c' l='453' u='c' c='inode_attach_resize'/>

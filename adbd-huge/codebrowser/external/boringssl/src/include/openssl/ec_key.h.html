@@ -1,0 +1,299 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ec_key.h source code [codebrowser/external/boringssl/src/include/openssl/ec_key.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ecdsa_method_st "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/ec_key.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='ec_key.h.html'>ec_key.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Originally written by Bodo Moeller for the OpenSSL project.</i></td></tr>
+<tr><th id="2">2</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright (c) 1998-2005 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *</i></td></tr>
+<tr><th id="9">9</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="10">10</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="11">11</th><td><i> *</i></td></tr>
+<tr><th id="12">12</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="13">13</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="14">14</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="15">15</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="16">16</th><td><i> *</i></td></tr>
+<tr><th id="17">17</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="18">18</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="19">19</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="20">20</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="23">23</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="24">24</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="25">25</th><td><i> *    openssl-core@openssl.org.</i></td></tr>
+<tr><th id="26">26</th><td><i> *</i></td></tr>
+<tr><th id="27">27</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="28">28</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="29">29</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="30">30</th><td><i> *</i></td></tr>
+<tr><th id="31">31</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="32">32</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="33">33</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="34">34</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="35">35</th><td><i> *</i></td></tr>
+<tr><th id="36">36</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="37">37</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="38">38</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="39">39</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="40">40</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="41">41</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="42">42</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="43">43</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="44">44</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="45">45</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="46">46</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="47">47</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="48">48</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="49">49</th><td><i> *</i></td></tr>
+<tr><th id="50">50</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="51">51</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="52">52</th><td><i> * Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="53">53</th><td><i> *</i></td></tr>
+<tr><th id="54">54</th><td><i> */</i></td></tr>
+<tr><th id="55">55</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="56">56</th><td><i> * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.</i></td></tr>
+<tr><th id="57">57</th><td><i> *</i></td></tr>
+<tr><th id="58">58</th><td><i> * Portions of the attached software ("Contribution") are developed by</i></td></tr>
+<tr><th id="59">59</th><td><i> * SUN MICROSYSTEMS, INC., and are contributed to the OpenSSL project.</i></td></tr>
+<tr><th id="60">60</th><td><i> *</i></td></tr>
+<tr><th id="61">61</th><td><i> * The Contribution is licensed pursuant to the OpenSSL open source</i></td></tr>
+<tr><th id="62">62</th><td><i> * license provided above.</i></td></tr>
+<tr><th id="63">63</th><td><i> *</i></td></tr>
+<tr><th id="64">64</th><td><i> * The elliptic curve binary polynomial software is originally written by</i></td></tr>
+<tr><th id="65">65</th><td><i> * Sheueling Chang Shantz and Douglas Stebila of Sun Microsystems</i></td></tr>
+<tr><th id="66">66</th><td><i> * Laboratories. */</i></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="68">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_EC_KEY_H">OPENSSL_HEADER_EC_KEY_H</span></u></td></tr>
+<tr><th id="69">69</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_EC_KEY_H" data-ref="_M/OPENSSL_HEADER_EC_KEY_H">OPENSSL_HEADER_EC_KEY_H</dfn></u></td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><u>#include <a href="ec.h.html">&lt;openssl/ec.h&gt;</a></u></td></tr>
+<tr><th id="74">74</th><td><u>#include <a href="engine.h.html">&lt;openssl/engine.h&gt;</a></u></td></tr>
+<tr><th id="75">75</th><td><u>#include <a href="ex_data.h.html">&lt;openssl/ex_data.h&gt;</a></u></td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><u>#<span data-ppcond="77">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="78">78</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="79">79</th><td><u>#<span data-ppcond="77">endif</span></u></td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><i>/* ec_key.h contains functions that handle elliptic-curve points that are</i></td></tr>
+<tr><th id="83">83</th><td><i> * public/private keys. */</i></td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><i>/* EC key objects. */</i></td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><i>/* EC_KEY_new returns a fresh |EC_KEY| object or NULL on error. */</i></td></tr>
+<tr><th id="89">89</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="EC_KEY_new" title='EC_KEY_new' data-ref="EC_KEY_new">EC_KEY_new</dfn>(<em>void</em>);</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td><i>/* EC_KEY_new_method acts the same as |EC_KEY_new|, but takes an explicit</i></td></tr>
+<tr><th id="92">92</th><td><i> * |ENGINE|. */</i></td></tr>
+<tr><th id="93">93</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="EC_KEY_new_method" title='EC_KEY_new_method' data-ref="EC_KEY_new_method">EC_KEY_new_method</dfn>(<em>const</em> <a class="typedef" href="base.h.html#ENGINE" title='ENGINE' data-type='struct engine_st' data-ref="ENGINE">ENGINE</a> *<dfn class="local col7 decl" id="2007engine" title='engine' data-type='const ENGINE *' data-ref="2007engine">engine</dfn>);</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><i>/* EC_KEY_new_by_curve_name returns a fresh EC_KEY for group specified by |nid|</i></td></tr>
+<tr><th id="96">96</th><td><i> * or NULL on error. */</i></td></tr>
+<tr><th id="97">97</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="EC_KEY_new_by_curve_name" title='EC_KEY_new_by_curve_name' data-ref="EC_KEY_new_by_curve_name">EC_KEY_new_by_curve_name</dfn>(<em>int</em> <dfn class="local col8 decl" id="2008nid" title='nid' data-type='int' data-ref="2008nid">nid</dfn>);</td></tr>
+<tr><th id="98">98</th><td></td></tr>
+<tr><th id="99">99</th><td><i>/* EC_KEY_free frees all the data owned by |key| and |key| itself. */</i></td></tr>
+<tr><th id="100">100</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EC_KEY_free" title='EC_KEY_free' data-ref="EC_KEY_free">EC_KEY_free</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col9 decl" id="2009key" title='key' data-type='EC_KEY *' data-ref="2009key">key</dfn>);</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td><i>/* EC_KEY_copy sets |dst| equal to |src| and returns |dst| or NULL on error. */</i></td></tr>
+<tr><th id="103">103</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="EC_KEY_copy" title='EC_KEY_copy' data-ref="EC_KEY_copy">EC_KEY_copy</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col0 decl" id="2010dst" title='dst' data-type='EC_KEY *' data-ref="2010dst">dst</dfn>, <em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col1 decl" id="2011src" title='src' data-type='const EC_KEY *' data-ref="2011src">src</dfn>);</td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><i>/* EC_KEY_dup returns a fresh copy of |src| or NULL on error. */</i></td></tr>
+<tr><th id="106">106</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="EC_KEY_dup" title='EC_KEY_dup' data-ref="EC_KEY_dup">EC_KEY_dup</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col2 decl" id="2012src" title='src' data-type='const EC_KEY *' data-ref="2012src">src</dfn>);</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td><i>/* EC_KEY_up_ref increases the reference count of |key|. It returns one on</i></td></tr>
+<tr><th id="109">109</th><td><i> * success and zero otherwise. */</i></td></tr>
+<tr><th id="110">110</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_up_ref" title='EC_KEY_up_ref' data-ref="EC_KEY_up_ref">EC_KEY_up_ref</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col3 decl" id="2013key" title='key' data-type='EC_KEY *' data-ref="2013key">key</dfn>);</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><i>/* EC_KEY_is_opaque returns one if |key| is opaque and doesn't expose its key</i></td></tr>
+<tr><th id="113">113</th><td><i> * material. Otherwise it return zero. */</i></td></tr>
+<tr><th id="114">114</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_is_opaque" title='EC_KEY_is_opaque' data-ref="EC_KEY_is_opaque">EC_KEY_is_opaque</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col4 decl" id="2014key" title='key' data-type='const EC_KEY *' data-ref="2014key">key</dfn>);</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><i>/* EC_KEY_get0_group returns a pointer to the |EC_GROUP| object inside |key|. */</i></td></tr>
+<tr><th id="117">117</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>const</em> <a class="typedef" href="ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="decl" id="EC_KEY_get0_group" title='EC_KEY_get0_group' data-ref="EC_KEY_get0_group">EC_KEY_get0_group</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col5 decl" id="2015key" title='key' data-type='const EC_KEY *' data-ref="2015key">key</dfn>);</td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td><i>/* EC_KEY_set_group sets the |EC_GROUP| object that |key| will use to |group|.</i></td></tr>
+<tr><th id="120">120</th><td><i> * It returns one on success and zero otherwise. */</i></td></tr>
+<tr><th id="121">121</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_set_group" title='EC_KEY_set_group' data-ref="EC_KEY_set_group">EC_KEY_set_group</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col6 decl" id="2016key" title='key' data-type='EC_KEY *' data-ref="2016key">key</dfn>, <em>const</em> <a class="typedef" href="ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col7 decl" id="2017group" title='group' data-type='const EC_GROUP *' data-ref="2017group">group</dfn>);</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><i>/* EC_KEY_get0_private_key returns a pointer to the private key inside |key|. */</i></td></tr>
+<tr><th id="124">124</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="decl" id="EC_KEY_get0_private_key" title='EC_KEY_get0_private_key' data-ref="EC_KEY_get0_private_key">EC_KEY_get0_private_key</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col8 decl" id="2018key" title='key' data-type='const EC_KEY *' data-ref="2018key">key</dfn>);</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td><i>/* EC_KEY_set_private_key sets the private key of |key| to |priv|. It returns</i></td></tr>
+<tr><th id="127">127</th><td><i> * one on success and zero otherwise. */</i></td></tr>
+<tr><th id="128">128</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_set_private_key" title='EC_KEY_set_private_key' data-ref="EC_KEY_set_private_key">EC_KEY_set_private_key</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col9 decl" id="2019key" title='key' data-type='EC_KEY *' data-ref="2019key">key</dfn>, <em>const</em> <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col0 decl" id="2020prv" title='prv' data-type='const BIGNUM *' data-ref="2020prv">prv</dfn>);</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td><i>/* EC_KEY_get0_public_key returns a pointer to the public key point inside</i></td></tr>
+<tr><th id="131">131</th><td><i> * |key|. */</i></td></tr>
+<tr><th id="132">132</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>const</em> <a class="typedef" href="ec.h.html#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="decl" id="EC_KEY_get0_public_key" title='EC_KEY_get0_public_key' data-ref="EC_KEY_get0_public_key">EC_KEY_get0_public_key</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col1 decl" id="2021key" title='key' data-type='const EC_KEY *' data-ref="2021key">key</dfn>);</td></tr>
+<tr><th id="133">133</th><td></td></tr>
+<tr><th id="134">134</th><td><i>/* EC_KEY_set_public_key sets the public key of |key| to |pub|, by copying it.</i></td></tr>
+<tr><th id="135">135</th><td><i> * It returns one on success and zero otherwise. */</i></td></tr>
+<tr><th id="136">136</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_set_public_key" title='EC_KEY_set_public_key' data-ref="EC_KEY_set_public_key">EC_KEY_set_public_key</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col2 decl" id="2022key" title='key' data-type='EC_KEY *' data-ref="2022key">key</dfn>, <em>const</em> <a class="typedef" href="ec.h.html#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col3 decl" id="2023pub" title='pub' data-type='const EC_POINT *' data-ref="2023pub">pub</dfn>);</td></tr>
+<tr><th id="137">137</th><td></td></tr>
+<tr><th id="138">138</th><td><u>#define <dfn class="macro" id="_M/EC_PKEY_NO_PARAMETERS" data-ref="_M/EC_PKEY_NO_PARAMETERS">EC_PKEY_NO_PARAMETERS</dfn> 0x001</u></td></tr>
+<tr><th id="139">139</th><td><u>#define <dfn class="macro" id="_M/EC_PKEY_NO_PUBKEY" data-ref="_M/EC_PKEY_NO_PUBKEY">EC_PKEY_NO_PUBKEY</dfn> 0x002</u></td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><i>/* EC_KEY_get_enc_flags returns the encoding flags for |key|, which is a</i></td></tr>
+<tr><th id="142">142</th><td><i> * bitwise-OR of |EC_PKEY_*| values. */</i></td></tr>
+<tr><th id="143">143</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>unsigned</em> <dfn class="decl" id="EC_KEY_get_enc_flags" title='EC_KEY_get_enc_flags' data-ref="EC_KEY_get_enc_flags">EC_KEY_get_enc_flags</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col4 decl" id="2024key" title='key' data-type='const EC_KEY *' data-ref="2024key">key</dfn>);</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><i>/* EC_KEY_set_enc_flags sets the encoding flags for |key|, which is a</i></td></tr>
+<tr><th id="146">146</th><td><i> * bitwise-OR of |EC_PKEY_*| values. */</i></td></tr>
+<tr><th id="147">147</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EC_KEY_set_enc_flags" title='EC_KEY_set_enc_flags' data-ref="EC_KEY_set_enc_flags">EC_KEY_set_enc_flags</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col5 decl" id="2025key" title='key' data-type='EC_KEY *' data-ref="2025key">key</dfn>, <em>unsigned</em> <dfn class="local col6 decl" id="2026flags" title='flags' data-type='unsigned int' data-ref="2026flags">flags</dfn>);</td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td><i>/* EC_KEY_get_conv_form returns the conversation form that will be used by</i></td></tr>
+<tr><th id="150">150</th><td><i> * |key|. */</i></td></tr>
+<tr><th id="151">151</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="ec.h.html#point_conversion_form_t" title='point_conversion_form_t' data-type='enum point_conversion_form_t' data-ref="point_conversion_form_t">point_conversion_form_t</a> <dfn class="decl" id="EC_KEY_get_conv_form" title='EC_KEY_get_conv_form' data-ref="EC_KEY_get_conv_form">EC_KEY_get_conv_form</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col7 decl" id="2027key" title='key' data-type='const EC_KEY *' data-ref="2027key">key</dfn>);</td></tr>
+<tr><th id="152">152</th><td></td></tr>
+<tr><th id="153">153</th><td><i>/* EC_KEY_set_conv_form sets the conversion form to be used by |key|. */</i></td></tr>
+<tr><th id="154">154</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EC_KEY_set_conv_form" title='EC_KEY_set_conv_form' data-ref="EC_KEY_set_conv_form">EC_KEY_set_conv_form</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col8 decl" id="2028key" title='key' data-type='EC_KEY *' data-ref="2028key">key</dfn>,</td></tr>
+<tr><th id="155">155</th><td>                                         <a class="typedef" href="ec.h.html#point_conversion_form_t" title='point_conversion_form_t' data-type='enum point_conversion_form_t' data-ref="point_conversion_form_t">point_conversion_form_t</a> <dfn class="local col9 decl" id="2029cform" title='cform' data-type='point_conversion_form_t' data-ref="2029cform">cform</dfn>);</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><i>/* EC_KEY_check_key performs several checks on |key| (possibly including an</i></td></tr>
+<tr><th id="158">158</th><td><i> * expensive check that the public key is in the primary subgroup). It returns</i></td></tr>
+<tr><th id="159">159</th><td><i> * one if all checks pass and zero otherwise. If it returns zero then detail</i></td></tr>
+<tr><th id="160">160</th><td><i> * about the problem can be found on the error stack. */</i></td></tr>
+<tr><th id="161">161</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_check_key" title='EC_KEY_check_key' data-ref="EC_KEY_check_key">EC_KEY_check_key</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col0 decl" id="2030key" title='key' data-type='const EC_KEY *' data-ref="2030key">key</dfn>);</td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td><i>/* EC_KEY_set_public_key_affine_coordinates sets the public key in |key| to</i></td></tr>
+<tr><th id="164">164</th><td><i> * (|x|, |y|). It returns one on success and zero otherwise. */</i></td></tr>
+<tr><th id="165">165</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_set_public_key_affine_coordinates" title='EC_KEY_set_public_key_affine_coordinates' data-ref="EC_KEY_set_public_key_affine_coordinates">EC_KEY_set_public_key_affine_coordinates</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col1 decl" id="2031key" title='key' data-type='EC_KEY *' data-ref="2031key">key</dfn>,</td></tr>
+<tr><th id="166">166</th><td>                                                            <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="2032x" title='x' data-type='BIGNUM *' data-ref="2032x">x</dfn>,</td></tr>
+<tr><th id="167">167</th><td>                                                            <a class="typedef" href="base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="2033y" title='y' data-type='BIGNUM *' data-ref="2033y">y</dfn>);</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td><i>/* Key generation. */</i></td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><i>/* EC_KEY_generate_key generates a random, private key, calculates the</i></td></tr>
+<tr><th id="173">173</th><td><i> * corresponding public key and stores both in |key|. It returns one on success</i></td></tr>
+<tr><th id="174">174</th><td><i> * or zero otherwise. */</i></td></tr>
+<tr><th id="175">175</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_generate_key" title='EC_KEY_generate_key' data-ref="EC_KEY_generate_key">EC_KEY_generate_key</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col4 decl" id="2034key" title='key' data-type='EC_KEY *' data-ref="2034key">key</dfn>);</td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td></td></tr>
+<tr><th id="178">178</th><td><i>/* Serialisation. */</i></td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td><i>/* d2i_ECPrivateKey parses an ASN.1, DER-encoded, private key from |len| bytes</i></td></tr>
+<tr><th id="181">181</th><td><i> * at |*inp|. If |out_key| is not NULL then, on exit, a pointer to the result</i></td></tr>
+<tr><th id="182">182</th><td><i> * is in |*out_key|. If |*out_key| is already non-NULL on entry then the result</i></td></tr>
+<tr><th id="183">183</th><td><i> * is written directly into |*out_key|, otherwise a fresh |EC_KEY| is</i></td></tr>
+<tr><th id="184">184</th><td><i> * allocated. On successful exit, |*inp| is advanced past the DER structure. It</i></td></tr>
+<tr><th id="185">185</th><td><i> * returns the result or NULL on error. */</i></td></tr>
+<tr><th id="186">186</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="d2i_ECPrivateKey" title='d2i_ECPrivateKey' data-ref="d2i_ECPrivateKey">d2i_ECPrivateKey</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> **<dfn class="local col5 decl" id="2035out_key" title='out_key' data-type='EC_KEY **' data-ref="2035out_key">out_key</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col6 decl" id="2036inp" title='inp' data-type='const uint8_t **' data-ref="2036inp">inp</dfn>,</td></tr>
+<tr><th id="187">187</th><td>                                        <em>long</em> <dfn class="local col7 decl" id="2037len" title='len' data-type='long' data-ref="2037len">len</dfn>);</td></tr>
+<tr><th id="188">188</th><td></td></tr>
+<tr><th id="189">189</th><td><i>/* i2d_ECPrivateKey marshals an EC private key from |key| to an ASN.1, DER</i></td></tr>
+<tr><th id="190">190</th><td><i> * structure. If |outp| is not NULL then the result is written to |*outp| and</i></td></tr>
+<tr><th id="191">191</th><td><i> * |*outp| is advanced just past the output. It returns the number of bytes in</i></td></tr>
+<tr><th id="192">192</th><td><i> * the result, whether written or not, or a negative value on error. */</i></td></tr>
+<tr><th id="193">193</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="i2d_ECPrivateKey" title='i2d_ECPrivateKey' data-ref="i2d_ECPrivateKey">i2d_ECPrivateKey</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col8 decl" id="2038key" title='key' data-type='const EC_KEY *' data-ref="2038key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col9 decl" id="2039outp" title='outp' data-type='uint8_t **' data-ref="2039outp">outp</dfn>);</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><i>/* d2i_ECParameters parses an ASN.1, DER-encoded, set of EC parameters from</i></td></tr>
+<tr><th id="196">196</th><td><i> * |len| bytes at |*inp|. If |out_key| is not NULL then, on exit, a pointer to</i></td></tr>
+<tr><th id="197">197</th><td><i> * the result is in |*out_key|. If |*out_key| is already non-NULL on entry then</i></td></tr>
+<tr><th id="198">198</th><td><i> * the result is written directly into |*out_key|, otherwise a fresh |EC_KEY|</i></td></tr>
+<tr><th id="199">199</th><td><i> * is allocated. On successful exit, |*inp| is advanced past the DER structure.</i></td></tr>
+<tr><th id="200">200</th><td><i> * It returns the result or NULL on error. */</i></td></tr>
+<tr><th id="201">201</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="d2i_ECParameters" title='d2i_ECParameters' data-ref="d2i_ECParameters">d2i_ECParameters</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> **<dfn class="local col0 decl" id="2040out_key" title='out_key' data-type='EC_KEY **' data-ref="2040out_key">out_key</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col1 decl" id="2041inp" title='inp' data-type='const uint8_t **' data-ref="2041inp">inp</dfn>,</td></tr>
+<tr><th id="202">202</th><td>                                        <em>long</em> <dfn class="local col2 decl" id="2042len" title='len' data-type='long' data-ref="2042len">len</dfn>);</td></tr>
+<tr><th id="203">203</th><td></td></tr>
+<tr><th id="204">204</th><td><i>/* i2d_ECParameters marshals EC parameters from |key| to an ASN.1, DER</i></td></tr>
+<tr><th id="205">205</th><td><i> * structure. If |outp| is not NULL then the result is written to |*outp| and</i></td></tr>
+<tr><th id="206">206</th><td><i> * |*outp| is advanced just past the output. It returns the number of bytes in</i></td></tr>
+<tr><th id="207">207</th><td><i> * the result, whether written or not, or a negative value on error. */</i></td></tr>
+<tr><th id="208">208</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="i2d_ECParameters" title='i2d_ECParameters' data-ref="i2d_ECParameters">i2d_ECParameters</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col3 decl" id="2043key" title='key' data-type='const EC_KEY *' data-ref="2043key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col4 decl" id="2044outp" title='outp' data-type='uint8_t **' data-ref="2044outp">outp</dfn>);</td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td><i>/* o2i_ECPublicKey parses an EC point from |len| bytes at |*inp| into</i></td></tr>
+<tr><th id="211">211</th><td><i> * |*out_key|. Note that this differs from the d2i format in that |*out_key|</i></td></tr>
+<tr><th id="212">212</th><td><i> * must be non-NULL with a group set. On successful exit, |*inp| is advanced by</i></td></tr>
+<tr><th id="213">213</th><td><i> * |len| bytes. It returns |*out_key| or NULL on error. */</i></td></tr>
+<tr><th id="214">214</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="decl" id="o2i_ECPublicKey" title='o2i_ECPublicKey' data-ref="o2i_ECPublicKey">o2i_ECPublicKey</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> **<dfn class="local col5 decl" id="2045out_key" title='out_key' data-type='EC_KEY **' data-ref="2045out_key">out_key</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> **<dfn class="local col6 decl" id="2046inp" title='inp' data-type='const uint8_t **' data-ref="2046inp">inp</dfn>,</td></tr>
+<tr><th id="215">215</th><td>                                       <em>long</em> <dfn class="local col7 decl" id="2047len" title='len' data-type='long' data-ref="2047len">len</dfn>);</td></tr>
+<tr><th id="216">216</th><td></td></tr>
+<tr><th id="217">217</th><td><i>/* i2o_ECPublicKey marshals an EC point from |key|. If |outp| is not NULL then</i></td></tr>
+<tr><th id="218">218</th><td><i> * the result is written to |*outp| and |*outp| is advanced just past the</i></td></tr>
+<tr><th id="219">219</th><td><i> * output. It returns the number of bytes in the result, whether written or</i></td></tr>
+<tr><th id="220">220</th><td><i> * not, or a negative value on error. */</i></td></tr>
+<tr><th id="221">221</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="i2o_ECPublicKey" title='i2o_ECPublicKey' data-ref="i2o_ECPublicKey">i2o_ECPublicKey</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col8 decl" id="2048key" title='key' data-type='const EC_KEY *' data-ref="2048key">key</dfn>, <em>unsigned</em> <em>char</em> **<dfn class="local col9 decl" id="2049outp" title='outp' data-type='unsigned char **' data-ref="2049outp">outp</dfn>);</td></tr>
+<tr><th id="222">222</th><td></td></tr>
+<tr><th id="223">223</th><td></td></tr>
+<tr><th id="224">224</th><td><i>/* ex_data functions.</i></td></tr>
+<tr><th id="225">225</th><td><i> *</i></td></tr>
+<tr><th id="226">226</th><td><i> * These functions are wrappers. See |ex_data.h| for details. */</i></td></tr>
+<tr><th id="227">227</th><td></td></tr>
+<tr><th id="228">228</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_get_ex_new_index" title='EC_KEY_get_ex_new_index' data-ref="EC_KEY_get_ex_new_index">EC_KEY_get_ex_new_index</dfn>(<em>long</em> <dfn class="local col0 decl" id="2050argl" title='argl' data-type='long' data-ref="2050argl">argl</dfn>, <em>void</em> *<dfn class="local col1 decl" id="2051argp" title='argp' data-type='void *' data-ref="2051argp">argp</dfn>,</td></tr>
+<tr><th id="229">229</th><td>                                           <a class="typedef" href="ex_data.h.html#CRYPTO_EX_unused" title='CRYPTO_EX_unused' data-type='int' data-ref="CRYPTO_EX_unused">CRYPTO_EX_unused</a> *<dfn class="local col2 decl" id="2052unused" title='unused' data-type='CRYPTO_EX_unused *' data-ref="2052unused">unused</dfn>,</td></tr>
+<tr><th id="230">230</th><td>                                           <a class="typedef" href="ex_data.h.html#CRYPTO_EX_dup" title='CRYPTO_EX_dup' data-type='int (CRYPTO_EX_DATA *, const CRYPTO_EX_DATA *, void **, int, long, void *)' data-ref="CRYPTO_EX_dup">CRYPTO_EX_dup</a> *<dfn class="local col3 decl" id="2053dup_func" title='dup_func' data-type='CRYPTO_EX_dup *' data-ref="2053dup_func">dup_func</dfn>,</td></tr>
+<tr><th id="231">231</th><td>                                           <a class="typedef" href="ex_data.h.html#CRYPTO_EX_free" title='CRYPTO_EX_free' data-type='void (void *, void *, CRYPTO_EX_DATA *, int, long, void *)' data-ref="CRYPTO_EX_free">CRYPTO_EX_free</a> *<dfn class="local col4 decl" id="2054free_func" title='free_func' data-type='CRYPTO_EX_free *' data-ref="2054free_func">free_func</dfn>);</td></tr>
+<tr><th id="232">232</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="EC_KEY_set_ex_data" title='EC_KEY_set_ex_data' data-ref="EC_KEY_set_ex_data">EC_KEY_set_ex_data</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col5 decl" id="2055r" title='r' data-type='EC_KEY *' data-ref="2055r">r</dfn>, <em>int</em> <dfn class="local col6 decl" id="2056idx" title='idx' data-type='int' data-ref="2056idx">idx</dfn>, <em>void</em> *<dfn class="local col7 decl" id="2057arg" title='arg' data-type='void *' data-ref="2057arg">arg</dfn>);</td></tr>
+<tr><th id="233">233</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> *<dfn class="decl" id="EC_KEY_get_ex_data" title='EC_KEY_get_ex_data' data-ref="EC_KEY_get_ex_data">EC_KEY_get_ex_data</dfn>(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col8 decl" id="2058r" title='r' data-type='const EC_KEY *' data-ref="2058r">r</dfn>, <em>int</em> <dfn class="local col9 decl" id="2059idx" title='idx' data-type='int' data-ref="2059idx">idx</dfn>);</td></tr>
+<tr><th id="234">234</th><td></td></tr>
+<tr><th id="235">235</th><td></td></tr>
+<tr><th id="236">236</th><td><i>/* ECDSA method. */</i></td></tr>
+<tr><th id="237">237</th><td></td></tr>
+<tr><th id="238">238</th><td><i>/* ECDSA_FLAG_OPAQUE specifies that this ECDSA_METHOD does not expose its key</i></td></tr>
+<tr><th id="239">239</th><td><i> * material. This may be set if, for instance, it is wrapping some other crypto</i></td></tr>
+<tr><th id="240">240</th><td><i> * API, like a platform key store. */</i></td></tr>
+<tr><th id="241">241</th><td><u>#define <dfn class="macro" id="_M/ECDSA_FLAG_OPAQUE" data-ref="_M/ECDSA_FLAG_OPAQUE">ECDSA_FLAG_OPAQUE</dfn> 1</u></td></tr>
+<tr><th id="242">242</th><td></td></tr>
+<tr><th id="243">243</th><td><i>/* ecdsa_method_st is a structure of function pointers for implementing ECDSA.</i></td></tr>
+<tr><th id="244">244</th><td><i> * See engine.h. */</i></td></tr>
+<tr><th id="245">245</th><td><b>struct</b> <dfn class="type def" id="ecdsa_method_st" title='ecdsa_method_st' data-ref="ecdsa_method_st">ecdsa_method_st</dfn> {</td></tr>
+<tr><th id="246">246</th><td>  <b>struct</b> <a class="type" href="engine.h.html#openssl_method_common_st" title='openssl_method_common_st' data-ref="openssl_method_common_st">openssl_method_common_st</a> <dfn class="decl" id="ecdsa_method_st::common" title='ecdsa_method_st::common' data-ref="ecdsa_method_st::common">common</dfn>;</td></tr>
+<tr><th id="247">247</th><td></td></tr>
+<tr><th id="248">248</th><td>  <em>void</em> *<dfn class="decl" id="ecdsa_method_st::app_data" title='ecdsa_method_st::app_data' data-ref="ecdsa_method_st::app_data">app_data</dfn>;</td></tr>
+<tr><th id="249">249</th><td></td></tr>
+<tr><th id="250">250</th><td>  <em>int</em> (*<dfn class="decl" id="ecdsa_method_st::init" title='ecdsa_method_st::init' data-ref="ecdsa_method_st::init">init</dfn>)(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col0 decl" id="2060key" title='key' data-type='EC_KEY *' data-ref="2060key">key</dfn>);</td></tr>
+<tr><th id="251">251</th><td>  <em>int</em> (*<dfn class="decl" id="ecdsa_method_st::finish" title='ecdsa_method_st::finish' data-ref="ecdsa_method_st::finish">finish</dfn>)(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col1 decl" id="2061key" title='key' data-type='EC_KEY *' data-ref="2061key">key</dfn>);</td></tr>
+<tr><th id="252">252</th><td></td></tr>
+<tr><th id="253">253</th><td>  <i>/* group_order_size returns the number of bytes needed to represent the order</i></td></tr>
+<tr><th id="254">254</th><td><i>   * of the group. This is used to calculate the maximum size of an ECDSA</i></td></tr>
+<tr><th id="255">255</th><td><i>   * signature in |ECDSA_size|. */</i></td></tr>
+<tr><th id="256">256</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> (*<dfn class="decl" id="ecdsa_method_st::group_order_size" title='ecdsa_method_st::group_order_size' data-ref="ecdsa_method_st::group_order_size">group_order_size</dfn>)(<em>const</em> <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col2 decl" id="2062key" title='key' data-type='const EC_KEY *' data-ref="2062key">key</dfn>);</td></tr>
+<tr><th id="257">257</th><td></td></tr>
+<tr><th id="258">258</th><td>  <i>/* sign matches the arguments and behaviour of |ECDSA_sign|. */</i></td></tr>
+<tr><th id="259">259</th><td>  <em>int</em> (*<dfn class="decl" id="ecdsa_method_st::sign" title='ecdsa_method_st::sign' data-ref="ecdsa_method_st::sign">sign</dfn>)(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="2063digest" title='digest' data-type='const uint8_t *' data-ref="2063digest">digest</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="2064digest_len" title='digest_len' data-type='size_t' data-ref="2064digest_len">digest_len</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="2065sig" title='sig' data-type='uint8_t *' data-ref="2065sig">sig</dfn>,</td></tr>
+<tr><th id="260">260</th><td>              <em>unsigned</em> <em>int</em> *<dfn class="local col6 decl" id="2066sig_len" title='sig_len' data-type='unsigned int *' data-ref="2066sig_len">sig_len</dfn>, <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col7 decl" id="2067eckey" title='eckey' data-type='EC_KEY *' data-ref="2067eckey">eckey</dfn>);</td></tr>
+<tr><th id="261">261</th><td></td></tr>
+<tr><th id="262">262</th><td>  <i>/* verify matches the arguments and behaviour of |ECDSA_verify|. */</i></td></tr>
+<tr><th id="263">263</th><td>  <em>int</em> (*<dfn class="decl" id="ecdsa_method_st::verify" title='ecdsa_method_st::verify' data-ref="ecdsa_method_st::verify">verify</dfn>)(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="2068digest" title='digest' data-type='const uint8_t *' data-ref="2068digest">digest</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="2069digest_len" title='digest_len' data-type='size_t' data-ref="2069digest_len">digest_len</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col0 decl" id="2070sig" title='sig' data-type='const uint8_t *' data-ref="2070sig">sig</dfn>,</td></tr>
+<tr><th id="264">264</th><td>                <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="2071sig_len" title='sig_len' data-type='size_t' data-ref="2071sig_len">sig_len</dfn>, <a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col2 decl" id="2072eckey" title='eckey' data-type='EC_KEY *' data-ref="2072eckey">eckey</dfn>);</td></tr>
+<tr><th id="265">265</th><td></td></tr>
+<tr><th id="266">266</th><td>  <em>int</em> <dfn class="decl" id="ecdsa_method_st::flags" title='ecdsa_method_st::flags' data-ref="ecdsa_method_st::flags">flags</dfn>;</td></tr>
+<tr><th id="267">267</th><td>};</td></tr>
+<tr><th id="268">268</th><td></td></tr>
+<tr><th id="269">269</th><td></td></tr>
+<tr><th id="270">270</th><td><i>/* Deprecated functions. */</i></td></tr>
+<tr><th id="271">271</th><td></td></tr>
+<tr><th id="272">272</th><td><i>/* EC_KEY_set_asn1_flag does nothing. */</i></td></tr>
+<tr><th id="273">273</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="EC_KEY_set_asn1_flag" title='EC_KEY_set_asn1_flag' data-ref="EC_KEY_set_asn1_flag">EC_KEY_set_asn1_flag</dfn>(<a class="typedef" href="base.h.html#EC_KEY" title='EC_KEY' data-type='struct ec_key_st' data-ref="EC_KEY">EC_KEY</a> *<dfn class="local col3 decl" id="2073key" title='key' data-type='EC_KEY *' data-ref="2073key">key</dfn>, <em>int</em> <dfn class="local col4 decl" id="2074flag" title='flag' data-type='int' data-ref="2074flag">flag</dfn>);</td></tr>
+<tr><th id="274">274</th><td></td></tr>
+<tr><th id="275">275</th><td></td></tr>
+<tr><th id="276">276</th><td><u>#<span data-ppcond="276">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="277">277</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="278">278</th><td><u>#<span data-ppcond="276">endif</span></u></td></tr>
+<tr><th id="279">279</th><td></td></tr>
+<tr><th id="280">280</th><td><u>#<span data-ppcond="68">endif</span>  /* OPENSSL_HEADER_EC_KEY_H */</u></td></tr>
+<tr><th id="281">281</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../android_compat_hacks.c.html'>codebrowser/external/boringssl/android_compat_hacks.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

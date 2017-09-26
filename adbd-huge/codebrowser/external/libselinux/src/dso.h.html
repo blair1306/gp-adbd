@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>dso.h source code [codebrowser/external/libselinux/src/dso.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/dso.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='dso.h.html'>dso.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#<span data-ppcond="1">ifndef</span> <span class="macro" data-ref="_M/_SELINUX_DSO_H">_SELINUX_DSO_H</span></u></td></tr>
+<tr><th id="2">2</th><td><u>#define <dfn class="macro" id="_M/_SELINUX_DSO_H" data-ref="_M/_SELINUX_DSO_H">_SELINUX_DSO_H</dfn>	1</u></td></tr>
+<tr><th id="3">3</th><td></td></tr>
+<tr><th id="4">4</th><td><u>#<span data-ppcond="4">ifdef</span> <span class="macro" data-ref="_M/SHARED">SHARED</span></u></td></tr>
+<tr><th id="5">5</th><td><u># define hidden __attribute__ ((visibility ("hidden")))</u></td></tr>
+<tr><th id="6">6</th><td><u># define hidden_proto(fct) __hidden_proto (fct, fct##_internal)</u></td></tr>
+<tr><th id="7">7</th><td><u># define __hidden_proto(fct, internal)	\</u></td></tr>
+<tr><th id="8">8</th><td><u>     extern __typeof (fct) internal;	\</u></td></tr>
+<tr><th id="9">9</th><td><u>     extern __typeof (fct) fct __asm (#internal) hidden;</u></td></tr>
+<tr><th id="10">10</th><td><u># if defined(__alpha__) || defined(__mips__)</u></td></tr>
+<tr><th id="11">11</th><td><u>#  define hidden_def(fct) \</u></td></tr>
+<tr><th id="12">12</th><td><u>     asm (".globl " #fct "\n" #fct " = " #fct "_internal");</u></td></tr>
+<tr><th id="13">13</th><td><u># else</u></td></tr>
+<tr><th id="14">14</th><td><u>#  define hidden_def(fct) \</u></td></tr>
+<tr><th id="15">15</th><td><u>     asm (".globl " #fct "\n.set " #fct ", " #fct "_internal");</u></td></tr>
+<tr><th id="16">16</th><td><u>#endif</u></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="4">else</span></u></td></tr>
+<tr><th id="18">18</th><td><u># define <dfn class="macro" id="_M/hidden" data-ref="_M/hidden">hidden</dfn></u></td></tr>
+<tr><th id="19">19</th><td><u># define <dfn class="macro" id="_M/hidden_proto" data-ref="_M/hidden_proto">hidden_proto</dfn>(fct)</u></td></tr>
+<tr><th id="20">20</th><td><u># define <dfn class="macro" id="_M/hidden_def" data-ref="_M/hidden_def">hidden_def</dfn>(fct)</u></td></tr>
+<tr><th id="21">21</th><td><u>#<span data-ppcond="4">endif</span></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="1">endif</span></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='android.c.html'>codebrowser/external/libselinux/src/android.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

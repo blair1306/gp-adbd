@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>crypto.h source code [codebrowser/external/boringssl/src/include/openssl/crypto.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/include/openssl/crypto.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>include</a>/<a href='./'>openssl</a>/<a href='crypto.h.html'>crypto.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2014, Google Inc.</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Permission to use, copy, modify, and/or distribute this software for any</i></td></tr>
+<tr><th id="4">4</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="5">5</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="8">8</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="9">9</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY</i></td></tr>
+<tr><th id="10">10</th><td><i> * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION</i></td></tr>
+<tr><th id="12">12</th><td><i> * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN</i></td></tr>
+<tr><th id="13">13</th><td><i> * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */</i></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#<span data-ppcond="15">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_CRYPTO_H">OPENSSL_HEADER_CRYPTO_H</span></u></td></tr>
+<tr><th id="16">16</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_CRYPTO_H" data-ref="_M/OPENSSL_HEADER_CRYPTO_H">OPENSSL_HEADER_CRYPTO_H</dfn></u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><i>/* Upstream OpenSSL defines |OPENSSL_malloc|, etc., in crypto.h rather than</i></td></tr>
+<tr><th id="21">21</th><td><i> * mem.h. */</i></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><i>/* Upstream OpenSSL defines |CRYPTO_LOCK|, etc., in crypto.h rather than</i></td></tr>
+<tr><th id="25">25</th><td><i> * thread.h. */</i></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="thread.h.html">&lt;openssl/thread.h&gt;</a></u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="29">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="30">30</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="31">31</th><td><u>#<span data-ppcond="29">endif</span></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><i>/* crypto.h contains functions for initializing the crypto library. */</i></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td><i>/* CRYPTO_library_init initializes the crypto library. It must be called if the</i></td></tr>
+<tr><th id="38">38</th><td><i> * library is built with BORINGSSL_NO_STATIC_INITIALIZER. Otherwise, it does</i></td></tr>
+<tr><th id="39">39</th><td><i> * nothing and a static initializer is used instead. */</i></td></tr>
+<tr><th id="40">40</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="CRYPTO_library_init" title='CRYPTO_library_init' data-ref="CRYPTO_library_init">CRYPTO_library_init</dfn>(<em>void</em>);</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><i>/* Deprecated functions. */</i></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_VERSION_TEXT" data-ref="_M/OPENSSL_VERSION_TEXT">OPENSSL_VERSION_TEXT</dfn> "BoringSSL"</u></td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/SSLEAY_VERSION" data-ref="_M/SSLEAY_VERSION">SSLEAY_VERSION</dfn> 0</u></td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><i>/* SSLeay_version is a compatibility function that returns the string</i></td></tr>
+<tr><th id="50">50</th><td><i> * "BoringSSL". */</i></td></tr>
+<tr><th id="51">51</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>const</em> <em>char</em> *<dfn class="decl" id="SSLeay_version" title='SSLeay_version' data-ref="SSLeay_version">SSLeay_version</dfn>(<em>int</em> <dfn class="local col3 decl" id="4103unused" title='unused' data-type='int' data-ref="4103unused">unused</dfn>);</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><i>/* SSLeay is a compatibility function that returns OPENSSL_VERSION_NUMBER from</i></td></tr>
+<tr><th id="54">54</th><td><i> * base.h. */</i></td></tr>
+<tr><th id="55">55</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>unsigned</em> <em>long</em> <dfn class="decl" id="SSLeay" title='SSLeay' data-ref="SSLeay">SSLeay</dfn>(<em>void</em>);</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><i>/* CRYPTO_malloc_init returns one. */</i></td></tr>
+<tr><th id="58">58</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="CRYPTO_malloc_init" title='CRYPTO_malloc_init' data-ref="CRYPTO_malloc_init">CRYPTO_malloc_init</dfn>(<em>void</em>);</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><i>/* ENGINE_load_builtin_engines does nothing. */</i></td></tr>
+<tr><th id="61">61</th><td><a class="macro" href="base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="ENGINE_load_builtin_engines" title='ENGINE_load_builtin_engines' data-ref="ENGINE_load_builtin_engines">ENGINE_load_builtin_engines</dfn>(<em>void</em>);</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="64">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="65">65</th><td>}  <i>/* extern C */</i></td></tr>
+<tr><th id="66">66</th><td><u>#<span data-ppcond="64">endif</span></u></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="15">endif</span>  /* OPENSSL_HEADER_CRYPTO_H */</u></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../android_compat_hacks.c.html'>codebrowser/external/boringssl/android_compat_hacks.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

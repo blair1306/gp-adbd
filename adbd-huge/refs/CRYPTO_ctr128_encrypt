@@ -1,0 +1,21 @@
+<dec f='codebrowser/external/boringssl/src/crypto/modes/internal.h' l='211' type='void CRYPTO_ctr128_encrypt(const uint8_t * in, uint8_t * out, size_t len, const void * key, uint8_t * ivec, uint8_t * ecount_buf, unsigned int * num, block128_f block)'/>
+<use f='codebrowser/external/boringssl/src/crypto/aes/mode_wrappers.c' l='59' u='c' c='AES_ctr128_encrypt'/>
+<doc f='codebrowser/external/boringssl/src/crypto/modes/internal.h' l='205'>/* CRYPTO_ctr128_encrypt encrypts (or decrypts, it&apos;s the same in CTR mode)
+ * |len| bytes from |in| to |out| using |block| in counter mode. There&apos;s no
+ * requirement that |len| be a multiple of any value and any partial blocks are
+ * stored in |ecount_buf| and |*num|, which must be zeroed before the initial
+ * call. The counter is a 128-bit, big-endian value in |ivec| and is
+ * incremented by this function. */</doc>
+<use f='codebrowser/external/boringssl/src/crypto/cipher/e_aes.c' l='394' u='c' c='aes_ctr_cipher'/>
+<use f='codebrowser/external/boringssl/src/crypto/cipher/e_aes.c' l='1639' u='c' c='aead_aes_ctr_hmac_sha256_crypt'/>
+<def f='codebrowser/external/boringssl/src/crypto/modes/ctr.c' l='88' ll='144' type='void CRYPTO_ctr128_encrypt(const uint8_t * in, uint8_t * out, size_t len, const void * key, uint8_t * ivec, uint8_t * ecount_buf, unsigned int * num, block128_f block)'/>
+<doc f='codebrowser/external/boringssl/src/crypto/modes/ctr.c' l='78'>/* The input encrypted as though 128bit counter mode is being used.  The extra
+ * state information to record how much of the 128bit block we have used is
+ * contained in *num, and the encrypted counter is kept in ecount_buf.  Both
+ * *num and ecount_buf must be initialised with zeros before the first call to
+ * CRYPTO_ctr128_encrypt().
+ *
+ * This algorithm assumes that the counter is in the x lower bits of the IV
+ * (ivec), and that the application has full control over overflow and the rest
+ * of the IV.  This implementation takes NO responsibility for checking that
+ * the counter doesn&apos;t overflow into the rest of the IV when incremented. */</doc>

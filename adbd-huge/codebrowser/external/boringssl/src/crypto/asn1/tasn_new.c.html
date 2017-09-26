@@ -1,0 +1,416 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>tasn_new.c source code [codebrowser/external/boringssl/src/crypto/asn1/tasn_new.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/asn1/tasn_new.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>asn1</a>/<a href='tasn_new.c.html'>tasn_new.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/asn1.h.html">&lt;openssl/asn1.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/asn1t.h.html">&lt;openssl/asn1t.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td><u>#include <a href="../../include/openssl/obj.h.html">&lt;openssl/obj.h&gt;</a></u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#asn1_item_ex_combine_new" title='asn1_item_ex_combine_new' data-type='int asn1_item_ex_combine_new(ASN1_VALUE ** pval, const ASN1_ITEM * it, int combine)' data-ref="asn1_item_ex_combine_new">asn1_item_ex_combine_new</a>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col1 decl" id="1pval" title='pval' data-type='ASN1_VALUE **' data-ref="1pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col2 decl" id="2it" title='it' data-type='const ASN1_ITEM *' data-ref="2it">it</dfn>,</td></tr>
+<tr><th id="68">68</th><td>								<em>int</em> <dfn class="local col3 decl" id="3combine" title='combine' data-type='int' data-ref="3combine">combine</dfn>);</td></tr>
+<tr><th id="69">69</th><td><em>static</em> <em>void</em> <a class="tu decl" href="#asn1_item_clear" title='asn1_item_clear' data-type='void asn1_item_clear(ASN1_VALUE ** pval, const ASN1_ITEM * it)' data-ref="asn1_item_clear">asn1_item_clear</a>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col4 decl" id="4pval" title='pval' data-type='ASN1_VALUE **' data-ref="4pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col5 decl" id="5it" title='it' data-type='const ASN1_ITEM *' data-ref="5it">it</dfn>);</td></tr>
+<tr><th id="70">70</th><td><em>static</em> <em>void</em> <a class="tu decl" href="#asn1_template_clear" title='asn1_template_clear' data-type='void asn1_template_clear(ASN1_VALUE ** pval, const ASN1_TEMPLATE * tt)' data-ref="asn1_template_clear">asn1_template_clear</a>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col6 decl" id="6pval" title='pval' data-type='ASN1_VALUE **' data-ref="6pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_TEMPLATE" title='ASN1_TEMPLATE' data-type='struct ASN1_TEMPLATE_st' data-ref="ASN1_TEMPLATE">ASN1_TEMPLATE</a> *<dfn class="local col7 decl" id="7tt" title='tt' data-type='const ASN1_TEMPLATE *' data-ref="7tt">tt</dfn>);</td></tr>
+<tr><th id="71">71</th><td><em>static</em> <em>void</em> <a class="tu decl" href="#asn1_primitive_clear" title='asn1_primitive_clear' data-type='void asn1_primitive_clear(ASN1_VALUE ** pval, const ASN1_ITEM * it)' data-ref="asn1_primitive_clear">asn1_primitive_clear</a>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col8 decl" id="8pval" title='pval' data-type='ASN1_VALUE **' data-ref="8pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col9 decl" id="9it" title='it' data-type='const ASN1_ITEM *' data-ref="9it">it</dfn>);</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> *<dfn class="decl def" id="ASN1_item_new" title='ASN1_item_new' data-ref="ASN1_item_new">ASN1_item_new</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col0 decl" id="10it" title='it' data-type='const ASN1_ITEM *' data-ref="10it">it</dfn>)</td></tr>
+<tr><th id="74">74</th><td>	{</td></tr>
+<tr><th id="75">75</th><td>	<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> *<dfn class="local col1 decl" id="11ret" title='ret' data-type='ASN1_VALUE *' data-ref="11ret">ret</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="76">76</th><td>	<b>if</b> (<a class="ref" href="#ASN1_item_ex_new" title='ASN1_item_ex_new' data-ref="ASN1_item_ex_new">ASN1_item_ex_new</a>(&amp;<a class="local col1 ref" href="#11ret" title='ret' data-ref="11ret">ret</a>, <a class="local col0 ref" href="#10it" title='it' data-ref="10it">it</a>) &gt; <var>0</var>)</td></tr>
+<tr><th id="77">77</th><td>		<b>return</b> <a class="local col1 ref" href="#11ret" title='ret' data-ref="11ret">ret</a>;</td></tr>
+<tr><th id="78">78</th><td>	<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="79">79</th><td>	}</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><i>/* Allocate an ASN1 structure */</i></td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><em>int</em> <dfn class="decl def" id="ASN1_item_ex_new" title='ASN1_item_ex_new' data-ref="ASN1_item_ex_new">ASN1_item_ex_new</dfn>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col2 decl" id="12pval" title='pval' data-type='ASN1_VALUE **' data-ref="12pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col3 decl" id="13it" title='it' data-type='const ASN1_ITEM *' data-ref="13it">it</dfn>)</td></tr>
+<tr><th id="84">84</th><td>	{</td></tr>
+<tr><th id="85">85</th><td>	<b>return</b> <a class="tu ref" href="#asn1_item_ex_combine_new" title='asn1_item_ex_combine_new' data-use='c' data-ref="asn1_item_ex_combine_new">asn1_item_ex_combine_new</a>(<a class="local col2 ref" href="#12pval" title='pval' data-ref="12pval">pval</a>, <a class="local col3 ref" href="#13it" title='it' data-ref="13it">it</a>, <var>0</var>);</td></tr>
+<tr><th id="86">86</th><td>	}</td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="asn1_item_ex_combine_new" title='asn1_item_ex_combine_new' data-type='int asn1_item_ex_combine_new(ASN1_VALUE ** pval, const ASN1_ITEM * it, int combine)' data-ref="asn1_item_ex_combine_new">asn1_item_ex_combine_new</dfn>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col4 decl" id="14pval" title='pval' data-type='ASN1_VALUE **' data-ref="14pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col5 decl" id="15it" title='it' data-type='const ASN1_ITEM *' data-ref="15it">it</dfn>,</td></tr>
+<tr><th id="89">89</th><td>								<em>int</em> <dfn class="local col6 decl" id="16combine" title='combine' data-type='int' data-ref="16combine">combine</dfn>)</td></tr>
+<tr><th id="90">90</th><td>	{</td></tr>
+<tr><th id="91">91</th><td>	<em>const</em> <a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_TEMPLATE" title='ASN1_TEMPLATE' data-type='struct ASN1_TEMPLATE_st' data-ref="ASN1_TEMPLATE">ASN1_TEMPLATE</a> *<dfn class="local col7 decl" id="17tt" title='tt' data-type='const ASN1_TEMPLATE *' data-ref="17tt">tt</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="92">92</th><td>	<em>const</em> <a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_COMPAT_FUNCS" title='ASN1_COMPAT_FUNCS' data-type='struct ASN1_COMPAT_FUNCS_st' data-ref="ASN1_COMPAT_FUNCS">ASN1_COMPAT_FUNCS</a> *<dfn class="local col8 decl" id="18cf" title='cf' data-type='const ASN1_COMPAT_FUNCS *' data-ref="18cf">cf</dfn>;</td></tr>
+<tr><th id="93">93</th><td>	<em>const</em> <a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_EXTERN_FUNCS" title='ASN1_EXTERN_FUNCS' data-type='struct ASN1_EXTERN_FUNCS_st' data-ref="ASN1_EXTERN_FUNCS">ASN1_EXTERN_FUNCS</a> *<dfn class="local col9 decl" id="19ef" title='ef' data-type='const ASN1_EXTERN_FUNCS *' data-ref="19ef">ef</dfn>;</td></tr>
+<tr><th id="94">94</th><td>	<em>const</em> <a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_AUX" title='ASN1_AUX' data-type='struct ASN1_AUX_st' data-ref="ASN1_AUX">ASN1_AUX</a> *<dfn class="local col0 decl" id="20aux" title='aux' data-type='const ASN1_AUX *' data-ref="20aux">aux</dfn> = <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>;</td></tr>
+<tr><th id="95">95</th><td>	<a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_aux_cb" title='ASN1_aux_cb' data-type='int (int, ASN1_VALUE **, const ASN1_ITEM *, void *)' data-ref="ASN1_aux_cb">ASN1_aux_cb</a> *<dfn class="local col1 decl" id="21asn1_cb" title='asn1_cb' data-type='ASN1_aux_cb *' data-ref="21asn1_cb">asn1_cb</dfn>;</td></tr>
+<tr><th id="96">96</th><td>	<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col2 decl" id="22pseqval" title='pseqval' data-type='ASN1_VALUE **' data-ref="22pseqval">pseqval</dfn>;</td></tr>
+<tr><th id="97">97</th><td>	<em>int</em> <dfn class="local col3 decl" id="23i" title='i' data-type='int' data-ref="23i">i</dfn>;</td></tr>
+<tr><th id="98">98</th><td>	<b>if</b> (<a class="local col0 ref" href="#20aux" title='aux' data-ref="20aux">aux</a> &amp;&amp; <a class="local col0 ref" href="#20aux" title='aux' data-ref="20aux">aux</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_AUX_st::asn1_cb" title='ASN1_AUX_st::asn1_cb' data-ref="ASN1_AUX_st::asn1_cb">asn1_cb</a>)</td></tr>
+<tr><th id="99">99</th><td>		<a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a> = <a class="local col0 ref" href="#20aux" title='aux' data-ref="20aux">aux</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_AUX_st::asn1_cb" title='ASN1_AUX_st::asn1_cb' data-ref="ASN1_AUX_st::asn1_cb">asn1_cb</a>;</td></tr>
+<tr><th id="100">100</th><td>	<b>else</b></td></tr>
+<tr><th id="101">101</th><td>		<a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a> = <var>0</var>;</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><u>#<span data-ppcond="103">ifdef</span> <span class="macro" data-ref="_M/CRYPTO_MDEBUG">CRYPTO_MDEBUG</span></u></td></tr>
+<tr><th id="104">104</th><td>	<b>if</b> (it-&gt;sname)</td></tr>
+<tr><th id="105">105</th><td>		CRYPTO_push_info(it-&gt;sname);</td></tr>
+<tr><th id="106">106</th><td><u>#<span data-ppcond="103">endif</span></u></td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td>	<b>switch</b>(<a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::itype" title='ASN1_ITEM_st::itype' data-ref="ASN1_ITEM_st::itype">itype</a>)</td></tr>
+<tr><th id="109">109</th><td>		{</td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#578" title="0x4" data-ref="_M/ASN1_ITYPE_EXTERN">ASN1_ITYPE_EXTERN</a>:</td></tr>
+<tr><th id="112">112</th><td>		<a class="local col9 ref" href="#19ef" title='ef' data-ref="19ef">ef</a> = <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>;</td></tr>
+<tr><th id="113">113</th><td>		<b>if</b> (<a class="local col9 ref" href="#19ef" title='ef' data-ref="19ef">ef</a> &amp;&amp; <a class="local col9 ref" href="#19ef" title='ef' data-ref="19ef">ef</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_EXTERN_FUNCS_st::asn1_ex_new" title='ASN1_EXTERN_FUNCS_st::asn1_ex_new' data-ref="ASN1_EXTERN_FUNCS_st::asn1_ex_new">asn1_ex_new</a>)</td></tr>
+<tr><th id="114">114</th><td>			{</td></tr>
+<tr><th id="115">115</th><td>			<b>if</b> (!<a class="local col9 ref" href="#19ef" title='ef' data-ref="19ef">ef</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_EXTERN_FUNCS_st::asn1_ex_new" title='ASN1_EXTERN_FUNCS_st::asn1_ex_new' data-ref="ASN1_EXTERN_FUNCS_st::asn1_ex_new">asn1_ex_new</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>))</td></tr>
+<tr><th id="116">116</th><td>				<b>goto</b> <a class="lbl" href="#24memerr" data-ref="24memerr">memerr</a>;</td></tr>
+<tr><th id="117">117</th><td>			}</td></tr>
+<tr><th id="118">118</th><td>		<b>break</b>;</td></tr>
+<tr><th id="119">119</th><td></td></tr>
+<tr><th id="120">120</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#576" title="0x3" data-ref="_M/ASN1_ITYPE_COMPAT">ASN1_ITYPE_COMPAT</a>:</td></tr>
+<tr><th id="121">121</th><td>		<a class="local col8 ref" href="#18cf" title='cf' data-ref="18cf">cf</a> = <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>;</td></tr>
+<tr><th id="122">122</th><td>		<b>if</b> (<a class="local col8 ref" href="#18cf" title='cf' data-ref="18cf">cf</a> &amp;&amp; <a class="local col8 ref" href="#18cf" title='cf' data-ref="18cf">cf</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_COMPAT_FUNCS_st::asn1_new" title='ASN1_COMPAT_FUNCS_st::asn1_new' data-ref="ASN1_COMPAT_FUNCS_st::asn1_new">asn1_new</a>) {</td></tr>
+<tr><th id="123">123</th><td>			*<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a> = <a class="local col8 ref" href="#18cf" title='cf' data-ref="18cf">cf</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_COMPAT_FUNCS_st::asn1_new" title='ASN1_COMPAT_FUNCS_st::asn1_new' data-ref="ASN1_COMPAT_FUNCS_st::asn1_new">asn1_new</a>();</td></tr>
+<tr><th id="124">124</th><td>			<b>if</b> (!*<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>)</td></tr>
+<tr><th id="125">125</th><td>				<b>goto</b> <a class="lbl" href="#24memerr" data-ref="24memerr">memerr</a>;</td></tr>
+<tr><th id="126">126</th><td>		}</td></tr>
+<tr><th id="127">127</th><td>		<b>break</b>;</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#570" title="0x0" data-ref="_M/ASN1_ITYPE_PRIMITIVE">ASN1_ITYPE_PRIMITIVE</a>:</td></tr>
+<tr><th id="130">130</th><td>		<b>if</b> (<a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::templates" title='ASN1_ITEM_st::templates' data-ref="ASN1_ITEM_st::templates">templates</a>)</td></tr>
+<tr><th id="131">131</th><td>			{</td></tr>
+<tr><th id="132">132</th><td>			<b>if</b> (!<a class="ref" href="#ASN1_template_new" title='ASN1_template_new' data-ref="ASN1_template_new">ASN1_template_new</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::templates" title='ASN1_ITEM_st::templates' data-ref="ASN1_ITEM_st::templates">templates</a>))</td></tr>
+<tr><th id="133">133</th><td>				<b>goto</b> <a class="lbl" href="#24memerr" data-ref="24memerr">memerr</a>;</td></tr>
+<tr><th id="134">134</th><td>			}</td></tr>
+<tr><th id="135">135</th><td>		<b>else</b> <b>if</b> (!<a class="ref" href="#ASN1_primitive_new" title='ASN1_primitive_new' data-ref="ASN1_primitive_new">ASN1_primitive_new</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>))</td></tr>
+<tr><th id="136">136</th><td>				<b>goto</b> <a class="lbl" href="#24memerr" data-ref="24memerr">memerr</a>;</td></tr>
+<tr><th id="137">137</th><td>		<b>break</b>;</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#580" title="0x5" data-ref="_M/ASN1_ITYPE_MSTRING">ASN1_ITYPE_MSTRING</a>:</td></tr>
+<tr><th id="140">140</th><td>		<b>if</b> (!<a class="ref" href="#ASN1_primitive_new" title='ASN1_primitive_new' data-ref="ASN1_primitive_new">ASN1_primitive_new</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>))</td></tr>
+<tr><th id="141">141</th><td>				<b>goto</b> <a class="lbl" href="#24memerr" data-ref="24memerr">memerr</a>;</td></tr>
+<tr><th id="142">142</th><td>		<b>break</b>;</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#574" title="0x2" data-ref="_M/ASN1_ITYPE_CHOICE">ASN1_ITYPE_CHOICE</a>:</td></tr>
+<tr><th id="145">145</th><td>		<b>if</b> (<a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a>)</td></tr>
+<tr><th id="146">146</th><td>			{</td></tr>
+<tr><th id="147">147</th><td>			<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a> = <a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a>(<a class="macro" href="../../include/openssl/asn1t.h.html#704" title="0" data-ref="_M/ASN1_OP_NEW_PRE">ASN1_OP_NEW_PRE</a>, <a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="148">148</th><td>			<b>if</b> (!<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a>)</td></tr>
+<tr><th id="149">149</th><td>				<b>goto</b> <a class="lbl" href="#25auxerr" data-ref="25auxerr">auxerr</a>;</td></tr>
+<tr><th id="150">150</th><td>			<b>if</b> (<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a>==<var>2</var>)</td></tr>
+<tr><th id="151">151</th><td>				{</td></tr>
+<tr><th id="152">152</th><td><u>#<span data-ppcond="152">ifdef</span> <span class="macro" data-ref="_M/CRYPTO_MDEBUG">CRYPTO_MDEBUG</span></u></td></tr>
+<tr><th id="153">153</th><td>				<b>if</b> (it-&gt;sname)</td></tr>
+<tr><th id="154">154</th><td>					CRYPTO_pop_info();</td></tr>
+<tr><th id="155">155</th><td><u>#<span data-ppcond="152">endif</span></u></td></tr>
+<tr><th id="156">156</th><td>				<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="157">157</th><td>				}</td></tr>
+<tr><th id="158">158</th><td>			}</td></tr>
+<tr><th id="159">159</th><td>		<b>if</b> (!<a class="local col6 ref" href="#16combine" title='combine' data-ref="16combine">combine</a>)</td></tr>
+<tr><th id="160">160</th><td>			{</td></tr>
+<tr><th id="161">161</th><td>			*<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::size" title='ASN1_ITEM_st::size' data-ref="ASN1_ITEM_st::size">size</a>);</td></tr>
+<tr><th id="162">162</th><td>			<b>if</b> (!*<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>)</td></tr>
+<tr><th id="163">163</th><td>				<b>goto</b> <a class="lbl" href="#24memerr" data-ref="24memerr">memerr</a>;</td></tr>
+<tr><th id="164">164</th><td>			<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(*<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <var>0</var>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::size" title='ASN1_ITEM_st::size' data-ref="ASN1_ITEM_st::size">size</a>);</td></tr>
+<tr><th id="165">165</th><td>			}</td></tr>
+<tr><th id="166">166</th><td>		<a class="ref" href="../../include/openssl/asn1t.h.html#asn1_set_choice_selector" title='asn1_set_choice_selector' data-ref="asn1_set_choice_selector">asn1_set_choice_selector</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, -<var>1</var>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>);</td></tr>
+<tr><th id="167">167</th><td>		<b>if</b> (<a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a> &amp;&amp; !<a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a>(<a class="macro" href="../../include/openssl/asn1t.h.html#705" title="1" data-ref="_M/ASN1_OP_NEW_POST">ASN1_OP_NEW_POST</a>, <a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>))</td></tr>
+<tr><th id="168">168</th><td>				<b>goto</b> <a class="lbl" href="#25auxerr" data-ref="25auxerr">auxerr</a>;</td></tr>
+<tr><th id="169">169</th><td>		<b>break</b>;</td></tr>
+<tr><th id="170">170</th><td></td></tr>
+<tr><th id="171">171</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#582" title="0x6" data-ref="_M/ASN1_ITYPE_NDEF_SEQUENCE">ASN1_ITYPE_NDEF_SEQUENCE</a>:</td></tr>
+<tr><th id="172">172</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#572" title="0x1" data-ref="_M/ASN1_ITYPE_SEQUENCE">ASN1_ITYPE_SEQUENCE</a>:</td></tr>
+<tr><th id="173">173</th><td>		<b>if</b> (<a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a>)</td></tr>
+<tr><th id="174">174</th><td>			{</td></tr>
+<tr><th id="175">175</th><td>			<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a> = <a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a>(<a class="macro" href="../../include/openssl/asn1t.h.html#704" title="0" data-ref="_M/ASN1_OP_NEW_PRE">ASN1_OP_NEW_PRE</a>, <a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="176">176</th><td>			<b>if</b> (!<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a>)</td></tr>
+<tr><th id="177">177</th><td>				<b>goto</b> <a class="lbl" href="#25auxerr" data-ref="25auxerr">auxerr</a>;</td></tr>
+<tr><th id="178">178</th><td>			<b>if</b> (<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a>==<var>2</var>)</td></tr>
+<tr><th id="179">179</th><td>				{</td></tr>
+<tr><th id="180">180</th><td><u>#<span data-ppcond="180">ifdef</span> <span class="macro" data-ref="_M/CRYPTO_MDEBUG">CRYPTO_MDEBUG</span></u></td></tr>
+<tr><th id="181">181</th><td>				<b>if</b> (it-&gt;sname)</td></tr>
+<tr><th id="182">182</th><td>					CRYPTO_pop_info();</td></tr>
+<tr><th id="183">183</th><td><u>#<span data-ppcond="180">endif</span></u></td></tr>
+<tr><th id="184">184</th><td>				<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="185">185</th><td>				}</td></tr>
+<tr><th id="186">186</th><td>			}</td></tr>
+<tr><th id="187">187</th><td>		<b>if</b> (!<a class="local col6 ref" href="#16combine" title='combine' data-ref="16combine">combine</a>)</td></tr>
+<tr><th id="188">188</th><td>			{</td></tr>
+<tr><th id="189">189</th><td>			*<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::size" title='ASN1_ITEM_st::size' data-ref="ASN1_ITEM_st::size">size</a>);</td></tr>
+<tr><th id="190">190</th><td>			<b>if</b> (!*<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>)</td></tr>
+<tr><th id="191">191</th><td>				<b>goto</b> <a class="lbl" href="#24memerr" data-ref="24memerr">memerr</a>;</td></tr>
+<tr><th id="192">192</th><td>			<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(*<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <var>0</var>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::size" title='ASN1_ITEM_st::size' data-ref="ASN1_ITEM_st::size">size</a>);</td></tr>
+<tr><th id="193">193</th><td>			<a class="ref" href="../../include/openssl/asn1t.h.html#asn1_refcount_set_one" title='asn1_refcount_set_one' data-ref="asn1_refcount_set_one">asn1_refcount_set_one</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>);</td></tr>
+<tr><th id="194">194</th><td>			<a class="ref" href="../../include/openssl/asn1t.h.html#asn1_enc_init" title='asn1_enc_init' data-ref="asn1_enc_init">asn1_enc_init</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>);</td></tr>
+<tr><th id="195">195</th><td>			}</td></tr>
+<tr><th id="196">196</th><td>		<b>for</b> (<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a> = <var>0</var>, <a class="local col7 ref" href="#17tt" title='tt' data-ref="17tt">tt</a> = <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::templates" title='ASN1_ITEM_st::templates' data-ref="ASN1_ITEM_st::templates">templates</a>; <a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a> &lt; <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::tcount" title='ASN1_ITEM_st::tcount' data-ref="ASN1_ITEM_st::tcount">tcount</a>; <a class="local col7 ref" href="#17tt" title='tt' data-ref="17tt">tt</a>++, <a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a>++)</td></tr>
+<tr><th id="197">197</th><td>			{</td></tr>
+<tr><th id="198">198</th><td>			<a class="local col2 ref" href="#22pseqval" title='pseqval' data-ref="22pseqval">pseqval</a> = <a class="ref" href="../../include/openssl/asn1t.h.html#asn1_get_field_ptr" title='asn1_get_field_ptr' data-ref="asn1_get_field_ptr">asn1_get_field_ptr</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col7 ref" href="#17tt" title='tt' data-ref="17tt">tt</a>);</td></tr>
+<tr><th id="199">199</th><td>			<b>if</b> (!<a class="ref" href="#ASN1_template_new" title='ASN1_template_new' data-ref="ASN1_template_new">ASN1_template_new</a>(<a class="local col2 ref" href="#22pseqval" title='pseqval' data-ref="22pseqval">pseqval</a>, <a class="local col7 ref" href="#17tt" title='tt' data-ref="17tt">tt</a>))</td></tr>
+<tr><th id="200">200</th><td>				<b>goto</b> <a class="lbl" href="#24memerr" data-ref="24memerr">memerr</a>;</td></tr>
+<tr><th id="201">201</th><td>			}</td></tr>
+<tr><th id="202">202</th><td>		<b>if</b> (<a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a> &amp;&amp; !<a class="local col1 ref" href="#21asn1_cb" title='asn1_cb' data-ref="21asn1_cb">asn1_cb</a>(<a class="macro" href="../../include/openssl/asn1t.h.html#705" title="1" data-ref="_M/ASN1_OP_NEW_POST">ASN1_OP_NEW_POST</a>, <a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>))</td></tr>
+<tr><th id="203">203</th><td>				<b>goto</b> <a class="lbl" href="#25auxerr" data-ref="25auxerr">auxerr</a>;</td></tr>
+<tr><th id="204">204</th><td>		<b>break</b>;</td></tr>
+<tr><th id="205">205</th><td>	}</td></tr>
+<tr><th id="206">206</th><td><u>#<span data-ppcond="206">ifdef</span> <span class="macro" data-ref="_M/CRYPTO_MDEBUG">CRYPTO_MDEBUG</span></u></td></tr>
+<tr><th id="207">207</th><td>	<b>if</b> (it-&gt;sname) CRYPTO_pop_info();</td></tr>
+<tr><th id="208">208</th><td><u>#<span data-ppcond="206">endif</span></u></td></tr>
+<tr><th id="209">209</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="210">210</th><td></td></tr>
+<tr><th id="211">211</th><td>	<dfn class="lbl" id="24memerr" data-ref="24memerr">memerr</dfn>:</td></tr>
+<tr><th id="212">212</th><td>	<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_ASN1, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/asn1/tasn_new.c&quot;, 212)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(ASN1, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="213">213</th><td>	<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_item_ex_free" title='ASN1_item_ex_free' data-ref="ASN1_item_ex_free">ASN1_item_ex_free</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>);</td></tr>
+<tr><th id="214">214</th><td><u>#<span data-ppcond="214">ifdef</span> <span class="macro" data-ref="_M/CRYPTO_MDEBUG">CRYPTO_MDEBUG</span></u></td></tr>
+<tr><th id="215">215</th><td>	<b>if</b> (it-&gt;sname) CRYPTO_pop_info();</td></tr>
+<tr><th id="216">216</th><td><u>#<span data-ppcond="214">endif</span></u></td></tr>
+<tr><th id="217">217</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="218">218</th><td></td></tr>
+<tr><th id="219">219</th><td>	<dfn class="lbl" id="25auxerr" data-ref="25auxerr">auxerr</dfn>:</td></tr>
+<tr><th id="220">220</th><td>	<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_ASN1, 0, 101, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/asn1/tasn_new.c&quot;, 220)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(ASN1, <a class="macro" href="../../include/openssl/asn1.h.html#1080" title="101" data-ref="_M/ASN1_R_AUX_ERROR">ASN1_R_AUX_ERROR</a>);</td></tr>
+<tr><th id="221">221</th><td>	<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_item_ex_free" title='ASN1_item_ex_free' data-ref="ASN1_item_ex_free">ASN1_item_ex_free</a>(<a class="local col4 ref" href="#14pval" title='pval' data-ref="14pval">pval</a>, <a class="local col5 ref" href="#15it" title='it' data-ref="15it">it</a>);</td></tr>
+<tr><th id="222">222</th><td><u>#<span data-ppcond="222">ifdef</span> <span class="macro" data-ref="_M/CRYPTO_MDEBUG">CRYPTO_MDEBUG</span></u></td></tr>
+<tr><th id="223">223</th><td>	<b>if</b> (it-&gt;sname) CRYPTO_pop_info();</td></tr>
+<tr><th id="224">224</th><td><u>#<span data-ppcond="222">endif</span></u></td></tr>
+<tr><th id="225">225</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="226">226</th><td></td></tr>
+<tr><th id="227">227</th><td>	}</td></tr>
+<tr><th id="228">228</th><td></td></tr>
+<tr><th id="229">229</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="asn1_item_clear" title='asn1_item_clear' data-type='void asn1_item_clear(ASN1_VALUE ** pval, const ASN1_ITEM * it)' data-ref="asn1_item_clear">asn1_item_clear</dfn>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col6 decl" id="26pval" title='pval' data-type='ASN1_VALUE **' data-ref="26pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col7 decl" id="27it" title='it' data-type='const ASN1_ITEM *' data-ref="27it">it</dfn>)</td></tr>
+<tr><th id="230">230</th><td>	{</td></tr>
+<tr><th id="231">231</th><td>	<em>const</em> <a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_EXTERN_FUNCS" title='ASN1_EXTERN_FUNCS' data-type='struct ASN1_EXTERN_FUNCS_st' data-ref="ASN1_EXTERN_FUNCS">ASN1_EXTERN_FUNCS</a> *<dfn class="local col8 decl" id="28ef" title='ef' data-type='const ASN1_EXTERN_FUNCS *' data-ref="28ef">ef</dfn>;</td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td>	<b>switch</b>(<a class="local col7 ref" href="#27it" title='it' data-ref="27it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::itype" title='ASN1_ITEM_st::itype' data-ref="ASN1_ITEM_st::itype">itype</a>)</td></tr>
+<tr><th id="234">234</th><td>		{</td></tr>
+<tr><th id="235">235</th><td></td></tr>
+<tr><th id="236">236</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#578" title="0x4" data-ref="_M/ASN1_ITYPE_EXTERN">ASN1_ITYPE_EXTERN</a>:</td></tr>
+<tr><th id="237">237</th><td>		<a class="local col8 ref" href="#28ef" title='ef' data-ref="28ef">ef</a> = <a class="local col7 ref" href="#27it" title='it' data-ref="27it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>;</td></tr>
+<tr><th id="238">238</th><td>		<b>if</b> (<a class="local col8 ref" href="#28ef" title='ef' data-ref="28ef">ef</a> &amp;&amp; <a class="local col8 ref" href="#28ef" title='ef' data-ref="28ef">ef</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_EXTERN_FUNCS_st::asn1_ex_clear" title='ASN1_EXTERN_FUNCS_st::asn1_ex_clear' data-ref="ASN1_EXTERN_FUNCS_st::asn1_ex_clear">asn1_ex_clear</a>) </td></tr>
+<tr><th id="239">239</th><td>			<a class="local col8 ref" href="#28ef" title='ef' data-ref="28ef">ef</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_EXTERN_FUNCS_st::asn1_ex_clear" title='ASN1_EXTERN_FUNCS_st::asn1_ex_clear' data-ref="ASN1_EXTERN_FUNCS_st::asn1_ex_clear">asn1_ex_clear</a>(<a class="local col6 ref" href="#26pval" title='pval' data-ref="26pval">pval</a>, <a class="local col7 ref" href="#27it" title='it' data-ref="27it">it</a>);</td></tr>
+<tr><th id="240">240</th><td>		<b>else</b> *<a class="local col6 ref" href="#26pval" title='pval' data-ref="26pval">pval</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="241">241</th><td>		<b>break</b>;</td></tr>
+<tr><th id="242">242</th><td></td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#570" title="0x0" data-ref="_M/ASN1_ITYPE_PRIMITIVE">ASN1_ITYPE_PRIMITIVE</a>:</td></tr>
+<tr><th id="245">245</th><td>		<b>if</b> (<a class="local col7 ref" href="#27it" title='it' data-ref="27it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::templates" title='ASN1_ITEM_st::templates' data-ref="ASN1_ITEM_st::templates">templates</a>) </td></tr>
+<tr><th id="246">246</th><td>			<a class="tu ref" href="#asn1_template_clear" title='asn1_template_clear' data-use='c' data-ref="asn1_template_clear">asn1_template_clear</a>(<a class="local col6 ref" href="#26pval" title='pval' data-ref="26pval">pval</a>, <a class="local col7 ref" href="#27it" title='it' data-ref="27it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::templates" title='ASN1_ITEM_st::templates' data-ref="ASN1_ITEM_st::templates">templates</a>);</td></tr>
+<tr><th id="247">247</th><td>		<b>else</b></td></tr>
+<tr><th id="248">248</th><td>			<a class="tu ref" href="#asn1_primitive_clear" title='asn1_primitive_clear' data-use='c' data-ref="asn1_primitive_clear">asn1_primitive_clear</a>(<a class="local col6 ref" href="#26pval" title='pval' data-ref="26pval">pval</a>, <a class="local col7 ref" href="#27it" title='it' data-ref="27it">it</a>);</td></tr>
+<tr><th id="249">249</th><td>		<b>break</b>;</td></tr>
+<tr><th id="250">250</th><td></td></tr>
+<tr><th id="251">251</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#580" title="0x5" data-ref="_M/ASN1_ITYPE_MSTRING">ASN1_ITYPE_MSTRING</a>:</td></tr>
+<tr><th id="252">252</th><td>		<a class="tu ref" href="#asn1_primitive_clear" title='asn1_primitive_clear' data-use='c' data-ref="asn1_primitive_clear">asn1_primitive_clear</a>(<a class="local col6 ref" href="#26pval" title='pval' data-ref="26pval">pval</a>, <a class="local col7 ref" href="#27it" title='it' data-ref="27it">it</a>);</td></tr>
+<tr><th id="253">253</th><td>		<b>break</b>;</td></tr>
+<tr><th id="254">254</th><td></td></tr>
+<tr><th id="255">255</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#576" title="0x3" data-ref="_M/ASN1_ITYPE_COMPAT">ASN1_ITYPE_COMPAT</a>:</td></tr>
+<tr><th id="256">256</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#574" title="0x2" data-ref="_M/ASN1_ITYPE_CHOICE">ASN1_ITYPE_CHOICE</a>:</td></tr>
+<tr><th id="257">257</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#572" title="0x1" data-ref="_M/ASN1_ITYPE_SEQUENCE">ASN1_ITYPE_SEQUENCE</a>:</td></tr>
+<tr><th id="258">258</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1t.h.html#582" title="0x6" data-ref="_M/ASN1_ITYPE_NDEF_SEQUENCE">ASN1_ITYPE_NDEF_SEQUENCE</a>:</td></tr>
+<tr><th id="259">259</th><td>		*<a class="local col6 ref" href="#26pval" title='pval' data-ref="26pval">pval</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="260">260</th><td>		<b>break</b>;</td></tr>
+<tr><th id="261">261</th><td>		}</td></tr>
+<tr><th id="262">262</th><td>	}</td></tr>
+<tr><th id="263">263</th><td></td></tr>
+<tr><th id="264">264</th><td></td></tr>
+<tr><th id="265">265</th><td><em>int</em> <dfn class="decl def" id="ASN1_template_new" title='ASN1_template_new' data-ref="ASN1_template_new">ASN1_template_new</dfn>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col9 decl" id="29pval" title='pval' data-type='ASN1_VALUE **' data-ref="29pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_TEMPLATE" title='ASN1_TEMPLATE' data-type='struct ASN1_TEMPLATE_st' data-ref="ASN1_TEMPLATE">ASN1_TEMPLATE</a> *<dfn class="local col0 decl" id="30tt" title='tt' data-type='const ASN1_TEMPLATE *' data-ref="30tt">tt</dfn>)</td></tr>
+<tr><th id="266">266</th><td>	{</td></tr>
+<tr><th id="267">267</th><td>	<em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col1 decl" id="31it" title='it' data-type='const ASN1_ITEM *' data-ref="31it">it</dfn> = <a class="macro" href="../../include/openssl/asn1.h.html#384" title="(tt-&gt;item)" data-ref="_M/ASN1_ITEM_ptr">ASN1_ITEM_ptr</a>(<a class="local col0 ref" href="#30tt" title='tt' data-ref="30tt">tt</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_TEMPLATE_st::item" title='ASN1_TEMPLATE_st::item' data-ref="ASN1_TEMPLATE_st::item">item</a>);</td></tr>
+<tr><th id="268">268</th><td>	<em>int</em> <dfn class="local col2 decl" id="32ret" title='ret' data-type='int' data-ref="32ret">ret</dfn>;</td></tr>
+<tr><th id="269">269</th><td>	<b>if</b> (<a class="local col0 ref" href="#30tt" title='tt' data-ref="30tt">tt</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_TEMPLATE_st::flags" title='ASN1_TEMPLATE_st::flags' data-ref="ASN1_TEMPLATE_st::flags">flags</a> &amp; <a class="macro" href="../../include/openssl/asn1t.h.html#428" title="(0x1)" data-ref="_M/ASN1_TFLG_OPTIONAL">ASN1_TFLG_OPTIONAL</a>)</td></tr>
+<tr><th id="270">270</th><td>		{</td></tr>
+<tr><th id="271">271</th><td>		<a class="tu ref" href="#asn1_template_clear" title='asn1_template_clear' data-use='c' data-ref="asn1_template_clear">asn1_template_clear</a>(<a class="local col9 ref" href="#29pval" title='pval' data-ref="29pval">pval</a>, <a class="local col0 ref" href="#30tt" title='tt' data-ref="30tt">tt</a>);</td></tr>
+<tr><th id="272">272</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="273">273</th><td>		}</td></tr>
+<tr><th id="274">274</th><td>	<i>/* If ANY DEFINED BY nothing to do */</i></td></tr>
+<tr><th id="275">275</th><td></td></tr>
+<tr><th id="276">276</th><td>	<b>if</b> (<a class="local col0 ref" href="#30tt" title='tt' data-ref="30tt">tt</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_TEMPLATE_st::flags" title='ASN1_TEMPLATE_st::flags' data-ref="ASN1_TEMPLATE_st::flags">flags</a> &amp; <a class="macro" href="../../include/openssl/asn1t.h.html#489" title="(0x3&lt;&lt;8)" data-ref="_M/ASN1_TFLG_ADB_MASK">ASN1_TFLG_ADB_MASK</a>)</td></tr>
+<tr><th id="277">277</th><td>		{</td></tr>
+<tr><th id="278">278</th><td>		*<a class="local col9 ref" href="#29pval" title='pval' data-ref="29pval">pval</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="279">279</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="280">280</th><td>		}</td></tr>
+<tr><th id="281">281</th><td><u>#<span data-ppcond="281">ifdef</span> <span class="macro" data-ref="_M/CRYPTO_MDEBUG">CRYPTO_MDEBUG</span></u></td></tr>
+<tr><th id="282">282</th><td>	<b>if</b> (tt-&gt;field_name)</td></tr>
+<tr><th id="283">283</th><td>		CRYPTO_push_info(tt-&gt;field_name);</td></tr>
+<tr><th id="284">284</th><td><u>#<span data-ppcond="281">endif</span></u></td></tr>
+<tr><th id="285">285</th><td>	<i>/* If SET OF or SEQUENCE OF, its a STACK */</i></td></tr>
+<tr><th id="286">286</th><td>	<b>if</b> (<a class="local col0 ref" href="#30tt" title='tt' data-ref="30tt">tt</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_TEMPLATE_st::flags" title='ASN1_TEMPLATE_st::flags' data-ref="ASN1_TEMPLATE_st::flags">flags</a> &amp; <a class="macro" href="../../include/openssl/asn1t.h.html#444" title="(0x3 &lt;&lt; 1)" data-ref="_M/ASN1_TFLG_SK_MASK">ASN1_TFLG_SK_MASK</a>)</td></tr>
+<tr><th id="287">287</th><td>		{</td></tr>
+<tr><th id="288">288</th><td>		<a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_ASN1_VALUE" data-ref="_M/STACK_OF">STACK_OF</a>(ASN1_VALUE) *<dfn class="local col3 decl" id="33skval" title='skval' data-type='struct stack_st_ASN1_VALUE *' data-ref="33skval">skval</dfn>;</td></tr>
+<tr><th id="289">289</th><td>		<a class="local col3 ref" href="#33skval" title='skval' data-ref="33skval">skval</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#617" title="((struct stack_st_ASN1_VALUE *)sk_new_null())" data-ref="_M/sk_ASN1_VALUE_new_null">sk_ASN1_VALUE_new_null</a>();</td></tr>
+<tr><th id="290">290</th><td>		<b>if</b> (!<a class="local col3 ref" href="#33skval" title='skval' data-ref="33skval">skval</a>)</td></tr>
+<tr><th id="291">291</th><td>			{</td></tr>
+<tr><th id="292">292</th><td>			<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_ASN1, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/asn1/tasn_new.c&quot;, 292)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(ASN1, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="293">293</th><td>			<a class="local col2 ref" href="#32ret" title='ret' data-ref="32ret">ret</a> = <var>0</var>;</td></tr>
+<tr><th id="294">294</th><td>			<b>goto</b> <a class="lbl" href="#34done" data-ref="34done">done</a>;</td></tr>
+<tr><th id="295">295</th><td>			}</td></tr>
+<tr><th id="296">296</th><td>		*<a class="local col9 ref" href="#29pval" title='pval' data-ref="29pval">pval</a> = (<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> *)<a class="local col3 ref" href="#33skval" title='skval' data-ref="33skval">skval</a>;</td></tr>
+<tr><th id="297">297</th><td>		<a class="local col2 ref" href="#32ret" title='ret' data-ref="32ret">ret</a> = <var>1</var>;</td></tr>
+<tr><th id="298">298</th><td>		<b>goto</b> <a class="lbl" href="#34done" data-ref="34done">done</a>;</td></tr>
+<tr><th id="299">299</th><td>		}</td></tr>
+<tr><th id="300">300</th><td>	<i>/* Otherwise pass it back to the item routine */</i></td></tr>
+<tr><th id="301">301</th><td>	<a class="local col2 ref" href="#32ret" title='ret' data-ref="32ret">ret</a> = <a class="tu ref" href="#asn1_item_ex_combine_new" title='asn1_item_ex_combine_new' data-use='c' data-ref="asn1_item_ex_combine_new">asn1_item_ex_combine_new</a>(<a class="local col9 ref" href="#29pval" title='pval' data-ref="29pval">pval</a>, <a class="local col1 ref" href="#31it" title='it' data-ref="31it">it</a>, <a class="local col0 ref" href="#30tt" title='tt' data-ref="30tt">tt</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_TEMPLATE_st::flags" title='ASN1_TEMPLATE_st::flags' data-ref="ASN1_TEMPLATE_st::flags">flags</a> &amp; <a class="macro" href="../../include/openssl/asn1t.h.html#503" title="(0x1&lt;&lt;10)" data-ref="_M/ASN1_TFLG_COMBINE">ASN1_TFLG_COMBINE</a>);</td></tr>
+<tr><th id="302">302</th><td>	<dfn class="lbl" id="34done" data-ref="34done">done</dfn>:</td></tr>
+<tr><th id="303">303</th><td><u>#<span data-ppcond="303">ifdef</span> <span class="macro" data-ref="_M/CRYPTO_MDEBUG">CRYPTO_MDEBUG</span></u></td></tr>
+<tr><th id="304">304</th><td>	<b>if</b> (it-&gt;sname)</td></tr>
+<tr><th id="305">305</th><td>		CRYPTO_pop_info();</td></tr>
+<tr><th id="306">306</th><td><u>#<span data-ppcond="303">endif</span></u></td></tr>
+<tr><th id="307">307</th><td>	<b>return</b> <a class="local col2 ref" href="#32ret" title='ret' data-ref="32ret">ret</a>;</td></tr>
+<tr><th id="308">308</th><td>	}</td></tr>
+<tr><th id="309">309</th><td></td></tr>
+<tr><th id="310">310</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="asn1_template_clear" title='asn1_template_clear' data-type='void asn1_template_clear(ASN1_VALUE ** pval, const ASN1_TEMPLATE * tt)' data-ref="asn1_template_clear">asn1_template_clear</dfn>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col5 decl" id="35pval" title='pval' data-type='ASN1_VALUE **' data-ref="35pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_TEMPLATE" title='ASN1_TEMPLATE' data-type='struct ASN1_TEMPLATE_st' data-ref="ASN1_TEMPLATE">ASN1_TEMPLATE</a> *<dfn class="local col6 decl" id="36tt" title='tt' data-type='const ASN1_TEMPLATE *' data-ref="36tt">tt</dfn>)</td></tr>
+<tr><th id="311">311</th><td>	{</td></tr>
+<tr><th id="312">312</th><td>	<i>/* If ADB or STACK just NULL the field */</i></td></tr>
+<tr><th id="313">313</th><td>	<b>if</b> (<a class="local col6 ref" href="#36tt" title='tt' data-ref="36tt">tt</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_TEMPLATE_st::flags" title='ASN1_TEMPLATE_st::flags' data-ref="ASN1_TEMPLATE_st::flags">flags</a> &amp; (<a class="macro" href="../../include/openssl/asn1t.h.html#489" title="(0x3&lt;&lt;8)" data-ref="_M/ASN1_TFLG_ADB_MASK">ASN1_TFLG_ADB_MASK</a>|<a class="macro" href="../../include/openssl/asn1t.h.html#444" title="(0x3 &lt;&lt; 1)" data-ref="_M/ASN1_TFLG_SK_MASK">ASN1_TFLG_SK_MASK</a>)) </td></tr>
+<tr><th id="314">314</th><td>		*<a class="local col5 ref" href="#35pval" title='pval' data-ref="35pval">pval</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="315">315</th><td>	<b>else</b></td></tr>
+<tr><th id="316">316</th><td>		<a class="tu ref" href="#asn1_item_clear" title='asn1_item_clear' data-use='c' data-ref="asn1_item_clear">asn1_item_clear</a>(<a class="local col5 ref" href="#35pval" title='pval' data-ref="35pval">pval</a>, <a class="macro" href="../../include/openssl/asn1.h.html#384" title="(tt-&gt;item)" data-ref="_M/ASN1_ITEM_ptr">ASN1_ITEM_ptr</a>(<a class="local col6 ref" href="#36tt" title='tt' data-ref="36tt">tt</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_TEMPLATE_st::item" title='ASN1_TEMPLATE_st::item' data-ref="ASN1_TEMPLATE_st::item">item</a>));</td></tr>
+<tr><th id="317">317</th><td>	}</td></tr>
+<tr><th id="318">318</th><td></td></tr>
+<tr><th id="319">319</th><td></td></tr>
+<tr><th id="320">320</th><td><i>/* NB: could probably combine most of the real XXX_new() behaviour and junk</i></td></tr>
+<tr><th id="321">321</th><td><i> * all the old functions.</i></td></tr>
+<tr><th id="322">322</th><td><i> */</i></td></tr>
+<tr><th id="323">323</th><td></td></tr>
+<tr><th id="324">324</th><td><em>int</em> <dfn class="decl def" id="ASN1_primitive_new" title='ASN1_primitive_new' data-ref="ASN1_primitive_new">ASN1_primitive_new</dfn>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col7 decl" id="37pval" title='pval' data-type='ASN1_VALUE **' data-ref="37pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col8 decl" id="38it" title='it' data-type='const ASN1_ITEM *' data-ref="38it">it</dfn>)</td></tr>
+<tr><th id="325">325</th><td>	{</td></tr>
+<tr><th id="326">326</th><td>	<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_TYPE" title='ASN1_TYPE' data-type='struct asn1_type_st' data-ref="ASN1_TYPE">ASN1_TYPE</a> *<dfn class="local col9 decl" id="39typ" title='typ' data-type='ASN1_TYPE *' data-ref="39typ">typ</dfn>;</td></tr>
+<tr><th id="327">327</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#ASN1_STRING" title='ASN1_STRING' data-type='struct asn1_string_st' data-ref="ASN1_STRING">ASN1_STRING</a> *<dfn class="local col0 decl" id="40str" title='str' data-type='ASN1_STRING *' data-ref="40str">str</dfn>;</td></tr>
+<tr><th id="328">328</th><td>	<em>int</em> <dfn class="local col1 decl" id="41utype" title='utype' data-type='int' data-ref="41utype">utype</dfn>;</td></tr>
+<tr><th id="329">329</th><td></td></tr>
+<tr><th id="330">330</th><td>	<b>if</b> (!<a class="local col8 ref" href="#38it" title='it' data-ref="38it">it</a>)</td></tr>
+<tr><th id="331">331</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="332">332</th><td></td></tr>
+<tr><th id="333">333</th><td>	<b>if</b> (<a class="local col8 ref" href="#38it" title='it' data-ref="38it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>)</td></tr>
+<tr><th id="334">334</th><td>		{</td></tr>
+<tr><th id="335">335</th><td>		<em>const</em> <a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_PRIMITIVE_FUNCS" title='ASN1_PRIMITIVE_FUNCS' data-type='struct ASN1_PRIMITIVE_FUNCS_st' data-ref="ASN1_PRIMITIVE_FUNCS">ASN1_PRIMITIVE_FUNCS</a> *<dfn class="local col2 decl" id="42pf" title='pf' data-type='const ASN1_PRIMITIVE_FUNCS *' data-ref="42pf">pf</dfn> = <a class="local col8 ref" href="#38it" title='it' data-ref="38it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>;</td></tr>
+<tr><th id="336">336</th><td>		<b>if</b> (<a class="local col2 ref" href="#42pf" title='pf' data-ref="42pf">pf</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_PRIMITIVE_FUNCS_st::prim_new" title='ASN1_PRIMITIVE_FUNCS_st::prim_new' data-ref="ASN1_PRIMITIVE_FUNCS_st::prim_new">prim_new</a>)</td></tr>
+<tr><th id="337">337</th><td>			<b>return</b> <a class="local col2 ref" href="#42pf" title='pf' data-ref="42pf">pf</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_PRIMITIVE_FUNCS_st::prim_new" title='ASN1_PRIMITIVE_FUNCS_st::prim_new' data-ref="ASN1_PRIMITIVE_FUNCS_st::prim_new">prim_new</a>(<a class="local col7 ref" href="#37pval" title='pval' data-ref="37pval">pval</a>, <a class="local col8 ref" href="#38it" title='it' data-ref="38it">it</a>);</td></tr>
+<tr><th id="338">338</th><td>		}</td></tr>
+<tr><th id="339">339</th><td></td></tr>
+<tr><th id="340">340</th><td>	<b>if</b> (<a class="local col8 ref" href="#38it" title='it' data-ref="38it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::itype" title='ASN1_ITEM_st::itype' data-ref="ASN1_ITEM_st::itype">itype</a> == <a class="macro" href="../../include/openssl/asn1t.h.html#580" title="0x5" data-ref="_M/ASN1_ITYPE_MSTRING">ASN1_ITYPE_MSTRING</a>)</td></tr>
+<tr><th id="341">341</th><td>		<a class="local col1 ref" href="#41utype" title='utype' data-ref="41utype">utype</a> = -<var>1</var>;</td></tr>
+<tr><th id="342">342</th><td>	<b>else</b></td></tr>
+<tr><th id="343">343</th><td>		<a class="local col1 ref" href="#41utype" title='utype' data-ref="41utype">utype</a> = <a class="local col8 ref" href="#38it" title='it' data-ref="38it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::utype" title='ASN1_ITEM_st::utype' data-ref="ASN1_ITEM_st::utype">utype</a>;</td></tr>
+<tr><th id="344">344</th><td>	<b>switch</b>(<a class="local col1 ref" href="#41utype" title='utype' data-ref="41utype">utype</a>)</td></tr>
+<tr><th id="345">345</th><td>		{</td></tr>
+<tr><th id="346">346</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1.h.html#97" title="6" data-ref="_M/V_ASN1_OBJECT">V_ASN1_OBJECT</a>:</td></tr>
+<tr><th id="347">347</th><td>		*<a class="local col7 ref" href="#37pval" title='pval' data-ref="37pval">pval</a> = (<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> *)<a class="ref" href="../../include/openssl/obj.h.html#OBJ_nid2obj" title='OBJ_nid2obj' data-ref="OBJ_nid2obj">OBJ_nid2obj</a>(<a class="macro" href="../../include/openssl/obj_mac.h.html#64" title="0" data-ref="_M/NID_undef">NID_undef</a>);</td></tr>
+<tr><th id="348">348</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="349">349</th><td></td></tr>
+<tr><th id="350">350</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1.h.html#91" title="1" data-ref="_M/V_ASN1_BOOLEAN">V_ASN1_BOOLEAN</a>:</td></tr>
+<tr><th id="351">351</th><td>		*(<a class="typedef" href="../../include/openssl/base.h.html#ASN1_BOOLEAN" title='ASN1_BOOLEAN' data-type='int' data-ref="ASN1_BOOLEAN">ASN1_BOOLEAN</a> *)<a class="local col7 ref" href="#37pval" title='pval' data-ref="37pval">pval</a> = <a class="local col8 ref" href="#38it" title='it' data-ref="38it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::size" title='ASN1_ITEM_st::size' data-ref="ASN1_ITEM_st::size">size</a>;</td></tr>
+<tr><th id="352">352</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="353">353</th><td></td></tr>
+<tr><th id="354">354</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1.h.html#96" title="5" data-ref="_M/V_ASN1_NULL">V_ASN1_NULL</a>:</td></tr>
+<tr><th id="355">355</th><td>		*<a class="local col7 ref" href="#37pval" title='pval' data-ref="37pval">pval</a> = (<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> *)<var>1</var>;</td></tr>
+<tr><th id="356">356</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="357">357</th><td></td></tr>
+<tr><th id="358">358</th><td>		<b>case</b> <a class="macro" href="../../include/openssl/asn1.h.html#85" title="-4" data-ref="_M/V_ASN1_ANY">V_ASN1_ANY</a>:</td></tr>
+<tr><th id="359">359</th><td>		<a class="local col9 ref" href="#39typ" title='typ' data-ref="39typ">typ</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<b>sizeof</b>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_TYPE" title='ASN1_TYPE' data-type='struct asn1_type_st' data-ref="ASN1_TYPE">ASN1_TYPE</a>));</td></tr>
+<tr><th id="360">360</th><td>		<b>if</b> (!<a class="local col9 ref" href="#39typ" title='typ' data-ref="39typ">typ</a>)</td></tr>
+<tr><th id="361">361</th><td>			<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="362">362</th><td>		<a class="local col9 ref" href="#39typ" title='typ' data-ref="39typ">typ</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_type_st::value" title='asn1_type_st::value' data-ref="asn1_type_st::value">value</a>.<a class="ref" href="../../include/openssl/asn1.h.html#asn1_type_st::(anonymous)::ptr" title='asn1_type_st::(anonymous union)::ptr' data-ref="asn1_type_st::(anonymous)::ptr">ptr</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="363">363</th><td>		<a class="local col9 ref" href="#39typ" title='typ' data-ref="39typ">typ</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_type_st::type" title='asn1_type_st::type' data-ref="asn1_type_st::type">type</a> = -<var>1</var>;</td></tr>
+<tr><th id="364">364</th><td>		*<a class="local col7 ref" href="#37pval" title='pval' data-ref="37pval">pval</a> = (<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> *)<a class="local col9 ref" href="#39typ" title='typ' data-ref="39typ">typ</a>;</td></tr>
+<tr><th id="365">365</th><td>		<b>break</b>;</td></tr>
+<tr><th id="366">366</th><td></td></tr>
+<tr><th id="367">367</th><td>		<b>default</b>:</td></tr>
+<tr><th id="368">368</th><td>		<a class="local col0 ref" href="#40str" title='str' data-ref="40str">str</a> = <a class="ref" href="../../include/openssl/asn1.h.html#ASN1_STRING_type_new" title='ASN1_STRING_type_new' data-ref="ASN1_STRING_type_new">ASN1_STRING_type_new</a>(<a class="local col1 ref" href="#41utype" title='utype' data-ref="41utype">utype</a>);</td></tr>
+<tr><th id="369">369</th><td>		<b>if</b> (<a class="local col8 ref" href="#38it" title='it' data-ref="38it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::itype" title='ASN1_ITEM_st::itype' data-ref="ASN1_ITEM_st::itype">itype</a> == <a class="macro" href="../../include/openssl/asn1t.h.html#580" title="0x5" data-ref="_M/ASN1_ITYPE_MSTRING">ASN1_ITYPE_MSTRING</a> &amp;&amp; <a class="local col0 ref" href="#40str" title='str' data-ref="40str">str</a>)</td></tr>
+<tr><th id="370">370</th><td>			<a class="local col0 ref" href="#40str" title='str' data-ref="40str">str</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::flags" title='asn1_string_st::flags' data-ref="asn1_string_st::flags">flags</a> |= <a class="macro" href="../../include/openssl/asn1.h.html#221" title="0x040" data-ref="_M/ASN1_STRING_FLAG_MSTRING">ASN1_STRING_FLAG_MSTRING</a>;</td></tr>
+<tr><th id="371">371</th><td>		*<a class="local col7 ref" href="#37pval" title='pval' data-ref="37pval">pval</a> = (<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> *)<a class="local col0 ref" href="#40str" title='str' data-ref="40str">str</a>;</td></tr>
+<tr><th id="372">372</th><td>		<b>break</b>;</td></tr>
+<tr><th id="373">373</th><td>		}</td></tr>
+<tr><th id="374">374</th><td>	<b>if</b> (*<a class="local col7 ref" href="#37pval" title='pval' data-ref="37pval">pval</a>)</td></tr>
+<tr><th id="375">375</th><td>		<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="376">376</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="377">377</th><td>	}</td></tr>
+<tr><th id="378">378</th><td></td></tr>
+<tr><th id="379">379</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="asn1_primitive_clear" title='asn1_primitive_clear' data-type='void asn1_primitive_clear(ASN1_VALUE ** pval, const ASN1_ITEM * it)' data-ref="asn1_primitive_clear">asn1_primitive_clear</dfn>(<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> **<dfn class="local col3 decl" id="43pval" title='pval' data-type='ASN1_VALUE **' data-ref="43pval">pval</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col4 decl" id="44it" title='it' data-type='const ASN1_ITEM *' data-ref="44it">it</dfn>)</td></tr>
+<tr><th id="380">380</th><td>	{</td></tr>
+<tr><th id="381">381</th><td>	<em>int</em> <dfn class="local col5 decl" id="45utype" title='utype' data-type='int' data-ref="45utype">utype</dfn>;</td></tr>
+<tr><th id="382">382</th><td>	<b>if</b> (<a class="local col4 ref" href="#44it" title='it' data-ref="44it">it</a> &amp;&amp; <a class="local col4 ref" href="#44it" title='it' data-ref="44it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>)</td></tr>
+<tr><th id="383">383</th><td>		{</td></tr>
+<tr><th id="384">384</th><td>		<em>const</em> <a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_PRIMITIVE_FUNCS" title='ASN1_PRIMITIVE_FUNCS' data-type='struct ASN1_PRIMITIVE_FUNCS_st' data-ref="ASN1_PRIMITIVE_FUNCS">ASN1_PRIMITIVE_FUNCS</a> *<dfn class="local col6 decl" id="46pf" title='pf' data-type='const ASN1_PRIMITIVE_FUNCS *' data-ref="46pf">pf</dfn> = <a class="local col4 ref" href="#44it" title='it' data-ref="44it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>;</td></tr>
+<tr><th id="385">385</th><td>		<b>if</b> (<a class="local col6 ref" href="#46pf" title='pf' data-ref="46pf">pf</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_PRIMITIVE_FUNCS_st::prim_clear" title='ASN1_PRIMITIVE_FUNCS_st::prim_clear' data-ref="ASN1_PRIMITIVE_FUNCS_st::prim_clear">prim_clear</a>)</td></tr>
+<tr><th id="386">386</th><td>			<a class="local col6 ref" href="#46pf" title='pf' data-ref="46pf">pf</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_PRIMITIVE_FUNCS_st::prim_clear" title='ASN1_PRIMITIVE_FUNCS_st::prim_clear' data-ref="ASN1_PRIMITIVE_FUNCS_st::prim_clear">prim_clear</a>(<a class="local col3 ref" href="#43pval" title='pval' data-ref="43pval">pval</a>, <a class="local col4 ref" href="#44it" title='it' data-ref="44it">it</a>);</td></tr>
+<tr><th id="387">387</th><td>		<b>else</b> </td></tr>
+<tr><th id="388">388</th><td>			*<a class="local col3 ref" href="#43pval" title='pval' data-ref="43pval">pval</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="389">389</th><td>		<b>return</b>;</td></tr>
+<tr><th id="390">390</th><td>		}</td></tr>
+<tr><th id="391">391</th><td>	<b>if</b> (!<a class="local col4 ref" href="#44it" title='it' data-ref="44it">it</a> || (<a class="local col4 ref" href="#44it" title='it' data-ref="44it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::itype" title='ASN1_ITEM_st::itype' data-ref="ASN1_ITEM_st::itype">itype</a> == <a class="macro" href="../../include/openssl/asn1t.h.html#580" title="0x5" data-ref="_M/ASN1_ITYPE_MSTRING">ASN1_ITYPE_MSTRING</a>))</td></tr>
+<tr><th id="392">392</th><td>		<a class="local col5 ref" href="#45utype" title='utype' data-ref="45utype">utype</a> = -<var>1</var>;</td></tr>
+<tr><th id="393">393</th><td>	<b>else</b></td></tr>
+<tr><th id="394">394</th><td>		<a class="local col5 ref" href="#45utype" title='utype' data-ref="45utype">utype</a> = <a class="local col4 ref" href="#44it" title='it' data-ref="44it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::utype" title='ASN1_ITEM_st::utype' data-ref="ASN1_ITEM_st::utype">utype</a>;</td></tr>
+<tr><th id="395">395</th><td>	<b>if</b> (<a class="local col5 ref" href="#45utype" title='utype' data-ref="45utype">utype</a> == <a class="macro" href="../../include/openssl/asn1.h.html#91" title="1" data-ref="_M/V_ASN1_BOOLEAN">V_ASN1_BOOLEAN</a>)</td></tr>
+<tr><th id="396">396</th><td>		*(<a class="typedef" href="../../include/openssl/base.h.html#ASN1_BOOLEAN" title='ASN1_BOOLEAN' data-type='int' data-ref="ASN1_BOOLEAN">ASN1_BOOLEAN</a> *)<a class="local col3 ref" href="#43pval" title='pval' data-ref="43pval">pval</a> = <a class="local col4 ref" href="#44it" title='it' data-ref="44it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::size" title='ASN1_ITEM_st::size' data-ref="ASN1_ITEM_st::size">size</a>;</td></tr>
+<tr><th id="397">397</th><td>	<b>else</b> *<a class="local col3 ref" href="#43pval" title='pval' data-ref="43pval">pval</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="398">398</th><td>	}</td></tr>
+<tr><th id="399">399</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

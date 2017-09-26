@@ -1,0 +1,11 @@
+<def f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/ldtoa.c' l='48' ll='108' type='char * __ldtoa(long double * ld, int mode, int ndigits, int * decpt, int * sign, char ** rve)'/>
+<doc f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/gdtoa/ldtoa.c' l='41'>/*
+ * ldtoa() is a wrapper for gdtoa() that makes it smell like dtoa(),
+ * except that the floating point argument is passed by reference.
+ * When dtoa() is passed a NaN or infinity, it sets expt to 9999.
+ * However, a long double could have a valid exponent of 9999, so we
+ * use INT_MAX in ldtoa() instead.
+ */</doc>
+<dec f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/floatio.h' l='58' type='char * __ldtoa(long double * , int , int , int * , int * , char ** )'/>
+<use f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/vfprintf.c' l='743' u='c' c='__vfprintf'/>
+<use f='codebrowser/bionic/libc/upstream-openbsd/lib/libc/stdio/vfwprintf.c' l='701' u='c' c='__vfwprintf'/>

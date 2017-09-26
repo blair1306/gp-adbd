@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ext4_sb.c source code [codebrowser/system/extras/ext4_utils/ext4_sb.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/extras/ext4_utils/ext4_sb.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>extras</a>/<a href='./'>ext4_utils</a>/<a href='ext4_sb.c.html'>ext4_sb.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2014 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="ext4_sb.h.html">"ext4_sb.h"</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><em>int</em> <dfn class="decl def" id="ext4_parse_sb" title='ext4_parse_sb' data-ref="ext4_parse_sb">ext4_parse_sb</dfn>(<b>struct</b> <a class="type" href="ext4.h.html#ext4_super_block" title='ext4_super_block' data-ref="ext4_super_block">ext4_super_block</a> *<dfn class="local col1 decl" id="1sb" title='sb' data-type='struct ext4_super_block *' data-ref="1sb">sb</dfn>, <b>struct</b> <a class="type" href="ext4_sb.h.html#fs_info" title='fs_info' data-ref="fs_info">fs_info</a> *<dfn class="local col2 decl" id="2info" title='info' data-type='struct fs_info *' data-ref="2info">info</dfn>)</td></tr>
+<tr><th id="22">22</th><td>{</td></tr>
+<tr><th id="23">23</th><td>	<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col3 decl" id="3len_blocks" title='len_blocks' data-type='uint64_t' data-ref="3len_blocks">len_blocks</dfn>;</td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td>        <b>if</b> (<a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_magic" title='ext4_super_block::s_magic' data-ref="ext4_super_block::s_magic">s_magic</a> != <a class="macro" href="ext4_sb.h.html#22" title="0xEF53" data-ref="_M/EXT4_SUPER_MAGIC">EXT4_SUPER_MAGIC</a>)</td></tr>
+<tr><th id="26">26</th><td>                <b>return</b> -<a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::block_size" title='fs_info::block_size' data-ref="fs_info::block_size">block_size</a> = <var>1024</var> &lt;&lt; <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_log_block_size" title='ext4_super_block::s_log_block_size' data-ref="ext4_super_block::s_log_block_size">s_log_block_size</a>;</td></tr>
+<tr><th id="29">29</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::blocks_per_group" title='fs_info::blocks_per_group' data-ref="fs_info::blocks_per_group">blocks_per_group</a> = <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_blocks_per_group" title='ext4_super_block::s_blocks_per_group' data-ref="ext4_super_block::s_blocks_per_group">s_blocks_per_group</a>;</td></tr>
+<tr><th id="30">30</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::inodes_per_group" title='fs_info::inodes_per_group' data-ref="fs_info::inodes_per_group">inodes_per_group</a> = <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_inodes_per_group" title='ext4_super_block::s_inodes_per_group' data-ref="ext4_super_block::s_inodes_per_group">s_inodes_per_group</a>;</td></tr>
+<tr><th id="31">31</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::inode_size" title='fs_info::inode_size' data-ref="fs_info::inode_size">inode_size</a> = <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_inode_size" title='ext4_super_block::s_inode_size' data-ref="ext4_super_block::s_inode_size">s_inode_size</a>;</td></tr>
+<tr><th id="32">32</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::inodes" title='fs_info::inodes' data-ref="fs_info::inodes">inodes</a> = <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_inodes_count" title='ext4_super_block::s_inodes_count' data-ref="ext4_super_block::s_inodes_count">s_inodes_count</a>;</td></tr>
+<tr><th id="33">33</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::feat_ro_compat" title='fs_info::feat_ro_compat' data-ref="fs_info::feat_ro_compat">feat_ro_compat</a> = <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_feature_ro_compat" title='ext4_super_block::s_feature_ro_compat' data-ref="ext4_super_block::s_feature_ro_compat">s_feature_ro_compat</a>;</td></tr>
+<tr><th id="34">34</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::feat_compat" title='fs_info::feat_compat' data-ref="fs_info::feat_compat">feat_compat</a> = <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_feature_compat" title='ext4_super_block::s_feature_compat' data-ref="ext4_super_block::s_feature_compat">s_feature_compat</a>;</td></tr>
+<tr><th id="35">35</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::feat_incompat" title='fs_info::feat_incompat' data-ref="fs_info::feat_incompat">feat_incompat</a> = <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_feature_incompat" title='ext4_super_block::s_feature_incompat' data-ref="ext4_super_block::s_feature_incompat">s_feature_incompat</a>;</td></tr>
+<tr><th id="36">36</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::bg_desc_reserve_blocks" title='fs_info::bg_desc_reserve_blocks' data-ref="fs_info::bg_desc_reserve_blocks">bg_desc_reserve_blocks</a> = <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_reserved_gdt_blocks" title='ext4_super_block::s_reserved_gdt_blocks' data-ref="ext4_super_block::s_reserved_gdt_blocks">s_reserved_gdt_blocks</a>;</td></tr>
+<tr><th id="37">37</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::label" title='fs_info::label' data-ref="fs_info::label">label</a> = <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_volume_name" title='ext4_super_block::s_volume_name' data-ref="ext4_super_block::s_volume_name">s_volume_name</a>;</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td>	<a class="local col3 ref" href="#3len_blocks" title='len_blocks' data-ref="3len_blocks">len_blocks</a> = ((<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>)<a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_blocks_count_hi" title='ext4_super_block::s_blocks_count_hi' data-ref="ext4_super_block::s_blocks_count_hi">s_blocks_count_hi</a> &lt;&lt; <var>32</var>) +</td></tr>
+<tr><th id="40">40</th><td>                <a class="local col1 ref" href="#1sb" title='sb' data-ref="1sb">sb</a>-&gt;<a class="ref" href="ext4.h.html#ext4_super_block::s_blocks_count_lo" title='ext4_super_block::s_blocks_count_lo' data-ref="ext4_super_block::s_blocks_count_lo">s_blocks_count_lo</a>;</td></tr>
+<tr><th id="41">41</th><td>	<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::len" title='fs_info::len' data-ref="fs_info::len">len</a> = (<a class="typedef" href="../../../bionic/libc/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a>)<a class="local col2 ref" href="#2info" title='info' data-ref="2info">info</a>-&gt;<a class="ref" href="ext4_sb.h.html#fs_info::block_size" title='fs_info::block_size' data-ref="fs_info::block_size">block_size</a> * <a class="local col3 ref" href="#3len_blocks" title='len_blocks' data-ref="3len_blocks">len_blocks</a>;</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="44">44</th><td>}</td></tr>
+<tr><th id="45">45</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

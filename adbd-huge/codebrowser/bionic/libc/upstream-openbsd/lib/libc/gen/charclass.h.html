@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>charclass.h source code [codebrowser/bionic/libc/upstream-openbsd/lib/libc/gen/charclass.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="cclass "/>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/upstream-openbsd/lib/libc/gen/charclass.h'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libc</a>/<a href='../../..'>upstream-openbsd</a>/<a href='../..'>lib</a>/<a href='..'>libc</a>/<a href='./'>gen</a>/<a href='charclass.h.html'>charclass.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Public domain, 2008, Todd C. Miller &lt;Todd.Miller@courtesan.com&gt;</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * $OpenBSD: charclass.h,v 1.1 2008/10/01 23:04:13 millert Exp $</i></td></tr>
+<tr><th id="5">5</th><td><i> */</i></td></tr>
+<tr><th id="6">6</th><td></td></tr>
+<tr><th id="7">7</th><td><i>/*</i></td></tr>
+<tr><th id="8">8</th><td><i> * POSIX character class support for fnmatch() and glob().</i></td></tr>
+<tr><th id="9">9</th><td><i> */</i></td></tr>
+<tr><th id="10">10</th><td><em>static</em> <b>struct</b> <dfn class="type def" id="cclass" title='cclass' data-ref="cclass"><a class="type" href="#cclass" title='cclass' data-ref="cclass">cclass</a></dfn> {</td></tr>
+<tr><th id="11">11</th><td>	<em>const</em> <em>char</em> *<dfn class="decl" id="cclass::name" title='cclass::name' data-ref="cclass::name">name</dfn>;</td></tr>
+<tr><th id="12">12</th><td>	<em>int</em> (*<dfn class="decl" id="cclass::isctype" title='cclass::isctype' data-ref="cclass::isctype">isctype</dfn>)(<em>int</em>);</td></tr>
+<tr><th id="13">13</th><td>} <dfn class="decl def" id="cclasses" title='cclasses' data-ref="cclasses">cclasses</dfn>[] = {</td></tr>
+<tr><th id="14">14</th><td>	{ <q>"alnum"</q>,	<a class="ref" href="../../../../include/ctype.h.html#isalnum" title='isalnum' data-ref="isalnum">isalnum</a> },</td></tr>
+<tr><th id="15">15</th><td>	{ <q>"alpha"</q>,	<a class="ref" href="../../../../include/ctype.h.html#isalpha" title='isalpha' data-ref="isalpha">isalpha</a> },</td></tr>
+<tr><th id="16">16</th><td>	{ <q>"blank"</q>,	<a class="ref" href="../../../../include/ctype.h.html#isblank" title='isblank' data-ref="isblank">isblank</a> },</td></tr>
+<tr><th id="17">17</th><td>	{ <q>"cntrl"</q>,	<a class="ref" href="../../../../include/ctype.h.html#iscntrl" title='iscntrl' data-ref="iscntrl">iscntrl</a> },</td></tr>
+<tr><th id="18">18</th><td>	{ <q>"digit"</q>,	<a class="ref" href="../../../../include/ctype.h.html#isdigit" title='isdigit' data-ref="isdigit">isdigit</a> },</td></tr>
+<tr><th id="19">19</th><td>	{ <q>"graph"</q>,	<a class="ref" href="../../../../include/ctype.h.html#isgraph" title='isgraph' data-ref="isgraph">isgraph</a> },</td></tr>
+<tr><th id="20">20</th><td>	{ <q>"lower"</q>,	<a class="ref" href="../../../../include/ctype.h.html#islower" title='islower' data-ref="islower">islower</a> },</td></tr>
+<tr><th id="21">21</th><td>	{ <q>"print"</q>,	<a class="ref" href="../../../../include/ctype.h.html#isprint" title='isprint' data-ref="isprint">isprint</a> },</td></tr>
+<tr><th id="22">22</th><td>	{ <q>"punct"</q>,	<a class="ref" href="../../../../include/ctype.h.html#ispunct" title='ispunct' data-ref="ispunct">ispunct</a> },</td></tr>
+<tr><th id="23">23</th><td>	{ <q>"space"</q>,	<a class="ref" href="../../../../include/ctype.h.html#isspace" title='isspace' data-ref="isspace">isspace</a> },</td></tr>
+<tr><th id="24">24</th><td>	{ <q>"upper"</q>,	<a class="ref" href="../../../../include/ctype.h.html#isupper" title='isupper' data-ref="isupper">isupper</a> },</td></tr>
+<tr><th id="25">25</th><td>	{ <q>"xdigit"</q>,	<a class="ref" href="../../../../include/ctype.h.html#isxdigit" title='isxdigit' data-ref="isxdigit">isxdigit</a> },</td></tr>
+<tr><th id="26">26</th><td>	{ <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>,		<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> }</td></tr>
+<tr><th id="27">27</th><td>};</td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#define <dfn class="macro" id="_M/NCCLASSES" data-ref="_M/NCCLASSES">NCCLASSES</dfn>	(sizeof(cclasses) / sizeof(cclasses[0]) - 1)</u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='fnmatch.c.html'>codebrowser/bionic/libc/upstream-openbsd/lib/libc/gen/fnmatch.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,13 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/x509_vfy.h' l='519' type='int X509_STORE_CTX_purpose_inherit(X509_STORE_CTX * ctx, int def_purpose, int purpose, int trust)'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509/x509_vfy.c' l='2187' u='c' c='X509_STORE_CTX_set_purpose'/>
+<use f='codebrowser/external/boringssl/src/crypto/x509/x509_vfy.c' l='2192' u='c' c='X509_STORE_CTX_set_trust'/>
+<def f='codebrowser/external/boringssl/src/crypto/x509/x509_vfy.c' l='2205' ll='2248' type='int X509_STORE_CTX_purpose_inherit(X509_STORE_CTX * ctx, int def_purpose, int purpose, int trust)'/>
+<doc f='codebrowser/external/boringssl/src/crypto/x509/x509_vfy.c' l='2195'>/* This function is used to set the X509_STORE_CTX purpose and trust
+ * values. This is intended to be used when another structure has its
+ * own trust and purpose values which (if set) will be inherited by
+ * the ctx. If they aren&apos;t set then we will usually have a default
+ * purpose in mind which should then be used to set the trust value.
+ * An example of this is SSL use: an SSL structure will have its own
+ * purpose and trust settings which the application can set: if they
+ * aren&apos;t set then we use the default of SSL client/server.
+ */</doc>

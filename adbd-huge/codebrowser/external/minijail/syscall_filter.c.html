@@ -1,0 +1,562 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>syscall_filter.c source code [codebrowser/external/minijail/syscall_filter.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/minijail/syscall_filter.c'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>minijail</a>/<a href='syscall_filter.c.html'>syscall_filter.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2012 The Chromium OS Authors. All rights reserved.</i></td></tr>
+<tr><th id="2">2</th><td><i> * Use of this source code is governed by a BSD-style license that can be</i></td></tr>
+<tr><th id="3">3</th><td><i> * found in the LICENSE file.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><u>#include <a href="../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><u>#include <a href="syscall_filter.h.html">"syscall_filter.h"</a></u></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><u>#include <a href="util.h.html">"util.h"</a></u></td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td><u>#define <dfn class="macro" id="_M/MAX_LINE_LENGTH" data-ref="_M/MAX_LINE_LENGTH">MAX_LINE_LENGTH</dfn>		1024</u></td></tr>
+<tr><th id="15">15</th><td><u>#define <dfn class="macro" id="_M/MAX_POLICY_LINE_LENGTH" data-ref="_M/MAX_POLICY_LINE_LENGTH">MAX_POLICY_LINE_LENGTH</dfn>	1024</u></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#define <dfn class="macro" id="_M/ONE_INSTR" data-ref="_M/ONE_INSTR">ONE_INSTR</dfn>	1</u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/TWO_INSTRS" data-ref="_M/TWO_INSTRS">TWO_INSTRS</dfn>	2</u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><em>int</em> <dfn class="decl def" id="str_to_op" title='str_to_op' data-ref="str_to_op">str_to_op</dfn>(<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="1op_str" title='op_str' data-type='const char *' data-ref="1op_str">op_str</dfn>)</td></tr>
+<tr><th id="21">21</th><td>{</td></tr>
+<tr><th id="22">22</th><td>	<b>if</b> (!<a class="ref" href="../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col1 ref" href="#1op_str" title='op_str' data-ref="1op_str">op_str</a>, <q>"=="</q>)) {</td></tr>
+<tr><th id="23">23</th><td>		<b>return</b> <a class="enum" href="bpf.h.html#operator::EQ" title='operator::EQ' data-ref="operator::EQ">EQ</a>;</td></tr>
+<tr><th id="24">24</th><td>	} <b>else</b> <b>if</b> (!<a class="ref" href="../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col1 ref" href="#1op_str" title='op_str' data-ref="1op_str">op_str</a>, <q>"!="</q>)) {</td></tr>
+<tr><th id="25">25</th><td>		<b>return</b> <a class="enum" href="bpf.h.html#operator::NE" title='operator::NE' data-ref="operator::NE">NE</a>;</td></tr>
+<tr><th id="26">26</th><td>	} <b>else</b> <b>if</b> (!<a class="ref" href="../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col1 ref" href="#1op_str" title='op_str' data-ref="1op_str">op_str</a>, <q>"&amp;"</q>)) {</td></tr>
+<tr><th id="27">27</th><td>		<b>return</b> <a class="enum" href="bpf.h.html#operator::SET" title='operator::SET' data-ref="operator::SET">SET</a>;</td></tr>
+<tr><th id="28">28</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="29">29</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="30">30</th><td>	}</td></tr>
+<tr><th id="31">31</th><td>}</td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="decl def" id="new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="2count" title='count' data-type='size_t' data-ref="2count">count</dfn>)</td></tr>
+<tr><th id="34">34</th><td>{</td></tr>
+<tr><th id="35">35</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col3 decl" id="3buf" title='buf' data-type='struct sock_filter *' data-ref="3buf">buf</dfn> = <a class="ref" href="../../bionic/libc/include/malloc.h.html#calloc" title='calloc' data-ref="calloc">calloc</a>(<a class="local col2 ref" href="#2count" title='count' data-ref="2count">count</a>, <b>sizeof</b>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a>));</td></tr>
+<tr><th id="36">36</th><td>	<b>if</b> (!<a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>)</td></tr>
+<tr><th id="37">37</th><td>		<a class="macro" href="util.h.html#15" title="do { syslog(3, &quot;libminijail: &quot; &quot;could not allocate BPF instruction buffer&quot;); abort(); } while (0)" data-ref="_M/die">die</a>(<q>"could not allocate BPF instruction buffer"</q>);</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td>	<b>return</b> <a class="local col3 ref" href="#3buf" title='buf' data-ref="3buf">buf</a>;</td></tr>
+<tr><th id="40">40</th><td>}</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="decl def" id="new_filter_block" title='new_filter_block' data-ref="new_filter_block">new_filter_block</dfn>()</td></tr>
+<tr><th id="43">43</th><td>{</td></tr>
+<tr><th id="44">44</th><td>	<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col4 decl" id="4block" title='block' data-type='struct filter_block *' data-ref="4block">block</dfn> = <a class="ref" href="../../bionic/libc/include/malloc.h.html#calloc" title='calloc' data-ref="calloc">calloc</a>(<var>1</var>, <b>sizeof</b>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a>));</td></tr>
+<tr><th id="45">45</th><td>	<b>if</b> (!<a class="local col4 ref" href="#4block" title='block' data-ref="4block">block</a>)</td></tr>
+<tr><th id="46">46</th><td>		<a class="macro" href="util.h.html#15" title="do { syslog(3, &quot;libminijail: &quot; &quot;could not allocate BPF filter block&quot;); abort(); } while (0)" data-ref="_M/die">die</a>(<q>"could not allocate BPF filter block"</q>);</td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td>	<a class="local col4 ref" href="#4block" title='block' data-ref="4block">block</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::instrs" title='filter_block::instrs' data-ref="filter_block::instrs">instrs</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="49">49</th><td>	<a class="local col4 ref" href="#4block" title='block' data-ref="4block">block</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a> = <a class="local col4 ref" href="#4block" title='block' data-ref="4block">block</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::next" title='filter_block::next' data-ref="filter_block::next">next</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td>	<b>return</b> <a class="local col4 ref" href="#4block" title='block' data-ref="4block">block</a>;</td></tr>
+<tr><th id="52">52</th><td>}</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><em>void</em> <dfn class="decl def" id="append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col5 decl" id="5head" title='head' data-type='struct filter_block *' data-ref="5head">head</dfn>,</td></tr>
+<tr><th id="55">55</th><td>		<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col6 decl" id="6instrs" title='instrs' data-type='struct sock_filter *' data-ref="6instrs">instrs</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="7len" title='len' data-type='size_t' data-ref="7len">len</dfn>)</td></tr>
+<tr><th id="56">56</th><td>{</td></tr>
+<tr><th id="57">57</th><td>	<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col8 decl" id="8new_last" title='new_last' data-type='struct filter_block *' data-ref="8new_last">new_last</dfn>;</td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td>	<i>/*</i></td></tr>
+<tr><th id="60">60</th><td><i>	 * If |head| has no filter assigned yet,</i></td></tr>
+<tr><th id="61">61</th><td><i>	 * we don't create a new node.</i></td></tr>
+<tr><th id="62">62</th><td><i>	 */</i></td></tr>
+<tr><th id="63">63</th><td>	<b>if</b> (<a class="local col5 ref" href="#5head" title='head' data-ref="5head">head</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::instrs" title='filter_block::instrs' data-ref="filter_block::instrs">instrs</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="64">64</th><td>		<a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a> = <a class="local col5 ref" href="#5head" title='head' data-ref="5head">head</a>;</td></tr>
+<tr><th id="65">65</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="66">66</th><td>		<a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a> = <a class="ref" href="#new_filter_block" title='new_filter_block' data-ref="new_filter_block">new_filter_block</a>();</td></tr>
+<tr><th id="67">67</th><td>		<b>if</b> (<a class="local col5 ref" href="#5head" title='head' data-ref="5head">head</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::next" title='filter_block::next' data-ref="filter_block::next">next</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="68">68</th><td>			<a class="local col5 ref" href="#5head" title='head' data-ref="5head">head</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::next" title='filter_block::next' data-ref="filter_block::next">next</a> = <a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a>;</td></tr>
+<tr><th id="69">69</th><td>			<a class="local col5 ref" href="#5head" title='head' data-ref="5head">head</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a> = <a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a>;</td></tr>
+<tr><th id="70">70</th><td>		} <b>else</b> {</td></tr>
+<tr><th id="71">71</th><td>			<a class="local col5 ref" href="#5head" title='head' data-ref="5head">head</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a> = <a class="local col5 ref" href="#5head" title='head' data-ref="5head">head</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::next" title='filter_block::next' data-ref="filter_block::next">next</a> = <a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a>;</td></tr>
+<tr><th id="72">72</th><td>		}</td></tr>
+<tr><th id="73">73</th><td>		<a class="local col5 ref" href="#5head" title='head' data-ref="5head">head</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::total_len" title='filter_block::total_len' data-ref="filter_block::total_len">total_len</a> += <a class="local col7 ref" href="#7len" title='len' data-ref="7len">len</a>;</td></tr>
+<tr><th id="74">74</th><td>	}</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td>	<a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::instrs" title='filter_block::instrs' data-ref="filter_block::instrs">instrs</a> = <a class="local col6 ref" href="#6instrs" title='instrs' data-ref="6instrs">instrs</a>;</td></tr>
+<tr><th id="77">77</th><td>	<a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::total_len" title='filter_block::total_len' data-ref="filter_block::total_len">total_len</a> = <a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::len" title='filter_block::len' data-ref="filter_block::len">len</a> = <a class="local col7 ref" href="#7len" title='len' data-ref="7len">len</a>;</td></tr>
+<tr><th id="78">78</th><td>	<a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a> = <a class="local col8 ref" href="#8new_last" title='new_last' data-ref="8new_last">new_last</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::next" title='filter_block::next' data-ref="filter_block::next">next</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="79">79</th><td>}</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><em>void</em> <dfn class="decl def" id="extend_filter_block_list" title='extend_filter_block_list' data-ref="extend_filter_block_list">extend_filter_block_list</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col9 decl" id="9list" title='list' data-type='struct filter_block *' data-ref="9list">list</dfn>,</td></tr>
+<tr><th id="82">82</th><td>		<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col0 decl" id="10another" title='another' data-type='struct filter_block *' data-ref="10another">another</dfn>)</td></tr>
+<tr><th id="83">83</th><td>{</td></tr>
+<tr><th id="84">84</th><td>	<b>if</b> (<a class="local col9 ref" href="#9list" title='list' data-ref="9list">list</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="85">85</th><td>		<a class="local col9 ref" href="#9list" title='list' data-ref="9list">list</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::next" title='filter_block::next' data-ref="filter_block::next">next</a> = <a class="local col0 ref" href="#10another" title='another' data-ref="10another">another</a>;</td></tr>
+<tr><th id="86">86</th><td>		<a class="local col9 ref" href="#9list" title='list' data-ref="9list">list</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a> = <a class="local col0 ref" href="#10another" title='another' data-ref="10another">another</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a>;</td></tr>
+<tr><th id="87">87</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="88">88</th><td>		<a class="local col9 ref" href="#9list" title='list' data-ref="9list">list</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::next" title='filter_block::next' data-ref="filter_block::next">next</a> = <a class="local col0 ref" href="#10another" title='another' data-ref="10another">another</a>;</td></tr>
+<tr><th id="89">89</th><td>		<a class="local col9 ref" href="#9list" title='list' data-ref="9list">list</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a> = <a class="local col0 ref" href="#10another" title='another' data-ref="10another">another</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::last" title='filter_block::last' data-ref="filter_block::last">last</a>;</td></tr>
+<tr><th id="90">90</th><td>	}</td></tr>
+<tr><th id="91">91</th><td>	<a class="local col9 ref" href="#9list" title='list' data-ref="9list">list</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::total_len" title='filter_block::total_len' data-ref="filter_block::total_len">total_len</a> += <a class="local col0 ref" href="#10another" title='another' data-ref="10another">another</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::total_len" title='filter_block::total_len' data-ref="filter_block::total_len">total_len</a>;</td></tr>
+<tr><th id="92">92</th><td>}</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><em>void</em> <dfn class="decl def" id="append_ret_kill" title='append_ret_kill' data-ref="append_ret_kill">append_ret_kill</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col1 decl" id="11head" title='head' data-type='struct filter_block *' data-ref="11head">head</dfn>)</td></tr>
+<tr><th id="95">95</th><td>{</td></tr>
+<tr><th id="96">96</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col2 decl" id="12filter" title='filter' data-type='struct sock_filter *' data-ref="12filter">filter</dfn> = <a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="#17" title="1" data-ref="_M/ONE_INSTR">ONE_INSTR</a>);</td></tr>
+<tr><th id="97">97</th><td>	<a class="macro" href="bpf.h.html#148" title="set_bpf_instr(((filter)), (0x06+0x00), (0x00000000U), 0, 0)" data-ref="_M/set_bpf_ret_kill">set_bpf_ret_kill</a>(<a class="local col2 ref" href="#12filter" title='filter' data-ref="12filter">filter</a>);</td></tr>
+<tr><th id="98">98</th><td>	<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col1 ref" href="#11head" title='head' data-ref="11head">head</a>, <a class="local col2 ref" href="#12filter" title='filter' data-ref="12filter">filter</a>, <a class="macro" href="#17" title="1" data-ref="_M/ONE_INSTR">ONE_INSTR</a>);</td></tr>
+<tr><th id="99">99</th><td>}</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td><em>void</em> <dfn class="decl def" id="append_ret_trap" title='append_ret_trap' data-ref="append_ret_trap">append_ret_trap</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col3 decl" id="13head" title='head' data-type='struct filter_block *' data-ref="13head">head</dfn>)</td></tr>
+<tr><th id="102">102</th><td>{</td></tr>
+<tr><th id="103">103</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col4 decl" id="14filter" title='filter' data-type='struct sock_filter *' data-ref="14filter">filter</dfn> = <a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="#17" title="1" data-ref="_M/ONE_INSTR">ONE_INSTR</a>);</td></tr>
+<tr><th id="104">104</th><td>	<a class="macro" href="bpf.h.html#151" title="set_bpf_instr(((filter)), (0x06+0x00), (0x00030000U), 0, 0)" data-ref="_M/set_bpf_ret_trap">set_bpf_ret_trap</a>(<a class="local col4 ref" href="#14filter" title='filter' data-ref="14filter">filter</a>);</td></tr>
+<tr><th id="105">105</th><td>	<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col3 ref" href="#13head" title='head' data-ref="13head">head</a>, <a class="local col4 ref" href="#14filter" title='filter' data-ref="14filter">filter</a>, <a class="macro" href="#17" title="1" data-ref="_M/ONE_INSTR">ONE_INSTR</a>);</td></tr>
+<tr><th id="106">106</th><td>}</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td><em>void</em> <dfn class="decl def" id="append_ret_errno" title='append_ret_errno' data-ref="append_ret_errno">append_ret_errno</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col5 decl" id="15head" title='head' data-type='struct filter_block *' data-ref="15head">head</dfn>, <em>int</em> <dfn class="local col6 decl" id="16errno_val" title='errno_val' data-type='int' data-ref="16errno_val">errno_val</dfn>)</td></tr>
+<tr><th id="109">109</th><td>{</td></tr>
+<tr><th id="110">110</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col7 decl" id="17filter" title='filter' data-type='struct sock_filter *' data-ref="17filter">filter</dfn> = <a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="#17" title="1" data-ref="_M/ONE_INSTR">ONE_INSTR</a>);</td></tr>
+<tr><th id="111">111</th><td>	<a class="macro" href="bpf.h.html#154" title="set_bpf_instr(((filter)), (0x06+0x00), (0x00050000U | ((errno_val) &amp; 0x0000ffffU)), 0, 0)" data-ref="_M/set_bpf_ret_errno">set_bpf_ret_errno</a>(<a class="local col7 ref" href="#17filter" title='filter' data-ref="17filter">filter</a>, <a class="local col6 ref" href="#16errno_val" title='errno_val' data-ref="16errno_val">errno_val</a>);</td></tr>
+<tr><th id="112">112</th><td>	<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col5 ref" href="#15head" title='head' data-ref="15head">head</a>, <a class="local col7 ref" href="#17filter" title='filter' data-ref="17filter">filter</a>, <a class="macro" href="#17" title="1" data-ref="_M/ONE_INSTR">ONE_INSTR</a>);</td></tr>
+<tr><th id="113">113</th><td>}</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td><em>void</em> <dfn class="decl def" id="append_allow_syscall" title='append_allow_syscall' data-ref="append_allow_syscall">append_allow_syscall</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col8 decl" id="18head" title='head' data-type='struct filter_block *' data-ref="18head">head</dfn>, <em>int</em> <dfn class="local col9 decl" id="19nr" title='nr' data-type='int' data-ref="19nr">nr</dfn>)</td></tr>
+<tr><th id="116">116</th><td>{</td></tr>
+<tr><th id="117">117</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col0 decl" id="20filter" title='filter' data-type='struct sock_filter *' data-ref="20filter">filter</dfn> = <a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="bpf.h.html#179" title="2U" data-ref="_M/ALLOW_SYSCALL_LEN">ALLOW_SYSCALL_LEN</a>);</td></tr>
+<tr><th id="118">118</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="21len" title='len' data-type='size_t' data-ref="21len">len</dfn> = <a class="ref" href="bpf.h.html#bpf_allow_syscall" title='bpf_allow_syscall' data-ref="bpf_allow_syscall">bpf_allow_syscall</a>(<a class="local col0 ref" href="#20filter" title='filter' data-ref="20filter">filter</a>, <a class="local col9 ref" href="#19nr" title='nr' data-ref="19nr">nr</a>);</td></tr>
+<tr><th id="119">119</th><td>	<b>if</b> (<a class="local col1 ref" href="#21len" title='len' data-ref="21len">len</a> != <a class="macro" href="bpf.h.html#179" title="2U" data-ref="_M/ALLOW_SYSCALL_LEN">ALLOW_SYSCALL_LEN</a>)</td></tr>
+<tr><th id="120">120</th><td>		<a class="macro" href="util.h.html#15" title="do { syslog(3, &quot;libminijail: &quot; &quot;error building syscall number comparison&quot;); abort(); } while (0)" data-ref="_M/die">die</a>(<q>"error building syscall number comparison"</q>);</td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td>	<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col8 ref" href="#18head" title='head' data-ref="18head">head</a>, <a class="local col0 ref" href="#20filter" title='filter' data-ref="20filter">filter</a>, <a class="local col1 ref" href="#21len" title='len' data-ref="21len">len</a>);</td></tr>
+<tr><th id="123">123</th><td>}</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td><em>void</em> <dfn class="decl def" id="allow_log_syscalls" title='allow_log_syscalls' data-ref="allow_log_syscalls">allow_log_syscalls</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col2 decl" id="22head" title='head' data-type='struct filter_block *' data-ref="22head">head</dfn>)</td></tr>
+<tr><th id="126">126</th><td>{</td></tr>
+<tr><th id="127">127</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col3 decl" id="23i" title='i' data-type='unsigned int' data-ref="23i">i</dfn>;</td></tr>
+<tr><th id="128">128</th><td>	<b>for</b> (<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a> = <var>0</var>; <a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a> &lt; <a class="ref" href="util.h.html#log_syscalls_len" title='log_syscalls_len' data-ref="log_syscalls_len">log_syscalls_len</a>; <a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a>++) {</td></tr>
+<tr><th id="129">129</th><td>		<a class="macro" href="util.h.html#23" title="syslog(4, &quot;libminijail: &quot; &quot;allowing syscall: %s&quot;, log_syscalls[i])" data-ref="_M/warn">warn</a>(<q>"allowing syscall: %s"</q>, <a class="ref" href="util.h.html#log_syscalls" title='log_syscalls' data-ref="log_syscalls">log_syscalls</a>[<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a>]);</td></tr>
+<tr><th id="130">130</th><td>		<a class="ref" href="#append_allow_syscall" title='append_allow_syscall' data-ref="append_allow_syscall">append_allow_syscall</a>(<a class="local col2 ref" href="#22head" title='head' data-ref="22head">head</a>, <a class="ref" href="util.h.html#lookup_syscall" title='lookup_syscall' data-ref="lookup_syscall">lookup_syscall</a>(<a class="ref" href="util.h.html#log_syscalls" title='log_syscalls' data-ref="log_syscalls">log_syscalls</a>[<a class="local col3 ref" href="#23i" title='i' data-ref="23i">i</a>]));</td></tr>
+<tr><th id="131">131</th><td>	}</td></tr>
+<tr><th id="132">132</th><td>}</td></tr>
+<tr><th id="133">133</th><td></td></tr>
+<tr><th id="134">134</th><td><em>unsigned</em> <em>int</em> <dfn class="decl def" id="get_label_id" title='get_label_id' data-ref="get_label_id">get_label_id</dfn>(<b>struct</b> <a class="type" href="bpf.h.html#bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</a> *<dfn class="local col4 decl" id="24labels" title='labels' data-type='struct bpf_labels *' data-ref="24labels">labels</dfn>, <em>const</em> <em>char</em> *<dfn class="local col5 decl" id="25label_str" title='label_str' data-type='const char *' data-ref="25label_str">label_str</dfn>)</td></tr>
+<tr><th id="135">135</th><td>{</td></tr>
+<tr><th id="136">136</th><td>	<em>int</em> <dfn class="local col6 decl" id="26label_id" title='label_id' data-type='int' data-ref="26label_id">label_id</dfn> = <a class="ref" href="bpf.h.html#bpf_label_id" title='bpf_label_id' data-ref="bpf_label_id">bpf_label_id</a>(<a class="local col4 ref" href="#24labels" title='labels' data-ref="24labels">labels</a>, <a class="local col5 ref" href="#25label_str" title='label_str' data-ref="25label_str">label_str</a>);</td></tr>
+<tr><th id="137">137</th><td>	<b>if</b> (<a class="local col6 ref" href="#26label_id" title='label_id' data-ref="26label_id">label_id</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="138">138</th><td>		<a class="macro" href="util.h.html#15" title="do { syslog(3, &quot;libminijail: &quot; &quot;could not allocate BPF label string&quot;); abort(); } while (0)" data-ref="_M/die">die</a>(<q>"could not allocate BPF label string"</q>);</td></tr>
+<tr><th id="139">139</th><td>	<b>return</b> <a class="local col6 ref" href="#26label_id" title='label_id' data-ref="26label_id">label_id</a>;</td></tr>
+<tr><th id="140">140</th><td>}</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td><em>unsigned</em> <em>int</em> <dfn class="decl def" id="group_end_lbl" title='group_end_lbl' data-ref="group_end_lbl">group_end_lbl</dfn>(<b>struct</b> <a class="type" href="bpf.h.html#bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</a> *<dfn class="local col7 decl" id="27labels" title='labels' data-type='struct bpf_labels *' data-ref="27labels">labels</dfn>, <em>int</em> <dfn class="local col8 decl" id="28nr" title='nr' data-type='int' data-ref="28nr">nr</dfn>, <em>int</em> <dfn class="local col9 decl" id="29idx" title='idx' data-type='int' data-ref="29idx">idx</dfn>)</td></tr>
+<tr><th id="143">143</th><td>{</td></tr>
+<tr><th id="144">144</th><td>	<em>char</em> <dfn class="local col0 decl" id="30lbl_str" title='lbl_str' data-type='char [32]' data-ref="30lbl_str">lbl_str</dfn>[<a class="macro" href="bpf.h.html#111" title="32" data-ref="_M/MAX_BPF_LABEL_LEN">MAX_BPF_LABEL_LEN</a>];</td></tr>
+<tr><th id="145">145</th><td>	<a class="macro" href="../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(lbl_str, 32, 0, __builtin_object_size((lbl_str), 1), &quot;%d_%d_end&quot;, nr, idx)" data-ref="_M/snprintf">snprintf</a>(<a class="local col0 ref" href="#30lbl_str" title='lbl_str' data-ref="30lbl_str">lbl_str</a>, <a class="macro" href="bpf.h.html#111" title="32" data-ref="_M/MAX_BPF_LABEL_LEN">MAX_BPF_LABEL_LEN</a>, <q>"%d_%d_end"</q>, <a class="local col8 ref" href="#28nr" title='nr' data-ref="28nr">nr</a>, <a class="local col9 ref" href="#29idx" title='idx' data-ref="29idx">idx</a>);</td></tr>
+<tr><th id="146">146</th><td>	<b>return</b> <a class="ref" href="#get_label_id" title='get_label_id' data-ref="get_label_id">get_label_id</a>(<a class="local col7 ref" href="#27labels" title='labels' data-ref="27labels">labels</a>, <a class="local col0 ref" href="#30lbl_str" title='lbl_str' data-ref="30lbl_str">lbl_str</a>);</td></tr>
+<tr><th id="147">147</th><td>}</td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td><em>unsigned</em> <em>int</em> <dfn class="decl def" id="success_lbl" title='success_lbl' data-ref="success_lbl">success_lbl</dfn>(<b>struct</b> <a class="type" href="bpf.h.html#bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</a> *<dfn class="local col1 decl" id="31labels" title='labels' data-type='struct bpf_labels *' data-ref="31labels">labels</dfn>, <em>int</em> <dfn class="local col2 decl" id="32nr" title='nr' data-type='int' data-ref="32nr">nr</dfn>)</td></tr>
+<tr><th id="150">150</th><td>{</td></tr>
+<tr><th id="151">151</th><td>	<em>char</em> <dfn class="local col3 decl" id="33lbl_str" title='lbl_str' data-type='char [32]' data-ref="33lbl_str">lbl_str</dfn>[<a class="macro" href="bpf.h.html#111" title="32" data-ref="_M/MAX_BPF_LABEL_LEN">MAX_BPF_LABEL_LEN</a>];</td></tr>
+<tr><th id="152">152</th><td>	<a class="macro" href="../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(lbl_str, 32, 0, __builtin_object_size((lbl_str), 1), &quot;%d_success&quot;, nr)" data-ref="_M/snprintf">snprintf</a>(<a class="local col3 ref" href="#33lbl_str" title='lbl_str' data-ref="33lbl_str">lbl_str</a>, <a class="macro" href="bpf.h.html#111" title="32" data-ref="_M/MAX_BPF_LABEL_LEN">MAX_BPF_LABEL_LEN</a>, <q>"%d_success"</q>, <a class="local col2 ref" href="#32nr" title='nr' data-ref="32nr">nr</a>);</td></tr>
+<tr><th id="153">153</th><td>	<b>return</b> <a class="ref" href="#get_label_id" title='get_label_id' data-ref="get_label_id">get_label_id</a>(<a class="local col1 ref" href="#31labels" title='labels' data-ref="31labels">labels</a>, <a class="local col3 ref" href="#33lbl_str" title='lbl_str' data-ref="33lbl_str">lbl_str</a>);</td></tr>
+<tr><th id="154">154</th><td>}</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td><em>int</em> <dfn class="decl def" id="compile_atom" title='compile_atom' data-ref="compile_atom">compile_atom</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col4 decl" id="34head" title='head' data-type='struct filter_block *' data-ref="34head">head</dfn>, <em>char</em> *<dfn class="local col5 decl" id="35atom" title='atom' data-type='char *' data-ref="35atom">atom</dfn>,</td></tr>
+<tr><th id="157">157</th><td>		<b>struct</b> <a class="type" href="bpf.h.html#bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</a> *<dfn class="local col6 decl" id="36labels" title='labels' data-type='struct bpf_labels *' data-ref="36labels">labels</dfn>, <em>int</em> <dfn class="local col7 decl" id="37nr" title='nr' data-type='int' data-ref="37nr">nr</dfn>, <em>int</em> <dfn class="local col8 decl" id="38group_idx" title='group_idx' data-type='int' data-ref="38group_idx">group_idx</dfn>)</td></tr>
+<tr><th id="158">158</th><td>{</td></tr>
+<tr><th id="159">159</th><td>	<i>/* Splits the atom. */</i></td></tr>
+<tr><th id="160">160</th><td>	<em>char</em> *<dfn class="local col9 decl" id="39atom_ptr" title='atom_ptr' data-type='char *' data-ref="39atom_ptr">atom_ptr</dfn>;</td></tr>
+<tr><th id="161">161</th><td>	<em>char</em> *<dfn class="local col0 decl" id="40argidx_str" title='argidx_str' data-type='char *' data-ref="40argidx_str">argidx_str</dfn> = <a class="ref" href="../../bionic/libc/include/string.h.html#strtok_r" title='strtok_r' data-ref="strtok_r">strtok_r</a>(<a class="local col5 ref" href="#35atom" title='atom' data-ref="35atom">atom</a>, <q>" "</q>, &amp;<a class="local col9 ref" href="#39atom_ptr" title='atom_ptr' data-ref="39atom_ptr">atom_ptr</a>);</td></tr>
+<tr><th id="162">162</th><td>	<em>char</em> *<dfn class="local col1 decl" id="41operator_str" title='operator_str' data-type='char *' data-ref="41operator_str">operator_str</dfn> = <a class="ref" href="../../bionic/libc/include/string.h.html#strtok_r" title='strtok_r' data-ref="strtok_r">strtok_r</a>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <q>" "</q>, &amp;<a class="local col9 ref" href="#39atom_ptr" title='atom_ptr' data-ref="39atom_ptr">atom_ptr</a>);</td></tr>
+<tr><th id="163">163</th><td>	<em>char</em> *<dfn class="local col2 decl" id="42constant_str" title='constant_str' data-type='char *' data-ref="42constant_str">constant_str</dfn> = <a class="ref" href="../../bionic/libc/include/string.h.html#strtok_r" title='strtok_r' data-ref="strtok_r">strtok_r</a>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <q>" "</q>, &amp;<a class="local col9 ref" href="#39atom_ptr" title='atom_ptr' data-ref="39atom_ptr">atom_ptr</a>);</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td>	<b>if</b> (<a class="local col0 ref" href="#40argidx_str" title='argidx_str' data-ref="40argidx_str">argidx_str</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || <a class="local col1 ref" href="#41operator_str" title='operator_str' data-ref="41operator_str">operator_str</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || <a class="local col2 ref" href="#42constant_str" title='constant_str' data-ref="42constant_str">constant_str</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="166">166</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="167">167</th><td></td></tr>
+<tr><th id="168">168</th><td>	<em>int</em> <dfn class="local col3 decl" id="43op" title='op' data-type='int' data-ref="43op">op</dfn> = <a class="ref" href="#str_to_op" title='str_to_op' data-ref="str_to_op">str_to_op</a>(<a class="local col1 ref" href="#41operator_str" title='operator_str' data-ref="41operator_str">operator_str</a>);</td></tr>
+<tr><th id="169">169</th><td>	<b>if</b> (<a class="local col3 ref" href="#43op" title='op' data-ref="43op">op</a> &lt; <a class="macro" href="bpf.h.html#28" title="128" data-ref="_M/MIN_OPERATOR">MIN_OPERATOR</a>)</td></tr>
+<tr><th id="170">170</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td>	<b>if</b> (<a class="ref" href="../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col0 ref" href="#40argidx_str" title='argidx_str' data-ref="40argidx_str">argidx_str</a>, <q>"arg"</q>, <var>3</var>)) {</td></tr>
+<tr><th id="173">173</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="174">174</th><td>	}</td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td>	<em>char</em> *<dfn class="local col4 decl" id="44argidx_ptr" title='argidx_ptr' data-type='char *' data-ref="44argidx_ptr">argidx_ptr</dfn>;</td></tr>
+<tr><th id="177">177</th><td>	<em>long</em> <em>int</em> <dfn class="local col5 decl" id="45argidx" title='argidx' data-type='long' data-ref="45argidx">argidx</dfn> = <a class="ref" href="../../bionic/libc/include/stdlib.h.html#strtol" title='strtol' data-ref="strtol">strtol</a>(<a class="local col0 ref" href="#40argidx_str" title='argidx_str' data-ref="40argidx_str">argidx_str</a> + <var>3</var>, &amp;<a class="local col4 ref" href="#44argidx_ptr" title='argidx_ptr' data-ref="44argidx_ptr">argidx_ptr</a>, <var>10</var>);</td></tr>
+<tr><th id="178">178</th><td>	<i>/*</i></td></tr>
+<tr><th id="179">179</th><td><i>	 * Checks to see if an actual argument index</i></td></tr>
+<tr><th id="180">180</th><td><i>	 * was parsed.</i></td></tr>
+<tr><th id="181">181</th><td><i>	 */</i></td></tr>
+<tr><th id="182">182</th><td>	<b>if</b> (<a class="local col4 ref" href="#44argidx_ptr" title='argidx_ptr' data-ref="44argidx_ptr">argidx_ptr</a> == <a class="local col0 ref" href="#40argidx_str" title='argidx_str' data-ref="40argidx_str">argidx_str</a> + <var>3</var>)</td></tr>
+<tr><th id="183">183</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="184">184</th><td></td></tr>
+<tr><th id="185">185</th><td>	<em>char</em> *<dfn class="local col6 decl" id="46constant_str_ptr" title='constant_str_ptr' data-type='char *' data-ref="46constant_str_ptr">constant_str_ptr</dfn>;</td></tr>
+<tr><th id="186">186</th><td>	<em>long</em> <em>int</em> <dfn class="local col7 decl" id="47c" title='c' data-type='long' data-ref="47c">c</dfn> = <a class="ref" href="util.h.html#parse_constant" title='parse_constant' data-ref="parse_constant">parse_constant</a>(<a class="local col2 ref" href="#42constant_str" title='constant_str' data-ref="42constant_str">constant_str</a>, &amp;<a class="local col6 ref" href="#46constant_str_ptr" title='constant_str_ptr' data-ref="46constant_str_ptr">constant_str_ptr</a>);</td></tr>
+<tr><th id="187">187</th><td>	<b>if</b> (<a class="local col6 ref" href="#46constant_str_ptr" title='constant_str_ptr' data-ref="46constant_str_ptr">constant_str_ptr</a> == <a class="local col2 ref" href="#42constant_str" title='constant_str' data-ref="42constant_str">constant_str</a>)</td></tr>
+<tr><th id="188">188</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="189">189</th><td></td></tr>
+<tr><th id="190">190</th><td>	<i>/*</i></td></tr>
+<tr><th id="191">191</th><td><i>	 * Looks up the label for the end of the AND statement</i></td></tr>
+<tr><th id="192">192</th><td><i>	 * this atom belongs to.</i></td></tr>
+<tr><th id="193">193</th><td><i>	 */</i></td></tr>
+<tr><th id="194">194</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col8 decl" id="48id" title='id' data-type='unsigned int' data-ref="48id">id</dfn> = <a class="ref" href="#group_end_lbl" title='group_end_lbl' data-ref="group_end_lbl">group_end_lbl</a>(<a class="local col6 ref" href="#36labels" title='labels' data-ref="36labels">labels</a>, <a class="local col7 ref" href="#37nr" title='nr' data-ref="37nr">nr</a>, <a class="local col8 ref" href="#38group_idx" title='group_idx' data-ref="38group_idx">group_idx</a>);</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td>	<i>/*</i></td></tr>
+<tr><th id="197">197</th><td><i>	 * Builds a BPF comparison between a syscall argument</i></td></tr>
+<tr><th id="198">198</th><td><i>	 * and a constant.</i></td></tr>
+<tr><th id="199">199</th><td><i>	 * The comparison lives inside an AND statement.</i></td></tr>
+<tr><th id="200">200</th><td><i>	 * If the comparison succeeds, we continue</i></td></tr>
+<tr><th id="201">201</th><td><i>	 * to the next comparison.</i></td></tr>
+<tr><th id="202">202</th><td><i>	 * If this comparison fails, the whole AND statement</i></td></tr>
+<tr><th id="203">203</th><td><i>	 * will fail, so we jump to the end of this AND statement.</i></td></tr>
+<tr><th id="204">204</th><td><i>	 */</i></td></tr>
+<tr><th id="205">205</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col9 decl" id="49comp_block" title='comp_block' data-type='struct sock_filter *' data-ref="49comp_block">comp_block</dfn>;</td></tr>
+<tr><th id="206">206</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="50len" title='len' data-type='size_t' data-ref="50len">len</dfn> = <a class="ref" href="bpf.h.html#bpf_arg_comp" title='bpf_arg_comp' data-ref="bpf_arg_comp">bpf_arg_comp</a>(&amp;<a class="local col9 ref" href="#49comp_block" title='comp_block' data-ref="49comp_block">comp_block</a>, <a class="local col3 ref" href="#43op" title='op' data-ref="43op">op</a>, <a class="local col5 ref" href="#45argidx" title='argidx' data-ref="45argidx">argidx</a>, <a class="local col7 ref" href="#47c" title='c' data-ref="47c">c</a>, <a class="local col8 ref" href="#48id" title='id' data-ref="48id">id</a>);</td></tr>
+<tr><th id="207">207</th><td>	<b>if</b> (<a class="local col0 ref" href="#50len" title='len' data-ref="50len">len</a> == <var>0</var>)</td></tr>
+<tr><th id="208">208</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td>	<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col4 ref" href="#34head" title='head' data-ref="34head">head</a>, <a class="local col9 ref" href="#49comp_block" title='comp_block' data-ref="49comp_block">comp_block</a>, <a class="local col0 ref" href="#50len" title='len' data-ref="50len">len</a>);</td></tr>
+<tr><th id="211">211</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="212">212</th><td>}</td></tr>
+<tr><th id="213">213</th><td></td></tr>
+<tr><th id="214">214</th><td><em>int</em> <dfn class="decl def" id="compile_errno" title='compile_errno' data-ref="compile_errno">compile_errno</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col1 decl" id="51head" title='head' data-type='struct filter_block *' data-ref="51head">head</dfn>, <em>char</em> *<dfn class="local col2 decl" id="52ret_errno" title='ret_errno' data-type='char *' data-ref="52ret_errno">ret_errno</dfn>)</td></tr>
+<tr><th id="215">215</th><td>{</td></tr>
+<tr><th id="216">216</th><td>	<em>char</em> *<dfn class="local col3 decl" id="53errno_ptr" title='errno_ptr' data-type='char *' data-ref="53errno_ptr">errno_ptr</dfn>;</td></tr>
+<tr><th id="217">217</th><td></td></tr>
+<tr><th id="218">218</th><td>	<i>/* Splits the 'return' keyword and the actual errno value. */</i></td></tr>
+<tr><th id="219">219</th><td>	<em>char</em> *<dfn class="local col4 decl" id="54ret_str" title='ret_str' data-type='char *' data-ref="54ret_str">ret_str</dfn> = <a class="ref" href="../../bionic/libc/include/string.h.html#strtok_r" title='strtok_r' data-ref="strtok_r">strtok_r</a>(<a class="local col2 ref" href="#52ret_errno" title='ret_errno' data-ref="52ret_errno">ret_errno</a>, <q>" "</q>, &amp;<a class="local col3 ref" href="#53errno_ptr" title='errno_ptr' data-ref="53errno_ptr">errno_ptr</a>);</td></tr>
+<tr><th id="220">220</th><td>	<b>if</b> (<a class="ref" href="../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col4 ref" href="#54ret_str" title='ret_str' data-ref="54ret_str">ret_str</a>, <q>"return"</q>, <a class="ref" href="../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<q>"return"</q>)))</td></tr>
+<tr><th id="221">221</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="222">222</th><td></td></tr>
+<tr><th id="223">223</th><td>	<em>char</em> *<dfn class="local col5 decl" id="55errno_val_str" title='errno_val_str' data-type='char *' data-ref="55errno_val_str">errno_val_str</dfn> = <a class="ref" href="../../bionic/libc/include/string.h.html#strtok_r" title='strtok_r' data-ref="strtok_r">strtok_r</a>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <q>" "</q>, &amp;<a class="local col3 ref" href="#53errno_ptr" title='errno_ptr' data-ref="53errno_ptr">errno_ptr</a>);</td></tr>
+<tr><th id="224">224</th><td></td></tr>
+<tr><th id="225">225</th><td>	<b>if</b> (<a class="local col5 ref" href="#55errno_val_str" title='errno_val_str' data-ref="55errno_val_str">errno_val_str</a>) {</td></tr>
+<tr><th id="226">226</th><td>		<em>char</em> *<dfn class="local col6 decl" id="56errno_val_ptr" title='errno_val_ptr' data-type='char *' data-ref="56errno_val_ptr">errno_val_ptr</dfn>;</td></tr>
+<tr><th id="227">227</th><td>		<em>int</em> <dfn class="local col7 decl" id="57errno_val" title='errno_val' data-type='int' data-ref="57errno_val">errno_val</dfn> = <a class="ref" href="util.h.html#parse_constant" title='parse_constant' data-ref="parse_constant">parse_constant</a>(<a class="local col5 ref" href="#55errno_val_str" title='errno_val_str' data-ref="55errno_val_str">errno_val_str</a>, &amp;<a class="local col6 ref" href="#56errno_val_ptr" title='errno_val_ptr' data-ref="56errno_val_ptr">errno_val_ptr</a>);</td></tr>
+<tr><th id="228">228</th><td>		<i>/* Checks to see if we parsed an actual errno. */</i></td></tr>
+<tr><th id="229">229</th><td>		<b>if</b> (<a class="local col6 ref" href="#56errno_val_ptr" title='errno_val_ptr' data-ref="56errno_val_ptr">errno_val_ptr</a> == <a class="local col5 ref" href="#55errno_val_str" title='errno_val_str' data-ref="55errno_val_str">errno_val_str</a> || <a class="local col7 ref" href="#57errno_val" title='errno_val' data-ref="57errno_val">errno_val</a> == -<var>1</var>)</td></tr>
+<tr><th id="230">230</th><td>			<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="231">231</th><td></td></tr>
+<tr><th id="232">232</th><td>		<a class="ref" href="#append_ret_errno" title='append_ret_errno' data-ref="append_ret_errno">append_ret_errno</a>(<a class="local col1 ref" href="#51head" title='head' data-ref="51head">head</a>, <a class="local col7 ref" href="#57errno_val" title='errno_val' data-ref="57errno_val">errno_val</a>);</td></tr>
+<tr><th id="233">233</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="234">234</th><td>		<a class="ref" href="#append_ret_kill" title='append_ret_kill' data-ref="append_ret_kill">append_ret_kill</a>(<a class="local col1 ref" href="#51head" title='head' data-ref="51head">head</a>);</td></tr>
+<tr><th id="235">235</th><td>	}</td></tr>
+<tr><th id="236">236</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="237">237</th><td>}</td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td><b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="decl def" id="compile_section" title='compile_section' data-ref="compile_section">compile_section</dfn>(<em>int</em> <dfn class="local col8 decl" id="58nr" title='nr' data-type='int' data-ref="58nr">nr</dfn>, <em>const</em> <em>char</em> *<dfn class="local col9 decl" id="59policy_line" title='policy_line' data-type='const char *' data-ref="59policy_line">policy_line</dfn>,</td></tr>
+<tr><th id="240">240</th><td>		<em>unsigned</em> <em>int</em> <dfn class="local col0 decl" id="60entry_lbl_id" title='entry_lbl_id' data-type='unsigned int' data-ref="60entry_lbl_id">entry_lbl_id</dfn>, <b>struct</b> <a class="type" href="bpf.h.html#bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</a> *<dfn class="local col1 decl" id="61labels" title='labels' data-type='struct bpf_labels *' data-ref="61labels">labels</dfn>)</td></tr>
+<tr><th id="241">241</th><td>{</td></tr>
+<tr><th id="242">242</th><td>	<i>/*</i></td></tr>
+<tr><th id="243">243</th><td><i>	 * |policy_line| should be an expression of the form:</i></td></tr>
+<tr><th id="244">244</th><td><i>	 * "arg0 == 3 &amp;&amp; arg1 == 5 || arg0 == 0x8"</i></td></tr>
+<tr><th id="245">245</th><td><i>	 *</i></td></tr>
+<tr><th id="246">246</th><td><i>	 * This is, an expression in DNF (disjunctive normal form);</i></td></tr>
+<tr><th id="247">247</th><td><i>	 * a disjunction ('||') of one or more conjunctions ('&amp;&amp;')</i></td></tr>
+<tr><th id="248">248</th><td><i>	 * of one or more atoms.</i></td></tr>
+<tr><th id="249">249</th><td><i>	 *</i></td></tr>
+<tr><th id="250">250</th><td><i>	 * Atoms are of the form "arg{DNUM} {OP} {NUM}"</i></td></tr>
+<tr><th id="251">251</th><td><i>	 * where:</i></td></tr>
+<tr><th id="252">252</th><td><i>	 *   - DNUM is a decimal number.</i></td></tr>
+<tr><th id="253">253</th><td><i>	 *   - OP is an operator: ==, !=, or &amp; (flags set).</i></td></tr>
+<tr><th id="254">254</th><td><i>	 *   - NUM is an octal, decimal, or hexadecimal number.</i></td></tr>
+<tr><th id="255">255</th><td><i>	 *</i></td></tr>
+<tr><th id="256">256</th><td><i>	 * When the syscall arguments make the expression true,</i></td></tr>
+<tr><th id="257">257</th><td><i>	 * the syscall is allowed. If not, the process is killed.</i></td></tr>
+<tr><th id="258">258</th><td><i>	 *</i></td></tr>
+<tr><th id="259">259</th><td><i>	 * To block a syscall without killing the process,</i></td></tr>
+<tr><th id="260">260</th><td><i>	 * |policy_line| can be of the form:</i></td></tr>
+<tr><th id="261">261</th><td><i>	 * "return &lt;errno&gt;"</i></td></tr>
+<tr><th id="262">262</th><td><i>	 *</i></td></tr>
+<tr><th id="263">263</th><td><i>	 * This "return {NUM}" policy line will block the syscall,</i></td></tr>
+<tr><th id="264">264</th><td><i>	 * make it return -1 and set |errno| to NUM.</i></td></tr>
+<tr><th id="265">265</th><td><i>	 *</i></td></tr>
+<tr><th id="266">266</th><td><i>	 * A regular policy line can also include a "return &lt;errno&gt;" clause,</i></td></tr>
+<tr><th id="267">267</th><td><i>	 * separated by a semicolon (';'):</i></td></tr>
+<tr><th id="268">268</th><td><i>	 * "arg0 == 3 &amp;&amp; arg1 == 5 || arg0 == 0x8; return {NUM}"</i></td></tr>
+<tr><th id="269">269</th><td><i>	 *</i></td></tr>
+<tr><th id="270">270</th><td><i>	 * If the syscall arguments don't make the expression true,</i></td></tr>
+<tr><th id="271">271</th><td><i>	 * the syscall will be blocked as above instead of killing the process.</i></td></tr>
+<tr><th id="272">272</th><td><i>	 */</i></td></tr>
+<tr><th id="273">273</th><td></td></tr>
+<tr><th id="274">274</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="62len" title='len' data-type='size_t' data-ref="62len">len</dfn> = <var>0</var>;</td></tr>
+<tr><th id="275">275</th><td>	<em>int</em> <dfn class="local col3 decl" id="63group_idx" title='group_idx' data-type='int' data-ref="63group_idx">group_idx</dfn> = <var>0</var>;</td></tr>
+<tr><th id="276">276</th><td></td></tr>
+<tr><th id="277">277</th><td>	<i>/* Checks for overly long policy lines. */</i></td></tr>
+<tr><th id="278">278</th><td>	<b>if</b> (<a class="ref" href="../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col9 ref" href="#59policy_line" title='policy_line' data-ref="59policy_line">policy_line</a>) &gt;= <a class="macro" href="#15" title="1024" data-ref="_M/MAX_POLICY_LINE_LENGTH">MAX_POLICY_LINE_LENGTH</a>)</td></tr>
+<tr><th id="279">279</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="280">280</th><td></td></tr>
+<tr><th id="281">281</th><td>	<i>/* We will modify |policy_line|, so let's make a copy. */</i></td></tr>
+<tr><th id="282">282</th><td>	<em>char</em> *<dfn class="local col4 decl" id="64line" title='line' data-type='char *' data-ref="64line">line</dfn> = <a class="ref" href="../../bionic/libc/include/string.h.html#strndup" title='strndup' data-ref="strndup">strndup</a>(<a class="local col9 ref" href="#59policy_line" title='policy_line' data-ref="59policy_line">policy_line</a>, <a class="macro" href="#15" title="1024" data-ref="_M/MAX_POLICY_LINE_LENGTH">MAX_POLICY_LINE_LENGTH</a>);</td></tr>
+<tr><th id="283">283</th><td>	<b>if</b> (!<a class="local col4 ref" href="#64line" title='line' data-ref="64line">line</a>)</td></tr>
+<tr><th id="284">284</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="285">285</th><td></td></tr>
+<tr><th id="286">286</th><td>	<i>/*</i></td></tr>
+<tr><th id="287">287</th><td><i>	 * We build the filter section as a collection of smaller</i></td></tr>
+<tr><th id="288">288</th><td><i>	 * "filter blocks" linked together in a singly-linked list.</i></td></tr>
+<tr><th id="289">289</th><td><i>	 */</i></td></tr>
+<tr><th id="290">290</th><td>	<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col5 decl" id="65head" title='head' data-type='struct filter_block *' data-ref="65head">head</dfn> = <a class="ref" href="#new_filter_block" title='new_filter_block' data-ref="new_filter_block">new_filter_block</a>();</td></tr>
+<tr><th id="291">291</th><td></td></tr>
+<tr><th id="292">292</th><td>	<i>/*</i></td></tr>
+<tr><th id="293">293</th><td><i>	 * Filter sections begin with a label where the main filter</i></td></tr>
+<tr><th id="294">294</th><td><i>	 * will jump after checking the syscall number.</i></td></tr>
+<tr><th id="295">295</th><td><i>	 */</i></td></tr>
+<tr><th id="296">296</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col6 decl" id="66entry_label" title='entry_label' data-type='struct sock_filter *' data-ref="66entry_label">entry_label</dfn> = <a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="#17" title="1" data-ref="_M/ONE_INSTR">ONE_INSTR</a>);</td></tr>
+<tr><th id="297">297</th><td>	<a class="macro" href="bpf.h.html#140" title="set_bpf_instr(((entry_label)), (0x05+0x00), ((entry_lbl_id)), (0xfe), (0xfe))" data-ref="_M/set_bpf_lbl">set_bpf_lbl</a>(<a class="local col6 ref" href="#66entry_label" title='entry_label' data-ref="66entry_label">entry_label</a>, <a class="local col0 ref" href="#60entry_lbl_id" title='entry_lbl_id' data-ref="60entry_lbl_id">entry_lbl_id</a>);</td></tr>
+<tr><th id="298">298</th><td>	<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col5 ref" href="#65head" title='head' data-ref="65head">head</a>, <a class="local col6 ref" href="#66entry_label" title='entry_label' data-ref="66entry_label">entry_label</a>, <a class="macro" href="#17" title="1" data-ref="_M/ONE_INSTR">ONE_INSTR</a>);</td></tr>
+<tr><th id="299">299</th><td></td></tr>
+<tr><th id="300">300</th><td>	<i>/* Checks whether we're unconditionally blocking this syscall. */</i></td></tr>
+<tr><th id="301">301</th><td>	<b>if</b> (<a class="ref" href="../../bionic/libc/include/string.h.html#strncmp" title='strncmp' data-ref="strncmp">strncmp</a>(<a class="local col4 ref" href="#64line" title='line' data-ref="64line">line</a>, <q>"return"</q>, <a class="ref" href="../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<q>"return"</q>)) == <var>0</var>) {</td></tr>
+<tr><th id="302">302</th><td>		<b>if</b> (<a class="ref" href="#compile_errno" title='compile_errno' data-ref="compile_errno">compile_errno</a>(<a class="local col5 ref" href="#65head" title='head' data-ref="65head">head</a>, <a class="local col4 ref" href="#64line" title='line' data-ref="64line">line</a>) &lt; <var>0</var>)</td></tr>
+<tr><th id="303">303</th><td>			<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="304">304</th><td>		<a class="ref" href="../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col4 ref" href="#64line" title='line' data-ref="64line">line</a>);</td></tr>
+<tr><th id="305">305</th><td>		<b>return</b> <a class="local col5 ref" href="#65head" title='head' data-ref="65head">head</a>;</td></tr>
+<tr><th id="306">306</th><td>	}</td></tr>
+<tr><th id="307">307</th><td></td></tr>
+<tr><th id="308">308</th><td>	<i>/* Splits the optional "return &lt;errno&gt;" part. */</i></td></tr>
+<tr><th id="309">309</th><td>	<em>char</em> *<dfn class="local col7 decl" id="67line_ptr" title='line_ptr' data-type='char *' data-ref="67line_ptr">line_ptr</dfn>;</td></tr>
+<tr><th id="310">310</th><td>	<em>char</em> *<dfn class="local col8 decl" id="68arg_filter" title='arg_filter' data-type='char *' data-ref="68arg_filter">arg_filter</dfn> = <a class="ref" href="../../bionic/libc/include/string.h.html#strtok_r" title='strtok_r' data-ref="strtok_r">strtok_r</a>(<a class="local col4 ref" href="#64line" title='line' data-ref="64line">line</a>, <q>";"</q>, &amp;<a class="local col7 ref" href="#67line_ptr" title='line_ptr' data-ref="67line_ptr">line_ptr</a>);</td></tr>
+<tr><th id="311">311</th><td>	<em>char</em> *<dfn class="local col9 decl" id="69ret_errno" title='ret_errno' data-type='char *' data-ref="69ret_errno">ret_errno</dfn> = <a class="ref" href="../../bionic/libc/include/string.h.html#strtok_r" title='strtok_r' data-ref="strtok_r">strtok_r</a>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <q>";"</q>, &amp;<a class="local col7 ref" href="#67line_ptr" title='line_ptr' data-ref="67line_ptr">line_ptr</a>);</td></tr>
+<tr><th id="312">312</th><td></td></tr>
+<tr><th id="313">313</th><td>	<i>/*</i></td></tr>
+<tr><th id="314">314</th><td><i>	 * Splits the policy line by '||' into conjunctions and each conjunction</i></td></tr>
+<tr><th id="315">315</th><td><i>	 * by '&amp;&amp;' into atoms.</i></td></tr>
+<tr><th id="316">316</th><td><i>	 */</i></td></tr>
+<tr><th id="317">317</th><td>	<em>char</em> *<dfn class="local col0 decl" id="70arg_filter_str" title='arg_filter_str' data-type='char *' data-ref="70arg_filter_str">arg_filter_str</dfn> = <a class="local col8 ref" href="#68arg_filter" title='arg_filter' data-ref="68arg_filter">arg_filter</a>;</td></tr>
+<tr><th id="318">318</th><td>	<em>char</em> *<dfn class="local col1 decl" id="71group" title='group' data-type='char *' data-ref="71group">group</dfn>;</td></tr>
+<tr><th id="319">319</th><td>	<b>while</b> ((<a class="local col1 ref" href="#71group" title='group' data-ref="71group">group</a> = <a class="ref" href="util.h.html#tokenize" title='tokenize' data-ref="tokenize">tokenize</a>(&amp;<a class="local col0 ref" href="#70arg_filter_str" title='arg_filter_str' data-ref="70arg_filter_str">arg_filter_str</a>, <q>"||"</q>)) != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="320">320</th><td>		<em>char</em> *<dfn class="local col2 decl" id="72group_str" title='group_str' data-type='char *' data-ref="72group_str">group_str</dfn> = <a class="local col1 ref" href="#71group" title='group' data-ref="71group">group</a>;</td></tr>
+<tr><th id="321">321</th><td>		<em>char</em> *<dfn class="local col3 decl" id="73comp" title='comp' data-type='char *' data-ref="73comp">comp</dfn>;</td></tr>
+<tr><th id="322">322</th><td>		<b>while</b> ((<a class="local col3 ref" href="#73comp" title='comp' data-ref="73comp">comp</a> = <a class="ref" href="util.h.html#tokenize" title='tokenize' data-ref="tokenize">tokenize</a>(&amp;<a class="local col2 ref" href="#72group_str" title='group_str' data-ref="72group_str">group_str</a>, <q>"&amp;&amp;"</q>)) != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="323">323</th><td>			<i>/* Compiles each atom into a BPF block. */</i></td></tr>
+<tr><th id="324">324</th><td>			<b>if</b> (<a class="ref" href="#compile_atom" title='compile_atom' data-ref="compile_atom">compile_atom</a>(<a class="local col5 ref" href="#65head" title='head' data-ref="65head">head</a>, <a class="local col3 ref" href="#73comp" title='comp' data-ref="73comp">comp</a>, <a class="local col1 ref" href="#61labels" title='labels' data-ref="61labels">labels</a>, <a class="local col8 ref" href="#58nr" title='nr' data-ref="58nr">nr</a>, <a class="local col3 ref" href="#63group_idx" title='group_idx' data-ref="63group_idx">group_idx</a>) &lt; <var>0</var>)</td></tr>
+<tr><th id="325">325</th><td>				<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="326">326</th><td>		}</td></tr>
+<tr><th id="327">327</th><td>		<i>/*</i></td></tr>
+<tr><th id="328">328</th><td><i>		 * If the AND statement succeeds, we're done,</i></td></tr>
+<tr><th id="329">329</th><td><i>		 * so jump to SUCCESS line.</i></td></tr>
+<tr><th id="330">330</th><td><i>		 */</i></td></tr>
+<tr><th id="331">331</th><td>		<em>unsigned</em> <em>int</em> <dfn class="local col4 decl" id="74id" title='id' data-type='unsigned int' data-ref="74id">id</dfn> = <a class="ref" href="#success_lbl" title='success_lbl' data-ref="success_lbl">success_lbl</a>(<a class="local col1 ref" href="#61labels" title='labels' data-ref="61labels">labels</a>, <a class="local col8 ref" href="#58nr" title='nr' data-ref="58nr">nr</a>);</td></tr>
+<tr><th id="332">332</th><td>		<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col5 decl" id="75group_end_block" title='group_end_block' data-type='struct sock_filter *' data-ref="75group_end_block">group_end_block</dfn> = <a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="#18" title="2" data-ref="_M/TWO_INSTRS">TWO_INSTRS</a>);</td></tr>
+<tr><th id="333">333</th><td>		<a class="local col2 ref" href="#62len" title='len' data-ref="62len">len</a> = <a class="macro" href="bpf.h.html#144" title="set_bpf_instr(((group_end_block)), (0x05+0x00), ((id)), (0xff), (0xff))" data-ref="_M/set_bpf_jump_lbl">set_bpf_jump_lbl</a>(<a class="local col5 ref" href="#75group_end_block" title='group_end_block' data-ref="75group_end_block">group_end_block</a>, <a class="local col4 ref" href="#74id" title='id' data-ref="74id">id</a>);</td></tr>
+<tr><th id="334">334</th><td>		<i>/*</i></td></tr>
+<tr><th id="335">335</th><td><i>		 * The end of each AND statement falls after the</i></td></tr>
+<tr><th id="336">336</th><td><i>		 * jump to SUCCESS.</i></td></tr>
+<tr><th id="337">337</th><td><i>		 */</i></td></tr>
+<tr><th id="338">338</th><td>		<a class="local col4 ref" href="#74id" title='id' data-ref="74id">id</a> = <a class="ref" href="#group_end_lbl" title='group_end_lbl' data-ref="group_end_lbl">group_end_lbl</a>(<a class="local col1 ref" href="#61labels" title='labels' data-ref="61labels">labels</a>, <a class="local col8 ref" href="#58nr" title='nr' data-ref="58nr">nr</a>, <a class="local col3 ref" href="#63group_idx" title='group_idx' data-ref="63group_idx">group_idx</a>++);</td></tr>
+<tr><th id="339">339</th><td>		<a class="local col2 ref" href="#62len" title='len' data-ref="62len">len</a> += <a class="macro" href="bpf.h.html#140" title="set_bpf_instr(((group_end_block + len)), (0x05+0x00), ((id)), (0xfe), (0xfe))" data-ref="_M/set_bpf_lbl">set_bpf_lbl</a>(<a class="local col5 ref" href="#75group_end_block" title='group_end_block' data-ref="75group_end_block">group_end_block</a> + <a class="local col2 ref" href="#62len" title='len' data-ref="62len">len</a>, <a class="local col4 ref" href="#74id" title='id' data-ref="74id">id</a>);</td></tr>
+<tr><th id="340">340</th><td>		<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col5 ref" href="#65head" title='head' data-ref="65head">head</a>, <a class="local col5 ref" href="#75group_end_block" title='group_end_block' data-ref="75group_end_block">group_end_block</a>, <a class="local col2 ref" href="#62len" title='len' data-ref="62len">len</a>);</td></tr>
+<tr><th id="341">341</th><td>	}</td></tr>
+<tr><th id="342">342</th><td></td></tr>
+<tr><th id="343">343</th><td>	<i>/*</i></td></tr>
+<tr><th id="344">344</th><td><i>	 * If no AND statements succeed, we end up here,</i></td></tr>
+<tr><th id="345">345</th><td><i>	 * because we never jumped to SUCCESS.</i></td></tr>
+<tr><th id="346">346</th><td><i>	 * If we have to return an errno, do it,</i></td></tr>
+<tr><th id="347">347</th><td><i>	 * otherwise just kill the task.</i></td></tr>
+<tr><th id="348">348</th><td><i>	 */</i></td></tr>
+<tr><th id="349">349</th><td>	<b>if</b> (<a class="local col9 ref" href="#69ret_errno" title='ret_errno' data-ref="69ret_errno">ret_errno</a>) {</td></tr>
+<tr><th id="350">350</th><td>		<b>if</b> (<a class="ref" href="#compile_errno" title='compile_errno' data-ref="compile_errno">compile_errno</a>(<a class="local col5 ref" href="#65head" title='head' data-ref="65head">head</a>, <a class="local col9 ref" href="#69ret_errno" title='ret_errno' data-ref="69ret_errno">ret_errno</a>) &lt; <var>0</var>)</td></tr>
+<tr><th id="351">351</th><td>			<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="352">352</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="353">353</th><td>		<a class="ref" href="#append_ret_kill" title='append_ret_kill' data-ref="append_ret_kill">append_ret_kill</a>(<a class="local col5 ref" href="#65head" title='head' data-ref="65head">head</a>);</td></tr>
+<tr><th id="354">354</th><td>	}</td></tr>
+<tr><th id="355">355</th><td></td></tr>
+<tr><th id="356">356</th><td>	<i>/*</i></td></tr>
+<tr><th id="357">357</th><td><i>	 * Every time the filter succeeds we jump to a predefined SUCCESS</i></td></tr>
+<tr><th id="358">358</th><td><i>	 * label. Add that label and BPF RET_ALLOW code now.</i></td></tr>
+<tr><th id="359">359</th><td><i>	 */</i></td></tr>
+<tr><th id="360">360</th><td>	<em>unsigned</em> <em>int</em> <dfn class="local col6 decl" id="76id" title='id' data-type='unsigned int' data-ref="76id">id</dfn> = <a class="ref" href="#success_lbl" title='success_lbl' data-ref="success_lbl">success_lbl</a>(<a class="local col1 ref" href="#61labels" title='labels' data-ref="61labels">labels</a>, <a class="local col8 ref" href="#58nr" title='nr' data-ref="58nr">nr</a>);</td></tr>
+<tr><th id="361">361</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col7 decl" id="77success_block" title='success_block' data-type='struct sock_filter *' data-ref="77success_block">success_block</dfn> = <a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="#18" title="2" data-ref="_M/TWO_INSTRS">TWO_INSTRS</a>);</td></tr>
+<tr><th id="362">362</th><td>	<a class="local col2 ref" href="#62len" title='len' data-ref="62len">len</a> = <a class="macro" href="bpf.h.html#140" title="set_bpf_instr(((success_block)), (0x05+0x00), ((id)), (0xfe), (0xfe))" data-ref="_M/set_bpf_lbl">set_bpf_lbl</a>(<a class="local col7 ref" href="#77success_block" title='success_block' data-ref="77success_block">success_block</a>, <a class="local col6 ref" href="#76id" title='id' data-ref="76id">id</a>);</td></tr>
+<tr><th id="363">363</th><td>	<a class="local col2 ref" href="#62len" title='len' data-ref="62len">len</a> += <a class="macro" href="bpf.h.html#158" title="set_bpf_instr(((success_block + len)), (0x06+0x00), (0x7fff0000U), 0, 0)" data-ref="_M/set_bpf_ret_allow">set_bpf_ret_allow</a>(<a class="local col7 ref" href="#77success_block" title='success_block' data-ref="77success_block">success_block</a> + <a class="local col2 ref" href="#62len" title='len' data-ref="62len">len</a>);</td></tr>
+<tr><th id="364">364</th><td>	<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col5 ref" href="#65head" title='head' data-ref="65head">head</a>, <a class="local col7 ref" href="#77success_block" title='success_block' data-ref="77success_block">success_block</a>, <a class="local col2 ref" href="#62len" title='len' data-ref="62len">len</a>);</td></tr>
+<tr><th id="365">365</th><td></td></tr>
+<tr><th id="366">366</th><td>	<a class="ref" href="../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col4 ref" href="#64line" title='line' data-ref="64line">line</a>);</td></tr>
+<tr><th id="367">367</th><td>	<b>return</b> <a class="local col5 ref" href="#65head" title='head' data-ref="65head">head</a>;</td></tr>
+<tr><th id="368">368</th><td>}</td></tr>
+<tr><th id="369">369</th><td></td></tr>
+<tr><th id="370">370</th><td><em>int</em> <dfn class="decl def" id="compile_filter" title='compile_filter' data-ref="compile_filter">compile_filter</dfn>(<a class="typedef" href="../../bionic/libc/include/stdio.h.html#FILE" title='FILE' data-type='struct __sFILE' data-ref="FILE">FILE</a> *<dfn class="local col8 decl" id="78policy_file" title='policy_file' data-type='FILE *' data-ref="78policy_file">policy_file</dfn>, <b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_fprog" title='sock_fprog' data-ref="sock_fprog">sock_fprog</a> *<dfn class="local col9 decl" id="79prog" title='prog' data-type='struct sock_fprog *' data-ref="79prog">prog</dfn>,</td></tr>
+<tr><th id="371">371</th><td>		<em>int</em> <dfn class="local col0 decl" id="80log_failures" title='log_failures' data-type='int' data-ref="80log_failures">log_failures</dfn>)</td></tr>
+<tr><th id="372">372</th><td>{</td></tr>
+<tr><th id="373">373</th><td>	<em>char</em> <dfn class="local col1 decl" id="81line" title='line' data-type='char [1024]' data-ref="81line">line</dfn>[<a class="macro" href="#14" title="1024" data-ref="_M/MAX_LINE_LENGTH">MAX_LINE_LENGTH</a>];</td></tr>
+<tr><th id="374">374</th><td>	<em>int</em> <dfn class="local col2 decl" id="82line_count" title='line_count' data-type='int' data-ref="82line_count">line_count</dfn> = <var>0</var>;</td></tr>
+<tr><th id="375">375</th><td></td></tr>
+<tr><th id="376">376</th><td>	<b>struct</b> <a class="type" href="bpf.h.html#bpf_labels" title='bpf_labels' data-ref="bpf_labels">bpf_labels</a> <dfn class="local col3 decl" id="83labels" title='labels' data-type='struct bpf_labels' data-ref="83labels">labels</dfn>;</td></tr>
+<tr><th id="377">377</th><td>	<a class="local col3 ref" href="#83labels" title='labels' data-ref="83labels">labels</a>.<a class="ref" href="bpf.h.html#bpf_labels::count" title='bpf_labels::count' data-ref="bpf_labels::count">count</a> = <var>0</var>;</td></tr>
+<tr><th id="378">378</th><td></td></tr>
+<tr><th id="379">379</th><td>	<b>if</b> (!<a class="local col8 ref" href="#78policy_file" title='policy_file' data-ref="78policy_file">policy_file</a>)</td></tr>
+<tr><th id="380">380</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="381">381</th><td></td></tr>
+<tr><th id="382">382</th><td>	<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col4 decl" id="84head" title='head' data-type='struct filter_block *' data-ref="84head">head</dfn> = <a class="ref" href="#new_filter_block" title='new_filter_block' data-ref="new_filter_block">new_filter_block</a>();</td></tr>
+<tr><th id="383">383</th><td>	<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col5 decl" id="85arg_blocks" title='arg_blocks' data-type='struct filter_block *' data-ref="85arg_blocks">arg_blocks</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="384">384</th><td></td></tr>
+<tr><th id="385">385</th><td>	<i>/* Start filter by validating arch. */</i></td></tr>
+<tr><th id="386">386</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col6 decl" id="86valid_arch" title='valid_arch' data-type='struct sock_filter *' data-ref="86valid_arch">valid_arch</dfn> = <a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="bpf.h.html#178" title="3U" data-ref="_M/ARCH_VALIDATION_LEN">ARCH_VALIDATION_LEN</a>);</td></tr>
+<tr><th id="387">387</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="87len" title='len' data-type='size_t' data-ref="87len">len</dfn> = <a class="ref" href="bpf.h.html#bpf_validate_arch" title='bpf_validate_arch' data-ref="bpf_validate_arch">bpf_validate_arch</a>(<a class="local col6 ref" href="#86valid_arch" title='valid_arch' data-ref="86valid_arch">valid_arch</a>);</td></tr>
+<tr><th id="388">388</th><td>	<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>, <a class="local col6 ref" href="#86valid_arch" title='valid_arch' data-ref="86valid_arch">valid_arch</a>, <a class="local col7 ref" href="#87len" title='len' data-ref="87len">len</a>);</td></tr>
+<tr><th id="389">389</th><td></td></tr>
+<tr><th id="390">390</th><td>	<i>/* Load syscall number. */</i></td></tr>
+<tr><th id="391">391</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col8 decl" id="88load_nr" title='load_nr' data-type='struct sock_filter *' data-ref="88load_nr">load_nr</dfn> = <a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="#17" title="1" data-ref="_M/ONE_INSTR">ONE_INSTR</a>);</td></tr>
+<tr><th id="392">392</th><td>	<a class="local col7 ref" href="#87len" title='len' data-ref="87len">len</a> = <a class="macro" href="bpf.h.html#161" title="set_bpf_instr(((load_nr)), (0x00+0x00+0x20), ((__builtin_offsetof(struct seccomp_data, nr))), 0, 0)" data-ref="_M/bpf_load_syscall_nr">bpf_load_syscall_nr</a>(<a class="local col8 ref" href="#88load_nr" title='load_nr' data-ref="88load_nr">load_nr</a>);</td></tr>
+<tr><th id="393">393</th><td>	<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>, <a class="local col8 ref" href="#88load_nr" title='load_nr' data-ref="88load_nr">load_nr</a>, <a class="local col7 ref" href="#87len" title='len' data-ref="87len">len</a>);</td></tr>
+<tr><th id="394">394</th><td></td></tr>
+<tr><th id="395">395</th><td>	<i>/* If we're logging failures, allow the necessary syscalls first. */</i></td></tr>
+<tr><th id="396">396</th><td>	<b>if</b> (<a class="local col0 ref" href="#80log_failures" title='log_failures' data-ref="80log_failures">log_failures</a>)</td></tr>
+<tr><th id="397">397</th><td>		<a class="ref" href="#allow_log_syscalls" title='allow_log_syscalls' data-ref="allow_log_syscalls">allow_log_syscalls</a>(<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>);</td></tr>
+<tr><th id="398">398</th><td></td></tr>
+<tr><th id="399">399</th><td>	<i>/*</i></td></tr>
+<tr><th id="400">400</th><td><i>	 * Loop through all the lines in the policy file.</i></td></tr>
+<tr><th id="401">401</th><td><i>	 * Build a jump table for the syscall number.</i></td></tr>
+<tr><th id="402">402</th><td><i>	 * If the policy line has an arg filter, build the arg filter</i></td></tr>
+<tr><th id="403">403</th><td><i>	 * as well.</i></td></tr>
+<tr><th id="404">404</th><td><i>	 * Chain the filter sections together and dump them into</i></td></tr>
+<tr><th id="405">405</th><td><i>	 * the final buffer at the end.</i></td></tr>
+<tr><th id="406">406</th><td><i>	 */</i></td></tr>
+<tr><th id="407">407</th><td>	<b>while</b> (<a class="ref" href="../../bionic/libc/include/stdio.h.html#fgets" title='fgets' data-ref="fgets">fgets</a>(<a class="local col1 ref" href="#81line" title='line' data-ref="81line">line</a>, <b>sizeof</b>(<a class="local col1 ref" href="#81line" title='line' data-ref="81line">line</a>), <a class="local col8 ref" href="#78policy_file" title='policy_file' data-ref="78policy_file">policy_file</a>)) {</td></tr>
+<tr><th id="408">408</th><td>		++<a class="local col2 ref" href="#82line_count" title='line_count' data-ref="82line_count">line_count</a>;</td></tr>
+<tr><th id="409">409</th><td>		<em>char</em> *<dfn class="local col9 decl" id="89policy_line" title='policy_line' data-type='char *' data-ref="89policy_line">policy_line</dfn> = <a class="local col1 ref" href="#81line" title='line' data-ref="81line">line</a>;</td></tr>
+<tr><th id="410">410</th><td>		<em>char</em> *<dfn class="local col0 decl" id="90syscall_name" title='syscall_name' data-type='char *' data-ref="90syscall_name">syscall_name</dfn> = <a class="ref" href="../../bionic/libc/include/string.h.html#strsep" title='strsep' data-ref="strsep">strsep</a>(&amp;<a class="local col9 ref" href="#89policy_line" title='policy_line' data-ref="89policy_line">policy_line</a>, <q>":"</q>);</td></tr>
+<tr><th id="411">411</th><td>		<em>int</em> <dfn class="local col1 decl" id="91nr" title='nr' data-type='int' data-ref="91nr">nr</dfn> = -<var>1</var>;</td></tr>
+<tr><th id="412">412</th><td></td></tr>
+<tr><th id="413">413</th><td>		<a class="local col0 ref" href="#90syscall_name" title='syscall_name' data-ref="90syscall_name">syscall_name</a> = <a class="ref" href="util.h.html#strip" title='strip' data-ref="strip">strip</a>(<a class="local col0 ref" href="#90syscall_name" title='syscall_name' data-ref="90syscall_name">syscall_name</a>);</td></tr>
+<tr><th id="414">414</th><td></td></tr>
+<tr><th id="415">415</th><td>		<i>/* Allow comments and empty lines. */</i></td></tr>
+<tr><th id="416">416</th><td>		<b>if</b> (*<a class="local col0 ref" href="#90syscall_name" title='syscall_name' data-ref="90syscall_name">syscall_name</a> == <kbd>'#'</kbd> || *<a class="local col0 ref" href="#90syscall_name" title='syscall_name' data-ref="90syscall_name">syscall_name</a> == <kbd>'\0'</kbd>)</td></tr>
+<tr><th id="417">417</th><td>			<b>continue</b>;</td></tr>
+<tr><th id="418">418</th><td></td></tr>
+<tr><th id="419">419</th><td>		<b>if</b> (!<a class="local col9 ref" href="#89policy_line" title='policy_line' data-ref="89policy_line">policy_line</a>)</td></tr>
+<tr><th id="420">420</th><td>			<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="421">421</th><td></td></tr>
+<tr><th id="422">422</th><td>		<a class="local col1 ref" href="#91nr" title='nr' data-ref="91nr">nr</a> = <a class="ref" href="util.h.html#lookup_syscall" title='lookup_syscall' data-ref="lookup_syscall">lookup_syscall</a>(<a class="local col0 ref" href="#90syscall_name" title='syscall_name' data-ref="90syscall_name">syscall_name</a>);</td></tr>
+<tr><th id="423">423</th><td>		<b>if</b> (<a class="local col1 ref" href="#91nr" title='nr' data-ref="91nr">nr</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="424">424</th><td>			<a class="macro" href="util.h.html#23" title="syslog(4, &quot;libminijail: &quot; &quot;compile_filter: nonexistent syscall &apos;%s&apos;&quot;, syscall_name)" data-ref="_M/warn">warn</a>(<q>"compile_filter: nonexistent syscall '%s'"</q>,</td></tr>
+<tr><th id="425">425</th><td>			     <a class="local col0 ref" href="#90syscall_name" title='syscall_name' data-ref="90syscall_name">syscall_name</a>);</td></tr>
+<tr><th id="426">426</th><td>			<b>if</b> (<a class="local col0 ref" href="#80log_failures" title='log_failures' data-ref="80log_failures">log_failures</a>) {</td></tr>
+<tr><th id="427">427</th><td>				<i>/*</i></td></tr>
+<tr><th id="428">428</th><td><i>				 * If we're logging failures, assume we're in a</i></td></tr>
+<tr><th id="429">429</th><td><i>				 * debugging case and continue.</i></td></tr>
+<tr><th id="430">430</th><td><i>				 * This is not super risky because an invalid</i></td></tr>
+<tr><th id="431">431</th><td><i>				 * syscall name is likely caused by a typo or by</i></td></tr>
+<tr><th id="432">432</th><td><i>				 * leftover lines from a different architecture.</i></td></tr>
+<tr><th id="433">433</th><td><i>				 * In either case, not including a policy line</i></td></tr>
+<tr><th id="434">434</th><td><i>				 * is equivalent to killing the process if the</i></td></tr>
+<tr><th id="435">435</th><td><i>				 * syscall is made, so there's no added attack</i></td></tr>
+<tr><th id="436">436</th><td><i>				 * surface.</i></td></tr>
+<tr><th id="437">437</th><td><i>				 */</i></td></tr>
+<tr><th id="438">438</th><td>				<b>continue</b>;</td></tr>
+<tr><th id="439">439</th><td>			}</td></tr>
+<tr><th id="440">440</th><td>			<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="441">441</th><td>		}</td></tr>
+<tr><th id="442">442</th><td></td></tr>
+<tr><th id="443">443</th><td>		<a class="local col9 ref" href="#89policy_line" title='policy_line' data-ref="89policy_line">policy_line</a> = <a class="ref" href="util.h.html#strip" title='strip' data-ref="strip">strip</a>(<a class="local col9 ref" href="#89policy_line" title='policy_line' data-ref="89policy_line">policy_line</a>);</td></tr>
+<tr><th id="444">444</th><td></td></tr>
+<tr><th id="445">445</th><td>		<i>/*</i></td></tr>
+<tr><th id="446">446</th><td><i>		 * For each syscall, add either a simple ALLOW,</i></td></tr>
+<tr><th id="447">447</th><td><i>		 * or an arg filter block.</i></td></tr>
+<tr><th id="448">448</th><td><i>		 */</i></td></tr>
+<tr><th id="449">449</th><td>		<b>if</b> (<a class="ref" href="../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col9 ref" href="#89policy_line" title='policy_line' data-ref="89policy_line">policy_line</a>, <q>"1"</q>) == <var>0</var>) {</td></tr>
+<tr><th id="450">450</th><td>			<i>/* Add simple ALLOW. */</i></td></tr>
+<tr><th id="451">451</th><td>			<a class="ref" href="#append_allow_syscall" title='append_allow_syscall' data-ref="append_allow_syscall">append_allow_syscall</a>(<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>, <a class="local col1 ref" href="#91nr" title='nr' data-ref="91nr">nr</a>);</td></tr>
+<tr><th id="452">452</th><td>		} <b>else</b> {</td></tr>
+<tr><th id="453">453</th><td>			<i>/*</i></td></tr>
+<tr><th id="454">454</th><td><i>			 * Create and jump to the label that will hold</i></td></tr>
+<tr><th id="455">455</th><td><i>			 * the arg filter block.</i></td></tr>
+<tr><th id="456">456</th><td><i>			 */</i></td></tr>
+<tr><th id="457">457</th><td>			<em>unsigned</em> <em>int</em> <dfn class="local col2 decl" id="92id" title='id' data-type='unsigned int' data-ref="92id">id</dfn> = <a class="ref" href="bpf.h.html#bpf_label_id" title='bpf_label_id' data-ref="bpf_label_id">bpf_label_id</a>(&amp;<a class="local col3 ref" href="#83labels" title='labels' data-ref="83labels">labels</a>, <a class="local col0 ref" href="#90syscall_name" title='syscall_name' data-ref="90syscall_name">syscall_name</a>);</td></tr>
+<tr><th id="458">458</th><td>			<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col3 decl" id="93nr_comp" title='nr_comp' data-type='struct sock_filter *' data-ref="93nr_comp">nr_comp</dfn> =</td></tr>
+<tr><th id="459">459</th><td>					<a class="ref" href="#new_instr_buf" title='new_instr_buf' data-ref="new_instr_buf">new_instr_buf</a>(<a class="macro" href="bpf.h.html#179" title="2U" data-ref="_M/ALLOW_SYSCALL_LEN">ALLOW_SYSCALL_LEN</a>);</td></tr>
+<tr><th id="460">460</th><td>			<a class="ref" href="bpf.h.html#bpf_allow_syscall_args" title='bpf_allow_syscall_args' data-ref="bpf_allow_syscall_args">bpf_allow_syscall_args</a>(<a class="local col3 ref" href="#93nr_comp" title='nr_comp' data-ref="93nr_comp">nr_comp</a>, <a class="local col1 ref" href="#91nr" title='nr' data-ref="91nr">nr</a>, <a class="local col2 ref" href="#92id" title='id' data-ref="92id">id</a>);</td></tr>
+<tr><th id="461">461</th><td>			<a class="ref" href="#append_filter_block" title='append_filter_block' data-ref="append_filter_block">append_filter_block</a>(<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>, <a class="local col3 ref" href="#93nr_comp" title='nr_comp' data-ref="93nr_comp">nr_comp</a>, <a class="macro" href="bpf.h.html#179" title="2U" data-ref="_M/ALLOW_SYSCALL_LEN">ALLOW_SYSCALL_LEN</a>);</td></tr>
+<tr><th id="462">462</th><td></td></tr>
+<tr><th id="463">463</th><td>			<i>/* Build the arg filter block. */</i></td></tr>
+<tr><th id="464">464</th><td>			<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col4 decl" id="94block" title='block' data-type='struct filter_block *' data-ref="94block">block</dfn> =</td></tr>
+<tr><th id="465">465</th><td>				<a class="ref" href="#compile_section" title='compile_section' data-ref="compile_section">compile_section</a>(<a class="local col1 ref" href="#91nr" title='nr' data-ref="91nr">nr</a>, <a class="local col9 ref" href="#89policy_line" title='policy_line' data-ref="89policy_line">policy_line</a>, <a class="local col2 ref" href="#92id" title='id' data-ref="92id">id</a>, &amp;<a class="local col3 ref" href="#83labels" title='labels' data-ref="83labels">labels</a>);</td></tr>
+<tr><th id="466">466</th><td></td></tr>
+<tr><th id="467">467</th><td>			<b>if</b> (!<a class="local col4 ref" href="#94block" title='block' data-ref="94block">block</a>)</td></tr>
+<tr><th id="468">468</th><td>				<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="469">469</th><td></td></tr>
+<tr><th id="470">470</th><td>			<b>if</b> (<a class="local col5 ref" href="#85arg_blocks" title='arg_blocks' data-ref="85arg_blocks">arg_blocks</a>) {</td></tr>
+<tr><th id="471">471</th><td>				<a class="ref" href="#extend_filter_block_list" title='extend_filter_block_list' data-ref="extend_filter_block_list">extend_filter_block_list</a>(<a class="local col5 ref" href="#85arg_blocks" title='arg_blocks' data-ref="85arg_blocks">arg_blocks</a>, <a class="local col4 ref" href="#94block" title='block' data-ref="94block">block</a>);</td></tr>
+<tr><th id="472">472</th><td>			} <b>else</b> {</td></tr>
+<tr><th id="473">473</th><td>				<a class="local col5 ref" href="#85arg_blocks" title='arg_blocks' data-ref="85arg_blocks">arg_blocks</a> = <a class="local col4 ref" href="#94block" title='block' data-ref="94block">block</a>;</td></tr>
+<tr><th id="474">474</th><td>			}</td></tr>
+<tr><th id="475">475</th><td>		}</td></tr>
+<tr><th id="476">476</th><td>	}</td></tr>
+<tr><th id="477">477</th><td></td></tr>
+<tr><th id="478">478</th><td>	<i>/*</i></td></tr>
+<tr><th id="479">479</th><td><i>	 * If none of the syscalls match, either fall back to KILL,</i></td></tr>
+<tr><th id="480">480</th><td><i>	 * or return TRAP.</i></td></tr>
+<tr><th id="481">481</th><td><i>	 */</i></td></tr>
+<tr><th id="482">482</th><td>	<b>if</b> (!<a class="local col0 ref" href="#80log_failures" title='log_failures' data-ref="80log_failures">log_failures</a>)</td></tr>
+<tr><th id="483">483</th><td>		<a class="ref" href="#append_ret_kill" title='append_ret_kill' data-ref="append_ret_kill">append_ret_kill</a>(<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>);</td></tr>
+<tr><th id="484">484</th><td>	<b>else</b></td></tr>
+<tr><th id="485">485</th><td>		<a class="ref" href="#append_ret_trap" title='append_ret_trap' data-ref="append_ret_trap">append_ret_trap</a>(<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>);</td></tr>
+<tr><th id="486">486</th><td></td></tr>
+<tr><th id="487">487</th><td>	<i>/* Allocate the final buffer, now that we know its size. */</i></td></tr>
+<tr><th id="488">488</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="95final_filter_len" title='final_filter_len' data-type='size_t' data-ref="95final_filter_len">final_filter_len</dfn> = <a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::total_len" title='filter_block::total_len' data-ref="filter_block::total_len">total_len</a> +</td></tr>
+<tr><th id="489">489</th><td>		(<a class="local col5 ref" href="#85arg_blocks" title='arg_blocks' data-ref="85arg_blocks">arg_blocks</a>? <a class="local col5 ref" href="#85arg_blocks" title='arg_blocks' data-ref="85arg_blocks">arg_blocks</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::total_len" title='filter_block::total_len' data-ref="filter_block::total_len">total_len</a> : <var>0</var>);</td></tr>
+<tr><th id="490">490</th><td>	<b>if</b> (<a class="local col5 ref" href="#95final_filter_len" title='final_filter_len' data-ref="95final_filter_len">final_filter_len</a> &gt; <a class="macro" href="../../bionic/libc/kernel/uapi/linux/bpf_common.h.html#72" title="4096" data-ref="_M/BPF_MAXINSNS">BPF_MAXINSNS</a>)</td></tr>
+<tr><th id="491">491</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="492">492</th><td></td></tr>
+<tr><th id="493">493</th><td>	<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col6 decl" id="96final_filter" title='final_filter' data-type='struct sock_filter *' data-ref="96final_filter">final_filter</dfn> =</td></tr>
+<tr><th id="494">494</th><td>			<a class="ref" href="../../bionic/libc/include/malloc.h.html#calloc" title='calloc' data-ref="calloc">calloc</a>(<a class="local col5 ref" href="#95final_filter_len" title='final_filter_len' data-ref="95final_filter_len">final_filter_len</a>, <b>sizeof</b>(<b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a>));</td></tr>
+<tr><th id="495">495</th><td></td></tr>
+<tr><th id="496">496</th><td>	<b>if</b> (<a class="ref" href="#flatten_block_list" title='flatten_block_list' data-ref="flatten_block_list">flatten_block_list</a>(<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>, <a class="local col6 ref" href="#96final_filter" title='final_filter' data-ref="96final_filter">final_filter</a>, <var>0</var>, <a class="local col5 ref" href="#95final_filter_len" title='final_filter_len' data-ref="95final_filter_len">final_filter_len</a>) &lt; <var>0</var>)</td></tr>
+<tr><th id="497">497</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="498">498</th><td></td></tr>
+<tr><th id="499">499</th><td>	<b>if</b> (<a class="ref" href="#flatten_block_list" title='flatten_block_list' data-ref="flatten_block_list">flatten_block_list</a>(<a class="local col5 ref" href="#85arg_blocks" title='arg_blocks' data-ref="85arg_blocks">arg_blocks</a>, <a class="local col6 ref" href="#96final_filter" title='final_filter' data-ref="96final_filter">final_filter</a>,</td></tr>
+<tr><th id="500">500</th><td>			<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::total_len" title='filter_block::total_len' data-ref="filter_block::total_len">total_len</a>, <a class="local col5 ref" href="#95final_filter_len" title='final_filter_len' data-ref="95final_filter_len">final_filter_len</a>) &lt; <var>0</var>)</td></tr>
+<tr><th id="501">501</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="502">502</th><td></td></tr>
+<tr><th id="503">503</th><td>	<a class="ref" href="#free_block_list" title='free_block_list' data-ref="free_block_list">free_block_list</a>(<a class="local col4 ref" href="#84head" title='head' data-ref="84head">head</a>);</td></tr>
+<tr><th id="504">504</th><td>	<a class="ref" href="#free_block_list" title='free_block_list' data-ref="free_block_list">free_block_list</a>(<a class="local col5 ref" href="#85arg_blocks" title='arg_blocks' data-ref="85arg_blocks">arg_blocks</a>);</td></tr>
+<tr><th id="505">505</th><td></td></tr>
+<tr><th id="506">506</th><td>	<a class="ref" href="bpf.h.html#bpf_resolve_jumps" title='bpf_resolve_jumps' data-ref="bpf_resolve_jumps">bpf_resolve_jumps</a>(&amp;<a class="local col3 ref" href="#83labels" title='labels' data-ref="83labels">labels</a>, <a class="local col6 ref" href="#96final_filter" title='final_filter' data-ref="96final_filter">final_filter</a>, <a class="local col5 ref" href="#95final_filter_len" title='final_filter_len' data-ref="95final_filter_len">final_filter_len</a>);</td></tr>
+<tr><th id="507">507</th><td></td></tr>
+<tr><th id="508">508</th><td>	<a class="ref" href="bpf.h.html#free_label_strings" title='free_label_strings' data-ref="free_label_strings">free_label_strings</a>(&amp;<a class="local col3 ref" href="#83labels" title='labels' data-ref="83labels">labels</a>);</td></tr>
+<tr><th id="509">509</th><td></td></tr>
+<tr><th id="510">510</th><td>	<a class="local col9 ref" href="#79prog" title='prog' data-ref="79prog">prog</a>-&gt;<a class="ref" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_fprog::filter" title='sock_fprog::filter' data-ref="sock_fprog::filter">filter</a> = <a class="local col6 ref" href="#96final_filter" title='final_filter' data-ref="96final_filter">final_filter</a>;</td></tr>
+<tr><th id="511">511</th><td>	<a class="local col9 ref" href="#79prog" title='prog' data-ref="79prog">prog</a>-&gt;<a class="ref" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_fprog::len" title='sock_fprog::len' data-ref="sock_fprog::len">len</a> = <a class="local col5 ref" href="#95final_filter_len" title='final_filter_len' data-ref="95final_filter_len">final_filter_len</a>;</td></tr>
+<tr><th id="512">512</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="513">513</th><td>}</td></tr>
+<tr><th id="514">514</th><td></td></tr>
+<tr><th id="515">515</th><td><em>int</em> <dfn class="decl def" id="flatten_block_list" title='flatten_block_list' data-ref="flatten_block_list">flatten_block_list</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col7 decl" id="97head" title='head' data-type='struct filter_block *' data-ref="97head">head</dfn>, <b>struct</b> <a class="type" href="../../bionic/libc/kernel/uapi/linux/filter.h.html#sock_filter" title='sock_filter' data-ref="sock_filter">sock_filter</a> *<dfn class="local col8 decl" id="98filter" title='filter' data-type='struct sock_filter *' data-ref="98filter">filter</dfn>,</td></tr>
+<tr><th id="516">516</th><td>		<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="99index" title='index' data-type='size_t' data-ref="99index">index</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="100cap" title='cap' data-type='size_t' data-ref="100cap">cap</dfn>)</td></tr>
+<tr><th id="517">517</th><td>{</td></tr>
+<tr><th id="518">518</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="101_index" title='_index' data-type='size_t' data-ref="101_index">_index</dfn> = <a class="local col9 ref" href="#99index" title='index' data-ref="99index">index</a>;</td></tr>
+<tr><th id="519">519</th><td></td></tr>
+<tr><th id="520">520</th><td>	<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col2 decl" id="102curr" title='curr' data-type='struct filter_block *' data-ref="102curr">curr</dfn>;</td></tr>
+<tr><th id="521">521</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="103i" title='i' data-type='size_t' data-ref="103i">i</dfn>;</td></tr>
+<tr><th id="522">522</th><td></td></tr>
+<tr><th id="523">523</th><td>	<b>for</b> (<a class="local col2 ref" href="#102curr" title='curr' data-ref="102curr">curr</a> = <a class="local col7 ref" href="#97head" title='head' data-ref="97head">head</a>; <a class="local col2 ref" href="#102curr" title='curr' data-ref="102curr">curr</a>; <a class="local col2 ref" href="#102curr" title='curr' data-ref="102curr">curr</a> = <a class="local col2 ref" href="#102curr" title='curr' data-ref="102curr">curr</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::next" title='filter_block::next' data-ref="filter_block::next">next</a>) {</td></tr>
+<tr><th id="524">524</th><td>		<b>for</b> (<a class="local col3 ref" href="#103i" title='i' data-ref="103i">i</a> = <var>0</var>; <a class="local col3 ref" href="#103i" title='i' data-ref="103i">i</a> &lt; <a class="local col2 ref" href="#102curr" title='curr' data-ref="102curr">curr</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::len" title='filter_block::len' data-ref="filter_block::len">len</a>; <a class="local col3 ref" href="#103i" title='i' data-ref="103i">i</a>++) {</td></tr>
+<tr><th id="525">525</th><td>			<b>if</b> (<a class="local col1 ref" href="#101_index" title='_index' data-ref="101_index">_index</a> &gt;= <a class="local col0 ref" href="#100cap" title='cap' data-ref="100cap">cap</a>)</td></tr>
+<tr><th id="526">526</th><td>				<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="527">527</th><td>			<a class="local col8 ref" href="#98filter" title='filter' data-ref="98filter">filter</a>[<a class="local col1 ref" href="#101_index" title='_index' data-ref="101_index">_index</a>++] = <a class="local col2 ref" href="#102curr" title='curr' data-ref="102curr">curr</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::instrs" title='filter_block::instrs' data-ref="filter_block::instrs">instrs</a>[<a class="local col3 ref" href="#103i" title='i' data-ref="103i">i</a>];</td></tr>
+<tr><th id="528">528</th><td>		}</td></tr>
+<tr><th id="529">529</th><td>	}</td></tr>
+<tr><th id="530">530</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="531">531</th><td>}</td></tr>
+<tr><th id="532">532</th><td></td></tr>
+<tr><th id="533">533</th><td><em>void</em> <dfn class="decl def" id="free_block_list" title='free_block_list' data-ref="free_block_list">free_block_list</dfn>(<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col4 decl" id="104head" title='head' data-type='struct filter_block *' data-ref="104head">head</dfn>)</td></tr>
+<tr><th id="534">534</th><td>{</td></tr>
+<tr><th id="535">535</th><td>	<b>struct</b> <a class="type" href="syscall_filter.h.html#filter_block" title='filter_block' data-ref="filter_block">filter_block</a> *<dfn class="local col5 decl" id="105current" title='current' data-type='struct filter_block *' data-ref="105current">current</dfn>, *<dfn class="local col6 decl" id="106prev" title='prev' data-type='struct filter_block *' data-ref="106prev">prev</dfn>;</td></tr>
+<tr><th id="536">536</th><td></td></tr>
+<tr><th id="537">537</th><td>	<a class="local col5 ref" href="#105current" title='current' data-ref="105current">current</a> = <a class="local col4 ref" href="#104head" title='head' data-ref="104head">head</a>;</td></tr>
+<tr><th id="538">538</th><td>	<b>while</b> (<a class="local col5 ref" href="#105current" title='current' data-ref="105current">current</a>) {</td></tr>
+<tr><th id="539">539</th><td>		<a class="ref" href="../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col5 ref" href="#105current" title='current' data-ref="105current">current</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::instrs" title='filter_block::instrs' data-ref="filter_block::instrs">instrs</a>);</td></tr>
+<tr><th id="540">540</th><td>		<a class="local col6 ref" href="#106prev" title='prev' data-ref="106prev">prev</a> = <a class="local col5 ref" href="#105current" title='current' data-ref="105current">current</a>;</td></tr>
+<tr><th id="541">541</th><td>		<a class="local col5 ref" href="#105current" title='current' data-ref="105current">current</a> = <a class="local col5 ref" href="#105current" title='current' data-ref="105current">current</a>-&gt;<a class="ref" href="syscall_filter.h.html#filter_block::next" title='filter_block::next' data-ref="filter_block::next">next</a>;</td></tr>
+<tr><th id="542">542</th><td>		<a class="ref" href="../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col6 ref" href="#106prev" title='prev' data-ref="106prev">prev</a>);</td></tr>
+<tr><th id="543">543</th><td>	}</td></tr>
+<tr><th id="544">544</th><td>}</td></tr>
+<tr><th id="545">545</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

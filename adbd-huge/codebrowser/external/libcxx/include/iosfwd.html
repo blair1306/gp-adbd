@@ -1,0 +1,217 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>iosfwd source code [codebrowser/external/libcxx/include/iosfwd] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libcxx/include/iosfwd'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libcxx</a>/<a href='./'>include</a>/<a href='iosfwd.html'>iosfwd</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>// -*- C++ -*-</i></td></tr>
+<tr><th id="2">2</th><td><i>//===--------------------------- iosfwd -----------------------------------===//</i></td></tr>
+<tr><th id="3">3</th><td><i>//</i></td></tr>
+<tr><th id="4">4</th><td><i>//                     The LLVM Compiler Infrastructure</i></td></tr>
+<tr><th id="5">5</th><td><i>//</i></td></tr>
+<tr><th id="6">6</th><td><i>// This file is dual licensed under the MIT and the University of Illinois Open</i></td></tr>
+<tr><th id="7">7</th><td><i>// Source Licenses. See LICENSE.TXT for details.</i></td></tr>
+<tr><th id="8">8</th><td><i>//</i></td></tr>
+<tr><th id="9">9</th><td><i>//===----------------------------------------------------------------------===//</i></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><u>#<span data-ppcond="11">ifndef</span> <span class="macro" data-ref="_M/_LIBCPP_IOSFWD">_LIBCPP_IOSFWD</span></u></td></tr>
+<tr><th id="12">12</th><td><u>#define <dfn class="macro" id="_M/_LIBCPP_IOSFWD" data-ref="_M/_LIBCPP_IOSFWD">_LIBCPP_IOSFWD</dfn></u></td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td><i>/*</i></td></tr>
+<tr><th id="15">15</th><td><i>    iosfwd synopsis</i></td></tr>
+<tr><th id="16">16</th><td><i></i></td></tr>
+<tr><th id="17">17</th><td><i>namespace std</i></td></tr>
+<tr><th id="18">18</th><td><i>{</i></td></tr>
+<tr><th id="19">19</th><td><i></i></td></tr>
+<tr><th id="20">20</th><td><i>template&lt;class charT&gt; struct char_traits;</i></td></tr>
+<tr><th id="21">21</th><td><i>template&lt;class T&gt;     class allocator;</i></td></tr>
+<tr><th id="22">22</th><td><i></i></td></tr>
+<tr><th id="23">23</th><td><i>class ios_base;</i></td></tr>
+<tr><th id="24">24</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class basic_ios;</i></td></tr>
+<tr><th id="25">25</th><td><i></i></td></tr>
+<tr><th id="26">26</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class basic_streambuf;</i></td></tr>
+<tr><th id="27">27</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class basic_istream;</i></td></tr>
+<tr><th id="28">28</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class basic_ostream;</i></td></tr>
+<tr><th id="29">29</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class basic_iostream;</i></td></tr>
+<tr><th id="30">30</th><td><i></i></td></tr>
+<tr><th id="31">31</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt;, class Allocator = allocator&lt;charT&gt; &gt;</i></td></tr>
+<tr><th id="32">32</th><td><i>    class basic_stringbuf;</i></td></tr>
+<tr><th id="33">33</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt;, class Allocator = allocator&lt;charT&gt; &gt;</i></td></tr>
+<tr><th id="34">34</th><td><i>    class basic_istringstream;</i></td></tr>
+<tr><th id="35">35</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt;, class Allocator = allocator&lt;charT&gt; &gt;</i></td></tr>
+<tr><th id="36">36</th><td><i>    class basic_ostringstream;</i></td></tr>
+<tr><th id="37">37</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt;, class Allocator = allocator&lt;charT&gt; &gt;</i></td></tr>
+<tr><th id="38">38</th><td><i>    class basic_stringstream;</i></td></tr>
+<tr><th id="39">39</th><td><i></i></td></tr>
+<tr><th id="40">40</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class basic_filebuf;</i></td></tr>
+<tr><th id="41">41</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class basic_ifstream;</i></td></tr>
+<tr><th id="42">42</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class basic_ofstream;</i></td></tr>
+<tr><th id="43">43</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class basic_fstream;</i></td></tr>
+<tr><th id="44">44</th><td><i></i></td></tr>
+<tr><th id="45">45</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class istreambuf_iterator;</i></td></tr>
+<tr><th id="46">46</th><td><i>template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt; class ostreambuf_iterator;</i></td></tr>
+<tr><th id="47">47</th><td><i></i></td></tr>
+<tr><th id="48">48</th><td><i>typedef basic_ios&lt;char&gt;              ios;</i></td></tr>
+<tr><th id="49">49</th><td><i>typedef basic_ios&lt;wchar_t&gt;           wios;</i></td></tr>
+<tr><th id="50">50</th><td><i></i></td></tr>
+<tr><th id="51">51</th><td><i>typedef basic_streambuf&lt;char&gt;        streambuf;</i></td></tr>
+<tr><th id="52">52</th><td><i>typedef basic_istream&lt;char&gt;          istream;</i></td></tr>
+<tr><th id="53">53</th><td><i>typedef basic_ostream&lt;char&gt;          ostream;</i></td></tr>
+<tr><th id="54">54</th><td><i>typedef basic_iostream&lt;char&gt;         iostream;</i></td></tr>
+<tr><th id="55">55</th><td><i></i></td></tr>
+<tr><th id="56">56</th><td><i>typedef basic_stringbuf&lt;char&gt;        stringbuf;</i></td></tr>
+<tr><th id="57">57</th><td><i>typedef basic_istringstream&lt;char&gt;    istringstream;</i></td></tr>
+<tr><th id="58">58</th><td><i>typedef basic_ostringstream&lt;char&gt;    ostringstream;</i></td></tr>
+<tr><th id="59">59</th><td><i>typedef basic_stringstream&lt;char&gt;     stringstream;</i></td></tr>
+<tr><th id="60">60</th><td><i></i></td></tr>
+<tr><th id="61">61</th><td><i>typedef basic_filebuf&lt;char&gt;          filebuf;</i></td></tr>
+<tr><th id="62">62</th><td><i>typedef basic_ifstream&lt;char&gt;         ifstream;</i></td></tr>
+<tr><th id="63">63</th><td><i>typedef basic_ofstream&lt;char&gt;         ofstream;</i></td></tr>
+<tr><th id="64">64</th><td><i>typedef basic_fstream&lt;char&gt;          fstream;</i></td></tr>
+<tr><th id="65">65</th><td><i></i></td></tr>
+<tr><th id="66">66</th><td><i>typedef basic_streambuf&lt;wchar_t&gt;     wstreambuf;</i></td></tr>
+<tr><th id="67">67</th><td><i>typedef basic_istream&lt;wchar_t&gt;       wistream;</i></td></tr>
+<tr><th id="68">68</th><td><i>typedef basic_ostream&lt;wchar_t&gt;       wostream;</i></td></tr>
+<tr><th id="69">69</th><td><i>typedef basic_iostream&lt;wchar_t&gt;      wiostream;</i></td></tr>
+<tr><th id="70">70</th><td><i></i></td></tr>
+<tr><th id="71">71</th><td><i>typedef basic_stringbuf&lt;wchar_t&gt;     wstringbuf;</i></td></tr>
+<tr><th id="72">72</th><td><i>typedef basic_istringstream&lt;wchar_t&gt; wistringstream;</i></td></tr>
+<tr><th id="73">73</th><td><i>typedef basic_ostringstream&lt;wchar_t&gt; wostringstream;</i></td></tr>
+<tr><th id="74">74</th><td><i>typedef basic_stringstream&lt;wchar_t&gt;  wstringstream;</i></td></tr>
+<tr><th id="75">75</th><td><i></i></td></tr>
+<tr><th id="76">76</th><td><i>typedef basic_filebuf&lt;wchar_t&gt;       wfilebuf;</i></td></tr>
+<tr><th id="77">77</th><td><i>typedef basic_ifstream&lt;wchar_t&gt;      wifstream;</i></td></tr>
+<tr><th id="78">78</th><td><i>typedef basic_ofstream&lt;wchar_t&gt;      wofstream;</i></td></tr>
+<tr><th id="79">79</th><td><i>typedef basic_fstream&lt;wchar_t&gt;       wfstream;</i></td></tr>
+<tr><th id="80">80</th><td><i></i></td></tr>
+<tr><th id="81">81</th><td><i>template &lt;class state&gt; class fpos;</i></td></tr>
+<tr><th id="82">82</th><td><i>typedef fpos&lt;char_traits&lt;char&gt;::state_type&gt;    streampos;</i></td></tr>
+<tr><th id="83">83</th><td><i>typedef fpos&lt;char_traits&lt;wchar_t&gt;::state_type&gt; wstreampos;</i></td></tr>
+<tr><th id="84">84</th><td><i></i></td></tr>
+<tr><th id="85">85</th><td><i>}  // std</i></td></tr>
+<tr><th id="86">86</th><td><i></i></td></tr>
+<tr><th id="87">87</th><td><i>*/</i></td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><u>#include <a href="__config.html">&lt;__config&gt;</a></u></td></tr>
+<tr><th id="90">90</th><td><u>#include <a href="../../../bionic/libc/include/wchar.h.html">&lt;wchar.h&gt;</a>  // for mbstate_t</u></td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td><u>#<span data-ppcond="92">if</span> !defined(<span class="macro" data-ref="_M/_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER">_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER</span>)</u></td></tr>
+<tr><th id="93">93</th><td><u>#pragma GCC system_header</u></td></tr>
+<tr><th id="94">94</th><td><u>#<span data-ppcond="92">endif</span></u></td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><a class="macro" href="__config.html#386" title="namespace std {inline namespace __1 {" data-ref="_M/_LIBCPP_BEGIN_NAMESPACE_STD">_LIBCPP_BEGIN_NAMESPACE_STD</a></td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><b>class</b> <a class="macro" href="__config.html#202" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS">_LIBCPP_TYPE_VIS</a> <a class="type" href="ios.html#std::__1::ios_base" title='std::__1::ios_base' data-ref="std::__1::ios_base" id="std::__1::ios_base">ios_base</a>;</td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><b>template</b>&lt;<b>class</b> _CharT&gt;  <b>struct</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="string.html#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits" id="std::__1::char_traits">char_traits</a>;</td></tr>
+<tr><th id="101">101</th><td><b>template</b>&lt;<b>class</b> _Tp&gt;     <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="memory.html#std::__1::allocator" title='std::__1::allocator' data-ref="std::__1::allocator" id="std::__1::allocator">allocator</a>;</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="104">104</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="ios.html#std::__1::basic_ios" title='std::__1::basic_ios' data-ref="std::__1::basic_ios" id="std::__1::basic_ios">basic_ios</a>;</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="107">107</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="streambuf.html#std::__1::basic_streambuf" title='std::__1::basic_streambuf' data-ref="std::__1::basic_streambuf" id="std::__1::basic_streambuf">basic_streambuf</a>;</td></tr>
+<tr><th id="108">108</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="109">109</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="istream.html#std::__1::basic_istream" title='std::__1::basic_istream' data-ref="std::__1::basic_istream" id="std::__1::basic_istream">basic_istream</a>;</td></tr>
+<tr><th id="110">110</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="111">111</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="ostream.html#std::__1::basic_ostream" title='std::__1::basic_ostream' data-ref="std::__1::basic_ostream" id="std::__1::basic_ostream">basic_ostream</a>;</td></tr>
+<tr><th id="112">112</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="113">113</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="istream.html#std::__1::basic_iostream" title='std::__1::basic_iostream' data-ref="std::__1::basic_iostream" id="std::__1::basic_iostream">basic_iostream</a>;</td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt;,</td></tr>
+<tr><th id="116">116</th><td>          <b>class</b> _Allocator = <a class="type" href="#std::__1::allocator" title='std::__1::allocator' data-ref="std::__1::allocator">allocator</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="117">117</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <dfn class="type" id="std::__1::basic_stringbuf" title='std::__1::basic_stringbuf' data-ref="std::__1::basic_stringbuf">basic_stringbuf</dfn>;</td></tr>
+<tr><th id="118">118</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt;,</td></tr>
+<tr><th id="119">119</th><td>          <b>class</b> _Allocator = <a class="type" href="#std::__1::allocator" title='std::__1::allocator' data-ref="std::__1::allocator">allocator</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="120">120</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <dfn class="type" id="std::__1::basic_istringstream" title='std::__1::basic_istringstream' data-ref="std::__1::basic_istringstream">basic_istringstream</dfn>;</td></tr>
+<tr><th id="121">121</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt;,</td></tr>
+<tr><th id="122">122</th><td>          <b>class</b> _Allocator = <a class="type" href="#std::__1::allocator" title='std::__1::allocator' data-ref="std::__1::allocator">allocator</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="123">123</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <dfn class="type" id="std::__1::basic_ostringstream" title='std::__1::basic_ostringstream' data-ref="std::__1::basic_ostringstream">basic_ostringstream</dfn>;</td></tr>
+<tr><th id="124">124</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt;,</td></tr>
+<tr><th id="125">125</th><td>          <b>class</b> _Allocator = <a class="type" href="#std::__1::allocator" title='std::__1::allocator' data-ref="std::__1::allocator">allocator</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="126">126</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <dfn class="type" id="std::__1::basic_stringstream" title='std::__1::basic_stringstream' data-ref="std::__1::basic_stringstream">basic_stringstream</dfn>;</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="129">129</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <dfn class="type" id="std::__1::basic_filebuf" title='std::__1::basic_filebuf' data-ref="std::__1::basic_filebuf">basic_filebuf</dfn>;</td></tr>
+<tr><th id="130">130</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="131">131</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <dfn class="type" id="std::__1::basic_ifstream" title='std::__1::basic_ifstream' data-ref="std::__1::basic_ifstream">basic_ifstream</dfn>;</td></tr>
+<tr><th id="132">132</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="133">133</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <dfn class="type" id="std::__1::basic_ofstream" title='std::__1::basic_ofstream' data-ref="std::__1::basic_ofstream">basic_ofstream</dfn>;</td></tr>
+<tr><th id="134">134</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="135">135</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <dfn class="type" id="std::__1::basic_fstream" title='std::__1::basic_fstream' data-ref="std::__1::basic_fstream">basic_fstream</dfn>;</td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="138">138</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="iterator.html#std::__1::istreambuf_iterator" title='std::__1::istreambuf_iterator' data-ref="std::__1::istreambuf_iterator" id="std::__1::istreambuf_iterator">istreambuf_iterator</a>;</td></tr>
+<tr><th id="139">139</th><td><b>template</b> &lt;<b>class</b> _CharT, <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="140">140</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="iterator.html#std::__1::ostreambuf_iterator" title='std::__1::ostreambuf_iterator' data-ref="std::__1::ostreambuf_iterator" id="std::__1::ostreambuf_iterator">ostreambuf_iterator</a>;</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ios" title='std::__1::basic_ios' data-ref="std::__1::basic_ios">basic_ios</a>&lt;<em>char</em>&gt;              <dfn class="typedef" id="std::__1::ios" title='std::__1::ios' data-type='basic_ios&lt;char&gt;' data-ref="std::__1::ios">ios</dfn>;</td></tr>
+<tr><th id="143">143</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ios" title='std::__1::basic_ios' data-ref="std::__1::basic_ios">basic_ios</a>&lt;<em>wchar_t</em>&gt;           <dfn class="typedef" id="std::__1::wios" title='std::__1::wios' data-type='basic_ios&lt;wchar_t&gt;' data-ref="std::__1::wios">wios</dfn>;</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_streambuf" title='std::__1::basic_streambuf' data-ref="std::__1::basic_streambuf">basic_streambuf</a>&lt;<em>char</em>&gt;        <dfn class="typedef" id="std::__1::streambuf" title='std::__1::streambuf' data-type='basic_streambuf&lt;char&gt;' data-ref="std::__1::streambuf">streambuf</dfn>;</td></tr>
+<tr><th id="146">146</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_istream" title='std::__1::basic_istream' data-ref="std::__1::basic_istream">basic_istream</a>&lt;<em>char</em>&gt;          <dfn class="typedef" id="std::__1::istream" title='std::__1::istream' data-type='basic_istream&lt;char&gt;' data-ref="std::__1::istream">istream</dfn>;</td></tr>
+<tr><th id="147">147</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ostream" title='std::__1::basic_ostream' data-ref="std::__1::basic_ostream">basic_ostream</a>&lt;<em>char</em>&gt;          <dfn class="typedef" id="std::__1::ostream" title='std::__1::ostream' data-type='basic_ostream&lt;char&gt;' data-ref="std::__1::ostream">ostream</dfn>;</td></tr>
+<tr><th id="148">148</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_iostream" title='std::__1::basic_iostream' data-ref="std::__1::basic_iostream">basic_iostream</a>&lt;<em>char</em>&gt;         <dfn class="typedef" id="std::__1::iostream" title='std::__1::iostream' data-type='basic_iostream&lt;char&gt;' data-ref="std::__1::iostream">iostream</dfn>;</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_stringbuf" title='std::__1::basic_stringbuf' data-ref="std::__1::basic_stringbuf">basic_stringbuf</a>&lt;<em>char</em>&gt;        <dfn class="typedef" id="std::__1::stringbuf" title='std::__1::stringbuf' data-type='basic_stringbuf&lt;char&gt;' data-ref="std::__1::stringbuf">stringbuf</dfn>;</td></tr>
+<tr><th id="151">151</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_istringstream" title='std::__1::basic_istringstream' data-ref="std::__1::basic_istringstream">basic_istringstream</a>&lt;<em>char</em>&gt;    <dfn class="typedef" id="std::__1::istringstream" title='std::__1::istringstream' data-type='basic_istringstream&lt;char&gt;' data-ref="std::__1::istringstream">istringstream</dfn>;</td></tr>
+<tr><th id="152">152</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ostringstream" title='std::__1::basic_ostringstream' data-ref="std::__1::basic_ostringstream">basic_ostringstream</a>&lt;<em>char</em>&gt;    <dfn class="typedef" id="std::__1::ostringstream" title='std::__1::ostringstream' data-type='basic_ostringstream&lt;char&gt;' data-ref="std::__1::ostringstream">ostringstream</dfn>;</td></tr>
+<tr><th id="153">153</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_stringstream" title='std::__1::basic_stringstream' data-ref="std::__1::basic_stringstream">basic_stringstream</a>&lt;<em>char</em>&gt;     <dfn class="typedef" id="std::__1::stringstream" title='std::__1::stringstream' data-type='basic_stringstream&lt;char&gt;' data-ref="std::__1::stringstream">stringstream</dfn>;</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_filebuf" title='std::__1::basic_filebuf' data-ref="std::__1::basic_filebuf">basic_filebuf</a>&lt;<em>char</em>&gt;          <dfn class="typedef" id="std::__1::filebuf" title='std::__1::filebuf' data-type='basic_filebuf&lt;char&gt;' data-ref="std::__1::filebuf">filebuf</dfn>;</td></tr>
+<tr><th id="156">156</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ifstream" title='std::__1::basic_ifstream' data-ref="std::__1::basic_ifstream">basic_ifstream</a>&lt;<em>char</em>&gt;         <dfn class="typedef" id="std::__1::ifstream" title='std::__1::ifstream' data-type='basic_ifstream&lt;char&gt;' data-ref="std::__1::ifstream">ifstream</dfn>;</td></tr>
+<tr><th id="157">157</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ofstream" title='std::__1::basic_ofstream' data-ref="std::__1::basic_ofstream">basic_ofstream</a>&lt;<em>char</em>&gt;         <dfn class="typedef" id="std::__1::ofstream" title='std::__1::ofstream' data-type='basic_ofstream&lt;char&gt;' data-ref="std::__1::ofstream">ofstream</dfn>;</td></tr>
+<tr><th id="158">158</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_fstream" title='std::__1::basic_fstream' data-ref="std::__1::basic_fstream">basic_fstream</a>&lt;<em>char</em>&gt;          <dfn class="typedef" id="std::__1::fstream" title='std::__1::fstream' data-type='basic_fstream&lt;char&gt;' data-ref="std::__1::fstream">fstream</dfn>;</td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_streambuf" title='std::__1::basic_streambuf' data-ref="std::__1::basic_streambuf">basic_streambuf</a>&lt;<em>wchar_t</em>&gt;     <dfn class="typedef" id="std::__1::wstreambuf" title='std::__1::wstreambuf' data-type='basic_streambuf&lt;wchar_t&gt;' data-ref="std::__1::wstreambuf">wstreambuf</dfn>;</td></tr>
+<tr><th id="161">161</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_istream" title='std::__1::basic_istream' data-ref="std::__1::basic_istream">basic_istream</a>&lt;<em>wchar_t</em>&gt;       <dfn class="typedef" id="std::__1::wistream" title='std::__1::wistream' data-type='basic_istream&lt;wchar_t&gt;' data-ref="std::__1::wistream">wistream</dfn>;</td></tr>
+<tr><th id="162">162</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ostream" title='std::__1::basic_ostream' data-ref="std::__1::basic_ostream">basic_ostream</a>&lt;<em>wchar_t</em>&gt;       <dfn class="typedef" id="std::__1::wostream" title='std::__1::wostream' data-type='basic_ostream&lt;wchar_t&gt;' data-ref="std::__1::wostream">wostream</dfn>;</td></tr>
+<tr><th id="163">163</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_iostream" title='std::__1::basic_iostream' data-ref="std::__1::basic_iostream">basic_iostream</a>&lt;<em>wchar_t</em>&gt;      <dfn class="typedef" id="std::__1::wiostream" title='std::__1::wiostream' data-type='basic_iostream&lt;wchar_t&gt;' data-ref="std::__1::wiostream">wiostream</dfn>;</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_stringbuf" title='std::__1::basic_stringbuf' data-ref="std::__1::basic_stringbuf">basic_stringbuf</a>&lt;<em>wchar_t</em>&gt;     <dfn class="typedef" id="std::__1::wstringbuf" title='std::__1::wstringbuf' data-type='basic_stringbuf&lt;wchar_t&gt;' data-ref="std::__1::wstringbuf">wstringbuf</dfn>;</td></tr>
+<tr><th id="166">166</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_istringstream" title='std::__1::basic_istringstream' data-ref="std::__1::basic_istringstream">basic_istringstream</a>&lt;<em>wchar_t</em>&gt; <dfn class="typedef" id="std::__1::wistringstream" title='std::__1::wistringstream' data-type='basic_istringstream&lt;wchar_t&gt;' data-ref="std::__1::wistringstream">wistringstream</dfn>;</td></tr>
+<tr><th id="167">167</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ostringstream" title='std::__1::basic_ostringstream' data-ref="std::__1::basic_ostringstream">basic_ostringstream</a>&lt;<em>wchar_t</em>&gt; <dfn class="typedef" id="std::__1::wostringstream" title='std::__1::wostringstream' data-type='basic_ostringstream&lt;wchar_t&gt;' data-ref="std::__1::wostringstream">wostringstream</dfn>;</td></tr>
+<tr><th id="168">168</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_stringstream" title='std::__1::basic_stringstream' data-ref="std::__1::basic_stringstream">basic_stringstream</a>&lt;<em>wchar_t</em>&gt;  <dfn class="typedef" id="std::__1::wstringstream" title='std::__1::wstringstream' data-type='basic_stringstream&lt;wchar_t&gt;' data-ref="std::__1::wstringstream">wstringstream</dfn>;</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_filebuf" title='std::__1::basic_filebuf' data-ref="std::__1::basic_filebuf">basic_filebuf</a>&lt;<em>wchar_t</em>&gt;       <dfn class="typedef" id="std::__1::wfilebuf" title='std::__1::wfilebuf' data-type='basic_filebuf&lt;wchar_t&gt;' data-ref="std::__1::wfilebuf">wfilebuf</dfn>;</td></tr>
+<tr><th id="171">171</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ifstream" title='std::__1::basic_ifstream' data-ref="std::__1::basic_ifstream">basic_ifstream</a>&lt;<em>wchar_t</em>&gt;      <dfn class="typedef" id="std::__1::wifstream" title='std::__1::wifstream' data-type='basic_ifstream&lt;wchar_t&gt;' data-ref="std::__1::wifstream">wifstream</dfn>;</td></tr>
+<tr><th id="172">172</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_ofstream" title='std::__1::basic_ofstream' data-ref="std::__1::basic_ofstream">basic_ofstream</a>&lt;<em>wchar_t</em>&gt;      <dfn class="typedef" id="std::__1::wofstream" title='std::__1::wofstream' data-type='basic_ofstream&lt;wchar_t&gt;' data-ref="std::__1::wofstream">wofstream</dfn>;</td></tr>
+<tr><th id="173">173</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_fstream" title='std::__1::basic_fstream' data-ref="std::__1::basic_fstream">basic_fstream</a>&lt;<em>wchar_t</em>&gt;       <dfn class="typedef" id="std::__1::wfstream" title='std::__1::wfstream' data-type='basic_fstream&lt;wchar_t&gt;' data-ref="std::__1::wfstream">wfstream</dfn>;</td></tr>
+<tr><th id="174">174</th><td></td></tr>
+<tr><th id="175">175</th><td><b>template</b> &lt;<b>class</b> _State&gt;             <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="string.html#std::__1::fpos" title='std::__1::fpos' data-ref="std::__1::fpos" id="std::__1::fpos">fpos</a>;</td></tr>
+<tr><th id="176">176</th><td><b>typedef</b> <a class="type" href="#std::__1::fpos" title='std::__1::fpos' data-ref="std::__1::fpos">fpos</a>&lt;<a class="typedef" href="../../../bionic/libc/include/wchar.h.html#mbstate_t" title='mbstate_t' data-type='struct mbstate_t' data-ref="mbstate_t">mbstate_t</a>&gt;    <dfn class="typedef" id="std::__1::streampos" title='std::__1::streampos' data-type='fpos&lt;mbstate_t&gt;' data-ref="std::__1::streampos">streampos</dfn>;</td></tr>
+<tr><th id="177">177</th><td><b>typedef</b> <a class="type" href="#std::__1::fpos" title='std::__1::fpos' data-ref="std::__1::fpos">fpos</a>&lt;<a class="typedef" href="../../../bionic/libc/include/wchar.h.html#mbstate_t" title='mbstate_t' data-type='struct mbstate_t' data-ref="mbstate_t">mbstate_t</a>&gt;    <dfn class="typedef" id="std::__1::wstreampos" title='std::__1::wstreampos' data-type='fpos&lt;mbstate_t&gt;' data-ref="std::__1::wstreampos">wstreampos</dfn>;</td></tr>
+<tr><th id="178">178</th><td><u>#<span data-ppcond="178">ifndef</span> <span class="macro" data-ref="_M/_LIBCPP_HAS_NO_UNICODE_CHARS">_LIBCPP_HAS_NO_UNICODE_CHARS</span></u></td></tr>
+<tr><th id="179">179</th><td><b>typedef</b> <a class="type" href="#std::__1::fpos" title='std::__1::fpos' data-ref="std::__1::fpos">fpos</a>&lt;<a class="typedef" href="../../../bionic/libc/include/wchar.h.html#mbstate_t" title='mbstate_t' data-type='struct mbstate_t' data-ref="mbstate_t">mbstate_t</a>&gt;    <dfn class="typedef" id="std::__1::u16streampos" title='std::__1::u16streampos' data-type='fpos&lt;mbstate_t&gt;' data-ref="std::__1::u16streampos">u16streampos</dfn>;</td></tr>
+<tr><th id="180">180</th><td><b>typedef</b> <a class="type" href="#std::__1::fpos" title='std::__1::fpos' data-ref="std::__1::fpos">fpos</a>&lt;<a class="typedef" href="../../../bionic/libc/include/wchar.h.html#mbstate_t" title='mbstate_t' data-type='struct mbstate_t' data-ref="mbstate_t">mbstate_t</a>&gt;    <dfn class="typedef" id="std::__1::u32streampos" title='std::__1::u32streampos' data-type='fpos&lt;mbstate_t&gt;' data-ref="std::__1::u32streampos">u32streampos</dfn>;</td></tr>
+<tr><th id="181">181</th><td><u>#<span data-ppcond="178">endif</span>  // _LIBCPP_HAS_NO_UNICODE_CHARS</u></td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td><u>#<span data-ppcond="183">if</span> defined(<span class="macro" data-ref="_M/_NEWLIB_VERSION">_NEWLIB_VERSION</span>)</u></td></tr>
+<tr><th id="184">184</th><td><i>// On newlib, off_t is 'long int'</i></td></tr>
+<tr><th id="185">185</th><td><b>typedef</b> <em>long</em> <em>int</em> streamoff;         <i>// for char_traits in &lt;string&gt;</i></td></tr>
+<tr><th id="186">186</th><td><u>#<span data-ppcond="183">else</span></u></td></tr>
+<tr><th id="187">187</th><td><b>typedef</b> <em>long</em> <em>long</em> <dfn class="typedef" id="std::__1::streamoff" title='std::__1::streamoff' data-type='long long' data-ref="std::__1::streamoff">streamoff</dfn>;        <i>// for char_traits in &lt;string&gt;</i></td></tr>
+<tr><th id="188">188</th><td><u>#<span data-ppcond="183">endif</span></u></td></tr>
+<tr><th id="189">189</th><td></td></tr>
+<tr><th id="190">190</th><td><b>template</b> &lt;<b>class</b> _CharT,             <i>// for &lt;stdexcept&gt;</i></td></tr>
+<tr><th id="191">191</th><td>          <b>class</b> _Traits = <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;_CharT&gt;,</td></tr>
+<tr><th id="192">192</th><td>          <b>class</b> _Allocator = <a class="type" href="#std::__1::allocator" title='std::__1::allocator' data-ref="std::__1::allocator">allocator</a>&lt;_CharT&gt; &gt;</td></tr>
+<tr><th id="193">193</th><td>    <b>class</b> <a class="macro" href="__config.html#209" title="__attribute__ ((__type_visibility__(&quot;default&quot;)))" data-ref="_M/_LIBCPP_TYPE_VIS_ONLY">_LIBCPP_TYPE_VIS_ONLY</a> <a class="type" href="string.html#std::__1::basic_string" title='std::__1::basic_string' data-ref="std::__1::basic_string" id="std::__1::basic_string">basic_string</a>;</td></tr>
+<tr><th id="194">194</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_string" title='std::__1::basic_string' data-ref="std::__1::basic_string">basic_string</a>&lt;<em>char</em>, <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;<em>char</em>&gt;, <a class="type" href="#std::__1::allocator" title='std::__1::allocator' data-ref="std::__1::allocator">allocator</a>&lt;<em>char</em>&gt; &gt; <dfn class="typedef" id="std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</dfn>;</td></tr>
+<tr><th id="195">195</th><td><b>typedef</b> <a class="type" href="#std::__1::basic_string" title='std::__1::basic_string' data-ref="std::__1::basic_string">basic_string</a>&lt;<em>wchar_t</em>, <a class="type" href="#std::__1::char_traits" title='std::__1::char_traits' data-ref="std::__1::char_traits">char_traits</a>&lt;<em>wchar_t</em>&gt;, <a class="type" href="#std::__1::allocator" title='std::__1::allocator' data-ref="std::__1::allocator">allocator</a>&lt;<em>wchar_t</em>&gt; &gt; <dfn class="typedef" id="std::__1::wstring" title='std::__1::wstring' data-type='basic_string&lt;wchar_t, char_traits&lt;wchar_t&gt;, allocator&lt;wchar_t&gt; &gt;' data-ref="std::__1::wstring">wstring</dfn>;</td></tr>
+<tr><th id="196">196</th><td></td></tr>
+<tr><th id="197">197</th><td><a class="macro" href="__config.html#387" title="} }" data-ref="_M/_LIBCPP_END_NAMESPACE_STD">_LIBCPP_END_NAMESPACE_STD</a></td></tr>
+<tr><th id="198">198</th><td></td></tr>
+<tr><th id="199">199</th><td><u>#<span data-ppcond="11">endif</span>  // _LIBCPP_IOSFWD</u></td></tr>
+<tr><th id="200">200</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../src/algorithm.cpp.html'>codebrowser/external/libcxx/src/algorithm.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

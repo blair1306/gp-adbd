@@ -1,0 +1,389 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>internal.h source code [codebrowser/external/boringssl/src/crypto/modes/internal.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ccm128_context,gcm128_context "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/modes/internal.h'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>modes</a>/<a href='internal.h.html'>internal.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 2008 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="5">5</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="6">6</th><td><i> * are met:</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *</i></td></tr>
+<tr><th id="11">11</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="12">12</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="13">13</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="14">14</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="15">15</th><td><i> *</i></td></tr>
+<tr><th id="16">16</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="17">17</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="18">18</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="19">19</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="20">20</th><td><i> *</i></td></tr>
+<tr><th id="21">21</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="22">22</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="23">23</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="24">24</th><td><i> *    openssl-core@openssl.org.</i></td></tr>
+<tr><th id="25">25</th><td><i> *</i></td></tr>
+<tr><th id="26">26</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="27">27</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="28">28</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="29">29</th><td><i> *</i></td></tr>
+<tr><th id="30">30</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="31">31</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="33">33</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *</i></td></tr>
+<tr><th id="35">35</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="36">36</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="37">37</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="38">38</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="39">39</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="40">40</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="41">41</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="42">42</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="43">43</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="44">44</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="45">45</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="46">46</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="47">47</th><td><i> * ==================================================================== */</i></td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><u>#<span data-ppcond="49">ifndef</span> <span class="macro" data-ref="_M/OPENSSL_HEADER_MODES_INTERNAL_H">OPENSSL_HEADER_MODES_INTERNAL_H</span></u></td></tr>
+<tr><th id="50">50</th><td><u>#define <dfn class="macro" id="_M/OPENSSL_HEADER_MODES_INTERNAL_H" data-ref="_M/OPENSSL_HEADER_MODES_INTERNAL_H">OPENSSL_HEADER_MODES_INTERNAL_H</dfn></u></td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><u>#include <a href="../../include/openssl/base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><u>#<span data-ppcond="54">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="55">55</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="56">56</th><td><u>#<span data-ppcond="54">endif</span></u></td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#define <dfn class="macro" id="_M/asm" data-ref="_M/asm">asm</dfn> __asm__</u></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><u>#define <dfn class="macro" id="_M/STRICT_ALIGNMENT" data-ref="_M/STRICT_ALIGNMENT">STRICT_ALIGNMENT</dfn> 1</u></td></tr>
+<tr><th id="62">62</th><td><u>#<span data-ppcond="62">if</span> defined(<a class="macro" href="../../include/openssl/base.h.html#72" data-ref="_M/OPENSSL_X86_64">OPENSSL_X86_64</a>) || defined(<span class="macro" data-ref="_M/OPENSSL_X86">OPENSSL_X86</span>) || defined(<span class="macro" data-ref="_M/OPENSSL_AARCH64">OPENSSL_AARCH64</span>)</u></td></tr>
+<tr><th id="63">63</th><td><u>#undef <a class="macro" href="#61" data-ref="_M/STRICT_ALIGNMENT">STRICT_ALIGNMENT</a></u></td></tr>
+<tr><th id="64">64</th><td><u>#define <dfn class="macro" id="_M/STRICT_ALIGNMENT" data-ref="_M/STRICT_ALIGNMENT">STRICT_ALIGNMENT</dfn> 0</u></td></tr>
+<tr><th id="65">65</th><td><u>#<span data-ppcond="62">endif</span></u></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><u>#<span data-ppcond="67">if</span> !defined(<span class="macro" data-ref="_M/PEDANTIC">PEDANTIC</span>) &amp;&amp; !defined(<span class="macro" data-ref="_M/OPENSSL_NO_ASM">OPENSSL_NO_ASM</span>)</u></td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="68">if</span> defined(<span class="macro" data-ref="_M/__GNUC__">__GNUC__</span>) &amp;&amp; <span class="macro" title="4" data-ref="_M/__GNUC__">__GNUC__</span> &gt;= 2</u></td></tr>
+<tr><th id="69">69</th><td><u>#<span data-ppcond="69">if</span> defined(<a class="macro" href="../../include/openssl/base.h.html#72" data-ref="_M/OPENSSL_X86_64">OPENSSL_X86_64</a>)</u></td></tr>
+<tr><th id="70">70</th><td><u>#define <dfn class="macro" id="_M/BSWAP8" data-ref="_M/BSWAP8">BSWAP8</dfn>(x)                 \</u></td></tr>
+<tr><th id="71">71</th><td><u>  ({                              \</u></td></tr>
+<tr><th id="72">72</th><td><u>    uint64_t ret = (x);           \</u></td></tr>
+<tr><th id="73">73</th><td><u>    asm("bswapq %0" : "+r"(ret)); \</u></td></tr>
+<tr><th id="74">74</th><td><u>    ret;                          \</u></td></tr>
+<tr><th id="75">75</th><td><u>  })</u></td></tr>
+<tr><th id="76">76</th><td><u>#define <dfn class="macro" id="_M/BSWAP4" data-ref="_M/BSWAP4">BSWAP4</dfn>(x)                 \</u></td></tr>
+<tr><th id="77">77</th><td><u>  ({                              \</u></td></tr>
+<tr><th id="78">78</th><td><u>    uint32_t ret = (x);           \</u></td></tr>
+<tr><th id="79">79</th><td><u>    asm("bswapl %0" : "+r"(ret)); \</u></td></tr>
+<tr><th id="80">80</th><td><u>    ret;                          \</u></td></tr>
+<tr><th id="81">81</th><td><u>  })</u></td></tr>
+<tr><th id="82">82</th><td><u>#<span data-ppcond="69">elif</span> defined(OPENSSL_X86)</u></td></tr>
+<tr><th id="83">83</th><td><u>#define BSWAP8(x)                                     \</u></td></tr>
+<tr><th id="84">84</th><td><u>  ({                                                  \</u></td></tr>
+<tr><th id="85">85</th><td><u>    uint32_t lo = (uint64_t)(x) &gt;&gt; 32, hi = (x);      \</u></td></tr>
+<tr><th id="86">86</th><td><u>    asm("bswapl %0; bswapl %1" : "+r"(hi), "+r"(lo)); \</u></td></tr>
+<tr><th id="87">87</th><td><u>    (uint64_t) hi &lt;&lt; 32 | lo;                         \</u></td></tr>
+<tr><th id="88">88</th><td><u>  })</u></td></tr>
+<tr><th id="89">89</th><td><u>#define BSWAP4(x)                 \</u></td></tr>
+<tr><th id="90">90</th><td><u>  ({                              \</u></td></tr>
+<tr><th id="91">91</th><td><u>    uint32_t ret = (x);           \</u></td></tr>
+<tr><th id="92">92</th><td><u>    asm("bswapl %0" : "+r"(ret)); \</u></td></tr>
+<tr><th id="93">93</th><td><u>    ret;                          \</u></td></tr>
+<tr><th id="94">94</th><td><u>  })</u></td></tr>
+<tr><th id="95">95</th><td><u>#elif defined(OPENSSL_AARCH64)</u></td></tr>
+<tr><th id="96">96</th><td><u>#define BSWAP8(x)                          \</u></td></tr>
+<tr><th id="97">97</th><td><u>  ({                                       \</u></td></tr>
+<tr><th id="98">98</th><td><u>    uint64_t ret;                          \</u></td></tr>
+<tr><th id="99">99</th><td><u>    asm("rev %0,%1" : "=r"(ret) : "r"(x)); \</u></td></tr>
+<tr><th id="100">100</th><td><u>    ret;                                   \</u></td></tr>
+<tr><th id="101">101</th><td><u>  })</u></td></tr>
+<tr><th id="102">102</th><td><u>#define BSWAP4(x)                            \</u></td></tr>
+<tr><th id="103">103</th><td><u>  ({                                         \</u></td></tr>
+<tr><th id="104">104</th><td><u>    uint32_t ret;                            \</u></td></tr>
+<tr><th id="105">105</th><td><u>    asm("rev %w0,%w1" : "=r"(ret) : "r"(x)); \</u></td></tr>
+<tr><th id="106">106</th><td><u>    ret;                                     \</u></td></tr>
+<tr><th id="107">107</th><td><u>  })</u></td></tr>
+<tr><th id="108">108</th><td><u>#elif defined(OPENSSL_ARM) &amp;&amp; !defined(STRICT_ALIGNMENT)</u></td></tr>
+<tr><th id="109">109</th><td><u>#define BSWAP8(x)                                     \</u></td></tr>
+<tr><th id="110">110</th><td><u>  ({                                                  \</u></td></tr>
+<tr><th id="111">111</th><td><u>    uint32_t lo = (uint64_t)(x) &gt;&gt; 32, hi = (x);      \</u></td></tr>
+<tr><th id="112">112</th><td><u>    asm("rev %0,%0; rev %1,%1" : "+r"(hi), "+r"(lo)); \</u></td></tr>
+<tr><th id="113">113</th><td><u>    (uint64_t) hi &lt;&lt; 32 | lo;                         \</u></td></tr>
+<tr><th id="114">114</th><td><u>  })</u></td></tr>
+<tr><th id="115">115</th><td><u>#define BSWAP4(x)                                      \</u></td></tr>
+<tr><th id="116">116</th><td><u>  ({                                                   \</u></td></tr>
+<tr><th id="117">117</th><td><u>    uint32_t ret;                                      \</u></td></tr>
+<tr><th id="118">118</th><td><u>    asm("rev %0,%1" : "=r"(ret) : "r"((uint32_t)(x))); \</u></td></tr>
+<tr><th id="119">119</th><td><u>    ret;                                               \</u></td></tr>
+<tr><th id="120">120</th><td><u>  })</u></td></tr>
+<tr><th id="121">121</th><td><u>#<span data-ppcond="69">endif</span></u></td></tr>
+<tr><th id="122">122</th><td><u>#<span data-ppcond="68">elif</span> defined(_MSC_VER)</u></td></tr>
+<tr><th id="123">123</th><td><u>#if _MSC_VER &gt;= 1300</u></td></tr>
+<tr><th id="124">124</th><td><u>#pragma warning(push, 3)</u></td></tr>
+<tr><th id="125">125</th><td><u>#include &lt;intrin.h&gt;</u></td></tr>
+<tr><th id="126">126</th><td><u>#pragma warning(pop)</u></td></tr>
+<tr><th id="127">127</th><td><u>#pragma intrinsic(_byteswap_uint64, _byteswap_ulong)</u></td></tr>
+<tr><th id="128">128</th><td><u>#define BSWAP8(x) _byteswap_uint64((uint64_t)(x))</u></td></tr>
+<tr><th id="129">129</th><td><u>#define BSWAP4(x) _byteswap_ulong((uint32_t)(x))</u></td></tr>
+<tr><th id="130">130</th><td><u>#elif defined(OPENSSL_X86)</u></td></tr>
+<tr><th id="131">131</th><td><b>__inline</b> uint32_t _bswap4(uint32_t val) {</td></tr>
+<tr><th id="132">132</th><td>  _asm mov eax, val</td></tr>
+<tr><th id="133">133</th><td>  _asm bswap eax</td></tr>
+<tr><th id="134">134</th><td>}</td></tr>
+<tr><th id="135">135</th><td><u>#define BSWAP4(x) _bswap4(x)</u></td></tr>
+<tr><th id="136">136</th><td><u>#endif</u></td></tr>
+<tr><th id="137">137</th><td><u>#<span data-ppcond="68">endif</span></u></td></tr>
+<tr><th id="138">138</th><td><u>#<span data-ppcond="67">endif</span></u></td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td><u>#<span data-ppcond="140">if</span> defined(<a class="macro" href="#76" data-ref="_M/BSWAP4">BSWAP4</a>) &amp;&amp; !defined(<a class="macro" href="#64" data-ref="_M/STRICT_ALIGNMENT">STRICT_ALIGNMENT</a>)</u></td></tr>
+<tr><th id="141">141</th><td><u>#define GETU32(p) BSWAP4(*(const uint32_t *)(p))</u></td></tr>
+<tr><th id="142">142</th><td><u>#define PUTU32(p, v) *(uint32_t *)(p) = BSWAP4(v)</u></td></tr>
+<tr><th id="143">143</th><td><u>#<span data-ppcond="140">else</span></u></td></tr>
+<tr><th id="144">144</th><td><u>#define <dfn class="macro" id="_M/GETU32" data-ref="_M/GETU32">GETU32</dfn>(p) \</u></td></tr>
+<tr><th id="145">145</th><td><u>  ((uint32_t)(p)[0] &lt;&lt; 24 | (uint32_t)(p)[1] &lt;&lt; 16 | (uint32_t)(p)[2] &lt;&lt; 8 | (uint32_t)(p)[3])</u></td></tr>
+<tr><th id="146">146</th><td><u>#define <dfn class="macro" id="_M/PUTU32" data-ref="_M/PUTU32">PUTU32</dfn>(p, v)                                   \</u></td></tr>
+<tr><th id="147">147</th><td><u>  ((p)[0] = (uint8_t)((v) &gt;&gt; 24), (p)[1] = (uint8_t)((v) &gt;&gt; 16), \</u></td></tr>
+<tr><th id="148">148</th><td><u>   (p)[2] = (uint8_t)((v) &gt;&gt; 8), (p)[3] = (uint8_t)(v))</u></td></tr>
+<tr><th id="149">149</th><td><u>#<span data-ppcond="140">endif</span></u></td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><i>/* block128_f is the type of a 128-bit, block cipher. */</i></td></tr>
+<tr><th id="153">153</th><td><b>typedef</b> <em>void</em> (*<dfn class="typedef" id="block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</dfn>)(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col1 decl" id="1in" title='in' data-type='const uint8_t *' data-ref="1in">in</dfn>[<var>16</var>], <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col2 decl" id="2out" title='out' data-type='uint8_t *' data-ref="2out">out</dfn>[<var>16</var>],</td></tr>
+<tr><th id="154">154</th><td>                           <em>const</em> <em>void</em> *<dfn class="local col3 decl" id="3key" title='key' data-type='const void *' data-ref="3key">key</dfn>);</td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td><i>/* GCM definitions */</i></td></tr>
+<tr><th id="157">157</th><td><b>typedef</b> <b>struct</b> { <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="(anonymous)::hi" title='(anonymous struct)::hi' data-ref="(anonymous)::hi">hi</dfn>,<dfn class="decl" id="(anonymous)::lo" title='(anonymous struct)::lo' data-ref="(anonymous)::lo">lo</dfn>; } <dfn class="typedef" id="u128" title='u128' data-type='struct u128' data-ref="u128">u128</dfn>;</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td><i>/* This differs from upstream's |gcm128_context| in that it does not have the</i></td></tr>
+<tr><th id="160">160</th><td><i> * |key| pointer, in order to make it |memcpy|-friendly. Rather the key is</i></td></tr>
+<tr><th id="161">161</th><td><i> * passed into each call that needs it. */</i></td></tr>
+<tr><th id="162">162</th><td><b>struct</b> <dfn class="type def" id="gcm128_context" title='gcm128_context' data-ref="gcm128_context">gcm128_context</dfn> {</td></tr>
+<tr><th id="163">163</th><td>  <i>/* Following 6 names follow names in GCM specification */</i></td></tr>
+<tr><th id="164">164</th><td>  <b>union</b> {</td></tr>
+<tr><th id="165">165</th><td>    <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="gcm128_context::(anonymous)::u" title='gcm128_context::(anonymous union)::u' data-ref="gcm128_context::(anonymous)::u">u</dfn>[<var>2</var>];</td></tr>
+<tr><th id="166">166</th><td>    <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> <dfn class="decl" id="gcm128_context::(anonymous)::d" title='gcm128_context::(anonymous union)::d' data-ref="gcm128_context::(anonymous)::d">d</dfn>[<var>4</var>];</td></tr>
+<tr><th id="167">167</th><td>    <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="gcm128_context::(anonymous)::c" title='gcm128_context::(anonymous union)::c' data-ref="gcm128_context::(anonymous)::c">c</dfn>[<var>16</var>];</td></tr>
+<tr><th id="168">168</th><td>    <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="gcm128_context::(anonymous)::t" title='gcm128_context::(anonymous union)::t' data-ref="gcm128_context::(anonymous)::t">t</dfn>[<var>16</var> / <b>sizeof</b>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)];</td></tr>
+<tr><th id="169">169</th><td>  } <dfn class="decl" id="gcm128_context::Yi" title='gcm128_context::Yi' data-ref="gcm128_context::Yi">Yi</dfn>, <dfn class="decl" id="gcm128_context::EKi" title='gcm128_context::EKi' data-ref="gcm128_context::EKi">EKi</dfn>, <dfn class="decl" id="gcm128_context::EK0" title='gcm128_context::EK0' data-ref="gcm128_context::EK0">EK0</dfn>, <dfn class="decl" id="gcm128_context::len" title='gcm128_context::len' data-ref="gcm128_context::len">len</dfn>, <dfn class="decl" id="gcm128_context::Xi" title='gcm128_context::Xi' data-ref="gcm128_context::Xi">Xi</dfn>, <dfn class="decl" id="gcm128_context::H" title='gcm128_context::H' data-ref="gcm128_context::H">H</dfn>;</td></tr>
+<tr><th id="170">170</th><td></td></tr>
+<tr><th id="171">171</th><td>  <i>/* Relative position of Xi, H and pre-computed Htable is used in some</i></td></tr>
+<tr><th id="172">172</th><td><i>   * assembler modules, i.e. don't change the order! */</i></td></tr>
+<tr><th id="173">173</th><td>  <a class="typedef" href="#u128" title='u128' data-type='struct u128' data-ref="u128">u128</a> <dfn class="decl" id="gcm128_context::Htable" title='gcm128_context::Htable' data-ref="gcm128_context::Htable">Htable</dfn>[<var>16</var>];</td></tr>
+<tr><th id="174">174</th><td>  <em>void</em> (*<dfn class="decl" id="gcm128_context::gmult" title='gcm128_context::gmult' data-ref="gcm128_context::gmult">gmult</dfn>)(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col4 decl" id="4Xi" title='Xi' data-type='uint64_t *' data-ref="4Xi">Xi</dfn>[<var>2</var>], <em>const</em> <a class="typedef" href="#u128" title='u128' data-type='struct u128' data-ref="u128">u128</a> <dfn class="local col5 decl" id="5Htable" title='Htable' data-type='const u128 *' data-ref="5Htable">Htable</dfn>[<var>16</var>]);</td></tr>
+<tr><th id="175">175</th><td>  <em>void</em> (*<dfn class="decl" id="gcm128_context::ghash" title='gcm128_context::ghash' data-ref="gcm128_context::ghash">ghash</dfn>)(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="local col6 decl" id="6Xi" title='Xi' data-type='uint64_t *' data-ref="6Xi">Xi</dfn>[<var>2</var>], <em>const</em> <a class="typedef" href="#u128" title='u128' data-type='struct u128' data-ref="u128">u128</a> <dfn class="local col7 decl" id="7Htable" title='Htable' data-type='const u128 *' data-ref="7Htable">Htable</dfn>[<var>16</var>], <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="8inp" title='inp' data-type='const uint8_t *' data-ref="8inp">inp</dfn>,</td></tr>
+<tr><th id="176">176</th><td>                <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="9len" title='len' data-type='size_t' data-ref="9len">len</dfn>);</td></tr>
+<tr><th id="177">177</th><td></td></tr>
+<tr><th id="178">178</th><td>  <em>unsigned</em> <em>int</em> <dfn class="decl" id="gcm128_context::mres" title='gcm128_context::mres' data-ref="gcm128_context::mres">mres</dfn>, <dfn class="decl" id="gcm128_context::ares" title='gcm128_context::ares' data-ref="gcm128_context::ares">ares</dfn>;</td></tr>
+<tr><th id="179">179</th><td>  <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="decl" id="gcm128_context::block" title='gcm128_context::block' data-ref="gcm128_context::block">block</dfn>;</td></tr>
+<tr><th id="180">180</th><td>};</td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td><b>struct</b> <dfn class="type def" id="ccm128_context" title='ccm128_context' data-ref="ccm128_context">ccm128_context</dfn> {</td></tr>
+<tr><th id="183">183</th><td>  <b>union</b> {</td></tr>
+<tr><th id="184">184</th><td>    <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="ccm128_context::(anonymous)::u" title='ccm128_context::(anonymous union)::u' data-ref="ccm128_context::(anonymous)::u">u</dfn>[<var>2</var>];</td></tr>
+<tr><th id="185">185</th><td>    <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="decl" id="ccm128_context::(anonymous)::c" title='ccm128_context::(anonymous union)::c' data-ref="ccm128_context::(anonymous)::c">c</dfn>[<var>16</var>];</td></tr>
+<tr><th id="186">186</th><td>  } <dfn class="decl" id="ccm128_context::nonce" title='ccm128_context::nonce' data-ref="ccm128_context::nonce">nonce</dfn>, <dfn class="decl" id="ccm128_context::cmac" title='ccm128_context::cmac' data-ref="ccm128_context::cmac">cmac</dfn>;</td></tr>
+<tr><th id="187">187</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint64_t" title='uint64_t' data-type='__uint64_t' data-ref="uint64_t">uint64_t</a> <dfn class="decl" id="ccm128_context::blocks" title='ccm128_context::blocks' data-ref="ccm128_context::blocks">blocks</dfn>;</td></tr>
+<tr><th id="188">188</th><td>  <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="decl" id="ccm128_context::block" title='ccm128_context::block' data-ref="ccm128_context::block">block</dfn>;</td></tr>
+<tr><th id="189">189</th><td>  <em>void</em> *<dfn class="decl" id="ccm128_context::key" title='ccm128_context::key' data-ref="ccm128_context::key">key</dfn>;</td></tr>
+<tr><th id="190">190</th><td>};</td></tr>
+<tr><th id="191">191</th><td></td></tr>
+<tr><th id="192">192</th><td><u>#<span data-ppcond="192">if</span> defined(<span class="macro" data-ref="_M/OPENSSL_X86">OPENSSL_X86</span>) || defined(<a class="macro" href="../../include/openssl/base.h.html#72" data-ref="_M/OPENSSL_X86_64">OPENSSL_X86_64</a>)</u></td></tr>
+<tr><th id="193">193</th><td><i>/* crypto_gcm_clmul_enabled returns one if the CLMUL implementation of GCM is</i></td></tr>
+<tr><th id="194">194</th><td><i> * used. */</i></td></tr>
+<tr><th id="195">195</th><td><em>int</em> <dfn class="decl" id="crypto_gcm_clmul_enabled" title='crypto_gcm_clmul_enabled' data-ref="crypto_gcm_clmul_enabled">crypto_gcm_clmul_enabled</dfn>(<em>void</em>);</td></tr>
+<tr><th id="196">196</th><td><u>#<span data-ppcond="192">endif</span></u></td></tr>
+<tr><th id="197">197</th><td></td></tr>
+<tr><th id="198">198</th><td></td></tr>
+<tr><th id="199">199</th><td><i>/* CTR. */</i></td></tr>
+<tr><th id="200">200</th><td></td></tr>
+<tr><th id="201">201</th><td><i>/* ctr128_f is the type of a function that performs CTR-mode encryption. */</i></td></tr>
+<tr><th id="202">202</th><td><b>typedef</b> <em>void</em> (*<dfn class="typedef" id="ctr128_f" title='ctr128_f' data-type='void (*)(const uint8_t *, uint8_t *, size_t, const void *, const uint8_t *)' data-ref="ctr128_f">ctr128_f</dfn>)(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col0 decl" id="10in" title='in' data-type='const uint8_t *' data-ref="10in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="11out" title='out' data-type='uint8_t *' data-ref="11out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="12blocks" title='blocks' data-type='size_t' data-ref="12blocks">blocks</dfn>,</td></tr>
+<tr><th id="203">203</th><td>                         <em>const</em> <em>void</em> *<dfn class="local col3 decl" id="13key" title='key' data-type='const void *' data-ref="13key">key</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col4 decl" id="14ivec" title='ivec' data-type='const uint8_t *' data-ref="14ivec">ivec</dfn>[<var>16</var>]);</td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><i>/* CRYPTO_ctr128_encrypt encrypts (or decrypts, it's the same in CTR mode)</i></td></tr>
+<tr><th id="206">206</th><td><i> * |len| bytes from |in| to |out| using |block| in counter mode. There's no</i></td></tr>
+<tr><th id="207">207</th><td><i> * requirement that |len| be a multiple of any value and any partial blocks are</i></td></tr>
+<tr><th id="208">208</th><td><i> * stored in |ecount_buf| and |*num|, which must be zeroed before the initial</i></td></tr>
+<tr><th id="209">209</th><td><i> * call. The counter is a 128-bit, big-endian value in |ivec| and is</i></td></tr>
+<tr><th id="210">210</th><td><i> * incremented by this function. */</i></td></tr>
+<tr><th id="211">211</th><td><em>void</em> <dfn class="decl" id="CRYPTO_ctr128_encrypt" title='CRYPTO_ctr128_encrypt' data-ref="CRYPTO_ctr128_encrypt">CRYPTO_ctr128_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="15in" title='in' data-type='const uint8_t *' data-ref="15in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="16out" title='out' data-type='uint8_t *' data-ref="16out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="17len" title='len' data-type='size_t' data-ref="17len">len</dfn>,</td></tr>
+<tr><th id="212">212</th><td>                           <em>const</em> <em>void</em> *<dfn class="local col8 decl" id="18key" title='key' data-type='const void *' data-ref="18key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col9 decl" id="19ivec" title='ivec' data-type='uint8_t *' data-ref="19ivec">ivec</dfn>[<var>16</var>],</td></tr>
+<tr><th id="213">213</th><td>                           <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col0 decl" id="20ecount_buf" title='ecount_buf' data-type='uint8_t *' data-ref="20ecount_buf">ecount_buf</dfn>[<var>16</var>], <em>unsigned</em> <em>int</em> *<dfn class="local col1 decl" id="21num" title='num' data-type='unsigned int *' data-ref="21num">num</dfn>,</td></tr>
+<tr><th id="214">214</th><td>                           <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col2 decl" id="22block" title='block' data-type='block128_f' data-ref="22block">block</dfn>);</td></tr>
+<tr><th id="215">215</th><td></td></tr>
+<tr><th id="216">216</th><td><i>/* CRYPTO_ctr128_encrypt_ctr32 acts like |CRYPTO_ctr128_encrypt| but takes</i></td></tr>
+<tr><th id="217">217</th><td><i> * |ctr|, a function that performs CTR mode but only deals with the lower 32</i></td></tr>
+<tr><th id="218">218</th><td><i> * bits of the counter. This is useful when |ctr| can be an optimised</i></td></tr>
+<tr><th id="219">219</th><td><i> * function. */</i></td></tr>
+<tr><th id="220">220</th><td><em>void</em> <dfn class="decl" id="CRYPTO_ctr128_encrypt_ctr32" title='CRYPTO_ctr128_encrypt_ctr32' data-ref="CRYPTO_ctr128_encrypt_ctr32">CRYPTO_ctr128_encrypt_ctr32</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="23in" title='in' data-type='const uint8_t *' data-ref="23in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="24out" title='out' data-type='uint8_t *' data-ref="24out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="25len" title='len' data-type='size_t' data-ref="25len">len</dfn>,</td></tr>
+<tr><th id="221">221</th><td>                                 <em>const</em> <em>void</em> *<dfn class="local col6 decl" id="26key" title='key' data-type='const void *' data-ref="26key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col7 decl" id="27ivec" title='ivec' data-type='uint8_t *' data-ref="27ivec">ivec</dfn>[<var>16</var>],</td></tr>
+<tr><th id="222">222</th><td>                                 <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col8 decl" id="28ecount_buf" title='ecount_buf' data-type='uint8_t *' data-ref="28ecount_buf">ecount_buf</dfn>[<var>16</var>], <em>unsigned</em> <em>int</em> *<dfn class="local col9 decl" id="29num" title='num' data-type='unsigned int *' data-ref="29num">num</dfn>,</td></tr>
+<tr><th id="223">223</th><td>                                 <a class="typedef" href="#ctr128_f" title='ctr128_f' data-type='void (*)(const uint8_t *, uint8_t *, size_t, const void *, const uint8_t *)' data-ref="ctr128_f">ctr128_f</a> <dfn class="local col0 decl" id="30ctr" title='ctr' data-type='ctr128_f' data-ref="30ctr">ctr</dfn>);</td></tr>
+<tr><th id="224">224</th><td></td></tr>
+<tr><th id="225">225</th><td></td></tr>
+<tr><th id="226">226</th><td><i>/* GCM.</i></td></tr>
+<tr><th id="227">227</th><td><i> *</i></td></tr>
+<tr><th id="228">228</th><td><i> * This API differs from the upstream API slightly. The |GCM128_CONTEXT| does</i></td></tr>
+<tr><th id="229">229</th><td><i> * not have a |key| pointer that points to the key as upstream's version does.</i></td></tr>
+<tr><th id="230">230</th><td><i> * Instead, every function takes a |key| parameter. This way |GCM128_CONTEXT|</i></td></tr>
+<tr><th id="231">231</th><td><i> * can be safely copied. */</i></td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td><b>typedef</b> <b>struct</b> <a class="type" href="#gcm128_context" title='gcm128_context' data-ref="gcm128_context">gcm128_context</a> <dfn class="typedef" id="GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</dfn>;</td></tr>
+<tr><th id="234">234</th><td></td></tr>
+<tr><th id="235">235</th><td><i>/* CRYPTO_gcm128_new allocates a fresh |GCM128_CONTEXT| and calls</i></td></tr>
+<tr><th id="236">236</th><td><i> * |CRYPTO_gcm128_init|. It returns the new context, or NULL on error. */</i></td></tr>
+<tr><th id="237">237</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="decl" id="CRYPTO_gcm128_new" title='CRYPTO_gcm128_new' data-ref="CRYPTO_gcm128_new">CRYPTO_gcm128_new</dfn>(<em>const</em> <em>void</em> *<dfn class="local col1 decl" id="31key" title='key' data-type='const void *' data-ref="31key">key</dfn>,</td></tr>
+<tr><th id="238">238</th><td>                                                 <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col2 decl" id="32block" title='block' data-type='block128_f' data-ref="32block">block</dfn>);</td></tr>
+<tr><th id="239">239</th><td></td></tr>
+<tr><th id="240">240</th><td><i>/* CRYPTO_gcm128_init initialises |ctx| to use |block| (typically AES) with</i></td></tr>
+<tr><th id="241">241</th><td><i> * the given key. */</i></td></tr>
+<tr><th id="242">242</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="CRYPTO_gcm128_init" title='CRYPTO_gcm128_init' data-ref="CRYPTO_gcm128_init">CRYPTO_gcm128_init</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col3 decl" id="33ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="33ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col4 decl" id="34key" title='key' data-type='const void *' data-ref="34key">key</dfn>,</td></tr>
+<tr><th id="243">243</th><td>                                       <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col5 decl" id="35block" title='block' data-type='block128_f' data-ref="35block">block</dfn>);</td></tr>
+<tr><th id="244">244</th><td></td></tr>
+<tr><th id="245">245</th><td><i>/* CRYPTO_gcm128_setiv sets the IV (nonce) for |ctx|. The |key| must be the</i></td></tr>
+<tr><th id="246">246</th><td><i> * same key that was passed to |CRYPTO_gcm128_init|. */</i></td></tr>
+<tr><th id="247">247</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="CRYPTO_gcm128_setiv" title='CRYPTO_gcm128_setiv' data-ref="CRYPTO_gcm128_setiv">CRYPTO_gcm128_setiv</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col6 decl" id="36ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="36ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col7 decl" id="37key" title='key' data-type='const void *' data-ref="37key">key</dfn>,</td></tr>
+<tr><th id="248">248</th><td>                                        <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="38iv" title='iv' data-type='const uint8_t *' data-ref="38iv">iv</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="39iv_len" title='iv_len' data-type='size_t' data-ref="39iv_len">iv_len</dfn>);</td></tr>
+<tr><th id="249">249</th><td></td></tr>
+<tr><th id="250">250</th><td><i>/* CRYPTO_gcm128_aad sets the authenticated data for an instance of GCM.</i></td></tr>
+<tr><th id="251">251</th><td><i> * This must be called before and data is encrypted. It returns one on success</i></td></tr>
+<tr><th id="252">252</th><td><i> * and zero otherwise. */</i></td></tr>
+<tr><th id="253">253</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="CRYPTO_gcm128_aad" title='CRYPTO_gcm128_aad' data-ref="CRYPTO_gcm128_aad">CRYPTO_gcm128_aad</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col0 decl" id="40ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="40ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="41aad" title='aad' data-type='const uint8_t *' data-ref="41aad">aad</dfn>,</td></tr>
+<tr><th id="254">254</th><td>                                     <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="42len" title='len' data-type='size_t' data-ref="42len">len</dfn>);</td></tr>
+<tr><th id="255">255</th><td></td></tr>
+<tr><th id="256">256</th><td><i>/* CRYPTO_gcm128_encrypt encrypts |len| bytes from |in| to |out|. The |key|</i></td></tr>
+<tr><th id="257">257</th><td><i> * must be the same key that was passed to |CRYPTO_gcm128_init|. It returns one</i></td></tr>
+<tr><th id="258">258</th><td><i> * on success and zero otherwise. */</i></td></tr>
+<tr><th id="259">259</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="CRYPTO_gcm128_encrypt" title='CRYPTO_gcm128_encrypt' data-ref="CRYPTO_gcm128_encrypt">CRYPTO_gcm128_encrypt</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col3 decl" id="43ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="43ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col4 decl" id="44key" title='key' data-type='const void *' data-ref="44key">key</dfn>,</td></tr>
+<tr><th id="260">260</th><td>                                         <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="45in" title='in' data-type='const uint8_t *' data-ref="45in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="46out" title='out' data-type='uint8_t *' data-ref="46out">out</dfn>,</td></tr>
+<tr><th id="261">261</th><td>                                         <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="47len" title='len' data-type='size_t' data-ref="47len">len</dfn>);</td></tr>
+<tr><th id="262">262</th><td></td></tr>
+<tr><th id="263">263</th><td><i>/* CRYPTO_gcm128_decrypt decrypts |len| bytes from |in| to |out|. The |key|</i></td></tr>
+<tr><th id="264">264</th><td><i> * must be the same key that was passed to |CRYPTO_gcm128_init|. It returns one</i></td></tr>
+<tr><th id="265">265</th><td><i> * on success and zero otherwise. */</i></td></tr>
+<tr><th id="266">266</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="CRYPTO_gcm128_decrypt" title='CRYPTO_gcm128_decrypt' data-ref="CRYPTO_gcm128_decrypt">CRYPTO_gcm128_decrypt</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col8 decl" id="48ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="48ctx">ctx</dfn>, <em>const</em> <em>void</em> *<dfn class="local col9 decl" id="49key" title='key' data-type='const void *' data-ref="49key">key</dfn>,</td></tr>
+<tr><th id="267">267</th><td>                                         <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col0 decl" id="50in" title='in' data-type='const uint8_t *' data-ref="50in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="51out" title='out' data-type='uint8_t *' data-ref="51out">out</dfn>,</td></tr>
+<tr><th id="268">268</th><td>                                         <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="52len" title='len' data-type='size_t' data-ref="52len">len</dfn>);</td></tr>
+<tr><th id="269">269</th><td></td></tr>
+<tr><th id="270">270</th><td><i>/* CRYPTO_gcm128_encrypt_ctr32 encrypts |len| bytes from |in| to |out| using</i></td></tr>
+<tr><th id="271">271</th><td><i> * a CTR function that only handles the bottom 32 bits of the nonce, like</i></td></tr>
+<tr><th id="272">272</th><td><i> * |CRYPTO_ctr128_encrypt_ctr32|. The |key| must be the same key that was</i></td></tr>
+<tr><th id="273">273</th><td><i> * passed to |CRYPTO_gcm128_init|. It returns one on success and zero</i></td></tr>
+<tr><th id="274">274</th><td><i> * otherwise. */</i></td></tr>
+<tr><th id="275">275</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="CRYPTO_gcm128_encrypt_ctr32" title='CRYPTO_gcm128_encrypt_ctr32' data-ref="CRYPTO_gcm128_encrypt_ctr32">CRYPTO_gcm128_encrypt_ctr32</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col3 decl" id="53ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="53ctx">ctx</dfn>,</td></tr>
+<tr><th id="276">276</th><td>                                               <em>const</em> <em>void</em> *<dfn class="local col4 decl" id="54key" title='key' data-type='const void *' data-ref="54key">key</dfn>,</td></tr>
+<tr><th id="277">277</th><td>                                               <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="55in" title='in' data-type='const uint8_t *' data-ref="55in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="56out" title='out' data-type='uint8_t *' data-ref="56out">out</dfn>,</td></tr>
+<tr><th id="278">278</th><td>                                               <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="57len" title='len' data-type='size_t' data-ref="57len">len</dfn>, <a class="typedef" href="#ctr128_f" title='ctr128_f' data-type='void (*)(const uint8_t *, uint8_t *, size_t, const void *, const uint8_t *)' data-ref="ctr128_f">ctr128_f</a> <dfn class="local col8 decl" id="58stream" title='stream' data-type='ctr128_f' data-ref="58stream">stream</dfn>);</td></tr>
+<tr><th id="279">279</th><td></td></tr>
+<tr><th id="280">280</th><td><i>/* CRYPTO_gcm128_decrypt_ctr32 decrypts |len| bytes from |in| to |out| using</i></td></tr>
+<tr><th id="281">281</th><td><i> * a CTR function that only handles the bottom 32 bits of the nonce, like</i></td></tr>
+<tr><th id="282">282</th><td><i> * |CRYPTO_ctr128_encrypt_ctr32|. The |key| must be the same key that was</i></td></tr>
+<tr><th id="283">283</th><td><i> * passed to |CRYPTO_gcm128_init|. It returns one on success and zero</i></td></tr>
+<tr><th id="284">284</th><td><i> * otherwise. */</i></td></tr>
+<tr><th id="285">285</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="CRYPTO_gcm128_decrypt_ctr32" title='CRYPTO_gcm128_decrypt_ctr32' data-ref="CRYPTO_gcm128_decrypt_ctr32">CRYPTO_gcm128_decrypt_ctr32</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col9 decl" id="59ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="59ctx">ctx</dfn>,</td></tr>
+<tr><th id="286">286</th><td>                                               <em>const</em> <em>void</em> *<dfn class="local col0 decl" id="60key" title='key' data-type='const void *' data-ref="60key">key</dfn>,</td></tr>
+<tr><th id="287">287</th><td>                                               <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="61in" title='in' data-type='const uint8_t *' data-ref="61in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col2 decl" id="62out" title='out' data-type='uint8_t *' data-ref="62out">out</dfn>,</td></tr>
+<tr><th id="288">288</th><td>                                               <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="63len" title='len' data-type='size_t' data-ref="63len">len</dfn>, <a class="typedef" href="#ctr128_f" title='ctr128_f' data-type='void (*)(const uint8_t *, uint8_t *, size_t, const void *, const uint8_t *)' data-ref="ctr128_f">ctr128_f</a> <dfn class="local col4 decl" id="64stream" title='stream' data-type='ctr128_f' data-ref="64stream">stream</dfn>);</td></tr>
+<tr><th id="289">289</th><td></td></tr>
+<tr><th id="290">290</th><td><i>/* CRYPTO_gcm128_finish calculates the authenticator and compares it against</i></td></tr>
+<tr><th id="291">291</th><td><i> * |len| bytes of |tag|. It returns one on success and zero otherwise. */</i></td></tr>
+<tr><th id="292">292</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>int</em> <dfn class="decl" id="CRYPTO_gcm128_finish" title='CRYPTO_gcm128_finish' data-ref="CRYPTO_gcm128_finish">CRYPTO_gcm128_finish</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col5 decl" id="65ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="65ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="66tag" title='tag' data-type='const uint8_t *' data-ref="66tag">tag</dfn>,</td></tr>
+<tr><th id="293">293</th><td>                                        <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="67len" title='len' data-type='size_t' data-ref="67len">len</dfn>);</td></tr>
+<tr><th id="294">294</th><td></td></tr>
+<tr><th id="295">295</th><td><i>/* CRYPTO_gcm128_tag calculates the authenticator and copies it into |tag|.</i></td></tr>
+<tr><th id="296">296</th><td><i> * The minimum of |len| and 16 bytes are copied into |tag|. */</i></td></tr>
+<tr><th id="297">297</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="CRYPTO_gcm128_tag" title='CRYPTO_gcm128_tag' data-ref="CRYPTO_gcm128_tag">CRYPTO_gcm128_tag</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col8 decl" id="68ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="68ctx">ctx</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="69tag" title='tag' data-type='uint8_t *' data-ref="69tag">tag</dfn>,</td></tr>
+<tr><th id="298">298</th><td>                                      <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="70len" title='len' data-type='size_t' data-ref="70len">len</dfn>);</td></tr>
+<tr><th id="299">299</th><td></td></tr>
+<tr><th id="300">300</th><td><i>/* CRYPTO_gcm128_release clears and frees |ctx|. */</i></td></tr>
+<tr><th id="301">301</th><td><a class="macro" href="../../include/openssl/base.h.html#128" title="__attribute__((visibility(&quot;default&quot;)))" data-ref="_M/OPENSSL_EXPORT">OPENSSL_EXPORT</a> <em>void</em> <dfn class="decl" id="CRYPTO_gcm128_release" title='CRYPTO_gcm128_release' data-ref="CRYPTO_gcm128_release">CRYPTO_gcm128_release</dfn>(<a class="typedef" href="#GCM128_CONTEXT" title='GCM128_CONTEXT' data-type='struct gcm128_context' data-ref="GCM128_CONTEXT">GCM128_CONTEXT</a> *<dfn class="local col1 decl" id="71ctx" title='ctx' data-type='GCM128_CONTEXT *' data-ref="71ctx">ctx</dfn>);</td></tr>
+<tr><th id="302">302</th><td></td></tr>
+<tr><th id="303">303</th><td></td></tr>
+<tr><th id="304">304</th><td><i>/* CBC. */</i></td></tr>
+<tr><th id="305">305</th><td></td></tr>
+<tr><th id="306">306</th><td><i>/* cbc128_f is the type of a function that performs CBC-mode encryption. */</i></td></tr>
+<tr><th id="307">307</th><td><b>typedef</b> <em>void</em> (*<dfn class="typedef" id="cbc128_f" title='cbc128_f' data-type='void (*)(const uint8_t *, uint8_t *, size_t, const void *, uint8_t *, int)' data-ref="cbc128_f">cbc128_f</dfn>)(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col2 decl" id="72in" title='in' data-type='const uint8_t *' data-ref="72in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="73out" title='out' data-type='uint8_t *' data-ref="73out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="74len" title='len' data-type='size_t' data-ref="74len">len</dfn>,</td></tr>
+<tr><th id="308">308</th><td>                         <em>const</em> <em>void</em> *<dfn class="local col5 decl" id="75key" title='key' data-type='const void *' data-ref="75key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col6 decl" id="76ivec" title='ivec' data-type='uint8_t *' data-ref="76ivec">ivec</dfn>[<var>16</var>], <em>int</em> <dfn class="local col7 decl" id="77enc" title='enc' data-type='int' data-ref="77enc">enc</dfn>);</td></tr>
+<tr><th id="309">309</th><td></td></tr>
+<tr><th id="310">310</th><td><i>/* CRYPTO_cbc128_encrypt encrypts |len| bytes from |in| to |out| using the</i></td></tr>
+<tr><th id="311">311</th><td><i> * given IV and block cipher in CBC mode. The input need not be a multiple of</i></td></tr>
+<tr><th id="312">312</th><td><i> * 128 bits long, but the output will round up to the nearest 128 bit multiple,</i></td></tr>
+<tr><th id="313">313</th><td><i> * zero padding the input if needed. The IV will be updated on return. */</i></td></tr>
+<tr><th id="314">314</th><td><em>void</em> <dfn class="decl" id="CRYPTO_cbc128_encrypt" title='CRYPTO_cbc128_encrypt' data-ref="CRYPTO_cbc128_encrypt">CRYPTO_cbc128_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="78in" title='in' data-type='const uint8_t *' data-ref="78in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col9 decl" id="79out" title='out' data-type='uint8_t *' data-ref="79out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="80len" title='len' data-type='size_t' data-ref="80len">len</dfn>,</td></tr>
+<tr><th id="315">315</th><td>                           <em>const</em> <em>void</em> *<dfn class="local col1 decl" id="81key" title='key' data-type='const void *' data-ref="81key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col2 decl" id="82ivec" title='ivec' data-type='uint8_t *' data-ref="82ivec">ivec</dfn>[<var>16</var>], <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col3 decl" id="83block" title='block' data-type='block128_f' data-ref="83block">block</dfn>);</td></tr>
+<tr><th id="316">316</th><td></td></tr>
+<tr><th id="317">317</th><td><i>/* CRYPTO_cbc128_decrypt decrypts |len| bytes from |in| to |out| using the</i></td></tr>
+<tr><th id="318">318</th><td><i> * given IV and block cipher in CBC mode. If |len| is not a multiple of 128</i></td></tr>
+<tr><th id="319">319</th><td><i> * bits then only that many bytes will be written, but a multiple of 128 bits</i></td></tr>
+<tr><th id="320">320</th><td><i> * is always read from |in|. The IV will be updated on return. */</i></td></tr>
+<tr><th id="321">321</th><td><em>void</em> <dfn class="decl" id="CRYPTO_cbc128_decrypt" title='CRYPTO_cbc128_decrypt' data-ref="CRYPTO_cbc128_decrypt">CRYPTO_cbc128_decrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="84in" title='in' data-type='const uint8_t *' data-ref="84in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="85out" title='out' data-type='uint8_t *' data-ref="85out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="86len" title='len' data-type='size_t' data-ref="86len">len</dfn>,</td></tr>
+<tr><th id="322">322</th><td>                           <em>const</em> <em>void</em> *<dfn class="local col7 decl" id="87key" title='key' data-type='const void *' data-ref="87key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col8 decl" id="88ivec" title='ivec' data-type='uint8_t *' data-ref="88ivec">ivec</dfn>[<var>16</var>], <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col9 decl" id="89block" title='block' data-type='block128_f' data-ref="89block">block</dfn>);</td></tr>
+<tr><th id="323">323</th><td></td></tr>
+<tr><th id="324">324</th><td></td></tr>
+<tr><th id="325">325</th><td><i>/* OFB. */</i></td></tr>
+<tr><th id="326">326</th><td></td></tr>
+<tr><th id="327">327</th><td><i>/* CRYPTO_ofb128_encrypt encrypts (or decrypts, it's the same with OFB mode)</i></td></tr>
+<tr><th id="328">328</th><td><i> * |len| bytes from |in| to |out| using |block| in OFB mode. There's no</i></td></tr>
+<tr><th id="329">329</th><td><i> * requirement that |len| be a multiple of any value and any partial blocks are</i></td></tr>
+<tr><th id="330">330</th><td><i> * stored in |ivec| and |*num|, the latter must be zero before the initial</i></td></tr>
+<tr><th id="331">331</th><td><i> * call. */</i></td></tr>
+<tr><th id="332">332</th><td><em>void</em> <dfn class="decl" id="CRYPTO_ofb128_encrypt" title='CRYPTO_ofb128_encrypt' data-ref="CRYPTO_ofb128_encrypt">CRYPTO_ofb128_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col0 decl" id="90in" title='in' data-type='const uint8_t *' data-ref="90in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="91out" title='out' data-type='uint8_t *' data-ref="91out">out</dfn>,</td></tr>
+<tr><th id="333">333</th><td>                           <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="92len" title='len' data-type='size_t' data-ref="92len">len</dfn>, <em>const</em> <em>void</em> *<dfn class="local col3 decl" id="93key" title='key' data-type='const void *' data-ref="93key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col4 decl" id="94ivec" title='ivec' data-type='uint8_t *' data-ref="94ivec">ivec</dfn>[<var>16</var>],</td></tr>
+<tr><th id="334">334</th><td>                           <em>int</em> *<dfn class="local col5 decl" id="95num" title='num' data-type='int *' data-ref="95num">num</dfn>, <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col6 decl" id="96block" title='block' data-type='block128_f' data-ref="96block">block</dfn>);</td></tr>
+<tr><th id="335">335</th><td></td></tr>
+<tr><th id="336">336</th><td></td></tr>
+<tr><th id="337">337</th><td><i>/* CFB. */</i></td></tr>
+<tr><th id="338">338</th><td></td></tr>
+<tr><th id="339">339</th><td><i>/* CRYPTO_cfb128_encrypt encrypts (or decrypts, if |enc| is zero) |len| bytes</i></td></tr>
+<tr><th id="340">340</th><td><i> * from |in| to |out| using |block| in CFB mode. There's no requirement that</i></td></tr>
+<tr><th id="341">341</th><td><i> * |len| be a multiple of any value and any partial blocks are stored in |ivec|</i></td></tr>
+<tr><th id="342">342</th><td><i> * and |*num|, the latter must be zero before the initial call. */</i></td></tr>
+<tr><th id="343">343</th><td><em>void</em> <dfn class="decl" id="CRYPTO_cfb128_encrypt" title='CRYPTO_cfb128_encrypt' data-ref="CRYPTO_cfb128_encrypt">CRYPTO_cfb128_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="97in" title='in' data-type='const uint8_t *' data-ref="97in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="98out" title='out' data-type='uint8_t *' data-ref="98out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="99len" title='len' data-type='size_t' data-ref="99len">len</dfn>,</td></tr>
+<tr><th id="344">344</th><td>                           <em>const</em> <em>void</em> *<dfn class="local col0 decl" id="100key" title='key' data-type='const void *' data-ref="100key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col1 decl" id="101ivec" title='ivec' data-type='uint8_t *' data-ref="101ivec">ivec</dfn>[<var>16</var>], <em>int</em> *<dfn class="local col2 decl" id="102num" title='num' data-type='int *' data-ref="102num">num</dfn>, <em>int</em> <dfn class="local col3 decl" id="103enc" title='enc' data-type='int' data-ref="103enc">enc</dfn>,</td></tr>
+<tr><th id="345">345</th><td>                           <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col4 decl" id="104block" title='block' data-type='block128_f' data-ref="104block">block</dfn>);</td></tr>
+<tr><th id="346">346</th><td></td></tr>
+<tr><th id="347">347</th><td><i>/* CRYPTO_cfb128_8_encrypt encrypts (or decrypts, if |enc| is zero) |len| bytes</i></td></tr>
+<tr><th id="348">348</th><td><i> * from |in| to |out| using |block| in CFB-8 mode. Prior to the first call</i></td></tr>
+<tr><th id="349">349</th><td><i> * |num| should be set to zero. */</i></td></tr>
+<tr><th id="350">350</th><td><em>void</em> <dfn class="decl" id="CRYPTO_cfb128_8_encrypt" title='CRYPTO_cfb128_8_encrypt' data-ref="CRYPTO_cfb128_8_encrypt">CRYPTO_cfb128_8_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col5 decl" id="105in" title='in' data-type='const uint8_t *' data-ref="105in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="106out" title='out' data-type='uint8_t *' data-ref="106out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="107len" title='len' data-type='size_t' data-ref="107len">len</dfn>,</td></tr>
+<tr><th id="351">351</th><td>                             <em>const</em> <em>void</em> *<dfn class="local col8 decl" id="108key" title='key' data-type='const void *' data-ref="108key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col9 decl" id="109ivec" title='ivec' data-type='uint8_t *' data-ref="109ivec">ivec</dfn>[<var>16</var>], <em>int</em> *<dfn class="local col0 decl" id="110num" title='num' data-type='int *' data-ref="110num">num</dfn>,</td></tr>
+<tr><th id="352">352</th><td>                             <em>int</em> <dfn class="local col1 decl" id="111enc" title='enc' data-type='int' data-ref="111enc">enc</dfn>, <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col2 decl" id="112block" title='block' data-type='block128_f' data-ref="112block">block</dfn>);</td></tr>
+<tr><th id="353">353</th><td></td></tr>
+<tr><th id="354">354</th><td><i>/* CRYPTO_cfb128_1_encrypt encrypts (or decrypts, if |enc| is zero) |len| bytes</i></td></tr>
+<tr><th id="355">355</th><td><i> * from |in| to |out| using |block| in CFB-1 mode. Prior to the first call</i></td></tr>
+<tr><th id="356">356</th><td><i> * |num| should be set to zero. */</i></td></tr>
+<tr><th id="357">357</th><td><em>void</em> <dfn class="decl" id="CRYPTO_cfb128_1_encrypt" title='CRYPTO_cfb128_1_encrypt' data-ref="CRYPTO_cfb128_1_encrypt">CRYPTO_cfb128_1_encrypt</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="113in" title='in' data-type='const uint8_t *' data-ref="113in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="114out" title='out' data-type='uint8_t *' data-ref="114out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="115bits" title='bits' data-type='size_t' data-ref="115bits">bits</dfn>,</td></tr>
+<tr><th id="358">358</th><td>                             <em>const</em> <em>void</em> *<dfn class="local col6 decl" id="116key" title='key' data-type='const void *' data-ref="116key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col7 decl" id="117ivec" title='ivec' data-type='uint8_t *' data-ref="117ivec">ivec</dfn>[<var>16</var>], <em>int</em> *<dfn class="local col8 decl" id="118num" title='num' data-type='int *' data-ref="118num">num</dfn>,</td></tr>
+<tr><th id="359">359</th><td>                             <em>int</em> <dfn class="local col9 decl" id="119enc" title='enc' data-type='int' data-ref="119enc">enc</dfn>, <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col0 decl" id="120block" title='block' data-type='block128_f' data-ref="120block">block</dfn>);</td></tr>
+<tr><th id="360">360</th><td></td></tr>
+<tr><th id="361">361</th><td><span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="CRYPTO_cts128_encrypt_block" title='CRYPTO_cts128_encrypt_block' data-ref="CRYPTO_cts128_encrypt_block">CRYPTO_cts128_encrypt_block</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="121in" title='in' data-type='const uint8_t *' data-ref="121in">in</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col2 decl" id="122out" title='out' data-type='uint8_t *' data-ref="122out">out</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="123len" title='len' data-type='size_t' data-ref="123len">len</dfn>,</td></tr>
+<tr><th id="362">362</th><td>                                   <em>const</em> <em>void</em> *<dfn class="local col4 decl" id="124key" title='key' data-type='const void *' data-ref="124key">key</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col5 decl" id="125ivec" title='ivec' data-type='uint8_t *' data-ref="125ivec">ivec</dfn>[<var>16</var>],</td></tr>
+<tr><th id="363">363</th><td>                                   <a class="typedef" href="#block128_f" title='block128_f' data-type='void (*)(const uint8_t *, uint8_t *, const void *)' data-ref="block128_f">block128_f</a> <dfn class="local col6 decl" id="126block" title='block' data-type='block128_f' data-ref="126block">block</dfn>);</td></tr>
+<tr><th id="364">364</th><td></td></tr>
+<tr><th id="365">365</th><td></td></tr>
+<tr><th id="366">366</th><td><u>#<span data-ppcond="366">if</span> defined(<span class="macro" data-ref="_M/__cplusplus">__cplusplus</span>)</u></td></tr>
+<tr><th id="367">367</th><td>} <i>/* extern C */</i></td></tr>
+<tr><th id="368">368</th><td><u>#<span data-ppcond="366">endif</span></u></td></tr>
+<tr><th id="369">369</th><td></td></tr>
+<tr><th id="370">370</th><td><u>#<span data-ppcond="49">endif</span> /* OPENSSL_HEADER_MODES_INTERNAL_H */</u></td></tr>
+<tr><th id="371">371</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../aes/mode_wrappers.c.html'>codebrowser/external/boringssl/src/crypto/aes/mode_wrappers.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

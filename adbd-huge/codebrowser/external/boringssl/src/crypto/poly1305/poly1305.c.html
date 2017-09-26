@@ -1,0 +1,349 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>poly1305.c source code [codebrowser/external/boringssl/src/crypto/poly1305/poly1305.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/poly1305/poly1305.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>poly1305</a>/<a href='poly1305.c.html'>poly1305.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2014, Google Inc.</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Permission to use, copy, modify, and/or distribute this software for any</i></td></tr>
+<tr><th id="4">4</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="5">5</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="8">8</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="9">9</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY</i></td></tr>
+<tr><th id="10">10</th><td><i> * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION</i></td></tr>
+<tr><th id="12">12</th><td><i> * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN</i></td></tr>
+<tr><th id="13">13</th><td><i> * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */</i></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><i>/* This implementation of poly1305 is by Andrew Moon</i></td></tr>
+<tr><th id="16">16</th><td><i> * (<a href="https://github.com/floodyberry/poly1305-donna">https://github.com/floodyberry/poly1305-donna</a>) and released as public</i></td></tr>
+<tr><th id="17">17</th><td><i> * domain. */</i></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="../../include/openssl/poly1305.h.html">&lt;openssl/poly1305.h&gt;</a></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../include/openssl/cpu.h.html">&lt;openssl/cpu.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><u>#<span data-ppcond="26">if</span> defined(<span class="macro" data-ref="_M/OPENSSL_WINDOWS">OPENSSL_WINDOWS</span>) || !defined(<a class="macro" href="../../include/openssl/base.h.html#72" data-ref="_M/OPENSSL_X86_64">OPENSSL_X86_64</a>)</u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><u>#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || defined(OPENSSL_ARM)</u></td></tr>
+<tr><th id="29">29</th><td><i>/* We can assume little-endian. */</i></td></tr>
+<tr><th id="30">30</th><td><em>static</em> uint32_t U8TO32_LE(<em>const</em> uint8_t *m) {</td></tr>
+<tr><th id="31">31</th><td>  uint32_t r;</td></tr>
+<tr><th id="32">32</th><td>  memcpy(&amp;r, m, <b>sizeof</b>(r));</td></tr>
+<tr><th id="33">33</th><td>  <b>return</b> r;</td></tr>
+<tr><th id="34">34</th><td>}</td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><em>static</em> <em>void</em> U32TO8_LE(uint8_t *m, uint32_t v) { memcpy(m, &amp;v, <b>sizeof</b>(v)); }</td></tr>
+<tr><th id="37">37</th><td><u>#else</u></td></tr>
+<tr><th id="38">38</th><td><em>static</em> uint32_t U8TO32_LE(<em>const</em> uint8_t *m) {</td></tr>
+<tr><th id="39">39</th><td>  <b>return</b> (uint32_t)m[<var>0</var>] | (uint32_t)m[<var>1</var>] &lt;&lt; <var>8</var> | (uint32_t)m[<var>2</var>] &lt;&lt; <var>16</var> |</td></tr>
+<tr><th id="40">40</th><td>         (uint32_t)m[<var>3</var>] &lt;&lt; <var>24</var>;</td></tr>
+<tr><th id="41">41</th><td>}</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><em>static</em> <em>void</em> U32TO8_LE(uint8_t *m, uint32_t v) {</td></tr>
+<tr><th id="44">44</th><td>  m[<var>0</var>] = v;</td></tr>
+<tr><th id="45">45</th><td>  m[<var>1</var>] = v &gt;&gt; <var>8</var>;</td></tr>
+<tr><th id="46">46</th><td>  m[<var>2</var>] = v &gt;&gt; <var>16</var>;</td></tr>
+<tr><th id="47">47</th><td>  m[<var>3</var>] = v &gt;&gt; <var>24</var>;</td></tr>
+<tr><th id="48">48</th><td>}</td></tr>
+<tr><th id="49">49</th><td><u>#endif</u></td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td><u>#if defined(OPENSSL_ARM) &amp;&amp; !defined(OPENSSL_NO_ASM)</u></td></tr>
+<tr><th id="52">52</th><td><em>void</em> CRYPTO_poly1305_init_neon(poly1305_state *state, <em>const</em> uint8_t key[<var>32</var>]);</td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><em>void</em> CRYPTO_poly1305_update_neon(poly1305_state *state, <em>const</em> uint8_t *in,</td></tr>
+<tr><th id="55">55</th><td>                                 size_t in_len);</td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><em>void</em> CRYPTO_poly1305_finish_neon(poly1305_state *state, uint8_t mac[<var>16</var>]);</td></tr>
+<tr><th id="58">58</th><td><u>#endif</u></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><em>static</em> uint64_t mul32x32_64(uint32_t a, uint32_t b) { <b>return</b> (uint64_t)a * b; }</td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><b>struct</b> poly1305_state_st {</td></tr>
+<tr><th id="63">63</th><td>  uint32_t r0, r1, r2, r3, r4;</td></tr>
+<tr><th id="64">64</th><td>  uint32_t s1, s2, s3, s4;</td></tr>
+<tr><th id="65">65</th><td>  uint32_t h0, h1, h2, h3, h4;</td></tr>
+<tr><th id="66">66</th><td>  uint8_t buf[<var>16</var>];</td></tr>
+<tr><th id="67">67</th><td>  <em>unsigned</em> <em>int</em> buf_used;</td></tr>
+<tr><th id="68">68</th><td>  uint8_t key[<var>16</var>];</td></tr>
+<tr><th id="69">69</th><td>};</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><i>/* poly1305_blocks updates |state| given some amount of input data. This</i></td></tr>
+<tr><th id="72">72</th><td><i> * function may only be called with a |len| that is not a multiple of 16 at the</i></td></tr>
+<tr><th id="73">73</th><td><i> * end of the data. Otherwise the input must be buffered into 16 byte blocks. */</i></td></tr>
+<tr><th id="74">74</th><td><em>static</em> <em>void</em> poly1305_update(<b>struct</b> poly1305_state_st *state, <em>const</em> uint8_t *in,</td></tr>
+<tr><th id="75">75</th><td>                            size_t len) {</td></tr>
+<tr><th id="76">76</th><td>  uint32_t t0, t1, t2, t3;</td></tr>
+<tr><th id="77">77</th><td>  uint64_t t[<var>5</var>];</td></tr>
+<tr><th id="78">78</th><td>  uint32_t b;</td></tr>
+<tr><th id="79">79</th><td>  uint64_t c;</td></tr>
+<tr><th id="80">80</th><td>  size_t j;</td></tr>
+<tr><th id="81">81</th><td>  uint8_t mp[<var>16</var>];</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td>  <b>if</b> (len &lt; <var>16</var>) {</td></tr>
+<tr><th id="84">84</th><td>    <b>goto</b> poly1305_donna_atmost15bytes;</td></tr>
+<tr><th id="85">85</th><td>  }</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td>poly1305_donna_16bytes:</td></tr>
+<tr><th id="88">88</th><td>  t0 = U8TO32_LE(in);</td></tr>
+<tr><th id="89">89</th><td>  t1 = U8TO32_LE(in + <var>4</var>);</td></tr>
+<tr><th id="90">90</th><td>  t2 = U8TO32_LE(in + <var>8</var>);</td></tr>
+<tr><th id="91">91</th><td>  t3 = U8TO32_LE(in + <var>12</var>);</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td>  in += <var>16</var>;</td></tr>
+<tr><th id="94">94</th><td>  len -= <var>16</var>;</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td>  state-&gt;h0 += t0 &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="97">97</th><td>  state-&gt;h1 += ((((uint64_t)t1 &lt;&lt; <var>32</var>) | t0) &gt;&gt; <var>26</var>) &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="98">98</th><td>  state-&gt;h2 += ((((uint64_t)t2 &lt;&lt; <var>32</var>) | t1) &gt;&gt; <var>20</var>) &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="99">99</th><td>  state-&gt;h3 += ((((uint64_t)t3 &lt;&lt; <var>32</var>) | t2) &gt;&gt; <var>14</var>) &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="100">100</th><td>  state-&gt;h4 += (t3 &gt;&gt; <var>8</var>) | (<var>1</var> &lt;&lt; <var>24</var>);</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td>poly1305_donna_mul:</td></tr>
+<tr><th id="103">103</th><td>  t[<var>0</var>] = mul32x32_64(state-&gt;h0, state-&gt;r0) + mul32x32_64(state-&gt;h1, state-&gt;s4) +</td></tr>
+<tr><th id="104">104</th><td>         mul32x32_64(state-&gt;h2, state-&gt;s3) + mul32x32_64(state-&gt;h3, state-&gt;s2) +</td></tr>
+<tr><th id="105">105</th><td>         mul32x32_64(state-&gt;h4, state-&gt;s1);</td></tr>
+<tr><th id="106">106</th><td>  t[<var>1</var>] = mul32x32_64(state-&gt;h0, state-&gt;r1) + mul32x32_64(state-&gt;h1, state-&gt;r0) +</td></tr>
+<tr><th id="107">107</th><td>         mul32x32_64(state-&gt;h2, state-&gt;s4) + mul32x32_64(state-&gt;h3, state-&gt;s3) +</td></tr>
+<tr><th id="108">108</th><td>         mul32x32_64(state-&gt;h4, state-&gt;s2);</td></tr>
+<tr><th id="109">109</th><td>  t[<var>2</var>] = mul32x32_64(state-&gt;h0, state-&gt;r2) + mul32x32_64(state-&gt;h1, state-&gt;r1) +</td></tr>
+<tr><th id="110">110</th><td>         mul32x32_64(state-&gt;h2, state-&gt;r0) + mul32x32_64(state-&gt;h3, state-&gt;s4) +</td></tr>
+<tr><th id="111">111</th><td>         mul32x32_64(state-&gt;h4, state-&gt;s3);</td></tr>
+<tr><th id="112">112</th><td>  t[<var>3</var>] = mul32x32_64(state-&gt;h0, state-&gt;r3) + mul32x32_64(state-&gt;h1, state-&gt;r2) +</td></tr>
+<tr><th id="113">113</th><td>         mul32x32_64(state-&gt;h2, state-&gt;r1) + mul32x32_64(state-&gt;h3, state-&gt;r0) +</td></tr>
+<tr><th id="114">114</th><td>         mul32x32_64(state-&gt;h4, state-&gt;s4);</td></tr>
+<tr><th id="115">115</th><td>  t[<var>4</var>] = mul32x32_64(state-&gt;h0, state-&gt;r4) + mul32x32_64(state-&gt;h1, state-&gt;r3) +</td></tr>
+<tr><th id="116">116</th><td>         mul32x32_64(state-&gt;h2, state-&gt;r2) + mul32x32_64(state-&gt;h3, state-&gt;r1) +</td></tr>
+<tr><th id="117">117</th><td>         mul32x32_64(state-&gt;h4, state-&gt;r0);</td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td>  state-&gt;h0 = (uint32_t)t[<var>0</var>] &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="120">120</th><td>  c = (t[<var>0</var>] &gt;&gt; <var>26</var>);</td></tr>
+<tr><th id="121">121</th><td>  t[<var>1</var>] += c;</td></tr>
+<tr><th id="122">122</th><td>  state-&gt;h1 = (uint32_t)t[<var>1</var>] &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="123">123</th><td>  b = (uint32_t)(t[<var>1</var>] &gt;&gt; <var>26</var>);</td></tr>
+<tr><th id="124">124</th><td>  t[<var>2</var>] += b;</td></tr>
+<tr><th id="125">125</th><td>  state-&gt;h2 = (uint32_t)t[<var>2</var>] &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="126">126</th><td>  b = (uint32_t)(t[<var>2</var>] &gt;&gt; <var>26</var>);</td></tr>
+<tr><th id="127">127</th><td>  t[<var>3</var>] += b;</td></tr>
+<tr><th id="128">128</th><td>  state-&gt;h3 = (uint32_t)t[<var>3</var>] &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="129">129</th><td>  b = (uint32_t)(t[<var>3</var>] &gt;&gt; <var>26</var>);</td></tr>
+<tr><th id="130">130</th><td>  t[<var>4</var>] += b;</td></tr>
+<tr><th id="131">131</th><td>  state-&gt;h4 = (uint32_t)t[<var>4</var>] &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="132">132</th><td>  b = (uint32_t)(t[<var>4</var>] &gt;&gt; <var>26</var>);</td></tr>
+<tr><th id="133">133</th><td>  state-&gt;h0 += b * <var>5</var>;</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td>  <b>if</b> (len &gt;= <var>16</var>) {</td></tr>
+<tr><th id="136">136</th><td>    <b>goto</b> poly1305_donna_16bytes;</td></tr>
+<tr><th id="137">137</th><td>  }</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td><i>/* final bytes */</i></td></tr>
+<tr><th id="140">140</th><td>poly1305_donna_atmost15bytes:</td></tr>
+<tr><th id="141">141</th><td>  <b>if</b> (!len) {</td></tr>
+<tr><th id="142">142</th><td>    <b>return</b>;</td></tr>
+<tr><th id="143">143</th><td>  }</td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td>  <b>for</b> (j = <var>0</var>; j &lt; len; j++) {</td></tr>
+<tr><th id="146">146</th><td>    mp[j] = in[j];</td></tr>
+<tr><th id="147">147</th><td>  }</td></tr>
+<tr><th id="148">148</th><td>  mp[j++] = <var>1</var>;</td></tr>
+<tr><th id="149">149</th><td>  <b>for</b> (; j &lt; <var>16</var>; j++) {</td></tr>
+<tr><th id="150">150</th><td>    mp[j] = <var>0</var>;</td></tr>
+<tr><th id="151">151</th><td>  }</td></tr>
+<tr><th id="152">152</th><td>  len = <var>0</var>;</td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td>  t0 = U8TO32_LE(mp + <var>0</var>);</td></tr>
+<tr><th id="155">155</th><td>  t1 = U8TO32_LE(mp + <var>4</var>);</td></tr>
+<tr><th id="156">156</th><td>  t2 = U8TO32_LE(mp + <var>8</var>);</td></tr>
+<tr><th id="157">157</th><td>  t3 = U8TO32_LE(mp + <var>12</var>);</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td>  state-&gt;h0 += t0 &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="160">160</th><td>  state-&gt;h1 += ((((uint64_t)t1 &lt;&lt; <var>32</var>) | t0) &gt;&gt; <var>26</var>) &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="161">161</th><td>  state-&gt;h2 += ((((uint64_t)t2 &lt;&lt; <var>32</var>) | t1) &gt;&gt; <var>20</var>) &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="162">162</th><td>  state-&gt;h3 += ((((uint64_t)t3 &lt;&lt; <var>32</var>) | t2) &gt;&gt; <var>14</var>) &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="163">163</th><td>  state-&gt;h4 += (t3 &gt;&gt; <var>8</var>);</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td>  <b>goto</b> poly1305_donna_mul;</td></tr>
+<tr><th id="166">166</th><td>}</td></tr>
+<tr><th id="167">167</th><td></td></tr>
+<tr><th id="168">168</th><td><em>void</em> CRYPTO_poly1305_init(poly1305_state *statep, <em>const</em> uint8_t key[<var>32</var>]) {</td></tr>
+<tr><th id="169">169</th><td>  <b>struct</b> poly1305_state_st *state = (<b>struct</b> poly1305_state_st *)statep;</td></tr>
+<tr><th id="170">170</th><td>  uint32_t t0, t1, t2, t3;</td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><u>#if defined(OPENSSL_ARM) &amp;&amp; !defined(OPENSSL_NO_ASM)</u></td></tr>
+<tr><th id="173">173</th><td>  <b>if</b> (CRYPTO_is_NEON_functional()) {</td></tr>
+<tr><th id="174">174</th><td>    CRYPTO_poly1305_init_neon(statep, key);</td></tr>
+<tr><th id="175">175</th><td>    <b>return</b>;</td></tr>
+<tr><th id="176">176</th><td>  }</td></tr>
+<tr><th id="177">177</th><td><u>#endif</u></td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td>  t0 = U8TO32_LE(key + <var>0</var>);</td></tr>
+<tr><th id="180">180</th><td>  t1 = U8TO32_LE(key + <var>4</var>);</td></tr>
+<tr><th id="181">181</th><td>  t2 = U8TO32_LE(key + <var>8</var>);</td></tr>
+<tr><th id="182">182</th><td>  t3 = U8TO32_LE(key + <var>12</var>);</td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td>  <i>/* precompute multipliers */</i></td></tr>
+<tr><th id="185">185</th><td>  state-&gt;r0 = t0 &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="186">186</th><td>  t0 &gt;&gt;= <var>26</var>;</td></tr>
+<tr><th id="187">187</th><td>  t0 |= t1 &lt;&lt; <var>6</var>;</td></tr>
+<tr><th id="188">188</th><td>  state-&gt;r1 = t0 &amp; <var>0x3ffff03</var>;</td></tr>
+<tr><th id="189">189</th><td>  t1 &gt;&gt;= <var>20</var>;</td></tr>
+<tr><th id="190">190</th><td>  t1 |= t2 &lt;&lt; <var>12</var>;</td></tr>
+<tr><th id="191">191</th><td>  state-&gt;r2 = t1 &amp; <var>0x3ffc0ff</var>;</td></tr>
+<tr><th id="192">192</th><td>  t2 &gt;&gt;= <var>14</var>;</td></tr>
+<tr><th id="193">193</th><td>  t2 |= t3 &lt;&lt; <var>18</var>;</td></tr>
+<tr><th id="194">194</th><td>  state-&gt;r3 = t2 &amp; <var>0x3f03fff</var>;</td></tr>
+<tr><th id="195">195</th><td>  t3 &gt;&gt;= <var>8</var>;</td></tr>
+<tr><th id="196">196</th><td>  state-&gt;r4 = t3 &amp; <var>0x00fffff</var>;</td></tr>
+<tr><th id="197">197</th><td></td></tr>
+<tr><th id="198">198</th><td>  state-&gt;s1 = state-&gt;r1 * <var>5</var>;</td></tr>
+<tr><th id="199">199</th><td>  state-&gt;s2 = state-&gt;r2 * <var>5</var>;</td></tr>
+<tr><th id="200">200</th><td>  state-&gt;s3 = state-&gt;r3 * <var>5</var>;</td></tr>
+<tr><th id="201">201</th><td>  state-&gt;s4 = state-&gt;r4 * <var>5</var>;</td></tr>
+<tr><th id="202">202</th><td></td></tr>
+<tr><th id="203">203</th><td>  <i>/* init state */</i></td></tr>
+<tr><th id="204">204</th><td>  state-&gt;h0 = <var>0</var>;</td></tr>
+<tr><th id="205">205</th><td>  state-&gt;h1 = <var>0</var>;</td></tr>
+<tr><th id="206">206</th><td>  state-&gt;h2 = <var>0</var>;</td></tr>
+<tr><th id="207">207</th><td>  state-&gt;h3 = <var>0</var>;</td></tr>
+<tr><th id="208">208</th><td>  state-&gt;h4 = <var>0</var>;</td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td>  state-&gt;buf_used = <var>0</var>;</td></tr>
+<tr><th id="211">211</th><td>  memcpy(state-&gt;key, key + <var>16</var>, <b>sizeof</b>(state-&gt;key));</td></tr>
+<tr><th id="212">212</th><td>}</td></tr>
+<tr><th id="213">213</th><td></td></tr>
+<tr><th id="214">214</th><td><em>void</em> CRYPTO_poly1305_update(poly1305_state *statep, <em>const</em> uint8_t *in,</td></tr>
+<tr><th id="215">215</th><td>                            size_t in_len) {</td></tr>
+<tr><th id="216">216</th><td>  <em>unsigned</em> <em>int</em> i;</td></tr>
+<tr><th id="217">217</th><td>  <b>struct</b> poly1305_state_st *state = (<b>struct</b> poly1305_state_st *)statep;</td></tr>
+<tr><th id="218">218</th><td></td></tr>
+<tr><th id="219">219</th><td><u>#if defined(OPENSSL_ARM) &amp;&amp; !defined(OPENSSL_NO_ASM)</u></td></tr>
+<tr><th id="220">220</th><td>  <b>if</b> (CRYPTO_is_NEON_functional()) {</td></tr>
+<tr><th id="221">221</th><td>    CRYPTO_poly1305_update_neon(statep, in, in_len);</td></tr>
+<tr><th id="222">222</th><td>    <b>return</b>;</td></tr>
+<tr><th id="223">223</th><td>  }</td></tr>
+<tr><th id="224">224</th><td><u>#endif</u></td></tr>
+<tr><th id="225">225</th><td></td></tr>
+<tr><th id="226">226</th><td>  <b>if</b> (state-&gt;buf_used) {</td></tr>
+<tr><th id="227">227</th><td>    <em>unsigned</em> <em>int</em> todo = <var>16</var> - state-&gt;buf_used;</td></tr>
+<tr><th id="228">228</th><td>    <b>if</b> (todo &gt; in_len) {</td></tr>
+<tr><th id="229">229</th><td>      todo = in_len;</td></tr>
+<tr><th id="230">230</th><td>    }</td></tr>
+<tr><th id="231">231</th><td>    <b>for</b> (i = <var>0</var>; i &lt; todo; i++) {</td></tr>
+<tr><th id="232">232</th><td>      state-&gt;buf[state-&gt;buf_used + i] = in[i];</td></tr>
+<tr><th id="233">233</th><td>    }</td></tr>
+<tr><th id="234">234</th><td>    state-&gt;buf_used += todo;</td></tr>
+<tr><th id="235">235</th><td>    in_len -= todo;</td></tr>
+<tr><th id="236">236</th><td>    in += todo;</td></tr>
+<tr><th id="237">237</th><td></td></tr>
+<tr><th id="238">238</th><td>    <b>if</b> (state-&gt;buf_used == <var>16</var>) {</td></tr>
+<tr><th id="239">239</th><td>      poly1305_update(state, state-&gt;buf, <var>16</var>);</td></tr>
+<tr><th id="240">240</th><td>      state-&gt;buf_used = <var>0</var>;</td></tr>
+<tr><th id="241">241</th><td>    }</td></tr>
+<tr><th id="242">242</th><td>  }</td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td>  <b>if</b> (in_len &gt;= <var>16</var>) {</td></tr>
+<tr><th id="245">245</th><td>    size_t todo = in_len &amp; ~<var>0xf</var>;</td></tr>
+<tr><th id="246">246</th><td>    poly1305_update(state, in, todo);</td></tr>
+<tr><th id="247">247</th><td>    in += todo;</td></tr>
+<tr><th id="248">248</th><td>    in_len &amp;= <var>0xf</var>;</td></tr>
+<tr><th id="249">249</th><td>  }</td></tr>
+<tr><th id="250">250</th><td></td></tr>
+<tr><th id="251">251</th><td>  <b>if</b> (in_len) {</td></tr>
+<tr><th id="252">252</th><td>    <b>for</b> (i = <var>0</var>; i &lt; in_len; i++) {</td></tr>
+<tr><th id="253">253</th><td>      state-&gt;buf[i] = in[i];</td></tr>
+<tr><th id="254">254</th><td>    }</td></tr>
+<tr><th id="255">255</th><td>    state-&gt;buf_used = in_len;</td></tr>
+<tr><th id="256">256</th><td>  }</td></tr>
+<tr><th id="257">257</th><td>}</td></tr>
+<tr><th id="258">258</th><td></td></tr>
+<tr><th id="259">259</th><td><em>void</em> CRYPTO_poly1305_finish(poly1305_state *statep, uint8_t mac[<var>16</var>]) {</td></tr>
+<tr><th id="260">260</th><td>  <b>struct</b> poly1305_state_st *state = (<b>struct</b> poly1305_state_st *)statep;</td></tr>
+<tr><th id="261">261</th><td>  uint64_t f0, f1, f2, f3;</td></tr>
+<tr><th id="262">262</th><td>  uint32_t g0, g1, g2, g3, g4;</td></tr>
+<tr><th id="263">263</th><td>  uint32_t b, nb;</td></tr>
+<tr><th id="264">264</th><td></td></tr>
+<tr><th id="265">265</th><td><u>#if defined(OPENSSL_ARM) &amp;&amp; !defined(OPENSSL_NO_ASM)</u></td></tr>
+<tr><th id="266">266</th><td>  <b>if</b> (CRYPTO_is_NEON_functional()) {</td></tr>
+<tr><th id="267">267</th><td>    CRYPTO_poly1305_finish_neon(statep, mac);</td></tr>
+<tr><th id="268">268</th><td>    <b>return</b>;</td></tr>
+<tr><th id="269">269</th><td>  }</td></tr>
+<tr><th id="270">270</th><td><u>#endif</u></td></tr>
+<tr><th id="271">271</th><td></td></tr>
+<tr><th id="272">272</th><td>  <b>if</b> (state-&gt;buf_used) {</td></tr>
+<tr><th id="273">273</th><td>    poly1305_update(state, state-&gt;buf, state-&gt;buf_used);</td></tr>
+<tr><th id="274">274</th><td>  }</td></tr>
+<tr><th id="275">275</th><td></td></tr>
+<tr><th id="276">276</th><td>  b = state-&gt;h0 &gt;&gt; <var>26</var>;</td></tr>
+<tr><th id="277">277</th><td>  state-&gt;h0 = state-&gt;h0 &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="278">278</th><td>  state-&gt;h1 += b;</td></tr>
+<tr><th id="279">279</th><td>  b = state-&gt;h1 &gt;&gt; <var>26</var>;</td></tr>
+<tr><th id="280">280</th><td>  state-&gt;h1 = state-&gt;h1 &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="281">281</th><td>  state-&gt;h2 += b;</td></tr>
+<tr><th id="282">282</th><td>  b = state-&gt;h2 &gt;&gt; <var>26</var>;</td></tr>
+<tr><th id="283">283</th><td>  state-&gt;h2 = state-&gt;h2 &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="284">284</th><td>  state-&gt;h3 += b;</td></tr>
+<tr><th id="285">285</th><td>  b = state-&gt;h3 &gt;&gt; <var>26</var>;</td></tr>
+<tr><th id="286">286</th><td>  state-&gt;h3 = state-&gt;h3 &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="287">287</th><td>  state-&gt;h4 += b;</td></tr>
+<tr><th id="288">288</th><td>  b = state-&gt;h4 &gt;&gt; <var>26</var>;</td></tr>
+<tr><th id="289">289</th><td>  state-&gt;h4 = state-&gt;h4 &amp; <var>0x3ffffff</var>;</td></tr>
+<tr><th id="290">290</th><td>  state-&gt;h0 += b * <var>5</var>;</td></tr>
+<tr><th id="291">291</th><td></td></tr>
+<tr><th id="292">292</th><td>  g0 = state-&gt;h0 + <var>5</var>;</td></tr>
+<tr><th id="293">293</th><td>  b = g0 &gt;&gt; <var>26</var>;</td></tr>
+<tr><th id="294">294</th><td>  g0 &amp;= <var>0x3ffffff</var>;</td></tr>
+<tr><th id="295">295</th><td>  g1 = state-&gt;h1 + b;</td></tr>
+<tr><th id="296">296</th><td>  b = g1 &gt;&gt; <var>26</var>;</td></tr>
+<tr><th id="297">297</th><td>  g1 &amp;= <var>0x3ffffff</var>;</td></tr>
+<tr><th id="298">298</th><td>  g2 = state-&gt;h2 + b;</td></tr>
+<tr><th id="299">299</th><td>  b = g2 &gt;&gt; <var>26</var>;</td></tr>
+<tr><th id="300">300</th><td>  g2 &amp;= <var>0x3ffffff</var>;</td></tr>
+<tr><th id="301">301</th><td>  g3 = state-&gt;h3 + b;</td></tr>
+<tr><th id="302">302</th><td>  b = g3 &gt;&gt; <var>26</var>;</td></tr>
+<tr><th id="303">303</th><td>  g3 &amp;= <var>0x3ffffff</var>;</td></tr>
+<tr><th id="304">304</th><td>  g4 = state-&gt;h4 + b - (<var>1</var> &lt;&lt; <var>26</var>);</td></tr>
+<tr><th id="305">305</th><td></td></tr>
+<tr><th id="306">306</th><td>  b = (g4 &gt;&gt; <var>31</var>) - <var>1</var>;</td></tr>
+<tr><th id="307">307</th><td>  nb = ~b;</td></tr>
+<tr><th id="308">308</th><td>  state-&gt;h0 = (state-&gt;h0 &amp; nb) | (g0 &amp; b);</td></tr>
+<tr><th id="309">309</th><td>  state-&gt;h1 = (state-&gt;h1 &amp; nb) | (g1 &amp; b);</td></tr>
+<tr><th id="310">310</th><td>  state-&gt;h2 = (state-&gt;h2 &amp; nb) | (g2 &amp; b);</td></tr>
+<tr><th id="311">311</th><td>  state-&gt;h3 = (state-&gt;h3 &amp; nb) | (g3 &amp; b);</td></tr>
+<tr><th id="312">312</th><td>  state-&gt;h4 = (state-&gt;h4 &amp; nb) | (g4 &amp; b);</td></tr>
+<tr><th id="313">313</th><td></td></tr>
+<tr><th id="314">314</th><td>  f0 = ((state-&gt;h0) | (state-&gt;h1 &lt;&lt; <var>26</var>)) + (uint64_t)U8TO32_LE(&amp;state-&gt;key[<var>0</var>]);</td></tr>
+<tr><th id="315">315</th><td>  f1 = ((state-&gt;h1 &gt;&gt; <var>6</var>) | (state-&gt;h2 &lt;&lt; <var>20</var>)) +</td></tr>
+<tr><th id="316">316</th><td>       (uint64_t)U8TO32_LE(&amp;state-&gt;key[<var>4</var>]);</td></tr>
+<tr><th id="317">317</th><td>  f2 = ((state-&gt;h2 &gt;&gt; <var>12</var>) | (state-&gt;h3 &lt;&lt; <var>14</var>)) +</td></tr>
+<tr><th id="318">318</th><td>       (uint64_t)U8TO32_LE(&amp;state-&gt;key[<var>8</var>]);</td></tr>
+<tr><th id="319">319</th><td>  f3 = ((state-&gt;h3 &gt;&gt; <var>18</var>) | (state-&gt;h4 &lt;&lt; <var>8</var>)) +</td></tr>
+<tr><th id="320">320</th><td>       (uint64_t)U8TO32_LE(&amp;state-&gt;key[<var>12</var>]);</td></tr>
+<tr><th id="321">321</th><td></td></tr>
+<tr><th id="322">322</th><td>  U32TO8_LE(&amp;mac[<var>0</var>], f0);</td></tr>
+<tr><th id="323">323</th><td>  f1 += (f0 &gt;&gt; <var>32</var>);</td></tr>
+<tr><th id="324">324</th><td>  U32TO8_LE(&amp;mac[<var>4</var>], f1);</td></tr>
+<tr><th id="325">325</th><td>  f2 += (f1 &gt;&gt; <var>32</var>);</td></tr>
+<tr><th id="326">326</th><td>  U32TO8_LE(&amp;mac[<var>8</var>], f2);</td></tr>
+<tr><th id="327">327</th><td>  f3 += (f2 &gt;&gt; <var>32</var>);</td></tr>
+<tr><th id="328">328</th><td>  U32TO8_LE(&amp;mac[<var>12</var>], f3);</td></tr>
+<tr><th id="329">329</th><td>}</td></tr>
+<tr><th id="330">330</th><td></td></tr>
+<tr><th id="331">331</th><td><u>#<span data-ppcond="26">endif</span>  /* OPENSSL_WINDOWS || !OPENSSL_X86_64 */</u></td></tr>
+<tr><th id="332">332</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

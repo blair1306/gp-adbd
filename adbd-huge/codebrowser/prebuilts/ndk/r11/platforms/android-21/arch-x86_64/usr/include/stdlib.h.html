@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>stdlib.h source code [codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdlib.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdlib.h'; var root_path = '../../../../../../../../..'; var data_path = '../../../../../../../../../../data';</script>
+<script src='../../../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../../../..'>codebrowser</a>/<a href='../../../../../../..'>prebuilts</a>/<a href='../../../../../..'>ndk</a>/<a href='../../../../..'>r11</a>/<a href='../../../..'>platforms</a>/<a href='../../..'>android-21</a>/<a href='../..'>arch-x86_64</a>/<a href='..'>usr</a>/<a href='./'>include</a>/<a href='stdlib.h.html'>stdlib.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><u>#<span data-ppcond="28">ifndef</span> <span class="macro" data-ref="_M/_STDLIB_H_">_STDLIB_H_</span></u></td></tr>
+<tr><th id="29">29</th><td><u>#define <dfn class="macro" id="_M/_STDLIB_H_" data-ref="_M/_STDLIB_H_">_STDLIB_H_</dfn></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#include &lt;stddef.h&gt;</u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="alloca.h.html">&lt;alloca.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="strings.h.html">&lt;strings.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td><u>#include <a href="memory.h.html">&lt;memory.h&gt;</a></u></td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><a class="macro" href="sys/cdefs.h.html#84" title="" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/EXIT_FAILURE" data-ref="_M/EXIT_FAILURE">EXIT_FAILURE</dfn> 1</u></td></tr>
+<tr><th id="42">42</th><td><u>#define <dfn class="macro" id="_M/EXIT_SUCCESS" data-ref="_M/EXIT_SUCCESS">EXIT_SUCCESS</dfn> 0</u></td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><b>extern</b> <a class="macro" href="sys/cdefs.h.html#332" title="__attribute__((__noreturn__))" data-ref="_M/__noreturn">__noreturn</a> <em>void</em> <a class="decl" href="#abort" title='abort' data-ref="abort">abort</a>(<em>void</em>);</td></tr>
+<tr><th id="45">45</th><td><b>extern</b> <a class="macro" href="sys/cdefs.h.html#332" title="__attribute__((__noreturn__))" data-ref="_M/__noreturn">__noreturn</a> <em>void</em> <a class="decl" href="#exit" title='exit' data-ref="exit">exit</a>(<em>int</em>);</td></tr>
+<tr><th id="46">46</th><td><b>extern</b> <a class="macro" href="sys/cdefs.h.html#332" title="__attribute__((__noreturn__))" data-ref="_M/__noreturn">__noreturn</a> <em>void</em> <a class="decl" href="#_Exit" title='_Exit' data-ref="_Exit">_Exit</a>(<em>int</em>);</td></tr>
+<tr><th id="47">47</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="atexit" title='atexit' data-ref="atexit">atexit</dfn>(<em>void</em> (*)(<em>void</em>));</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><u>#<span data-ppcond="49">if</span> <a class="macro" href="sys/cdefs.h.html#526" title="1999" data-ref="_M/__ISO_C_VISIBLE">__ISO_C_VISIBLE</a> &gt;= 2011 || __cplusplus &gt;= 201103L</u></td></tr>
+<tr><th id="50">50</th><td><em>int</em> at_quick_exit(<em>void</em> (*)(<em>void</em>));</td></tr>
+<tr><th id="51">51</th><td><em>void</em> quick_exit(<em>int</em>) __noreturn;</td></tr>
+<tr><th id="52">52</th><td><u>#<span data-ppcond="49">endif</span></u></td></tr>
+<tr><th id="53">53</th><td></td></tr>
+<tr><th id="54">54</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="getenv" title='getenv' data-ref="getenv">getenv</dfn>(<em>const</em> <em>char</em>*);</td></tr>
+<tr><th id="55">55</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="putenv" title='putenv' data-ref="putenv">putenv</dfn>(<em>char</em>*);</td></tr>
+<tr><th id="56">56</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setenv" title='setenv' data-ref="setenv">setenv</dfn>(<em>const</em> <em>char</em>*, <em>const</em> <em>char</em>*, <em>int</em>);</td></tr>
+<tr><th id="57">57</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="unsetenv" title='unsetenv' data-ref="unsetenv">unsetenv</dfn>(<em>const</em> <em>char</em>*);</td></tr>
+<tr><th id="58">58</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="clearenv" title='clearenv' data-ref="clearenv">clearenv</dfn>(<em>void</em>);</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="mkdtemp" title='mkdtemp' data-ref="mkdtemp">mkdtemp</dfn>(<em>char</em>*);</td></tr>
+<tr><th id="61">61</th><td><b>extern</b> <em>char</em>* <dfn class="decl" id="mktemp" title='mktemp' data-ref="mktemp">mktemp</dfn>(<em>char</em>*) <a class="macro" href="sys/cdefs.h.html#358" title="" data-ref="_M/__warnattr">__warnattr</a>(<q>"mktemp possibly used unsafely; consider using mkstemp"</q>);</td></tr>
+<tr><th id="62">62</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="mkstemp" title='mkstemp' data-ref="mkstemp">mkstemp</dfn>(<em>char</em>*);</td></tr>
+<tr><th id="63">63</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="mkstemp64" title='mkstemp64' data-ref="mkstemp64">mkstemp64</dfn>(<em>char</em>*);</td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td><b>extern</b> <em>long</em> <dfn class="decl" id="strtol" title='strtol' data-ref="strtol">strtol</dfn>(<em>const</em> <em>char</em> *, <em>char</em> **, <em>int</em>);</td></tr>
+<tr><th id="66">66</th><td><b>extern</b> <em>long</em> <em>long</em> <dfn class="decl" id="strtoll" title='strtoll' data-ref="strtoll">strtoll</dfn>(<em>const</em> <em>char</em> *, <em>char</em> **, <em>int</em>);</td></tr>
+<tr><th id="67">67</th><td><b>extern</b> <em>unsigned</em> <em>long</em> <dfn class="decl" id="strtoul" title='strtoul' data-ref="strtoul">strtoul</dfn>(<em>const</em> <em>char</em> *, <em>char</em> **, <em>int</em>);</td></tr>
+<tr><th id="68">68</th><td><b>extern</b> <em>unsigned</em> <em>long</em> <em>long</em> <dfn class="decl" id="strtoull" title='strtoull' data-ref="strtoull">strtoull</dfn>(<em>const</em> <em>char</em> *, <em>char</em> **, <em>int</em>);</td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="posix_memalign" title='posix_memalign' data-ref="posix_memalign">posix_memalign</dfn>(<em>void</em> **<dfn class="local col6 decl" id="4066memptr" title='memptr' data-type='void **' data-ref="4066memptr">memptr</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="4067alignment" title='alignment' data-type='size_t' data-ref="4067alignment">alignment</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="4068size" title='size' data-type='size_t' data-ref="4068size">size</dfn>);</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><b>extern</b> <em>double</em> <dfn class="decl" id="atof" title='atof' data-ref="atof">atof</dfn>(<em>const</em> <em>char</em>*) <a class="macro" href="sys/cdefs.h.html#598" title="" data-ref="_M/__NDK_FPABI__">__NDK_FPABI__</a>;</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><b>extern</b> <em>double</em> <dfn class="decl" id="strtod" title='strtod' data-ref="strtod">strtod</dfn>(<em>const</em> <em>char</em>*, <em>char</em>**) <a class="macro" href="sys/cdefs_elf.h.html#75" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a> <a class="macro" href="sys/cdefs.h.html#598" title="" data-ref="_M/__NDK_FPABI__">__NDK_FPABI__</a>;</td></tr>
+<tr><th id="75">75</th><td><b>extern</b> <em>float</em> <dfn class="decl" id="strtof" title='strtof' data-ref="strtof">strtof</dfn>(<em>const</em> <em>char</em>*, <em>char</em>**) <a class="macro" href="sys/cdefs_elf.h.html#75" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a> <a class="macro" href="sys/cdefs.h.html#598" title="" data-ref="_M/__NDK_FPABI__">__NDK_FPABI__</a>;</td></tr>
+<tr><th id="76">76</th><td><b>extern</b> <em>long</em> <em>double</em> <dfn class="decl" id="strtold" title='strtold' data-ref="strtold">strtold</dfn>(<em>const</em> <em>char</em>*, <em>char</em>**) <a class="macro" href="sys/cdefs_elf.h.html#75" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a> <a class="macro" href="sys/cdefs.h.html#598" title="" data-ref="_M/__NDK_FPABI__">__NDK_FPABI__</a>;</td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td><b>extern</b> <em>long</em> <em>double</em> <dfn class="decl" id="strtold_l" title='strtold_l' data-ref="strtold_l">strtold_l</dfn>(<em>const</em> <em>char</em> *, <em>char</em> **, <a class="typedef" href="xlocale.h.html#locale_t" title='locale_t' data-type='struct __locale_t *' data-ref="locale_t">locale_t</a>) <a class="macro" href="sys/cdefs_elf.h.html#75" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a> <a class="macro" href="sys/cdefs.h.html#598" title="" data-ref="_M/__NDK_FPABI__">__NDK_FPABI__</a>;</td></tr>
+<tr><th id="79">79</th><td><b>extern</b> <em>long</em> <em>long</em> <dfn class="decl" id="strtoll_l" title='strtoll_l' data-ref="strtoll_l">strtoll_l</dfn>(<em>const</em> <em>char</em> *, <em>char</em> **, <em>int</em>, <a class="typedef" href="xlocale.h.html#locale_t" title='locale_t' data-type='struct __locale_t *' data-ref="locale_t">locale_t</a>) <a class="macro" href="sys/cdefs_elf.h.html#75" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="80">80</th><td><b>extern</b> <em>unsigned</em> <em>long</em> <em>long</em> <dfn class="decl" id="strtoull_l" title='strtoull_l' data-ref="strtoull_l">strtoull_l</dfn>(<em>const</em> <em>char</em> *, <em>char</em> **, <em>int</em>, <a class="typedef" href="xlocale.h.html#locale_t" title='locale_t' data-type='struct __locale_t *' data-ref="locale_t">locale_t</a>) <a class="macro" href="sys/cdefs_elf.h.html#75" title="__attribute__((visibility (&quot;default&quot;)))" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</a>;</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="atoi" title='atoi' data-ref="atoi">atoi</dfn>(<em>const</em> <em>char</em>*) <a class="macro" href="sys/cdefs.h.html#334" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="83">83</th><td><b>extern</b> <em>long</em> <dfn class="decl" id="atol" title='atol' data-ref="atol">atol</dfn>(<em>const</em> <em>char</em>*) <a class="macro" href="sys/cdefs.h.html#334" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="84">84</th><td><b>extern</b> <em>long</em> <em>long</em> <dfn class="decl" id="atoll" title='atoll' data-ref="atoll">atoll</dfn>(<em>const</em> <em>char</em>*) <a class="macro" href="sys/cdefs.h.html#334" title="__attribute__((pure))" data-ref="_M/__purefunc">__purefunc</a>;</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><b>extern</b> <em>int</em> <a class="decl" href="#abs" title='abs' data-ref="abs">abs</a>(<em>int</em>) <a class="macro" href="sys/cdefs.h.html#198" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="87">87</th><td><b>extern</b> <em>long</em> <a class="decl" href="#labs" title='labs' data-ref="labs">labs</a>(<em>long</em>) <a class="macro" href="sys/cdefs.h.html#198" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="88">88</th><td><b>extern</b> <em>long</em> <em>long</em> <a class="decl" href="#llabs" title='llabs' data-ref="llabs">llabs</a>(<em>long</em> <em>long</em>) <a class="macro" href="sys/cdefs.h.html#198" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td><b>extern</b> <em>char</em> * <dfn class="decl" id="realpath" title='realpath' data-ref="realpath">realpath</dfn>(<em>const</em> <em>char</em> *<dfn class="local col9 decl" id="4069path" title='path' data-type='const char *' data-ref="4069path">path</dfn>, <em>char</em> *<dfn class="local col0 decl" id="4070resolved" title='resolved' data-type='char *' data-ref="4070resolved">resolved</dfn>);</td></tr>
+<tr><th id="91">91</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="system" title='system' data-ref="system">system</dfn>(<em>const</em> <em>char</em> * <dfn class="local col1 decl" id="4071string" title='string' data-type='const char *' data-ref="4071string">string</dfn>);</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><b>extern</b> <em>void</em> * <dfn class="decl" id="bsearch" title='bsearch' data-ref="bsearch">bsearch</dfn>(<em>const</em> <em>void</em> *<dfn class="local col2 decl" id="4072key" title='key' data-type='const void *' data-ref="4072key">key</dfn>, <em>const</em> <em>void</em> *<dfn class="local col3 decl" id="4073base0" title='base0' data-type='const void *' data-ref="4073base0">base0</dfn>,</td></tr>
+<tr><th id="94">94</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col4 decl" id="4074nmemb" title='nmemb' data-type='size_t' data-ref="4074nmemb">nmemb</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="4075size" title='size' data-type='size_t' data-ref="4075size">size</dfn>,</td></tr>
+<tr><th id="95">95</th><td>	<em>int</em> (*<dfn class="local col6 decl" id="4076compar" title='compar' data-type='int (*)(const void *, const void *)' data-ref="4076compar">compar</dfn>)(<em>const</em> <em>void</em> *, <em>const</em> <em>void</em> *));</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><b>extern</b> <em>void</em> <dfn class="decl" id="qsort" title='qsort' data-ref="qsort">qsort</dfn>(<em>void</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>int</em> (*)(<em>const</em> <em>void</em> *, <em>const</em> <em>void</em> *));</td></tr>
+<tr><th id="98">98</th><td></td></tr>
+<tr><th id="99">99</th><td><b>extern</b> <em>long</em> <dfn class="decl" id="jrand48" title='jrand48' data-ref="jrand48">jrand48</dfn>(<em>unsigned</em> <em>short</em> *);</td></tr>
+<tr><th id="100">100</th><td><b>extern</b> <em>long</em> <dfn class="decl" id="mrand48" title='mrand48' data-ref="mrand48">mrand48</dfn>(<em>void</em>);</td></tr>
+<tr><th id="101">101</th><td><b>extern</b> <em>long</em> <dfn class="decl" id="nrand48" title='nrand48' data-ref="nrand48">nrand48</dfn>(<em>unsigned</em> <em>short</em> *);</td></tr>
+<tr><th id="102">102</th><td><b>extern</b> <em>long</em> <dfn class="decl" id="lrand48" title='lrand48' data-ref="lrand48">lrand48</dfn>(<em>void</em>);</td></tr>
+<tr><th id="103">103</th><td><b>extern</b> <em>unsigned</em> <em>short</em> *<dfn class="decl" id="seed48" title='seed48' data-ref="seed48">seed48</dfn>(<em>unsigned</em> <em>short</em>*);</td></tr>
+<tr><th id="104">104</th><td><b>extern</b> <em>double</em> <dfn class="decl" id="erand48" title='erand48' data-ref="erand48">erand48</dfn>(<em>unsigned</em> <em>short</em> <dfn class="local col7 decl" id="4077xsubi" title='xsubi' data-type='unsigned short *' data-ref="4077xsubi">xsubi</dfn>[<var>3</var>]) <a class="macro" href="sys/cdefs.h.html#598" title="" data-ref="_M/__NDK_FPABI__">__NDK_FPABI__</a>;</td></tr>
+<tr><th id="105">105</th><td><b>extern</b> <em>double</em> <dfn class="decl" id="drand48" title='drand48' data-ref="drand48">drand48</dfn>(<em>void</em>) <a class="macro" href="sys/cdefs.h.html#598" title="" data-ref="_M/__NDK_FPABI__">__NDK_FPABI__</a>;</td></tr>
+<tr><th id="106">106</th><td><b>extern</b> <em>void</em> <dfn class="decl" id="srand48" title='srand48' data-ref="srand48">srand48</dfn>(<em>long</em>);</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td><em>unsigned</em> <em>int</em> <dfn class="decl" id="arc4random" title='arc4random' data-ref="arc4random">arc4random</dfn>(<em>void</em>);</td></tr>
+<tr><th id="109">109</th><td><em>unsigned</em> <em>int</em> <dfn class="decl" id="arc4random_uniform" title='arc4random_uniform' data-ref="arc4random_uniform">arc4random_uniform</dfn>(<em>unsigned</em> <em>int</em>);</td></tr>
+<tr><th id="110">110</th><td><em>void</em> <dfn class="decl" id="arc4random_buf" title='arc4random_buf' data-ref="arc4random_buf">arc4random_buf</dfn>(<em>void</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><u>#define <dfn class="macro" id="_M/RAND_MAX" data-ref="_M/RAND_MAX">RAND_MAX</dfn> 0x7fffffff</u></td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><em>int</em> <dfn class="decl" id="rand" title='rand' data-ref="rand">rand</dfn>(<em>void</em>);</td></tr>
+<tr><th id="115">115</th><td><em>int</em> <dfn class="decl" id="rand_r" title='rand_r' data-ref="rand_r">rand_r</dfn>(<em>unsigned</em> <em>int</em>*);</td></tr>
+<tr><th id="116">116</th><td><em>void</em> <dfn class="decl" id="srand" title='srand' data-ref="srand">srand</dfn>(<em>unsigned</em> <em>int</em>);</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><em>char</em>* <dfn class="decl" id="initstate" title='initstate' data-ref="initstate">initstate</dfn>(<em>unsigned</em> <em>int</em>, <em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="119">119</th><td><em>long</em> <dfn class="decl" id="random" title='random' data-ref="random">random</dfn>(<em>void</em>);</td></tr>
+<tr><th id="120">120</th><td><em>char</em>* <dfn class="decl" id="setstate" title='setstate' data-ref="setstate">setstate</dfn>(<em>char</em>*);</td></tr>
+<tr><th id="121">121</th><td><em>void</em> <dfn class="decl" id="srandom" title='srandom' data-ref="srandom">srandom</dfn>(<em>unsigned</em> <em>int</em>);</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><em>int</em> <dfn class="decl" id="getpt" title='getpt' data-ref="getpt">getpt</dfn>(<em>void</em>);</td></tr>
+<tr><th id="124">124</th><td><em>int</em> <dfn class="decl" id="grantpt" title='grantpt' data-ref="grantpt">grantpt</dfn>(<em>int</em>);</td></tr>
+<tr><th id="125">125</th><td><em>int</em> <dfn class="decl" id="posix_openpt" title='posix_openpt' data-ref="posix_openpt">posix_openpt</dfn>(<em>int</em>);</td></tr>
+<tr><th id="126">126</th><td><em>char</em>* <dfn class="decl" id="ptsname" title='ptsname' data-ref="ptsname">ptsname</dfn>(<em>int</em>) <a class="macro" href="sys/cdefs.h.html#358" title="" data-ref="_M/__warnattr">__warnattr</a>(<q>"ptsname is not thread-safe; use ptsname_r instead"</q>);</td></tr>
+<tr><th id="127">127</th><td><em>int</em> <dfn class="decl" id="ptsname_r" title='ptsname_r' data-ref="ptsname_r">ptsname_r</dfn>(<em>int</em>, <em>char</em>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="128">128</th><td><em>int</em> <dfn class="decl" id="unlockpt" title='unlockpt' data-ref="unlockpt">unlockpt</dfn>(<em>int</em>);</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="131">131</th><td>    <em>int</em>  <dfn class="decl" id="(anonymous)::quot" title='(anonymous struct)::quot' data-ref="(anonymous)::quot">quot</dfn>;</td></tr>
+<tr><th id="132">132</th><td>    <em>int</em>  <dfn class="decl" id="(anonymous)::rem" title='(anonymous struct)::rem' data-ref="(anonymous)::rem">rem</dfn>;</td></tr>
+<tr><th id="133">133</th><td>} <dfn class="typedef" id="div_t" title='div_t' data-type='struct div_t' data-ref="div_t">div_t</dfn>;</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td><b>extern</b> <a class="typedef" href="#div_t" title='div_t' data-type='struct div_t' data-ref="div_t">div_t</a>   <dfn class="decl" id="div" title='div' data-ref="div">div</dfn>(<em>int</em>, <em>int</em>) <a class="macro" href="sys/cdefs.h.html#198" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="138">138</th><td>    <em>long</em> <em>int</em>  <dfn class="decl" id="(anonymous)::quot" title='(anonymous struct)::quot' data-ref="(anonymous)::quot">quot</dfn>;</td></tr>
+<tr><th id="139">139</th><td>    <em>long</em> <em>int</em>  <dfn class="decl" id="(anonymous)::rem" title='(anonymous struct)::rem' data-ref="(anonymous)::rem">rem</dfn>;</td></tr>
+<tr><th id="140">140</th><td>} <dfn class="typedef" id="ldiv_t" title='ldiv_t' data-type='struct ldiv_t' data-ref="ldiv_t">ldiv_t</dfn>;</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td><b>extern</b> <a class="typedef" href="#ldiv_t" title='ldiv_t' data-type='struct ldiv_t' data-ref="ldiv_t">ldiv_t</a>   <dfn class="decl" id="ldiv" title='ldiv' data-ref="ldiv">ldiv</dfn>(<em>long</em>, <em>long</em>) <a class="macro" href="sys/cdefs.h.html#198" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="145">145</th><td>    <em>long</em> <em>long</em> <em>int</em>  <dfn class="decl" id="(anonymous)::quot" title='(anonymous struct)::quot' data-ref="(anonymous)::quot">quot</dfn>;</td></tr>
+<tr><th id="146">146</th><td>    <em>long</em> <em>long</em> <em>int</em>  <dfn class="decl" id="(anonymous)::rem" title='(anonymous struct)::rem' data-ref="(anonymous)::rem">rem</dfn>;</td></tr>
+<tr><th id="147">147</th><td>} <dfn class="typedef" id="lldiv_t" title='lldiv_t' data-type='struct lldiv_t' data-ref="lldiv_t">lldiv_t</dfn>;</td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td><b>extern</b> <a class="typedef" href="#lldiv_t" title='lldiv_t' data-type='struct lldiv_t' data-ref="lldiv_t">lldiv_t</a>   <dfn class="decl" id="lldiv" title='lldiv' data-ref="lldiv">lldiv</dfn>(<em>long</em> <em>long</em>, <em>long</em> <em>long</em>) <a class="macro" href="sys/cdefs.h.html#198" title="__attribute__((__const__))" data-ref="_M/__pure2">__pure2</a>;</td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><i>/* BSD compatibility. */</i></td></tr>
+<tr><th id="152">152</th><td><b>extern</b> <em>const</em> <em>char</em>* <dfn class="decl" id="getprogname" title='getprogname' data-ref="getprogname">getprogname</dfn>(<em>void</em>);</td></tr>
+<tr><th id="153">153</th><td><b>extern</b> <em>void</em> <dfn class="decl" id="setprogname" title='setprogname' data-ref="setprogname">setprogname</dfn>(<em>const</em> <em>char</em>*);</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td><i>/* make STLPort happy */</i></td></tr>
+<tr><th id="156">156</th><td><b>extern</b> <em>int</em>      <dfn class="decl" id="mblen" title='mblen' data-ref="mblen">mblen</dfn>(<em>const</em> <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="157">157</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>   <dfn class="decl" id="mbstowcs" title='mbstowcs' data-ref="mbstowcs">mbstowcs</dfn>(<span class='typedef' title='wchar_t' data-type='int' data-ref="wchar_t">wchar_t</span> *, <em>const</em> <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="158">158</th><td><b>extern</b> <em>int</em>      <dfn class="decl" id="mbtowc" title='mbtowc' data-ref="mbtowc">mbtowc</dfn>(<span class='typedef' title='wchar_t' data-type='int' data-ref="wchar_t">wchar_t</span> *, <em>const</em> <em>char</em> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td><i>/* Likewise, make libstdc++-v3 happy.  */</i></td></tr>
+<tr><th id="161">161</th><td><b>extern</b> <em>int</em>	<dfn class="decl" id="wctomb" title='wctomb' data-ref="wctomb">wctomb</dfn>(<em>char</em> *, <span class='typedef' title='wchar_t' data-type='int' data-ref="wchar_t">wchar_t</span>);</td></tr>
+<tr><th id="162">162</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>	<dfn class="decl" id="wcstombs" title='wcstombs' data-ref="wcstombs">wcstombs</dfn>(<em>char</em> *, <em>const</em> <span class='typedef' title='wchar_t' data-type='int' data-ref="wchar_t">wchar_t</span> *, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="__ctype_get_mb_cur_max" title='__ctype_get_mb_cur_max' data-ref="__ctype_get_mb_cur_max">__ctype_get_mb_cur_max</dfn>(<em>void</em>);</td></tr>
+<tr><th id="165">165</th><td><u>#define <dfn class="macro" id="_M/MB_CUR_MAX" data-ref="_M/MB_CUR_MAX">MB_CUR_MAX</dfn> __ctype_get_mb_cur_max()</u></td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><a class="macro" href="sys/cdefs.h.html#85" title="" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td><u>#<span data-ppcond="28">endif</span> /* _STDLIB_H_ */</u></td></tr>
+<tr><th id="170">170</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../../../../../../external/boringssl/android_compat_hacks.c.html'>codebrowser/external/boringssl/android_compat_hacks.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

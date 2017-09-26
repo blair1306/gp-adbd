@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>pthread_once.cpp source code [codebrowser/bionic/libc/bionic/pthread_once.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/bionic/pthread_once.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>bionic</a>/<a href='pthread_once.cpp.html'>pthread_once.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../include/stdatomic.h.html">&lt;stdatomic.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../private/bionic_futex.h.html">"private/bionic_futex.h"</a></u></td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#define <dfn class="macro" id="_M/ONCE_INITIALIZATION_NOT_YET_STARTED" data-ref="_M/ONCE_INITIALIZATION_NOT_YET_STARTED">ONCE_INITIALIZATION_NOT_YET_STARTED</dfn>   0</u></td></tr>
+<tr><th id="35">35</th><td><u>#define <dfn class="macro" id="_M/ONCE_INITIALIZATION_UNDERWAY" data-ref="_M/ONCE_INITIALIZATION_UNDERWAY">ONCE_INITIALIZATION_UNDERWAY</dfn>          1</u></td></tr>
+<tr><th id="36">36</th><td><u>#define <dfn class="macro" id="_M/ONCE_INITIALIZATION_COMPLETE" data-ref="_M/ONCE_INITIALIZATION_COMPLETE">ONCE_INITIALIZATION_COMPLETE</dfn>          2</u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i>/* NOTE: this implementation doesn't support a init function that throws a C++ exception</i></td></tr>
+<tr><th id="39">39</th><td><i> *       or calls fork()</i></td></tr>
+<tr><th id="40">40</th><td><i> */</i></td></tr>
+<tr><th id="41">41</th><td><em>int</em> <dfn class="decl def" id="pthread_once" title='pthread_once' data-ref="pthread_once">pthread_once</dfn>(<a class="typedef" href="../include/pthread.h.html#pthread_once_t" title='pthread_once_t' data-type='int' data-ref="pthread_once_t">pthread_once_t</a>* <dfn class="local col1 decl" id="1once_control" title='once_control' data-type='pthread_once_t *' data-ref="1once_control">once_control</dfn>, <em>void</em> (*<dfn class="local col2 decl" id="2init_routine" title='init_routine' data-type='void (*)()' data-ref="2init_routine">init_routine</dfn>)(<em>void</em>)) {</td></tr>
+<tr><th id="42">42</th><td>  <b>static_assert</b>(<b>sizeof</b>(<a class="typedef" href="../include/stdatomic.h.html#atomic_int" title='atomic_int' data-type='_Atomic(int)' data-ref="atomic_int">atomic_int</a>) == <b>sizeof</b>(<a class="typedef" href="../include/pthread.h.html#pthread_once_t" title='pthread_once_t' data-type='int' data-ref="pthread_once_t">pthread_once_t</a>),</td></tr>
+<tr><th id="43">43</th><td>                <q>"pthread_once_t should actually be atomic_int in implementation."</q>);</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td>  <i>// We prefer casting to atomic_int instead of declaring pthread_once_t to be atomic_int directly.</i></td></tr>
+<tr><th id="46">46</th><td><i>  // Because using the second method pollutes pthread.h, and causes an error when compiling libcxx.</i></td></tr>
+<tr><th id="47">47</th><td>  <a class="typedef" href="../include/stdatomic.h.html#atomic_int" title='atomic_int' data-type='_Atomic(int)' data-ref="atomic_int">atomic_int</a>* <dfn class="local col3 decl" id="3once_control_ptr" title='once_control_ptr' data-type='atomic_int *' data-ref="3once_control_ptr">once_control_ptr</dfn> = <b>reinterpret_cast</b>&lt;<a class="typedef" href="../include/stdatomic.h.html#atomic_int" title='atomic_int' data-type='_Atomic(int)' data-ref="atomic_int">atomic_int</a>*&gt;(<a class="local col1 ref" href="#1once_control" title='once_control' data-ref="1once_control">once_control</a>);</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td>  <i>// First check if the once is already initialized. This will be the common</i></td></tr>
+<tr><th id="50">50</th><td><i>  // case and we want to make this as fast as possible. Note that this still</i></td></tr>
+<tr><th id="51">51</th><td><i>  // requires a load_acquire operation here to ensure that all the</i></td></tr>
+<tr><th id="52">52</th><td><i>  // stores performed by the initialization function are observable on</i></td></tr>
+<tr><th id="53">53</th><td><i>  // this CPU after we exit.</i></td></tr>
+<tr><th id="54">54</th><td>  <em>int</em> <dfn class="local col4 decl" id="4old_value" title='old_value' data-type='int' data-ref="4old_value">old_value</dfn> = <a class="macro" href="../include/stdatomic.h.html#423" title="__c11_atomic_load(once_control_ptr, memory_order_acquire)" data-ref="_M/atomic_load_explicit">atomic_load_explicit</a>(<a class="local col3 ref" href="#3once_control_ptr" title='once_control_ptr' data-ref="3once_control_ptr">once_control_ptr</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_acquire" title='memory_order_acquire' data-ref="memory_order_acquire">memory_order_acquire</a>);</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td>  <b>while</b> (<span class="macro" title="true" data-ref="_M/true"><b>true</b></span>) {</td></tr>
+<tr><th id="57">57</th><td>    <b>if</b> (<a class="macro" href="../include/sys/cdefs.h.html#207" title="__builtin_expect((old_value == 2) != 0, 1)" data-ref="_M/__predict_true">__predict_true</a>(<a class="local col4 ref" href="#4old_value" title='old_value' data-ref="4old_value">old_value</a> == <a class="macro" href="#36" title="2" data-ref="_M/ONCE_INITIALIZATION_COMPLETE">ONCE_INITIALIZATION_COMPLETE</a>)) {</td></tr>
+<tr><th id="58">58</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="59">59</th><td>    }</td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td>    <i>// Try to atomically set the initialization underway flag. This requires a compare exchange</i></td></tr>
+<tr><th id="62">62</th><td><i>    // in a loop, and we may need to exit prematurely if the initialization is complete.</i></td></tr>
+<tr><th id="63">63</th><td>    <b>if</b> (!<a class="macro" href="../include/stdatomic.h.html#407" title="__c11_atomic_compare_exchange_weak(once_control_ptr, &amp;old_value, 1, memory_order_acquire, memory_order_acquire)" data-ref="_M/atomic_compare_exchange_weak_explicit">atomic_compare_exchange_weak_explicit</a>(<a class="local col3 ref" href="#3once_control_ptr" title='once_control_ptr' data-ref="3once_control_ptr">once_control_ptr</a>, &amp;<a class="local col4 ref" href="#4old_value" title='old_value' data-ref="4old_value">old_value</a>,</td></tr>
+<tr><th id="64">64</th><td>                                               <a class="macro" href="#35" title="1" data-ref="_M/ONCE_INITIALIZATION_UNDERWAY">ONCE_INITIALIZATION_UNDERWAY</a>,</td></tr>
+<tr><th id="65">65</th><td>                                               <a class="enum" href="../include/stdatomic.h.html#memory_order_acquire" title='memory_order_acquire' data-ref="memory_order_acquire">memory_order_acquire</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_acquire" title='memory_order_acquire' data-ref="memory_order_acquire">memory_order_acquire</a>)) {</td></tr>
+<tr><th id="66">66</th><td>      <b>continue</b>;</td></tr>
+<tr><th id="67">67</th><td>    }</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td>    <b>if</b> (<a class="local col4 ref" href="#4old_value" title='old_value' data-ref="4old_value">old_value</a> == <a class="macro" href="#34" title="0" data-ref="_M/ONCE_INITIALIZATION_NOT_YET_STARTED">ONCE_INITIALIZATION_NOT_YET_STARTED</a>) {</td></tr>
+<tr><th id="70">70</th><td>      <i>// We got here first, we can handle the initialization.</i></td></tr>
+<tr><th id="71">71</th><td>      (*<a class="local col2 ref" href="#2init_routine" title='init_routine' data-ref="2init_routine">init_routine</a>)();</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td>      <i>// Do a store_release indicating that initialization is complete.</i></td></tr>
+<tr><th id="74">74</th><td>      <a class="macro" href="../include/stdatomic.h.html#425" title="__c11_atomic_store(once_control_ptr, 2, memory_order_release)" data-ref="_M/atomic_store_explicit">atomic_store_explicit</a>(<a class="local col3 ref" href="#3once_control_ptr" title='once_control_ptr' data-ref="3once_control_ptr">once_control_ptr</a>, <a class="macro" href="#36" title="2" data-ref="_M/ONCE_INITIALIZATION_COMPLETE">ONCE_INITIALIZATION_COMPLETE</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_release" title='memory_order_release' data-ref="memory_order_release">memory_order_release</a>);</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td>      <i>// Wake up any waiters, if any.</i></td></tr>
+<tr><th id="77">77</th><td>      <a class="ref" href="../private/bionic_futex.h.html#__futex_wake_ex" title='__futex_wake_ex' data-ref="__futex_wake_ex">__futex_wake_ex</a>(<a class="local col3 ref" href="#3once_control_ptr" title='once_control_ptr' data-ref="3once_control_ptr">once_control_ptr</a>, <var>0</var>, <a class="macro" href="../include/sys/limits.h.html#53" title="0x7fffffff" data-ref="_M/INT_MAX">INT_MAX</a>);</td></tr>
+<tr><th id="78">78</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="79">79</th><td>    }</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td>    <i>// The initialization is underway, wait for its finish.</i></td></tr>
+<tr><th id="82">82</th><td>    <a class="ref" href="../private/bionic_futex.h.html#__futex_wait_ex" title='__futex_wait_ex' data-ref="__futex_wait_ex">__futex_wait_ex</a>(<a class="local col3 ref" href="#3once_control_ptr" title='once_control_ptr' data-ref="3once_control_ptr">once_control_ptr</a>, <var>0</var>, <a class="local col4 ref" href="#4old_value" title='old_value' data-ref="4old_value">old_value</a>, <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>, <b>nullptr</b>);</td></tr>
+<tr><th id="83">83</th><td>    <a class="local col4 ref" href="#4old_value" title='old_value' data-ref="4old_value">old_value</a> = <a class="macro" href="../include/stdatomic.h.html#423" title="__c11_atomic_load(once_control_ptr, memory_order_acquire)" data-ref="_M/atomic_load_explicit">atomic_load_explicit</a>(<a class="local col3 ref" href="#3once_control_ptr" title='once_control_ptr' data-ref="3once_control_ptr">once_control_ptr</a>, <a class="enum" href="../include/stdatomic.h.html#memory_order_acquire" title='memory_order_acquire' data-ref="memory_order_acquire">memory_order_acquire</a>);</td></tr>
+<tr><th id="84">84</th><td>  }</td></tr>
+<tr><th id="85">85</th><td>}</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

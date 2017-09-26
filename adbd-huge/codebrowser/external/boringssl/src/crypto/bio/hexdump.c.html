@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>hexdump.c source code [codebrowser/external/boringssl/src/crypto/bio/hexdump.c] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="hexdump_ctx "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/bio/hexdump.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>bio</a>/<a href='hexdump.c.html'>hexdump.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/bio.h.html">&lt;openssl/bio.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><i>/* hexdump_ctx contains the state of a hexdump. */</i></td></tr>
+<tr><th id="64">64</th><td><b>struct</b> <dfn class="type def" id="hexdump_ctx" title='hexdump_ctx' data-ref="hexdump_ctx">hexdump_ctx</dfn> {</td></tr>
+<tr><th id="65">65</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="tu decl" id="hexdump_ctx::bio" title='hexdump_ctx::bio' data-type='BIO *' data-ref="hexdump_ctx::bio">bio</dfn>;</td></tr>
+<tr><th id="66">66</th><td>  <em>char</em> <dfn class="tu decl" id="hexdump_ctx::right_chars" title='hexdump_ctx::right_chars' data-type='char [18]' data-ref="hexdump_ctx::right_chars">right_chars</dfn>[<var>18</var>]; <i  data-doc="hexdump_ctx::right_chars">/* the contents of the right-hand side, ASCII dump. */</i></td></tr>
+<tr><th id="67">67</th><td>  <em>unsigned</em> <dfn class="tu decl" id="hexdump_ctx::used" title='hexdump_ctx::used' data-type='unsigned int' data-ref="hexdump_ctx::used">used</dfn>;        <i  data-doc="hexdump_ctx::used">/* number of bytes in the current line. */</i></td></tr>
+<tr><th id="68">68</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="tu decl" id="hexdump_ctx::n" title='hexdump_ctx::n' data-type='size_t' data-ref="hexdump_ctx::n">n</dfn>;             <i  data-doc="hexdump_ctx::n">/* number of bytes total. */</i></td></tr>
+<tr><th id="69">69</th><td>  <em>unsigned</em> <dfn class="tu decl" id="hexdump_ctx::indent" title='hexdump_ctx::indent' data-type='unsigned int' data-ref="hexdump_ctx::indent">indent</dfn>;</td></tr>
+<tr><th id="70">70</th><td>};</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="hexbyte" title='hexbyte' data-type='void hexbyte(char * out, uint8_t b)' data-ref="hexbyte">hexbyte</dfn>(<em>char</em> *<dfn class="local col1 decl" id="1out" title='out' data-type='char *' data-ref="1out">out</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col2 decl" id="2b" title='b' data-type='uint8_t' data-ref="2b">b</dfn>) {</td></tr>
+<tr><th id="73">73</th><td>  <em>static</em> <em>const</em> <em>char</em> <dfn class="local col3 decl" id="3hextable" title='hextable' data-type='const char [17]' data-ref="3hextable">hextable</dfn>[] = <q>"0123456789abcdef"</q>;</td></tr>
+<tr><th id="74">74</th><td>  <a class="local col1 ref" href="#1out" title='out' data-ref="1out">out</a>[<var>0</var>] = <a class="local col3 ref" href="#3hextable" title='hextable' data-ref="3hextable">hextable</a>[<a class="local col2 ref" href="#2b" title='b' data-ref="2b">b</a>&gt;&gt;<var>4</var>];</td></tr>
+<tr><th id="75">75</th><td>  <a class="local col1 ref" href="#1out" title='out' data-ref="1out">out</a>[<var>1</var>] = <a class="local col3 ref" href="#3hextable" title='hextable' data-ref="3hextable">hextable</a>[<a class="local col2 ref" href="#2b" title='b' data-ref="2b">b</a>&amp;<var>0x0f</var>];</td></tr>
+<tr><th id="76">76</th><td>}</td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td><em>static</em> <em>char</em> <dfn class="tu decl def" id="to_char" title='to_char' data-type='char to_char(uint8_t b)' data-ref="to_char">to_char</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col4 decl" id="4b" title='b' data-type='uint8_t' data-ref="4b">b</dfn>) {</td></tr>
+<tr><th id="79">79</th><td>  <b>if</b> (<a class="local col4 ref" href="#4b" title='b' data-ref="4b">b</a> &lt; <var>32</var> || <a class="local col4 ref" href="#4b" title='b' data-ref="4b">b</a> &gt; <var>126</var>) {</td></tr>
+<tr><th id="80">80</th><td>          <b>return</b> <kbd>'.'</kbd>;</td></tr>
+<tr><th id="81">81</th><td>  }</td></tr>
+<tr><th id="82">82</th><td>  <b>return</b> <a class="local col4 ref" href="#4b" title='b' data-ref="4b">b</a>;</td></tr>
+<tr><th id="83">83</th><td>}</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><i  data-doc="hexdump_write">/* hexdump_write adds |len| bytes of |data| to the current hex dump described by</i></td></tr>
+<tr><th id="86">86</th><td><i  data-doc="hexdump_write"> * |ctx|. */</i></td></tr>
+<tr><th id="87">87</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="hexdump_write" title='hexdump_write' data-type='int hexdump_write(struct hexdump_ctx * ctx, const uint8_t * data, size_t len)' data-ref="hexdump_write">hexdump_write</dfn>(<b>struct</b> <a class="type" href="#hexdump_ctx" title='hexdump_ctx' data-ref="hexdump_ctx">hexdump_ctx</a> *<dfn class="local col5 decl" id="5ctx" title='ctx' data-type='struct hexdump_ctx *' data-ref="5ctx">ctx</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="6data" title='data' data-type='const uint8_t *' data-ref="6data">data</dfn>,</td></tr>
+<tr><th id="88">88</th><td>                         <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="7len" title='len' data-type='size_t' data-ref="7len">len</dfn>) {</td></tr>
+<tr><th id="89">89</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col8 decl" id="8i" title='i' data-type='size_t' data-ref="8i">i</dfn>;</td></tr>
+<tr><th id="90">90</th><td>  <em>char</em> <dfn class="local col9 decl" id="9buf" title='buf' data-type='char [10]' data-ref="9buf">buf</dfn>[<var>10</var>];</td></tr>
+<tr><th id="91">91</th><td>  <em>unsigned</em> <dfn class="local col0 decl" id="10l" title='l' data-type='unsigned int' data-ref="10l">l</dfn>;</td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td>  <i>/* Output lines look like:</i></td></tr>
+<tr><th id="94">94</th><td><i>   * 00000010  2e 2f 30 31 32 33 34 35  36 37 38 ... 3c 3d // |./0123456789:;&lt;=|</i></td></tr>
+<tr><th id="95">95</th><td><i>   * ^ offset                          ^ extra space           ^ ASCII of line</i></td></tr>
+<tr><th id="96">96</th><td><i>   */</i></td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td>  <b>for</b> (<a class="local col8 ref" href="#8i" title='i' data-ref="8i">i</a> = <var>0</var>; <a class="local col8 ref" href="#8i" title='i' data-ref="8i">i</a> &lt; <a class="local col7 ref" href="#7len" title='len' data-ref="7len">len</a>; <a class="local col8 ref" href="#8i" title='i' data-ref="8i">i</a>++) {</td></tr>
+<tr><th id="99">99</th><td>    <b>if</b> (<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='r' data-ref="hexdump_ctx::used">used</a> == <var>0</var>) {</td></tr>
+<tr><th id="100">100</th><td>      <i>/* The beginning of a line. */</i></td></tr>
+<tr><th id="101">101</th><td>      <a class="ref" href="../../include/openssl/bio.h.html#BIO_indent" title='BIO_indent' data-ref="BIO_indent">BIO_indent</a>(<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::bio" title='hexdump_ctx::bio' data-use='r' data-ref="hexdump_ctx::bio">bio</a>, <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::indent" title='hexdump_ctx::indent' data-use='r' data-ref="hexdump_ctx::indent">indent</a>, <a class="macro" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/limits.h.html#52" title="0xffffffffU" data-ref="_M/UINT_MAX">UINT_MAX</a>);</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td>      <a class="tu ref" href="#hexbyte" title='hexbyte' data-use='c' data-ref="hexbyte">hexbyte</a>(&amp;<a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>0</var>], <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::n" title='hexdump_ctx::n' data-use='r' data-ref="hexdump_ctx::n">n</a> &gt;&gt; <var>24</var>);</td></tr>
+<tr><th id="104">104</th><td>      <a class="tu ref" href="#hexbyte" title='hexbyte' data-use='c' data-ref="hexbyte">hexbyte</a>(&amp;<a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>2</var>], <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::n" title='hexdump_ctx::n' data-use='r' data-ref="hexdump_ctx::n">n</a> &gt;&gt; <var>16</var>);</td></tr>
+<tr><th id="105">105</th><td>      <a class="tu ref" href="#hexbyte" title='hexbyte' data-use='c' data-ref="hexbyte">hexbyte</a>(&amp;<a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>4</var>], <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::n" title='hexdump_ctx::n' data-use='r' data-ref="hexdump_ctx::n">n</a> &gt;&gt; <var>8</var>);</td></tr>
+<tr><th id="106">106</th><td>      <a class="tu ref" href="#hexbyte" title='hexbyte' data-use='c' data-ref="hexbyte">hexbyte</a>(&amp;<a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>6</var>], <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::n" title='hexdump_ctx::n' data-use='r' data-ref="hexdump_ctx::n">n</a>);</td></tr>
+<tr><th id="107">107</th><td>      <a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>8</var>] = <a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>9</var>] = <kbd>' '</kbd>;</td></tr>
+<tr><th id="108">108</th><td>      <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::bio" title='hexdump_ctx::bio' data-use='r' data-ref="hexdump_ctx::bio">bio</a>, <a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>, <var>10</var>) &lt; <var>0</var>) {</td></tr>
+<tr><th id="109">109</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="110">110</th><td>      }</td></tr>
+<tr><th id="111">111</th><td>    }</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td>    <a class="tu ref" href="#hexbyte" title='hexbyte' data-use='c' data-ref="hexbyte">hexbyte</a>(<a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>, <a class="local col6 ref" href="#6data" title='data' data-ref="6data">data</a>[<a class="local col8 ref" href="#8i" title='i' data-ref="8i">i</a>]);</td></tr>
+<tr><th id="114">114</th><td>    <a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>2</var>] = <kbd>' '</kbd>;</td></tr>
+<tr><th id="115">115</th><td>    <a class="local col0 ref" href="#10l" title='l' data-ref="10l">l</a> = <var>3</var>;</td></tr>
+<tr><th id="116">116</th><td>    <b>if</b> (<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='r' data-ref="hexdump_ctx::used">used</a> == <var>7</var>) {</td></tr>
+<tr><th id="117">117</th><td>      <i>/* There's an additional space after the 8th byte. */</i></td></tr>
+<tr><th id="118">118</th><td>      <a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>3</var>] = <kbd>' '</kbd>;</td></tr>
+<tr><th id="119">119</th><td>      <a class="local col0 ref" href="#10l" title='l' data-ref="10l">l</a> = <var>4</var>;</td></tr>
+<tr><th id="120">120</th><td>    } <b>else</b> <b>if</b> (<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='r' data-ref="hexdump_ctx::used">used</a> == <var>15</var>) {</td></tr>
+<tr><th id="121">121</th><td>      <i>/* At the end of the line there's an extra space and the bar for the</i></td></tr>
+<tr><th id="122">122</th><td><i>       * right column. */</i></td></tr>
+<tr><th id="123">123</th><td>      <a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>3</var>] = <kbd>' '</kbd>;</td></tr>
+<tr><th id="124">124</th><td>      <a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>[<var>4</var>] = <kbd>'|'</kbd>;</td></tr>
+<tr><th id="125">125</th><td>      <a class="local col0 ref" href="#10l" title='l' data-ref="10l">l</a> = <var>5</var>;</td></tr>
+<tr><th id="126">126</th><td>    }</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::bio" title='hexdump_ctx::bio' data-use='r' data-ref="hexdump_ctx::bio">bio</a>, <a class="local col9 ref" href="#9buf" title='buf' data-ref="9buf">buf</a>, <a class="local col0 ref" href="#10l" title='l' data-ref="10l">l</a>) &lt; <var>0</var>) {</td></tr>
+<tr><th id="129">129</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="130">130</th><td>    }</td></tr>
+<tr><th id="131">131</th><td>    <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::right_chars" title='hexdump_ctx::right_chars' data-use='w' data-ref="hexdump_ctx::right_chars">right_chars</a>[<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='r' data-ref="hexdump_ctx::used">used</a>] = <a class="tu ref" href="#to_char" title='to_char' data-use='c' data-ref="to_char">to_char</a>(<a class="local col6 ref" href="#6data" title='data' data-ref="6data">data</a>[<a class="local col8 ref" href="#8i" title='i' data-ref="8i">i</a>]);</td></tr>
+<tr><th id="132">132</th><td>    <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='w' data-ref="hexdump_ctx::used">used</a>++;</td></tr>
+<tr><th id="133">133</th><td>    <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::n" title='hexdump_ctx::n' data-use='w' data-ref="hexdump_ctx::n">n</a>++;</td></tr>
+<tr><th id="134">134</th><td>    <b>if</b> (<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='r' data-ref="hexdump_ctx::used">used</a> == <var>16</var>) {</td></tr>
+<tr><th id="135">135</th><td>      <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::right_chars" title='hexdump_ctx::right_chars' data-use='w' data-ref="hexdump_ctx::right_chars">right_chars</a>[<var>16</var>] = <kbd>'|'</kbd>;</td></tr>
+<tr><th id="136">136</th><td>      <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::right_chars" title='hexdump_ctx::right_chars' data-use='w' data-ref="hexdump_ctx::right_chars">right_chars</a>[<var>17</var>] = <kbd>'\n'</kbd>;</td></tr>
+<tr><th id="137">137</th><td>      <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::bio" title='hexdump_ctx::bio' data-use='r' data-ref="hexdump_ctx::bio">bio</a>, <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::right_chars" title='hexdump_ctx::right_chars' data-use='r' data-ref="hexdump_ctx::right_chars">right_chars</a>, <b>sizeof</b>(<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::right_chars" title='hexdump_ctx::right_chars' data-use='r' data-ref="hexdump_ctx::right_chars">right_chars</a>)) &lt; <var>0</var>) {</td></tr>
+<tr><th id="138">138</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="139">139</th><td>      }</td></tr>
+<tr><th id="140">140</th><td>      <a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='w' data-ref="hexdump_ctx::used">used</a> = <var>0</var>;</td></tr>
+<tr><th id="141">141</th><td>    }</td></tr>
+<tr><th id="142">142</th><td>  }</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="145">145</th><td>}</td></tr>
+<tr><th id="146">146</th><td></td></tr>
+<tr><th id="147">147</th><td><i  data-doc="finish">/* finish flushes any buffered data in |ctx|. */</i></td></tr>
+<tr><th id="148">148</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="finish" title='finish' data-type='int finish(struct hexdump_ctx * ctx)' data-ref="finish">finish</dfn>(<b>struct</b> <a class="type" href="#hexdump_ctx" title='hexdump_ctx' data-ref="hexdump_ctx">hexdump_ctx</a> *<dfn class="local col1 decl" id="11ctx" title='ctx' data-type='struct hexdump_ctx *' data-ref="11ctx">ctx</dfn>) {</td></tr>
+<tr><th id="149">149</th><td>  <i>/* See the comments in |hexdump| for the details of this format. */</i></td></tr>
+<tr><th id="150">150</th><td>  <em>const</em> <em>unsigned</em> <dfn class="local col2 decl" id="12n_bytes" title='n_bytes' data-type='const unsigned int' data-ref="12n_bytes">n_bytes</dfn> = <a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='r' data-ref="hexdump_ctx::used">used</a>;</td></tr>
+<tr><th id="151">151</th><td>  <em>unsigned</em> <dfn class="local col3 decl" id="13l" title='l' data-type='unsigned int' data-ref="13l">l</dfn>;</td></tr>
+<tr><th id="152">152</th><td>  <em>char</em> <dfn class="local col4 decl" id="14buf" title='buf' data-type='char [5]' data-ref="14buf">buf</dfn>[<var>5</var>];</td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td>  <b>if</b> (<a class="local col2 ref" href="#12n_bytes" title='n_bytes' data-ref="12n_bytes">n_bytes</a> == <var>0</var>) {</td></tr>
+<tr><th id="155">155</th><td>    <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="156">156</th><td>  }</td></tr>
+<tr><th id="157">157</th><td></td></tr>
+<tr><th id="158">158</th><td>  <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col4 ref" href="#14buf" title='buf' data-ref="14buf">buf</a>, <kbd>' '</kbd>, <var>4</var>);</td></tr>
+<tr><th id="159">159</th><td>  <a class="local col4 ref" href="#14buf" title='buf' data-ref="14buf">buf</a>[<var>4</var>] = <kbd>'|'</kbd>;</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td>  <b>for</b> (; <a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='r' data-ref="hexdump_ctx::used">used</a> &lt; <var>16</var>; <a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='w' data-ref="hexdump_ctx::used">used</a>++) {</td></tr>
+<tr><th id="162">162</th><td>    <a class="local col3 ref" href="#13l" title='l' data-ref="13l">l</a> = <var>3</var>;</td></tr>
+<tr><th id="163">163</th><td>    <b>if</b> (<a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='r' data-ref="hexdump_ctx::used">used</a> == <var>7</var>) {</td></tr>
+<tr><th id="164">164</th><td>      <a class="local col3 ref" href="#13l" title='l' data-ref="13l">l</a> = <var>4</var>;</td></tr>
+<tr><th id="165">165</th><td>    } <b>else</b> <b>if</b> (<a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::used" title='hexdump_ctx::used' data-use='r' data-ref="hexdump_ctx::used">used</a> == <var>15</var>) {</td></tr>
+<tr><th id="166">166</th><td>      <a class="local col3 ref" href="#13l" title='l' data-ref="13l">l</a> = <var>5</var>;</td></tr>
+<tr><th id="167">167</th><td>    }</td></tr>
+<tr><th id="168">168</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::bio" title='hexdump_ctx::bio' data-use='r' data-ref="hexdump_ctx::bio">bio</a>, <a class="local col4 ref" href="#14buf" title='buf' data-ref="14buf">buf</a>, <a class="local col3 ref" href="#13l" title='l' data-ref="13l">l</a>) &lt; <var>0</var>) {</td></tr>
+<tr><th id="169">169</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="170">170</th><td>    }</td></tr>
+<tr><th id="171">171</th><td>  }</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td>  <a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::right_chars" title='hexdump_ctx::right_chars' data-use='w' data-ref="hexdump_ctx::right_chars">right_chars</a>[<a class="local col2 ref" href="#12n_bytes" title='n_bytes' data-ref="12n_bytes">n_bytes</a>] = <kbd>'|'</kbd>;</td></tr>
+<tr><th id="174">174</th><td>  <a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::right_chars" title='hexdump_ctx::right_chars' data-use='w' data-ref="hexdump_ctx::right_chars">right_chars</a>[<a class="local col2 ref" href="#12n_bytes" title='n_bytes' data-ref="12n_bytes">n_bytes</a> + <var>1</var>] = <kbd>'\n'</kbd>;</td></tr>
+<tr><th id="175">175</th><td>  <b>if</b> (<a class="ref" href="../../include/openssl/bio.h.html#BIO_write" title='BIO_write' data-ref="BIO_write">BIO_write</a>(<a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::bio" title='hexdump_ctx::bio' data-use='r' data-ref="hexdump_ctx::bio">bio</a>, <a class="local col1 ref" href="#11ctx" title='ctx' data-ref="11ctx">ctx</a>-&gt;<a class="tu ref" href="#hexdump_ctx::right_chars" title='hexdump_ctx::right_chars' data-use='r' data-ref="hexdump_ctx::right_chars">right_chars</a>, <a class="local col2 ref" href="#12n_bytes" title='n_bytes' data-ref="12n_bytes">n_bytes</a> + <var>2</var>) &lt; <var>0</var>) {</td></tr>
+<tr><th id="176">176</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="177">177</th><td>  }</td></tr>
+<tr><th id="178">178</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="179">179</th><td>}</td></tr>
+<tr><th id="180">180</th><td></td></tr>
+<tr><th id="181">181</th><td><em>int</em> <dfn class="decl def" id="BIO_hexdump" title='BIO_hexdump' data-ref="BIO_hexdump">BIO_hexdump</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col5 decl" id="15bio" title='bio' data-type='BIO *' data-ref="15bio">bio</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="16data" title='data' data-type='const uint8_t *' data-ref="16data">data</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="17len" title='len' data-type='size_t' data-ref="17len">len</dfn>, <em>unsigned</em> <dfn class="local col8 decl" id="18indent" title='indent' data-type='unsigned int' data-ref="18indent">indent</dfn>) {</td></tr>
+<tr><th id="182">182</th><td>  <b>struct</b> <a class="type" href="#hexdump_ctx" title='hexdump_ctx' data-ref="hexdump_ctx">hexdump_ctx</a> <dfn class="local col9 decl" id="19ctx" title='ctx' data-type='struct hexdump_ctx' data-ref="19ctx">ctx</dfn>;</td></tr>
+<tr><th id="183">183</th><td>  <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(&amp;<a class="local col9 ref" href="#19ctx" title='ctx' data-ref="19ctx">ctx</a>, <var>0</var>, <b>sizeof</b>(<a class="local col9 ref" href="#19ctx" title='ctx' data-ref="19ctx">ctx</a>));</td></tr>
+<tr><th id="184">184</th><td>  <a class="local col9 ref" href="#19ctx" title='ctx' data-ref="19ctx">ctx</a>.<a class="tu ref" href="#hexdump_ctx::bio" title='hexdump_ctx::bio' data-use='w' data-ref="hexdump_ctx::bio">bio</a> = <a class="local col5 ref" href="#15bio" title='bio' data-ref="15bio">bio</a>;</td></tr>
+<tr><th id="185">185</th><td>  <a class="local col9 ref" href="#19ctx" title='ctx' data-ref="19ctx">ctx</a>.<a class="tu ref" href="#hexdump_ctx::indent" title='hexdump_ctx::indent' data-use='w' data-ref="hexdump_ctx::indent">indent</a> = <a class="local col8 ref" href="#18indent" title='indent' data-ref="18indent">indent</a>;</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td>  <b>if</b> (!<a class="tu ref" href="#hexdump_write" title='hexdump_write' data-use='c' data-ref="hexdump_write">hexdump_write</a>(&amp;<a class="local col9 ref" href="#19ctx" title='ctx' data-ref="19ctx">ctx</a>, <a class="local col6 ref" href="#16data" title='data' data-ref="16data">data</a>, <a class="local col7 ref" href="#17len" title='len' data-ref="17len">len</a>) || !<a class="tu ref" href="#finish" title='finish' data-use='c' data-ref="finish">finish</a>(&amp;<a class="local col9 ref" href="#19ctx" title='ctx' data-ref="19ctx">ctx</a>)) {</td></tr>
+<tr><th id="188">188</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="189">189</th><td>  }</td></tr>
+<tr><th id="190">190</th><td></td></tr>
+<tr><th id="191">191</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="192">192</th><td>}</td></tr>
+<tr><th id="193">193</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

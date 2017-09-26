@@ -1,0 +1,16 @@
+<dec f='codebrowser/bionic/libc/bionic/jemalloc.h' l='29' type='int je_iterate(uintptr_t , size_t , void (*)(uintptr_t, size_t, void *) , void * )'/>
+<use f='codebrowser/bionic/libc/bionic/malloc_common.cpp' l='68' macro='1' u='r'/>
+<use f='codebrowser/bionic/libc/bionic/malloc_common.cpp' l='68' macro='1' u='r'/>
+<use f='codebrowser/bionic/libc/bionic/malloc_common.cpp' l='431' macro='1' u='c'/>
+<def f='codebrowser/external/jemalloc/src/android_je_iterate.c' l='36' ll='80' type='int je_iterate(uintptr_t base, size_t size, void (*)(uintptr_t, size_t, void *) callback, void * arg)'/>
+<doc f='codebrowser/external/jemalloc/src/android_je_iterate.c' l='25'>/* je_iterate calls callback for each allocation found in the memory region
+ * between [base, base+size).  base will be rounded down to by the jemalloc
+ * chunk size, and base+size will be rounded up to the chunk size.  If no memory
+ * managed by jemalloc is found in the requested region, je_iterate returns -1
+ * and sets errno to EINVAL.
+ *
+ * je_iterate must be called when no allocations are in progress, either
+ * when single-threaded (for example just after a fork), or between
+ * jemalloc_prefork() and jemalloc_postfork_parent().  The callback must
+ * not attempt to allocate with jemalloc.
+ */</doc>

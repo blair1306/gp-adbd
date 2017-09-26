@@ -1,0 +1,27 @@
+<dec f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/math_private.h' l='412'/>
+<doc f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/math_private.h' l='388'>/*
+ * Set x += c, where x is represented in extra precision as a + b.
+ * x must be sufficiently normalized and sufficiently larger than c,
+ * and the result is then sufficiently normalized.
+ *
+ * The details of ordering are that |a| must be &gt;= |c| (so that (a, c)
+ * can be normalized without extra work to swap &apos;a&apos; with c).  The details of
+ * the normalization are that b must be small relative to the normalized &apos;a&apos;.
+ * Normalization of (a, c) makes the normalized c tiny relative to the
+ * normalized a, so b remains small relative to &apos;a&apos; in the result.  However,
+ * b need not ever be tiny relative to &apos;a&apos;.  For example, b might be about
+ * 2**20 times smaller than &apos;a&apos; to give about 20 extra bits of precision.
+ * That is usually enough, and adding c (which by normalization is about
+ * 2**53 times smaller than a) cannot change b significantly.  However,
+ * cancellation of &apos;a&apos; with c in normalization of (a, c) may reduce &apos;a&apos;
+ * significantly relative to b.  The caller must ensure that significant
+ * cancellation doesn&apos;t occur, either by having c of the same sign as &apos;a&apos;,
+ * or by having |c| a few percent smaller than |a|.  Pre-normalization of
+ * (a, b) may help.
+ *
+ * This is is a variant of an algorithm of Kahan (see Knuth (1981) 4.2.2
+ * exercise 19).  We gain considerable efficiency by requiring the terms to
+ * be sufficiently normalized and sufficiently increasing.
+ */</doc>
+<use f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/s_logl.c' l='559' u='c'/>
+<use f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/s_logl.c' l='668' u='c'/>

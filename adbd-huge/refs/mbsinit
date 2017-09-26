@@ -1,0 +1,25 @@
+<dec f='codebrowser/bionic/libc/include/wchar.h' l='95' type='int mbsinit(const mbstate_t * )'/>
+<use f='codebrowser/bionic/libc/bionic/c16rtomb.cpp' l='46' u='c' c='c16rtomb'/>
+<use f='codebrowser/bionic/libc/bionic/c32rtomb.cpp' l='53' u='c' c='c32rtomb'/>
+<use f='codebrowser/bionic/libc/bionic/mbrtoc32.cpp' l='58' u='c' c='mbrtoc32'/>
+<use f='codebrowser/bionic/libc/bionic/mbrtoc32.cpp' l='108' u='c' c='mbrtoc32'/>
+<def f='codebrowser/bionic/libc/bionic/wchar.cpp' l='56' ll='58' type='int mbsinit(const mbstate_t * ps)'/>
+<use f='codebrowser/bionic/libc/bionic/wchar.cpp' l='162' u='c' c='wcsnrtombs'/>
+<doc f='codebrowser/bionic/libc/bionic/wchar.cpp' l='37'>//
+// This file is basically OpenBSD&apos;s citrus_utf8.c but rewritten to not require a
+// 12-byte mbstate_t so we&apos;re backwards-compatible with our LP32 ABI where
+// mbstate_t was only 4 bytes.
+//
+// The state is the UTF-8 sequence. We only support &lt;= 4-bytes sequences so LP32
+// mbstate_t already has enough space (out of the 4 available bytes we only
+// need 3 since we should never need to store the entire sequence in the
+// intermediary state).
+//
+// The C standard leaves the conversion state undefined after a bad conversion.
+// To avoid unexpected failures due to the possible use of the internal private
+// state we always reset the conversion state when encountering illegal
+// sequences.
+//
+// We also implement the POSIX interface directly rather than being accessed via
+// function pointers.
+//</doc>

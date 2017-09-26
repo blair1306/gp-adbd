@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>rs-common.h source code [codebrowser/external/fec/rs-common.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="rs "/>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/fec/rs-common.h'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>fec</a>/<a href='rs-common.h.html'>rs-common.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Stuff common to all the general-purpose Reed-Solomon codecs</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright 2004 Phil Karn, KA9Q</i></td></tr>
+<tr><th id="3">3</th><td><i> * May be used under the terms of the GNU Lesser General Public License (LGPL)</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><i>/* Reed-Solomon codec control block */</i></td></tr>
+<tr><th id="7">7</th><td><b>struct</b> <dfn class="type def" id="rs" title='rs' data-ref="rs">rs</dfn> {</td></tr>
+<tr><th id="8">8</th><td>  <em>int</em> <dfn class="decl" id="rs::mm" title='rs::mm' data-ref="rs::mm">mm</dfn>;              <i>/* Bits per symbol */</i></td></tr>
+<tr><th id="9">9</th><td>  <em>int</em> <dfn class="decl" id="rs::nn" title='rs::nn' data-ref="rs::nn">nn</dfn>;              <i>/* Symbols per block (= (1&lt;&lt;mm)-1) */</i></td></tr>
+<tr><th id="10">10</th><td>  <a class="typedef" href="char.h.html#data_t" title='data_t' data-type='unsigned char' data-ref="data_t">data_t</a> *<dfn class="decl" id="rs::alpha_to" title='rs::alpha_to' data-ref="rs::alpha_to">alpha_to</dfn>;     <i>/* log lookup table */</i></td></tr>
+<tr><th id="11">11</th><td>  <a class="typedef" href="char.h.html#data_t" title='data_t' data-type='unsigned char' data-ref="data_t">data_t</a> *<dfn class="decl" id="rs::index_of" title='rs::index_of' data-ref="rs::index_of">index_of</dfn>;     <i>/* Antilog lookup table */</i></td></tr>
+<tr><th id="12">12</th><td>  <a class="typedef" href="char.h.html#data_t" title='data_t' data-type='unsigned char' data-ref="data_t">data_t</a> *<dfn class="decl" id="rs::genpoly" title='rs::genpoly' data-ref="rs::genpoly">genpoly</dfn>;      <i>/* Generator polynomial */</i></td></tr>
+<tr><th id="13">13</th><td>  <em>int</em> <dfn class="decl" id="rs::nroots" title='rs::nroots' data-ref="rs::nroots">nroots</dfn>;     <i>/* Number of generator roots = number of parity symbols */</i></td></tr>
+<tr><th id="14">14</th><td>  <em>int</em> <dfn class="decl" id="rs::fcr" title='rs::fcr' data-ref="rs::fcr">fcr</dfn>;        <i>/* First consecutive root, index form */</i></td></tr>
+<tr><th id="15">15</th><td>  <em>int</em> <dfn class="decl" id="rs::prim" title='rs::prim' data-ref="rs::prim">prim</dfn>;       <i>/* Primitive element, index form */</i></td></tr>
+<tr><th id="16">16</th><td>  <em>int</em> <dfn class="decl" id="rs::iprim" title='rs::iprim' data-ref="rs::iprim">iprim</dfn>;      <i>/* prim-th root of 1, index form */</i></td></tr>
+<tr><th id="17">17</th><td>  <em>int</em> <dfn class="decl" id="rs::pad" title='rs::pad' data-ref="rs::pad">pad</dfn>;        <i>/* Padding bytes in shortened block */</i></td></tr>
+<tr><th id="18">18</th><td>};</td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="modnn" title='modnn' data-ref="modnn">modnn</dfn>(<b>struct</b> <a class="type" href="#rs" title='rs' data-ref="rs">rs</a> *<dfn class="local col1 decl" id="1rs" title='rs' data-type='struct rs *' data-ref="1rs">rs</dfn>,<em>int</em> <dfn class="local col2 decl" id="2x" title='x' data-type='int' data-ref="2x">x</dfn>){</td></tr>
+<tr><th id="21">21</th><td>  <b>while</b> (<a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> &gt;= <a class="local col1 ref" href="#1rs" title='rs' data-ref="1rs">rs</a>-&gt;<a class="ref" href="#rs::nn" title='rs::nn' data-ref="rs::nn">nn</a>) {</td></tr>
+<tr><th id="22">22</th><td>    <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> -= <a class="local col1 ref" href="#1rs" title='rs' data-ref="1rs">rs</a>-&gt;<a class="ref" href="#rs::nn" title='rs::nn' data-ref="rs::nn">nn</a>;</td></tr>
+<tr><th id="23">23</th><td>    <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> = (<a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> &gt;&gt; <a class="local col1 ref" href="#1rs" title='rs' data-ref="1rs">rs</a>-&gt;<a class="ref" href="#rs::mm" title='rs::mm' data-ref="rs::mm">mm</a>) + (<a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a> &amp; <a class="local col1 ref" href="#1rs" title='rs' data-ref="1rs">rs</a>-&gt;<a class="ref" href="#rs::nn" title='rs::nn' data-ref="rs::nn">nn</a>);</td></tr>
+<tr><th id="24">24</th><td>  }</td></tr>
+<tr><th id="25">25</th><td>  <b>return</b> <a class="local col2 ref" href="#2x" title='x' data-ref="2x">x</a>;</td></tr>
+<tr><th id="26">26</th><td>}</td></tr>
+<tr><th id="27">27</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='decode_rs_char.c.html'>codebrowser/external/fec/decode_rs_char.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

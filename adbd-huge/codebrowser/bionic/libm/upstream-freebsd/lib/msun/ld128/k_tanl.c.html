@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>k_tanl.c source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/k_tanl.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/ld128/k_tanl.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>ld128</a>/<a href='k_tanl.c.html'>k_tanl.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* From: @(#)k_tan.c 1.5 04/04/22 SMI */</i></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><i>/*</i></td></tr>
+<tr><th id="4">4</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="5">5</th><td><i> * Copyright 2004 Sun Microsystems, Inc.  All Rights Reserved.</i></td></tr>
+<tr><th id="6">6</th><td><i> * Copyright (c) 2008 Steven G. Kargl, David Schultz, Bruce D. Evans.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * Permission to use, copy, modify, and distribute this</i></td></tr>
+<tr><th id="9">9</th><td><i> * software is freely granted, provided that this notice</i></td></tr>
+<tr><th id="10">10</th><td><i> * is preserved.</i></td></tr>
+<tr><th id="11">11</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="12">12</th><td><i> */</i></td></tr>
+<tr><th id="13">13</th><td></td></tr>
+<tr><th id="14">14</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="15">15</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD$"</q>);</td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><i>/*</i></td></tr>
+<tr><th id="18">18</th><td><i> * ld128 version of k_tan.c.  See ../src/k_tan.c for most comments.</i></td></tr>
+<tr><th id="19">19</th><td><i> */</i></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../../../libc/include/math.h.html">"math.h"</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../src/math_private.h.html">"math_private.h"</a></u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><i>/*</i></td></tr>
+<tr><th id="25">25</th><td><i> * Domain [-0.67434, 0.67434], range ~[-3.37e-36, 1.982e-37]</i></td></tr>
+<tr><th id="26">26</th><td><i> * |tan(x)/x - t(x)| &lt; 2**-117.8 (XXX should be ~1e-37)</i></td></tr>
+<tr><th id="27">27</th><td><i> *</i></td></tr>
+<tr><th id="28">28</th><td><i> * See ../ld80/k_cosl.c for more details about the polynomial.</i></td></tr>
+<tr><th id="29">29</th><td><i> */</i></td></tr>
+<tr><th id="30">30</th><td><em>static</em> <em>const</em> <em>long</em> <em>double</em></td></tr>
+<tr><th id="31">31</th><td><dfn class="tu decl def" id="T3" title='T3' data-type='const long double' data-ref="T3">T3</dfn> = <var>0x1.5555555555555555555555555553p-2L</var>,</td></tr>
+<tr><th id="32">32</th><td><dfn class="tu decl def" id="T5" title='T5' data-type='const long double' data-ref="T5">T5</dfn> = <var>0x1.1111111111111111111111111eb5p-3L</var>,</td></tr>
+<tr><th id="33">33</th><td><dfn class="tu decl def" id="T7" title='T7' data-type='const long double' data-ref="T7">T7</dfn> = <var>0x1.ba1ba1ba1ba1ba1ba1ba1b694cd6p-5L</var>,</td></tr>
+<tr><th id="34">34</th><td><dfn class="tu decl def" id="T9" title='T9' data-type='const long double' data-ref="T9">T9</dfn> = <var>0x1.664f4882c10f9f32d6bbe09d8bcdp-6L</var>,</td></tr>
+<tr><th id="35">35</th><td><dfn class="tu decl def" id="T11" title='T11' data-type='const long double' data-ref="T11">T11</dfn> = <var>0x1.226e355e6c23c8f5b4f5762322eep-7L</var>,</td></tr>
+<tr><th id="36">36</th><td><dfn class="tu decl def" id="T13" title='T13' data-type='const long double' data-ref="T13">T13</dfn> = <var>0x1.d6d3d0e157ddfb5fed8e84e27b37p-9L</var>,</td></tr>
+<tr><th id="37">37</th><td><dfn class="tu decl def" id="T15" title='T15' data-type='const long double' data-ref="T15">T15</dfn> = <var>0x1.7da36452b75e2b5fce9ee7c2c92ep-10L</var>,</td></tr>
+<tr><th id="38">38</th><td><dfn class="tu decl def" id="T17" title='T17' data-type='const long double' data-ref="T17">T17</dfn> = <var>0x1.355824803674477dfcf726649efep-11L</var>,</td></tr>
+<tr><th id="39">39</th><td><dfn class="tu decl def" id="T19" title='T19' data-type='const long double' data-ref="T19">T19</dfn> = <var>0x1.f57d7734d1656e0aceb716f614c2p-13L</var>,</td></tr>
+<tr><th id="40">40</th><td><dfn class="tu decl def" id="T21" title='T21' data-type='const long double' data-ref="T21">T21</dfn> = <var>0x1.967e18afcb180ed942dfdc518d6cp-14L</var>,</td></tr>
+<tr><th id="41">41</th><td><dfn class="tu decl def" id="T23" title='T23' data-type='const long double' data-ref="T23">T23</dfn> = <var>0x1.497d8eea21e95bc7e2aa79b9f2cdp-15L</var>,</td></tr>
+<tr><th id="42">42</th><td><dfn class="tu decl def" id="T25" title='T25' data-type='const long double' data-ref="T25">T25</dfn> = <var>0x1.0b132d39f055c81be49eff7afd50p-16L</var>,</td></tr>
+<tr><th id="43">43</th><td><dfn class="tu decl def" id="T27" title='T27' data-type='const long double' data-ref="T27">T27</dfn> = <var>0x1.b0f72d33eff7bfa2fbc1059d90b6p-18L</var>,</td></tr>
+<tr><th id="44">44</th><td><dfn class="tu decl def" id="T29" title='T29' data-type='const long double' data-ref="T29">T29</dfn> = <var>0x1.5ef2daf21d1113df38d0fbc00267p-19L</var>,</td></tr>
+<tr><th id="45">45</th><td><dfn class="tu decl def" id="T31" title='T31' data-type='const long double' data-ref="T31">T31</dfn> = <var>0x1.1c77d6eac0234988cdaa04c96626p-20L</var>,</td></tr>
+<tr><th id="46">46</th><td><dfn class="tu decl def" id="T33" title='T33' data-type='const long double' data-ref="T33">T33</dfn> = <var>0x1.cd2a5a292b180e0bdd701057dfe3p-22L</var>,</td></tr>
+<tr><th id="47">47</th><td><dfn class="tu decl def" id="T35" title='T35' data-type='const long double' data-ref="T35">T35</dfn> = <var>0x1.75c7357d0298c01a31d0a6f7d518p-23L</var>,</td></tr>
+<tr><th id="48">48</th><td><dfn class="tu decl def" id="T37" title='T37' data-type='const long double' data-ref="T37">T37</dfn> = <var>0x1.2f3190f4718a9a520f98f50081fcp-24L</var>,</td></tr>
+<tr><th id="49">49</th><td><dfn class="tu decl def" id="pio4" title='pio4' data-type='const long double' data-ref="pio4">pio4</dfn> = <var>0x1.921fb54442d18469898cc51701b8p-1L</var>,</td></tr>
+<tr><th id="50">50</th><td><dfn class="tu decl def" id="pio4lo" title='pio4lo' data-type='const long double' data-ref="pio4lo">pio4lo</dfn> = <var>0x1.cd129024e088a67cc74020bbea60p-116L</var>;</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><em>static</em> <em>const</em> <em>double</em></td></tr>
+<tr><th id="53">53</th><td><dfn class="tu decl def" id="T39" title='T39' data-type='const double' data-ref="T39">T39</dfn> =  <var>0.000000028443389121318352</var>,	<i>/*  0x1e8a7592977938.0p-78 */</i></td></tr>
+<tr><th id="54">54</th><td><dfn class="tu decl def" id="T41" title='T41' data-type='const double' data-ref="T41">T41</dfn> =  <var>0.000000011981013102001973</var>,	<i>/*  0x19baa1b1223219.0p-79 */</i></td></tr>
+<tr><th id="55">55</th><td><dfn class="tu decl def" id="T43" title='T43' data-type='const double' data-ref="T43">T43</dfn> =  <var>0.0000000038303578044958070</var>,	<i>/*  0x107385dfb24529.0p-80 */</i></td></tr>
+<tr><th id="56">56</th><td><dfn class="tu decl def" id="T45" title='T45' data-type='const double' data-ref="T45">T45</dfn> =  <var>0.0000000034664378216909893</var>,	<i>/*  0x1dc6c702a05262.0p-81 */</i></td></tr>
+<tr><th id="57">57</th><td><dfn class="tu decl def" id="T47" title='T47' data-type='const double' data-ref="T47">T47</dfn> = -<var>0.0000000015090641701997785</var>,	<i>/* -0x19ecef3569ebb6.0p-82 */</i></td></tr>
+<tr><th id="58">58</th><td><dfn class="tu decl def" id="T49" title='T49' data-type='const double' data-ref="T49">T49</dfn> =  <var>0.0000000029449552300483952</var>,	<i>/*  0x194c0668da786a.0p-81 */</i></td></tr>
+<tr><th id="59">59</th><td><dfn class="tu decl def" id="T51" title='T51' data-type='const double' data-ref="T51">T51</dfn> = -<var>0.0000000022006995706097711</var>,	<i>/* -0x12e763b8845268.0p-81 */</i></td></tr>
+<tr><th id="60">60</th><td><dfn class="tu decl def" id="T53" title='T53' data-type='const double' data-ref="T53">T53</dfn> =  <var>0.0000000015468200913196612</var>,	<i>/*  0x1a92fc98c29554.0p-82 */</i></td></tr>
+<tr><th id="61">61</th><td><dfn class="tu decl def" id="T55" title='T55' data-type='const double' data-ref="T55">T55</dfn> = -<var>0.00000000061311613386849674</var>,	<i>/* -0x151106cbc779a9.0p-83 */</i></td></tr>
+<tr><th id="62">62</th><td><dfn class="tu decl def" id="T57" title='T57' data-type='const double' data-ref="T57">T57</dfn> =  <var>1.4912469681508012e-10</var>;		<i>/*  0x147edbdba6f43a.0p-85 */</i></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><em>long</em> <em>double</em></td></tr>
+<tr><th id="65">65</th><td><dfn class="decl def" id="__kernel_tanl" title='__kernel_tanl' data-ref="__kernel_tanl">__kernel_tanl</dfn>(<em>long</em> <em>double</em> <dfn class="local col1 decl" id="1x" title='x' data-type='long double' data-ref="1x">x</dfn>, <em>long</em> <em>double</em> <dfn class="local col2 decl" id="2y" title='y' data-type='long double' data-ref="2y">y</dfn>, <em>int</em> <dfn class="local col3 decl" id="3iy" title='iy' data-type='int' data-ref="3iy">iy</dfn>) {</td></tr>
+<tr><th id="66">66</th><td>	<em>long</em> <em>double</em> <dfn class="local col4 decl" id="4z" title='z' data-type='long double' data-ref="4z">z</dfn>, <dfn class="local col5 decl" id="5r" title='r' data-type='long double' data-ref="5r">r</dfn>, <dfn class="local col6 decl" id="6v" title='v' data-type='long double' data-ref="6v">v</dfn>, <dfn class="local col7 decl" id="7w" title='w' data-type='long double' data-ref="7w">w</dfn>, <dfn class="local col8 decl" id="8s" title='s' data-type='long double' data-ref="8s">s</dfn>;</td></tr>
+<tr><th id="67">67</th><td>	<em>long</em> <em>double</em> <dfn class="local col9 decl" id="9osign" title='osign' data-type='long double' data-ref="9osign">osign</dfn>;</td></tr>
+<tr><th id="68">68</th><td>	<em>int</em> <dfn class="local col0 decl" id="10i" title='i' data-type='int' data-ref="10i">i</dfn>;</td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td>	<a class="local col3 ref" href="#3iy" title='iy' data-ref="3iy">iy</a> = (<a class="local col3 ref" href="#3iy" title='iy' data-ref="3iy">iy</a> == <var>1</var> ? -<var>1</var> : <var>1</var>);	<i>/* XXX recover original interface */</i></td></tr>
+<tr><th id="71">71</th><td>	<a class="local col9 ref" href="#9osign" title='osign' data-ref="9osign">osign</a> = (<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> &gt;= <var>0</var> ? <var>1.0</var> : -<var>1.0</var>);	<i>/* XXX slow, probably wrong for -0 */</i></td></tr>
+<tr><th id="72">72</th><td>	<b>if</b> (<a class="ref" href="../../../../../libc/include/math.h.html#fabsl" title='fabsl' data-ref="fabsl">fabsl</a>(<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>) &gt;= <var>0.67434</var>) {</td></tr>
+<tr><th id="73">73</th><td>		<b>if</b> (<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> &lt; <var>0</var>) {</td></tr>
+<tr><th id="74">74</th><td>			<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> = -<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="75">75</th><td>			<a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a> = -<a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a>;</td></tr>
+<tr><th id="76">76</th><td>		}</td></tr>
+<tr><th id="77">77</th><td>		<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> = <a class="tu ref" href="#pio4" title='pio4' data-use='r' data-ref="pio4">pio4</a> - <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="78">78</th><td>		<a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> = <a class="tu ref" href="#pio4lo" title='pio4lo' data-use='r' data-ref="pio4lo">pio4lo</a> - <a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a>;</td></tr>
+<tr><th id="79">79</th><td>		<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> = <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a>;</td></tr>
+<tr><th id="80">80</th><td>		<a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a> = <var>0.0</var>;</td></tr>
+<tr><th id="81">81</th><td>		<a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a> = <var>1</var>;</td></tr>
+<tr><th id="82">82</th><td>	} <b>else</b></td></tr>
+<tr><th id="83">83</th><td>		<a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a> = <var>0</var>;</td></tr>
+<tr><th id="84">84</th><td>	<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> = <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> * <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="85">85</th><td>	<a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> = <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> * <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>;</td></tr>
+<tr><th id="86">86</th><td>	<a class="local col5 ref" href="#5r" title='r' data-ref="5r">r</a> = <a class="tu ref" href="#T5" title='T5' data-use='r' data-ref="T5">T5</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T9" title='T9' data-use='r' data-ref="T9">T9</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T13" title='T13' data-use='r' data-ref="T13">T13</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T17" title='T17' data-use='r' data-ref="T17">T17</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T21" title='T21' data-use='r' data-ref="T21">T21</a> +</td></tr>
+<tr><th id="87">87</th><td>	    <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T25" title='T25' data-use='r' data-ref="T25">T25</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T29" title='T29' data-use='r' data-ref="T29">T29</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T33" title='T33' data-use='r' data-ref="T33">T33</a> +</td></tr>
+<tr><th id="88">88</th><td>	    <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T37" title='T37' data-use='r' data-ref="T37">T37</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T41" title='T41' data-use='r' data-ref="T41">T41</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T45" title='T45' data-use='r' data-ref="T45">T45</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T49" title='T49' data-use='r' data-ref="T49">T49</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T53" title='T53' data-use='r' data-ref="T53">T53</a> +</td></tr>
+<tr><th id="89">89</th><td>	    <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * <a class="tu ref" href="#T57" title='T57' data-use='r' data-ref="T57">T57</a>))))))))))));</td></tr>
+<tr><th id="90">90</th><td>	<a class="local col6 ref" href="#6v" title='v' data-ref="6v">v</a> = <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> * (<a class="tu ref" href="#T7" title='T7' data-use='r' data-ref="T7">T7</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T11" title='T11' data-use='r' data-ref="T11">T11</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T15" title='T15' data-use='r' data-ref="T15">T15</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T19" title='T19' data-use='r' data-ref="T19">T19</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T23" title='T23' data-use='r' data-ref="T23">T23</a> +</td></tr>
+<tr><th id="91">91</th><td>	    <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T27" title='T27' data-use='r' data-ref="T27">T27</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T31" title='T31' data-use='r' data-ref="T31">T31</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T35" title='T35' data-use='r' data-ref="T35">T35</a> +</td></tr>
+<tr><th id="92">92</th><td>	    <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T39" title='T39' data-use='r' data-ref="T39">T39</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T43" title='T43' data-use='r' data-ref="T43">T43</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T47" title='T47' data-use='r' data-ref="T47">T47</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * (<a class="tu ref" href="#T51" title='T51' data-use='r' data-ref="T51">T51</a> + <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * <a class="tu ref" href="#T55" title='T55' data-use='r' data-ref="T55">T55</a>))))))))))));</td></tr>
+<tr><th id="93">93</th><td>	<a class="local col8 ref" href="#8s" title='s' data-ref="8s">s</a> = <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> * <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="94">94</th><td>	<a class="local col5 ref" href="#5r" title='r' data-ref="5r">r</a> = <a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a> + <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> * (<a class="local col8 ref" href="#8s" title='s' data-ref="8s">s</a> * (<a class="local col5 ref" href="#5r" title='r' data-ref="5r">r</a> + <a class="local col6 ref" href="#6v" title='v' data-ref="6v">v</a>) + <a class="local col2 ref" href="#2y" title='y' data-ref="2y">y</a>);</td></tr>
+<tr><th id="95">95</th><td>	<a class="local col5 ref" href="#5r" title='r' data-ref="5r">r</a> += <a class="tu ref" href="#T3" title='T3' data-use='r' data-ref="T3">T3</a> * <a class="local col8 ref" href="#8s" title='s' data-ref="8s">s</a>;</td></tr>
+<tr><th id="96">96</th><td>	<a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> = <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> + <a class="local col5 ref" href="#5r" title='r' data-ref="5r">r</a>;</td></tr>
+<tr><th id="97">97</th><td>	<b>if</b> (<a class="local col0 ref" href="#10i" title='i' data-ref="10i">i</a> == <var>1</var>) {</td></tr>
+<tr><th id="98">98</th><td>		<a class="local col6 ref" href="#6v" title='v' data-ref="6v">v</a> = (<em>long</em> <em>double</em>) <a class="local col3 ref" href="#3iy" title='iy' data-ref="3iy">iy</a>;</td></tr>
+<tr><th id="99">99</th><td>		<b>return</b> <a class="local col9 ref" href="#9osign" title='osign' data-ref="9osign">osign</a> *</td></tr>
+<tr><th id="100">100</th><td>			(<a class="local col6 ref" href="#6v" title='v' data-ref="6v">v</a> - <var>2.0</var> * (<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a> - (<a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> * <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> / (<a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a> + <a class="local col6 ref" href="#6v" title='v' data-ref="6v">v</a>) - <a class="local col5 ref" href="#5r" title='r' data-ref="5r">r</a>)));</td></tr>
+<tr><th id="101">101</th><td>	}</td></tr>
+<tr><th id="102">102</th><td>	<b>if</b> (<a class="local col3 ref" href="#3iy" title='iy' data-ref="3iy">iy</a> == <var>1</var>)</td></tr>
+<tr><th id="103">103</th><td>		<b>return</b> <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a>;</td></tr>
+<tr><th id="104">104</th><td>	<b>else</b> {</td></tr>
+<tr><th id="105">105</th><td>		<i>/*</i></td></tr>
+<tr><th id="106">106</th><td><i>		 * if allow error up to 2 ulp, simply return</i></td></tr>
+<tr><th id="107">107</th><td><i>		 * -1.0 / (x+r) here</i></td></tr>
+<tr><th id="108">108</th><td><i>		 */</i></td></tr>
+<tr><th id="109">109</th><td>		<i>/* compute -1.0 / (x+r) accurately */</i></td></tr>
+<tr><th id="110">110</th><td>		<em>long</em> <em>double</em> <dfn class="local col1 decl" id="11a" title='a' data-type='long double' data-ref="11a">a</dfn>, <dfn class="local col2 decl" id="12t" title='t' data-type='long double' data-ref="12t">t</dfn>;</td></tr>
+<tr><th id="111">111</th><td>		<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> = <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a>;</td></tr>
+<tr><th id="112">112</th><td>		<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> = <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> + <var>0x1p32</var> - <var>0x1p32</var>;</td></tr>
+<tr><th id="113">113</th><td>		<a class="local col6 ref" href="#6v" title='v' data-ref="6v">v</a> = <a class="local col5 ref" href="#5r" title='r' data-ref="5r">r</a> - (<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> - <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>);	<i>/* z+v = r+x */</i></td></tr>
+<tr><th id="114">114</th><td>		<a class="local col2 ref" href="#12t" title='t' data-ref="12t">t</a> = <a class="local col1 ref" href="#11a" title='a' data-ref="11a">a</a> = -<var>1.0</var> / <a class="local col7 ref" href="#7w" title='w' data-ref="7w">w</a>;	<i>/* a = -1.0/w */</i></td></tr>
+<tr><th id="115">115</th><td>		<a class="local col2 ref" href="#12t" title='t' data-ref="12t">t</a> = <a class="local col2 ref" href="#12t" title='t' data-ref="12t">t</a> + <var>0x1p32</var> - <var>0x1p32</var>;</td></tr>
+<tr><th id="116">116</th><td>		<a class="local col8 ref" href="#8s" title='s' data-ref="8s">s</a> = <var>1.0</var> + <a class="local col2 ref" href="#12t" title='t' data-ref="12t">t</a> * <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>;</td></tr>
+<tr><th id="117">117</th><td>		<b>return</b> <a class="local col2 ref" href="#12t" title='t' data-ref="12t">t</a> + <a class="local col1 ref" href="#11a" title='a' data-ref="11a">a</a> * (<a class="local col8 ref" href="#8s" title='s' data-ref="8s">s</a> + <a class="local col2 ref" href="#12t" title='t' data-ref="12t">t</a> * <a class="local col6 ref" href="#6v" title='v' data-ref="6v">v</a>);</td></tr>
+<tr><th id="118">118</th><td>	}</td></tr>
+<tr><th id="119">119</th><td>}</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

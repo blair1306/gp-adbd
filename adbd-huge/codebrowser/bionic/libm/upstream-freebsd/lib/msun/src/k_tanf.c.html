@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>k_tanf.c source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_tanf.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_tanf.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>src</a>/<a href='k_tanf.c.html'>k_tanf.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* k_tanf.c -- float version of k_tan.c</i></td></tr>
+<tr><th id="2">2</th><td><i> * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.</i></td></tr>
+<tr><th id="3">3</th><td><i> * Optimized by Bruce D. Evans.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><i>/*</i></td></tr>
+<tr><th id="7">7</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="8">8</th><td><i> * Copyright 2004 Sun Microsystems, Inc.  All Rights Reserved.</i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Permission to use, copy, modify, and distribute this</i></td></tr>
+<tr><th id="11">11</th><td><i> * software is freely granted, provided that this notice</i></td></tr>
+<tr><th id="12">12</th><td><i> * is preserved.</i></td></tr>
+<tr><th id="13">13</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="14">14</th><td><i> */</i></td></tr>
+<tr><th id="15">15</th><td></td></tr>
+<tr><th id="16">16</th><td><u>#<span data-ppcond="16">ifndef</span> <span class="macro" data-ref="_M/INLINE_KERNEL_TANDF">INLINE_KERNEL_TANDF</span></u></td></tr>
+<tr><th id="17">17</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="18">18</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD$"</q>);</td></tr>
+<tr><th id="19">19</th><td><u>#<span data-ppcond="16">endif</span></u></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../../../libc/include/math.h.html">"math.h"</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="math_private.h.html">"math_private.h"</a></u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><i  data-doc="T">/* |tan(x)/x - t(x)| &lt; 2**-25.5 (~[-2e-08, 2e-08]). */</i></td></tr>
+<tr><th id="25">25</th><td><em>static</em> <em>const</em> <em>double</em></td></tr>
+<tr><th id="26">26</th><td><dfn class="tu decl def" id="T" title='T' data-type='const double [6]' data-ref="T">T</dfn>[] =  {</td></tr>
+<tr><th id="27">27</th><td>  <var>0x15554d3418c99f.0p-54</var>,	<i>/* 0.333331395030791399758 */</i></td></tr>
+<tr><th id="28">28</th><td>  <var>0x1112fd38999f72.0p-55</var>,	<i>/* 0.133392002712976742718 */</i></td></tr>
+<tr><th id="29">29</th><td>  <var>0x1b54c91d865afe.0p-57</var>,	<i>/* 0.0533812378445670393523 */</i></td></tr>
+<tr><th id="30">30</th><td>  <var>0x191df3908c33ce.0p-58</var>,	<i>/* 0.0245283181166547278873 */</i></td></tr>
+<tr><th id="31">31</th><td>  <var>0x185dadfcecf44e.0p-61</var>,	<i>/* 0.00297435743359967304927 */</i></td></tr>
+<tr><th id="32">32</th><td>  <var>0x1362b9bf971bcd.0p-59</var>,	<i>/* 0.00946564784943673166728 */</i></td></tr>
+<tr><th id="33">33</th><td>};</td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><u>#<span data-ppcond="35">ifdef</span> <span class="macro" data-ref="_M/INLINE_KERNEL_TANDF">INLINE_KERNEL_TANDF</span></u></td></tr>
+<tr><th id="36">36</th><td><em>static</em> <b>__inline</b></td></tr>
+<tr><th id="37">37</th><td><u>#<span data-ppcond="35">endif</span></u></td></tr>
+<tr><th id="38">38</th><td><em>float</em></td></tr>
+<tr><th id="39">39</th><td><dfn class="decl def" id="__kernel_tandf" title='__kernel_tandf' data-ref="__kernel_tandf">__kernel_tandf</dfn>(<em>double</em> <dfn class="local col1 decl" id="1x" title='x' data-type='double' data-ref="1x">x</dfn>, <em>int</em> <dfn class="local col2 decl" id="2iy" title='iy' data-type='int' data-ref="2iy">iy</dfn>)</td></tr>
+<tr><th id="40">40</th><td>{</td></tr>
+<tr><th id="41">41</th><td>	<em>double</em> <dfn class="local col3 decl" id="3z" title='z' data-type='double' data-ref="3z">z</dfn>,<dfn class="local col4 decl" id="4r" title='r' data-type='double' data-ref="4r">r</dfn>,<dfn class="local col5 decl" id="5w" title='w' data-type='double' data-ref="5w">w</dfn>,<dfn class="local col6 decl" id="6s" title='s' data-type='double' data-ref="6s">s</dfn>,<dfn class="local col7 decl" id="7t" title='t' data-type='double' data-ref="7t">t</dfn>,<dfn class="local col8 decl" id="8u" title='u' data-type='double' data-ref="8u">u</dfn>;</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td>	<a class="local col3 ref" href="#3z" title='z' data-ref="3z">z</a>	=  <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>*<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="44">44</th><td>	<i>/*</i></td></tr>
+<tr><th id="45">45</th><td><i>	 * Split up the polynomial into small independent terms to give</i></td></tr>
+<tr><th id="46">46</th><td><i>	 * opportunities for parallel evaluation.  The chosen splitting is</i></td></tr>
+<tr><th id="47">47</th><td><i>	 * micro-optimized for Athlons (XP, X64).  It costs 2 multiplications</i></td></tr>
+<tr><th id="48">48</th><td><i>	 * relative to Horner's method on sequential machines.</i></td></tr>
+<tr><th id="49">49</th><td><i>	 *</i></td></tr>
+<tr><th id="50">50</th><td><i>	 * We add the small terms from lowest degree up for efficiency on</i></td></tr>
+<tr><th id="51">51</th><td><i>	 * non-sequential machines (the lowest degree terms tend to be ready</i></td></tr>
+<tr><th id="52">52</th><td><i>	 * earlier).  Apart from this, we don't care about order of</i></td></tr>
+<tr><th id="53">53</th><td><i>	 * operations, and don't need to to care since we have precision to</i></td></tr>
+<tr><th id="54">54</th><td><i>	 * spare.  However, the chosen splitting is good for accuracy too,</i></td></tr>
+<tr><th id="55">55</th><td><i>	 * and would give results as accurate as Horner's method if the</i></td></tr>
+<tr><th id="56">56</th><td><i>	 * small terms were added from highest degree down.</i></td></tr>
+<tr><th id="57">57</th><td><i>	 */</i></td></tr>
+<tr><th id="58">58</th><td>	<a class="local col4 ref" href="#4r" title='r' data-ref="4r">r</a> = <a class="tu ref" href="#T" title='T' data-use='r' data-ref="T">T</a>[<var>4</var>]+<a class="local col3 ref" href="#3z" title='z' data-ref="3z">z</a>*<a class="tu ref" href="#T" title='T' data-use='r' data-ref="T">T</a>[<var>5</var>];</td></tr>
+<tr><th id="59">59</th><td>	<a class="local col7 ref" href="#7t" title='t' data-ref="7t">t</a> = <a class="tu ref" href="#T" title='T' data-use='r' data-ref="T">T</a>[<var>2</var>]+<a class="local col3 ref" href="#3z" title='z' data-ref="3z">z</a>*<a class="tu ref" href="#T" title='T' data-use='r' data-ref="T">T</a>[<var>3</var>];</td></tr>
+<tr><th id="60">60</th><td>	<a class="local col5 ref" href="#5w" title='w' data-ref="5w">w</a> = <a class="local col3 ref" href="#3z" title='z' data-ref="3z">z</a>*<a class="local col3 ref" href="#3z" title='z' data-ref="3z">z</a>;</td></tr>
+<tr><th id="61">61</th><td>	<a class="local col6 ref" href="#6s" title='s' data-ref="6s">s</a> = <a class="local col3 ref" href="#3z" title='z' data-ref="3z">z</a>*<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="62">62</th><td>	<a class="local col8 ref" href="#8u" title='u' data-ref="8u">u</a> = <a class="tu ref" href="#T" title='T' data-use='r' data-ref="T">T</a>[<var>0</var>]+<a class="local col3 ref" href="#3z" title='z' data-ref="3z">z</a>*<a class="tu ref" href="#T" title='T' data-use='r' data-ref="T">T</a>[<var>1</var>];</td></tr>
+<tr><th id="63">63</th><td>	<a class="local col4 ref" href="#4r" title='r' data-ref="4r">r</a> = (<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>+<a class="local col6 ref" href="#6s" title='s' data-ref="6s">s</a>*<a class="local col8 ref" href="#8u" title='u' data-ref="8u">u</a>)+(<a class="local col6 ref" href="#6s" title='s' data-ref="6s">s</a>*<a class="local col5 ref" href="#5w" title='w' data-ref="5w">w</a>)*(<a class="local col7 ref" href="#7t" title='t' data-ref="7t">t</a>+<a class="local col5 ref" href="#5w" title='w' data-ref="5w">w</a>*<a class="local col4 ref" href="#4r" title='r' data-ref="4r">r</a>);</td></tr>
+<tr><th id="64">64</th><td>	<b>if</b>(<a class="local col2 ref" href="#2iy" title='iy' data-ref="2iy">iy</a>==<var>1</var>) <b>return</b> <a class="local col4 ref" href="#4r" title='r' data-ref="4r">r</a>;</td></tr>
+<tr><th id="65">65</th><td>	<b>else</b> <b>return</b> -<var>1.0</var>/<a class="local col4 ref" href="#4r" title='r' data-ref="4r">r</a>;</td></tr>
+<tr><th id="66">66</th><td>}</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

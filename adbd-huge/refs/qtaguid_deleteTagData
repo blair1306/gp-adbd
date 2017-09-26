@@ -1,0 +1,11 @@
+<dec f='codebrowser/system/core/include/cutils/qtaguid.h' l='54' type='int qtaguid_deleteTagData(int tag, uid_t uid)'/>
+<def f='codebrowser/system/core/libcutils/qtaguid.c' l='143' ll='160' type='int qtaguid_deleteTagData(int tag, uid_t uid)'/>
+<doc f='codebrowser/system/core/include/cutils/qtaguid.h' l='45'>/*
+ * Delete all tag info that relates to the given tag an uid.
+ * If the tag is 0, then ALL info about the uid is freeded.
+ * The delete data also affects active tagged socketd, which are
+ * then untagged.
+ * The calling process can only operate on its own tags.
+ * Unless it is part of the happy AID_NET_BW_ACCT group.
+ * In which case it can clobber everything.
+ */</doc>

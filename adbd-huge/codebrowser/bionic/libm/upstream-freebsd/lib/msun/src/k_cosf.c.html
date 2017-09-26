@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>k_cosf.c source code [codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_cosf.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_cosf.c'; var root_path = '../../../../../../..'; var data_path = '../../../../../../../../data';</script>
+<script src='../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../..'>codebrowser</a>/<a href='../../../../..'>bionic</a>/<a href='../../../..'>libm</a>/<a href='../../..'>upstream-freebsd</a>/<a href='../..'>lib</a>/<a href='..'>msun</a>/<a href='./'>src</a>/<a href='k_cosf.c.html'>k_cosf.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* k_cosf.c -- float version of k_cos.c</i></td></tr>
+<tr><th id="2">2</th><td><i> * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.</i></td></tr>
+<tr><th id="3">3</th><td><i> * Debugged and optimized by Bruce D. Evans.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><i>/*</i></td></tr>
+<tr><th id="7">7</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="8">8</th><td><i> * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.</i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Developed at SunPro, a Sun Microsystems, Inc. business.</i></td></tr>
+<tr><th id="11">11</th><td><i> * Permission to use, copy, modify, and distribute this</i></td></tr>
+<tr><th id="12">12</th><td><i> * software is freely granted, provided that this notice</i></td></tr>
+<tr><th id="13">13</th><td><i> * is preserved.</i></td></tr>
+<tr><th id="14">14</th><td><i> * ====================================================</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/INLINE_KERNEL_COSDF">INLINE_KERNEL_COSDF</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#include <a href="../../../../../libc/include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="19">19</th><td><a class="macro" href="../../../../../libc/include/sys/cdefs.h.html#230" title="" data-ref="_M/__FBSDID">__FBSDID</a>(<q>"$FreeBSD$"</q>);</td></tr>
+<tr><th id="20">20</th><td><u>#<span data-ppcond="17">endif</span></u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../../../libc/include/math.h.html">"math.h"</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="math_private.h.html">"math_private.h"</a></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><i>/* |cos(x) - c(x)| &lt; 2**-34.1 (~[-5.37e-11, 5.295e-11]). */</i></td></tr>
+<tr><th id="26">26</th><td><em>static</em> <em>const</em> <em>double</em></td></tr>
+<tr><th id="27">27</th><td><dfn class="tu decl def" id="one" title='one' data-type='const double' data-ref="one">one</dfn> =  <var>1.0</var>,</td></tr>
+<tr><th id="28">28</th><td><dfn class="tu decl def" id="C0" title='C0' data-type='const double' data-ref="C0">C0</dfn>  = -<var>0x1ffffffd0c5e81.0p-54</var>,	<i>/* -0.499999997251031003120 */</i></td></tr>
+<tr><th id="29">29</th><td><dfn class="tu decl def" id="C1" title='C1' data-type='const double' data-ref="C1">C1</dfn>  =  <var>0x155553e1053a42.0p-57</var>,	<i>/*  0.0416666233237390631894 */</i></td></tr>
+<tr><th id="30">30</th><td><dfn class="tu decl def" id="C2" title='C2' data-type='const double' data-ref="C2">C2</dfn>  = -<var>0x16c087e80f1e27.0p-62</var>,	<i>/* -0.00138867637746099294692 */</i></td></tr>
+<tr><th id="31">31</th><td><dfn class="tu decl def" id="C3" title='C3' data-type='const double' data-ref="C3">C3</dfn>  =  <var>0x199342e0ee5069.0p-68</var>;	<i>/*  0.0000243904487962774090654 */</i></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#<span data-ppcond="33">ifdef</span> <span class="macro" data-ref="_M/INLINE_KERNEL_COSDF">INLINE_KERNEL_COSDF</span></u></td></tr>
+<tr><th id="34">34</th><td><em>static</em> <b>__inline</b></td></tr>
+<tr><th id="35">35</th><td><u>#<span data-ppcond="33">endif</span></u></td></tr>
+<tr><th id="36">36</th><td><em>float</em></td></tr>
+<tr><th id="37">37</th><td><dfn class="decl def" id="__kernel_cosdf" title='__kernel_cosdf' data-ref="__kernel_cosdf">__kernel_cosdf</dfn>(<em>double</em> <dfn class="local col1 decl" id="1x" title='x' data-type='double' data-ref="1x">x</dfn>)</td></tr>
+<tr><th id="38">38</th><td>{</td></tr>
+<tr><th id="39">39</th><td>	<em>double</em> <dfn class="local col2 decl" id="2r" title='r' data-type='double' data-ref="2r">r</dfn>, <dfn class="local col3 decl" id="3w" title='w' data-type='double' data-ref="3w">w</dfn>, <dfn class="local col4 decl" id="4z" title='z' data-type='double' data-ref="4z">z</dfn>;</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td>	<i>/* Try to optimize for parallel evaluation as in k_tanf.c. */</i></td></tr>
+<tr><th id="42">42</th><td>	<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a> = <a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>*<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="43">43</th><td>	<a class="local col3 ref" href="#3w" title='w' data-ref="3w">w</a> = <a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>*<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>;</td></tr>
+<tr><th id="44">44</th><td>	<a class="local col2 ref" href="#2r" title='r' data-ref="2r">r</a> = <a class="tu ref" href="#C2" title='C2' data-use='r' data-ref="C2">C2</a>+<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>*<a class="tu ref" href="#C3" title='C3' data-use='r' data-ref="C3">C3</a>;</td></tr>
+<tr><th id="45">45</th><td>	<b>return</b> ((<a class="tu ref" href="#one" title='one' data-use='r' data-ref="one">one</a>+<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>*<a class="tu ref" href="#C0" title='C0' data-use='r' data-ref="C0">C0</a>) + <a class="local col3 ref" href="#3w" title='w' data-ref="3w">w</a>*<a class="tu ref" href="#C1" title='C1' data-use='r' data-ref="C1">C1</a>) + (<a class="local col3 ref" href="#3w" title='w' data-ref="3w">w</a>*<a class="local col4 ref" href="#4z" title='z' data-ref="4z">z</a>)*<a class="local col2 ref" href="#2r" title='r' data-ref="2r">r</a>;</td></tr>
+<tr><th id="46">46</th><td>}</td></tr>
+<tr><th id="47">47</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

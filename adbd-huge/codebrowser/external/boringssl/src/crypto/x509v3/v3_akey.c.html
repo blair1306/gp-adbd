@@ -1,0 +1,230 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>v3_akey.c source code [codebrowser/external/boringssl/src/crypto/x509v3/v3_akey.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/x509v3/v3_akey.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>x509v3</a>/<a href='v3_akey.c.html'>v3_akey.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* v3_akey.c */</i></td></tr>
+<tr><th id="2">2</th><td><i>/* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL</i></td></tr>
+<tr><th id="3">3</th><td><i> * project 1999.</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="6">6</th><td><i> * Copyright (c) 1999 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="9">9</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * are met:</i></td></tr>
+<tr><th id="11">11</th><td><i> *</i></td></tr>
+<tr><th id="12">12</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="13">13</th><td><i> *    notice, this list of conditions and the following disclaimer. </i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="16">16</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="17">17</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="18">18</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="19">19</th><td><i> *</i></td></tr>
+<tr><th id="20">20</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="21">21</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="22">22</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="23">23</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="24">24</th><td><i> *</i></td></tr>
+<tr><th id="25">25</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="26">26</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="27">27</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="28">28</th><td><i> *    licensing@OpenSSL.org.</i></td></tr>
+<tr><th id="29">29</th><td><i> *</i></td></tr>
+<tr><th id="30">30</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="31">31</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="32">32</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="33">33</th><td><i> *</i></td></tr>
+<tr><th id="34">34</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="35">35</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="36">36</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="37">37</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.OpenSSL.org/">http://www.OpenSSL.org/</a>)"</i></td></tr>
+<tr><th id="38">38</th><td><i> *</i></td></tr>
+<tr><th id="39">39</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="40">40</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="41">41</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="42">42</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="43">43</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="44">44</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="45">45</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="46">46</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="48">48</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="49">49</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="50">50</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="52">52</th><td><i> *</i></td></tr>
+<tr><th id="53">53</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="54">54</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="55">55</th><td><i> * Hudson (tjh@cryptsoft.com). */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#include <a href="../../include/openssl/asn1.h.html">&lt;openssl/asn1.h&gt;</a></u></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/asn1t.h.html">&lt;openssl/asn1t.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/conf.h.html">&lt;openssl/conf.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="65">65</th><td><u>#include <a href="../../include/openssl/obj.h.html">&lt;openssl/obj.h&gt;</a></u></td></tr>
+<tr><th id="66">66</th><td><u>#include <a href="../../include/openssl/x509v3.h.html">&lt;openssl/x509v3.h&gt;</a></u></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><em>static</em> <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_CONF_VALUE" data-ref="_M/STACK_OF">STACK_OF</a>(CONF_VALUE) *<a class="tu decl" href="#i2v_AUTHORITY_KEYID" title='i2v_AUTHORITY_KEYID' data-type='struct stack_st_CONF_VALUE * i2v_AUTHORITY_KEYID(X509V3_EXT_METHOD * method, AUTHORITY_KEYID * akeyid, struct stack_st_CONF_VALUE * extlist)' data-ref="i2v_AUTHORITY_KEYID">i2v_AUTHORITY_KEYID</a>(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> *<dfn class="local col1 decl" id="1method" title='method' data-type='X509V3_EXT_METHOD *' data-ref="1method">method</dfn>,</td></tr>
+<tr><th id="70">70</th><td>			<a class="typedef" href="../../include/openssl/base.h.html#AUTHORITY_KEYID" title='AUTHORITY_KEYID' data-type='struct AUTHORITY_KEYID_st' data-ref="AUTHORITY_KEYID">AUTHORITY_KEYID</a> *<dfn class="local col2 decl" id="2akeyid" title='akeyid' data-type='AUTHORITY_KEYID *' data-ref="2akeyid">akeyid</dfn>, <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_CONF_VALUE" data-ref="_M/STACK_OF">STACK_OF</a>(CONF_VALUE) *<dfn class="local col3 decl" id="3extlist" title='extlist' data-type='struct stack_st_CONF_VALUE *' data-ref="3extlist">extlist</dfn>);</td></tr>
+<tr><th id="71">71</th><td><em>static</em> <a class="typedef" href="../../include/openssl/base.h.html#AUTHORITY_KEYID" title='AUTHORITY_KEYID' data-type='struct AUTHORITY_KEYID_st' data-ref="AUTHORITY_KEYID">AUTHORITY_KEYID</a> *<a class="tu decl" href="#v2i_AUTHORITY_KEYID" title='v2i_AUTHORITY_KEYID' data-type='AUTHORITY_KEYID * v2i_AUTHORITY_KEYID(X509V3_EXT_METHOD * method, X509V3_CTX * ctx, struct stack_st_CONF_VALUE * values)' data-ref="v2i_AUTHORITY_KEYID">v2i_AUTHORITY_KEYID</a>(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> *<dfn class="local col4 decl" id="4method" title='method' data-type='X509V3_EXT_METHOD *' data-ref="4method">method</dfn>,</td></tr>
+<tr><th id="72">72</th><td>			<a class="typedef" href="../../include/openssl/base.h.html#X509V3_CTX" title='X509V3_CTX' data-type='struct v3_ext_ctx' data-ref="X509V3_CTX">X509V3_CTX</a> *<dfn class="local col5 decl" id="5ctx" title='ctx' data-type='X509V3_CTX *' data-ref="5ctx">ctx</dfn>, <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_CONF_VALUE" data-ref="_M/STACK_OF">STACK_OF</a>(CONF_VALUE) *<dfn class="local col6 decl" id="6values" title='values' data-type='struct stack_st_CONF_VALUE *' data-ref="6values">values</dfn>);</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><em>const</em> <a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> <dfn class="decl def" id="v3_akey_id" title='v3_akey_id' data-ref="v3_akey_id">v3_akey_id</dfn> =</td></tr>
+<tr><th id="75">75</th><td>	{</td></tr>
+<tr><th id="76">76</th><td>	<a class="macro" href="../../include/openssl/obj_mac.h.html#2390" title="90" data-ref="_M/NID_authority_key_identifier">NID_authority_key_identifier</a>,</td></tr>
+<tr><th id="77">77</th><td>	<a class="macro" href="../../include/openssl/x509v3.h.html#145" title="0x4" data-ref="_M/X509V3_EXT_MULTILINE">X509V3_EXT_MULTILINE</a>, <a class="macro" href="../../include/openssl/asn1.h.html#387" title="(&amp;(AUTHORITY_KEYID_it))" data-ref="_M/ASN1_ITEM_ref">ASN1_ITEM_ref</a>(AUTHORITY_KEYID),</td></tr>
+<tr><th id="78">78</th><td>	<var>0</var>,<var>0</var>,<var>0</var>,<var>0</var>,</td></tr>
+<tr><th id="79">79</th><td>	<var>0</var>,<var>0</var>,</td></tr>
+<tr><th id="80">80</th><td>	(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_I2V" title='X509V3_EXT_I2V' data-type='struct stack_st_CONF_VALUE *(*)(const struct v3_ext_method *, void *, struct stack_st_CONF_VALUE *)' data-ref="X509V3_EXT_I2V">X509V3_EXT_I2V</a>)<a class="tu ref" href="#i2v_AUTHORITY_KEYID" title='i2v_AUTHORITY_KEYID' data-use='r' data-ref="i2v_AUTHORITY_KEYID">i2v_AUTHORITY_KEYID</a>,</td></tr>
+<tr><th id="81">81</th><td>	(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_V2I" title='X509V3_EXT_V2I' data-type='void *(*)(const struct v3_ext_method *, struct v3_ext_ctx *, struct stack_st_CONF_VALUE *)' data-ref="X509V3_EXT_V2I">X509V3_EXT_V2I</a>)<a class="tu ref" href="#v2i_AUTHORITY_KEYID" title='v2i_AUTHORITY_KEYID' data-use='r' data-ref="v2i_AUTHORITY_KEYID">v2i_AUTHORITY_KEYID</a>,</td></tr>
+<tr><th id="82">82</th><td>	<var>0</var>,<var>0</var>,</td></tr>
+<tr><th id="83">83</th><td>	<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span></td></tr>
+<tr><th id="84">84</th><td>	};</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><em>static</em> <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_CONF_VALUE" data-ref="_M/STACK_OF">STACK_OF</a>(CONF_VALUE) *<dfn class="tu decl def" id="i2v_AUTHORITY_KEYID" title='i2v_AUTHORITY_KEYID' data-type='struct stack_st_CONF_VALUE * i2v_AUTHORITY_KEYID(X509V3_EXT_METHOD * method, AUTHORITY_KEYID * akeyid, struct stack_st_CONF_VALUE * extlist)' data-ref="i2v_AUTHORITY_KEYID">i2v_AUTHORITY_KEYID</dfn>(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> *<dfn class="local col7 decl" id="7method" title='method' data-type='X509V3_EXT_METHOD *' data-ref="7method">method</dfn>,</td></tr>
+<tr><th id="87">87</th><td>	     <a class="typedef" href="../../include/openssl/base.h.html#AUTHORITY_KEYID" title='AUTHORITY_KEYID' data-type='struct AUTHORITY_KEYID_st' data-ref="AUTHORITY_KEYID">AUTHORITY_KEYID</a> *<dfn class="local col8 decl" id="8akeyid" title='akeyid' data-type='AUTHORITY_KEYID *' data-ref="8akeyid">akeyid</dfn>, <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_CONF_VALUE" data-ref="_M/STACK_OF">STACK_OF</a>(CONF_VALUE) *<dfn class="local col9 decl" id="9extlist" title='extlist' data-type='struct stack_st_CONF_VALUE *' data-ref="9extlist">extlist</dfn>)</td></tr>
+<tr><th id="88">88</th><td>{</td></tr>
+<tr><th id="89">89</th><td>	<em>char</em> *<dfn class="local col0 decl" id="10tmp" title='tmp' data-type='char *' data-ref="10tmp">tmp</dfn>;</td></tr>
+<tr><th id="90">90</th><td>	<b>if</b>(<a class="local col8 ref" href="#8akeyid" title='akeyid' data-ref="8akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::keyid" title='AUTHORITY_KEYID_st::keyid' data-ref="AUTHORITY_KEYID_st::keyid">keyid</a>) {</td></tr>
+<tr><th id="91">91</th><td>		<a class="local col0 ref" href="#10tmp" title='tmp' data-ref="10tmp">tmp</a> = <a class="ref" href="../../include/openssl/x509v3.h.html#hex_to_string" title='hex_to_string' data-ref="hex_to_string">hex_to_string</a>(<a class="local col8 ref" href="#8akeyid" title='akeyid' data-ref="8akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::keyid" title='AUTHORITY_KEYID_st::keyid' data-ref="AUTHORITY_KEYID_st::keyid">keyid</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>, <a class="local col8 ref" href="#8akeyid" title='akeyid' data-ref="8akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::keyid" title='AUTHORITY_KEYID_st::keyid' data-ref="AUTHORITY_KEYID_st::keyid">keyid</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>);</td></tr>
+<tr><th id="92">92</th><td>		<a class="ref" href="../../include/openssl/x509v3.h.html#X509V3_add_value" title='X509V3_add_value' data-ref="X509V3_add_value">X509V3_add_value</a>(<q>"keyid"</q>, <a class="local col0 ref" href="#10tmp" title='tmp' data-ref="10tmp">tmp</a>, &amp;<a class="local col9 ref" href="#9extlist" title='extlist' data-ref="9extlist">extlist</a>);</td></tr>
+<tr><th id="93">93</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col0 ref" href="#10tmp" title='tmp' data-ref="10tmp">tmp</a>);</td></tr>
+<tr><th id="94">94</th><td>	}</td></tr>
+<tr><th id="95">95</th><td>	<b>if</b>(<a class="local col8 ref" href="#8akeyid" title='akeyid' data-ref="8akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::issuer" title='AUTHORITY_KEYID_st::issuer' data-ref="AUTHORITY_KEYID_st::issuer">issuer</a>) </td></tr>
+<tr><th id="96">96</th><td>		<a class="local col9 ref" href="#9extlist" title='extlist' data-ref="9extlist">extlist</a> = <a class="ref" href="../../include/openssl/x509v3.h.html#i2v_GENERAL_NAMES" title='i2v_GENERAL_NAMES' data-ref="i2v_GENERAL_NAMES">i2v_GENERAL_NAMES</a>(<span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <a class="local col8 ref" href="#8akeyid" title='akeyid' data-ref="8akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::issuer" title='AUTHORITY_KEYID_st::issuer' data-ref="AUTHORITY_KEYID_st::issuer">issuer</a>, <a class="local col9 ref" href="#9extlist" title='extlist' data-ref="9extlist">extlist</a>);</td></tr>
+<tr><th id="97">97</th><td>	<b>if</b>(<a class="local col8 ref" href="#8akeyid" title='akeyid' data-ref="8akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::serial" title='AUTHORITY_KEYID_st::serial' data-ref="AUTHORITY_KEYID_st::serial">serial</a>) {</td></tr>
+<tr><th id="98">98</th><td>		<a class="local col0 ref" href="#10tmp" title='tmp' data-ref="10tmp">tmp</a> = <a class="ref" href="../../include/openssl/x509v3.h.html#hex_to_string" title='hex_to_string' data-ref="hex_to_string">hex_to_string</a>(<a class="local col8 ref" href="#8akeyid" title='akeyid' data-ref="8akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::serial" title='AUTHORITY_KEYID_st::serial' data-ref="AUTHORITY_KEYID_st::serial">serial</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::data" title='asn1_string_st::data' data-ref="asn1_string_st::data">data</a>,</td></tr>
+<tr><th id="99">99</th><td>						 <a class="local col8 ref" href="#8akeyid" title='akeyid' data-ref="8akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::serial" title='AUTHORITY_KEYID_st::serial' data-ref="AUTHORITY_KEYID_st::serial">serial</a>-&gt;<a class="ref" href="../../include/openssl/asn1.h.html#asn1_string_st::length" title='asn1_string_st::length' data-ref="asn1_string_st::length">length</a>);</td></tr>
+<tr><th id="100">100</th><td>		<a class="ref" href="../../include/openssl/x509v3.h.html#X509V3_add_value" title='X509V3_add_value' data-ref="X509V3_add_value">X509V3_add_value</a>(<q>"serial"</q>, <a class="local col0 ref" href="#10tmp" title='tmp' data-ref="10tmp">tmp</a>, &amp;<a class="local col9 ref" href="#9extlist" title='extlist' data-ref="9extlist">extlist</a>);</td></tr>
+<tr><th id="101">101</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col0 ref" href="#10tmp" title='tmp' data-ref="10tmp">tmp</a>);</td></tr>
+<tr><th id="102">102</th><td>	}</td></tr>
+<tr><th id="103">103</th><td>	<b>return</b> <a class="local col9 ref" href="#9extlist" title='extlist' data-ref="9extlist">extlist</a>;</td></tr>
+<tr><th id="104">104</th><td>}</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><i  data-doc="v2i_AUTHORITY_KEYID">/* Currently two options:</i></td></tr>
+<tr><th id="107">107</th><td><i  data-doc="v2i_AUTHORITY_KEYID"> * keyid: use the issuers subject keyid, the value 'always' means its is</i></td></tr>
+<tr><th id="108">108</th><td><i  data-doc="v2i_AUTHORITY_KEYID"> * an error if the issuer certificate doesn't have a key id.</i></td></tr>
+<tr><th id="109">109</th><td><i  data-doc="v2i_AUTHORITY_KEYID"> * issuer: use the issuers cert issuer and serial number. The default is</i></td></tr>
+<tr><th id="110">110</th><td><i  data-doc="v2i_AUTHORITY_KEYID"> * to only use this if keyid is not present. With the option 'always'</i></td></tr>
+<tr><th id="111">111</th><td><i  data-doc="v2i_AUTHORITY_KEYID"> * this is always included.</i></td></tr>
+<tr><th id="112">112</th><td><i  data-doc="v2i_AUTHORITY_KEYID"> */</i></td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><em>static</em> <a class="typedef" href="../../include/openssl/base.h.html#AUTHORITY_KEYID" title='AUTHORITY_KEYID' data-type='struct AUTHORITY_KEYID_st' data-ref="AUTHORITY_KEYID">AUTHORITY_KEYID</a> *<dfn class="tu decl def" id="v2i_AUTHORITY_KEYID" title='v2i_AUTHORITY_KEYID' data-type='AUTHORITY_KEYID * v2i_AUTHORITY_KEYID(X509V3_EXT_METHOD * method, X509V3_CTX * ctx, struct stack_st_CONF_VALUE * values)' data-ref="v2i_AUTHORITY_KEYID">v2i_AUTHORITY_KEYID</dfn>(<a class="typedef" href="../../include/openssl/x509v3.h.html#X509V3_EXT_METHOD" title='X509V3_EXT_METHOD' data-type='struct v3_ext_method' data-ref="X509V3_EXT_METHOD">X509V3_EXT_METHOD</a> *<dfn class="local col1 decl" id="11method" title='method' data-type='X509V3_EXT_METHOD *' data-ref="11method">method</dfn>,</td></tr>
+<tr><th id="115">115</th><td>	     <a class="typedef" href="../../include/openssl/base.h.html#X509V3_CTX" title='X509V3_CTX' data-type='struct v3_ext_ctx' data-ref="X509V3_CTX">X509V3_CTX</a> *<dfn class="local col2 decl" id="12ctx" title='ctx' data-type='X509V3_CTX *' data-ref="12ctx">ctx</dfn>, <a class="macro" href="../../include/openssl/stack.h.html#112" title="struct stack_st_CONF_VALUE" data-ref="_M/STACK_OF">STACK_OF</a>(CONF_VALUE) *<dfn class="local col3 decl" id="13values" title='values' data-type='struct stack_st_CONF_VALUE *' data-ref="13values">values</dfn>)</td></tr>
+<tr><th id="116">116</th><td>	{</td></tr>
+<tr><th id="117">117</th><td>	<em>char</em> <dfn class="local col4 decl" id="14keyid" title='keyid' data-type='char' data-ref="14keyid">keyid</dfn>=<var>0</var>, <dfn class="local col5 decl" id="15issuer" title='issuer' data-type='char' data-ref="15issuer">issuer</dfn>=<var>0</var>;</td></tr>
+<tr><th id="118">118</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="16i" title='i' data-type='size_t' data-ref="16i">i</dfn>;</td></tr>
+<tr><th id="119">119</th><td>	<em>int</em> <dfn class="local col7 decl" id="17j" title='j' data-type='int' data-ref="17j">j</dfn>;</td></tr>
+<tr><th id="120">120</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#CONF_VALUE" title='CONF_VALUE' data-type='struct conf_value_st' data-ref="CONF_VALUE">CONF_VALUE</a> *<dfn class="local col8 decl" id="18cnf" title='cnf' data-type='CONF_VALUE *' data-ref="18cnf">cnf</dfn>;</td></tr>
+<tr><th id="121">121</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#ASN1_OCTET_STRING" title='ASN1_OCTET_STRING' data-type='struct asn1_string_st' data-ref="ASN1_OCTET_STRING">ASN1_OCTET_STRING</a> *<dfn class="local col9 decl" id="19ikeyid" title='ikeyid' data-type='ASN1_OCTET_STRING *' data-ref="19ikeyid">ikeyid</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="122">122</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#X509_NAME" title='X509_NAME' data-type='struct X509_name_st' data-ref="X509_NAME">X509_NAME</a> *<dfn class="local col0 decl" id="20isname" title='isname' data-type='X509_NAME *' data-ref="20isname">isname</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="123">123</th><td>	<a class="typedef" href="../../include/openssl/x509v3.h.html#GENERAL_NAMES" title='GENERAL_NAMES' data-type='struct stack_st_GENERAL_NAME' data-ref="GENERAL_NAMES">GENERAL_NAMES</a> * <dfn class="local col1 decl" id="21gens" title='gens' data-type='GENERAL_NAMES *' data-ref="21gens">gens</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="124">124</th><td>	<a class="typedef" href="../../include/openssl/x509v3.h.html#GENERAL_NAME" title='GENERAL_NAME' data-type='struct GENERAL_NAME_st' data-ref="GENERAL_NAME">GENERAL_NAME</a> *<dfn class="local col2 decl" id="22gen" title='gen' data-type='GENERAL_NAME *' data-ref="22gen">gen</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="125">125</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#ASN1_INTEGER" title='ASN1_INTEGER' data-type='struct asn1_string_st' data-ref="ASN1_INTEGER">ASN1_INTEGER</a> *<dfn class="local col3 decl" id="23serial" title='serial' data-type='ASN1_INTEGER *' data-ref="23serial">serial</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="126">126</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#X509_EXTENSION" title='X509_EXTENSION' data-type='struct X509_extension_st' data-ref="X509_EXTENSION">X509_EXTENSION</a> *<dfn class="local col4 decl" id="24ext" title='ext' data-type='X509_EXTENSION *' data-ref="24ext">ext</dfn>;</td></tr>
+<tr><th id="127">127</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#X509" title='X509' data-type='struct x509_st' data-ref="X509">X509</a> *<dfn class="local col5 decl" id="25cert" title='cert' data-type='X509 *' data-ref="25cert">cert</dfn>;</td></tr>
+<tr><th id="128">128</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#AUTHORITY_KEYID" title='AUTHORITY_KEYID' data-type='struct AUTHORITY_KEYID_st' data-ref="AUTHORITY_KEYID">AUTHORITY_KEYID</a> *<dfn class="local col6 decl" id="26akeyid" title='akeyid' data-type='AUTHORITY_KEYID *' data-ref="26akeyid">akeyid</dfn>;</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td>	<b>for</b>(<a class="local col6 ref" href="#16i" title='i' data-ref="16i">i</a> = <var>0</var>; <a class="local col6 ref" href="#16i" title='i' data-ref="16i">i</a> &lt; <a class="macro" href="../../include/openssl/stack_macros.h.html#933" title="sk_num(((_STACK *) (1 ? (values) : (struct stack_st_CONF_VALUE *)0)))" data-ref="_M/sk_CONF_VALUE_num">sk_CONF_VALUE_num</a>(<a class="local col3 ref" href="#13values" title='values' data-ref="13values">values</a>); <a class="local col6 ref" href="#16i" title='i' data-ref="16i">i</a>++)</td></tr>
+<tr><th id="131">131</th><td>		{</td></tr>
+<tr><th id="132">132</th><td>		<a class="local col8 ref" href="#18cnf" title='cnf' data-ref="18cnf">cnf</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#939" title="((CONF_VALUE *)sk_value( ((_STACK *) (1 ? (values) : (const struct stack_st_CONF_VALUE *)0)), (i)))" data-ref="_M/sk_CONF_VALUE_value">sk_CONF_VALUE_value</a>(<a class="local col3 ref" href="#13values" title='values' data-ref="13values">values</a>, <a class="local col6 ref" href="#16i" title='i' data-ref="16i">i</a>);</td></tr>
+<tr><th id="133">133</th><td>		<b>if</b>(!<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col8 ref" href="#18cnf" title='cnf' data-ref="18cnf">cnf</a>-&gt;<a class="ref" href="../../include/openssl/conf.h.html#conf_value_st::name" title='conf_value_st::name' data-ref="conf_value_st::name">name</a>, <q>"keyid"</q>))</td></tr>
+<tr><th id="134">134</th><td>			{</td></tr>
+<tr><th id="135">135</th><td>			<a class="local col4 ref" href="#14keyid" title='keyid' data-ref="14keyid">keyid</a> = <var>1</var>;</td></tr>
+<tr><th id="136">136</th><td>			<b>if</b>(<a class="local col8 ref" href="#18cnf" title='cnf' data-ref="18cnf">cnf</a>-&gt;<a class="ref" href="../../include/openssl/conf.h.html#conf_value_st::value" title='conf_value_st::value' data-ref="conf_value_st::value">value</a> &amp;&amp; !<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col8 ref" href="#18cnf" title='cnf' data-ref="18cnf">cnf</a>-&gt;<a class="ref" href="../../include/openssl/conf.h.html#conf_value_st::value" title='conf_value_st::value' data-ref="conf_value_st::value">value</a>, <q>"always"</q>))</td></tr>
+<tr><th id="137">137</th><td>				<a class="local col4 ref" href="#14keyid" title='keyid' data-ref="14keyid">keyid</a> = <var>2</var>;</td></tr>
+<tr><th id="138">138</th><td>			}</td></tr>
+<tr><th id="139">139</th><td>		<b>else</b> <b>if</b>(!<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col8 ref" href="#18cnf" title='cnf' data-ref="18cnf">cnf</a>-&gt;<a class="ref" href="../../include/openssl/conf.h.html#conf_value_st::name" title='conf_value_st::name' data-ref="conf_value_st::name">name</a>, <q>"issuer"</q>))</td></tr>
+<tr><th id="140">140</th><td>			{</td></tr>
+<tr><th id="141">141</th><td>			<a class="local col5 ref" href="#15issuer" title='issuer' data-ref="15issuer">issuer</a> = <var>1</var>;</td></tr>
+<tr><th id="142">142</th><td>			<b>if</b>(<a class="local col8 ref" href="#18cnf" title='cnf' data-ref="18cnf">cnf</a>-&gt;<a class="ref" href="../../include/openssl/conf.h.html#conf_value_st::value" title='conf_value_st::value' data-ref="conf_value_st::value">value</a> &amp;&amp; !<a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col8 ref" href="#18cnf" title='cnf' data-ref="18cnf">cnf</a>-&gt;<a class="ref" href="../../include/openssl/conf.h.html#conf_value_st::value" title='conf_value_st::value' data-ref="conf_value_st::value">value</a>, <q>"always"</q>))</td></tr>
+<tr><th id="143">143</th><td>				<a class="local col5 ref" href="#15issuer" title='issuer' data-ref="15issuer">issuer</a> = <var>2</var>;</td></tr>
+<tr><th id="144">144</th><td>			}</td></tr>
+<tr><th id="145">145</th><td>		<b>else</b></td></tr>
+<tr><th id="146">146</th><td>			{</td></tr>
+<tr><th id="147">147</th><td>			<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509V3, 0, 159, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509v3/v3_akey.c&quot;, 147)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509V3, <a class="macro" href="../../include/openssl/x509v3.h.html#793" title="159" data-ref="_M/X509V3_R_UNKNOWN_OPTION">X509V3_R_UNKNOWN_OPTION</a>);</td></tr>
+<tr><th id="148">148</th><td>			<a class="ref" href="../../include/openssl/err.h.html#ERR_add_error_data" title='ERR_add_error_data' data-ref="ERR_add_error_data">ERR_add_error_data</a>(<var>2</var>, <q>"name="</q>, <a class="local col8 ref" href="#18cnf" title='cnf' data-ref="18cnf">cnf</a>-&gt;<a class="ref" href="../../include/openssl/conf.h.html#conf_value_st::name" title='conf_value_st::name' data-ref="conf_value_st::name">name</a>);</td></tr>
+<tr><th id="149">149</th><td>			<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="150">150</th><td>			}</td></tr>
+<tr><th id="151">151</th><td>		}</td></tr>
+<tr><th id="152">152</th><td></td></tr>
+<tr><th id="153">153</th><td>	<b>if</b>(!<a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a> || !<a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#v3_ext_ctx::issuer_cert" title='v3_ext_ctx::issuer_cert' data-ref="v3_ext_ctx::issuer_cert">issuer_cert</a>)</td></tr>
+<tr><th id="154">154</th><td>		{</td></tr>
+<tr><th id="155">155</th><td>		<b>if</b>(<a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a> &amp;&amp; (<a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#v3_ext_ctx::flags" title='v3_ext_ctx::flags' data-ref="v3_ext_ctx::flags">flags</a>==<a class="macro" href="../../include/openssl/x509v3.h.html#127" title="0x1" data-ref="_M/CTX_TEST">CTX_TEST</a>))</td></tr>
+<tr><th id="156">156</th><td>			<b>return</b> <a class="ref" href="../../include/openssl/x509v3.h.html#519" title='AUTHORITY_KEYID_new' data-ref="AUTHORITY_KEYID_new">AUTHORITY_KEYID_new</a>();</td></tr>
+<tr><th id="157">157</th><td>		<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509V3, 0, 140, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509v3/v3_akey.c&quot;, 157)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509V3, <a class="macro" href="../../include/openssl/x509v3.h.html#774" title="140" data-ref="_M/X509V3_R_NO_ISSUER_CERTIFICATE">X509V3_R_NO_ISSUER_CERTIFICATE</a>);</td></tr>
+<tr><th id="158">158</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="159">159</th><td>		}</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td>	<a class="local col5 ref" href="#25cert" title='cert' data-ref="25cert">cert</a> = <a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#v3_ext_ctx::issuer_cert" title='v3_ext_ctx::issuer_cert' data-ref="v3_ext_ctx::issuer_cert">issuer_cert</a>;</td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td>	<b>if</b>(<a class="local col4 ref" href="#14keyid" title='keyid' data-ref="14keyid">keyid</a>)</td></tr>
+<tr><th id="164">164</th><td>		{</td></tr>
+<tr><th id="165">165</th><td>		<a class="local col7 ref" href="#17j" title='j' data-ref="17j">j</a> = <a class="ref" href="../../include/openssl/x509.h.html#X509_get_ext_by_NID" title='X509_get_ext_by_NID' data-ref="X509_get_ext_by_NID">X509_get_ext_by_NID</a>(<a class="local col5 ref" href="#25cert" title='cert' data-ref="25cert">cert</a>, <a class="macro" href="../../include/openssl/obj_mac.h.html#2305" title="82" data-ref="_M/NID_subject_key_identifier">NID_subject_key_identifier</a>, -<var>1</var>);</td></tr>
+<tr><th id="166">166</th><td>		<b>if</b>((<a class="local col7 ref" href="#17j" title='j' data-ref="17j">j</a> &gt;= <var>0</var>)  &amp;&amp; (<a class="local col4 ref" href="#24ext" title='ext' data-ref="24ext">ext</a> = <a class="ref" href="../../include/openssl/x509.h.html#X509_get_ext" title='X509_get_ext' data-ref="X509_get_ext">X509_get_ext</a>(<a class="local col5 ref" href="#25cert" title='cert' data-ref="25cert">cert</a>, <a class="local col7 ref" href="#17j" title='j' data-ref="17j">j</a>)))</td></tr>
+<tr><th id="167">167</th><td>			<a class="local col9 ref" href="#19ikeyid" title='ikeyid' data-ref="19ikeyid">ikeyid</a> = <a class="ref" href="../../include/openssl/x509v3.h.html#X509V3_EXT_d2i" title='X509V3_EXT_d2i' data-ref="X509V3_EXT_d2i">X509V3_EXT_d2i</a>(<a class="local col4 ref" href="#24ext" title='ext' data-ref="24ext">ext</a>);</td></tr>
+<tr><th id="168">168</th><td>		<b>if</b>(<a class="local col4 ref" href="#14keyid" title='keyid' data-ref="14keyid">keyid</a>==<var>2</var> &amp;&amp; !<a class="local col9 ref" href="#19ikeyid" title='ikeyid' data-ref="19ikeyid">ikeyid</a>)</td></tr>
+<tr><th id="169">169</th><td>			{</td></tr>
+<tr><th id="170">170</th><td>			<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509V3, 0, 155, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509v3/v3_akey.c&quot;, 170)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509V3, <a class="macro" href="../../include/openssl/x509v3.h.html#789" title="155" data-ref="_M/X509V3_R_UNABLE_TO_GET_ISSUER_KEYID">X509V3_R_UNABLE_TO_GET_ISSUER_KEYID</a>);</td></tr>
+<tr><th id="171">171</th><td>			<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="172">172</th><td>			}</td></tr>
+<tr><th id="173">173</th><td>		}</td></tr>
+<tr><th id="174">174</th><td></td></tr>
+<tr><th id="175">175</th><td>	<b>if</b>((<a class="local col5 ref" href="#15issuer" title='issuer' data-ref="15issuer">issuer</a> &amp;&amp; !<a class="local col9 ref" href="#19ikeyid" title='ikeyid' data-ref="19ikeyid">ikeyid</a>) || (<a class="local col5 ref" href="#15issuer" title='issuer' data-ref="15issuer">issuer</a> == <var>2</var>))</td></tr>
+<tr><th id="176">176</th><td>		{</td></tr>
+<tr><th id="177">177</th><td>		<a class="local col0 ref" href="#20isname" title='isname' data-ref="20isname">isname</a> = <a class="ref" href="../../include/openssl/x509.h.html#X509_NAME_dup" title='X509_NAME_dup' data-ref="X509_NAME_dup">X509_NAME_dup</a>(<a class="ref" href="../../include/openssl/x509.h.html#X509_get_issuer_name" title='X509_get_issuer_name' data-ref="X509_get_issuer_name">X509_get_issuer_name</a>(<a class="local col5 ref" href="#25cert" title='cert' data-ref="25cert">cert</a>));</td></tr>
+<tr><th id="178">178</th><td>		<a class="local col3 ref" href="#23serial" title='serial' data-ref="23serial">serial</a> = <a class="macro" href="../../include/openssl/asn1.h.html#552" title="(ASN1_INTEGER *) ASN1_STRING_dup((const ASN1_STRING *)X509_get_serialNumber(cert))" data-ref="_M/M_ASN1_INTEGER_dup">M_ASN1_INTEGER_dup</a>(<a class="ref" href="../../include/openssl/x509.h.html#X509_get_serialNumber" title='X509_get_serialNumber' data-ref="X509_get_serialNumber">X509_get_serialNumber</a>(<a class="local col5 ref" href="#25cert" title='cert' data-ref="25cert">cert</a>));</td></tr>
+<tr><th id="179">179</th><td>		<b>if</b>(!<a class="local col0 ref" href="#20isname" title='isname' data-ref="20isname">isname</a> || !<a class="local col3 ref" href="#23serial" title='serial' data-ref="23serial">serial</a>)</td></tr>
+<tr><th id="180">180</th><td>			{</td></tr>
+<tr><th id="181">181</th><td>			<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509V3, 0, 154, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509v3/v3_akey.c&quot;, 181)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509V3, <a class="macro" href="../../include/openssl/x509v3.h.html#788" title="154" data-ref="_M/X509V3_R_UNABLE_TO_GET_ISSUER_DETAILS">X509V3_R_UNABLE_TO_GET_ISSUER_DETAILS</a>);</td></tr>
+<tr><th id="182">182</th><td>			<b>goto</b> <a class="lbl" href="#27err" data-ref="27err">err</a>;</td></tr>
+<tr><th id="183">183</th><td>			}</td></tr>
+<tr><th id="184">184</th><td>		}</td></tr>
+<tr><th id="185">185</th><td></td></tr>
+<tr><th id="186">186</th><td>	<b>if</b>(!(<a class="local col6 ref" href="#26akeyid" title='akeyid' data-ref="26akeyid">akeyid</a> = <a class="ref" href="../../include/openssl/x509v3.h.html#519" title='AUTHORITY_KEYID_new' data-ref="AUTHORITY_KEYID_new">AUTHORITY_KEYID_new</a>())) <b>goto</b> <a class="lbl" href="#27err" data-ref="27err">err</a>;</td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td>	<b>if</b>(<a class="local col0 ref" href="#20isname" title='isname' data-ref="20isname">isname</a>)</td></tr>
+<tr><th id="189">189</th><td>		{</td></tr>
+<tr><th id="190">190</th><td>		<b>if</b>(!(<a class="local col1 ref" href="#21gens" title='gens' data-ref="21gens">gens</a> = <a class="macro" href="../../include/openssl/stack_macros.h.html#1186" title="((struct stack_st_GENERAL_NAME *)sk_new_null())" data-ref="_M/sk_GENERAL_NAME_new_null">sk_GENERAL_NAME_new_null</a>())</td></tr>
+<tr><th id="191">191</th><td>			|| !(<a class="local col2 ref" href="#22gen" title='gen' data-ref="22gen">gen</a> = <a class="ref" href="../../include/openssl/x509v3.h.html#523" title='GENERAL_NAME_new' data-ref="GENERAL_NAME_new">GENERAL_NAME_new</a>())</td></tr>
+<tr><th id="192">192</th><td>			|| !<a class="macro" href="../../include/openssl/stack_macros.h.html#1232" title="sk_push(((_STACK *) (1 ? (gens) : (struct stack_st_GENERAL_NAME *)0)), ((void *) (1 ? (gen) : (GENERAL_NAME *)0)))" data-ref="_M/sk_GENERAL_NAME_push">sk_GENERAL_NAME_push</a>(<a class="local col1 ref" href="#21gens" title='gens' data-ref="21gens">gens</a>, <a class="local col2 ref" href="#22gen" title='gen' data-ref="22gen">gen</a>))</td></tr>
+<tr><th id="193">193</th><td>			{</td></tr>
+<tr><th id="194">194</th><td>			<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_X509V3, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/x509v3/v3_akey.c&quot;, 194)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(X509V3, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="195">195</th><td>			<b>goto</b> <a class="lbl" href="#27err" data-ref="27err">err</a>;</td></tr>
+<tr><th id="196">196</th><td>			}</td></tr>
+<tr><th id="197">197</th><td>		<a class="local col2 ref" href="#22gen" title='gen' data-ref="22gen">gen</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#GENERAL_NAME_st::type" title='GENERAL_NAME_st::type' data-ref="GENERAL_NAME_st::type">type</a> = <a class="macro" href="../../include/openssl/x509v3.h.html#176" title="4" data-ref="_M/GEN_DIRNAME">GEN_DIRNAME</a>;</td></tr>
+<tr><th id="198">198</th><td>		<a class="local col2 ref" href="#22gen" title='gen' data-ref="22gen">gen</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#GENERAL_NAME_st::d" title='GENERAL_NAME_st::d' data-ref="GENERAL_NAME_st::d">d</a>.<a class="ref" href="../../include/openssl/x509v3.h.html#GENERAL_NAME_st::(anonymous)::dirn" title='GENERAL_NAME_st::(anonymous union)::dirn' data-ref="GENERAL_NAME_st::(anonymous)::dirn">dirn</a> = <a class="local col0 ref" href="#20isname" title='isname' data-ref="20isname">isname</a>;</td></tr>
+<tr><th id="199">199</th><td>		}</td></tr>
+<tr><th id="200">200</th><td></td></tr>
+<tr><th id="201">201</th><td>	<a class="local col6 ref" href="#26akeyid" title='akeyid' data-ref="26akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::issuer" title='AUTHORITY_KEYID_st::issuer' data-ref="AUTHORITY_KEYID_st::issuer">issuer</a> = <a class="local col1 ref" href="#21gens" title='gens' data-ref="21gens">gens</a>;</td></tr>
+<tr><th id="202">202</th><td>	<a class="local col6 ref" href="#26akeyid" title='akeyid' data-ref="26akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::serial" title='AUTHORITY_KEYID_st::serial' data-ref="AUTHORITY_KEYID_st::serial">serial</a> = <a class="local col3 ref" href="#23serial" title='serial' data-ref="23serial">serial</a>;</td></tr>
+<tr><th id="203">203</th><td>	<a class="local col6 ref" href="#26akeyid" title='akeyid' data-ref="26akeyid">akeyid</a>-&gt;<a class="ref" href="../../include/openssl/x509v3.h.html#AUTHORITY_KEYID_st::keyid" title='AUTHORITY_KEYID_st::keyid' data-ref="AUTHORITY_KEYID_st::keyid">keyid</a> = <a class="local col9 ref" href="#19ikeyid" title='ikeyid' data-ref="19ikeyid">ikeyid</a>;</td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td>	<b>return</b> <a class="local col6 ref" href="#26akeyid" title='akeyid' data-ref="26akeyid">akeyid</a>;</td></tr>
+<tr><th id="206">206</th><td></td></tr>
+<tr><th id="207">207</th><td> <dfn class="lbl" id="27err" data-ref="27err">err</dfn>:</td></tr>
+<tr><th id="208">208</th><td>	<a class="ref" href="../../include/openssl/x509.h.html#773" title='X509_NAME_free' data-ref="X509_NAME_free">X509_NAME_free</a>(<a class="local col0 ref" href="#20isname" title='isname' data-ref="20isname">isname</a>);</td></tr>
+<tr><th id="209">209</th><td>	<a class="macro" href="../../include/openssl/asn1.h.html#551" title="ASN1_STRING_free((ASN1_STRING *)serial)" data-ref="_M/M_ASN1_INTEGER_free">M_ASN1_INTEGER_free</a>(<a class="local col3 ref" href="#23serial" title='serial' data-ref="23serial">serial</a>);</td></tr>
+<tr><th id="210">210</th><td>	<a class="macro" href="../../include/openssl/asn1.h.html#567" title="ASN1_STRING_free((ASN1_STRING *)ikeyid)" data-ref="_M/M_ASN1_OCTET_STRING_free">M_ASN1_OCTET_STRING_free</a>(<a class="local col9 ref" href="#19ikeyid" title='ikeyid' data-ref="19ikeyid">ikeyid</a>);</td></tr>
+<tr><th id="211">211</th><td>	<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="212">212</th><td>	}</td></tr>
+<tr><th id="213">213</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

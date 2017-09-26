@@ -1,0 +1,263 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>pcre_fullinfo.c source code [codebrowser/external/pcre/dist/pcre_fullinfo.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/pcre/dist/pcre_fullinfo.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>pcre</a>/<a href='./'>dist</a>/<a href='pcre_fullinfo.c.html'>pcre_fullinfo.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*************************************************</i></td></tr>
+<tr><th id="2">2</th><td><i>*      Perl-Compatible Regular Expressions       *</i></td></tr>
+<tr><th id="3">3</th><td><i>*************************************************/</i></td></tr>
+<tr><th id="4">4</th><td></td></tr>
+<tr><th id="5">5</th><td><i>/* PCRE is a library of functions to support regular expressions whose syntax</i></td></tr>
+<tr><th id="6">6</th><td><i>and semantics are as close as possible to those of the Perl 5 language.</i></td></tr>
+<tr><th id="7">7</th><td><i></i></td></tr>
+<tr><th id="8">8</th><td><i>                       Written by Philip Hazel</i></td></tr>
+<tr><th id="9">9</th><td><i>           Copyright (c) 1997-2013 University of Cambridge</i></td></tr>
+<tr><th id="10">10</th><td><i></i></td></tr>
+<tr><th id="11">11</th><td><i>-----------------------------------------------------------------------------</i></td></tr>
+<tr><th id="12">12</th><td><i>Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="13">13</th><td><i>modification, are permitted provided that the following conditions are met:</i></td></tr>
+<tr><th id="14">14</th><td><i></i></td></tr>
+<tr><th id="15">15</th><td><i>    * Redistributions of source code must retain the above copyright notice,</i></td></tr>
+<tr><th id="16">16</th><td><i>      this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="17">17</th><td><i></i></td></tr>
+<tr><th id="18">18</th><td><i>    * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="19">19</th><td><i>      notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="20">20</th><td><i>      documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="21">21</th><td><i></i></td></tr>
+<tr><th id="22">22</th><td><i>    * Neither the name of the University of Cambridge nor the names of its</i></td></tr>
+<tr><th id="23">23</th><td><i>      contributors may be used to endorse or promote products derived from</i></td></tr>
+<tr><th id="24">24</th><td><i>      this software without specific prior written permission.</i></td></tr>
+<tr><th id="25">25</th><td><i></i></td></tr>
+<tr><th id="26">26</th><td><i>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"</i></td></tr>
+<tr><th id="27">27</th><td><i>AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="28">28</th><td><i>IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="29">29</th><td><i>ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE</i></td></tr>
+<tr><th id="30">30</th><td><i>LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR</i></td></tr>
+<tr><th id="31">31</th><td><i>CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF</i></td></tr>
+<tr><th id="32">32</th><td><i>SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS</i></td></tr>
+<tr><th id="33">33</th><td><i>INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN</i></td></tr>
+<tr><th id="34">34</th><td><i>CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="35">35</th><td><i>ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</i></td></tr>
+<tr><th id="36">36</th><td><i>POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="37">37</th><td><i>-----------------------------------------------------------------------------</i></td></tr>
+<tr><th id="38">38</th><td><i>*/</i></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><i>/* This module contains the external function pcre_fullinfo(), which returns</i></td></tr>
+<tr><th id="42">42</th><td><i>information about a compiled pattern. */</i></td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><u>#<span data-ppcond="45">ifdef</span> <span class="macro" data-ref="_M/HAVE_CONFIG_H">HAVE_CONFIG_H</span></u></td></tr>
+<tr><th id="46">46</th><td><u>#include <a href="../config.h.html">"config.h"</a></u></td></tr>
+<tr><th id="47">47</th><td><u>#<span data-ppcond="45">endif</span></u></td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><u>#include <a href="pcre_internal.h.html">"pcre_internal.h"</a></u></td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><i>/*************************************************</i></td></tr>
+<tr><th id="53">53</th><td><i>*        Return info about compiled pattern      *</i></td></tr>
+<tr><th id="54">54</th><td><i>*************************************************/</i></td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><i>/* This is a newer "info" function which has an extensible interface so</i></td></tr>
+<tr><th id="57">57</th><td><i>that additional items can be added compatibly.</i></td></tr>
+<tr><th id="58">58</th><td><i></i></td></tr>
+<tr><th id="59">59</th><td><i>Arguments:</i></td></tr>
+<tr><th id="60">60</th><td><i>  argument_re      points to compiled code</i></td></tr>
+<tr><th id="61">61</th><td><i>  extra_data       points extra data, or NULL</i></td></tr>
+<tr><th id="62">62</th><td><i>  what             what information is required</i></td></tr>
+<tr><th id="63">63</th><td><i>  where            where to put the information</i></td></tr>
+<tr><th id="64">64</th><td><i></i></td></tr>
+<tr><th id="65">65</th><td><i>Returns:           0 if data returned, negative on error</i></td></tr>
+<tr><th id="66">66</th><td><i>*/</i></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="68">if</span> defined <a class="macro" href="pcre_internal.h.html#58" data-ref="_M/COMPILE_PCRE8">COMPILE_PCRE8</a></u></td></tr>
+<tr><th id="69">69</th><td><a class="macro" href="../config.h.html#275" title="__attribute__ ((visibility (&quot;default&quot;)))" data-ref="_M/PCRE_EXP_DEFN">PCRE_EXP_DEFN</a> <em>int</em> <a class="macro" href="pcre_internal.h.html#185" title="" data-ref="_M/PCRE_CALL_CONVENTION">PCRE_CALL_CONVENTION</a></td></tr>
+<tr><th id="70">70</th><td><dfn class="decl def" id="pcre_fullinfo" title='pcre_fullinfo' data-ref="pcre_fullinfo">pcre_fullinfo</dfn>(<em>const</em> <a class="typedef" href="../pcre.h.html#pcre" title='pcre' data-type='struct real_pcre' data-ref="pcre">pcre</a> *<dfn class="local col1 decl" id="1argument_re" title='argument_re' data-type='const pcre *' data-ref="1argument_re">argument_re</dfn>, <em>const</em> <a class="typedef" href="../pcre.h.html#pcre_extra" title='pcre_extra' data-type='struct pcre_extra' data-ref="pcre_extra">pcre_extra</a> *<dfn class="local col2 decl" id="2extra_data" title='extra_data' data-type='const pcre_extra *' data-ref="2extra_data">extra_data</dfn>,</td></tr>
+<tr><th id="71">71</th><td>  <em>int</em> <dfn class="local col3 decl" id="3what" title='what' data-type='int' data-ref="3what">what</dfn>, <em>void</em> *<dfn class="local col4 decl" id="4where" title='where' data-type='void *' data-ref="4where">where</dfn>)</td></tr>
+<tr><th id="72">72</th><td><u>#<span data-ppcond="68">elif</span> defined COMPILE_PCRE16</u></td></tr>
+<tr><th id="73">73</th><td>PCRE_EXP_DEFN <em>int</em> PCRE_CALL_CONVENTION</td></tr>
+<tr><th id="74">74</th><td>pcre16_fullinfo(<em>const</em> pcre16 *argument_re, <em>const</em> pcre16_extra *extra_data,</td></tr>
+<tr><th id="75">75</th><td>  <em>int</em> what, <em>void</em> *where)</td></tr>
+<tr><th id="76">76</th><td><u>#elif defined COMPILE_PCRE32</u></td></tr>
+<tr><th id="77">77</th><td>PCRE_EXP_DEFN <em>int</em> PCRE_CALL_CONVENTION</td></tr>
+<tr><th id="78">78</th><td>pcre32_fullinfo(<em>const</em> pcre32 *argument_re, <em>const</em> pcre32_extra *extra_data,</td></tr>
+<tr><th id="79">79</th><td>  <em>int</em> what, <em>void</em> *where)</td></tr>
+<tr><th id="80">80</th><td><u>#<span data-ppcond="68">endif</span></u></td></tr>
+<tr><th id="81">81</th><td>{</td></tr>
+<tr><th id="82">82</th><td><em>const</em> <a class="macro" href="pcre_internal.h.html#2373" title="real_pcre" data-ref="_M/REAL_PCRE">REAL_PCRE</a> *<dfn class="local col5 decl" id="5re" title='re' data-type='const real_pcre *' data-ref="5re">re</dfn> = (<em>const</em> <a class="macro" href="pcre_internal.h.html#2373" title="real_pcre" data-ref="_M/REAL_PCRE">REAL_PCRE</a> *)<a class="local col1 ref" href="#1argument_re" title='argument_re' data-ref="1argument_re">argument_re</a>;</td></tr>
+<tr><th id="83">83</th><td><em>const</em> <a class="typedef" href="pcre_internal.h.html#pcre_study_data" title='pcre_study_data' data-type='struct pcre_study_data' data-ref="pcre_study_data">pcre_study_data</a> *<dfn class="local col6 decl" id="6study" title='study' data-type='const pcre_study_data *' data-ref="6study">study</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><b>if</b> (<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || <a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) <b>return</b> <a class="macro" href="../pcre.h.html#176" title="(-2)" data-ref="_M/PCRE_ERROR_NULL">PCRE_ERROR_NULL</a>;</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td><b>if</b> (<a class="local col2 ref" href="#2extra_data" title='extra_data' data-ref="2extra_data">extra_data</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> &amp;&amp; (<a class="local col2 ref" href="#2extra_data" title='extra_data' data-ref="2extra_data">extra_data</a>-&gt;<a class="ref" href="../pcre.h.html#pcre_extra::flags" title='pcre_extra::flags' data-ref="pcre_extra::flags">flags</a> &amp; <a class="macro" href="../pcre.h.html#314" title="0x0001" data-ref="_M/PCRE_EXTRA_STUDY_DATA">PCRE_EXTRA_STUDY_DATA</a>) != <var>0</var>)</td></tr>
+<tr><th id="88">88</th><td>  <a class="local col6 ref" href="#6study" title='study' data-ref="6study">study</a> = (<em>const</em> <a class="typedef" href="pcre_internal.h.html#pcre_study_data" title='pcre_study_data' data-type='struct pcre_study_data' data-ref="pcre_study_data">pcre_study_data</a> *)<a class="local col2 ref" href="#2extra_data" title='extra_data' data-ref="2extra_data">extra_data</a>-&gt;<a class="ref" href="../pcre.h.html#pcre_extra::study_data" title='pcre_extra::study_data' data-ref="pcre_extra::study_data">study_data</a>;</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td><i>/* Check that the first field in the block is the magic number. If it is not,</i></td></tr>
+<tr><th id="91">91</th><td><i>return with PCRE_ERROR_BADMAGIC. However, if the magic number is equal to</i></td></tr>
+<tr><th id="92">92</th><td><i>REVERSED_MAGIC_NUMBER we return with PCRE_ERROR_BADENDIANNESS, which</i></td></tr>
+<tr><th id="93">93</th><td><i>means that the pattern is likely compiled with different endianness. */</i></td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><b>if</b> (<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::magic_number" title='real_pcre8_or_16::magic_number' data-ref="real_pcre8_or_16::magic_number">magic_number</a> != <a class="macro" href="pcre_internal.h.html#1143" title="0x50435245UL" data-ref="_M/MAGIC_NUMBER">MAGIC_NUMBER</a>)</td></tr>
+<tr><th id="96">96</th><td>  <b>return</b> <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::magic_number" title='real_pcre8_or_16::magic_number' data-ref="real_pcre8_or_16::magic_number">magic_number</a> == <a class="macro" href="pcre_internal.h.html#1148" title="0x45524350UL" data-ref="_M/REVERSED_MAGIC_NUMBER">REVERSED_MAGIC_NUMBER</a>?</td></tr>
+<tr><th id="97">97</th><td>    <a class="macro" href="../pcre.h.html#208" title="(-29)" data-ref="_M/PCRE_ERROR_BADENDIANNESS">PCRE_ERROR_BADENDIANNESS</a>:<a class="macro" href="../pcre.h.html#178" title="(-4)" data-ref="_M/PCRE_ERROR_BADMAGIC">PCRE_ERROR_BADMAGIC</a>;</td></tr>
+<tr><th id="98">98</th><td></td></tr>
+<tr><th id="99">99</th><td><i>/* Check that this pattern was compiled in the correct bit mode */</i></td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td><b>if</b> ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1095" title="0x00000001" data-ref="_M/PCRE_MODE">PCRE_MODE</a>) == <var>0</var>) <b>return</b> <a class="macro" href="../pcre.h.html#207" title="(-28)" data-ref="_M/PCRE_ERROR_BADMODE">PCRE_ERROR_BADMODE</a>;</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><b>switch</b> (<a class="local col3 ref" href="#3what" title='what' data-ref="3what">what</a>)</td></tr>
+<tr><th id="104">104</th><td>  {</td></tr>
+<tr><th id="105">105</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#257" title="0" data-ref="_M/PCRE_INFO_OPTIONS">PCRE_INFO_OPTIONS</a>:</td></tr>
+<tr><th id="106">106</th><td>  *((<em>unsigned</em> <em>long</em> <em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::options" title='real_pcre8_or_16::options' data-ref="real_pcre8_or_16::options">options</a> &amp; <a class="macro" href="pcre_internal.h.html#1114" title="(0x00000001|0x00000008|0x00000010|0x00000002| 0x00000004|0x00000020|0x00000040|0x00000200|0x00000800| 0x00001000|0x00020000| 0x00002000|0x00004000|0x00040000| 0x00080000|(0x00100000|0x00200000|0x00400000| 0x00500000)|0x00800000|0x01000000| 0x02000000|0x20000000|0x04000000|0x00010000)" data-ref="_M/PUBLIC_COMPILE_OPTIONS">PUBLIC_COMPILE_OPTIONS</a>;</td></tr>
+<tr><th id="107">107</th><td>  <b>break</b>;</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#258" title="1" data-ref="_M/PCRE_INFO_SIZE">PCRE_INFO_SIZE</a>:</td></tr>
+<tr><th id="110">110</th><td>  *((<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::size" title='real_pcre8_or_16::size' data-ref="real_pcre8_or_16::size">size</a>;</td></tr>
+<tr><th id="111">111</th><td>  <b>break</b>;</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#268" title="10" data-ref="_M/PCRE_INFO_STUDYSIZE">PCRE_INFO_STUDYSIZE</a>:</td></tr>
+<tr><th id="114">114</th><td>  *((<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = (<a class="local col6 ref" href="#6study" title='study' data-ref="6study">study</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)? <var>0</var> : <a class="local col6 ref" href="#6study" title='study' data-ref="6study">study</a>-&gt;<a class="ref" href="pcre_internal.h.html#pcre_study_data::size" title='pcre_study_data::size' data-ref="pcre_study_data::size">size</a>;</td></tr>
+<tr><th id="115">115</th><td>  <b>break</b>;</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#275" title="17" data-ref="_M/PCRE_INFO_JITSIZE">PCRE_INFO_JITSIZE</a>:</td></tr>
+<tr><th id="118">118</th><td><u>#<span data-ppcond="118">ifdef</span> <span class="macro" data-ref="_M/SUPPORT_JIT">SUPPORT_JIT</span></u></td></tr>
+<tr><th id="119">119</th><td>  *((size_t *)where) =</td></tr>
+<tr><th id="120">120</th><td>      (extra_data != NULL &amp;&amp;</td></tr>
+<tr><th id="121">121</th><td>      (extra_data-&gt;flags &amp; PCRE_EXTRA_EXECUTABLE_JIT) != <var>0</var> &amp;&amp;</td></tr>
+<tr><th id="122">122</th><td>      extra_data-&gt;executable_jit != NULL)?</td></tr>
+<tr><th id="123">123</th><td>    PRIV(jit_get_size)(extra_data-&gt;executable_jit) : <var>0</var>;</td></tr>
+<tr><th id="124">124</th><td><u>#<span data-ppcond="118">else</span></u></td></tr>
+<tr><th id="125">125</th><td>  *((<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <var>0</var>;</td></tr>
+<tr><th id="126">126</th><td><u>#<span data-ppcond="118">endif</span></u></td></tr>
+<tr><th id="127">127</th><td>  <b>break</b>;</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#259" title="2" data-ref="_M/PCRE_INFO_CAPTURECOUNT">PCRE_INFO_CAPTURECOUNT</a>:</td></tr>
+<tr><th id="130">130</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::top_bracket" title='real_pcre8_or_16::top_bracket' data-ref="real_pcre8_or_16::top_bracket">top_bracket</a>;</td></tr>
+<tr><th id="131">131</th><td>  <b>break</b>;</td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#260" title="3" data-ref="_M/PCRE_INFO_BACKREFMAX">PCRE_INFO_BACKREFMAX</a>:</td></tr>
+<tr><th id="134">134</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::top_backref" title='real_pcre8_or_16::top_backref' data-ref="real_pcre8_or_16::top_backref">top_backref</a>;</td></tr>
+<tr><th id="135">135</th><td>  <b>break</b>;</td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#261" title="4" data-ref="_M/PCRE_INFO_FIRSTBYTE">PCRE_INFO_FIRSTBYTE</a>:</td></tr>
+<tr><th id="138">138</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) =</td></tr>
+<tr><th id="139">139</th><td>    ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1081" title="0x00000010" data-ref="_M/PCRE_FIRSTSET">PCRE_FIRSTSET</a>) != <var>0</var>)? (<em>int</em>)<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::first_char" title='real_pcre8_or_16::first_char' data-ref="real_pcre8_or_16::first_char">first_char</a> :</td></tr>
+<tr><th id="140">140</th><td>    ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1085" title="0x00000100" data-ref="_M/PCRE_STARTLINE">PCRE_STARTLINE</a>) != <var>0</var>)? -<var>1</var> : -<var>2</var>;</td></tr>
+<tr><th id="141">141</th><td>  <b>break</b>;</td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#277" title="19" data-ref="_M/PCRE_INFO_FIRSTCHARACTER">PCRE_INFO_FIRSTCHARACTER</a>:</td></tr>
+<tr><th id="144">144</th><td>    *((<a class="typedef" href="pcre_internal.h.html#pcre_uint32" title='pcre_uint32' data-type='unsigned int' data-ref="pcre_uint32">pcre_uint32</a> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) =</td></tr>
+<tr><th id="145">145</th><td>      (<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1081" title="0x00000010" data-ref="_M/PCRE_FIRSTSET">PCRE_FIRSTSET</a>) != <var>0</var> ? <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::first_char" title='real_pcre8_or_16::first_char' data-ref="real_pcre8_or_16::first_char">first_char</a> : <var>0</var>;</td></tr>
+<tr><th id="146">146</th><td>    <b>break</b>;</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#278" title="20" data-ref="_M/PCRE_INFO_FIRSTCHARACTERFLAGS">PCRE_INFO_FIRSTCHARACTERFLAGS</a>:</td></tr>
+<tr><th id="149">149</th><td>    *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) =</td></tr>
+<tr><th id="150">150</th><td>      ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1081" title="0x00000010" data-ref="_M/PCRE_FIRSTSET">PCRE_FIRSTSET</a>) != <var>0</var>) ? <var>1</var> :</td></tr>
+<tr><th id="151">151</th><td>      ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1085" title="0x00000100" data-ref="_M/PCRE_STARTLINE">PCRE_STARTLINE</a>) != <var>0</var>) ? <var>2</var> : <var>0</var>;</td></tr>
+<tr><th id="152">152</th><td>    <b>break</b>;</td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td>  <i>/* Make sure we pass back the pointer to the bit vector in the external</i></td></tr>
+<tr><th id="155">155</th><td><i>  block, not the internal copy (with flipped integer fields). */</i></td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#263" title="5" data-ref="_M/PCRE_INFO_FIRSTTABLE">PCRE_INFO_FIRSTTABLE</a>:</td></tr>
+<tr><th id="158">158</th><td>  *((<em>const</em> <a class="typedef" href="pcre_internal.h.html#pcre_uint8" title='pcre_uint8' data-type='unsigned char' data-ref="pcre_uint8">pcre_uint8</a> **)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) =</td></tr>
+<tr><th id="159">159</th><td>    (<a class="local col6 ref" href="#6study" title='study' data-ref="6study">study</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> &amp;&amp; (<a class="local col6 ref" href="#6study" title='study' data-ref="6study">study</a>-&gt;<a class="ref" href="pcre_internal.h.html#pcre_study_data::flags" title='pcre_study_data::flags' data-ref="pcre_study_data::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1105" title="0x0001" data-ref="_M/PCRE_STUDY_MAPPED">PCRE_STUDY_MAPPED</a>) != <var>0</var>)?</td></tr>
+<tr><th id="160">160</th><td>      ((<em>const</em> <a class="typedef" href="pcre_internal.h.html#pcre_study_data" title='pcre_study_data' data-type='struct pcre_study_data' data-ref="pcre_study_data">pcre_study_data</a> *)<a class="local col2 ref" href="#2extra_data" title='extra_data' data-ref="2extra_data">extra_data</a>-&gt;<a class="ref" href="../pcre.h.html#pcre_extra::study_data" title='pcre_extra::study_data' data-ref="pcre_extra::study_data">study_data</a>)-&gt;<a class="ref" href="pcre_internal.h.html#pcre_study_data::start_bits" title='pcre_study_data::start_bits' data-ref="pcre_study_data::start_bits">start_bits</a> : <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="161">161</th><td>  <b>break</b>;</td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#273" title="15" data-ref="_M/PCRE_INFO_MINLENGTH">PCRE_INFO_MINLENGTH</a>:</td></tr>
+<tr><th id="164">164</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) =</td></tr>
+<tr><th id="165">165</th><td>    (<a class="local col6 ref" href="#6study" title='study' data-ref="6study">study</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> &amp;&amp; (<a class="local col6 ref" href="#6study" title='study' data-ref="6study">study</a>-&gt;<a class="ref" href="pcre_internal.h.html#pcre_study_data::flags" title='pcre_study_data::flags' data-ref="pcre_study_data::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1106" title="0x0002" data-ref="_M/PCRE_STUDY_MINLEN">PCRE_STUDY_MINLEN</a>) != <var>0</var>)?</td></tr>
+<tr><th id="166">166</th><td>      (<em>int</em>)(<a class="local col6 ref" href="#6study" title='study' data-ref="6study">study</a>-&gt;<a class="ref" href="pcre_internal.h.html#pcre_study_data::minlength" title='pcre_study_data::minlength' data-ref="pcre_study_data::minlength">minlength</a>) : -<var>1</var>;</td></tr>
+<tr><th id="167">167</th><td>  <b>break</b>;</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#274" title="16" data-ref="_M/PCRE_INFO_JIT">PCRE_INFO_JIT</a>:</td></tr>
+<tr><th id="170">170</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col2 ref" href="#2extra_data" title='extra_data' data-ref="2extra_data">extra_data</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> &amp;&amp;</td></tr>
+<tr><th id="171">171</th><td>                    (<a class="local col2 ref" href="#2extra_data" title='extra_data' data-ref="2extra_data">extra_data</a>-&gt;<a class="ref" href="../pcre.h.html#pcre_extra::flags" title='pcre_extra::flags' data-ref="pcre_extra::flags">flags</a> &amp; <a class="macro" href="../pcre.h.html#320" title="0x0040" data-ref="_M/PCRE_EXTRA_EXECUTABLE_JIT">PCRE_EXTRA_EXECUTABLE_JIT</a>) != <var>0</var> &amp;&amp;</td></tr>
+<tr><th id="172">172</th><td>                    <a class="local col2 ref" href="#2extra_data" title='extra_data' data-ref="2extra_data">extra_data</a>-&gt;<a class="ref" href="../pcre.h.html#pcre_extra::executable_jit" title='pcre_extra::executable_jit' data-ref="pcre_extra::executable_jit">executable_jit</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="173">173</th><td>  <b>break</b>;</td></tr>
+<tr><th id="174">174</th><td></td></tr>
+<tr><th id="175">175</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#264" title="6" data-ref="_M/PCRE_INFO_LASTLITERAL">PCRE_INFO_LASTLITERAL</a>:</td></tr>
+<tr><th id="176">176</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) =</td></tr>
+<tr><th id="177">177</th><td>    ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1083" title="0x00000040" data-ref="_M/PCRE_REQCHSET">PCRE_REQCHSET</a>) != <var>0</var>)? (<em>int</em>)<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::req_char" title='real_pcre8_or_16::req_char' data-ref="real_pcre8_or_16::req_char">req_char</a> : -<var>1</var>;</td></tr>
+<tr><th id="178">178</th><td>  <b>break</b>;</td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#279" title="21" data-ref="_M/PCRE_INFO_REQUIREDCHAR">PCRE_INFO_REQUIREDCHAR</a>:</td></tr>
+<tr><th id="181">181</th><td>    *((<a class="typedef" href="pcre_internal.h.html#pcre_uint32" title='pcre_uint32' data-type='unsigned int' data-ref="pcre_uint32">pcre_uint32</a> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) =</td></tr>
+<tr><th id="182">182</th><td>      ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1083" title="0x00000040" data-ref="_M/PCRE_REQCHSET">PCRE_REQCHSET</a>) != <var>0</var>) ? <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::req_char" title='real_pcre8_or_16::req_char' data-ref="real_pcre8_or_16::req_char">req_char</a> : <var>0</var>;</td></tr>
+<tr><th id="183">183</th><td>    <b>break</b>;</td></tr>
+<tr><th id="184">184</th><td></td></tr>
+<tr><th id="185">185</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#280" title="22" data-ref="_M/PCRE_INFO_REQUIREDCHARFLAGS">PCRE_INFO_REQUIREDCHARFLAGS</a>:</td></tr>
+<tr><th id="186">186</th><td>    *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) =</td></tr>
+<tr><th id="187">187</th><td>      ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1083" title="0x00000040" data-ref="_M/PCRE_REQCHSET">PCRE_REQCHSET</a>) != <var>0</var>);</td></tr>
+<tr><th id="188">188</th><td>    <b>break</b>;</td></tr>
+<tr><th id="189">189</th><td></td></tr>
+<tr><th id="190">190</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#265" title="7" data-ref="_M/PCRE_INFO_NAMEENTRYSIZE">PCRE_INFO_NAMEENTRYSIZE</a>:</td></tr>
+<tr><th id="191">191</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::name_entry_size" title='real_pcre8_or_16::name_entry_size' data-ref="real_pcre8_or_16::name_entry_size">name_entry_size</a>;</td></tr>
+<tr><th id="192">192</th><td>  <b>break</b>;</td></tr>
+<tr><th id="193">193</th><td></td></tr>
+<tr><th id="194">194</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#266" title="8" data-ref="_M/PCRE_INFO_NAMECOUNT">PCRE_INFO_NAMECOUNT</a>:</td></tr>
+<tr><th id="195">195</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::name_count" title='real_pcre8_or_16::name_count' data-ref="real_pcre8_or_16::name_count">name_count</a>;</td></tr>
+<tr><th id="196">196</th><td>  <b>break</b>;</td></tr>
+<tr><th id="197">197</th><td></td></tr>
+<tr><th id="198">198</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#267" title="9" data-ref="_M/PCRE_INFO_NAMETABLE">PCRE_INFO_NAMETABLE</a>:</td></tr>
+<tr><th id="199">199</th><td>  *((<em>const</em> <a class="typedef" href="pcre_internal.h.html#pcre_uchar" title='pcre_uchar' data-type='unsigned char' data-ref="pcre_uchar">pcre_uchar</a> **)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = (<em>const</em> <a class="typedef" href="pcre_internal.h.html#pcre_uchar" title='pcre_uchar' data-type='unsigned char' data-ref="pcre_uchar">pcre_uchar</a> *)<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a> + <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::name_table_offset" title='real_pcre8_or_16::name_table_offset' data-ref="real_pcre8_or_16::name_table_offset">name_table_offset</a>;</td></tr>
+<tr><th id="200">200</th><td>  <b>break</b>;</td></tr>
+<tr><th id="201">201</th><td></td></tr>
+<tr><th id="202">202</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#269" title="11" data-ref="_M/PCRE_INFO_DEFAULT_TABLES">PCRE_INFO_DEFAULT_TABLES</a>:</td></tr>
+<tr><th id="203">203</th><td>  *((<em>const</em> <a class="typedef" href="pcre_internal.h.html#pcre_uint8" title='pcre_uint8' data-type='unsigned char' data-ref="pcre_uint8">pcre_uint8</a> **)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = (<em>const</em> <a class="typedef" href="pcre_internal.h.html#pcre_uint8" title='pcre_uint8' data-type='unsigned char' data-ref="pcre_uint8">pcre_uint8</a> *)(<a class="macro" href="pcre_internal.h.html#2624" title="_pcre_default_tables" data-ref="_M/PRIV">PRIV</a>(default_tables));</td></tr>
+<tr><th id="204">204</th><td>  <b>break</b>;</td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td>  <i>/* From release 8.00 this will always return TRUE because NOPARTIAL is</i></td></tr>
+<tr><th id="207">207</th><td><i>  no longer ever set (the restrictions have been removed). */</i></td></tr>
+<tr><th id="208">208</th><td></td></tr>
+<tr><th id="209">209</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#270" title="12" data-ref="_M/PCRE_INFO_OKPARTIAL">PCRE_INFO_OKPARTIAL</a>:</td></tr>
+<tr><th id="210">210</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = (<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1086" title="0x00000200" data-ref="_M/PCRE_NOPARTIAL">PCRE_NOPARTIAL</a>) == <var>0</var>;</td></tr>
+<tr><th id="211">211</th><td>  <b>break</b>;</td></tr>
+<tr><th id="212">212</th><td></td></tr>
+<tr><th id="213">213</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#271" title="13" data-ref="_M/PCRE_INFO_JCHANGED">PCRE_INFO_JCHANGED</a>:</td></tr>
+<tr><th id="214">214</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = (<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1087" title="0x00000400" data-ref="_M/PCRE_JCHANGED">PCRE_JCHANGED</a>) != <var>0</var>;</td></tr>
+<tr><th id="215">215</th><td>  <b>break</b>;</td></tr>
+<tr><th id="216">216</th><td></td></tr>
+<tr><th id="217">217</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#272" title="14" data-ref="_M/PCRE_INFO_HASCRORLF">PCRE_INFO_HASCRORLF</a>:</td></tr>
+<tr><th id="218">218</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = (<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1088" title="0x00000800" data-ref="_M/PCRE_HASCRORLF">PCRE_HASCRORLF</a>) != <var>0</var>;</td></tr>
+<tr><th id="219">219</th><td>  <b>break</b>;</td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#276" title="18" data-ref="_M/PCRE_INFO_MAXLOOKBEHIND">PCRE_INFO_MAXLOOKBEHIND</a>:</td></tr>
+<tr><th id="222">222</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::max_lookbehind" title='real_pcre8_or_16::max_lookbehind' data-ref="real_pcre8_or_16::max_lookbehind">max_lookbehind</a>;</td></tr>
+<tr><th id="223">223</th><td>  <b>break</b>;</td></tr>
+<tr><th id="224">224</th><td></td></tr>
+<tr><th id="225">225</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#281" title="23" data-ref="_M/PCRE_INFO_MATCHLIMIT">PCRE_INFO_MATCHLIMIT</a>:</td></tr>
+<tr><th id="226">226</th><td>  <b>if</b> ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1090" title="0x00002000" data-ref="_M/PCRE_MLSET">PCRE_MLSET</a>) == <var>0</var>) <b>return</b> <a class="macro" href="../pcre.h.html#212" title="(-33)" data-ref="_M/PCRE_ERROR_UNSET">PCRE_ERROR_UNSET</a>;</td></tr>
+<tr><th id="227">227</th><td>  *((<a class="typedef" href="pcre_internal.h.html#pcre_uint32" title='pcre_uint32' data-type='unsigned int' data-ref="pcre_uint32">pcre_uint32</a> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::limit_match" title='real_pcre8_or_16::limit_match' data-ref="real_pcre8_or_16::limit_match">limit_match</a>;</td></tr>
+<tr><th id="228">228</th><td>  <b>break</b>;</td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#282" title="24" data-ref="_M/PCRE_INFO_RECURSIONLIMIT">PCRE_INFO_RECURSIONLIMIT</a>:</td></tr>
+<tr><th id="231">231</th><td>  <b>if</b> ((<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1091" title="0x00004000" data-ref="_M/PCRE_RLSET">PCRE_RLSET</a>) == <var>0</var>) <b>return</b> <a class="macro" href="../pcre.h.html#212" title="(-33)" data-ref="_M/PCRE_ERROR_UNSET">PCRE_ERROR_UNSET</a>;</td></tr>
+<tr><th id="232">232</th><td>  *((<a class="typedef" href="pcre_internal.h.html#pcre_uint32" title='pcre_uint32' data-type='unsigned int' data-ref="pcre_uint32">pcre_uint32</a> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = <a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::limit_recursion" title='real_pcre8_or_16::limit_recursion' data-ref="real_pcre8_or_16::limit_recursion">limit_recursion</a>;</td></tr>
+<tr><th id="233">233</th><td>  <b>break</b>;</td></tr>
+<tr><th id="234">234</th><td></td></tr>
+<tr><th id="235">235</th><td>  <b>case</b> <a class="macro" href="../pcre.h.html#283" title="25" data-ref="_M/PCRE_INFO_MATCH_EMPTY">PCRE_INFO_MATCH_EMPTY</a>:</td></tr>
+<tr><th id="236">236</th><td>  *((<em>int</em> *)<a class="local col4 ref" href="#4where" title='where' data-ref="4where">where</a>) = (<a class="local col5 ref" href="#5re" title='re' data-ref="5re">re</a>-&gt;<a class="ref" href="pcre_internal.h.html#real_pcre8_or_16::flags" title='real_pcre8_or_16::flags' data-ref="real_pcre8_or_16::flags">flags</a> &amp; <a class="macro" href="pcre_internal.h.html#1092" title="0x00008000" data-ref="_M/PCRE_MATCH_EMPTY">PCRE_MATCH_EMPTY</a>) != <var>0</var>;</td></tr>
+<tr><th id="237">237</th><td>  <b>break</b>;</td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td>  <b>default</b>: <b>return</b> <a class="macro" href="../pcre.h.html#177" title="(-3)" data-ref="_M/PCRE_ERROR_BADOPTION">PCRE_ERROR_BADOPTION</a>;</td></tr>
+<tr><th id="240">240</th><td>  }</td></tr>
+<tr><th id="241">241</th><td></td></tr>
+<tr><th id="242">242</th><td><b>return</b> <var>0</var>;</td></tr>
+<tr><th id="243">243</th><td>}</td></tr>
+<tr><th id="244">244</th><td></td></tr>
+<tr><th id="245">245</th><td><i>/* End of pcre_fullinfo.c */</i></td></tr>
+<tr><th id="246">246</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

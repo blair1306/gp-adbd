@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>libminijail-private.h source code [codebrowser/external/minijail/libminijail-private.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/minijail/libminijail-private.h'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>minijail</a>/<a href='libminijail-private.h.html'>libminijail-private.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* libminijail-private.h</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (c) 2011 The Chromium OS Authors. All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> * Use of this source code is governed by a BSD-style license that can be</i></td></tr>
+<tr><th id="4">4</th><td><i> * found in the LICENSE file.</i></td></tr>
+<tr><th id="5">5</th><td><i> *</i></td></tr>
+<tr><th id="6">6</th><td><i> * Values shared between libminijailpreload and libminijail, but not visible to</i></td></tr>
+<tr><th id="7">7</th><td><i> * the outside world.</i></td></tr>
+<tr><th id="8">8</th><td><i> */</i></td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><u>#<span data-ppcond="10">ifndef</span> <span class="macro" data-ref="_M/LIBMINIJAIL_PRIVATE_H">LIBMINIJAIL_PRIVATE_H</span></u></td></tr>
+<tr><th id="11">11</th><td><u>#define <dfn class="macro" id="_M/LIBMINIJAIL_PRIVATE_H" data-ref="_M/LIBMINIJAIL_PRIVATE_H">LIBMINIJAIL_PRIVATE_H</dfn></u></td></tr>
+<tr><th id="12">12</th><td></td></tr>
+<tr><th id="13">13</th><td><i>/* Explicitly declare exported functions so that -fvisibility tricks</i></td></tr>
+<tr><th id="14">14</th><td><i> * can be used for testing and minimal symbol leakage occurs.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td><u>#define <dfn class="macro" id="_M/API" data-ref="_M/API">API</dfn> __attribute__ ((visibility("default")))</u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><em>static</em> <em>const</em> <em>char</em> *<dfn class="decl def" id="kFdEnvVar" title='kFdEnvVar' data-ref="kFdEnvVar">kFdEnvVar</dfn> = <q>"__MINIJAIL_FD"</q>;</td></tr>
+<tr><th id="19">19</th><td><em>static</em> <em>const</em> <em>char</em> *<dfn class="decl def" id="kLdPreloadEnvVar" title='kLdPreloadEnvVar' data-ref="kLdPreloadEnvVar">kLdPreloadEnvVar</dfn> = <q>"LD_PRELOAD"</q>;</td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><b>struct</b> <a class="type" href="libminijail.c.html#minijail" title='minijail' data-ref="minijail" id="minijail">minijail</a>;</td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><i>/* minijail_size: returns the size (in bytes) of @j if marshalled</i></td></tr>
+<tr><th id="24">24</th><td><i> * @j jail to compute size of</i></td></tr>
+<tr><th id="25">25</th><td><i> *</i></td></tr>
+<tr><th id="26">26</th><td><i> * Returns 0 on error.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><b>extern</b> <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <a class="decl" href="libminijail.c.html#minijail_size" title='minijail_size' data-ref="minijail_size" id="minijail_size">minijail_size</a>(<em>const</em> <b>struct</b> <a class="type" href="libminijail.c.html#minijail" title='minijail' data-ref="minijail">minijail</a> *<dfn class="local col4 decl" id="94j" title='j' data-type='const struct minijail *' data-ref="94j">j</dfn>);</td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><i>/* minijail_marshal: serializes @j to @buf</i></td></tr>
+<tr><th id="31">31</th><td><i> * @j    minijail to serialize</i></td></tr>
+<tr><th id="32">32</th><td><i> * @buf  buffer to serialize to</i></td></tr>
+<tr><th id="33">33</th><td><i> * @size size of @buf</i></td></tr>
+<tr><th id="34">34</th><td><i> *</i></td></tr>
+<tr><th id="35">35</th><td><i> * Returns 0 on success.</i></td></tr>
+<tr><th id="36">36</th><td><i> *</i></td></tr>
+<tr><th id="37">37</th><td><i> * Writes |j| to |buf| such that it can be reparsed by the same</i></td></tr>
+<tr><th id="38">38</th><td><i> * library on the same architecture.  This is meant to be used</i></td></tr>
+<tr><th id="39">39</th><td><i> * by minijail0.c and libminijailpreload.c.  minijail flags that</i></td></tr>
+<tr><th id="40">40</th><td><i> * require minijail_run() will be excluded.</i></td></tr>
+<tr><th id="41">41</th><td><i> *</i></td></tr>
+<tr><th id="42">42</th><td><i> * The marshalled data is not robust to differences between the child</i></td></tr>
+<tr><th id="43">43</th><td><i> * and parent process (personality, etc).</i></td></tr>
+<tr><th id="44">44</th><td><i> */</i></td></tr>
+<tr><th id="45">45</th><td><b>extern</b> <em>int</em> <a class="decl" href="libminijail.c.html#minijail_marshal" title='minijail_marshal' data-ref="minijail_marshal" id="minijail_marshal">minijail_marshal</a>(<em>const</em> <b>struct</b> <a class="type" href="libminijail.c.html#minijail" title='minijail' data-ref="minijail">minijail</a> *<dfn class="local col5 decl" id="95j" title='j' data-type='const struct minijail *' data-ref="95j">j</dfn>,</td></tr>
+<tr><th id="46">46</th><td>                            <em>char</em> *<dfn class="local col6 decl" id="96buf" title='buf' data-type='char *' data-ref="96buf">buf</dfn>,</td></tr>
+<tr><th id="47">47</th><td>                            <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="97size" title='size' data-type='size_t' data-ref="97size">size</dfn>);</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><i>/* minijail_unmarshal: initializes @j from @serialized</i></td></tr>
+<tr><th id="50">50</th><td><i> * @j          minijail to initialize</i></td></tr>
+<tr><th id="51">51</th><td><i> * @serialized serialized jail buffer</i></td></tr>
+<tr><th id="52">52</th><td><i> * @length     length of buffer</i></td></tr>
+<tr><th id="53">53</th><td><i> *</i></td></tr>
+<tr><th id="54">54</th><td><i> * Returns 0 on success.</i></td></tr>
+<tr><th id="55">55</th><td><i> */</i></td></tr>
+<tr><th id="56">56</th><td><b>extern</b> <em>int</em> <a class="decl" href="libminijail.c.html#minijail_unmarshal" title='minijail_unmarshal' data-ref="minijail_unmarshal" id="minijail_unmarshal">minijail_unmarshal</a>(<b>struct</b> <a class="type" href="libminijail.c.html#minijail" title='minijail' data-ref="minijail">minijail</a> *<dfn class="local col8 decl" id="98j" title='j' data-type='struct minijail *' data-ref="98j">j</dfn>,</td></tr>
+<tr><th id="57">57</th><td>                              <em>char</em> *<dfn class="local col9 decl" id="99serialized" title='serialized' data-type='char *' data-ref="99serialized">serialized</dfn>,</td></tr>
+<tr><th id="58">58</th><td>                              <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="100length" title='length' data-type='size_t' data-ref="100length">length</dfn>);</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><i>/* minijail_from_fd: builds @j from @fd</i></td></tr>
+<tr><th id="61">61</th><td><i> * @j  minijail to initialize</i></td></tr>
+<tr><th id="62">62</th><td><i> * @fd fd to initialize from</i></td></tr>
+<tr><th id="63">63</th><td><i> *</i></td></tr>
+<tr><th id="64">64</th><td><i> * Returns 0 on success.</i></td></tr>
+<tr><th id="65">65</th><td><i> */</i></td></tr>
+<tr><th id="66">66</th><td><b>extern</b> <em>int</em> <a class="decl" href="libminijail.c.html#minijail_from_fd" title='minijail_from_fd' data-ref="minijail_from_fd" id="minijail_from_fd">minijail_from_fd</a>(<em>int</em> <dfn class="local col1 decl" id="101fd" title='fd' data-type='int' data-ref="101fd">fd</dfn>, <b>struct</b> <a class="type" href="libminijail.c.html#minijail" title='minijail' data-ref="minijail">minijail</a> *<dfn class="local col2 decl" id="102j" title='j' data-type='struct minijail *' data-ref="102j">j</dfn>);</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><i>/* minijail_to_fd: sends @j over @fd</i></td></tr>
+<tr><th id="69">69</th><td><i> * @j  minijail to send</i></td></tr>
+<tr><th id="70">70</th><td><i> * @fd fd to send over</i></td></tr>
+<tr><th id="71">71</th><td><i> *</i></td></tr>
+<tr><th id="72">72</th><td><i> * Returns 0 on success.</i></td></tr>
+<tr><th id="73">73</th><td><i> */</i></td></tr>
+<tr><th id="74">74</th><td><b>extern</b> <em>int</em> <a class="decl" href="libminijail.c.html#minijail_to_fd" title='minijail_to_fd' data-ref="minijail_to_fd" id="minijail_to_fd">minijail_to_fd</a>(<b>struct</b> <a class="type" href="libminijail.c.html#minijail" title='minijail' data-ref="minijail">minijail</a> *<dfn class="local col3 decl" id="103j" title='j' data-type='struct minijail *' data-ref="103j">j</dfn>, <em>int</em> <dfn class="local col4 decl" id="104fd" title='fd' data-type='int' data-ref="104fd">fd</dfn>);</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><i>/* minijail_preexec: strips @j of all options handled by minijail_enter()</i></td></tr>
+<tr><th id="77">77</th><td><i> * @j jail to strip</i></td></tr>
+<tr><th id="78">78</th><td><i> */</i></td></tr>
+<tr><th id="79">79</th><td><b>extern</b> <em>void</em> <a class="decl" href="libminijail.c.html#minijail_preexec" title='minijail_preexec' data-ref="minijail_preexec" id="minijail_preexec">minijail_preexec</a>(<b>struct</b> <a class="type" href="libminijail.c.html#minijail" title='minijail' data-ref="minijail">minijail</a> *<dfn class="local col5 decl" id="105j" title='j' data-type='struct minijail *' data-ref="105j">j</dfn>);</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td><i>/* minijail_preenter: strips @j of all options handled by minijail_run()</i></td></tr>
+<tr><th id="82">82</th><td><i> * @j jail to strip</i></td></tr>
+<tr><th id="83">83</th><td><i> */</i></td></tr>
+<tr><th id="84">84</th><td><b>extern</b> <em>void</em> <a class="decl" href="libminijail.c.html#minijail_preenter" title='minijail_preenter' data-ref="minijail_preenter" id="minijail_preenter">minijail_preenter</a>(<b>struct</b> <a class="type" href="libminijail.c.html#minijail" title='minijail' data-ref="minijail">minijail</a> *<dfn class="local col6 decl" id="106j" title='j' data-type='struct minijail *' data-ref="106j">j</dfn>);</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><u>#<span data-ppcond="10">endif</span> /* !LIBMINIJAIL_PRIVATE_H */</u></td></tr>
+<tr><th id="87">87</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='libminijail.c.html'>codebrowser/external/minijail/libminijail.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>random.c source code [codebrowser/external/boringssl/src/crypto/bn/random.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/bn/random.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>bn</a>/<a href='random.c.html'>random.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.]</i></td></tr>
+<tr><th id="56">56</th><td><i> */</i></td></tr>
+<tr><th id="57">57</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="58">58</th><td><i> * Copyright (c) 1998-2001 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="59">59</th><td><i> *</i></td></tr>
+<tr><th id="60">60</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="61">61</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="62">62</th><td><i> * are met:</i></td></tr>
+<tr><th id="63">63</th><td><i> *</i></td></tr>
+<tr><th id="64">64</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="65">65</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="66">66</th><td><i> *</i></td></tr>
+<tr><th id="67">67</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="68">68</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="69">69</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="70">70</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="71">71</th><td><i> *</i></td></tr>
+<tr><th id="72">72</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="73">73</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="74">74</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="75">75</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="76">76</th><td><i> *</i></td></tr>
+<tr><th id="77">77</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="78">78</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="79">79</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="80">80</th><td><i> *    openssl-core@openssl.org.</i></td></tr>
+<tr><th id="81">81</th><td><i> *</i></td></tr>
+<tr><th id="82">82</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="83">83</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="84">84</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="85">85</th><td><i> *</i></td></tr>
+<tr><th id="86">86</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="87">87</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="88">88</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="89">89</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="90">90</th><td><i> *</i></td></tr>
+<tr><th id="91">91</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="92">92</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="93">93</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="94">94</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="95">95</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="96">96</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="97">97</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="98">98</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="99">99</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="100">100</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="101">101</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="102">102</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="103">103</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="104">104</th><td><i> *</i></td></tr>
+<tr><th id="105">105</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="106">106</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="107">107</th><td><i> * Hudson (tjh@cryptsoft.com). */</i></td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><u>#include <a href="../../include/openssl/bn.h.html">&lt;openssl/bn.h&gt;</a></u></td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="114">114</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="115">115</th><td><u>#include <a href="../../include/openssl/rand.h.html">&lt;openssl/rand.h&gt;</a></u></td></tr>
+<tr><th id="116">116</th><td><u>#include <a href="../../include/openssl/sha.h.html">&lt;openssl/sha.h&gt;</a></u></td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><em>int</em> <dfn class="decl def" id="BN_rand" title='BN_rand' data-ref="BN_rand">BN_rand</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="23rnd" title='rnd' data-type='BIGNUM *' data-ref="23rnd">rnd</dfn>, <em>int</em> <dfn class="local col4 decl" id="24bits" title='bits' data-type='int' data-ref="24bits">bits</dfn>, <em>int</em> <dfn class="local col5 decl" id="25top" title='top' data-type='int' data-ref="25top">top</dfn>, <em>int</em> <dfn class="local col6 decl" id="26bottom" title='bottom' data-type='int' data-ref="26bottom">bottom</dfn>) {</td></tr>
+<tr><th id="119">119</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col7 decl" id="27buf" title='buf' data-type='uint8_t *' data-ref="27buf">buf</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="120">120</th><td>  <em>int</em> <dfn class="local col8 decl" id="28ret" title='ret' data-type='int' data-ref="28ret">ret</dfn> = <var>0</var>, <dfn class="local col9 decl" id="29bit" title='bit' data-type='int' data-ref="29bit">bit</dfn>, <dfn class="local col0 decl" id="30bytes" title='bytes' data-type='int' data-ref="30bytes">bytes</dfn>, <dfn class="local col1 decl" id="31mask" title='mask' data-type='int' data-ref="31mask">mask</dfn>;</td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td>  <b>if</b> (<a class="local col3 ref" href="#23rnd" title='rnd' data-ref="23rnd">rnd</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="123">123</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="124">124</th><td>  }</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td>  <b>if</b> (<a class="local col4 ref" href="#24bits" title='bits' data-ref="24bits">bits</a> == <var>0</var>) {</td></tr>
+<tr><th id="127">127</th><td>    <a class="ref" href="../../include/openssl/bn.h.html#BN_zero" title='BN_zero' data-ref="BN_zero">BN_zero</a>(<a class="local col3 ref" href="#23rnd" title='rnd' data-ref="23rnd">rnd</a>);</td></tr>
+<tr><th id="128">128</th><td>    <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="129">129</th><td>  }</td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td>  <a class="local col0 ref" href="#30bytes" title='bytes' data-ref="30bytes">bytes</a> = (<a class="local col4 ref" href="#24bits" title='bits' data-ref="24bits">bits</a> + <var>7</var>) / <var>8</var>;</td></tr>
+<tr><th id="132">132</th><td>  <a class="local col9 ref" href="#29bit" title='bit' data-ref="29bit">bit</a> = (<a class="local col4 ref" href="#24bits" title='bits' data-ref="24bits">bits</a> - <var>1</var>) % <var>8</var>;</td></tr>
+<tr><th id="133">133</th><td>  <a class="local col1 ref" href="#31mask" title='mask' data-ref="31mask">mask</a> = <var>0xff</var> &lt;&lt; (<a class="local col9 ref" href="#29bit" title='bit' data-ref="29bit">bit</a> + <var>1</var>);</td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td>  <a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<a class="local col0 ref" href="#30bytes" title='bytes' data-ref="30bytes">bytes</a>);</td></tr>
+<tr><th id="136">136</th><td>  <b>if</b> (<a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="137">137</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BN, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bn/random.c&quot;, 137)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BN, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="138">138</th><td>    <b>goto</b> <a class="lbl" href="#32err" data-ref="32err">err</a>;</td></tr>
+<tr><th id="139">139</th><td>  }</td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td>  <i>/* Make a random number and set the top and bottom bits. */</i></td></tr>
+<tr><th id="142">142</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/rand.h.html#RAND_bytes" title='RAND_bytes' data-ref="RAND_bytes">RAND_bytes</a>(<a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>, <a class="local col0 ref" href="#30bytes" title='bytes' data-ref="30bytes">bytes</a>)) {</td></tr>
+<tr><th id="143">143</th><td>    <b>goto</b> <a class="lbl" href="#32err" data-ref="32err">err</a>;</td></tr>
+<tr><th id="144">144</th><td>  }</td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td>  <b>if</b> (<a class="local col5 ref" href="#25top" title='top' data-ref="25top">top</a> != -<var>1</var>) {</td></tr>
+<tr><th id="147">147</th><td>    <b>if</b> (<a class="local col5 ref" href="#25top" title='top' data-ref="25top">top</a> &amp;&amp; <a class="local col4 ref" href="#24bits" title='bits' data-ref="24bits">bits</a> &gt; <var>1</var>) {</td></tr>
+<tr><th id="148">148</th><td>      <b>if</b> (<a class="local col9 ref" href="#29bit" title='bit' data-ref="29bit">bit</a> == <var>0</var>) {</td></tr>
+<tr><th id="149">149</th><td>        <a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>[<var>0</var>] = <var>1</var>;</td></tr>
+<tr><th id="150">150</th><td>        <a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>[<var>1</var>] |= <var>0x80</var>;</td></tr>
+<tr><th id="151">151</th><td>      } <b>else</b> {</td></tr>
+<tr><th id="152">152</th><td>        <a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>[<var>0</var>] |= (<var>3</var> &lt;&lt; (<a class="local col9 ref" href="#29bit" title='bit' data-ref="29bit">bit</a> - <var>1</var>));</td></tr>
+<tr><th id="153">153</th><td>      }</td></tr>
+<tr><th id="154">154</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="155">155</th><td>      <a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>[<var>0</var>] |= (<var>1</var> &lt;&lt; <a class="local col9 ref" href="#29bit" title='bit' data-ref="29bit">bit</a>);</td></tr>
+<tr><th id="156">156</th><td>    }</td></tr>
+<tr><th id="157">157</th><td>  }</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td>  <a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>[<var>0</var>] &amp;= ~<a class="local col1 ref" href="#31mask" title='mask' data-ref="31mask">mask</a>;</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td>  <i>/* set bottom bit if requested */</i></td></tr>
+<tr><th id="162">162</th><td>  <b>if</b> (<a class="local col6 ref" href="#26bottom" title='bottom' data-ref="26bottom">bottom</a>)  {</td></tr>
+<tr><th id="163">163</th><td>    <a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>[<a class="local col0 ref" href="#30bytes" title='bytes' data-ref="30bytes">bytes</a> - <var>1</var>] |= <var>1</var>;</td></tr>
+<tr><th id="164">164</th><td>  }</td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_bin2bn" title='BN_bin2bn' data-ref="BN_bin2bn">BN_bin2bn</a>(<a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>, <a class="local col0 ref" href="#30bytes" title='bytes' data-ref="30bytes">bytes</a>, <a class="local col3 ref" href="#23rnd" title='rnd' data-ref="23rnd">rnd</a>)) {</td></tr>
+<tr><th id="167">167</th><td>    <b>goto</b> <a class="lbl" href="#32err" data-ref="32err">err</a>;</td></tr>
+<tr><th id="168">168</th><td>  }</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td>  <a class="local col8 ref" href="#28ret" title='ret' data-ref="28ret">ret</a> = <var>1</var>;</td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><dfn class="lbl" id="32err" data-ref="32err">err</dfn>:</td></tr>
+<tr><th id="173">173</th><td>  <b>if</b> (<a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="174">174</th><td>    <a class="ref" href="../../include/openssl/mem.h.html#OPENSSL_cleanse" title='OPENSSL_cleanse' data-ref="OPENSSL_cleanse">OPENSSL_cleanse</a>(<a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>, <a class="local col0 ref" href="#30bytes" title='bytes' data-ref="30bytes">bytes</a>);</td></tr>
+<tr><th id="175">175</th><td>    <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>);</td></tr>
+<tr><th id="176">176</th><td>  }</td></tr>
+<tr><th id="177">177</th><td>  <b>return</b> (<a class="local col8 ref" href="#28ret" title='ret' data-ref="28ret">ret</a>);</td></tr>
+<tr><th id="178">178</th><td>}</td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td><em>int</em> <dfn class="decl def" id="BN_pseudo_rand" title='BN_pseudo_rand' data-ref="BN_pseudo_rand">BN_pseudo_rand</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="33rnd" title='rnd' data-type='BIGNUM *' data-ref="33rnd">rnd</dfn>, <em>int</em> <dfn class="local col4 decl" id="34bits" title='bits' data-type='int' data-ref="34bits">bits</dfn>, <em>int</em> <dfn class="local col5 decl" id="35top" title='top' data-type='int' data-ref="35top">top</dfn>, <em>int</em> <dfn class="local col6 decl" id="36bottom" title='bottom' data-type='int' data-ref="36bottom">bottom</dfn>) {</td></tr>
+<tr><th id="181">181</th><td>  <b>return</b> <a class="ref" href="#BN_rand" title='BN_rand' data-ref="BN_rand">BN_rand</a>(<a class="local col3 ref" href="#33rnd" title='rnd' data-ref="33rnd">rnd</a>, <a class="local col4 ref" href="#34bits" title='bits' data-ref="34bits">bits</a>, <a class="local col5 ref" href="#35top" title='top' data-ref="35top">top</a>, <a class="local col6 ref" href="#36bottom" title='bottom' data-ref="36bottom">bottom</a>);</td></tr>
+<tr><th id="182">182</th><td>}</td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td><em>int</em> <dfn class="decl def" id="BN_rand_range" title='BN_rand_range' data-ref="BN_rand_range">BN_rand_range</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col7 decl" id="37r" title='r' data-type='BIGNUM *' data-ref="37r">r</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col8 decl" id="38range" title='range' data-type='const BIGNUM *' data-ref="38range">range</dfn>) {</td></tr>
+<tr><th id="185">185</th><td>  <em>unsigned</em> <dfn class="local col9 decl" id="39n" title='n' data-type='unsigned int' data-ref="39n">n</dfn>;</td></tr>
+<tr><th id="186">186</th><td>  <em>unsigned</em> <dfn class="local col0 decl" id="40count" title='count' data-type='unsigned int' data-ref="40count">count</dfn> = <var>100</var>;</td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td>  <b>if</b> (<a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bignum_st::neg" title='bignum_st::neg' data-ref="bignum_st::neg">neg</a> || <a class="ref" href="../../include/openssl/bn.h.html#BN_is_zero" title='BN_is_zero' data-ref="BN_is_zero">BN_is_zero</a>(<a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>)) {</td></tr>
+<tr><th id="189">189</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BN, 0, 108, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bn/random.c&quot;, 189)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BN, <a class="macro" href="../../include/openssl/bn.h.html#876" title="108" data-ref="_M/BN_R_INVALID_RANGE">BN_R_INVALID_RANGE</a>);</td></tr>
+<tr><th id="190">190</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="191">191</th><td>  }</td></tr>
+<tr><th id="192">192</th><td></td></tr>
+<tr><th id="193">193</th><td>  <a class="local col9 ref" href="#39n" title='n' data-ref="39n">n</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_num_bits" title='BN_num_bits' data-ref="BN_num_bits">BN_num_bits</a>(<a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>); <i>/* n &gt; 0 */</i></td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td>  <i>/* BN_is_bit_set(range, n - 1) always holds */</i></td></tr>
+<tr><th id="196">196</th><td>  <b>if</b> (<a class="local col9 ref" href="#39n" title='n' data-ref="39n">n</a> == <var>1</var>) {</td></tr>
+<tr><th id="197">197</th><td>    <a class="ref" href="../../include/openssl/bn.h.html#BN_zero" title='BN_zero' data-ref="BN_zero">BN_zero</a>(<a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>);</td></tr>
+<tr><th id="198">198</th><td>  } <b>else</b> <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_is_bit_set" title='BN_is_bit_set' data-ref="BN_is_bit_set">BN_is_bit_set</a>(<a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>, <a class="local col9 ref" href="#39n" title='n' data-ref="39n">n</a> - <var>2</var>) &amp;&amp; !<a class="ref" href="../../include/openssl/bn.h.html#BN_is_bit_set" title='BN_is_bit_set' data-ref="BN_is_bit_set">BN_is_bit_set</a>(<a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>, <a class="local col9 ref" href="#39n" title='n' data-ref="39n">n</a> - <var>3</var>)) {</td></tr>
+<tr><th id="199">199</th><td>    <i>/* range = 100..._2,</i></td></tr>
+<tr><th id="200">200</th><td><i>     * so  3*range (= 11..._2)  is exactly one bit longer than  range */</i></td></tr>
+<tr><th id="201">201</th><td>    <b>do</b> {</td></tr>
+<tr><th id="202">202</th><td>      <b>if</b> (!<a class="ref" href="#BN_rand" title='BN_rand' data-ref="BN_rand">BN_rand</a>(<a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col9 ref" href="#39n" title='n' data-ref="39n">n</a> + <var>1</var>, -<var>1</var> <i>/* don't set most significant bits */</i>,</td></tr>
+<tr><th id="203">203</th><td>                   <var>0</var> <i>/* don't set least significant bits */</i>)) {</td></tr>
+<tr><th id="204">204</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="205">205</th><td>      }</td></tr>
+<tr><th id="206">206</th><td></td></tr>
+<tr><th id="207">207</th><td>      <i>/* If r &lt; 3*range, use r := r MOD range (which is either r, r - range, or</i></td></tr>
+<tr><th id="208">208</th><td><i>       * r - 2*range). Otherwise, iterate again. Since 3*range = 11..._2, each</i></td></tr>
+<tr><th id="209">209</th><td><i>       * iteration succeeds with probability &gt;= .75. */</i></td></tr>
+<tr><th id="210">210</th><td>      <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_cmp" title='BN_cmp' data-ref="BN_cmp">BN_cmp</a>(<a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>) &gt;= <var>0</var>) {</td></tr>
+<tr><th id="211">211</th><td>        <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_sub" title='BN_sub' data-ref="BN_sub">BN_sub</a>(<a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>)) {</td></tr>
+<tr><th id="212">212</th><td>          <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="213">213</th><td>        }</td></tr>
+<tr><th id="214">214</th><td>        <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_cmp" title='BN_cmp' data-ref="BN_cmp">BN_cmp</a>(<a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>) &gt;= <var>0</var>) {</td></tr>
+<tr><th id="215">215</th><td>          <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_sub" title='BN_sub' data-ref="BN_sub">BN_sub</a>(<a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>)) {</td></tr>
+<tr><th id="216">216</th><td>            <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="217">217</th><td>          }</td></tr>
+<tr><th id="218">218</th><td>        }</td></tr>
+<tr><th id="219">219</th><td>      }</td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td>      <b>if</b> (!--<a class="local col0 ref" href="#40count" title='count' data-ref="40count">count</a>) {</td></tr>
+<tr><th id="222">222</th><td>        <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BN, 0, 115, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bn/random.c&quot;, 222)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BN, <a class="macro" href="../../include/openssl/bn.h.html#883" title="115" data-ref="_M/BN_R_TOO_MANY_ITERATIONS">BN_R_TOO_MANY_ITERATIONS</a>);</td></tr>
+<tr><th id="223">223</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="224">224</th><td>      }</td></tr>
+<tr><th id="225">225</th><td>    } <b>while</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_cmp" title='BN_cmp' data-ref="BN_cmp">BN_cmp</a>(<a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>) &gt;= <var>0</var>);</td></tr>
+<tr><th id="226">226</th><td>  } <b>else</b> {</td></tr>
+<tr><th id="227">227</th><td>    <b>do</b> {</td></tr>
+<tr><th id="228">228</th><td>      <i>/* range = 11..._2  or  range = 101..._2 */</i></td></tr>
+<tr><th id="229">229</th><td>      <b>if</b> (!<a class="ref" href="#BN_rand" title='BN_rand' data-ref="BN_rand">BN_rand</a>(<a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col9 ref" href="#39n" title='n' data-ref="39n">n</a>, -<var>1</var>, <var>0</var>)) {</td></tr>
+<tr><th id="230">230</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="231">231</th><td>      }</td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td>      <b>if</b> (!--<a class="local col0 ref" href="#40count" title='count' data-ref="40count">count</a>) {</td></tr>
+<tr><th id="234">234</th><td>        <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BN, 0, 115, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bn/random.c&quot;, 234)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BN, <a class="macro" href="../../include/openssl/bn.h.html#883" title="115" data-ref="_M/BN_R_TOO_MANY_ITERATIONS">BN_R_TOO_MANY_ITERATIONS</a>);</td></tr>
+<tr><th id="235">235</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="236">236</th><td>      }</td></tr>
+<tr><th id="237">237</th><td>    } <b>while</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_cmp" title='BN_cmp' data-ref="BN_cmp">BN_cmp</a>(<a class="local col7 ref" href="#37r" title='r' data-ref="37r">r</a>, <a class="local col8 ref" href="#38range" title='range' data-ref="38range">range</a>) &gt;= <var>0</var>);</td></tr>
+<tr><th id="238">238</th><td>  }</td></tr>
+<tr><th id="239">239</th><td></td></tr>
+<tr><th id="240">240</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="241">241</th><td>}</td></tr>
+<tr><th id="242">242</th><td></td></tr>
+<tr><th id="243">243</th><td><em>int</em> <dfn class="decl def" id="BN_pseudo_rand_range" title='BN_pseudo_rand_range' data-ref="BN_pseudo_rand_range">BN_pseudo_rand_range</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="41r" title='r' data-type='BIGNUM *' data-ref="41r">r</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="42range" title='range' data-type='const BIGNUM *' data-ref="42range">range</dfn>) {</td></tr>
+<tr><th id="244">244</th><td>  <b>return</b> <a class="ref" href="#BN_rand_range" title='BN_rand_range' data-ref="BN_rand_range">BN_rand_range</a>(<a class="local col1 ref" href="#41r" title='r' data-ref="41r">r</a>, <a class="local col2 ref" href="#42range" title='range' data-ref="42range">range</a>);</td></tr>
+<tr><th id="245">245</th><td>}</td></tr>
+<tr><th id="246">246</th><td></td></tr>
+<tr><th id="247">247</th><td><em>int</em> <dfn class="decl def" id="BN_generate_dsa_nonce" title='BN_generate_dsa_nonce' data-ref="BN_generate_dsa_nonce">BN_generate_dsa_nonce</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="43out" title='out' data-type='BIGNUM *' data-ref="43out">out</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col4 decl" id="44range" title='range' data-type='const BIGNUM *' data-ref="44range">range</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col5 decl" id="45priv" title='priv' data-type='const BIGNUM *' data-ref="45priv">priv</dfn>,</td></tr>
+<tr><th id="248">248</th><td>                          <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col6 decl" id="46message" title='message' data-type='const uint8_t *' data-ref="46message">message</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="47message_len" title='message_len' data-type='size_t' data-ref="47message_len">message_len</dfn>,</td></tr>
+<tr><th id="249">249</th><td>                          <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col8 decl" id="48ctx" title='ctx' data-type='BN_CTX *' data-ref="48ctx">ctx</dfn>) {</td></tr>
+<tr><th id="250">250</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#SHA512_CTX" title='SHA512_CTX' data-type='struct sha512_state_st' data-ref="SHA512_CTX">SHA512_CTX</a> <dfn class="local col9 decl" id="49sha" title='sha' data-type='SHA512_CTX' data-ref="49sha">sha</dfn>;</td></tr>
+<tr><th id="251">251</th><td>  <i>/* We use 512 bits of random data per iteration to</i></td></tr>
+<tr><th id="252">252</th><td><i>   * ensure that we have at least |range| bits of randomness. */</i></td></tr>
+<tr><th id="253">253</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col0 decl" id="50random_bytes" title='random_bytes' data-type='uint8_t [64]' data-ref="50random_bytes">random_bytes</dfn>[<var>64</var>];</td></tr>
+<tr><th id="254">254</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col1 decl" id="51digest" title='digest' data-type='uint8_t [64]' data-ref="51digest">digest</dfn>[<a class="macro" href="../../include/openssl/sha.h.html#219" title="64" data-ref="_M/SHA512_DIGEST_LENGTH">SHA512_DIGEST_LENGTH</a>];</td></tr>
+<tr><th id="255">255</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="52done" title='done' data-type='size_t' data-ref="52done">done</dfn>, <dfn class="local col3 decl" id="53todo" title='todo' data-type='size_t' data-ref="53todo">todo</dfn>, <dfn class="local col4 decl" id="54attempt" title='attempt' data-type='size_t' data-ref="54attempt">attempt</dfn>;</td></tr>
+<tr><th id="256">256</th><td>  <em>const</em> <em>unsigned</em> <dfn class="local col5 decl" id="55num_k_bytes" title='num_k_bytes' data-type='const unsigned int' data-ref="55num_k_bytes">num_k_bytes</dfn> = <a class="ref" href="../../include/openssl/bn.h.html#BN_num_bytes" title='BN_num_bytes' data-ref="BN_num_bytes">BN_num_bytes</a>(<a class="local col4 ref" href="#44range" title='range' data-ref="44range">range</a>);</td></tr>
+<tr><th id="257">257</th><td>  <em>const</em> <em>unsigned</em> <dfn class="local col6 decl" id="56bits_to_mask" title='bits_to_mask' data-type='const unsigned int' data-ref="56bits_to_mask">bits_to_mask</dfn> = (<var>8</var> - (<a class="ref" href="../../include/openssl/bn.h.html#BN_num_bits" title='BN_num_bits' data-ref="BN_num_bits">BN_num_bits</a>(<a class="local col4 ref" href="#44range" title='range' data-ref="44range">range</a>) % <var>8</var>)) % <var>8</var>;</td></tr>
+<tr><th id="258">258</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col7 decl" id="57private_bytes" title='private_bytes' data-type='uint8_t [96]' data-ref="57private_bytes">private_bytes</dfn>[<var>96</var>];</td></tr>
+<tr><th id="259">259</th><td>  <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="58k_bytes" title='k_bytes' data-type='uint8_t *' data-ref="58k_bytes">k_bytes</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="260">260</th><td>  <em>int</em> <dfn class="local col9 decl" id="59ret" title='ret' data-type='int' data-ref="59ret">ret</dfn> = <var>0</var>;</td></tr>
+<tr><th id="261">261</th><td></td></tr>
+<tr><th id="262">262</th><td>  <b>if</b> (<a class="local col3 ref" href="#43out" title='out' data-ref="43out">out</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="263">263</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="264">264</th><td>  }</td></tr>
+<tr><th id="265">265</th><td></td></tr>
+<tr><th id="266">266</th><td>  <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_is_zero" title='BN_is_zero' data-ref="BN_is_zero">BN_is_zero</a>(<a class="local col4 ref" href="#44range" title='range' data-ref="44range">range</a>)) {</td></tr>
+<tr><th id="267">267</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BN, 0, 105, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bn/random.c&quot;, 267)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BN, <a class="macro" href="../../include/openssl/bn.h.html#873" title="105" data-ref="_M/BN_R_DIV_BY_ZERO">BN_R_DIV_BY_ZERO</a>);</td></tr>
+<tr><th id="268">268</th><td>    <b>goto</b> <a class="lbl" href="#60err" data-ref="60err">err</a>;</td></tr>
+<tr><th id="269">269</th><td>  }</td></tr>
+<tr><th id="270">270</th><td></td></tr>
+<tr><th id="271">271</th><td>  <a class="local col8 ref" href="#58k_bytes" title='k_bytes' data-ref="58k_bytes">k_bytes</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<a class="local col5 ref" href="#55num_k_bytes" title='num_k_bytes' data-ref="55num_k_bytes">num_k_bytes</a>);</td></tr>
+<tr><th id="272">272</th><td>  <b>if</b> (!<a class="local col8 ref" href="#58k_bytes" title='k_bytes' data-ref="58k_bytes">k_bytes</a>) {</td></tr>
+<tr><th id="273">273</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BN, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bn/random.c&quot;, 273)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BN, <a class="macro" href="../../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="274">274</th><td>    <b>goto</b> <a class="lbl" href="#60err" data-ref="60err">err</a>;</td></tr>
+<tr><th id="275">275</th><td>  }</td></tr>
+<tr><th id="276">276</th><td></td></tr>
+<tr><th id="277">277</th><td>  <i>/* We copy |priv| into a local buffer to avoid furthur exposing its</i></td></tr>
+<tr><th id="278">278</th><td><i>   * length. */</i></td></tr>
+<tr><th id="279">279</th><td>  <a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a> = <b>sizeof</b>(<a class="local col5 ref" href="#45priv" title='priv' data-ref="45priv">priv</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bignum_st::d" title='bignum_st::d' data-ref="bignum_st::d">d</a>[<var>0</var>]) * <a class="local col5 ref" href="#45priv" title='priv' data-ref="45priv">priv</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bignum_st::top" title='bignum_st::top' data-ref="bignum_st::top">top</a>;</td></tr>
+<tr><th id="280">280</th><td>  <b>if</b> (<a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a> &gt; <b>sizeof</b>(<a class="local col7 ref" href="#57private_bytes" title='private_bytes' data-ref="57private_bytes">private_bytes</a>)) {</td></tr>
+<tr><th id="281">281</th><td>    <i>/* No reasonable DSA or ECDSA key should have a private key</i></td></tr>
+<tr><th id="282">282</th><td><i>     * this large and we don't handle this case in order to avoid</i></td></tr>
+<tr><th id="283">283</th><td><i>     * leaking the length of the private key. */</i></td></tr>
+<tr><th id="284">284</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_BN, 0, 113, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/bn/random.c&quot;, 284)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(BN, <a class="macro" href="../../include/openssl/bn.h.html#881" title="113" data-ref="_M/BN_R_PRIVATE_KEY_TOO_LARGE">BN_R_PRIVATE_KEY_TOO_LARGE</a>);</td></tr>
+<tr><th id="285">285</th><td>    <b>goto</b> <a class="lbl" href="#60err" data-ref="60err">err</a>;</td></tr>
+<tr><th id="286">286</th><td>  }</td></tr>
+<tr><th id="287">287</th><td>  <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col7 ref" href="#57private_bytes" title='private_bytes' data-ref="57private_bytes">private_bytes</a>, <a class="local col5 ref" href="#45priv" title='priv' data-ref="45priv">priv</a>-&gt;<a class="ref" href="../../include/openssl/bn.h.html#bignum_st::d" title='bignum_st::d' data-ref="bignum_st::d">d</a>, <a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a>);</td></tr>
+<tr><th id="288">288</th><td>  <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col7 ref" href="#57private_bytes" title='private_bytes' data-ref="57private_bytes">private_bytes</a> + <a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a>, <var>0</var>, <b>sizeof</b>(<a class="local col7 ref" href="#57private_bytes" title='private_bytes' data-ref="57private_bytes">private_bytes</a>) - <a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a>);</td></tr>
+<tr><th id="289">289</th><td></td></tr>
+<tr><th id="290">290</th><td>  <b>for</b> (<a class="local col4 ref" href="#54attempt" title='attempt' data-ref="54attempt">attempt</a> = <var>0</var>;; <a class="local col4 ref" href="#54attempt" title='attempt' data-ref="54attempt">attempt</a>++) {</td></tr>
+<tr><th id="291">291</th><td>    <b>for</b> (<a class="local col2 ref" href="#52done" title='done' data-ref="52done">done</a> = <var>0</var>; <a class="local col2 ref" href="#52done" title='done' data-ref="52done">done</a> &lt; <a class="local col5 ref" href="#55num_k_bytes" title='num_k_bytes' data-ref="55num_k_bytes">num_k_bytes</a>;) {</td></tr>
+<tr><th id="292">292</th><td>      <b>if</b> (!<a class="ref" href="../../include/openssl/rand.h.html#RAND_bytes" title='RAND_bytes' data-ref="RAND_bytes">RAND_bytes</a>(<a class="local col0 ref" href="#50random_bytes" title='random_bytes' data-ref="50random_bytes">random_bytes</a>, <b>sizeof</b>(<a class="local col0 ref" href="#50random_bytes" title='random_bytes' data-ref="50random_bytes">random_bytes</a>))) {</td></tr>
+<tr><th id="293">293</th><td>        <b>goto</b> <a class="lbl" href="#60err" data-ref="60err">err</a>;</td></tr>
+<tr><th id="294">294</th><td>      }</td></tr>
+<tr><th id="295">295</th><td>      <a class="ref" href="../../include/openssl/sha.h.html#SHA512_Init" title='SHA512_Init' data-ref="SHA512_Init">SHA512_Init</a>(&amp;<a class="local col9 ref" href="#49sha" title='sha' data-ref="49sha">sha</a>);</td></tr>
+<tr><th id="296">296</th><td>      <a class="ref" href="../../include/openssl/sha.h.html#SHA512_Update" title='SHA512_Update' data-ref="SHA512_Update">SHA512_Update</a>(&amp;<a class="local col9 ref" href="#49sha" title='sha' data-ref="49sha">sha</a>, &amp;<a class="local col4 ref" href="#54attempt" title='attempt' data-ref="54attempt">attempt</a>, <b>sizeof</b>(<a class="local col4 ref" href="#54attempt" title='attempt' data-ref="54attempt">attempt</a>));</td></tr>
+<tr><th id="297">297</th><td>      <a class="ref" href="../../include/openssl/sha.h.html#SHA512_Update" title='SHA512_Update' data-ref="SHA512_Update">SHA512_Update</a>(&amp;<a class="local col9 ref" href="#49sha" title='sha' data-ref="49sha">sha</a>, &amp;<a class="local col2 ref" href="#52done" title='done' data-ref="52done">done</a>, <b>sizeof</b>(<a class="local col2 ref" href="#52done" title='done' data-ref="52done">done</a>));</td></tr>
+<tr><th id="298">298</th><td>      <a class="ref" href="../../include/openssl/sha.h.html#SHA512_Update" title='SHA512_Update' data-ref="SHA512_Update">SHA512_Update</a>(&amp;<a class="local col9 ref" href="#49sha" title='sha' data-ref="49sha">sha</a>, <a class="local col7 ref" href="#57private_bytes" title='private_bytes' data-ref="57private_bytes">private_bytes</a>, <b>sizeof</b>(<a class="local col7 ref" href="#57private_bytes" title='private_bytes' data-ref="57private_bytes">private_bytes</a>));</td></tr>
+<tr><th id="299">299</th><td>      <a class="ref" href="../../include/openssl/sha.h.html#SHA512_Update" title='SHA512_Update' data-ref="SHA512_Update">SHA512_Update</a>(&amp;<a class="local col9 ref" href="#49sha" title='sha' data-ref="49sha">sha</a>, <a class="local col6 ref" href="#46message" title='message' data-ref="46message">message</a>, <a class="local col7 ref" href="#47message_len" title='message_len' data-ref="47message_len">message_len</a>);</td></tr>
+<tr><th id="300">300</th><td>      <a class="ref" href="../../include/openssl/sha.h.html#SHA512_Update" title='SHA512_Update' data-ref="SHA512_Update">SHA512_Update</a>(&amp;<a class="local col9 ref" href="#49sha" title='sha' data-ref="49sha">sha</a>, <a class="local col0 ref" href="#50random_bytes" title='random_bytes' data-ref="50random_bytes">random_bytes</a>, <b>sizeof</b>(<a class="local col0 ref" href="#50random_bytes" title='random_bytes' data-ref="50random_bytes">random_bytes</a>));</td></tr>
+<tr><th id="301">301</th><td>      <a class="ref" href="../../include/openssl/sha.h.html#SHA512_Final" title='SHA512_Final' data-ref="SHA512_Final">SHA512_Final</a>(<a class="local col1 ref" href="#51digest" title='digest' data-ref="51digest">digest</a>, &amp;<a class="local col9 ref" href="#49sha" title='sha' data-ref="49sha">sha</a>);</td></tr>
+<tr><th id="302">302</th><td></td></tr>
+<tr><th id="303">303</th><td>      <a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a> = <a class="local col5 ref" href="#55num_k_bytes" title='num_k_bytes' data-ref="55num_k_bytes">num_k_bytes</a> - <a class="local col2 ref" href="#52done" title='done' data-ref="52done">done</a>;</td></tr>
+<tr><th id="304">304</th><td>      <b>if</b> (<a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a> &gt; <a class="macro" href="../../include/openssl/sha.h.html#219" title="64" data-ref="_M/SHA512_DIGEST_LENGTH">SHA512_DIGEST_LENGTH</a>) {</td></tr>
+<tr><th id="305">305</th><td>        <a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a> = <a class="macro" href="../../include/openssl/sha.h.html#219" title="64" data-ref="_M/SHA512_DIGEST_LENGTH">SHA512_DIGEST_LENGTH</a>;</td></tr>
+<tr><th id="306">306</th><td>      }</td></tr>
+<tr><th id="307">307</th><td>      <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memcpy" title='memcpy' data-ref="memcpy">memcpy</a>(<a class="local col8 ref" href="#58k_bytes" title='k_bytes' data-ref="58k_bytes">k_bytes</a> + <a class="local col2 ref" href="#52done" title='done' data-ref="52done">done</a>, <a class="local col1 ref" href="#51digest" title='digest' data-ref="51digest">digest</a>, <a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a>);</td></tr>
+<tr><th id="308">308</th><td>      <a class="local col2 ref" href="#52done" title='done' data-ref="52done">done</a> += <a class="local col3 ref" href="#53todo" title='todo' data-ref="53todo">todo</a>;</td></tr>
+<tr><th id="309">309</th><td>    }</td></tr>
+<tr><th id="310">310</th><td></td></tr>
+<tr><th id="311">311</th><td>    <a class="local col8 ref" href="#58k_bytes" title='k_bytes' data-ref="58k_bytes">k_bytes</a>[<var>0</var>] &amp;= <var>0xff</var> &gt;&gt; <a class="local col6 ref" href="#56bits_to_mask" title='bits_to_mask' data-ref="56bits_to_mask">bits_to_mask</a>;</td></tr>
+<tr><th id="312">312</th><td></td></tr>
+<tr><th id="313">313</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_bin2bn" title='BN_bin2bn' data-ref="BN_bin2bn">BN_bin2bn</a>(<a class="local col8 ref" href="#58k_bytes" title='k_bytes' data-ref="58k_bytes">k_bytes</a>, <a class="local col5 ref" href="#55num_k_bytes" title='num_k_bytes' data-ref="55num_k_bytes">num_k_bytes</a>, <a class="local col3 ref" href="#43out" title='out' data-ref="43out">out</a>)) {</td></tr>
+<tr><th id="314">314</th><td>      <b>goto</b> <a class="lbl" href="#60err" data-ref="60err">err</a>;</td></tr>
+<tr><th id="315">315</th><td>    }</td></tr>
+<tr><th id="316">316</th><td>    <b>if</b> (<a class="ref" href="../../include/openssl/bn.h.html#BN_cmp" title='BN_cmp' data-ref="BN_cmp">BN_cmp</a>(<a class="local col3 ref" href="#43out" title='out' data-ref="43out">out</a>, <a class="local col4 ref" href="#44range" title='range' data-ref="44range">range</a>) &lt; <var>0</var>) {</td></tr>
+<tr><th id="317">317</th><td>      <b>break</b>;</td></tr>
+<tr><th id="318">318</th><td>    }</td></tr>
+<tr><th id="319">319</th><td>  }</td></tr>
+<tr><th id="320">320</th><td></td></tr>
+<tr><th id="321">321</th><td>  <a class="local col9 ref" href="#59ret" title='ret' data-ref="59ret">ret</a> = <var>1</var>;</td></tr>
+<tr><th id="322">322</th><td></td></tr>
+<tr><th id="323">323</th><td><dfn class="lbl" id="60err" data-ref="60err">err</dfn>:</td></tr>
+<tr><th id="324">324</th><td>  <a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col8 ref" href="#58k_bytes" title='k_bytes' data-ref="58k_bytes">k_bytes</a>);</td></tr>
+<tr><th id="325">325</th><td>  <b>return</b> <a class="local col9 ref" href="#59ret" title='ret' data-ref="59ret">ret</a>;</td></tr>
+<tr><th id="326">326</th><td>}</td></tr>
+<tr><th id="327">327</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

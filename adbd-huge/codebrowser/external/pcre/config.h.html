@@ -1,0 +1,366 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>config.h source code [codebrowser/external/pcre/config.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/pcre/config.h'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>pcre</a>/<a href='config.h.html'>config.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* config.h.  Generated from config.h.in by configure.  */</i></td></tr>
+<tr><th id="2">2</th><td><i>/* config.h.in.  Generated from configure.ac by autoheader.  */</i></td></tr>
+<tr><th id="3">3</th><td></td></tr>
+<tr><th id="4">4</th><td></td></tr>
+<tr><th id="5">5</th><td><i>/* PCRE is written in Standard C, but there are a few non-standard things it</i></td></tr>
+<tr><th id="6">6</th><td><i>can cope with, allowing it to run on SunOS4 and other "close to standard"</i></td></tr>
+<tr><th id="7">7</th><td><i>systems.</i></td></tr>
+<tr><th id="8">8</th><td><i></i></td></tr>
+<tr><th id="9">9</th><td><i>In environments that support the GNU autotools, config.h.in is converted into</i></td></tr>
+<tr><th id="10">10</th><td><i>config.h by the "configure" script. In environments that use CMake,</i></td></tr>
+<tr><th id="11">11</th><td><i>config-cmake.in is converted into config.h. If you are going to build PCRE "by</i></td></tr>
+<tr><th id="12">12</th><td><i>hand" without using "configure" or CMake, you should copy the distributed</i></td></tr>
+<tr><th id="13">13</th><td><i>config.h.generic to config.h, and edit the macro definitions to be the way you</i></td></tr>
+<tr><th id="14">14</th><td><i>need them. You must then add -DHAVE_CONFIG_H to all of your compile commands,</i></td></tr>
+<tr><th id="15">15</th><td><i>so that config.h is included at the start of every source.</i></td></tr>
+<tr><th id="16">16</th><td><i></i></td></tr>
+<tr><th id="17">17</th><td><i>Alternatively, you can avoid editing by using -D on the compiler command line</i></td></tr>
+<tr><th id="18">18</th><td><i>to set the macro values. In this case, you do not have to set -DHAVE_CONFIG_H,</i></td></tr>
+<tr><th id="19">19</th><td><i>but if you do, default values will be taken from config.h for non-boolean</i></td></tr>
+<tr><th id="20">20</th><td><i>macros that are not defined on the command line.</i></td></tr>
+<tr><th id="21">21</th><td><i></i></td></tr>
+<tr><th id="22">22</th><td><i>Boolean macros such as HAVE_STDLIB_H and SUPPORT_PCRE8 should either be defined</i></td></tr>
+<tr><th id="23">23</th><td><i>(conventionally to 1) for TRUE, and not defined at all for FALSE. All such</i></td></tr>
+<tr><th id="24">24</th><td><i>macros are listed as a commented #undef in config.h.generic. Macros such as</i></td></tr>
+<tr><th id="25">25</th><td><i>MATCH_LIMIT, whose actual value is relevant, have defaults defined, but are</i></td></tr>
+<tr><th id="26">26</th><td><i>surrounded by #ifndef/#endif lines so that the value can be overridden by -D.</i></td></tr>
+<tr><th id="27">27</th><td><i></i></td></tr>
+<tr><th id="28">28</th><td><i>PCRE uses memmove() if HAVE_MEMMOVE is defined; otherwise it uses bcopy() if</i></td></tr>
+<tr><th id="29">29</th><td><i>HAVE_BCOPY is defined. If your system has neither bcopy() nor memmove(), make</i></td></tr>
+<tr><th id="30">30</th><td><i>sure both macros are undefined; an emulation function will then be used. */</i></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><i>/* By default, the \R escape sequence matches any Unicode line ending</i></td></tr>
+<tr><th id="33">33</th><td><i>   character or sequence of characters. If BSR_ANYCRLF is defined (to any</i></td></tr>
+<tr><th id="34">34</th><td><i>   value), this is changed so that backslash-R matches only CR, LF, or CRLF.</i></td></tr>
+<tr><th id="35">35</th><td><i>   The build-time default can be overridden by the user of PCRE at runtime. */</i></td></tr>
+<tr><th id="36">36</th><td><i>/* #undef BSR_ANYCRLF */</i></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><i>/* If you are compiling for a system that uses EBCDIC instead of ASCII</i></td></tr>
+<tr><th id="39">39</th><td><i>   character codes, define this macro to any value. You must also edit the</i></td></tr>
+<tr><th id="40">40</th><td><i>   NEWLINE macro below to set a suitable EBCDIC newline, commonly 21 (0x15).</i></td></tr>
+<tr><th id="41">41</th><td><i>   On systems that can use "configure" or CMake to set EBCDIC, NEWLINE is</i></td></tr>
+<tr><th id="42">42</th><td><i>   automatically adjusted. When EBCDIC is set, PCRE assumes that all input</i></td></tr>
+<tr><th id="43">43</th><td><i>   strings are in EBCDIC. If you do not define this macro, PCRE will assume</i></td></tr>
+<tr><th id="44">44</th><td><i>   input strings are ASCII or UTF-8/16/32 Unicode. It is not possible to build</i></td></tr>
+<tr><th id="45">45</th><td><i>   a version of PCRE that supports both EBCDIC and UTF-8/16/32. */</i></td></tr>
+<tr><th id="46">46</th><td><i>/* #undef EBCDIC */</i></td></tr>
+<tr><th id="47">47</th><td></td></tr>
+<tr><th id="48">48</th><td><i>/* In an EBCDIC environment, define this macro to any value to arrange for the</i></td></tr>
+<tr><th id="49">49</th><td><i>   NL character to be 0x25 instead of the default 0x15. NL plays the role that</i></td></tr>
+<tr><th id="50">50</th><td><i>   LF does in an ASCII/Unicode environment. The value must also be set in the</i></td></tr>
+<tr><th id="51">51</th><td><i>   NEWLINE macro below. On systems that can use "configure" or CMake to set</i></td></tr>
+<tr><th id="52">52</th><td><i>   EBCDIC_NL25, the adjustment of NEWLINE is automatic. */</i></td></tr>
+<tr><th id="53">53</th><td><i>/* #undef EBCDIC_NL25 */</i></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><i>/* Define to 1 if you have the `bcopy' function. */</i></td></tr>
+<tr><th id="56">56</th><td><u>#define <dfn class="macro" id="_M/HAVE_BCOPY" data-ref="_M/HAVE_BCOPY">HAVE_BCOPY</dfn> 1</u></td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td><i>/* Define to 1 if you have the &lt;bits/type_traits.h&gt; header file. */</i></td></tr>
+<tr><th id="59">59</th><td><i>/* #undef HAVE_BITS_TYPE_TRAITS_H */</i></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><i>/* Define to 1 if you have the &lt;bzlib.h&gt; header file. */</i></td></tr>
+<tr><th id="62">62</th><td><i>/* #undef HAVE_BZLIB_H */</i></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><i>/* Define to 1 if you have the &lt;dirent.h&gt; header file. */</i></td></tr>
+<tr><th id="65">65</th><td><u>#define <dfn class="macro" id="_M/HAVE_DIRENT_H" data-ref="_M/HAVE_DIRENT_H">HAVE_DIRENT_H</dfn> 1</u></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><i>/* Define to 1 if you have the &lt;dlfcn.h&gt; header file. */</i></td></tr>
+<tr><th id="68">68</th><td><u>#define <dfn class="macro" id="_M/HAVE_DLFCN_H" data-ref="_M/HAVE_DLFCN_H">HAVE_DLFCN_H</dfn> 1</u></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><i>/* Define to 1 if you have the &lt;editline/readline.h&gt; header file. */</i></td></tr>
+<tr><th id="71">71</th><td><i>/* #undef HAVE_EDITLINE_READLINE_H */</i></td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><i>/* Define to 1 if you have the &lt;edit/readline/readline.h&gt; header file. */</i></td></tr>
+<tr><th id="74">74</th><td><i>/* #undef HAVE_EDIT_READLINE_READLINE_H */</i></td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><i>/* Define to 1 if you have the &lt;inttypes.h&gt; header file. */</i></td></tr>
+<tr><th id="77">77</th><td><u>#define <dfn class="macro" id="_M/HAVE_INTTYPES_H" data-ref="_M/HAVE_INTTYPES_H">HAVE_INTTYPES_H</dfn> 1</u></td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><i>/* Define to 1 if you have the &lt;limits.h&gt; header file. */</i></td></tr>
+<tr><th id="80">80</th><td><u>#define <dfn class="macro" id="_M/HAVE_LIMITS_H" data-ref="_M/HAVE_LIMITS_H">HAVE_LIMITS_H</dfn> 1</u></td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><i>/* Define to 1 if the system has the type `long long'. */</i></td></tr>
+<tr><th id="83">83</th><td><u>#define <dfn class="macro" id="_M/HAVE_LONG_LONG" data-ref="_M/HAVE_LONG_LONG">HAVE_LONG_LONG</dfn> 1</u></td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><i>/* Define to 1 if you have the `memmove' function. */</i></td></tr>
+<tr><th id="86">86</th><td><u>#define <dfn class="macro" id="_M/HAVE_MEMMOVE" data-ref="_M/HAVE_MEMMOVE">HAVE_MEMMOVE</dfn> 1</u></td></tr>
+<tr><th id="87">87</th><td></td></tr>
+<tr><th id="88">88</th><td><i>/* Define to 1 if you have the &lt;memory.h&gt; header file. */</i></td></tr>
+<tr><th id="89">89</th><td><u>#define <dfn class="macro" id="_M/HAVE_MEMORY_H" data-ref="_M/HAVE_MEMORY_H">HAVE_MEMORY_H</dfn> 1</u></td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td><i>/* Define if you have POSIX threads libraries and header files. */</i></td></tr>
+<tr><th id="92">92</th><td><i>/* #undef HAVE_PTHREAD */</i></td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><i>/* Have PTHREAD_PRIO_INHERIT. */</i></td></tr>
+<tr><th id="95">95</th><td><i>/* #undef HAVE_PTHREAD_PRIO_INHERIT */</i></td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><i>/* Define to 1 if you have the &lt;readline/history.h&gt; header file. */</i></td></tr>
+<tr><th id="98">98</th><td><i>/* #undef HAVE_READLINE_HISTORY_H */</i></td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><i>/* Define to 1 if you have the &lt;readline/readline.h&gt; header file. */</i></td></tr>
+<tr><th id="101">101</th><td><i>/* #undef HAVE_READLINE_READLINE_H */</i></td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><i>/* Define to 1 if you have the &lt;stdint.h&gt; header file. */</i></td></tr>
+<tr><th id="104">104</th><td><u>#define <dfn class="macro" id="_M/HAVE_STDINT_H" data-ref="_M/HAVE_STDINT_H">HAVE_STDINT_H</dfn> 1</u></td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><i>/* Define to 1 if you have the &lt;stdlib.h&gt; header file. */</i></td></tr>
+<tr><th id="107">107</th><td><u>#define <dfn class="macro" id="_M/HAVE_STDLIB_H" data-ref="_M/HAVE_STDLIB_H">HAVE_STDLIB_H</dfn> 1</u></td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><i>/* Define to 1 if you have the `strerror' function. */</i></td></tr>
+<tr><th id="110">110</th><td><u>#define <dfn class="macro" id="_M/HAVE_STRERROR" data-ref="_M/HAVE_STRERROR">HAVE_STRERROR</dfn> 1</u></td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><i>/* Define to 1 if you have the &lt;string&gt; header file. */</i></td></tr>
+<tr><th id="113">113</th><td><u>#define <dfn class="macro" id="_M/HAVE_STRING" data-ref="_M/HAVE_STRING">HAVE_STRING</dfn> 1</u></td></tr>
+<tr><th id="114">114</th><td></td></tr>
+<tr><th id="115">115</th><td><i>/* Define to 1 if you have the &lt;strings.h&gt; header file. */</i></td></tr>
+<tr><th id="116">116</th><td><u>#define <dfn class="macro" id="_M/HAVE_STRINGS_H" data-ref="_M/HAVE_STRINGS_H">HAVE_STRINGS_H</dfn> 1</u></td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><i>/* Define to 1 if you have the &lt;string.h&gt; header file. */</i></td></tr>
+<tr><th id="119">119</th><td><u>#define <dfn class="macro" id="_M/HAVE_STRING_H" data-ref="_M/HAVE_STRING_H">HAVE_STRING_H</dfn> 1</u></td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><i>/* Define to 1 if you have `strtoimax'. */</i></td></tr>
+<tr><th id="122">122</th><td><i>/* #undef HAVE_STRTOIMAX */</i></td></tr>
+<tr><th id="123">123</th><td></td></tr>
+<tr><th id="124">124</th><td><i>/* Define to 1 if you have `strtoll'. */</i></td></tr>
+<tr><th id="125">125</th><td><u>#define <dfn class="macro" id="_M/HAVE_STRTOLL" data-ref="_M/HAVE_STRTOLL">HAVE_STRTOLL</dfn> 1</u></td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><i>/* Define to 1 if you have `strtoq'. */</i></td></tr>
+<tr><th id="128">128</th><td><i>/* #undef HAVE_STRTOQ */</i></td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td><i>/* Define to 1 if you have the &lt;sys/stat.h&gt; header file. */</i></td></tr>
+<tr><th id="131">131</th><td><u>#define <dfn class="macro" id="_M/HAVE_SYS_STAT_H" data-ref="_M/HAVE_SYS_STAT_H">HAVE_SYS_STAT_H</dfn> 1</u></td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td><i>/* Define to 1 if you have the &lt;sys/types.h&gt; header file. */</i></td></tr>
+<tr><th id="134">134</th><td><u>#define <dfn class="macro" id="_M/HAVE_SYS_TYPES_H" data-ref="_M/HAVE_SYS_TYPES_H">HAVE_SYS_TYPES_H</dfn> 1</u></td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td><i>/* Define to 1 if you have the &lt;type_traits.h&gt; header file. */</i></td></tr>
+<tr><th id="137">137</th><td><i>/* #undef HAVE_TYPE_TRAITS_H */</i></td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td><i>/* Define to 1 if you have the &lt;unistd.h&gt; header file. */</i></td></tr>
+<tr><th id="140">140</th><td><u>#define <dfn class="macro" id="_M/HAVE_UNISTD_H" data-ref="_M/HAVE_UNISTD_H">HAVE_UNISTD_H</dfn> 1</u></td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td><i>/* Define to 1 if the system has the type `unsigned long long'. */</i></td></tr>
+<tr><th id="143">143</th><td><u>#define <dfn class="macro" id="_M/HAVE_UNSIGNED_LONG_LONG" data-ref="_M/HAVE_UNSIGNED_LONG_LONG">HAVE_UNSIGNED_LONG_LONG</dfn> 1</u></td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><i>/* Define to 1 if the compiler supports simple visibility declarations. */</i></td></tr>
+<tr><th id="146">146</th><td><u>#define <dfn class="macro" id="_M/HAVE_VISIBILITY" data-ref="_M/HAVE_VISIBILITY">HAVE_VISIBILITY</dfn> 1</u></td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td><i>/* Define to 1 if you have the &lt;windows.h&gt; header file. */</i></td></tr>
+<tr><th id="149">149</th><td><i>/* #undef HAVE_WINDOWS_H */</i></td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><i>/* Define to 1 if you have the &lt;zlib.h&gt; header file. */</i></td></tr>
+<tr><th id="152">152</th><td><u>#define <dfn class="macro" id="_M/HAVE_ZLIB_H" data-ref="_M/HAVE_ZLIB_H">HAVE_ZLIB_H</dfn> 1</u></td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td><i>/* Define to 1 if you have `_strtoi64'. */</i></td></tr>
+<tr><th id="155">155</th><td><i>/* #undef HAVE__STRTOI64 */</i></td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><i>/* The value of LINK_SIZE determines the number of bytes used to store links</i></td></tr>
+<tr><th id="158">158</th><td><i>   as offsets within the compiled regex. The default is 2, which allows for</i></td></tr>
+<tr><th id="159">159</th><td><i>   compiled patterns up to 64K long. This covers the vast majority of cases.</i></td></tr>
+<tr><th id="160">160</th><td><i>   However, PCRE can also be compiled to use 3 or 4 bytes instead. This allows</i></td></tr>
+<tr><th id="161">161</th><td><i>   for longer patterns in extreme cases. */</i></td></tr>
+<tr><th id="162">162</th><td><u>#define <dfn class="macro" id="_M/LINK_SIZE" data-ref="_M/LINK_SIZE">LINK_SIZE</dfn> 2</u></td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><i>/* Define to the sub-directory where libtool stores uninstalled libraries. */</i></td></tr>
+<tr><th id="165">165</th><td><u>#define <dfn class="macro" id="_M/LT_OBJDIR" data-ref="_M/LT_OBJDIR">LT_OBJDIR</dfn> ".libs/"</u></td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td><i>/* The value of MATCH_LIMIT determines the default number of times the</i></td></tr>
+<tr><th id="168">168</th><td><i>   internal match() function can be called during a single execution of</i></td></tr>
+<tr><th id="169">169</th><td><i>   pcre_exec(). There is a runtime interface for setting a different limit.</i></td></tr>
+<tr><th id="170">170</th><td><i>   The limit exists in order to catch runaway regular expressions that take</i></td></tr>
+<tr><th id="171">171</th><td><i>   for ever to determine that they do not match. The default is set very large</i></td></tr>
+<tr><th id="172">172</th><td><i>   so that it does not accidentally catch legitimate cases. */</i></td></tr>
+<tr><th id="173">173</th><td><u>#define <dfn class="macro" id="_M/MATCH_LIMIT" data-ref="_M/MATCH_LIMIT">MATCH_LIMIT</dfn> 10000000</u></td></tr>
+<tr><th id="174">174</th><td></td></tr>
+<tr><th id="175">175</th><td><i>/* The above limit applies to all calls of match(), whether or not they</i></td></tr>
+<tr><th id="176">176</th><td><i>   increase the recursion depth. In some environments it is desirable to limit</i></td></tr>
+<tr><th id="177">177</th><td><i>   the depth of recursive calls of match() more strictly, in order to restrict</i></td></tr>
+<tr><th id="178">178</th><td><i>   the maximum amount of stack (or heap, if NO_RECURSE is defined) that is</i></td></tr>
+<tr><th id="179">179</th><td><i>   used. The value of MATCH_LIMIT_RECURSION applies only to recursive calls of</i></td></tr>
+<tr><th id="180">180</th><td><i>   match(). To have any useful effect, it must be less than the value of</i></td></tr>
+<tr><th id="181">181</th><td><i>   MATCH_LIMIT. The default is to use the same value as MATCH_LIMIT. There is</i></td></tr>
+<tr><th id="182">182</th><td><i>   a runtime method for setting a different limit. */</i></td></tr>
+<tr><th id="183">183</th><td><u>#define <dfn class="macro" id="_M/MATCH_LIMIT_RECURSION" data-ref="_M/MATCH_LIMIT_RECURSION">MATCH_LIMIT_RECURSION</dfn> MATCH_LIMIT</u></td></tr>
+<tr><th id="184">184</th><td></td></tr>
+<tr><th id="185">185</th><td><i>/* This limit is parameterized just in case anybody ever wants to change it.</i></td></tr>
+<tr><th id="186">186</th><td><i>   Care must be taken if it is increased, because it guards against integer</i></td></tr>
+<tr><th id="187">187</th><td><i>   overflow caused by enormously large patterns. */</i></td></tr>
+<tr><th id="188">188</th><td><u>#define <dfn class="macro" id="_M/MAX_NAME_COUNT" data-ref="_M/MAX_NAME_COUNT">MAX_NAME_COUNT</dfn> 10000</u></td></tr>
+<tr><th id="189">189</th><td></td></tr>
+<tr><th id="190">190</th><td><i>/* This limit is parameterized just in case anybody ever wants to change it.</i></td></tr>
+<tr><th id="191">191</th><td><i>   Care must be taken if it is increased, because it guards against integer</i></td></tr>
+<tr><th id="192">192</th><td><i>   overflow caused by enormously large patterns. */</i></td></tr>
+<tr><th id="193">193</th><td><u>#define <dfn class="macro" id="_M/MAX_NAME_SIZE" data-ref="_M/MAX_NAME_SIZE">MAX_NAME_SIZE</dfn> 32</u></td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><i>/* The value of NEWLINE determines the default newline character sequence.</i></td></tr>
+<tr><th id="196">196</th><td><i>   PCRE client programs can override this by selecting other values at run</i></td></tr>
+<tr><th id="197">197</th><td><i>   time. In ASCII environments, the value can be 10 (LF), 13 (CR), or 3338</i></td></tr>
+<tr><th id="198">198</th><td><i>   (CRLF); in EBCDIC environments the value can be 21 or 37 (LF), 13 (CR), or</i></td></tr>
+<tr><th id="199">199</th><td><i>   3349 or 3365 (CRLF) because there are two alternative codepoints (0x15 and</i></td></tr>
+<tr><th id="200">200</th><td><i>   0x25) that are used as the NL line terminator that is equivalent to ASCII</i></td></tr>
+<tr><th id="201">201</th><td><i>   LF. In both ASCII and EBCDIC environments the value can also be -1 (ANY),</i></td></tr>
+<tr><th id="202">202</th><td><i>   or -2 (ANYCRLF). */</i></td></tr>
+<tr><th id="203">203</th><td><u>#define <dfn class="macro" id="_M/NEWLINE" data-ref="_M/NEWLINE">NEWLINE</dfn> 10</u></td></tr>
+<tr><th id="204">204</th><td></td></tr>
+<tr><th id="205">205</th><td><i>/* PCRE uses recursive function calls to handle backtracking while matching.</i></td></tr>
+<tr><th id="206">206</th><td><i>   This can sometimes be a problem on systems that have stacks of limited</i></td></tr>
+<tr><th id="207">207</th><td><i>   size. Define NO_RECURSE to any value to get a version that doesn't use</i></td></tr>
+<tr><th id="208">208</th><td><i>   recursion in the match() function; instead it creates its own stack by</i></td></tr>
+<tr><th id="209">209</th><td><i>   steam using pcre_recurse_malloc() to obtain memory from the heap. For more</i></td></tr>
+<tr><th id="210">210</th><td><i>   detail, see the comments and other stuff just above the match() function.</i></td></tr>
+<tr><th id="211">211</th><td><i>   */</i></td></tr>
+<tr><th id="212">212</th><td><i>/* #undef NO_RECURSE */</i></td></tr>
+<tr><th id="213">213</th><td></td></tr>
+<tr><th id="214">214</th><td><i>/* Name of package */</i></td></tr>
+<tr><th id="215">215</th><td><u>#define <dfn class="macro" id="_M/PACKAGE" data-ref="_M/PACKAGE">PACKAGE</dfn> "pcre"</u></td></tr>
+<tr><th id="216">216</th><td></td></tr>
+<tr><th id="217">217</th><td><i>/* Define to the address where bug reports for this package should be sent. */</i></td></tr>
+<tr><th id="218">218</th><td><u>#define <dfn class="macro" id="_M/PACKAGE_BUGREPORT" data-ref="_M/PACKAGE_BUGREPORT">PACKAGE_BUGREPORT</dfn> ""</u></td></tr>
+<tr><th id="219">219</th><td></td></tr>
+<tr><th id="220">220</th><td><i>/* Define to the full name of this package. */</i></td></tr>
+<tr><th id="221">221</th><td><u>#define <dfn class="macro" id="_M/PACKAGE_NAME" data-ref="_M/PACKAGE_NAME">PACKAGE_NAME</dfn> "PCRE"</u></td></tr>
+<tr><th id="222">222</th><td></td></tr>
+<tr><th id="223">223</th><td><i>/* Define to the full name and version of this package. */</i></td></tr>
+<tr><th id="224">224</th><td><u>#define <dfn class="macro" id="_M/PACKAGE_STRING" data-ref="_M/PACKAGE_STRING">PACKAGE_STRING</dfn> "PCRE 8.38"</u></td></tr>
+<tr><th id="225">225</th><td></td></tr>
+<tr><th id="226">226</th><td><i>/* Define to the one symbol short name of this package. */</i></td></tr>
+<tr><th id="227">227</th><td><u>#define <dfn class="macro" id="_M/PACKAGE_TARNAME" data-ref="_M/PACKAGE_TARNAME">PACKAGE_TARNAME</dfn> "pcre"</u></td></tr>
+<tr><th id="228">228</th><td></td></tr>
+<tr><th id="229">229</th><td><i>/* Define to the home page for this package. */</i></td></tr>
+<tr><th id="230">230</th><td><u>#define <dfn class="macro" id="_M/PACKAGE_URL" data-ref="_M/PACKAGE_URL">PACKAGE_URL</dfn> ""</u></td></tr>
+<tr><th id="231">231</th><td></td></tr>
+<tr><th id="232">232</th><td><i>/* Define to the version of this package. */</i></td></tr>
+<tr><th id="233">233</th><td><u>#define <dfn class="macro" id="_M/PACKAGE_VERSION" data-ref="_M/PACKAGE_VERSION">PACKAGE_VERSION</dfn> "8.38"</u></td></tr>
+<tr><th id="234">234</th><td></td></tr>
+<tr><th id="235">235</th><td><i>/* The value of PARENS_NEST_LIMIT specifies the maximum depth of nested</i></td></tr>
+<tr><th id="236">236</th><td><i>   parentheses (of any kind) in a pattern. This limits the amount of system</i></td></tr>
+<tr><th id="237">237</th><td><i>   stack that is used while compiling a pattern. */</i></td></tr>
+<tr><th id="238">238</th><td><u>#define <dfn class="macro" id="_M/PARENS_NEST_LIMIT" data-ref="_M/PARENS_NEST_LIMIT">PARENS_NEST_LIMIT</dfn> 250</u></td></tr>
+<tr><th id="239">239</th><td></td></tr>
+<tr><th id="240">240</th><td><i>/* to make a symbol visible */</i></td></tr>
+<tr><th id="241">241</th><td><u>#define <dfn class="macro" id="_M/PCRECPP_EXP_DECL" data-ref="_M/PCRECPP_EXP_DECL">PCRECPP_EXP_DECL</dfn> extern __attribute__ ((visibility ("default")))</u></td></tr>
+<tr><th id="242">242</th><td></td></tr>
+<tr><th id="243">243</th><td><i>/* to make a symbol visible */</i></td></tr>
+<tr><th id="244">244</th><td><u>#define <dfn class="macro" id="_M/PCRECPP_EXP_DEFN" data-ref="_M/PCRECPP_EXP_DEFN">PCRECPP_EXP_DEFN</dfn> __attribute__ ((visibility ("default")))</u></td></tr>
+<tr><th id="245">245</th><td></td></tr>
+<tr><th id="246">246</th><td><i>/* The value of PCREGREP_BUFSIZE determines the size of buffer used by</i></td></tr>
+<tr><th id="247">247</th><td><i>   pcregrep to hold parts of the file it is searching. This is also the</i></td></tr>
+<tr><th id="248">248</th><td><i>   minimum value. The actual amount of memory used by pcregrep is three times</i></td></tr>
+<tr><th id="249">249</th><td><i>   this number, because it allows for the buffering of "before" and "after"</i></td></tr>
+<tr><th id="250">250</th><td><i>   lines. */</i></td></tr>
+<tr><th id="251">251</th><td><u>#define <dfn class="macro" id="_M/PCREGREP_BUFSIZE" data-ref="_M/PCREGREP_BUFSIZE">PCREGREP_BUFSIZE</dfn> 20480</u></td></tr>
+<tr><th id="252">252</th><td></td></tr>
+<tr><th id="253">253</th><td><i>/* to make a symbol visible */</i></td></tr>
+<tr><th id="254">254</th><td><u>#define <dfn class="macro" id="_M/PCREPOSIX_EXP_DECL" data-ref="_M/PCREPOSIX_EXP_DECL">PCREPOSIX_EXP_DECL</dfn> extern __attribute__ ((visibility ("default")))</u></td></tr>
+<tr><th id="255">255</th><td></td></tr>
+<tr><th id="256">256</th><td><i>/* to make a symbol visible */</i></td></tr>
+<tr><th id="257">257</th><td><u>#define <dfn class="macro" id="_M/PCREPOSIX_EXP_DEFN" data-ref="_M/PCREPOSIX_EXP_DEFN">PCREPOSIX_EXP_DEFN</dfn> extern __attribute__ ((visibility ("default")))</u></td></tr>
+<tr><th id="258">258</th><td></td></tr>
+<tr><th id="259">259</th><td><i>/* to make a symbol visible */</i></td></tr>
+<tr><th id="260">260</th><td><u>#define <dfn class="macro" id="_M/PCRE_EXP_DATA_DEFN" data-ref="_M/PCRE_EXP_DATA_DEFN">PCRE_EXP_DATA_DEFN</dfn> __attribute__ ((visibility ("default")))</u></td></tr>
+<tr><th id="261">261</th><td></td></tr>
+<tr><th id="262">262</th><td><i>/* to make a symbol visible */</i></td></tr>
+<tr><th id="263">263</th><td><u>#define <dfn class="macro" id="_M/PCRE_EXP_DECL" data-ref="_M/PCRE_EXP_DECL">PCRE_EXP_DECL</dfn> extern __attribute__ ((visibility ("default")))</u></td></tr>
+<tr><th id="264">264</th><td></td></tr>
+<tr><th id="265">265</th><td></td></tr>
+<tr><th id="266">266</th><td><i>/* If you are compiling for a system other than a Unix-like system or</i></td></tr>
+<tr><th id="267">267</th><td><i>   Win32, and it needs some magic to be inserted before the definition</i></td></tr>
+<tr><th id="268">268</th><td><i>   of a function that is exported by the library, define this macro to</i></td></tr>
+<tr><th id="269">269</th><td><i>   contain the relevant magic. If you do not define this macro, a suitable</i></td></tr>
+<tr><th id="270">270</th><td><i>    __declspec value is used for Windows systems; in other environments</i></td></tr>
+<tr><th id="271">271</th><td><i>   "extern" is used for a C compiler and "extern C" for a C++ compiler.</i></td></tr>
+<tr><th id="272">272</th><td><i>   This macro apears at the start of every exported function that is part</i></td></tr>
+<tr><th id="273">273</th><td><i>   of the external API. It does not appear on functions that are "external"</i></td></tr>
+<tr><th id="274">274</th><td><i>   in the C sense, but which are internal to the library. */</i></td></tr>
+<tr><th id="275">275</th><td><u>#define <dfn class="macro" id="_M/PCRE_EXP_DEFN" data-ref="_M/PCRE_EXP_DEFN">PCRE_EXP_DEFN</dfn> __attribute__ ((visibility ("default")))</u></td></tr>
+<tr><th id="276">276</th><td></td></tr>
+<tr><th id="277">277</th><td><i>/* Define to any value if linking statically (TODO: make nice with Libtool) */</i></td></tr>
+<tr><th id="278">278</th><td><i>/* #undef PCRE_STATIC */</i></td></tr>
+<tr><th id="279">279</th><td></td></tr>
+<tr><th id="280">280</th><td><i>/* When calling PCRE via the POSIX interface, additional working storage is</i></td></tr>
+<tr><th id="281">281</th><td><i>   required for holding the pointers to capturing substrings because PCRE</i></td></tr>
+<tr><th id="282">282</th><td><i>   requires three integers per substring, whereas the POSIX interface provides</i></td></tr>
+<tr><th id="283">283</th><td><i>   only two. If the number of expected substrings is small, the wrapper</i></td></tr>
+<tr><th id="284">284</th><td><i>   function uses space on the stack, because this is faster than using</i></td></tr>
+<tr><th id="285">285</th><td><i>   malloc() for each call. The threshold above which the stack is no longer</i></td></tr>
+<tr><th id="286">286</th><td><i>   used is defined by POSIX_MALLOC_THRESHOLD. */</i></td></tr>
+<tr><th id="287">287</th><td><u>#define <dfn class="macro" id="_M/POSIX_MALLOC_THRESHOLD" data-ref="_M/POSIX_MALLOC_THRESHOLD">POSIX_MALLOC_THRESHOLD</dfn> 10</u></td></tr>
+<tr><th id="288">288</th><td></td></tr>
+<tr><th id="289">289</th><td><i>/* Define to necessary symbol if this constant uses a non-standard name on</i></td></tr>
+<tr><th id="290">290</th><td><i>   your system. */</i></td></tr>
+<tr><th id="291">291</th><td><i>/* #undef PTHREAD_CREATE_JOINABLE */</i></td></tr>
+<tr><th id="292">292</th><td></td></tr>
+<tr><th id="293">293</th><td><i>/* Define to 1 if you have the ANSI C header files. */</i></td></tr>
+<tr><th id="294">294</th><td><u>#define <dfn class="macro" id="_M/STDC_HEADERS" data-ref="_M/STDC_HEADERS">STDC_HEADERS</dfn> 1</u></td></tr>
+<tr><th id="295">295</th><td></td></tr>
+<tr><th id="296">296</th><td><i>/* Define to any value to enable support for Just-In-Time compiling. */</i></td></tr>
+<tr><th id="297">297</th><td><i>/* #undef SUPPORT_JIT */</i></td></tr>
+<tr><th id="298">298</th><td></td></tr>
+<tr><th id="299">299</th><td><i>/* Define to any value to allow pcregrep to be linked with libbz2, so that it</i></td></tr>
+<tr><th id="300">300</th><td><i>   is able to handle .bz2 files. */</i></td></tr>
+<tr><th id="301">301</th><td><i>/* #undef SUPPORT_LIBBZ2 */</i></td></tr>
+<tr><th id="302">302</th><td></td></tr>
+<tr><th id="303">303</th><td><i>/* Define to any value to allow pcretest to be linked with libedit. */</i></td></tr>
+<tr><th id="304">304</th><td><i>/* #undef SUPPORT_LIBEDIT */</i></td></tr>
+<tr><th id="305">305</th><td></td></tr>
+<tr><th id="306">306</th><td><i>/* Define to any value to allow pcretest to be linked with libreadline. */</i></td></tr>
+<tr><th id="307">307</th><td><i>/* #undef SUPPORT_LIBREADLINE */</i></td></tr>
+<tr><th id="308">308</th><td></td></tr>
+<tr><th id="309">309</th><td><i>/* Define to any value to allow pcregrep to be linked with libz, so that it is</i></td></tr>
+<tr><th id="310">310</th><td><i>   able to handle .gz files. */</i></td></tr>
+<tr><th id="311">311</th><td><i>/* #undef SUPPORT_LIBZ */</i></td></tr>
+<tr><th id="312">312</th><td></td></tr>
+<tr><th id="313">313</th><td><i>/* Define to any value to enable the 16 bit PCRE library. */</i></td></tr>
+<tr><th id="314">314</th><td><i>/* #undef SUPPORT_PCRE16 */</i></td></tr>
+<tr><th id="315">315</th><td></td></tr>
+<tr><th id="316">316</th><td><i>/* Define to any value to enable the 32 bit PCRE library. */</i></td></tr>
+<tr><th id="317">317</th><td><i>/* #undef SUPPORT_PCRE32 */</i></td></tr>
+<tr><th id="318">318</th><td></td></tr>
+<tr><th id="319">319</th><td><i>/* Define to any value to enable the 8 bit PCRE library. */</i></td></tr>
+<tr><th id="320">320</th><td><u>#define <dfn class="macro" id="_M/SUPPORT_PCRE8" data-ref="_M/SUPPORT_PCRE8">SUPPORT_PCRE8</dfn> /**/</u></td></tr>
+<tr><th id="321">321</th><td></td></tr>
+<tr><th id="322">322</th><td><i>/* Define to any value to enable JIT support in pcregrep. */</i></td></tr>
+<tr><th id="323">323</th><td><i>/* #undef SUPPORT_PCREGREP_JIT */</i></td></tr>
+<tr><th id="324">324</th><td></td></tr>
+<tr><th id="325">325</th><td><i>/* Define to any value to enable support for Unicode properties. */</i></td></tr>
+<tr><th id="326">326</th><td><i>/* #undef SUPPORT_UCP */</i></td></tr>
+<tr><th id="327">327</th><td></td></tr>
+<tr><th id="328">328</th><td><i>/* Define to any value to enable support for the UTF-8/16/32 Unicode encoding.</i></td></tr>
+<tr><th id="329">329</th><td><i>   This will work even in an EBCDIC environment, but it is incompatible with</i></td></tr>
+<tr><th id="330">330</th><td><i>   the EBCDIC macro. That is, PCRE can support *either* EBCDIC code *or*</i></td></tr>
+<tr><th id="331">331</th><td><i>   ASCII/UTF-8/16/32, but not both at once. */</i></td></tr>
+<tr><th id="332">332</th><td><i>/* #undef SUPPORT_UTF */</i></td></tr>
+<tr><th id="333">333</th><td></td></tr>
+<tr><th id="334">334</th><td><i>/* Define to any value for valgrind support to find invalid memory reads. */</i></td></tr>
+<tr><th id="335">335</th><td><i>/* #undef SUPPORT_VALGRIND */</i></td></tr>
+<tr><th id="336">336</th><td></td></tr>
+<tr><th id="337">337</th><td><i>/* Version number of package */</i></td></tr>
+<tr><th id="338">338</th><td><u>#define <dfn class="macro" id="_M/VERSION" data-ref="_M/VERSION">VERSION</dfn> "8.38"</u></td></tr>
+<tr><th id="339">339</th><td></td></tr>
+<tr><th id="340">340</th><td><i>/* Define to empty if `const' does not conform to ANSI C. */</i></td></tr>
+<tr><th id="341">341</th><td><i>/* #undef const */</i></td></tr>
+<tr><th id="342">342</th><td></td></tr>
+<tr><th id="343">343</th><td><i>/* Define to the type of a signed integer type of width exactly 64 bits if</i></td></tr>
+<tr><th id="344">344</th><td><i>   such a type exists and the standard includes do not define it. */</i></td></tr>
+<tr><th id="345">345</th><td><i>/* #undef int64_t */</i></td></tr>
+<tr><th id="346">346</th><td></td></tr>
+<tr><th id="347">347</th><td><i>/* Define to `unsigned int' if &lt;sys/types.h&gt; does not define. */</i></td></tr>
+<tr><th id="348">348</th><td><i>/* #undef size_t */</i></td></tr>
+<tr><th id="349">349</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='dist/pcre_byte_order.c.html'>codebrowser/external/pcre/dist/pcre_byte_order.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

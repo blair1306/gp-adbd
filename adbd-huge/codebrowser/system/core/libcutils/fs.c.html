@@ -1,0 +1,255 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>fs.c source code [codebrowser/system/core/libcutils/fs.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/libcutils/fs.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>libcutils</a>/<a href='fs.c.html'>fs.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2012 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#define <dfn class="macro" id="_M/LOG_TAG" data-ref="_M/LOG_TAG">LOG_TAG</dfn> "cutils"</u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><i>/* These defines are only needed because prebuilt headers are out of date */</i></td></tr>
+<tr><th id="20">20</th><td><u>#define <dfn class="macro" id="_M/__USE_XOPEN2K8" data-ref="_M/__USE_XOPEN2K8">__USE_XOPEN2K8</dfn> 1</u></td></tr>
+<tr><th id="21">21</th><td><u>#define <dfn class="macro" id="_M/_ATFILE_SOURCE" data-ref="_M/_ATFILE_SOURCE">_ATFILE_SOURCE</dfn> 1</u></td></tr>
+<tr><th id="22">22</th><td><u>#define <dfn class="macro" id="_M/_GNU_SOURCE" data-ref="_M/_GNU_SOURCE">_GNU_SOURCE</dfn> 1</u></td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../include/cutils/fs.h.html">&lt;cutils/fs.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="../include/cutils/log.h.html">&lt;cutils/log.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../../../bionic/libc/include/sys/stat.h.html">&lt;sys/stat.h&gt;</a></u></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../../../bionic/libc/include/limits.h.html">&lt;limits.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="../../../bionic/libc/include/dirent.h.html">&lt;dirent.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td><u>#define <dfn class="macro" id="_M/ALL_PERMS" data-ref="_M/ALL_PERMS">ALL_PERMS</dfn> (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO)</u></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/BUF_SIZE" data-ref="_M/BUF_SIZE">BUF_SIZE</dfn> 64</u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><em>int</em> <dfn class="decl def" id="fs_prepare_dir" title='fs_prepare_dir' data-ref="fs_prepare_dir">fs_prepare_dir</dfn>(<em>const</em> <em>char</em>* <dfn class="local col1 decl" id="11path" title='path' data-type='const char *' data-ref="11path">path</dfn>, <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="local col2 decl" id="12mode" title='mode' data-type='mode_t' data-ref="12mode">mode</dfn>, <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#uid_t" title='uid_t' data-type='__uid_t' data-ref="uid_t">uid_t</a> <dfn class="local col3 decl" id="13uid" title='uid' data-type='uid_t' data-ref="13uid">uid</dfn>, <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#gid_t" title='gid_t' data-type='__gid_t' data-ref="gid_t">gid_t</a> <dfn class="local col4 decl" id="14gid" title='gid' data-type='gid_t' data-ref="14gid">gid</dfn>) {</td></tr>
+<tr><th id="41">41</th><td>    <i>// Check if path needs to be created</i></td></tr>
+<tr><th id="42">42</th><td>    <b>struct</b> <a class="type" href="../../../bionic/libc/include/sys/stat.h.html#stat" title='stat' data-ref="stat">stat</a> <dfn class="local col5 decl" id="15sb" title='sb' data-type='struct stat' data-ref="15sb">sb</dfn>;</td></tr>
+<tr><th id="43">43</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(lstat(path, &amp;sb)) _rc; do { _rc = (lstat(path, &amp;sb)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#lstat" title='lstat' data-ref="lstat">lstat</a>(<a class="local col1 ref" href="#11path" title='path' data-ref="11path">path</a>, &amp;<a class="local col5 ref" href="#15sb" title='sb' data-ref="15sb">sb</a>)) == -<var>1</var>) {</td></tr>
+<tr><th id="44">44</th><td>        <b>if</b> (<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#22" title="2" data-ref="_M/ENOENT">ENOENT</a>) {</td></tr>
+<tr><th id="45">45</th><td>            <b>goto</b> <a class="lbl" href="#16create" data-ref="16create">create</a>;</td></tr>
+<tr><th id="46">46</th><td>        } <b>else</b> {</td></tr>
+<tr><th id="47">47</th><td>            <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to lstat(%s): %s&quot;, path, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to lstat(%s): %s"</q>, <a class="local col1 ref" href="#11path" title='path' data-ref="11path">path</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="48">48</th><td>            <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="49">49</th><td>        }</td></tr>
+<tr><th id="50">50</th><td>    }</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td>    <i>// Exists, verify status</i></td></tr>
+<tr><th id="53">53</th><td>    <b>if</b> (!<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#39" title="(((sb.st_mode) &amp; 00170000) == 0040000)" data-ref="_M/S_ISDIR">S_ISDIR</a>(<a class="local col5 ref" href="#15sb" title='sb' data-ref="15sb">sb</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_mode' data-ref="stat::st_mode">st_mode</a>)) {</td></tr>
+<tr><th id="54">54</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Not a directory: %s&quot;, path))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Not a directory: %s"</q>, <a class="local col1 ref" href="#11path" title='path' data-ref="11path">path</a>);</td></tr>
+<tr><th id="55">55</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="56">56</th><td>    }</td></tr>
+<tr><th id="57">57</th><td>    <b>if</b> (((<a class="local col5 ref" href="#15sb" title='sb' data-ref="15sb">sb</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_mode' data-ref="stat::st_mode">st_mode</a> &amp; <a class="macro" href="#37" title="(0004000 | 0002000 | 0001000 | 00700 | 00070 | 00007)" data-ref="_M/ALL_PERMS">ALL_PERMS</a>) == <a class="local col2 ref" href="#12mode" title='mode' data-ref="12mode">mode</a>) &amp;&amp; (<a class="local col5 ref" href="#15sb" title='sb' data-ref="15sb">sb</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_uid' data-ref="stat::st_uid">st_uid</a> == <a class="local col3 ref" href="#13uid" title='uid' data-ref="13uid">uid</a>) &amp;&amp; (<a class="local col5 ref" href="#15sb" title='sb' data-ref="15sb">sb</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_gid' data-ref="stat::st_gid">st_gid</a> == <a class="local col4 ref" href="#14gid" title='gid' data-ref="14gid">gid</a>)) {</td></tr>
+<tr><th id="58">58</th><td>        <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="59">59</th><td>    } <b>else</b> {</td></tr>
+<tr><th id="60">60</th><td>        <b>goto</b> <a class="lbl" href="#17fixup" data-ref="17fixup">fixup</a>;</td></tr>
+<tr><th id="61">61</th><td>    }</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td><dfn class="lbl" id="16create" data-ref="16create">create</dfn>:</td></tr>
+<tr><th id="64">64</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(mkdir(path, mode)) _rc; do { _rc = (mkdir(path, mode)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#mkdir" title='mkdir' data-ref="mkdir">mkdir</a>(<a class="local col1 ref" href="#11path" title='path' data-ref="11path">path</a>, <a class="local col2 ref" href="#12mode" title='mode' data-ref="12mode">mode</a>)) == -<var>1</var>) {</td></tr>
+<tr><th id="65">65</th><td>        <b>if</b> (<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> != <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#41" title="17" data-ref="_M/EEXIST">EEXIST</a>) {</td></tr>
+<tr><th id="66">66</th><td>            <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to mkdir(%s): %s&quot;, path, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to mkdir(%s): %s"</q>, <a class="local col1 ref" href="#11path" title='path' data-ref="11path">path</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="67">67</th><td>            <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="68">68</th><td>        }</td></tr>
+<tr><th id="69">69</th><td>    }</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><dfn class="lbl" id="17fixup" data-ref="17fixup">fixup</dfn>:</td></tr>
+<tr><th id="72">72</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(chmod(path, mode)) _rc; do { _rc = (chmod(path, mode)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#chmod" title='chmod' data-ref="chmod">chmod</a>(<a class="local col1 ref" href="#11path" title='path' data-ref="11path">path</a>, <a class="local col2 ref" href="#12mode" title='mode' data-ref="12mode">mode</a>)) == -<var>1</var>) {</td></tr>
+<tr><th id="73">73</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to chmod(%s, %d): %s&quot;, path, mode, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to chmod(%s, %d): %s"</q>, <a class="local col1 ref" href="#11path" title='path' data-ref="11path">path</a>, <a class="local col2 ref" href="#12mode" title='mode' data-ref="12mode">mode</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="74">74</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="75">75</th><td>    }</td></tr>
+<tr><th id="76">76</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(chown(path, uid, gid)) _rc; do { _rc = (chown(path, uid, gid)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/unistd.h.html#chown" title='chown' data-ref="chown">chown</a>(<a class="local col1 ref" href="#11path" title='path' data-ref="11path">path</a>, <a class="local col3 ref" href="#13uid" title='uid' data-ref="13uid">uid</a>, <a class="local col4 ref" href="#14gid" title='gid' data-ref="14gid">gid</a>)) == -<var>1</var>) {</td></tr>
+<tr><th id="77">77</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to chown(%s, %d, %d): %s&quot;, path, uid, gid, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to chown(%s, %d, %d): %s"</q>, <a class="local col1 ref" href="#11path" title='path' data-ref="11path">path</a>, <a class="local col3 ref" href="#13uid" title='uid' data-ref="13uid">uid</a>, <a class="local col4 ref" href="#14gid" title='gid' data-ref="14gid">gid</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="78">78</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="79">79</th><td>    }</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="82">82</th><td>}</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><em>int</em> <dfn class="decl def" id="fs_read_atomic_int" title='fs_read_atomic_int' data-ref="fs_read_atomic_int">fs_read_atomic_int</dfn>(<em>const</em> <em>char</em>* <dfn class="local col8 decl" id="18path" title='path' data-type='const char *' data-ref="18path">path</dfn>, <em>int</em>* <dfn class="local col9 decl" id="19out_value" title='out_value' data-type='int *' data-ref="19out_value">out_value</dfn>) {</td></tr>
+<tr><th id="85">85</th><td>    <em>int</em> <dfn class="local col0 decl" id="20fd" title='fd' data-type='int' data-ref="20fd">fd</dfn> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(open(path, 00000000)) _rc; do { _rc = (open(path, 00000000)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<a class="local col8 ref" href="#18path" title='path' data-ref="18path">path</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#24" title="00000000" data-ref="_M/O_RDONLY">O_RDONLY</a>));</td></tr>
+<tr><th id="86">86</th><td>    <b>if</b> (<a class="local col0 ref" href="#20fd" title='fd' data-ref="20fd">fd</a> == -<var>1</var>) {</td></tr>
+<tr><th id="87">87</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to read %s: %s&quot;, path, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to read %s: %s"</q>, <a class="local col8 ref" href="#18path" title='path' data-ref="18path">path</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="88">88</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="89">89</th><td>    }</td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td>    <em>char</em> <dfn class="local col1 decl" id="21buf" title='buf' data-type='char [64]' data-ref="21buf">buf</dfn>[<a class="macro" href="#38" title="64" data-ref="_M/BUF_SIZE">BUF_SIZE</a>];</td></tr>
+<tr><th id="92">92</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(read(fd, buf, 64)) _rc; do { _rc = (read(fd, buf, 64)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/unistd.h.html#read" title='read' data-ref="read">read</a>(<a class="local col0 ref" href="#20fd" title='fd' data-ref="20fd">fd</a>, <a class="local col1 ref" href="#21buf" title='buf' data-ref="21buf">buf</a>, <a class="macro" href="#38" title="64" data-ref="_M/BUF_SIZE">BUF_SIZE</a>)) == -<var>1</var>) {</td></tr>
+<tr><th id="93">93</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to read %s: %s&quot;, path, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to read %s: %s"</q>, <a class="local col8 ref" href="#18path" title='path' data-ref="18path">path</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="94">94</th><td>        <b>goto</b> <a class="lbl" href="#22fail" data-ref="22fail">fail</a>;</td></tr>
+<tr><th id="95">95</th><td>    }</td></tr>
+<tr><th id="96">96</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/stdio.h.html#sscanf" title='sscanf' data-ref="sscanf">sscanf</a>(<a class="local col1 ref" href="#21buf" title='buf' data-ref="21buf">buf</a>, <q>"%d"</q>, <a class="local col9 ref" href="#19out_value" title='out_value' data-ref="19out_value">out_value</a>) != <var>1</var>) {</td></tr>
+<tr><th id="97">97</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to parse %s: %s&quot;, path, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to parse %s: %s"</q>, <a class="local col8 ref" href="#18path" title='path' data-ref="18path">path</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="98">98</th><td>        <b>goto</b> <a class="lbl" href="#22fail" data-ref="22fail">fail</a>;</td></tr>
+<tr><th id="99">99</th><td>    }</td></tr>
+<tr><th id="100">100</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col0 ref" href="#20fd" title='fd' data-ref="20fd">fd</a>);</td></tr>
+<tr><th id="101">101</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><dfn class="lbl" id="22fail" data-ref="22fail">fail</dfn>:</td></tr>
+<tr><th id="104">104</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col0 ref" href="#20fd" title='fd' data-ref="20fd">fd</a>);</td></tr>
+<tr><th id="105">105</th><td>    *<a class="local col9 ref" href="#19out_value" title='out_value' data-ref="19out_value">out_value</a> = -<var>1</var>;</td></tr>
+<tr><th id="106">106</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="107">107</th><td>}</td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><em>int</em> <dfn class="decl def" id="fs_write_atomic_int" title='fs_write_atomic_int' data-ref="fs_write_atomic_int">fs_write_atomic_int</dfn>(<em>const</em> <em>char</em>* <dfn class="local col3 decl" id="23path" title='path' data-type='const char *' data-ref="23path">path</dfn>, <em>int</em> <dfn class="local col4 decl" id="24value" title='value' data-type='int' data-ref="24value">value</dfn>) {</td></tr>
+<tr><th id="110">110</th><td>    <em>char</em> <dfn class="local col5 decl" id="25temp" title='temp' data-type='char [4096]' data-ref="25temp">temp</dfn>[<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/limits.h.html#30" title="4096" data-ref="_M/PATH_MAX">PATH_MAX</a>];</td></tr>
+<tr><th id="111">111</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(temp, 4096, 0, __builtin_object_size((temp), 1), &quot;%s.XXXXXX&quot;, path)" data-ref="_M/snprintf">snprintf</a>(<a class="local col5 ref" href="#25temp" title='temp' data-ref="25temp">temp</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/limits.h.html#30" title="4096" data-ref="_M/PATH_MAX">PATH_MAX</a>, <q>"%s.XXXXXX"</q>, <a class="local col3 ref" href="#23path" title='path' data-ref="23path">path</a>) &gt;= <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/limits.h.html#30" title="4096" data-ref="_M/PATH_MAX">PATH_MAX</a>) {</td></tr>
+<tr><th id="112">112</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Path too long&quot;))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Path too long"</q>);</td></tr>
+<tr><th id="113">113</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="114">114</th><td>    }</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td>    <em>int</em> <dfn class="local col6 decl" id="26fd" title='fd' data-type='int' data-ref="26fd">fd</dfn> = <a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(mkstemp(temp)) _rc; do { _rc = (mkstemp(temp)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/stdlib.h.html#mkstemp" title='mkstemp' data-ref="mkstemp">mkstemp</a>(<a class="local col5 ref" href="#25temp" title='temp' data-ref="25temp">temp</a>));</td></tr>
+<tr><th id="117">117</th><td>    <b>if</b> (<a class="local col6 ref" href="#26fd" title='fd' data-ref="26fd">fd</a> == -<var>1</var>) {</td></tr>
+<tr><th id="118">118</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to open %s: %s&quot;, temp, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to open %s: %s"</q>, <a class="local col5 ref" href="#25temp" title='temp' data-ref="25temp">temp</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="119">119</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="120">120</th><td>    }</td></tr>
+<tr><th id="121">121</th><td></td></tr>
+<tr><th id="122">122</th><td>    <em>char</em> <dfn class="local col7 decl" id="27buf" title='buf' data-type='char [64]' data-ref="27buf">buf</dfn>[<a class="macro" href="#38" title="64" data-ref="_M/BUF_SIZE">BUF_SIZE</a>];</td></tr>
+<tr><th id="123">123</th><td>    <em>int</em> <dfn class="local col8 decl" id="28len" title='len' data-type='int' data-ref="28len">len</dfn> = <a class="macro" href="../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(buf, 64, 0, __builtin_object_size((buf), 1), &quot;%d&quot;, value)" data-ref="_M/snprintf">snprintf</a>(<a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>, <a class="macro" href="#38" title="64" data-ref="_M/BUF_SIZE">BUF_SIZE</a>, <q>"%d"</q>, <a class="local col4 ref" href="#24value" title='value' data-ref="24value">value</a>) + <var>1</var>;</td></tr>
+<tr><th id="124">124</th><td>    <b>if</b> (<a class="local col8 ref" href="#28len" title='len' data-ref="28len">len</a> &gt; <a class="macro" href="#38" title="64" data-ref="_M/BUF_SIZE">BUF_SIZE</a>) {</td></tr>
+<tr><th id="125">125</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Value %d too large: %s&quot;, value, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Value %d too large: %s"</q>, <a class="local col4 ref" href="#24value" title='value' data-ref="24value">value</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="126">126</th><td>        <b>goto</b> <a class="lbl" href="#29fail" data-ref="29fail">fail</a>;</td></tr>
+<tr><th id="127">127</th><td>    }</td></tr>
+<tr><th id="128">128</th><td>    <b>if</b> (<a class="macro" href="../../../bionic/libc/include/unistd.h.html#243" title="({ __typeof__(write(fd, buf, len)) _rc; do { _rc = (write(fd, buf, len)); } while (_rc == -1 &amp;&amp; (*__errno()) == 4); _rc; })" data-ref="_M/TEMP_FAILURE_RETRY">TEMP_FAILURE_RETRY</a>(<a class="ref" href="../../../bionic/libc/include/unistd.h.html#write" title='write' data-ref="write">write</a>(<a class="local col6 ref" href="#26fd" title='fd' data-ref="26fd">fd</a>, <a class="local col7 ref" href="#27buf" title='buf' data-ref="27buf">buf</a>, <a class="local col8 ref" href="#28len" title='len' data-ref="28len">len</a>)) &lt; <a class="local col8 ref" href="#28len" title='len' data-ref="28len">len</a>) {</td></tr>
+<tr><th id="129">129</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to write %s: %s&quot;, temp, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to write %s: %s"</q>, <a class="local col5 ref" href="#25temp" title='temp' data-ref="25temp">temp</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="130">130</th><td>        <b>goto</b> <a class="lbl" href="#29fail" data-ref="29fail">fail</a>;</td></tr>
+<tr><th id="131">131</th><td>    }</td></tr>
+<tr><th id="132">132</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col6 ref" href="#26fd" title='fd' data-ref="26fd">fd</a>) == -<var>1</var>) {</td></tr>
+<tr><th id="133">133</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to close %s: %s&quot;, temp, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to close %s: %s"</q>, <a class="local col5 ref" href="#25temp" title='temp' data-ref="25temp">temp</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="134">134</th><td>        <b>goto</b> <a class="lbl" href="#30fail_closed" data-ref="30fail_closed">fail_closed</a>;</td></tr>
+<tr><th id="135">135</th><td>    }</td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td>    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/stdio.h.html#rename" title='rename' data-ref="rename">rename</a>(<a class="local col5 ref" href="#25temp" title='temp' data-ref="25temp">temp</a>, <a class="local col3 ref" href="#23path" title='path' data-ref="23path">path</a>) == -<var>1</var>) {</td></tr>
+<tr><th id="138">138</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to rename %s to %s: %s&quot;, temp, path, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to rename %s to %s: %s"</q>, <a class="local col5 ref" href="#25temp" title='temp' data-ref="25temp">temp</a>, <a class="local col3 ref" href="#23path" title='path' data-ref="23path">path</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="139">139</th><td>        <b>goto</b> <a class="lbl" href="#30fail_closed" data-ref="30fail_closed">fail_closed</a>;</td></tr>
+<tr><th id="140">140</th><td>    }</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="143">143</th><td></td></tr>
+<tr><th id="144">144</th><td><dfn class="lbl" id="29fail" data-ref="29fail">fail</dfn>:</td></tr>
+<tr><th id="145">145</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col6 ref" href="#26fd" title='fd' data-ref="26fd">fd</a>);</td></tr>
+<tr><th id="146">146</th><td><dfn class="lbl" id="30fail_closed" data-ref="30fail_closed">fail_closed</dfn>:</td></tr>
+<tr><th id="147">147</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#unlink" title='unlink' data-ref="unlink">unlink</a>(<a class="local col5 ref" href="#25temp" title='temp' data-ref="25temp">temp</a>);</td></tr>
+<tr><th id="148">148</th><td>    <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="149">149</th><td>}</td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><u>#<span data-ppcond="151">ifndef</span> <span class="macro" data-ref="_M/__APPLE__">__APPLE__</span></u></td></tr>
+<tr><th id="152">152</th><td></td></tr>
+<tr><th id="153">153</th><td><em>int</em> <dfn class="decl def" id="fs_mkdirs" title='fs_mkdirs' data-ref="fs_mkdirs">fs_mkdirs</dfn>(<em>const</em> <em>char</em>* <dfn class="local col1 decl" id="31path" title='path' data-type='const char *' data-ref="31path">path</dfn>, <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a> <dfn class="local col2 decl" id="32mode" title='mode' data-type='mode_t' data-ref="32mode">mode</dfn>) {</td></tr>
+<tr><th id="154">154</th><td>    <em>int</em> <dfn class="local col3 decl" id="33res" title='res' data-type='int' data-ref="33res">res</dfn> = <var>0</var>;</td></tr>
+<tr><th id="155">155</th><td>    <em>int</em> <dfn class="local col4 decl" id="34fd" title='fd' data-type='int' data-ref="34fd">fd</dfn> = <var>0</var>;</td></tr>
+<tr><th id="156">156</th><td>    <b>struct</b> <a class="type" href="../../../bionic/libc/include/sys/stat.h.html#stat" title='stat' data-ref="stat">stat</a> <dfn class="local col5 decl" id="35sb" title='sb' data-type='struct stat' data-ref="35sb">sb</dfn>;</td></tr>
+<tr><th id="157">157</th><td>    <em>char</em>* <dfn class="local col6 decl" id="36buf" title='buf' data-type='char *' data-ref="36buf">buf</dfn> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strdup" title='strdup' data-ref="strdup">strdup</a>(<a class="local col1 ref" href="#31path" title='path' data-ref="31path">path</a>);</td></tr>
+<tr><th id="158">158</th><td></td></tr>
+<tr><th id="159">159</th><td>    <b>if</b> (*<a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a> != <kbd>'/'</kbd>) {</td></tr>
+<tr><th id="160">160</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Relative paths are not allowed: %s&quot;, buf))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Relative paths are not allowed: %s"</q>, <a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>);</td></tr>
+<tr><th id="161">161</th><td>        <a class="local col3 ref" href="#33res" title='res' data-ref="33res">res</a> = -<a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="162">162</th><td>        <b>goto</b> <a class="lbl" href="#37done" data-ref="37done">done</a>;</td></tr>
+<tr><th id="163">163</th><td>    }</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td>    <b>if</b> ((<a class="local col4 ref" href="#34fd" title='fd' data-ref="34fd">fd</a> = <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<q>"/"</q>, <var>0</var>)) == -<var>1</var>) {</td></tr>
+<tr><th id="166">166</th><td>        <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to open(/): %s&quot;, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to open(/): %s"</q>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="167">167</th><td>        <a class="local col3 ref" href="#33res" title='res' data-ref="33res">res</a> = -<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="168">168</th><td>        <b>goto</b> <a class="lbl" href="#37done" data-ref="37done">done</a>;</td></tr>
+<tr><th id="169">169</th><td>    }</td></tr>
+<tr><th id="170">170</th><td></td></tr>
+<tr><th id="171">171</th><td>    <em>char</em>* <dfn class="local col8 decl" id="38segment" title='segment' data-type='char *' data-ref="38segment">segment</dfn> = <a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a> + <var>1</var>;</td></tr>
+<tr><th id="172">172</th><td>    <em>char</em>* <dfn class="local col9 decl" id="39p" title='p' data-type='char *' data-ref="39p">p</dfn> = <a class="local col8 ref" href="#38segment" title='segment' data-ref="38segment">segment</a>;</td></tr>
+<tr><th id="173">173</th><td>    <b>while</b> (*<a class="local col9 ref" href="#39p" title='p' data-ref="39p">p</a> != <kbd>'\0'</kbd>) {</td></tr>
+<tr><th id="174">174</th><td>        <b>if</b> (*<a class="local col9 ref" href="#39p" title='p' data-ref="39p">p</a> == <kbd>'/'</kbd>) {</td></tr>
+<tr><th id="175">175</th><td>            *<a class="local col9 ref" href="#39p" title='p' data-ref="39p">p</a> = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td>            <b>if</b> (!<a class="ref" href="../../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col8 ref" href="#38segment" title='segment' data-ref="38segment">segment</a>, <q>".."</q>) || !<a class="ref" href="../../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col8 ref" href="#38segment" title='segment' data-ref="38segment">segment</a>, <q>"."</q>) || !<a class="ref" href="../../../bionic/libc/include/string.h.html#strcmp" title='strcmp' data-ref="strcmp">strcmp</a>(<a class="local col8 ref" href="#38segment" title='segment' data-ref="38segment">segment</a>, <q>""</q>)) {</td></tr>
+<tr><th id="178">178</th><td>                <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Invalid path: %s&quot;, buf))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Invalid path: %s"</q>, <a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>);</td></tr>
+<tr><th id="179">179</th><td>                <a class="local col3 ref" href="#33res" title='res' data-ref="33res">res</a> = -<a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="180">180</th><td>                <b>goto</b> <a class="lbl" href="#40done_close" data-ref="40done_close">done_close</a>;</td></tr>
+<tr><th id="181">181</th><td>            }</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td>            <b>if</b> (<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#fstatat" title='fstatat' data-ref="fstatat">fstatat</a>(<a class="local col4 ref" href="#34fd" title='fd' data-ref="34fd">fd</a>, <a class="local col8 ref" href="#38segment" title='segment' data-ref="38segment">segment</a>, &amp;<a class="local col5 ref" href="#35sb" title='sb' data-ref="35sb">sb</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/linux/fcntl.h.html#49" title="0x100" data-ref="_M/AT_SYMLINK_NOFOLLOW">AT_SYMLINK_NOFOLLOW</a>) != <var>0</var>) {</td></tr>
+<tr><th id="184">184</th><td>                <b>if</b> (<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#22" title="2" data-ref="_M/ENOENT">ENOENT</a>) {</td></tr>
+<tr><th id="185">185</th><td>                    <i>/* Nothing there yet; let's create it! */</i></td></tr>
+<tr><th id="186">186</th><td>                    <b>if</b> (<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#mkdirat" title='mkdirat' data-ref="mkdirat">mkdirat</a>(<a class="local col4 ref" href="#34fd" title='fd' data-ref="34fd">fd</a>, <a class="local col8 ref" href="#38segment" title='segment' data-ref="38segment">segment</a>, <a class="local col2 ref" href="#32mode" title='mode' data-ref="32mode">mode</a>) != <var>0</var>) {</td></tr>
+<tr><th id="187">187</th><td>                        <b>if</b> (<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#41" title="17" data-ref="_M/EEXIST">EEXIST</a>) {</td></tr>
+<tr><th id="188">188</th><td>                            <i>/* We raced with someone; ignore */</i></td></tr>
+<tr><th id="189">189</th><td>                        } <b>else</b> {</td></tr>
+<tr><th id="190">190</th><td>                            <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to mkdirat(%s): %s&quot;, buf, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to mkdirat(%s): %s"</q>, <a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="191">191</th><td>                            <a class="local col3 ref" href="#33res" title='res' data-ref="33res">res</a> = -<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="192">192</th><td>                            <b>goto</b> <a class="lbl" href="#40done_close" data-ref="40done_close">done_close</a>;</td></tr>
+<tr><th id="193">193</th><td>                        }</td></tr>
+<tr><th id="194">194</th><td>                    }</td></tr>
+<tr><th id="195">195</th><td>                } <b>else</b> {</td></tr>
+<tr><th id="196">196</th><td>                    <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to fstatat(%s): %s&quot;, buf, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to fstatat(%s): %s"</q>, <a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="197">197</th><td>                    <a class="local col3 ref" href="#33res" title='res' data-ref="33res">res</a> = -<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="198">198</th><td>                    <b>goto</b> <a class="lbl" href="#40done_close" data-ref="40done_close">done_close</a>;</td></tr>
+<tr><th id="199">199</th><td>                }</td></tr>
+<tr><th id="200">200</th><td>            } <b>else</b> {</td></tr>
+<tr><th id="201">201</th><td>                <b>if</b> (<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#36" title="(((sb.st_mode) &amp; 00170000) == 0120000)" data-ref="_M/S_ISLNK">S_ISLNK</a>(<a class="local col5 ref" href="#35sb" title='sb' data-ref="35sb">sb</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_mode' data-ref="stat::st_mode">st_mode</a>)) {</td></tr>
+<tr><th id="202">202</th><td>                    <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Symbolic links are not allowed: %s&quot;, buf))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Symbolic links are not allowed: %s"</q>, <a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>);</td></tr>
+<tr><th id="203">203</th><td>                    <a class="local col3 ref" href="#33res" title='res' data-ref="33res">res</a> = -<a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno.h.html#29" title="40" data-ref="_M/ELOOP">ELOOP</a>;</td></tr>
+<tr><th id="204">204</th><td>                    <b>goto</b> <a class="lbl" href="#40done_close" data-ref="40done_close">done_close</a>;</td></tr>
+<tr><th id="205">205</th><td>                }</td></tr>
+<tr><th id="206">206</th><td>                <b>if</b> (!<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/stat.h.html#39" title="(((sb.st_mode) &amp; 00170000) == 0040000)" data-ref="_M/S_ISDIR">S_ISDIR</a>(<a class="local col5 ref" href="#35sb" title='sb' data-ref="35sb">sb</a>.<a class="ref" href="../../../bionic/libc/include/sys/stat.h.html#117" title='stat::st_mode' data-ref="stat::st_mode">st_mode</a>)) {</td></tr>
+<tr><th id="207">207</th><td>                    <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Existing segment not a directory: %s&quot;, buf))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Existing segment not a directory: %s"</q>, <a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>);</td></tr>
+<tr><th id="208">208</th><td>                    <a class="local col3 ref" href="#33res" title='res' data-ref="33res">res</a> = -<a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#45" title="20" data-ref="_M/ENOTDIR">ENOTDIR</a>;</td></tr>
+<tr><th id="209">209</th><td>                    <b>goto</b> <a class="lbl" href="#40done_close" data-ref="40done_close">done_close</a>;</td></tr>
+<tr><th id="210">210</th><td>                }</td></tr>
+<tr><th id="211">211</th><td>            }</td></tr>
+<tr><th id="212">212</th><td></td></tr>
+<tr><th id="213">213</th><td>            <i>/* Yay, segment is ready for us to step into */</i></td></tr>
+<tr><th id="214">214</th><td>            <em>int</em> <dfn class="local col1 decl" id="41next_fd" title='next_fd' data-type='int' data-ref="41next_fd">next_fd</dfn>;</td></tr>
+<tr><th id="215">215</th><td>            <b>if</b> ((<a class="local col1 ref" href="#41next_fd" title='next_fd' data-ref="41next_fd">next_fd</a> = <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#openat" title='openat' data-ref="openat">openat</a>(<a class="local col4 ref" href="#34fd" title='fd' data-ref="34fd">fd</a>, <a class="local col8 ref" href="#38segment" title='segment' data-ref="38segment">segment</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#70" title="00400000" data-ref="_M/O_NOFOLLOW">O_NOFOLLOW</a> | <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#77" title="02000000" data-ref="_M/O_CLOEXEC">O_CLOEXEC</a>)) == -<var>1</var>) {</td></tr>
+<tr><th id="216">216</th><td>                <a class="macro" href="../include/log/log.h.html#156" title="((void)__android_log_print(ANDROID_LOG_ERROR, &quot;cutils&quot;, &quot;Failed to openat(%s): %s&quot;, buf, strerror((*__errno()))))" data-ref="_M/ALOGE">ALOGE</a>(<q>"Failed to openat(%s): %s"</q>, <a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strerror" title='strerror' data-ref="strerror">strerror</a>(<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>));</td></tr>
+<tr><th id="217">217</th><td>                <a class="local col3 ref" href="#33res" title='res' data-ref="33res">res</a> = -<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="218">218</th><td>                <b>goto</b> <a class="lbl" href="#40done_close" data-ref="40done_close">done_close</a>;</td></tr>
+<tr><th id="219">219</th><td>            }</td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td>            <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col4 ref" href="#34fd" title='fd' data-ref="34fd">fd</a>);</td></tr>
+<tr><th id="222">222</th><td>            <a class="local col4 ref" href="#34fd" title='fd' data-ref="34fd">fd</a> = <a class="local col1 ref" href="#41next_fd" title='next_fd' data-ref="41next_fd">next_fd</a>;</td></tr>
+<tr><th id="223">223</th><td></td></tr>
+<tr><th id="224">224</th><td>            *<a class="local col9 ref" href="#39p" title='p' data-ref="39p">p</a> = <kbd>'/'</kbd>;</td></tr>
+<tr><th id="225">225</th><td>            <a class="local col8 ref" href="#38segment" title='segment' data-ref="38segment">segment</a> = <a class="local col9 ref" href="#39p" title='p' data-ref="39p">p</a> + <var>1</var>;</td></tr>
+<tr><th id="226">226</th><td>        }</td></tr>
+<tr><th id="227">227</th><td>        <a class="local col9 ref" href="#39p" title='p' data-ref="39p">p</a>++;</td></tr>
+<tr><th id="228">228</th><td>    }</td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td><dfn class="lbl" id="40done_close" data-ref="40done_close">done_close</dfn>:</td></tr>
+<tr><th id="231">231</th><td>    <a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col4 ref" href="#34fd" title='fd' data-ref="34fd">fd</a>);</td></tr>
+<tr><th id="232">232</th><td><dfn class="lbl" id="37done" data-ref="37done">done</dfn>:</td></tr>
+<tr><th id="233">233</th><td>    <a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col6 ref" href="#36buf" title='buf' data-ref="36buf">buf</a>);</td></tr>
+<tr><th id="234">234</th><td>    <b>return</b> <a class="local col3 ref" href="#33res" title='res' data-ref="33res">res</a>;</td></tr>
+<tr><th id="235">235</th><td>}</td></tr>
+<tr><th id="236">236</th><td></td></tr>
+<tr><th id="237">237</th><td><u>#<span data-ppcond="151">endif</span></u></td></tr>
+<tr><th id="238">238</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

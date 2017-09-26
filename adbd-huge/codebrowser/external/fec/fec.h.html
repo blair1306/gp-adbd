@@ -1,0 +1,365 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>fec.h source code [codebrowser/external/fec/fec.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/fec/fec.h'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>fec</a>/<a href='fec.h.html'>fec.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* User include file for libfec</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright 2004, Phil Karn, KA9Q</i></td></tr>
+<tr><th id="3">3</th><td><i> * May be used under the terms of the GNU Lesser General Public License (LGPL)</i></td></tr>
+<tr><th id="4">4</th><td><i> */</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><u>#<span data-ppcond="6">ifndef</span> <span class="macro" data-ref="_M/_FEC_H_">_FEC_H_</span></u></td></tr>
+<tr><th id="7">7</th><td><u>#define <dfn class="macro" id="_M/_FEC_H_" data-ref="_M/_FEC_H_">_FEC_H_</dfn></u></td></tr>
+<tr><th id="8">8</th><td></td></tr>
+<tr><th id="9">9</th><td><i>/* r=1/2 k=7 convolutional encoder polynomials</i></td></tr>
+<tr><th id="10">10</th><td><i> * The NASA-DSN convention is to use V27POLYA inverted, then V27POLYB</i></td></tr>
+<tr><th id="11">11</th><td><i> * The CCSDS/NASA-GSFC convention is to use V27POLYB, then V27POLYA inverted</i></td></tr>
+<tr><th id="12">12</th><td><i> */</i></td></tr>
+<tr><th id="13">13</th><td><u>#define	<dfn class="macro" id="_M/V27POLYA" data-ref="_M/V27POLYA">V27POLYA</dfn>	0x6d</u></td></tr>
+<tr><th id="14">14</th><td><u>#define	<dfn class="macro" id="_M/V27POLYB" data-ref="_M/V27POLYB">V27POLYB</dfn>	0x4f</u></td></tr>
+<tr><th id="15">15</th><td></td></tr>
+<tr><th id="16">16</th><td><em>void</em> *<dfn class="decl" id="create_viterbi27" title='create_viterbi27' data-ref="create_viterbi27">create_viterbi27</dfn>(<em>int</em> <dfn class="local col1 decl" id="1len" title='len' data-type='int' data-ref="1len">len</dfn>);</td></tr>
+<tr><th id="17">17</th><td><em>void</em> <dfn class="decl" id="set_viterbi27_polynomial" title='set_viterbi27_polynomial' data-ref="set_viterbi27_polynomial">set_viterbi27_polynomial</dfn>(<em>int</em> <dfn class="local col2 decl" id="2polys" title='polys' data-type='int *' data-ref="2polys">polys</dfn>[<var>2</var>]);</td></tr>
+<tr><th id="18">18</th><td><em>int</em> <dfn class="decl" id="init_viterbi27" title='init_viterbi27' data-ref="init_viterbi27">init_viterbi27</dfn>(<em>void</em> *<dfn class="local col3 decl" id="3vp" title='vp' data-type='void *' data-ref="3vp">vp</dfn>,<em>int</em> <dfn class="local col4 decl" id="4starting_state" title='starting_state' data-type='int' data-ref="4starting_state">starting_state</dfn>);</td></tr>
+<tr><th id="19">19</th><td><em>int</em> <dfn class="decl" id="update_viterbi27_blk" title='update_viterbi27_blk' data-ref="update_viterbi27_blk">update_viterbi27_blk</dfn>(<em>void</em> *<dfn class="local col5 decl" id="5vp" title='vp' data-type='void *' data-ref="5vp">vp</dfn>,<em>unsigned</em> <em>char</em> <dfn class="local col6 decl" id="6sym" title='sym' data-type='unsigned char *' data-ref="6sym">sym</dfn>[],<em>int</em> <dfn class="local col7 decl" id="7npairs" title='npairs' data-type='int' data-ref="7npairs">npairs</dfn>);</td></tr>
+<tr><th id="20">20</th><td><em>int</em> <dfn class="decl" id="chainback_viterbi27" title='chainback_viterbi27' data-ref="chainback_viterbi27">chainback_viterbi27</dfn>(<em>void</em> *<dfn class="local col8 decl" id="8vp" title='vp' data-type='void *' data-ref="8vp">vp</dfn>, <em>unsigned</em> <em>char</em> *<dfn class="local col9 decl" id="9data" title='data' data-type='unsigned char *' data-ref="9data">data</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col0 decl" id="10nbits" title='nbits' data-type='unsigned int' data-ref="10nbits">nbits</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col1 decl" id="11endstate" title='endstate' data-type='unsigned int' data-ref="11endstate">endstate</dfn>);</td></tr>
+<tr><th id="21">21</th><td><em>void</em> <dfn class="decl" id="delete_viterbi27" title='delete_viterbi27' data-ref="delete_viterbi27">delete_viterbi27</dfn>(<em>void</em> *<dfn class="local col2 decl" id="12vp" title='vp' data-type='void *' data-ref="12vp">vp</dfn>);</td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="23">ifdef</span> <span class="macro" data-ref="_M/__VEC__">__VEC__</span></u></td></tr>
+<tr><th id="24">24</th><td><em>void</em> *create_viterbi27_av(<em>int</em> len);</td></tr>
+<tr><th id="25">25</th><td><em>void</em> set_viterbi27_polynomial_av(<em>int</em> polys[<var>2</var>]);</td></tr>
+<tr><th id="26">26</th><td><em>int</em> init_viterbi27_av(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="27">27</th><td><em>int</em> chainback_viterbi27_av(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="28">28</th><td><em>void</em> delete_viterbi27_av(<em>void</em> *p);</td></tr>
+<tr><th id="29">29</th><td><em>int</em> update_viterbi27_blk_av(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="30">30</th><td><u>#<span data-ppcond="23">endif</span></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#<span data-ppcond="32">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="33">33</th><td><em>void</em> *create_viterbi27_mmx(<em>int</em> len);</td></tr>
+<tr><th id="34">34</th><td><em>void</em> set_viterbi27_polynomial_mmx(<em>int</em> polys[<var>2</var>]);</td></tr>
+<tr><th id="35">35</th><td><em>int</em> init_viterbi27_mmx(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="36">36</th><td><em>int</em> chainback_viterbi27_mmx(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="37">37</th><td><em>void</em> delete_viterbi27_mmx(<em>void</em> *p);</td></tr>
+<tr><th id="38">38</th><td><em>int</em> update_viterbi27_blk_mmx(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><em>void</em> *create_viterbi27_sse(<em>int</em> len);</td></tr>
+<tr><th id="41">41</th><td><em>void</em> set_viterbi27_polynomial_sse(<em>int</em> polys[<var>2</var>]);</td></tr>
+<tr><th id="42">42</th><td><em>int</em> init_viterbi27_sse(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="43">43</th><td><em>int</em> chainback_viterbi27_sse(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="44">44</th><td><em>void</em> delete_viterbi27_sse(<em>void</em> *p);</td></tr>
+<tr><th id="45">45</th><td><em>int</em> update_viterbi27_blk_sse(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td><em>void</em> *create_viterbi27_sse2(<em>int</em> len);</td></tr>
+<tr><th id="48">48</th><td><em>void</em> set_viterbi27_polynomial_sse2(<em>int</em> polys[<var>2</var>]);</td></tr>
+<tr><th id="49">49</th><td><em>int</em> init_viterbi27_sse2(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="50">50</th><td><em>int</em> chainback_viterbi27_sse2(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="51">51</th><td><em>void</em> delete_viterbi27_sse2(<em>void</em> *p);</td></tr>
+<tr><th id="52">52</th><td><em>int</em> update_viterbi27_blk_sse2(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="53">53</th><td><u>#<span data-ppcond="32">endif</span></u></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><em>void</em> *<dfn class="decl" id="create_viterbi27_port" title='create_viterbi27_port' data-ref="create_viterbi27_port">create_viterbi27_port</dfn>(<em>int</em> <dfn class="local col3 decl" id="13len" title='len' data-type='int' data-ref="13len">len</dfn>);</td></tr>
+<tr><th id="56">56</th><td><em>void</em> <dfn class="decl" id="set_viterbi27_polynomial_port" title='set_viterbi27_polynomial_port' data-ref="set_viterbi27_polynomial_port">set_viterbi27_polynomial_port</dfn>(<em>int</em> <dfn class="local col4 decl" id="14polys" title='polys' data-type='int *' data-ref="14polys">polys</dfn>[<var>2</var>]);</td></tr>
+<tr><th id="57">57</th><td><em>int</em> <dfn class="decl" id="init_viterbi27_port" title='init_viterbi27_port' data-ref="init_viterbi27_port">init_viterbi27_port</dfn>(<em>void</em> *<dfn class="local col5 decl" id="15p" title='p' data-type='void *' data-ref="15p">p</dfn>,<em>int</em> <dfn class="local col6 decl" id="16starting_state" title='starting_state' data-type='int' data-ref="16starting_state">starting_state</dfn>);</td></tr>
+<tr><th id="58">58</th><td><em>int</em> <dfn class="decl" id="chainback_viterbi27_port" title='chainback_viterbi27_port' data-ref="chainback_viterbi27_port">chainback_viterbi27_port</dfn>(<em>void</em> *<dfn class="local col7 decl" id="17p" title='p' data-type='void *' data-ref="17p">p</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col8 decl" id="18data" title='data' data-type='unsigned char *' data-ref="18data">data</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col9 decl" id="19nbits" title='nbits' data-type='unsigned int' data-ref="19nbits">nbits</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col0 decl" id="20endstate" title='endstate' data-type='unsigned int' data-ref="20endstate">endstate</dfn>);</td></tr>
+<tr><th id="59">59</th><td><em>void</em> <dfn class="decl" id="delete_viterbi27_port" title='delete_viterbi27_port' data-ref="delete_viterbi27_port">delete_viterbi27_port</dfn>(<em>void</em> *<dfn class="local col1 decl" id="21p" title='p' data-type='void *' data-ref="21p">p</dfn>);</td></tr>
+<tr><th id="60">60</th><td><em>int</em> <dfn class="decl" id="update_viterbi27_blk_port" title='update_viterbi27_blk_port' data-ref="update_viterbi27_blk_port">update_viterbi27_blk_port</dfn>(<em>void</em> *<dfn class="local col2 decl" id="22p" title='p' data-type='void *' data-ref="22p">p</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col3 decl" id="23syms" title='syms' data-type='unsigned char *' data-ref="23syms">syms</dfn>,<em>int</em> <dfn class="local col4 decl" id="24nbits" title='nbits' data-type='int' data-ref="24nbits">nbits</dfn>);</td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><i>/* r=1/2 k=9 convolutional encoder polynomials */</i></td></tr>
+<tr><th id="63">63</th><td><u>#define	<dfn class="macro" id="_M/V29POLYA" data-ref="_M/V29POLYA">V29POLYA</dfn>	0x1af</u></td></tr>
+<tr><th id="64">64</th><td><u>#define	<dfn class="macro" id="_M/V29POLYB" data-ref="_M/V29POLYB">V29POLYB</dfn>	0x11d</u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><em>void</em> *<dfn class="decl" id="create_viterbi29" title='create_viterbi29' data-ref="create_viterbi29">create_viterbi29</dfn>(<em>int</em> <dfn class="local col5 decl" id="25len" title='len' data-type='int' data-ref="25len">len</dfn>);</td></tr>
+<tr><th id="67">67</th><td><em>void</em> <dfn class="decl" id="set_viterbi29_polynomial" title='set_viterbi29_polynomial' data-ref="set_viterbi29_polynomial">set_viterbi29_polynomial</dfn>(<em>int</em> <dfn class="local col6 decl" id="26polys" title='polys' data-type='int *' data-ref="26polys">polys</dfn>[<var>2</var>]);</td></tr>
+<tr><th id="68">68</th><td><em>int</em> <dfn class="decl" id="init_viterbi29" title='init_viterbi29' data-ref="init_viterbi29">init_viterbi29</dfn>(<em>void</em> *<dfn class="local col7 decl" id="27vp" title='vp' data-type='void *' data-ref="27vp">vp</dfn>,<em>int</em> <dfn class="local col8 decl" id="28starting_state" title='starting_state' data-type='int' data-ref="28starting_state">starting_state</dfn>);</td></tr>
+<tr><th id="69">69</th><td><em>int</em> <dfn class="decl" id="update_viterbi29_blk" title='update_viterbi29_blk' data-ref="update_viterbi29_blk">update_viterbi29_blk</dfn>(<em>void</em> *<dfn class="local col9 decl" id="29vp" title='vp' data-type='void *' data-ref="29vp">vp</dfn>,<em>unsigned</em> <em>char</em> <dfn class="local col0 decl" id="30syms" title='syms' data-type='unsigned char *' data-ref="30syms">syms</dfn>[],<em>int</em> <dfn class="local col1 decl" id="31nbits" title='nbits' data-type='int' data-ref="31nbits">nbits</dfn>);</td></tr>
+<tr><th id="70">70</th><td><em>int</em> <dfn class="decl" id="chainback_viterbi29" title='chainback_viterbi29' data-ref="chainback_viterbi29">chainback_viterbi29</dfn>(<em>void</em> *<dfn class="local col2 decl" id="32vp" title='vp' data-type='void *' data-ref="32vp">vp</dfn>, <em>unsigned</em> <em>char</em> *<dfn class="local col3 decl" id="33data" title='data' data-type='unsigned char *' data-ref="33data">data</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col4 decl" id="34nbits" title='nbits' data-type='unsigned int' data-ref="34nbits">nbits</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col5 decl" id="35endstate" title='endstate' data-type='unsigned int' data-ref="35endstate">endstate</dfn>);</td></tr>
+<tr><th id="71">71</th><td><em>void</em> <dfn class="decl" id="delete_viterbi29" title='delete_viterbi29' data-ref="delete_viterbi29">delete_viterbi29</dfn>(<em>void</em> *<dfn class="local col6 decl" id="36vp" title='vp' data-type='void *' data-ref="36vp">vp</dfn>);</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><u>#<span data-ppcond="73">ifdef</span> <span class="macro" data-ref="_M/__VEC__">__VEC__</span></u></td></tr>
+<tr><th id="74">74</th><td><em>void</em> *create_viterbi29_av(<em>int</em> len);</td></tr>
+<tr><th id="75">75</th><td><em>void</em> set_viterbi29_polynomial_av(<em>int</em> polys[<var>2</var>]);</td></tr>
+<tr><th id="76">76</th><td><em>int</em> init_viterbi29_av(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="77">77</th><td><em>int</em> chainback_viterbi29_av(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="78">78</th><td><em>void</em> delete_viterbi29_av(<em>void</em> *p);</td></tr>
+<tr><th id="79">79</th><td><em>int</em> update_viterbi29_blk_av(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="80">80</th><td><u>#<span data-ppcond="73">endif</span></u></td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><u>#<span data-ppcond="82">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="83">83</th><td><em>void</em> *create_viterbi29_mmx(<em>int</em> len);</td></tr>
+<tr><th id="84">84</th><td><em>void</em> set_viterbi29_polynomial_mmx(<em>int</em> polys[<var>2</var>]);</td></tr>
+<tr><th id="85">85</th><td><em>int</em> init_viterbi29_mmx(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="86">86</th><td><em>int</em> chainback_viterbi29_mmx(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="87">87</th><td><em>void</em> delete_viterbi29_mmx(<em>void</em> *p);</td></tr>
+<tr><th id="88">88</th><td><em>int</em> update_viterbi29_blk_mmx(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td><em>void</em> *create_viterbi29_sse(<em>int</em> len);</td></tr>
+<tr><th id="91">91</th><td><em>void</em> set_viterbi29_polynomial_sse(<em>int</em> polys[<var>2</var>]);</td></tr>
+<tr><th id="92">92</th><td><em>int</em> init_viterbi29_sse(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="93">93</th><td><em>int</em> chainback_viterbi29_sse(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="94">94</th><td><em>void</em> delete_viterbi29_sse(<em>void</em> *p);</td></tr>
+<tr><th id="95">95</th><td><em>int</em> update_viterbi29_blk_sse(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><em>void</em> *create_viterbi29_sse2(<em>int</em> len);</td></tr>
+<tr><th id="98">98</th><td><em>void</em> set_viterbi29_polynomial_sse2(<em>int</em> polys[<var>2</var>]);</td></tr>
+<tr><th id="99">99</th><td><em>int</em> init_viterbi29_sse2(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="100">100</th><td><em>int</em> chainback_viterbi29_sse2(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="101">101</th><td><em>void</em> delete_viterbi29_sse2(<em>void</em> *p);</td></tr>
+<tr><th id="102">102</th><td><em>int</em> update_viterbi29_blk_sse2(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="103">103</th><td><u>#<span data-ppcond="82">endif</span></u></td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><em>void</em> *<dfn class="decl" id="create_viterbi29_port" title='create_viterbi29_port' data-ref="create_viterbi29_port">create_viterbi29_port</dfn>(<em>int</em> <dfn class="local col7 decl" id="37len" title='len' data-type='int' data-ref="37len">len</dfn>);</td></tr>
+<tr><th id="106">106</th><td><em>void</em> <dfn class="decl" id="set_viterbi29_polynomial_port" title='set_viterbi29_polynomial_port' data-ref="set_viterbi29_polynomial_port">set_viterbi29_polynomial_port</dfn>(<em>int</em> <dfn class="local col8 decl" id="38polys" title='polys' data-type='int *' data-ref="38polys">polys</dfn>[<var>2</var>]);</td></tr>
+<tr><th id="107">107</th><td><em>int</em> <dfn class="decl" id="init_viterbi29_port" title='init_viterbi29_port' data-ref="init_viterbi29_port">init_viterbi29_port</dfn>(<em>void</em> *<dfn class="local col9 decl" id="39p" title='p' data-type='void *' data-ref="39p">p</dfn>,<em>int</em> <dfn class="local col0 decl" id="40starting_state" title='starting_state' data-type='int' data-ref="40starting_state">starting_state</dfn>);</td></tr>
+<tr><th id="108">108</th><td><em>int</em> <dfn class="decl" id="chainback_viterbi29_port" title='chainback_viterbi29_port' data-ref="chainback_viterbi29_port">chainback_viterbi29_port</dfn>(<em>void</em> *<dfn class="local col1 decl" id="41p" title='p' data-type='void *' data-ref="41p">p</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col2 decl" id="42data" title='data' data-type='unsigned char *' data-ref="42data">data</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col3 decl" id="43nbits" title='nbits' data-type='unsigned int' data-ref="43nbits">nbits</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col4 decl" id="44endstate" title='endstate' data-type='unsigned int' data-ref="44endstate">endstate</dfn>);</td></tr>
+<tr><th id="109">109</th><td><em>void</em> <dfn class="decl" id="delete_viterbi29_port" title='delete_viterbi29_port' data-ref="delete_viterbi29_port">delete_viterbi29_port</dfn>(<em>void</em> *<dfn class="local col5 decl" id="45p" title='p' data-type='void *' data-ref="45p">p</dfn>);</td></tr>
+<tr><th id="110">110</th><td><em>int</em> <dfn class="decl" id="update_viterbi29_blk_port" title='update_viterbi29_blk_port' data-ref="update_viterbi29_blk_port">update_viterbi29_blk_port</dfn>(<em>void</em> *<dfn class="local col6 decl" id="46p" title='p' data-type='void *' data-ref="46p">p</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col7 decl" id="47syms" title='syms' data-type='unsigned char *' data-ref="47syms">syms</dfn>,<em>int</em> <dfn class="local col8 decl" id="48nbits" title='nbits' data-type='int' data-ref="48nbits">nbits</dfn>);</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><i>/* r=1/3 k=9 convolutional encoder polynomials */</i></td></tr>
+<tr><th id="113">113</th><td><u>#define	<dfn class="macro" id="_M/V39POLYA" data-ref="_M/V39POLYA">V39POLYA</dfn>	0x1ed</u></td></tr>
+<tr><th id="114">114</th><td><u>#define	<dfn class="macro" id="_M/V39POLYB" data-ref="_M/V39POLYB">V39POLYB</dfn>	0x19b</u></td></tr>
+<tr><th id="115">115</th><td><u>#define	<dfn class="macro" id="_M/V39POLYC" data-ref="_M/V39POLYC">V39POLYC</dfn>	0x127</u></td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td><em>void</em> *<dfn class="decl" id="create_viterbi39" title='create_viterbi39' data-ref="create_viterbi39">create_viterbi39</dfn>(<em>int</em> <dfn class="local col9 decl" id="49len" title='len' data-type='int' data-ref="49len">len</dfn>);</td></tr>
+<tr><th id="118">118</th><td><em>void</em> <dfn class="decl" id="set_viterbi39_polynomial" title='set_viterbi39_polynomial' data-ref="set_viterbi39_polynomial">set_viterbi39_polynomial</dfn>(<em>int</em> <dfn class="local col0 decl" id="50polys" title='polys' data-type='int *' data-ref="50polys">polys</dfn>[<var>3</var>]);</td></tr>
+<tr><th id="119">119</th><td><em>int</em> <dfn class="decl" id="init_viterbi39" title='init_viterbi39' data-ref="init_viterbi39">init_viterbi39</dfn>(<em>void</em> *<dfn class="local col1 decl" id="51vp" title='vp' data-type='void *' data-ref="51vp">vp</dfn>,<em>int</em> <dfn class="local col2 decl" id="52starting_state" title='starting_state' data-type='int' data-ref="52starting_state">starting_state</dfn>);</td></tr>
+<tr><th id="120">120</th><td><em>int</em> <dfn class="decl" id="update_viterbi39_blk" title='update_viterbi39_blk' data-ref="update_viterbi39_blk">update_viterbi39_blk</dfn>(<em>void</em> *<dfn class="local col3 decl" id="53vp" title='vp' data-type='void *' data-ref="53vp">vp</dfn>,<em>unsigned</em> <em>char</em> <dfn class="local col4 decl" id="54syms" title='syms' data-type='unsigned char *' data-ref="54syms">syms</dfn>[],<em>int</em> <dfn class="local col5 decl" id="55nbits" title='nbits' data-type='int' data-ref="55nbits">nbits</dfn>);</td></tr>
+<tr><th id="121">121</th><td><em>int</em> <dfn class="decl" id="chainback_viterbi39" title='chainback_viterbi39' data-ref="chainback_viterbi39">chainback_viterbi39</dfn>(<em>void</em> *<dfn class="local col6 decl" id="56vp" title='vp' data-type='void *' data-ref="56vp">vp</dfn>, <em>unsigned</em> <em>char</em> *<dfn class="local col7 decl" id="57data" title='data' data-type='unsigned char *' data-ref="57data">data</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col8 decl" id="58nbits" title='nbits' data-type='unsigned int' data-ref="58nbits">nbits</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col9 decl" id="59endstate" title='endstate' data-type='unsigned int' data-ref="59endstate">endstate</dfn>);</td></tr>
+<tr><th id="122">122</th><td><em>void</em> <dfn class="decl" id="delete_viterbi39" title='delete_viterbi39' data-ref="delete_viterbi39">delete_viterbi39</dfn>(<em>void</em> *<dfn class="local col0 decl" id="60vp" title='vp' data-type='void *' data-ref="60vp">vp</dfn>);</td></tr>
+<tr><th id="123">123</th><td></td></tr>
+<tr><th id="124">124</th><td><u>#<span data-ppcond="124">ifdef</span> <span class="macro" data-ref="_M/__VEC__">__VEC__</span></u></td></tr>
+<tr><th id="125">125</th><td><em>void</em> *create_viterbi39_av(<em>int</em> len);</td></tr>
+<tr><th id="126">126</th><td><em>void</em> set_viterbi39_polynomial_av(<em>int</em> polys[<var>3</var>]);</td></tr>
+<tr><th id="127">127</th><td><em>int</em> init_viterbi39_av(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="128">128</th><td><em>int</em> chainback_viterbi39_av(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="129">129</th><td><em>void</em> delete_viterbi39_av(<em>void</em> *p);</td></tr>
+<tr><th id="130">130</th><td><em>int</em> update_viterbi39_blk_av(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="131">131</th><td><u>#<span data-ppcond="124">endif</span></u></td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td><u>#<span data-ppcond="133">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="134">134</th><td><em>void</em> *create_viterbi39_mmx(<em>int</em> len);</td></tr>
+<tr><th id="135">135</th><td><em>void</em> set_viterbi39_polynomial_mmx(<em>int</em> polys[<var>3</var>]);</td></tr>
+<tr><th id="136">136</th><td><em>int</em> init_viterbi39_mmx(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="137">137</th><td><em>int</em> chainback_viterbi39_mmx(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="138">138</th><td><em>void</em> delete_viterbi39_mmx(<em>void</em> *p);</td></tr>
+<tr><th id="139">139</th><td><em>int</em> update_viterbi39_blk_mmx(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="140">140</th><td></td></tr>
+<tr><th id="141">141</th><td><em>void</em> *create_viterbi39_sse(<em>int</em> len);</td></tr>
+<tr><th id="142">142</th><td><em>void</em> set_viterbi39_polynomial_sse(<em>int</em> polys[<var>3</var>]);</td></tr>
+<tr><th id="143">143</th><td><em>int</em> init_viterbi39_sse(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="144">144</th><td><em>int</em> chainback_viterbi39_sse(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="145">145</th><td><em>void</em> delete_viterbi39_sse(<em>void</em> *p);</td></tr>
+<tr><th id="146">146</th><td><em>int</em> update_viterbi39_blk_sse(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td><em>void</em> *create_viterbi39_sse2(<em>int</em> len);</td></tr>
+<tr><th id="149">149</th><td><em>void</em> set_viterbi39_polynomial_sse2(<em>int</em> polys[<var>3</var>]);</td></tr>
+<tr><th id="150">150</th><td><em>int</em> init_viterbi39_sse2(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="151">151</th><td><em>int</em> chainback_viterbi39_sse2(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="152">152</th><td><em>void</em> delete_viterbi39_sse2(<em>void</em> *p);</td></tr>
+<tr><th id="153">153</th><td><em>int</em> update_viterbi39_blk_sse2(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="154">154</th><td><u>#<span data-ppcond="133">endif</span></u></td></tr>
+<tr><th id="155">155</th><td></td></tr>
+<tr><th id="156">156</th><td><em>void</em> *<dfn class="decl" id="create_viterbi39_port" title='create_viterbi39_port' data-ref="create_viterbi39_port">create_viterbi39_port</dfn>(<em>int</em> <dfn class="local col1 decl" id="61len" title='len' data-type='int' data-ref="61len">len</dfn>);</td></tr>
+<tr><th id="157">157</th><td><em>void</em> <dfn class="decl" id="set_viterbi39_polynomial_port" title='set_viterbi39_polynomial_port' data-ref="set_viterbi39_polynomial_port">set_viterbi39_polynomial_port</dfn>(<em>int</em> <dfn class="local col2 decl" id="62polys" title='polys' data-type='int *' data-ref="62polys">polys</dfn>[<var>3</var>]);</td></tr>
+<tr><th id="158">158</th><td><em>int</em> <dfn class="decl" id="init_viterbi39_port" title='init_viterbi39_port' data-ref="init_viterbi39_port">init_viterbi39_port</dfn>(<em>void</em> *<dfn class="local col3 decl" id="63p" title='p' data-type='void *' data-ref="63p">p</dfn>,<em>int</em> <dfn class="local col4 decl" id="64starting_state" title='starting_state' data-type='int' data-ref="64starting_state">starting_state</dfn>);</td></tr>
+<tr><th id="159">159</th><td><em>int</em> <dfn class="decl" id="chainback_viterbi39_port" title='chainback_viterbi39_port' data-ref="chainback_viterbi39_port">chainback_viterbi39_port</dfn>(<em>void</em> *<dfn class="local col5 decl" id="65p" title='p' data-type='void *' data-ref="65p">p</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col6 decl" id="66data" title='data' data-type='unsigned char *' data-ref="66data">data</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col7 decl" id="67nbits" title='nbits' data-type='unsigned int' data-ref="67nbits">nbits</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col8 decl" id="68endstate" title='endstate' data-type='unsigned int' data-ref="68endstate">endstate</dfn>);</td></tr>
+<tr><th id="160">160</th><td><em>void</em> <dfn class="decl" id="delete_viterbi39_port" title='delete_viterbi39_port' data-ref="delete_viterbi39_port">delete_viterbi39_port</dfn>(<em>void</em> *<dfn class="local col9 decl" id="69p" title='p' data-type='void *' data-ref="69p">p</dfn>);</td></tr>
+<tr><th id="161">161</th><td><em>int</em> <dfn class="decl" id="update_viterbi39_blk_port" title='update_viterbi39_blk_port' data-ref="update_viterbi39_blk_port">update_viterbi39_blk_port</dfn>(<em>void</em> *<dfn class="local col0 decl" id="70p" title='p' data-type='void *' data-ref="70p">p</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col1 decl" id="71syms" title='syms' data-type='unsigned char *' data-ref="71syms">syms</dfn>,<em>int</em> <dfn class="local col2 decl" id="72nbits" title='nbits' data-type='int' data-ref="72nbits">nbits</dfn>);</td></tr>
+<tr><th id="162">162</th><td></td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><i>/* r=1/6 k=15 Cassini convolutional encoder polynomials without symbol inversion</i></td></tr>
+<tr><th id="165">165</th><td><i> * dfree = 56</i></td></tr>
+<tr><th id="166">166</th><td><i> * These bits may be left-right flipped from some textbook representations;</i></td></tr>
+<tr><th id="167">167</th><td><i> * here I have the bits entering the shift register from the right (low) end</i></td></tr>
+<tr><th id="168">168</th><td><i> *</i></td></tr>
+<tr><th id="169">169</th><td><i> * Some other spacecraft use the same code, but with the polynomials in a different order.</i></td></tr>
+<tr><th id="170">170</th><td><i> * E.g., Mars Pathfinder and STEREO swap POLYC and POLYD. All use alternate symbol inversion,</i></td></tr>
+<tr><th id="171">171</th><td><i> * so use set_viterbi615_polynomial() as appropriate.</i></td></tr>
+<tr><th id="172">172</th><td><i> */</i></td></tr>
+<tr><th id="173">173</th><td><u>#define	<dfn class="macro" id="_M/V615POLYA" data-ref="_M/V615POLYA">V615POLYA</dfn>	042631</u></td></tr>
+<tr><th id="174">174</th><td><u>#define	<dfn class="macro" id="_M/V615POLYB" data-ref="_M/V615POLYB">V615POLYB</dfn>	047245</u></td></tr>
+<tr><th id="175">175</th><td><u>#define <dfn class="macro" id="_M/V615POLYC" data-ref="_M/V615POLYC">V615POLYC</dfn>       056507</u></td></tr>
+<tr><th id="176">176</th><td><u>#define <dfn class="macro" id="_M/V615POLYD" data-ref="_M/V615POLYD">V615POLYD</dfn>       073363</u></td></tr>
+<tr><th id="177">177</th><td><u>#define <dfn class="macro" id="_M/V615POLYE" data-ref="_M/V615POLYE">V615POLYE</dfn>       077267</u></td></tr>
+<tr><th id="178">178</th><td><u>#define <dfn class="macro" id="_M/V615POLYF" data-ref="_M/V615POLYF">V615POLYF</dfn>       064537</u></td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td><em>void</em> *<dfn class="decl" id="create_viterbi615" title='create_viterbi615' data-ref="create_viterbi615">create_viterbi615</dfn>(<em>int</em> <dfn class="local col3 decl" id="73len" title='len' data-type='int' data-ref="73len">len</dfn>);</td></tr>
+<tr><th id="181">181</th><td><em>void</em> <dfn class="decl" id="set_viterbi615_polynomial" title='set_viterbi615_polynomial' data-ref="set_viterbi615_polynomial">set_viterbi615_polynomial</dfn>(<em>int</em> <dfn class="local col4 decl" id="74polys" title='polys' data-type='int *' data-ref="74polys">polys</dfn>[<var>6</var>]);</td></tr>
+<tr><th id="182">182</th><td><em>int</em> <dfn class="decl" id="init_viterbi615" title='init_viterbi615' data-ref="init_viterbi615">init_viterbi615</dfn>(<em>void</em> *<dfn class="local col5 decl" id="75vp" title='vp' data-type='void *' data-ref="75vp">vp</dfn>,<em>int</em> <dfn class="local col6 decl" id="76starting_state" title='starting_state' data-type='int' data-ref="76starting_state">starting_state</dfn>);</td></tr>
+<tr><th id="183">183</th><td><em>int</em> <dfn class="decl" id="update_viterbi615_blk" title='update_viterbi615_blk' data-ref="update_viterbi615_blk">update_viterbi615_blk</dfn>(<em>void</em> *<dfn class="local col7 decl" id="77vp" title='vp' data-type='void *' data-ref="77vp">vp</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col8 decl" id="78syms" title='syms' data-type='unsigned char *' data-ref="78syms">syms</dfn>,<em>int</em> <dfn class="local col9 decl" id="79nbits" title='nbits' data-type='int' data-ref="79nbits">nbits</dfn>);</td></tr>
+<tr><th id="184">184</th><td><em>int</em> <dfn class="decl" id="chainback_viterbi615" title='chainback_viterbi615' data-ref="chainback_viterbi615">chainback_viterbi615</dfn>(<em>void</em> *<dfn class="local col0 decl" id="80vp" title='vp' data-type='void *' data-ref="80vp">vp</dfn>, <em>unsigned</em> <em>char</em> *<dfn class="local col1 decl" id="81data" title='data' data-type='unsigned char *' data-ref="81data">data</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col2 decl" id="82nbits" title='nbits' data-type='unsigned int' data-ref="82nbits">nbits</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col3 decl" id="83endstate" title='endstate' data-type='unsigned int' data-ref="83endstate">endstate</dfn>);</td></tr>
+<tr><th id="185">185</th><td><em>void</em> <dfn class="decl" id="delete_viterbi615" title='delete_viterbi615' data-ref="delete_viterbi615">delete_viterbi615</dfn>(<em>void</em> *<dfn class="local col4 decl" id="84vp" title='vp' data-type='void *' data-ref="84vp">vp</dfn>);</td></tr>
+<tr><th id="186">186</th><td></td></tr>
+<tr><th id="187">187</th><td><u>#<span data-ppcond="187">ifdef</span> <span class="macro" data-ref="_M/__VEC__">__VEC__</span></u></td></tr>
+<tr><th id="188">188</th><td><em>void</em> *create_viterbi615_av(<em>int</em> len);</td></tr>
+<tr><th id="189">189</th><td><em>void</em> set_viterbi615_polynomial_av(<em>int</em> polys[<var>6</var>]);</td></tr>
+<tr><th id="190">190</th><td><em>int</em> init_viterbi615_av(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="191">191</th><td><em>int</em> chainback_viterbi615_av(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="192">192</th><td><em>void</em> delete_viterbi615_av(<em>void</em> *p);</td></tr>
+<tr><th id="193">193</th><td><em>int</em> update_viterbi615_blk_av(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="194">194</th><td><u>#<span data-ppcond="187">endif</span></u></td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td><u>#<span data-ppcond="196">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="197">197</th><td><em>void</em> *create_viterbi615_mmx(<em>int</em> len);</td></tr>
+<tr><th id="198">198</th><td><em>void</em> set_viterbi615_polynomial_mmx(<em>int</em> polys[<var>6</var>]);</td></tr>
+<tr><th id="199">199</th><td><em>int</em> init_viterbi615_mmx(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="200">200</th><td><em>int</em> chainback_viterbi615_mmx(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="201">201</th><td><em>void</em> delete_viterbi615_mmx(<em>void</em> *p);</td></tr>
+<tr><th id="202">202</th><td><em>int</em> update_viterbi615_blk_mmx(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="203">203</th><td></td></tr>
+<tr><th id="204">204</th><td><em>void</em> *create_viterbi615_sse(<em>int</em> len);</td></tr>
+<tr><th id="205">205</th><td><em>void</em> set_viterbi615_polynomial_sse(<em>int</em> polys[<var>6</var>]);</td></tr>
+<tr><th id="206">206</th><td><em>int</em> init_viterbi615_sse(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="207">207</th><td><em>int</em> chainback_viterbi615_sse(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="208">208</th><td><em>void</em> delete_viterbi615_sse(<em>void</em> *p);</td></tr>
+<tr><th id="209">209</th><td><em>int</em> update_viterbi615_blk_sse(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="210">210</th><td></td></tr>
+<tr><th id="211">211</th><td><em>void</em> *create_viterbi615_sse2(<em>int</em> len);</td></tr>
+<tr><th id="212">212</th><td><em>void</em> set_viterbi615_polynomial_sse2(<em>int</em> polys[<var>6</var>]);</td></tr>
+<tr><th id="213">213</th><td><em>int</em> init_viterbi615_sse2(<em>void</em> *p,<em>int</em> starting_state);</td></tr>
+<tr><th id="214">214</th><td><em>int</em> chainback_viterbi615_sse2(<em>void</em> *p,<em>unsigned</em> <em>char</em> *data,<em>unsigned</em> <em>int</em> nbits,<em>unsigned</em> <em>int</em> endstate);</td></tr>
+<tr><th id="215">215</th><td><em>void</em> delete_viterbi615_sse2(<em>void</em> *p);</td></tr>
+<tr><th id="216">216</th><td><em>int</em> update_viterbi615_blk_sse2(<em>void</em> *p,<em>unsigned</em> <em>char</em> *syms,<em>int</em> nbits);</td></tr>
+<tr><th id="217">217</th><td></td></tr>
+<tr><th id="218">218</th><td><u>#<span data-ppcond="196">endif</span></u></td></tr>
+<tr><th id="219">219</th><td></td></tr>
+<tr><th id="220">220</th><td><em>void</em> *<dfn class="decl" id="create_viterbi615_port" title='create_viterbi615_port' data-ref="create_viterbi615_port">create_viterbi615_port</dfn>(<em>int</em> <dfn class="local col5 decl" id="85len" title='len' data-type='int' data-ref="85len">len</dfn>);</td></tr>
+<tr><th id="221">221</th><td><em>void</em> <dfn class="decl" id="set_viterbi615_polynomial_port" title='set_viterbi615_polynomial_port' data-ref="set_viterbi615_polynomial_port">set_viterbi615_polynomial_port</dfn>(<em>int</em> <dfn class="local col6 decl" id="86polys" title='polys' data-type='int *' data-ref="86polys">polys</dfn>[<var>6</var>]);</td></tr>
+<tr><th id="222">222</th><td><em>int</em> <dfn class="decl" id="init_viterbi615_port" title='init_viterbi615_port' data-ref="init_viterbi615_port">init_viterbi615_port</dfn>(<em>void</em> *<dfn class="local col7 decl" id="87p" title='p' data-type='void *' data-ref="87p">p</dfn>,<em>int</em> <dfn class="local col8 decl" id="88starting_state" title='starting_state' data-type='int' data-ref="88starting_state">starting_state</dfn>);</td></tr>
+<tr><th id="223">223</th><td><em>int</em> <dfn class="decl" id="chainback_viterbi615_port" title='chainback_viterbi615_port' data-ref="chainback_viterbi615_port">chainback_viterbi615_port</dfn>(<em>void</em> *<dfn class="local col9 decl" id="89p" title='p' data-type='void *' data-ref="89p">p</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col0 decl" id="90data" title='data' data-type='unsigned char *' data-ref="90data">data</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col1 decl" id="91nbits" title='nbits' data-type='unsigned int' data-ref="91nbits">nbits</dfn>,<em>unsigned</em> <em>int</em> <dfn class="local col2 decl" id="92endstate" title='endstate' data-type='unsigned int' data-ref="92endstate">endstate</dfn>);</td></tr>
+<tr><th id="224">224</th><td><em>void</em> <dfn class="decl" id="delete_viterbi615_port" title='delete_viterbi615_port' data-ref="delete_viterbi615_port">delete_viterbi615_port</dfn>(<em>void</em> *<dfn class="local col3 decl" id="93p" title='p' data-type='void *' data-ref="93p">p</dfn>);</td></tr>
+<tr><th id="225">225</th><td><em>int</em> <dfn class="decl" id="update_viterbi615_blk_port" title='update_viterbi615_blk_port' data-ref="update_viterbi615_blk_port">update_viterbi615_blk_port</dfn>(<em>void</em> *<dfn class="local col4 decl" id="94p" title='p' data-type='void *' data-ref="94p">p</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col5 decl" id="95syms" title='syms' data-type='unsigned char *' data-ref="95syms">syms</dfn>,<em>int</em> <dfn class="local col6 decl" id="96nbits" title='nbits' data-type='int' data-ref="96nbits">nbits</dfn>);</td></tr>
+<tr><th id="226">226</th><td></td></tr>
+<tr><th id="227">227</th><td></td></tr>
+<tr><th id="228">228</th><td><i>/* General purpose RS codec, 8-bit symbols */</i></td></tr>
+<tr><th id="229">229</th><td><em>void</em> <dfn class="decl" id="encode_rs_char" title='encode_rs_char' data-ref="encode_rs_char">encode_rs_char</dfn>(<em>void</em> *<dfn class="local col7 decl" id="97rs" title='rs' data-type='void *' data-ref="97rs">rs</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col8 decl" id="98data" title='data' data-type='unsigned char *' data-ref="98data">data</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col9 decl" id="99parity" title='parity' data-type='unsigned char *' data-ref="99parity">parity</dfn>);</td></tr>
+<tr><th id="230">230</th><td><em>int</em> <dfn class="decl" id="decode_rs_char" title='decode_rs_char' data-ref="decode_rs_char">decode_rs_char</dfn>(<em>void</em> *<dfn class="local col0 decl" id="100rs" title='rs' data-type='void *' data-ref="100rs">rs</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col1 decl" id="101data" title='data' data-type='unsigned char *' data-ref="101data">data</dfn>,<em>int</em> *<dfn class="local col2 decl" id="102eras_pos" title='eras_pos' data-type='int *' data-ref="102eras_pos">eras_pos</dfn>,</td></tr>
+<tr><th id="231">231</th><td>		   <em>int</em> <dfn class="local col3 decl" id="103no_eras" title='no_eras' data-type='int' data-ref="103no_eras">no_eras</dfn>);</td></tr>
+<tr><th id="232">232</th><td><em>void</em> *<dfn class="decl" id="init_rs_char" title='init_rs_char' data-ref="init_rs_char">init_rs_char</dfn>(<em>int</em> <dfn class="local col4 decl" id="104symsize" title='symsize' data-type='int' data-ref="104symsize">symsize</dfn>,<em>int</em> <dfn class="local col5 decl" id="105gfpoly" title='gfpoly' data-type='int' data-ref="105gfpoly">gfpoly</dfn>,</td></tr>
+<tr><th id="233">233</th><td>		   <em>int</em> <dfn class="local col6 decl" id="106fcr" title='fcr' data-type='int' data-ref="106fcr">fcr</dfn>,<em>int</em> <dfn class="local col7 decl" id="107prim" title='prim' data-type='int' data-ref="107prim">prim</dfn>,<em>int</em> <dfn class="local col8 decl" id="108nroots" title='nroots' data-type='int' data-ref="108nroots">nroots</dfn>,</td></tr>
+<tr><th id="234">234</th><td>		   <em>int</em> <dfn class="local col9 decl" id="109pad" title='pad' data-type='int' data-ref="109pad">pad</dfn>);</td></tr>
+<tr><th id="235">235</th><td><em>void</em> <dfn class="decl" id="free_rs_char" title='free_rs_char' data-ref="free_rs_char">free_rs_char</dfn>(<em>void</em> *<dfn class="local col0 decl" id="110rs" title='rs' data-type='void *' data-ref="110rs">rs</dfn>);</td></tr>
+<tr><th id="236">236</th><td></td></tr>
+<tr><th id="237">237</th><td><i>/* General purpose RS codec, integer symbols */</i></td></tr>
+<tr><th id="238">238</th><td><em>void</em> <dfn class="decl" id="encode_rs_int" title='encode_rs_int' data-ref="encode_rs_int">encode_rs_int</dfn>(<em>void</em> *<dfn class="local col1 decl" id="111rs" title='rs' data-type='void *' data-ref="111rs">rs</dfn>,<em>int</em> *<dfn class="local col2 decl" id="112data" title='data' data-type='int *' data-ref="112data">data</dfn>,<em>int</em> *<dfn class="local col3 decl" id="113parity" title='parity' data-type='int *' data-ref="113parity">parity</dfn>);</td></tr>
+<tr><th id="239">239</th><td><em>int</em> <dfn class="decl" id="decode_rs_int" title='decode_rs_int' data-ref="decode_rs_int">decode_rs_int</dfn>(<em>void</em> *<dfn class="local col4 decl" id="114rs" title='rs' data-type='void *' data-ref="114rs">rs</dfn>,<em>int</em> *<dfn class="local col5 decl" id="115data" title='data' data-type='int *' data-ref="115data">data</dfn>,<em>int</em> *<dfn class="local col6 decl" id="116eras_pos" title='eras_pos' data-type='int *' data-ref="116eras_pos">eras_pos</dfn>,<em>int</em> <dfn class="local col7 decl" id="117no_eras" title='no_eras' data-type='int' data-ref="117no_eras">no_eras</dfn>);</td></tr>
+<tr><th id="240">240</th><td><em>void</em> *<dfn class="decl" id="init_rs_int" title='init_rs_int' data-ref="init_rs_int">init_rs_int</dfn>(<em>int</em> <dfn class="local col8 decl" id="118symsize" title='symsize' data-type='int' data-ref="118symsize">symsize</dfn>,<em>int</em> <dfn class="local col9 decl" id="119gfpoly" title='gfpoly' data-type='int' data-ref="119gfpoly">gfpoly</dfn>,<em>int</em> <dfn class="local col0 decl" id="120fcr" title='fcr' data-type='int' data-ref="120fcr">fcr</dfn>,</td></tr>
+<tr><th id="241">241</th><td>		  <em>int</em> <dfn class="local col1 decl" id="121prim" title='prim' data-type='int' data-ref="121prim">prim</dfn>,<em>int</em> <dfn class="local col2 decl" id="122nroots" title='nroots' data-type='int' data-ref="122nroots">nroots</dfn>,<em>int</em> <dfn class="local col3 decl" id="123pad" title='pad' data-type='int' data-ref="123pad">pad</dfn>);</td></tr>
+<tr><th id="242">242</th><td><em>void</em> <dfn class="decl" id="free_rs_int" title='free_rs_int' data-ref="free_rs_int">free_rs_int</dfn>(<em>void</em> *<dfn class="local col4 decl" id="124rs" title='rs' data-type='void *' data-ref="124rs">rs</dfn>);</td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td><i>/* CCSDS standard (255,223) RS codec with conventional (*not* dual-basis)</i></td></tr>
+<tr><th id="245">245</th><td><i> * symbol representation</i></td></tr>
+<tr><th id="246">246</th><td><i> */</i></td></tr>
+<tr><th id="247">247</th><td><em>void</em> <dfn class="decl" id="encode_rs_8" title='encode_rs_8' data-ref="encode_rs_8">encode_rs_8</dfn>(<em>unsigned</em> <em>char</em> *<dfn class="local col5 decl" id="125data" title='data' data-type='unsigned char *' data-ref="125data">data</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col6 decl" id="126parity" title='parity' data-type='unsigned char *' data-ref="126parity">parity</dfn>,<em>int</em> <dfn class="local col7 decl" id="127pad" title='pad' data-type='int' data-ref="127pad">pad</dfn>);</td></tr>
+<tr><th id="248">248</th><td><em>int</em> <dfn class="decl" id="decode_rs_8" title='decode_rs_8' data-ref="decode_rs_8">decode_rs_8</dfn>(<em>unsigned</em> <em>char</em> *<dfn class="local col8 decl" id="128data" title='data' data-type='unsigned char *' data-ref="128data">data</dfn>,<em>int</em> *<dfn class="local col9 decl" id="129eras_pos" title='eras_pos' data-type='int *' data-ref="129eras_pos">eras_pos</dfn>,<em>int</em> <dfn class="local col0 decl" id="130no_eras" title='no_eras' data-type='int' data-ref="130no_eras">no_eras</dfn>,<em>int</em> <dfn class="local col1 decl" id="131pad" title='pad' data-type='int' data-ref="131pad">pad</dfn>);</td></tr>
+<tr><th id="249">249</th><td></td></tr>
+<tr><th id="250">250</th><td><i>/* CCSDS standard (255,223) RS codec with dual-basis symbol representation */</i></td></tr>
+<tr><th id="251">251</th><td><em>void</em> <dfn class="decl" id="encode_rs_ccsds" title='encode_rs_ccsds' data-ref="encode_rs_ccsds">encode_rs_ccsds</dfn>(<em>unsigned</em> <em>char</em> *<dfn class="local col2 decl" id="132data" title='data' data-type='unsigned char *' data-ref="132data">data</dfn>,<em>unsigned</em> <em>char</em> *<dfn class="local col3 decl" id="133parity" title='parity' data-type='unsigned char *' data-ref="133parity">parity</dfn>,<em>int</em> <dfn class="local col4 decl" id="134pad" title='pad' data-type='int' data-ref="134pad">pad</dfn>);</td></tr>
+<tr><th id="252">252</th><td><em>int</em> <dfn class="decl" id="decode_rs_ccsds" title='decode_rs_ccsds' data-ref="decode_rs_ccsds">decode_rs_ccsds</dfn>(<em>unsigned</em> <em>char</em> *<dfn class="local col5 decl" id="135data" title='data' data-type='unsigned char *' data-ref="135data">data</dfn>,<em>int</em> *<dfn class="local col6 decl" id="136eras_pos" title='eras_pos' data-type='int *' data-ref="136eras_pos">eras_pos</dfn>,<em>int</em> <dfn class="local col7 decl" id="137no_eras" title='no_eras' data-type='int' data-ref="137no_eras">no_eras</dfn>,<em>int</em> <dfn class="local col8 decl" id="138pad" title='pad' data-type='int' data-ref="138pad">pad</dfn>);</td></tr>
+<tr><th id="253">253</th><td></td></tr>
+<tr><th id="254">254</th><td><i>/* Tables to map from conventional-&gt;dual (Taltab) and</i></td></tr>
+<tr><th id="255">255</th><td><i> * dual-&gt;conventional (Tal1tab) bases</i></td></tr>
+<tr><th id="256">256</th><td><i> */</i></td></tr>
+<tr><th id="257">257</th><td><b>extern</b> <em>unsigned</em> <em>char</em> <dfn class="decl" id="Taltab" title='Taltab' data-ref="Taltab">Taltab</dfn>[],<dfn class="decl" id="Tal1tab" title='Tal1tab' data-ref="Tal1tab">Tal1tab</dfn>[];</td></tr>
+<tr><th id="258">258</th><td></td></tr>
+<tr><th id="259">259</th><td></td></tr>
+<tr><th id="260">260</th><td><i>/* CPU SIMD instruction set available */</i></td></tr>
+<tr><th id="261">261</th><td><b>extern</b> <b>enum</b> <dfn class="type def" id="cpu_mode" title='cpu_mode' data-ref="cpu_mode"><a class="type" href="#cpu_mode" title='cpu_mode' data-ref="cpu_mode">cpu_mode</a></dfn> {<dfn class="enum" id="cpu_mode::UNKNOWN" title='cpu_mode::UNKNOWN' data-ref="cpu_mode::UNKNOWN">UNKNOWN</dfn>=<var>0</var>,<dfn class="enum" id="cpu_mode::PORT" title='cpu_mode::PORT' data-ref="cpu_mode::PORT">PORT</dfn>,<dfn class="enum" id="cpu_mode::MMX" title='cpu_mode::MMX' data-ref="cpu_mode::MMX">MMX</dfn>,<dfn class="enum" id="cpu_mode::SSE" title='cpu_mode::SSE' data-ref="cpu_mode::SSE">SSE</dfn>,<dfn class="enum" id="cpu_mode::SSE2" title='cpu_mode::SSE2' data-ref="cpu_mode::SSE2">SSE2</dfn>,<dfn class="enum" id="cpu_mode::ALTIVEC" title='cpu_mode::ALTIVEC' data-ref="cpu_mode::ALTIVEC">ALTIVEC</dfn>} <dfn class="decl" id="Cpu_mode" title='Cpu_mode' data-ref="Cpu_mode">Cpu_mode</dfn>;</td></tr>
+<tr><th id="262">262</th><td><em>void</em> <dfn class="decl" id="find_cpu_mode" title='find_cpu_mode' data-ref="find_cpu_mode">find_cpu_mode</dfn>(<em>void</em>); <i>/* Call this once at startup to set Cpu_mode */</i></td></tr>
+<tr><th id="263">263</th><td></td></tr>
+<tr><th id="264">264</th><td><i>/* Determine parity of argument: 1 = odd, 0 = even */</i></td></tr>
+<tr><th id="265">265</th><td><u>#<span data-ppcond="265">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="266">266</th><td><em>static</em> <b>inline</b> <em>int</em> parityb(<em>unsigned</em> <em>char</em> x){</td></tr>
+<tr><th id="267">267</th><td>  <b>__asm__</b> <em>__volatile__</em> (<q>"test %1,%1;setpo %0"</q> : <q>"=g"</q>(x) : <q>"r"</q> (x));</td></tr>
+<tr><th id="268">268</th><td>  <b>return</b> x;</td></tr>
+<tr><th id="269">269</th><td>}</td></tr>
+<tr><th id="270">270</th><td><u>#<span data-ppcond="265">else</span></u></td></tr>
+<tr><th id="271">271</th><td><em>void</em> <dfn class="decl" id="partab_init" title='partab_init' data-ref="partab_init">partab_init</dfn>();</td></tr>
+<tr><th id="272">272</th><td></td></tr>
+<tr><th id="273">273</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="_Z7paritybh" title='parityb' data-ref="_Z7paritybh">parityb</dfn>(<em>unsigned</em> <em>char</em> <dfn class="local col9 decl" id="139x" title='x' data-type='unsigned char' data-ref="139x">x</dfn>){</td></tr>
+<tr><th id="274">274</th><td>  <b>extern</b> <em>unsigned</em> <em>char</em> <dfn class="decl" id="Partab" title='Partab' data-ref="Partab">Partab</dfn>[<var>256</var>];</td></tr>
+<tr><th id="275">275</th><td>  <b>extern</b> <em>int</em> <dfn class="decl" id="P_init" title='P_init' data-ref="P_init">P_init</dfn>;</td></tr>
+<tr><th id="276">276</th><td>  <b>if</b>(!<a class="ref" href="#P_init" title='P_init' data-ref="P_init">P_init</a>){</td></tr>
+<tr><th id="277">277</th><td>    <a class="ref" href="#partab_init" title='partab_init' data-ref="partab_init">partab_init</a>();</td></tr>
+<tr><th id="278">278</th><td>  }</td></tr>
+<tr><th id="279">279</th><td>  <b>return</b> <a class="ref" href="#Partab" title='Partab' data-ref="Partab">Partab</a>[<a class="local col9 ref" href="#139x" title='x' data-ref="139x">x</a>];</td></tr>
+<tr><th id="280">280</th><td>}</td></tr>
+<tr><th id="281">281</th><td><u>#<span data-ppcond="265">endif</span></u></td></tr>
+<tr><th id="282">282</th><td></td></tr>
+<tr><th id="283">283</th><td></td></tr>
+<tr><th id="284">284</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="_Z6parityi" title='parity' data-ref="_Z6parityi">parity</dfn>(<em>int</em> <dfn class="local col0 decl" id="140x" title='x' data-type='int' data-ref="140x">x</dfn>){</td></tr>
+<tr><th id="285">285</th><td>  <i>/* Fold down to one byte */</i></td></tr>
+<tr><th id="286">286</th><td>  <a class="local col0 ref" href="#140x" title='x' data-ref="140x">x</a> ^= (<a class="local col0 ref" href="#140x" title='x' data-ref="140x">x</a> &gt;&gt; <var>16</var>);</td></tr>
+<tr><th id="287">287</th><td>  <a class="local col0 ref" href="#140x" title='x' data-ref="140x">x</a> ^= (<a class="local col0 ref" href="#140x" title='x' data-ref="140x">x</a> &gt;&gt; <var>8</var>);</td></tr>
+<tr><th id="288">288</th><td>  <b>return</b> <a class="ref" href="#_Z7paritybh" title='parityb' data-ref="_Z7paritybh">parityb</a>(<a class="local col0 ref" href="#140x" title='x' data-ref="140x">x</a>);</td></tr>
+<tr><th id="289">289</th><td>}</td></tr>
+<tr><th id="290">290</th><td></td></tr>
+<tr><th id="291">291</th><td><i>/* Useful utilities for simulation */</i></td></tr>
+<tr><th id="292">292</th><td><em>double</em> <dfn class="decl" id="normal_rand" title='normal_rand' data-ref="normal_rand">normal_rand</dfn>(<em>double</em> <dfn class="local col1 decl" id="141mean" title='mean' data-type='double' data-ref="141mean">mean</dfn>, <em>double</em> <dfn class="local col2 decl" id="142std_dev" title='std_dev' data-type='double' data-ref="142std_dev">std_dev</dfn>);</td></tr>
+<tr><th id="293">293</th><td><em>unsigned</em> <em>char</em> <dfn class="decl" id="addnoise" title='addnoise' data-ref="addnoise">addnoise</dfn>(<em>int</em> <dfn class="local col3 decl" id="143sym" title='sym' data-type='int' data-ref="143sym">sym</dfn>,<em>double</em> <dfn class="local col4 decl" id="144amp" title='amp' data-type='double' data-ref="144amp">amp</dfn>,<em>double</em> <dfn class="local col5 decl" id="145gain" title='gain' data-type='double' data-ref="145gain">gain</dfn>,<em>double</em> <dfn class="local col6 decl" id="146offset" title='offset' data-type='double' data-ref="146offset">offset</dfn>,<em>int</em> <dfn class="local col7 decl" id="147clip" title='clip' data-type='int' data-ref="147clip">clip</dfn>);</td></tr>
+<tr><th id="294">294</th><td></td></tr>
+<tr><th id="295">295</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="Bitcnt" title='Bitcnt' data-ref="Bitcnt">Bitcnt</dfn>[];</td></tr>
+<tr><th id="296">296</th><td></td></tr>
+<tr><th id="297">297</th><td><i>/* Dot product functions */</i></td></tr>
+<tr><th id="298">298</th><td><em>void</em> *<dfn class="decl" id="initdp" title='initdp' data-ref="initdp">initdp</dfn>(<em>signed</em> <em>short</em> <dfn class="local col8 decl" id="148coeffs" title='coeffs' data-type='short *' data-ref="148coeffs">coeffs</dfn>[],<em>int</em> <dfn class="local col9 decl" id="149len" title='len' data-type='int' data-ref="149len">len</dfn>);</td></tr>
+<tr><th id="299">299</th><td><em>void</em> <dfn class="decl" id="freedp" title='freedp' data-ref="freedp">freedp</dfn>(<em>void</em> *<dfn class="local col0 decl" id="150dp" title='dp' data-type='void *' data-ref="150dp">dp</dfn>);</td></tr>
+<tr><th id="300">300</th><td><em>long</em> <dfn class="decl" id="dotprod" title='dotprod' data-ref="dotprod">dotprod</dfn>(<em>void</em> *<dfn class="local col1 decl" id="151dp" title='dp' data-type='void *' data-ref="151dp">dp</dfn>,<em>signed</em> <em>short</em> <dfn class="local col2 decl" id="152a" title='a' data-type='short *' data-ref="152a">a</dfn>[]);</td></tr>
+<tr><th id="301">301</th><td></td></tr>
+<tr><th id="302">302</th><td><em>void</em> *<dfn class="decl" id="initdp_port" title='initdp_port' data-ref="initdp_port">initdp_port</dfn>(<em>signed</em> <em>short</em> <dfn class="local col3 decl" id="153coeffs" title='coeffs' data-type='short *' data-ref="153coeffs">coeffs</dfn>[],<em>int</em> <dfn class="local col4 decl" id="154len" title='len' data-type='int' data-ref="154len">len</dfn>);</td></tr>
+<tr><th id="303">303</th><td><em>void</em> <dfn class="decl" id="freedp_port" title='freedp_port' data-ref="freedp_port">freedp_port</dfn>(<em>void</em> *<dfn class="local col5 decl" id="155dp" title='dp' data-type='void *' data-ref="155dp">dp</dfn>);</td></tr>
+<tr><th id="304">304</th><td><em>long</em> <dfn class="decl" id="dotprod_port" title='dotprod_port' data-ref="dotprod_port">dotprod_port</dfn>(<em>void</em> *<dfn class="local col6 decl" id="156dp" title='dp' data-type='void *' data-ref="156dp">dp</dfn>,<em>signed</em> <em>short</em> <dfn class="local col7 decl" id="157a" title='a' data-type='short *' data-ref="157a">a</dfn>[]);</td></tr>
+<tr><th id="305">305</th><td></td></tr>
+<tr><th id="306">306</th><td><u>#<span data-ppcond="306">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="307">307</th><td><em>void</em> *initdp_mmx(<em>signed</em> <em>short</em> coeffs[],<em>int</em> len);</td></tr>
+<tr><th id="308">308</th><td><em>void</em> freedp_mmx(<em>void</em> *dp);</td></tr>
+<tr><th id="309">309</th><td><em>long</em> dotprod_mmx(<em>void</em> *dp,<em>signed</em> <em>short</em> a[]);</td></tr>
+<tr><th id="310">310</th><td></td></tr>
+<tr><th id="311">311</th><td><em>void</em> *initdp_sse(<em>signed</em> <em>short</em> coeffs[],<em>int</em> len);</td></tr>
+<tr><th id="312">312</th><td><em>void</em> freedp_sse(<em>void</em> *dp);</td></tr>
+<tr><th id="313">313</th><td><em>long</em> dotprod_sse(<em>void</em> *dp,<em>signed</em> <em>short</em> a[]);</td></tr>
+<tr><th id="314">314</th><td></td></tr>
+<tr><th id="315">315</th><td><em>void</em> *initdp_sse2(<em>signed</em> <em>short</em> coeffs[],<em>int</em> len);</td></tr>
+<tr><th id="316">316</th><td><em>void</em> freedp_sse2(<em>void</em> *dp);</td></tr>
+<tr><th id="317">317</th><td><em>long</em> dotprod_sse2(<em>void</em> *dp,<em>signed</em> <em>short</em> a[]);</td></tr>
+<tr><th id="318">318</th><td><u>#<span data-ppcond="306">endif</span></u></td></tr>
+<tr><th id="319">319</th><td></td></tr>
+<tr><th id="320">320</th><td><u>#<span data-ppcond="320">ifdef</span> <span class="macro" data-ref="_M/__VEC__">__VEC__</span></u></td></tr>
+<tr><th id="321">321</th><td><em>void</em> *initdp_av(<em>signed</em> <em>short</em> coeffs[],<em>int</em> len);</td></tr>
+<tr><th id="322">322</th><td><em>void</em> freedp_av(<em>void</em> *dp);</td></tr>
+<tr><th id="323">323</th><td><em>long</em> dotprod_av(<em>void</em> *dp,<em>signed</em> <em>short</em> a[]);</td></tr>
+<tr><th id="324">324</th><td><u>#<span data-ppcond="320">endif</span></u></td></tr>
+<tr><th id="325">325</th><td></td></tr>
+<tr><th id="326">326</th><td><i>/* Sum of squares - accepts signed shorts, produces unsigned long long */</i></td></tr>
+<tr><th id="327">327</th><td><em>unsigned</em> <em>long</em> <em>long</em> <dfn class="decl" id="sumsq" title='sumsq' data-ref="sumsq">sumsq</dfn>(<em>signed</em> <em>short</em> *<dfn class="local col8 decl" id="158in" title='in' data-type='short *' data-ref="158in">in</dfn>,<em>int</em> <dfn class="local col9 decl" id="159cnt" title='cnt' data-type='int' data-ref="159cnt">cnt</dfn>);</td></tr>
+<tr><th id="328">328</th><td><em>unsigned</em> <em>long</em> <em>long</em> <dfn class="decl" id="sumsq_port" title='sumsq_port' data-ref="sumsq_port">sumsq_port</dfn>(<em>signed</em> <em>short</em> *<dfn class="local col0 decl" id="160in" title='in' data-type='short *' data-ref="160in">in</dfn>,<em>int</em> <dfn class="local col1 decl" id="161cnt" title='cnt' data-type='int' data-ref="161cnt">cnt</dfn>);</td></tr>
+<tr><th id="329">329</th><td></td></tr>
+<tr><th id="330">330</th><td><u>#<span data-ppcond="330">ifdef</span> <span class="macro" data-ref="_M/__i386__">__i386__</span></u></td></tr>
+<tr><th id="331">331</th><td><em>unsigned</em> <em>long</em> <em>long</em> sumsq_mmx(<em>signed</em> <em>short</em> *in,<em>int</em> cnt);</td></tr>
+<tr><th id="332">332</th><td><em>unsigned</em> <em>long</em> <em>long</em> sumsq_sse(<em>signed</em> <em>short</em> *in,<em>int</em> cnt);</td></tr>
+<tr><th id="333">333</th><td><em>unsigned</em> <em>long</em> <em>long</em> sumsq_sse2(<em>signed</em> <em>short</em> *in,<em>int</em> cnt);</td></tr>
+<tr><th id="334">334</th><td><u>#<span data-ppcond="330">endif</span></u></td></tr>
+<tr><th id="335">335</th><td><u>#<span data-ppcond="335">ifdef</span> <span class="macro" data-ref="_M/__VEC__">__VEC__</span></u></td></tr>
+<tr><th id="336">336</th><td><em>unsigned</em> <em>long</em> <em>long</em> sumsq_av(<em>signed</em> <em>short</em> *in,<em>int</em> cnt);</td></tr>
+<tr><th id="337">337</th><td><u>#<span data-ppcond="335">endif</span></u></td></tr>
+<tr><th id="338">338</th><td></td></tr>
+<tr><th id="339">339</th><td></td></tr>
+<tr><th id="340">340</th><td><i>/* Low-level data structures and routines */</i></td></tr>
+<tr><th id="341">341</th><td></td></tr>
+<tr><th id="342">342</th><td><em>int</em> <dfn class="decl" id="cpu_features" title='cpu_features' data-ref="cpu_features">cpu_features</dfn>(<em>void</em>);</td></tr>
+<tr><th id="343">343</th><td></td></tr>
+<tr><th id="344">344</th><td><u>#<span data-ppcond="6">endif</span> /* _FEC_H_ */</u></td></tr>
+<tr><th id="345">345</th><td></td></tr>
+<tr><th id="346">346</th><td></td></tr>
+<tr><th id="347">347</th><td></td></tr>
+<tr><th id="348">348</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../system/extras/libfec/fec_read.cpp.html'>codebrowser/system/extras/libfec/fec_read.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

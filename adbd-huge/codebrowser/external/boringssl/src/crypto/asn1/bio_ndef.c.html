@@ -1,0 +1,273 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>bio_ndef.c source code [codebrowser/external/boringssl/src/crypto/asn1/bio_ndef.c] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ndef_aux_st "/>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/asn1/bio_ndef.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>asn1</a>/<a href='bio_ndef.c.html'>bio_ndef.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/asn1.h.html">&lt;openssl/asn1.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/assert.h.html">&lt;assert.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/asn1t.h.html">&lt;openssl/asn1t.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td><u>#include <a href="../../include/openssl/bio.h.html">&lt;openssl/bio.h&gt;</a></u></td></tr>
+<tr><th id="63">63</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="64">64</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><i>/* Experimental NDEF ASN1 BIO support routines */</i></td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><i>/* The usage is quite simple, initialize an ASN1 structure,</i></td></tr>
+<tr><th id="70">70</th><td><i> * get a BIO from it then any data written through the BIO</i></td></tr>
+<tr><th id="71">71</th><td><i> * will end up translated to approptiate format on the fly.</i></td></tr>
+<tr><th id="72">72</th><td><i> * The data is streamed out and does *not* need to be</i></td></tr>
+<tr><th id="73">73</th><td><i> * all held in memory at once.</i></td></tr>
+<tr><th id="74">74</th><td><i> *</i></td></tr>
+<tr><th id="75">75</th><td><i> * When the BIO is flushed the output is finalized and any</i></td></tr>
+<tr><th id="76">76</th><td><i> * signatures etc written out.</i></td></tr>
+<tr><th id="77">77</th><td><i> *</i></td></tr>
+<tr><th id="78">78</th><td><i> * The BIO is a 'proper' BIO and can handle non blocking I/O</i></td></tr>
+<tr><th id="79">79</th><td><i> * correctly.</i></td></tr>
+<tr><th id="80">80</th><td><i> *</i></td></tr>
+<tr><th id="81">81</th><td><i> * The usage is simple. The implementation is *not*...</i></td></tr>
+<tr><th id="82">82</th><td><i> */</i></td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td><i>/* BIO support data stored in the ASN1 BIO ex_arg */</i></td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><b>typedef</b> <b>struct</b> <dfn class="type def" id="ndef_aux_st" title='ndef_aux_st' data-ref="ndef_aux_st"><a class="type" href="#ndef_aux_st" title='ndef_aux_st' data-ref="ndef_aux_st">ndef_aux_st</a></dfn></td></tr>
+<tr><th id="87">87</th><td>	{</td></tr>
+<tr><th id="88">88</th><td>	<i  data-doc="ndef_aux_st::val">/* ASN1 structure this BIO refers to */</i></td></tr>
+<tr><th id="89">89</th><td>	<a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> *<dfn class="tu decl" id="ndef_aux_st::val" title='ndef_aux_st::val' data-type='ASN1_VALUE *' data-ref="ndef_aux_st::val">val</dfn>;</td></tr>
+<tr><th id="90">90</th><td>	<em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="tu decl" id="ndef_aux_st::it" title='ndef_aux_st::it' data-type='const ASN1_ITEM *' data-ref="ndef_aux_st::it">it</dfn>;</td></tr>
+<tr><th id="91">91</th><td>	<i  data-doc="ndef_aux_st::ndef_bio">/* Top of the BIO chain */</i></td></tr>
+<tr><th id="92">92</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="tu decl" id="ndef_aux_st::ndef_bio" title='ndef_aux_st::ndef_bio' data-type='BIO *' data-ref="ndef_aux_st::ndef_bio">ndef_bio</dfn>;</td></tr>
+<tr><th id="93">93</th><td>	<i  data-doc="ndef_aux_st::out">/* Output BIO */</i></td></tr>
+<tr><th id="94">94</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="tu decl" id="ndef_aux_st::out" title='ndef_aux_st::out' data-type='BIO *' data-ref="ndef_aux_st::out">out</dfn>;</td></tr>
+<tr><th id="95">95</th><td>	<i  data-doc="ndef_aux_st::boundary">/* Boundary where content is inserted */</i></td></tr>
+<tr><th id="96">96</th><td>	<em>unsigned</em> <em>char</em> **<dfn class="tu decl" id="ndef_aux_st::boundary" title='ndef_aux_st::boundary' data-type='unsigned char **' data-ref="ndef_aux_st::boundary">boundary</dfn>;</td></tr>
+<tr><th id="97">97</th><td>	<i  data-doc="ndef_aux_st::derbuf">/* DER buffer start */</i></td></tr>
+<tr><th id="98">98</th><td>	<em>unsigned</em> <em>char</em> *<dfn class="tu decl" id="ndef_aux_st::derbuf" title='ndef_aux_st::derbuf' data-type='unsigned char *' data-ref="ndef_aux_st::derbuf">derbuf</dfn>;</td></tr>
+<tr><th id="99">99</th><td>	} <dfn class="typedef" id="NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</dfn>;</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#ndef_prefix" title='ndef_prefix' data-type='int ndef_prefix(BIO * b, unsigned char ** pbuf, int * plen, void * parg)' data-ref="ndef_prefix">ndef_prefix</a>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col1 decl" id="1b" title='b' data-type='BIO *' data-ref="1b">b</dfn>, <em>unsigned</em> <em>char</em> **<dfn class="local col2 decl" id="2pbuf" title='pbuf' data-type='unsigned char **' data-ref="2pbuf">pbuf</dfn>, <em>int</em> *<dfn class="local col3 decl" id="3plen" title='plen' data-type='int *' data-ref="3plen">plen</dfn>, <em>void</em> *<dfn class="local col4 decl" id="4parg" title='parg' data-type='void *' data-ref="4parg">parg</dfn>);</td></tr>
+<tr><th id="102">102</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#ndef_prefix_free" title='ndef_prefix_free' data-type='int ndef_prefix_free(BIO * b, unsigned char ** pbuf, int * plen, void * parg)' data-ref="ndef_prefix_free">ndef_prefix_free</a>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col5 decl" id="5b" title='b' data-type='BIO *' data-ref="5b">b</dfn>, <em>unsigned</em> <em>char</em> **<dfn class="local col6 decl" id="6pbuf" title='pbuf' data-type='unsigned char **' data-ref="6pbuf">pbuf</dfn>, <em>int</em> *<dfn class="local col7 decl" id="7plen" title='plen' data-type='int *' data-ref="7plen">plen</dfn>, <em>void</em> *<dfn class="local col8 decl" id="8parg" title='parg' data-type='void *' data-ref="8parg">parg</dfn>);</td></tr>
+<tr><th id="103">103</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#ndef_suffix" title='ndef_suffix' data-type='int ndef_suffix(BIO * b, unsigned char ** pbuf, int * plen, void * parg)' data-ref="ndef_suffix">ndef_suffix</a>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col9 decl" id="9b" title='b' data-type='BIO *' data-ref="9b">b</dfn>, <em>unsigned</em> <em>char</em> **<dfn class="local col0 decl" id="10pbuf" title='pbuf' data-type='unsigned char **' data-ref="10pbuf">pbuf</dfn>, <em>int</em> *<dfn class="local col1 decl" id="11plen" title='plen' data-type='int *' data-ref="11plen">plen</dfn>, <em>void</em> *<dfn class="local col2 decl" id="12parg" title='parg' data-type='void *' data-ref="12parg">parg</dfn>);</td></tr>
+<tr><th id="104">104</th><td><em>static</em> <em>int</em> <a class="tu decl" href="#ndef_suffix_free" title='ndef_suffix_free' data-type='int ndef_suffix_free(BIO * b, unsigned char ** pbuf, int * plen, void * parg)' data-ref="ndef_suffix_free">ndef_suffix_free</a>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col3 decl" id="13b" title='b' data-type='BIO *' data-ref="13b">b</dfn>, <em>unsigned</em> <em>char</em> **<dfn class="local col4 decl" id="14pbuf" title='pbuf' data-type='unsigned char **' data-ref="14pbuf">pbuf</dfn>, <em>int</em> *<dfn class="local col5 decl" id="15plen" title='plen' data-type='int *' data-ref="15plen">plen</dfn>, <em>void</em> *<dfn class="local col6 decl" id="16parg" title='parg' data-type='void *' data-ref="16parg">parg</dfn>);</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="decl def" id="BIO_new_NDEF" title='BIO_new_NDEF' data-ref="BIO_new_NDEF">BIO_new_NDEF</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col7 decl" id="17out" title='out' data-type='BIO *' data-ref="17out">out</dfn>, <a class="typedef" href="../../include/openssl/asn1.h.html#ASN1_VALUE" title='ASN1_VALUE' data-type='struct ASN1_VALUE_st' data-ref="ASN1_VALUE">ASN1_VALUE</a> *<dfn class="local col8 decl" id="18val" title='val' data-type='ASN1_VALUE *' data-ref="18val">val</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#ASN1_ITEM" title='ASN1_ITEM' data-type='struct ASN1_ITEM_st' data-ref="ASN1_ITEM">ASN1_ITEM</a> *<dfn class="local col9 decl" id="19it" title='it' data-type='const ASN1_ITEM *' data-ref="19it">it</dfn>)</td></tr>
+<tr><th id="107">107</th><td>	{</td></tr>
+<tr><th id="108">108</th><td>	<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a> *<dfn class="local col0 decl" id="20ndef_aux" title='ndef_aux' data-type='NDEF_SUPPORT *' data-ref="20ndef_aux">ndef_aux</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="109">109</th><td>	<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col1 decl" id="21asn_bio" title='asn_bio' data-type='BIO *' data-ref="21asn_bio">asn_bio</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="110">110</th><td>	<em>const</em> <a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_AUX" title='ASN1_AUX' data-type='struct ASN1_AUX_st' data-ref="ASN1_AUX">ASN1_AUX</a> *<dfn class="local col2 decl" id="22aux" title='aux' data-type='const ASN1_AUX *' data-ref="22aux">aux</dfn> = <a class="local col9 ref" href="#19it" title='it' data-ref="19it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>;</td></tr>
+<tr><th id="111">111</th><td>	<a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG" title='ASN1_STREAM_ARG' data-type='struct ASN1_STREAM_ARG_st' data-ref="ASN1_STREAM_ARG">ASN1_STREAM_ARG</a> <dfn class="local col3 decl" id="23sarg" title='sarg' data-type='ASN1_STREAM_ARG' data-ref="23sarg">sarg</dfn>;</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td>	<b>if</b> (!<a class="local col2 ref" href="#22aux" title='aux' data-ref="22aux">aux</a> || !<a class="local col2 ref" href="#22aux" title='aux' data-ref="22aux">aux</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_AUX_st::asn1_cb" title='ASN1_AUX_st::asn1_cb' data-ref="ASN1_AUX_st::asn1_cb">asn1_cb</a>)</td></tr>
+<tr><th id="114">114</th><td>		{</td></tr>
+<tr><th id="115">115</th><td>		<a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_ASN1, 0, 170, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/asn1/bio_ndef.c&quot;, 115)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(ASN1, <a class="macro" href="../../include/openssl/asn1.h.html#1149" title="170" data-ref="_M/ASN1_R_STREAMING_NOT_SUPPORTED">ASN1_R_STREAMING_NOT_SUPPORTED</a>);</td></tr>
+<tr><th id="116">116</th><td>		<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="117">117</th><td>		}</td></tr>
+<tr><th id="118">118</th><td>	<a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<b>sizeof</b>(<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a>));</td></tr>
+<tr><th id="119">119</th><td>	<a class="local col1 ref" href="#21asn_bio" title='asn_bio' data-ref="21asn_bio">asn_bio</a> = <a class="ref" href="../../include/openssl/bio.h.html#BIO_new" title='BIO_new' data-ref="BIO_new">BIO_new</a>(<a class="ref" href="../../include/openssl/asn1.h.html#BIO_f_asn1" title='BIO_f_asn1' data-ref="BIO_f_asn1">BIO_f_asn1</a>());</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td>	<i>/* ASN1 bio needs to be next to output BIO */</i></td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td>	<a class="local col7 ref" href="#17out" title='out' data-ref="17out">out</a> = <a class="ref" href="../../include/openssl/bio.h.html#BIO_push" title='BIO_push' data-ref="BIO_push">BIO_push</a>(<a class="local col1 ref" href="#21asn_bio" title='asn_bio' data-ref="21asn_bio">asn_bio</a>, <a class="local col7 ref" href="#17out" title='out' data-ref="17out">out</a>);</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td>	<b>if</b> (!<a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a> || !<a class="local col1 ref" href="#21asn_bio" title='asn_bio' data-ref="21asn_bio">asn_bio</a> || !<a class="local col7 ref" href="#17out" title='out' data-ref="17out">out</a>)</td></tr>
+<tr><th id="126">126</th><td>		<b>goto</b> <a class="lbl" href="#24err" data-ref="24err">err</a>;</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td>	<a class="ref" href="../../include/openssl/asn1.h.html#BIO_asn1_set_prefix" title='BIO_asn1_set_prefix' data-ref="BIO_asn1_set_prefix">BIO_asn1_set_prefix</a>(<a class="local col1 ref" href="#21asn_bio" title='asn_bio' data-ref="21asn_bio">asn_bio</a>, <a class="tu ref" href="#ndef_prefix" title='ndef_prefix' data-use='r' data-ref="ndef_prefix">ndef_prefix</a>, <a class="tu ref" href="#ndef_prefix_free" title='ndef_prefix_free' data-use='r' data-ref="ndef_prefix_free">ndef_prefix_free</a>);</td></tr>
+<tr><th id="129">129</th><td>	<a class="ref" href="../../include/openssl/asn1.h.html#BIO_asn1_set_suffix" title='BIO_asn1_set_suffix' data-ref="BIO_asn1_set_suffix">BIO_asn1_set_suffix</a>(<a class="local col1 ref" href="#21asn_bio" title='asn_bio' data-ref="21asn_bio">asn_bio</a>, <a class="tu ref" href="#ndef_suffix" title='ndef_suffix' data-use='r' data-ref="ndef_suffix">ndef_suffix</a>, <a class="tu ref" href="#ndef_suffix_free" title='ndef_suffix_free' data-use='r' data-ref="ndef_suffix_free">ndef_suffix_free</a>);</td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td>	<i>/* Now let callback prepend any digest, cipher etc BIOs</i></td></tr>
+<tr><th id="132">132</th><td><i>	 * ASN1 structure needs.</i></td></tr>
+<tr><th id="133">133</th><td><i>	 */</i></td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td>	<a class="local col3 ref" href="#23sarg" title='sarg' data-ref="23sarg">sarg</a>.<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG_st::out" title='ASN1_STREAM_ARG_st::out' data-ref="ASN1_STREAM_ARG_st::out">out</a> = <a class="local col7 ref" href="#17out" title='out' data-ref="17out">out</a>;</td></tr>
+<tr><th id="136">136</th><td>	<a class="local col3 ref" href="#23sarg" title='sarg' data-ref="23sarg">sarg</a>.<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG_st::ndef_bio" title='ASN1_STREAM_ARG_st::ndef_bio' data-ref="ASN1_STREAM_ARG_st::ndef_bio">ndef_bio</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="137">137</th><td>	<a class="local col3 ref" href="#23sarg" title='sarg' data-ref="23sarg">sarg</a>.<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG_st::boundary" title='ASN1_STREAM_ARG_st::boundary' data-ref="ASN1_STREAM_ARG_st::boundary">boundary</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td>	<b>if</b> (<a class="local col2 ref" href="#22aux" title='aux' data-ref="22aux">aux</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_AUX_st::asn1_cb" title='ASN1_AUX_st::asn1_cb' data-ref="ASN1_AUX_st::asn1_cb">asn1_cb</a>(<a class="macro" href="../../include/openssl/asn1t.h.html#714" title="10" data-ref="_M/ASN1_OP_STREAM_PRE">ASN1_OP_STREAM_PRE</a>, &amp;<a class="local col8 ref" href="#18val" title='val' data-ref="18val">val</a>, <a class="local col9 ref" href="#19it" title='it' data-ref="19it">it</a>, &amp;<a class="local col3 ref" href="#23sarg" title='sarg' data-ref="23sarg">sarg</a>) &lt;= <var>0</var>)</td></tr>
+<tr><th id="140">140</th><td>		<b>goto</b> <a class="lbl" href="#24err" data-ref="24err">err</a>;</td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td>	<a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::val" title='ndef_aux_st::val' data-use='w' data-ref="ndef_aux_st::val">val</a> = <a class="local col8 ref" href="#18val" title='val' data-ref="18val">val</a>;</td></tr>
+<tr><th id="143">143</th><td>	<a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::it" title='ndef_aux_st::it' data-use='w' data-ref="ndef_aux_st::it">it</a> = <a class="local col9 ref" href="#19it" title='it' data-ref="19it">it</a>;</td></tr>
+<tr><th id="144">144</th><td>	<a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::ndef_bio" title='ndef_aux_st::ndef_bio' data-use='w' data-ref="ndef_aux_st::ndef_bio">ndef_bio</a> = <a class="local col3 ref" href="#23sarg" title='sarg' data-ref="23sarg">sarg</a>.<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG_st::ndef_bio" title='ASN1_STREAM_ARG_st::ndef_bio' data-ref="ASN1_STREAM_ARG_st::ndef_bio">ndef_bio</a>;</td></tr>
+<tr><th id="145">145</th><td>	<a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::boundary" title='ndef_aux_st::boundary' data-use='w' data-ref="ndef_aux_st::boundary">boundary</a> = <a class="local col3 ref" href="#23sarg" title='sarg' data-ref="23sarg">sarg</a>.<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG_st::boundary" title='ASN1_STREAM_ARG_st::boundary' data-ref="ASN1_STREAM_ARG_st::boundary">boundary</a>;</td></tr>
+<tr><th id="146">146</th><td>	<a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::out" title='ndef_aux_st::out' data-use='w' data-ref="ndef_aux_st::out">out</a> = <a class="local col7 ref" href="#17out" title='out' data-ref="17out">out</a>;</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td>	<a class="ref" href="../../include/openssl/bio.h.html#BIO_ctrl" title='BIO_ctrl' data-ref="BIO_ctrl">BIO_ctrl</a>(<a class="local col1 ref" href="#21asn_bio" title='asn_bio' data-ref="21asn_bio">asn_bio</a>, <a class="macro" href="../../include/openssl/bio.h.html#876" title="153" data-ref="_M/BIO_C_SET_EX_ARG">BIO_C_SET_EX_ARG</a>, <var>0</var>, <a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a>);</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td>	<b>return</b> <a class="local col3 ref" href="#23sarg" title='sarg' data-ref="23sarg">sarg</a>.<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG_st::ndef_bio" title='ASN1_STREAM_ARG_st::ndef_bio' data-ref="ASN1_STREAM_ARG_st::ndef_bio">ndef_bio</a>;</td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td>	<dfn class="lbl" id="24err" data-ref="24err">err</dfn>:</td></tr>
+<tr><th id="153">153</th><td>	<b>if</b> (<a class="local col1 ref" href="#21asn_bio" title='asn_bio' data-ref="21asn_bio">asn_bio</a>)</td></tr>
+<tr><th id="154">154</th><td>		<a class="ref" href="../../include/openssl/bio.h.html#BIO_free" title='BIO_free' data-ref="BIO_free">BIO_free</a>(<a class="local col1 ref" href="#21asn_bio" title='asn_bio' data-ref="21asn_bio">asn_bio</a>);</td></tr>
+<tr><th id="155">155</th><td>	<b>if</b> (<a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a>)</td></tr>
+<tr><th id="156">156</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col0 ref" href="#20ndef_aux" title='ndef_aux' data-ref="20ndef_aux">ndef_aux</a>);</td></tr>
+<tr><th id="157">157</th><td>	<b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="158">158</th><td>	}</td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="ndef_prefix" title='ndef_prefix' data-type='int ndef_prefix(BIO * b, unsigned char ** pbuf, int * plen, void * parg)' data-ref="ndef_prefix">ndef_prefix</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col5 decl" id="25b" title='b' data-type='BIO *' data-ref="25b">b</dfn>, <em>unsigned</em> <em>char</em> **<dfn class="local col6 decl" id="26pbuf" title='pbuf' data-type='unsigned char **' data-ref="26pbuf">pbuf</dfn>, <em>int</em> *<dfn class="local col7 decl" id="27plen" title='plen' data-type='int *' data-ref="27plen">plen</dfn>, <em>void</em> *<dfn class="local col8 decl" id="28parg" title='parg' data-type='void *' data-ref="28parg">parg</dfn>)</td></tr>
+<tr><th id="161">161</th><td>	{</td></tr>
+<tr><th id="162">162</th><td>	<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a> *<dfn class="local col9 decl" id="29ndef_aux" title='ndef_aux' data-type='NDEF_SUPPORT *' data-ref="29ndef_aux">ndef_aux</dfn>;</td></tr>
+<tr><th id="163">163</th><td>	<em>unsigned</em> <em>char</em> *<dfn class="local col0 decl" id="30p" title='p' data-type='unsigned char *' data-ref="30p">p</dfn>;</td></tr>
+<tr><th id="164">164</th><td>	<em>int</em> <dfn class="local col1 decl" id="31derlen" title='derlen' data-type='int' data-ref="31derlen">derlen</dfn>;</td></tr>
+<tr><th id="165">165</th><td></td></tr>
+<tr><th id="166">166</th><td>	<b>if</b> (!<a class="local col8 ref" href="#28parg" title='parg' data-ref="28parg">parg</a>)</td></tr>
+<tr><th id="167">167</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td>	<a class="local col9 ref" href="#29ndef_aux" title='ndef_aux' data-ref="29ndef_aux">ndef_aux</a> = *(<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a> **)<a class="local col8 ref" href="#28parg" title='parg' data-ref="28parg">parg</a>;</td></tr>
+<tr><th id="170">170</th><td></td></tr>
+<tr><th id="171">171</th><td>	<a class="local col1 ref" href="#31derlen" title='derlen' data-ref="31derlen">derlen</a> = <a class="ref" href="../../include/openssl/asn1.h.html#ASN1_item_ndef_i2d" title='ASN1_item_ndef_i2d' data-ref="ASN1_item_ndef_i2d">ASN1_item_ndef_i2d</a>(<a class="local col9 ref" href="#29ndef_aux" title='ndef_aux' data-ref="29ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::val" title='ndef_aux_st::val' data-use='r' data-ref="ndef_aux_st::val">val</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <a class="local col9 ref" href="#29ndef_aux" title='ndef_aux' data-ref="29ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::it" title='ndef_aux_st::it' data-use='r' data-ref="ndef_aux_st::it">it</a>);</td></tr>
+<tr><th id="172">172</th><td>	<a class="local col0 ref" href="#30p" title='p' data-ref="30p">p</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<a class="local col1 ref" href="#31derlen" title='derlen' data-ref="31derlen">derlen</a>);</td></tr>
+<tr><th id="173">173</th><td>	<b>if</b> (<a class="local col0 ref" href="#30p" title='p' data-ref="30p">p</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="174">174</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td>	<a class="local col9 ref" href="#29ndef_aux" title='ndef_aux' data-ref="29ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::derbuf" title='ndef_aux_st::derbuf' data-use='w' data-ref="ndef_aux_st::derbuf">derbuf</a> = <a class="local col0 ref" href="#30p" title='p' data-ref="30p">p</a>;</td></tr>
+<tr><th id="177">177</th><td>	*<a class="local col6 ref" href="#26pbuf" title='pbuf' data-ref="26pbuf">pbuf</a> = <a class="local col0 ref" href="#30p" title='p' data-ref="30p">p</a>;</td></tr>
+<tr><th id="178">178</th><td>	<a class="local col1 ref" href="#31derlen" title='derlen' data-ref="31derlen">derlen</a> = <a class="ref" href="../../include/openssl/asn1.h.html#ASN1_item_ndef_i2d" title='ASN1_item_ndef_i2d' data-ref="ASN1_item_ndef_i2d">ASN1_item_ndef_i2d</a>(<a class="local col9 ref" href="#29ndef_aux" title='ndef_aux' data-ref="29ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::val" title='ndef_aux_st::val' data-use='r' data-ref="ndef_aux_st::val">val</a>, &amp;<a class="local col0 ref" href="#30p" title='p' data-ref="30p">p</a>, <a class="local col9 ref" href="#29ndef_aux" title='ndef_aux' data-ref="29ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::it" title='ndef_aux_st::it' data-use='r' data-ref="ndef_aux_st::it">it</a>);</td></tr>
+<tr><th id="179">179</th><td></td></tr>
+<tr><th id="180">180</th><td>	<b>if</b> (!*<a class="local col9 ref" href="#29ndef_aux" title='ndef_aux' data-ref="29ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::boundary" title='ndef_aux_st::boundary' data-use='r' data-ref="ndef_aux_st::boundary">boundary</a>)</td></tr>
+<tr><th id="181">181</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td>	*<a class="local col7 ref" href="#27plen" title='plen' data-ref="27plen">plen</a> = *<a class="local col9 ref" href="#29ndef_aux" title='ndef_aux' data-ref="29ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::boundary" title='ndef_aux_st::boundary' data-use='r' data-ref="ndef_aux_st::boundary">boundary</a> - *<a class="local col6 ref" href="#26pbuf" title='pbuf' data-ref="26pbuf">pbuf</a>;</td></tr>
+<tr><th id="184">184</th><td></td></tr>
+<tr><th id="185">185</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="186">186</th><td>	}</td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="ndef_prefix_free" title='ndef_prefix_free' data-type='int ndef_prefix_free(BIO * b, unsigned char ** pbuf, int * plen, void * parg)' data-ref="ndef_prefix_free">ndef_prefix_free</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col2 decl" id="32b" title='b' data-type='BIO *' data-ref="32b">b</dfn>, <em>unsigned</em> <em>char</em> **<dfn class="local col3 decl" id="33pbuf" title='pbuf' data-type='unsigned char **' data-ref="33pbuf">pbuf</dfn>, <em>int</em> *<dfn class="local col4 decl" id="34plen" title='plen' data-type='int *' data-ref="34plen">plen</dfn>, <em>void</em> *<dfn class="local col5 decl" id="35parg" title='parg' data-type='void *' data-ref="35parg">parg</dfn>)</td></tr>
+<tr><th id="189">189</th><td>	{</td></tr>
+<tr><th id="190">190</th><td>	<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a> *<dfn class="local col6 decl" id="36ndef_aux" title='ndef_aux' data-type='NDEF_SUPPORT *' data-ref="36ndef_aux">ndef_aux</dfn>;</td></tr>
+<tr><th id="191">191</th><td></td></tr>
+<tr><th id="192">192</th><td>	<b>if</b> (!<a class="local col5 ref" href="#35parg" title='parg' data-ref="35parg">parg</a>)</td></tr>
+<tr><th id="193">193</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td>	<a class="local col6 ref" href="#36ndef_aux" title='ndef_aux' data-ref="36ndef_aux">ndef_aux</a> = *(<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a> **)<a class="local col5 ref" href="#35parg" title='parg' data-ref="35parg">parg</a>;</td></tr>
+<tr><th id="196">196</th><td></td></tr>
+<tr><th id="197">197</th><td>	<b>if</b> (<a class="local col6 ref" href="#36ndef_aux" title='ndef_aux' data-ref="36ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::derbuf" title='ndef_aux_st::derbuf' data-use='r' data-ref="ndef_aux_st::derbuf">derbuf</a>)</td></tr>
+<tr><th id="198">198</th><td>		<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col6 ref" href="#36ndef_aux" title='ndef_aux' data-ref="36ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::derbuf" title='ndef_aux_st::derbuf' data-use='r' data-ref="ndef_aux_st::derbuf">derbuf</a>);</td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td>	<a class="local col6 ref" href="#36ndef_aux" title='ndef_aux' data-ref="36ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::derbuf" title='ndef_aux_st::derbuf' data-use='w' data-ref="ndef_aux_st::derbuf">derbuf</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="201">201</th><td>	*<a class="local col3 ref" href="#33pbuf" title='pbuf' data-ref="33pbuf">pbuf</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="202">202</th><td>	*<a class="local col4 ref" href="#34plen" title='plen' data-ref="34plen">plen</a> = <var>0</var>;</td></tr>
+<tr><th id="203">203</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="204">204</th><td>	}</td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="ndef_suffix_free" title='ndef_suffix_free' data-type='int ndef_suffix_free(BIO * b, unsigned char ** pbuf, int * plen, void * parg)' data-ref="ndef_suffix_free">ndef_suffix_free</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col7 decl" id="37b" title='b' data-type='BIO *' data-ref="37b">b</dfn>, <em>unsigned</em> <em>char</em> **<dfn class="local col8 decl" id="38pbuf" title='pbuf' data-type='unsigned char **' data-ref="38pbuf">pbuf</dfn>, <em>int</em> *<dfn class="local col9 decl" id="39plen" title='plen' data-type='int *' data-ref="39plen">plen</dfn>, <em>void</em> *<dfn class="local col0 decl" id="40parg" title='parg' data-type='void *' data-ref="40parg">parg</dfn>)</td></tr>
+<tr><th id="207">207</th><td>	{</td></tr>
+<tr><th id="208">208</th><td>	<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a> **<dfn class="local col1 decl" id="41pndef_aux" title='pndef_aux' data-type='NDEF_SUPPORT **' data-ref="41pndef_aux">pndef_aux</dfn> = (<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a> **)<a class="local col0 ref" href="#40parg" title='parg' data-ref="40parg">parg</a>;</td></tr>
+<tr><th id="209">209</th><td>	<b>if</b> (!<a class="tu ref" href="#ndef_prefix_free" title='ndef_prefix_free' data-use='c' data-ref="ndef_prefix_free">ndef_prefix_free</a>(<a class="local col7 ref" href="#37b" title='b' data-ref="37b">b</a>, <a class="local col8 ref" href="#38pbuf" title='pbuf' data-ref="38pbuf">pbuf</a>, <a class="local col9 ref" href="#39plen" title='plen' data-ref="39plen">plen</a>, <a class="local col0 ref" href="#40parg" title='parg' data-ref="40parg">parg</a>))</td></tr>
+<tr><th id="210">210</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="211">211</th><td>	<a class="macro" href="../../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(*<a class="local col1 ref" href="#41pndef_aux" title='pndef_aux' data-ref="41pndef_aux">pndef_aux</a>);</td></tr>
+<tr><th id="212">212</th><td>	*<a class="local col1 ref" href="#41pndef_aux" title='pndef_aux' data-ref="41pndef_aux">pndef_aux</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="213">213</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="214">214</th><td>	}</td></tr>
+<tr><th id="215">215</th><td></td></tr>
+<tr><th id="216">216</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="ndef_suffix" title='ndef_suffix' data-type='int ndef_suffix(BIO * b, unsigned char ** pbuf, int * plen, void * parg)' data-ref="ndef_suffix">ndef_suffix</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#BIO" title='BIO' data-type='struct bio_st' data-ref="BIO">BIO</a> *<dfn class="local col2 decl" id="42b" title='b' data-type='BIO *' data-ref="42b">b</dfn>, <em>unsigned</em> <em>char</em> **<dfn class="local col3 decl" id="43pbuf" title='pbuf' data-type='unsigned char **' data-ref="43pbuf">pbuf</dfn>, <em>int</em> *<dfn class="local col4 decl" id="44plen" title='plen' data-type='int *' data-ref="44plen">plen</dfn>, <em>void</em> *<dfn class="local col5 decl" id="45parg" title='parg' data-type='void *' data-ref="45parg">parg</dfn>)</td></tr>
+<tr><th id="217">217</th><td>	{</td></tr>
+<tr><th id="218">218</th><td>	<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a> *<dfn class="local col6 decl" id="46ndef_aux" title='ndef_aux' data-type='NDEF_SUPPORT *' data-ref="46ndef_aux">ndef_aux</dfn>;</td></tr>
+<tr><th id="219">219</th><td>	<em>unsigned</em> <em>char</em> *<dfn class="local col7 decl" id="47p" title='p' data-type='unsigned char *' data-ref="47p">p</dfn>;</td></tr>
+<tr><th id="220">220</th><td>	<em>int</em> <dfn class="local col8 decl" id="48derlen" title='derlen' data-type='int' data-ref="48derlen">derlen</dfn>;</td></tr>
+<tr><th id="221">221</th><td>	<em>const</em> <a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_AUX" title='ASN1_AUX' data-type='struct ASN1_AUX_st' data-ref="ASN1_AUX">ASN1_AUX</a> *<dfn class="local col9 decl" id="49aux" title='aux' data-type='const ASN1_AUX *' data-ref="49aux">aux</dfn>;</td></tr>
+<tr><th id="222">222</th><td>	<a class="typedef" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG" title='ASN1_STREAM_ARG' data-type='struct ASN1_STREAM_ARG_st' data-ref="ASN1_STREAM_ARG">ASN1_STREAM_ARG</a> <dfn class="local col0 decl" id="50sarg" title='sarg' data-type='ASN1_STREAM_ARG' data-ref="50sarg">sarg</dfn>;</td></tr>
+<tr><th id="223">223</th><td></td></tr>
+<tr><th id="224">224</th><td>	<b>if</b> (!<a class="local col5 ref" href="#45parg" title='parg' data-ref="45parg">parg</a>)</td></tr>
+<tr><th id="225">225</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="226">226</th><td></td></tr>
+<tr><th id="227">227</th><td>	<a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a> = *(<a class="typedef" href="#NDEF_SUPPORT" title='NDEF_SUPPORT' data-type='struct ndef_aux_st' data-ref="NDEF_SUPPORT">NDEF_SUPPORT</a> **)<a class="local col5 ref" href="#45parg" title='parg' data-ref="45parg">parg</a>;</td></tr>
+<tr><th id="228">228</th><td></td></tr>
+<tr><th id="229">229</th><td>	<a class="local col9 ref" href="#49aux" title='aux' data-ref="49aux">aux</a> = <a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::it" title='ndef_aux_st::it' data-use='r' data-ref="ndef_aux_st::it">it</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_ITEM_st::funcs" title='ASN1_ITEM_st::funcs' data-ref="ASN1_ITEM_st::funcs">funcs</a>;</td></tr>
+<tr><th id="230">230</th><td></td></tr>
+<tr><th id="231">231</th><td>	<i>/* Finalize structures */</i></td></tr>
+<tr><th id="232">232</th><td>	<a class="local col0 ref" href="#50sarg" title='sarg' data-ref="50sarg">sarg</a>.<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG_st::ndef_bio" title='ASN1_STREAM_ARG_st::ndef_bio' data-ref="ASN1_STREAM_ARG_st::ndef_bio">ndef_bio</a> = <a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::ndef_bio" title='ndef_aux_st::ndef_bio' data-use='r' data-ref="ndef_aux_st::ndef_bio">ndef_bio</a>;</td></tr>
+<tr><th id="233">233</th><td>	<a class="local col0 ref" href="#50sarg" title='sarg' data-ref="50sarg">sarg</a>.<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG_st::out" title='ASN1_STREAM_ARG_st::out' data-ref="ASN1_STREAM_ARG_st::out">out</a> = <a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::out" title='ndef_aux_st::out' data-use='r' data-ref="ndef_aux_st::out">out</a>;</td></tr>
+<tr><th id="234">234</th><td>	<a class="local col0 ref" href="#50sarg" title='sarg' data-ref="50sarg">sarg</a>.<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_STREAM_ARG_st::boundary" title='ASN1_STREAM_ARG_st::boundary' data-ref="ASN1_STREAM_ARG_st::boundary">boundary</a> = <a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::boundary" title='ndef_aux_st::boundary' data-use='r' data-ref="ndef_aux_st::boundary">boundary</a>;</td></tr>
+<tr><th id="235">235</th><td>	<b>if</b> (<a class="local col9 ref" href="#49aux" title='aux' data-ref="49aux">aux</a>-&gt;<a class="ref" href="../../include/openssl/asn1t.h.html#ASN1_AUX_st::asn1_cb" title='ASN1_AUX_st::asn1_cb' data-ref="ASN1_AUX_st::asn1_cb">asn1_cb</a>(<a class="macro" href="../../include/openssl/asn1t.h.html#715" title="11" data-ref="_M/ASN1_OP_STREAM_POST">ASN1_OP_STREAM_POST</a>,</td></tr>
+<tr><th id="236">236</th><td>				&amp;<a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::val" title='ndef_aux_st::val' data-use='a' data-ref="ndef_aux_st::val">val</a>, <a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::it" title='ndef_aux_st::it' data-use='r' data-ref="ndef_aux_st::it">it</a>, &amp;<a class="local col0 ref" href="#50sarg" title='sarg' data-ref="50sarg">sarg</a>) &lt;= <var>0</var>)</td></tr>
+<tr><th id="237">237</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="238">238</th><td></td></tr>
+<tr><th id="239">239</th><td>	<a class="local col8 ref" href="#48derlen" title='derlen' data-ref="48derlen">derlen</a> = <a class="ref" href="../../include/openssl/asn1.h.html#ASN1_item_ndef_i2d" title='ASN1_item_ndef_i2d' data-ref="ASN1_item_ndef_i2d">ASN1_item_ndef_i2d</a>(<a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::val" title='ndef_aux_st::val' data-use='r' data-ref="ndef_aux_st::val">val</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::it" title='ndef_aux_st::it' data-use='r' data-ref="ndef_aux_st::it">it</a>);</td></tr>
+<tr><th id="240">240</th><td>	<a class="local col7 ref" href="#47p" title='p' data-ref="47p">p</a> = <a class="macro" href="../../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<a class="local col8 ref" href="#48derlen" title='derlen' data-ref="48derlen">derlen</a>);</td></tr>
+<tr><th id="241">241</th><td>	<b>if</b> (<a class="local col7 ref" href="#47p" title='p' data-ref="47p">p</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)</td></tr>
+<tr><th id="242">242</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="243">243</th><td></td></tr>
+<tr><th id="244">244</th><td>	<a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::derbuf" title='ndef_aux_st::derbuf' data-use='w' data-ref="ndef_aux_st::derbuf">derbuf</a> = <a class="local col7 ref" href="#47p" title='p' data-ref="47p">p</a>;</td></tr>
+<tr><th id="245">245</th><td>	*<a class="local col3 ref" href="#43pbuf" title='pbuf' data-ref="43pbuf">pbuf</a> = <a class="local col7 ref" href="#47p" title='p' data-ref="47p">p</a>;</td></tr>
+<tr><th id="246">246</th><td>	<a class="local col8 ref" href="#48derlen" title='derlen' data-ref="48derlen">derlen</a> = <a class="ref" href="../../include/openssl/asn1.h.html#ASN1_item_ndef_i2d" title='ASN1_item_ndef_i2d' data-ref="ASN1_item_ndef_i2d">ASN1_item_ndef_i2d</a>(<a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::val" title='ndef_aux_st::val' data-use='r' data-ref="ndef_aux_st::val">val</a>, &amp;<a class="local col7 ref" href="#47p" title='p' data-ref="47p">p</a>, <a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::it" title='ndef_aux_st::it' data-use='r' data-ref="ndef_aux_st::it">it</a>);</td></tr>
+<tr><th id="247">247</th><td></td></tr>
+<tr><th id="248">248</th><td>	<b>if</b> (!*<a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::boundary" title='ndef_aux_st::boundary' data-use='r' data-ref="ndef_aux_st::boundary">boundary</a>)</td></tr>
+<tr><th id="249">249</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="250">250</th><td>	*<a class="local col3 ref" href="#43pbuf" title='pbuf' data-ref="43pbuf">pbuf</a> = *<a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::boundary" title='ndef_aux_st::boundary' data-use='r' data-ref="ndef_aux_st::boundary">boundary</a>;</td></tr>
+<tr><th id="251">251</th><td>	*<a class="local col4 ref" href="#44plen" title='plen' data-ref="44plen">plen</a> = <a class="local col8 ref" href="#48derlen" title='derlen' data-ref="48derlen">derlen</a> - (*<a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::boundary" title='ndef_aux_st::boundary' data-use='r' data-ref="ndef_aux_st::boundary">boundary</a> - <a class="local col6 ref" href="#46ndef_aux" title='ndef_aux' data-ref="46ndef_aux">ndef_aux</a>-&gt;<a class="tu ref" href="#ndef_aux_st::derbuf" title='ndef_aux_st::derbuf' data-use='r' data-ref="ndef_aux_st::derbuf">derbuf</a>);</td></tr>
+<tr><th id="252">252</th><td></td></tr>
+<tr><th id="253">253</th><td>	<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="254">254</th><td>	}</td></tr>
+<tr><th id="255">255</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

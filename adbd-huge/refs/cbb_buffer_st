@@ -1,0 +1,19 @@
+<def f='codebrowser/external/boringssl/src/include/openssl/bytestring.h' l='231' ll='237'/>
+<size>32</size>
+<doc f='codebrowser/external/boringssl/src/include/openssl/bytestring.h' l='217'>/* CRYPTO ByteBuilder.
+ *
+ * |CBB| objects allow one to build length-prefixed serialisations. A |CBB|
+ * object is associated with a buffer and new buffers are created with
+ * |CBB_init|. Several |CBB| objects can point at the same buffer when a
+ * length-prefix is pending, however only a single |CBB| can be &apos;current&apos; at
+ * any one time. For example, if one calls |CBB_add_u8_length_prefixed| then
+ * the new |CBB| points at the same buffer as the original. But if the original
+ * |CBB| is used then the length prefix is written out and the new |CBB| must
+ * not be used again.
+ *
+ * If one needs to force a length prefix to be written out because a |CBB| is
+ * going out of scope, use |CBB_flush|. */</doc>
+<mbr r='cbb_buffer_st::buf' o='0' t='uint8_t *'/>
+<mbr r='cbb_buffer_st::len' o='64' t='size_t'/>
+<mbr r='cbb_buffer_st::cap' o='128' t='size_t'/>
+<mbr r='cbb_buffer_st::can_resize' o='192' t='char'/>

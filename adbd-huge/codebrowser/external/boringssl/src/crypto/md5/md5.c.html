@@ -1,0 +1,293 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>md5.c source code [codebrowser/external/boringssl/src/crypto/md5/md5.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/md5/md5.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>md5</a>/<a href='md5.c.html'>md5.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/md5.h.html">&lt;openssl/md5.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="decl def" id="MD5" title='MD5' data-ref="MD5">MD5</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col1 decl" id="1data" title='data' data-type='const uint8_t *' data-ref="1data">data</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="2len" title='len' data-type='size_t' data-ref="2len">len</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col3 decl" id="3out" title='out' data-type='uint8_t *' data-ref="3out">out</dfn>) {</td></tr>
+<tr><th id="65">65</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#MD5_CTX" title='MD5_CTX' data-type='struct md5_state_st' data-ref="MD5_CTX">MD5_CTX</a> <dfn class="local col4 decl" id="4ctx" title='ctx' data-type='MD5_CTX' data-ref="4ctx">ctx</dfn>;</td></tr>
+<tr><th id="66">66</th><td>  <em>static</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col5 decl" id="5digest" title='digest' data-type='uint8_t [16]' data-ref="5digest">digest</dfn>[<a class="macro" href="../../include/openssl/md5.h.html#74" title="16" data-ref="_M/MD5_DIGEST_LENGTH">MD5_DIGEST_LENGTH</a>];</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td>  <i>/* TODO(fork): remove this static buffer. */</i></td></tr>
+<tr><th id="69">69</th><td>  <b>if</b> (<a class="local col3 ref" href="#3out" title='out' data-ref="3out">out</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="70">70</th><td>    <a class="local col3 ref" href="#3out" title='out' data-ref="3out">out</a> = <a class="local col5 ref" href="#5digest" title='digest' data-ref="5digest">digest</a>;</td></tr>
+<tr><th id="71">71</th><td>  }</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td>  <a class="ref" href="#MD5_Init" title='MD5_Init' data-ref="MD5_Init">MD5_Init</a>(&amp;<a class="local col4 ref" href="#4ctx" title='ctx' data-ref="4ctx">ctx</a>);</td></tr>
+<tr><th id="74">74</th><td>  <a class="ref" href="../../include/openssl/md5.h.html#MD5_Update" title='MD5_Update' data-ref="MD5_Update">MD5_Update</a>(&amp;<a class="local col4 ref" href="#4ctx" title='ctx' data-ref="4ctx">ctx</a>, <a class="local col1 ref" href="#1data" title='data' data-ref="1data">data</a>, <a class="local col2 ref" href="#2len" title='len' data-ref="2len">len</a>);</td></tr>
+<tr><th id="75">75</th><td>  <a class="ref" href="../../include/openssl/md5.h.html#MD5_Final" title='MD5_Final' data-ref="MD5_Final">MD5_Final</a>(<a class="local col3 ref" href="#3out" title='out' data-ref="3out">out</a>, &amp;<a class="local col4 ref" href="#4ctx" title='ctx' data-ref="4ctx">ctx</a>);</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td>  <b>return</b> <a class="local col3 ref" href="#3out" title='out' data-ref="3out">out</a>;</td></tr>
+<tr><th id="78">78</th><td>}</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><em>int</em> <dfn class="decl def" id="MD5_Init" title='MD5_Init' data-ref="MD5_Init">MD5_Init</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#MD5_CTX" title='MD5_CTX' data-type='struct md5_state_st' data-ref="MD5_CTX">MD5_CTX</a> *<dfn class="local col6 decl" id="6md5" title='md5' data-type='MD5_CTX *' data-ref="6md5">md5</dfn>) {</td></tr>
+<tr><th id="81">81</th><td>  <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col6 ref" href="#6md5" title='md5' data-ref="6md5">md5</a>, <var>0</var>, <b>sizeof</b>(<a class="typedef" href="../../include/openssl/base.h.html#MD5_CTX" title='MD5_CTX' data-type='struct md5_state_st' data-ref="MD5_CTX">MD5_CTX</a>));</td></tr>
+<tr><th id="82">82</th><td>  <a class="local col6 ref" href="#6md5" title='md5' data-ref="6md5">md5</a>-&gt;<a class="ref" href="../../include/openssl/md5.h.html#md5_state_st::h" title='md5_state_st::h' data-ref="md5_state_st::h">h</a>[<var>0</var>] = <var>0x67452301UL</var>;</td></tr>
+<tr><th id="83">83</th><td>  <a class="local col6 ref" href="#6md5" title='md5' data-ref="6md5">md5</a>-&gt;<a class="ref" href="../../include/openssl/md5.h.html#md5_state_st::h" title='md5_state_st::h' data-ref="md5_state_st::h">h</a>[<var>1</var>] = <var>0xefcdab89UL</var>;</td></tr>
+<tr><th id="84">84</th><td>  <a class="local col6 ref" href="#6md5" title='md5' data-ref="6md5">md5</a>-&gt;<a class="ref" href="../../include/openssl/md5.h.html#md5_state_st::h" title='md5_state_st::h' data-ref="md5_state_st::h">h</a>[<var>2</var>] = <var>0x98badcfeUL</var>;</td></tr>
+<tr><th id="85">85</th><td>  <a class="local col6 ref" href="#6md5" title='md5' data-ref="6md5">md5</a>-&gt;<a class="ref" href="../../include/openssl/md5.h.html#md5_state_st::h" title='md5_state_st::h' data-ref="md5_state_st::h">h</a>[<var>3</var>] = <var>0x10325476UL</var>;</td></tr>
+<tr><th id="86">86</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="87">87</th><td>}</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><u>#<span data-ppcond="89">if</span> !defined(<span class="macro" data-ref="_M/OPENSSL_NO_ASM">OPENSSL_NO_ASM</span>) &amp;&amp; \</u></td></tr>
+<tr><th id="90">90</th><td><u>    (defined(<a class="macro" href="../../include/openssl/base.h.html#72" data-ref="_M/OPENSSL_X86_64">OPENSSL_X86_64</a>) || defined(<span class="macro" data-ref="_M/OPENSSL_X86">OPENSSL_X86</span>))</u></td></tr>
+<tr><th id="91">91</th><td><u>#define <dfn class="macro" id="_M/MD5_ASM" data-ref="_M/MD5_ASM">MD5_ASM</dfn></u></td></tr>
+<tr><th id="92">92</th><td><u>#define <dfn class="macro" id="_M/md5_block_data_order" data-ref="_M/md5_block_data_order">md5_block_data_order</dfn> <dfn class="decl" id="md5_block_asm_data_order" title='md5_block_asm_data_order' data-ref="md5_block_asm_data_order">md5_block_asm_data_order</dfn></u></td></tr>
+<tr><th id="93">93</th><td><u>#<span data-ppcond="89">endif</span></u></td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><em>void</em> <a class="macro" href="#92" title="md5_block_asm_data_order" data-ref="_M/md5_block_data_order">md5_block_data_order</a>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> *<dfn class="local col7 decl" id="7state" title='state' data-type='uint32_t *' data-ref="7state">state</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="8data" title='data' data-type='const uint8_t *' data-ref="8data">data</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="9num" title='num' data-type='size_t' data-ref="9num">num</dfn>);</td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><u>#define <dfn class="macro" id="_M/DATA_ORDER_IS_LITTLE_ENDIAN" data-ref="_M/DATA_ORDER_IS_LITTLE_ENDIAN">DATA_ORDER_IS_LITTLE_ENDIAN</dfn></u></td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><u>#define <dfn class="macro" id="_M/HASH_CTX" data-ref="_M/HASH_CTX">HASH_CTX</dfn> MD5_CTX</u></td></tr>
+<tr><th id="101">101</th><td><u>#define <dfn class="macro" id="_M/HASH_CBLOCK" data-ref="_M/HASH_CBLOCK">HASH_CBLOCK</dfn> 64</u></td></tr>
+<tr><th id="102">102</th><td><u>#define <dfn class="macro" id="_M/HASH_UPDATE" data-ref="_M/HASH_UPDATE">HASH_UPDATE</dfn> MD5_Update</u></td></tr>
+<tr><th id="103">103</th><td><u>#define <dfn class="macro" id="_M/HASH_TRANSFORM" data-ref="_M/HASH_TRANSFORM">HASH_TRANSFORM</dfn> MD5_Transform</u></td></tr>
+<tr><th id="104">104</th><td><u>#define <dfn class="macro" id="_M/HASH_FINAL" data-ref="_M/HASH_FINAL">HASH_FINAL</dfn> MD5_Final</u></td></tr>
+<tr><th id="105">105</th><td><u>#define <dfn class="macro" id="_M/HASH_MAKE_STRING" data-ref="_M/HASH_MAKE_STRING">HASH_MAKE_STRING</dfn>(c, s) \</u></td></tr>
+<tr><th id="106">106</th><td><u>  do {                         \</u></td></tr>
+<tr><th id="107">107</th><td><u>    uint32_t ll;               \</u></td></tr>
+<tr><th id="108">108</th><td><u>    ll = (c)-&gt;h[0];            \</u></td></tr>
+<tr><th id="109">109</th><td><u>    HOST_l2c(ll, (s));         \</u></td></tr>
+<tr><th id="110">110</th><td><u>    ll = (c)-&gt;h[1];            \</u></td></tr>
+<tr><th id="111">111</th><td><u>    HOST_l2c(ll, (s));         \</u></td></tr>
+<tr><th id="112">112</th><td><u>    ll = (c)-&gt;h[2];            \</u></td></tr>
+<tr><th id="113">113</th><td><u>    HOST_l2c(ll, (s));         \</u></td></tr>
+<tr><th id="114">114</th><td><u>    ll = (c)-&gt;h[3];            \</u></td></tr>
+<tr><th id="115">115</th><td><u>    HOST_l2c(ll, (s));         \</u></td></tr>
+<tr><th id="116">116</th><td><u>  } while (0)</u></td></tr>
+<tr><th id="117">117</th><td><u>#define <dfn class="macro" id="_M/HASH_BLOCK_DATA_ORDER" data-ref="_M/HASH_BLOCK_DATA_ORDER">HASH_BLOCK_DATA_ORDER</dfn> md5_block_data_order</u></td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td><u>#include <a href="../digest/md32_common.h.html">"../digest/md32_common.h"</a></u></td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><i>/* As pointed out by Wei Dai &lt;weidai@eskimo.com&gt;, the above can be</i></td></tr>
+<tr><th id="122">122</th><td><i> * simplified to the code below.  Wei attributes these optimizations</i></td></tr>
+<tr><th id="123">123</th><td><i> * to Peter Gutmann's SHS code, and he attributes it to Rich Schroeppel.</i></td></tr>
+<tr><th id="124">124</th><td><i> */</i></td></tr>
+<tr><th id="125">125</th><td><u>#define	<dfn class="macro" id="_M/F" data-ref="_M/F">F</dfn>(b,c,d)	((((c) ^ (d)) &amp; (b)) ^ (d))</u></td></tr>
+<tr><th id="126">126</th><td><u>#define	<dfn class="macro" id="_M/G" data-ref="_M/G">G</dfn>(b,c,d)	((((b) ^ (c)) &amp; (d)) ^ (c))</u></td></tr>
+<tr><th id="127">127</th><td><u>#define	<dfn class="macro" id="_M/H" data-ref="_M/H">H</dfn>(b,c,d)	((b) ^ (c) ^ (d))</u></td></tr>
+<tr><th id="128">128</th><td><u>#define	<dfn class="macro" id="_M/I" data-ref="_M/I">I</dfn>(b,c,d)	(((~(d)) | (b)) ^ (c))</u></td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td><u>#define <dfn class="macro" id="_M/ROTATE" data-ref="_M/ROTATE">ROTATE</dfn>(a, n) (((a) &lt;&lt; (n)) | ((a) &gt;&gt; (32 - (n))))</u></td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><u>#define <dfn class="macro" id="_M/R0" data-ref="_M/R0">R0</dfn>(a,b,c,d,k,s,t) { \</u></td></tr>
+<tr><th id="133">133</th><td><u>	a+=((k)+(t)+F((b),(c),(d))); \</u></td></tr>
+<tr><th id="134">134</th><td><u>	a=ROTATE(a,s); \</u></td></tr>
+<tr><th id="135">135</th><td><u>	a+=b; };</u>\</td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td><u>#define <dfn class="macro" id="_M/R1" data-ref="_M/R1">R1</dfn>(a,b,c,d,k,s,t) { \</u></td></tr>
+<tr><th id="138">138</th><td><u>	a+=((k)+(t)+G((b),(c),(d))); \</u></td></tr>
+<tr><th id="139">139</th><td><u>	a=ROTATE(a,s); \</u></td></tr>
+<tr><th id="140">140</th><td><u>	a+=b; };</u></td></tr>
+<tr><th id="141">141</th><td></td></tr>
+<tr><th id="142">142</th><td><u>#define <dfn class="macro" id="_M/R2" data-ref="_M/R2">R2</dfn>(a,b,c,d,k,s,t) { \</u></td></tr>
+<tr><th id="143">143</th><td><u>	a+=((k)+(t)+H((b),(c),(d))); \</u></td></tr>
+<tr><th id="144">144</th><td><u>	a=ROTATE(a,s); \</u></td></tr>
+<tr><th id="145">145</th><td><u>	a+=b; };</u></td></tr>
+<tr><th id="146">146</th><td></td></tr>
+<tr><th id="147">147</th><td><u>#define <dfn class="macro" id="_M/R3" data-ref="_M/R3">R3</dfn>(a,b,c,d,k,s,t) { \</u></td></tr>
+<tr><th id="148">148</th><td><u>	a+=((k)+(t)+I((b),(c),(d))); \</u></td></tr>
+<tr><th id="149">149</th><td><u>	a=ROTATE(a,s); \</u></td></tr>
+<tr><th id="150">150</th><td><u>	a+=b; };</u></td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><u>#<span data-ppcond="152">ifndef</span> <a class="macro" href="#92" data-ref="_M/md5_block_data_order">md5_block_data_order</a></u></td></tr>
+<tr><th id="153">153</th><td><u>#ifdef X</u></td></tr>
+<tr><th id="154">154</th><td><u>#undef X</u></td></tr>
+<tr><th id="155">155</th><td><u>#endif</u></td></tr>
+<tr><th id="156">156</th><td><em>void</em> md5_block_data_order(uint32_t *state, <em>const</em> uint8_t *data, size_t num) {</td></tr>
+<tr><th id="157">157</th><td>  uint32_t A, B, C, D, l;</td></tr>
+<tr><th id="158">158</th><td>  uint32_t XX0, XX1, XX2, XX3, XX4, XX5, XX6, XX7, XX8, XX9, XX10, XX11, XX12,</td></tr>
+<tr><th id="159">159</th><td>      XX13, XX14, XX15;</td></tr>
+<tr><th id="160">160</th><td><u>#define X(i) XX##i</u></td></tr>
+<tr><th id="161">161</th><td></td></tr>
+<tr><th id="162">162</th><td>  A = state[<var>0</var>];</td></tr>
+<tr><th id="163">163</th><td>  B = state[<var>1</var>];</td></tr>
+<tr><th id="164">164</th><td>  C = state[<var>2</var>];</td></tr>
+<tr><th id="165">165</th><td>  D = state[<var>3</var>];</td></tr>
+<tr><th id="166">166</th><td></td></tr>
+<tr><th id="167">167</th><td>  <b>for</b> (; num--;) {</td></tr>
+<tr><th id="168">168</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="169">169</th><td>    X(<var>0</var>) = l;</td></tr>
+<tr><th id="170">170</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="171">171</th><td>    X(<var>1</var>) = l;</td></tr>
+<tr><th id="172">172</th><td>    <i>/* Round 0 */</i></td></tr>
+<tr><th id="173">173</th><td>    R0(A, B, C, D, X(<var>0</var>), <var>7</var>, <var>0xd76aa478L</var>);</td></tr>
+<tr><th id="174">174</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="175">175</th><td>    X(<var>2</var>) = l;</td></tr>
+<tr><th id="176">176</th><td>    R0(D, A, B, C, X(<var>1</var>), <var>12</var>, <var>0xe8c7b756L</var>);</td></tr>
+<tr><th id="177">177</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="178">178</th><td>    X(<var>3</var>) = l;</td></tr>
+<tr><th id="179">179</th><td>    R0(C, D, A, B, X(<var>2</var>), <var>17</var>, <var>0x242070dbL</var>);</td></tr>
+<tr><th id="180">180</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="181">181</th><td>    X(<var>4</var>) = l;</td></tr>
+<tr><th id="182">182</th><td>    R0(B, C, D, A, X(<var>3</var>), <var>22</var>, <var>0xc1bdceeeL</var>);</td></tr>
+<tr><th id="183">183</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="184">184</th><td>    X(<var>5</var>) = l;</td></tr>
+<tr><th id="185">185</th><td>    R0(A, B, C, D, X(<var>4</var>), <var>7</var>, <var>0xf57c0fafL</var>);</td></tr>
+<tr><th id="186">186</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="187">187</th><td>    X(<var>6</var>) = l;</td></tr>
+<tr><th id="188">188</th><td>    R0(D, A, B, C, X(<var>5</var>), <var>12</var>, <var>0x4787c62aL</var>);</td></tr>
+<tr><th id="189">189</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="190">190</th><td>    X(<var>7</var>) = l;</td></tr>
+<tr><th id="191">191</th><td>    R0(C, D, A, B, X(<var>6</var>), <var>17</var>, <var>0xa8304613L</var>);</td></tr>
+<tr><th id="192">192</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="193">193</th><td>    X(<var>8</var>) = l;</td></tr>
+<tr><th id="194">194</th><td>    R0(B, C, D, A, X(<var>7</var>), <var>22</var>, <var>0xfd469501L</var>);</td></tr>
+<tr><th id="195">195</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="196">196</th><td>    X(<var>9</var>) = l;</td></tr>
+<tr><th id="197">197</th><td>    R0(A, B, C, D, X(<var>8</var>), <var>7</var>, <var>0x698098d8L</var>);</td></tr>
+<tr><th id="198">198</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="199">199</th><td>    X(<var>10</var>) = l;</td></tr>
+<tr><th id="200">200</th><td>    R0(D, A, B, C, X(<var>9</var>), <var>12</var>, <var>0x8b44f7afL</var>);</td></tr>
+<tr><th id="201">201</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="202">202</th><td>    X(<var>11</var>) = l;</td></tr>
+<tr><th id="203">203</th><td>    R0(C, D, A, B, X(<var>10</var>), <var>17</var>, <var>0xffff5bb1L</var>);</td></tr>
+<tr><th id="204">204</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="205">205</th><td>    X(<var>12</var>) = l;</td></tr>
+<tr><th id="206">206</th><td>    R0(B, C, D, A, X(<var>11</var>), <var>22</var>, <var>0x895cd7beL</var>);</td></tr>
+<tr><th id="207">207</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="208">208</th><td>    X(<var>13</var>) = l;</td></tr>
+<tr><th id="209">209</th><td>    R0(A, B, C, D, X(<var>12</var>), <var>7</var>, <var>0x6b901122L</var>);</td></tr>
+<tr><th id="210">210</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="211">211</th><td>    X(<var>14</var>) = l;</td></tr>
+<tr><th id="212">212</th><td>    R0(D, A, B, C, X(<var>13</var>), <var>12</var>, <var>0xfd987193L</var>);</td></tr>
+<tr><th id="213">213</th><td>    HOST_c2l(data, l);</td></tr>
+<tr><th id="214">214</th><td>    X(<var>15</var>) = l;</td></tr>
+<tr><th id="215">215</th><td>    R0(C, D, A, B, X(<var>14</var>), <var>17</var>, <var>0xa679438eL</var>);</td></tr>
+<tr><th id="216">216</th><td>    R0(B, C, D, A, X(<var>15</var>), <var>22</var>, <var>0x49b40821L</var>);</td></tr>
+<tr><th id="217">217</th><td>    <i>/* Round 1 */</i></td></tr>
+<tr><th id="218">218</th><td>    R1(A, B, C, D, X(<var>1</var>), <var>5</var>, <var>0xf61e2562L</var>);</td></tr>
+<tr><th id="219">219</th><td>    R1(D, A, B, C, X(<var>6</var>), <var>9</var>, <var>0xc040b340L</var>);</td></tr>
+<tr><th id="220">220</th><td>    R1(C, D, A, B, X(<var>11</var>), <var>14</var>, <var>0x265e5a51L</var>);</td></tr>
+<tr><th id="221">221</th><td>    R1(B, C, D, A, X(<var>0</var>), <var>20</var>, <var>0xe9b6c7aaL</var>);</td></tr>
+<tr><th id="222">222</th><td>    R1(A, B, C, D, X(<var>5</var>), <var>5</var>, <var>0xd62f105dL</var>);</td></tr>
+<tr><th id="223">223</th><td>    R1(D, A, B, C, X(<var>10</var>), <var>9</var>, <var>0x02441453L</var>);</td></tr>
+<tr><th id="224">224</th><td>    R1(C, D, A, B, X(<var>15</var>), <var>14</var>, <var>0xd8a1e681L</var>);</td></tr>
+<tr><th id="225">225</th><td>    R1(B, C, D, A, X(<var>4</var>), <var>20</var>, <var>0xe7d3fbc8L</var>);</td></tr>
+<tr><th id="226">226</th><td>    R1(A, B, C, D, X(<var>9</var>), <var>5</var>, <var>0x21e1cde6L</var>);</td></tr>
+<tr><th id="227">227</th><td>    R1(D, A, B, C, X(<var>14</var>), <var>9</var>, <var>0xc33707d6L</var>);</td></tr>
+<tr><th id="228">228</th><td>    R1(C, D, A, B, X(<var>3</var>), <var>14</var>, <var>0xf4d50d87L</var>);</td></tr>
+<tr><th id="229">229</th><td>    R1(B, C, D, A, X(<var>8</var>), <var>20</var>, <var>0x455a14edL</var>);</td></tr>
+<tr><th id="230">230</th><td>    R1(A, B, C, D, X(<var>13</var>), <var>5</var>, <var>0xa9e3e905L</var>);</td></tr>
+<tr><th id="231">231</th><td>    R1(D, A, B, C, X(<var>2</var>), <var>9</var>, <var>0xfcefa3f8L</var>);</td></tr>
+<tr><th id="232">232</th><td>    R1(C, D, A, B, X(<var>7</var>), <var>14</var>, <var>0x676f02d9L</var>);</td></tr>
+<tr><th id="233">233</th><td>    R1(B, C, D, A, X(<var>12</var>), <var>20</var>, <var>0x8d2a4c8aL</var>);</td></tr>
+<tr><th id="234">234</th><td>    <i>/* Round 2 */</i></td></tr>
+<tr><th id="235">235</th><td>    R2(A, B, C, D, X(<var>5</var>), <var>4</var>, <var>0xfffa3942L</var>);</td></tr>
+<tr><th id="236">236</th><td>    R2(D, A, B, C, X(<var>8</var>), <var>11</var>, <var>0x8771f681L</var>);</td></tr>
+<tr><th id="237">237</th><td>    R2(C, D, A, B, X(<var>11</var>), <var>16</var>, <var>0x6d9d6122L</var>);</td></tr>
+<tr><th id="238">238</th><td>    R2(B, C, D, A, X(<var>14</var>), <var>23</var>, <var>0xfde5380cL</var>);</td></tr>
+<tr><th id="239">239</th><td>    R2(A, B, C, D, X(<var>1</var>), <var>4</var>, <var>0xa4beea44L</var>);</td></tr>
+<tr><th id="240">240</th><td>    R2(D, A, B, C, X(<var>4</var>), <var>11</var>, <var>0x4bdecfa9L</var>);</td></tr>
+<tr><th id="241">241</th><td>    R2(C, D, A, B, X(<var>7</var>), <var>16</var>, <var>0xf6bb4b60L</var>);</td></tr>
+<tr><th id="242">242</th><td>    R2(B, C, D, A, X(<var>10</var>), <var>23</var>, <var>0xbebfbc70L</var>);</td></tr>
+<tr><th id="243">243</th><td>    R2(A, B, C, D, X(<var>13</var>), <var>4</var>, <var>0x289b7ec6L</var>);</td></tr>
+<tr><th id="244">244</th><td>    R2(D, A, B, C, X(<var>0</var>), <var>11</var>, <var>0xeaa127faL</var>);</td></tr>
+<tr><th id="245">245</th><td>    R2(C, D, A, B, X(<var>3</var>), <var>16</var>, <var>0xd4ef3085L</var>);</td></tr>
+<tr><th id="246">246</th><td>    R2(B, C, D, A, X(<var>6</var>), <var>23</var>, <var>0x04881d05L</var>);</td></tr>
+<tr><th id="247">247</th><td>    R2(A, B, C, D, X(<var>9</var>), <var>4</var>, <var>0xd9d4d039L</var>);</td></tr>
+<tr><th id="248">248</th><td>    R2(D, A, B, C, X(<var>12</var>), <var>11</var>, <var>0xe6db99e5L</var>);</td></tr>
+<tr><th id="249">249</th><td>    R2(C, D, A, B, X(<var>15</var>), <var>16</var>, <var>0x1fa27cf8L</var>);</td></tr>
+<tr><th id="250">250</th><td>    R2(B, C, D, A, X(<var>2</var>), <var>23</var>, <var>0xc4ac5665L</var>);</td></tr>
+<tr><th id="251">251</th><td>    <i>/* Round 3 */</i></td></tr>
+<tr><th id="252">252</th><td>    R3(A, B, C, D, X(<var>0</var>), <var>6</var>, <var>0xf4292244L</var>);</td></tr>
+<tr><th id="253">253</th><td>    R3(D, A, B, C, X(<var>7</var>), <var>10</var>, <var>0x432aff97L</var>);</td></tr>
+<tr><th id="254">254</th><td>    R3(C, D, A, B, X(<var>14</var>), <var>15</var>, <var>0xab9423a7L</var>);</td></tr>
+<tr><th id="255">255</th><td>    R3(B, C, D, A, X(<var>5</var>), <var>21</var>, <var>0xfc93a039L</var>);</td></tr>
+<tr><th id="256">256</th><td>    R3(A, B, C, D, X(<var>12</var>), <var>6</var>, <var>0x655b59c3L</var>);</td></tr>
+<tr><th id="257">257</th><td>    R3(D, A, B, C, X(<var>3</var>), <var>10</var>, <var>0x8f0ccc92L</var>);</td></tr>
+<tr><th id="258">258</th><td>    R3(C, D, A, B, X(<var>10</var>), <var>15</var>, <var>0xffeff47dL</var>);</td></tr>
+<tr><th id="259">259</th><td>    R3(B, C, D, A, X(<var>1</var>), <var>21</var>, <var>0x85845dd1L</var>);</td></tr>
+<tr><th id="260">260</th><td>    R3(A, B, C, D, X(<var>8</var>), <var>6</var>, <var>0x6fa87e4fL</var>);</td></tr>
+<tr><th id="261">261</th><td>    R3(D, A, B, C, X(<var>15</var>), <var>10</var>, <var>0xfe2ce6e0L</var>);</td></tr>
+<tr><th id="262">262</th><td>    R3(C, D, A, B, X(<var>6</var>), <var>15</var>, <var>0xa3014314L</var>);</td></tr>
+<tr><th id="263">263</th><td>    R3(B, C, D, A, X(<var>13</var>), <var>21</var>, <var>0x4e0811a1L</var>);</td></tr>
+<tr><th id="264">264</th><td>    R3(A, B, C, D, X(<var>4</var>), <var>6</var>, <var>0xf7537e82L</var>);</td></tr>
+<tr><th id="265">265</th><td>    R3(D, A, B, C, X(<var>11</var>), <var>10</var>, <var>0xbd3af235L</var>);</td></tr>
+<tr><th id="266">266</th><td>    R3(C, D, A, B, X(<var>2</var>), <var>15</var>, <var>0x2ad7d2bbL</var>);</td></tr>
+<tr><th id="267">267</th><td>    R3(B, C, D, A, X(<var>9</var>), <var>21</var>, <var>0xeb86d391L</var>);</td></tr>
+<tr><th id="268">268</th><td></td></tr>
+<tr><th id="269">269</th><td>    A = state[<var>0</var>] += A;</td></tr>
+<tr><th id="270">270</th><td>    B = state[<var>1</var>] += B;</td></tr>
+<tr><th id="271">271</th><td>    C = state[<var>2</var>] += C;</td></tr>
+<tr><th id="272">272</th><td>    D = state[<var>3</var>] += D;</td></tr>
+<tr><th id="273">273</th><td>  }</td></tr>
+<tr><th id="274">274</th><td>}</td></tr>
+<tr><th id="275">275</th><td><u>#<span data-ppcond="152">endif</span></u></td></tr>
+<tr><th id="276">276</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

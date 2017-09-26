@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>difftime.c source code [codebrowser/bionic/libc/tzcode/difftime.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/tzcode/difftime.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>tzcode</a>/<a href='difftime.c.html'>difftime.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i>** This file is in the public domain, so clarified as of</i></td></tr>
+<tr><th id="3">3</th><td><i>** 1996-06-05 by Arthur David Olson.</i></td></tr>
+<tr><th id="4">4</th><td><i>*/</i></td></tr>
+<tr><th id="5">5</th><td></td></tr>
+<tr><th id="6">6</th><td><i>/*LINTLIBRARY*/</i></td></tr>
+<tr><th id="7">7</th><td></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="private.h.html">"private.h"</a>	/* for time_t and TYPE_SIGNED */</u></td></tr>
+<tr><th id="9">9</th><td></td></tr>
+<tr><th id="10">10</th><td><i  data-doc="dminus">/* Return -X as a double.  Using this avoids casting to 'double'.  */</i></td></tr>
+<tr><th id="11">11</th><td><em>static</em> <em>double</em></td></tr>
+<tr><th id="12">12</th><td><dfn class="tu decl def" id="dminus" title='dminus' data-type='double dminus(double x)' data-ref="dminus">dminus</dfn>(<em>double</em> <dfn class="local col1 decl" id="1x" title='x' data-type='double' data-ref="1x">x</dfn>)</td></tr>
+<tr><th id="13">13</th><td>{</td></tr>
+<tr><th id="14">14</th><td>  <b>return</b> -<a class="local col1 ref" href="#1x" title='x' data-ref="1x">x</a>;</td></tr>
+<tr><th id="15">15</th><td>}</td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><em>double</em> <a class="macro" href="private.h.html#282" title="__attribute__ ((const))" data-ref="_M/ATTRIBUTE_CONST">ATTRIBUTE_CONST</a></td></tr>
+<tr><th id="18">18</th><td><dfn class="decl def" id="difftime" title='difftime' data-ref="difftime">difftime</dfn>(<a class="typedef" href="../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="local col2 decl" id="2time1" title='time1' data-type='time_t' data-ref="2time1">time1</dfn>, <a class="typedef" href="../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a> <dfn class="local col3 decl" id="3time0" title='time0' data-type='time_t' data-ref="3time0">time0</dfn>)</td></tr>
+<tr><th id="19">19</th><td>{</td></tr>
+<tr><th id="20">20</th><td>	<i>/*</i></td></tr>
+<tr><th id="21">21</th><td><i>	** If double is large enough, simply convert and subtract</i></td></tr>
+<tr><th id="22">22</th><td><i>	** (assuming that the larger type has more precision).</i></td></tr>
+<tr><th id="23">23</th><td><i>	*/</i></td></tr>
+<tr><th id="24">24</th><td>	<b>if</b> (<b>sizeof</b> (<a class="typedef" href="../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>) &lt; <b>sizeof</b> (<em>double</em>)) {</td></tr>
+<tr><th id="25">25</th><td>	  <em>double</em> <dfn class="local col4 decl" id="4t1" title='t1' data-type='double' data-ref="4t1">t1</dfn> = <a class="local col2 ref" href="#2time1" title='time1' data-ref="2time1">time1</a>, <dfn class="local col5 decl" id="5t0" title='t0' data-type='double' data-ref="5t0">t0</dfn> = <a class="local col3 ref" href="#3time0" title='time0' data-ref="3time0">time0</a>;</td></tr>
+<tr><th id="26">26</th><td>	  <b>return</b> <a class="local col4 ref" href="#4t1" title='t1' data-ref="4t1">t1</a> - <a class="local col5 ref" href="#5t0" title='t0' data-ref="5t0">t0</a>;</td></tr>
+<tr><th id="27">27</th><td>	}</td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td>	<i>/*</i></td></tr>
+<tr><th id="30">30</th><td><i>	** The difference of two unsigned values can't overflow</i></td></tr>
+<tr><th id="31">31</th><td><i>	** if the minuend is greater than or equal to the subtrahend.</i></td></tr>
+<tr><th id="32">32</th><td><i>	*/</i></td></tr>
+<tr><th id="33">33</th><td>	<b>if</b> (!<a class="macro" href="private.h.html#489" title="(((time_t) -1) &lt; 0)" data-ref="_M/TYPE_SIGNED">TYPE_SIGNED</a>(<a class="typedef" href="../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>))</td></tr>
+<tr><th id="34">34</th><td>	  <b>return</b> <a class="local col3 ref" href="#3time0" title='time0' data-ref="3time0">time0</a> &lt;= <a class="local col2 ref" href="#2time1" title='time1' data-ref="2time1">time1</a> ? <a class="local col2 ref" href="#2time1" title='time1' data-ref="2time1">time1</a> - <a class="local col3 ref" href="#3time0" title='time0' data-ref="3time0">time0</a> : <a class="tu ref" href="#dminus" title='dminus' data-use='c' data-ref="dminus">dminus</a>(<a class="local col3 ref" href="#3time0" title='time0' data-ref="3time0">time0</a> - <a class="local col2 ref" href="#2time1" title='time1' data-ref="2time1">time1</a>);</td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td>	<i>/* Use uintmax_t if wide enough.  */</i></td></tr>
+<tr><th id="37">37</th><td>	<b>if</b> (<b>sizeof</b> (<a class="typedef" href="../include/sys/types.h.html#time_t" title='time_t' data-type='__time_t' data-ref="time_t">time_t</a>) &lt;= <b>sizeof</b> (<a class="typedef" href="../include/stdint.h.html#uintmax_t" title='uintmax_t' data-type='uint64_t' data-ref="uintmax_t">uintmax_t</a>)) {</td></tr>
+<tr><th id="38">38</th><td>	  <a class="typedef" href="../include/stdint.h.html#uintmax_t" title='uintmax_t' data-type='uint64_t' data-ref="uintmax_t">uintmax_t</a> <dfn class="local col6 decl" id="6t1" title='t1' data-type='uintmax_t' data-ref="6t1">t1</dfn> = <a class="local col2 ref" href="#2time1" title='time1' data-ref="2time1">time1</a>, <dfn class="local col7 decl" id="7t0" title='t0' data-type='uintmax_t' data-ref="7t0">t0</dfn> = <a class="local col3 ref" href="#3time0" title='time0' data-ref="3time0">time0</a>;</td></tr>
+<tr><th id="39">39</th><td>	  <b>return</b> <a class="local col3 ref" href="#3time0" title='time0' data-ref="3time0">time0</a> &lt;= <a class="local col2 ref" href="#2time1" title='time1' data-ref="2time1">time1</a> ? <a class="local col6 ref" href="#6t1" title='t1' data-ref="6t1">t1</a> - <a class="local col7 ref" href="#7t0" title='t0' data-ref="7t0">t0</a> : <a class="tu ref" href="#dminus" title='dminus' data-use='c' data-ref="dminus">dminus</a>(<a class="local col7 ref" href="#7t0" title='t0' data-ref="7t0">t0</a> - <a class="local col6 ref" href="#6t1" title='t1' data-ref="6t1">t1</a>);</td></tr>
+<tr><th id="40">40</th><td>	}</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td>	<i>/*</i></td></tr>
+<tr><th id="43">43</th><td><i>	** Handle cases where both time1 and time0 have the same sign</i></td></tr>
+<tr><th id="44">44</th><td><i>	** (meaning that their difference cannot overflow).</i></td></tr>
+<tr><th id="45">45</th><td><i>	*/</i></td></tr>
+<tr><th id="46">46</th><td>	<b>if</b> ((<a class="local col2 ref" href="#2time1" title='time1' data-ref="2time1">time1</a> &lt; <var>0</var>) == (<a class="local col3 ref" href="#3time0" title='time0' data-ref="3time0">time0</a> &lt; <var>0</var>))</td></tr>
+<tr><th id="47">47</th><td>	  <b>return</b> <a class="local col2 ref" href="#2time1" title='time1' data-ref="2time1">time1</a> - <a class="local col3 ref" href="#3time0" title='time0' data-ref="3time0">time0</a>;</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td>	<i>/*</i></td></tr>
+<tr><th id="50">50</th><td><i>	** The values have opposite signs and uintmax_t is too narrow.</i></td></tr>
+<tr><th id="51">51</th><td><i>	** This suffers from double rounding; attempt to lessen that</i></td></tr>
+<tr><th id="52">52</th><td><i>	** by using long double temporaries.</i></td></tr>
+<tr><th id="53">53</th><td><i>	*/</i></td></tr>
+<tr><th id="54">54</th><td>	{</td></tr>
+<tr><th id="55">55</th><td>	  <em>long</em> <em>double</em> <dfn class="local col8 decl" id="8t1" title='t1' data-type='long double' data-ref="8t1">t1</dfn> = <a class="local col2 ref" href="#2time1" title='time1' data-ref="2time1">time1</a>, <dfn class="local col9 decl" id="9t0" title='t0' data-type='long double' data-ref="9t0">t0</dfn> = <a class="local col3 ref" href="#3time0" title='time0' data-ref="3time0">time0</a>;</td></tr>
+<tr><th id="56">56</th><td>	  <b>return</b> <a class="local col8 ref" href="#8t1" title='t1' data-ref="8t1">t1</a> - <a class="local col9 ref" href="#9t0" title='t0' data-ref="9t0">t0</a>;</td></tr>
+<tr><th id="57">57</th><td>	}</td></tr>
+<tr><th id="58">58</th><td>}</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

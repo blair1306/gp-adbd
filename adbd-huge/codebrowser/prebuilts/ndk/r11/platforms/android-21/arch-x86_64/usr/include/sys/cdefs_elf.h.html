@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>cdefs_elf.h source code [codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/cdefs_elf.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/cdefs_elf.h'; var root_path = '../../../../../../../../../..'; var data_path = '../../../../../../../../../../../data';</script>
+<script src='../../../../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../../../../..'>codebrowser</a>/<a href='../../../../../../../..'>prebuilts</a>/<a href='../../../../../../..'>ndk</a>/<a href='../../../../../..'>r11</a>/<a href='../../../../..'>platforms</a>/<a href='../../../..'>android-21</a>/<a href='../../..'>arch-x86_64</a>/<a href='../..'>usr</a>/<a href='..'>include</a>/<a href='./'>sys</a>/<a href='cdefs_elf.h.html'>cdefs_elf.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*	$NetBSD: cdefs_elf.h,v 1.22 2005/02/26 22:25:34 perry Exp $	*/</i></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><i>/*</i></td></tr>
+<tr><th id="4">4</th><td><i> * Copyright (c) 1995, 1996 Carnegie-Mellon University.</i></td></tr>
+<tr><th id="5">5</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * Author: Chris G. Demetriou</i></td></tr>
+<tr><th id="8">8</th><td><i> *</i></td></tr>
+<tr><th id="9">9</th><td><i> * Permission to use, copy, modify and distribute this software and</i></td></tr>
+<tr><th id="10">10</th><td><i> * its documentation is hereby granted, provided that both the copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> * notice and this permission notice appear in all copies of the</i></td></tr>
+<tr><th id="12">12</th><td><i> * software, derivative works or modified versions, and any portions</i></td></tr>
+<tr><th id="13">13</th><td><i> * thereof, and that both notices appear in supporting documentation.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS"</i></td></tr>
+<tr><th id="16">16</th><td><i> * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND</i></td></tr>
+<tr><th id="17">17</th><td><i> * FOR ANY DAMAGES WHATSOEVER RESULTING FROM THE USE OF THIS SOFTWARE.</i></td></tr>
+<tr><th id="18">18</th><td><i> *</i></td></tr>
+<tr><th id="19">19</th><td><i> * Carnegie Mellon requests users of this software to return to</i></td></tr>
+<tr><th id="20">20</th><td><i> *</i></td></tr>
+<tr><th id="21">21</th><td><i> *  Software Distribution Coordinator  or  Software.Distribution@CS.CMU.EDU</i></td></tr>
+<tr><th id="22">22</th><td><i> *  School of Computer Science</i></td></tr>
+<tr><th id="23">23</th><td><i> *  Carnegie Mellon University</i></td></tr>
+<tr><th id="24">24</th><td><i> *  Pittsburgh PA 15213-3890</i></td></tr>
+<tr><th id="25">25</th><td><i> *</i></td></tr>
+<tr><th id="26">26</th><td><i> * any improvements or extensions that they make and grant Carnegie the</i></td></tr>
+<tr><th id="27">27</th><td><i> * rights to redistribute these changes.</i></td></tr>
+<tr><th id="28">28</th><td><i> */</i></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td><u>#<span data-ppcond="30">ifndef</span> <span class="macro" data-ref="_M/_SYS_CDEFS_ELF_H_">_SYS_CDEFS_ELF_H_</span></u></td></tr>
+<tr><th id="31">31</th><td><u>#define	<dfn class="macro" id="_M/_SYS_CDEFS_ELF_H_" data-ref="_M/_SYS_CDEFS_ELF_H_">_SYS_CDEFS_ELF_H_</dfn></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><u>#<span data-ppcond="33">ifdef</span> <span class="macro" data-ref="_M/__LEADING_UNDERSCORE">__LEADING_UNDERSCORE</span></u></td></tr>
+<tr><th id="34">34</th><td><u>#define	_C_LABEL(x)	__CONCAT(_,x)</u></td></tr>
+<tr><th id="35">35</th><td><u>#define _C_LABEL_STRING(x)	"_" x</u></td></tr>
+<tr><th id="36">36</th><td><u>#<span data-ppcond="33">else</span></u></td></tr>
+<tr><th id="37">37</th><td><u>#define	<dfn class="macro" id="_M/_C_LABEL" data-ref="_M/_C_LABEL">_C_LABEL</dfn>(x)	x</u></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/_C_LABEL_STRING" data-ref="_M/_C_LABEL_STRING">_C_LABEL_STRING</dfn>(x)	x</u></td></tr>
+<tr><th id="39">39</th><td><u>#<span data-ppcond="33">endif</span></u></td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><u>#define	<dfn class="macro" id="_M/___RENAME" data-ref="_M/___RENAME">___RENAME</dfn>(x)	__asm__(___STRING(_C_LABEL(x)))</u></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><u>#define	<dfn class="macro" id="_M/__indr_reference" data-ref="_M/__indr_reference">__indr_reference</dfn>(sym,alias)	/* nada, since we do weak refs */</u></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><u>#define	<dfn class="macro" id="_M/__strong_alias" data-ref="_M/__strong_alias">__strong_alias</dfn>(alias,sym)	       				\</u></td></tr>
+<tr><th id="46">46</th><td><u>    __asm__(".global " _C_LABEL_STRING(#alias) "\n"			\</u></td></tr>
+<tr><th id="47">47</th><td><u>	    _C_LABEL_STRING(#alias) " = " _C_LABEL_STRING(#sym));</u></td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><u>#define	<dfn class="macro" id="_M/__weak_alias" data-ref="_M/__weak_alias">__weak_alias</dfn>(alias,sym)						\</u></td></tr>
+<tr><th id="50">50</th><td><u>    __asm__(".weak " _C_LABEL_STRING(#alias) "\n"			\</u></td></tr>
+<tr><th id="51">51</th><td><u>	    _C_LABEL_STRING(#alias) " = " _C_LABEL_STRING(#sym));</u></td></tr>
+<tr><th id="52">52</th><td><u>#define	<dfn class="macro" id="_M/__weak_extern" data-ref="_M/__weak_extern">__weak_extern</dfn>(sym)						\</u></td></tr>
+<tr><th id="53">53</th><td><u>    __asm__(".weak " _C_LABEL_STRING(#sym));</u></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><i>/* We use __warnattr instead of __warn_references.</i></td></tr>
+<tr><th id="56">56</th><td><i> * TODO: remove this and put an empty definition in one of the upstream-* compatibility headers.</i></td></tr>
+<tr><th id="57">57</th><td><i> */</i></td></tr>
+<tr><th id="58">58</th><td><u>#define	<dfn class="macro" id="_M/__warn_references" data-ref="_M/__warn_references">__warn_references</dfn>(sym,msg)					\</u></td></tr>
+<tr><th id="59">59</th><td><u>    /*__asm__(".section .gnu.warning." #sym "\n\t.ascii \"" msg "\"\n\t.text");*/</u></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><u>#define	<dfn class="macro" id="_M/__SECTIONSTRING" data-ref="_M/__SECTIONSTRING">__SECTIONSTRING</dfn>(_sec, _str)					\</u></td></tr>
+<tr><th id="62">62</th><td><u>	__asm__(".section " #_sec "\n\t.asciz \"" _str "\"\n\t.previous")</u></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><i>/* Used to tag non-static symbols that are private and never exposed by the shared library. */</i></td></tr>
+<tr><th id="65">65</th><td><u>#define <dfn class="macro" id="_M/__LIBC_HIDDEN__" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</dfn> __attribute__((visibility ("hidden")))</u></td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td><i>/* Like __LIBC_HIDDEN__, but preserves binary compatibility for LP32. */</i></td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="68">ifdef</span> <span class="macro" data-ref="_M/__LP64__">__LP64__</span></u></td></tr>
+<tr><th id="69">69</th><td><u>#define <dfn class="macro" id="_M/__LIBC64_HIDDEN__" data-ref="_M/__LIBC64_HIDDEN__">__LIBC64_HIDDEN__</dfn> __LIBC_HIDDEN__</u></td></tr>
+<tr><th id="70">70</th><td><u>#<span data-ppcond="68">else</span></u></td></tr>
+<tr><th id="71">71</th><td><u>#define __LIBC64_HIDDEN__ __LIBC_ABI_PUBLIC__</u></td></tr>
+<tr><th id="72">72</th><td><u>#<span data-ppcond="68">endif</span></u></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><i>/* Used to tag non-static symbols that are public and exposed by the shared library. */</i></td></tr>
+<tr><th id="75">75</th><td><u>#define <dfn class="macro" id="_M/__LIBC_ABI_PUBLIC__" data-ref="_M/__LIBC_ABI_PUBLIC__">__LIBC_ABI_PUBLIC__</dfn> __attribute__((visibility ("default")))</u></td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><u>#define	<dfn class="macro" id="_M/__IDSTRING" data-ref="_M/__IDSTRING">__IDSTRING</dfn>(_n,_s)		__SECTIONSTRING(.ident,_s)</u></td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><u>#define	<dfn class="macro" id="_M/__RCSID" data-ref="_M/__RCSID">__RCSID</dfn>(_s)			__IDSTRING(rcsid,_s)</u></td></tr>
+<tr><th id="80">80</th><td><u>#define	<dfn class="macro" id="_M/__SCCSID" data-ref="_M/__SCCSID">__SCCSID</dfn>(_s)</u></td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/__SCCSID2" data-ref="_M/__SCCSID2">__SCCSID2</dfn>(_s)</u></td></tr>
+<tr><th id="82">82</th><td><u>#<span data-ppcond="82">if</span> 0	/* XXX userland __COPYRIGHTs have \ns in them */</u></td></tr>
+<tr><th id="83">83</th><td><u>#define	__COPYRIGHT(_s)			__SECTIONSTRING(.copyright,_s)</u></td></tr>
+<tr><th id="84">84</th><td><u>#<span data-ppcond="82">else</span></u></td></tr>
+<tr><th id="85">85</th><td><u>#define	<dfn class="macro" id="_M/__COPYRIGHT" data-ref="_M/__COPYRIGHT">__COPYRIGHT</dfn>(_s)							\</u></td></tr>
+<tr><th id="86">86</th><td><u>	static const char copyright[]					\</u></td></tr>
+<tr><th id="87">87</th><td><u>	    __attribute__((__unused__,__section__(".copyright"))) = _s</u></td></tr>
+<tr><th id="88">88</th><td><u>#<span data-ppcond="82">endif</span></u></td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td><u>#define	<dfn class="macro" id="_M/__KERNEL_RCSID" data-ref="_M/__KERNEL_RCSID">__KERNEL_RCSID</dfn>(_n, _s)		__RCSID(_s)</u></td></tr>
+<tr><th id="91">91</th><td><u>#define	<dfn class="macro" id="_M/__KERNEL_SCCSID" data-ref="_M/__KERNEL_SCCSID">__KERNEL_SCCSID</dfn>(_n, _s)</u></td></tr>
+<tr><th id="92">92</th><td><u>#<span data-ppcond="92">if</span> 0	/* XXX see above */</u></td></tr>
+<tr><th id="93">93</th><td><u>#define	__KERNEL_COPYRIGHT(_n, _s)	__COPYRIGHT(_s)</u></td></tr>
+<tr><th id="94">94</th><td><u>#<span data-ppcond="92">else</span></u></td></tr>
+<tr><th id="95">95</th><td><u>#define	<dfn class="macro" id="_M/__KERNEL_COPYRIGHT" data-ref="_M/__KERNEL_COPYRIGHT">__KERNEL_COPYRIGHT</dfn>(_n, _s)	__SECTIONSTRING(.copyright, _s)</u></td></tr>
+<tr><th id="96">96</th><td><u>#<span data-ppcond="92">endif</span></u></td></tr>
+<tr><th id="97">97</th><td></td></tr>
+<tr><th id="98">98</th><td><u>#<span data-ppcond="98">ifndef</span> <span class="macro" data-ref="_M/__lint__">__lint__</span></u></td></tr>
+<tr><th id="99">99</th><td><u>#define	<dfn class="macro" id="_M/__link_set_make_entry" data-ref="_M/__link_set_make_entry">__link_set_make_entry</dfn>(set, sym)					\</u></td></tr>
+<tr><th id="100">100</th><td><u>	static void const * const __link_set_##set##_sym_##sym		\</u></td></tr>
+<tr><th id="101">101</th><td><u>	    __section("link_set_" #set) __used = &amp;sym</u></td></tr>
+<tr><th id="102">102</th><td><u>#define	<dfn class="macro" id="_M/__link_set_make_entry2" data-ref="_M/__link_set_make_entry2">__link_set_make_entry2</dfn>(set, sym, n)				\</u></td></tr>
+<tr><th id="103">103</th><td><u>	static void const * const __link_set_##set##_sym_##sym##_##n	\</u></td></tr>
+<tr><th id="104">104</th><td><u>	    __section("link_set_" #set) __used = &amp;sym[n]</u></td></tr>
+<tr><th id="105">105</th><td><u>#<span data-ppcond="98">else</span></u></td></tr>
+<tr><th id="106">106</th><td><u>#define	__link_set_make_entry(set, sym)					\</u></td></tr>
+<tr><th id="107">107</th><td><u>	extern void const * const __link_set_##set##_sym_##sym</u></td></tr>
+<tr><th id="108">108</th><td><u>#define	__link_set_make_entry2(set, sym, n)				\</u></td></tr>
+<tr><th id="109">109</th><td><u>	extern void const * const __link_set_##set##_sym_##sym##_##n</u></td></tr>
+<tr><th id="110">110</th><td><u>#<span data-ppcond="98">endif</span> /* __lint__ */</u></td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><u>#define	<dfn class="macro" id="_M/__link_set_add_text" data-ref="_M/__link_set_add_text">__link_set_add_text</dfn>(set, sym)	__link_set_make_entry(set, sym)</u></td></tr>
+<tr><th id="113">113</th><td><u>#define	<dfn class="macro" id="_M/__link_set_add_rodata" data-ref="_M/__link_set_add_rodata">__link_set_add_rodata</dfn>(set, sym)	__link_set_make_entry(set, sym)</u></td></tr>
+<tr><th id="114">114</th><td><u>#define	<dfn class="macro" id="_M/__link_set_add_data" data-ref="_M/__link_set_add_data">__link_set_add_data</dfn>(set, sym)	__link_set_make_entry(set, sym)</u></td></tr>
+<tr><th id="115">115</th><td><u>#define	<dfn class="macro" id="_M/__link_set_add_bss" data-ref="_M/__link_set_add_bss">__link_set_add_bss</dfn>(set, sym)	__link_set_make_entry(set, sym)</u></td></tr>
+<tr><th id="116">116</th><td><u>#define	<dfn class="macro" id="_M/__link_set_add_text2" data-ref="_M/__link_set_add_text2">__link_set_add_text2</dfn>(set, sym, n)   __link_set_make_entry2(set, sym, n)</u></td></tr>
+<tr><th id="117">117</th><td><u>#define	<dfn class="macro" id="_M/__link_set_add_rodata2" data-ref="_M/__link_set_add_rodata2">__link_set_add_rodata2</dfn>(set, sym, n) __link_set_make_entry2(set, sym, n)</u></td></tr>
+<tr><th id="118">118</th><td><u>#define	<dfn class="macro" id="_M/__link_set_add_data2" data-ref="_M/__link_set_add_data2">__link_set_add_data2</dfn>(set, sym, n)   __link_set_make_entry2(set, sym, n)</u></td></tr>
+<tr><th id="119">119</th><td><u>#define	<dfn class="macro" id="_M/__link_set_add_bss2" data-ref="_M/__link_set_add_bss2">__link_set_add_bss2</dfn>(set, sym, n)    __link_set_make_entry2(set, sym, n)</u></td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><u>#define	<dfn class="macro" id="_M/__link_set_decl" data-ref="_M/__link_set_decl">__link_set_decl</dfn>(set, ptype)					\</u></td></tr>
+<tr><th id="122">122</th><td><u>	extern ptype * const __start_link_set_##set[];			\</u></td></tr>
+<tr><th id="123">123</th><td><u>	extern ptype * const __stop_link_set_##set[]</u>			\</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td><u>#define	<dfn class="macro" id="_M/__link_set_start" data-ref="_M/__link_set_start">__link_set_start</dfn>(set)	(__start_link_set_##set)</u></td></tr>
+<tr><th id="126">126</th><td><u>#define	<dfn class="macro" id="_M/__link_set_end" data-ref="_M/__link_set_end">__link_set_end</dfn>(set)	(__stop_link_set_##set)</u></td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td><u>#define	<dfn class="macro" id="_M/__link_set_count" data-ref="_M/__link_set_count">__link_set_count</dfn>(set)						\</u></td></tr>
+<tr><th id="129">129</th><td><u>	(__link_set_end(set) - __link_set_start(set))</u></td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td><u>#<span data-ppcond="30">endif</span> /* !_SYS_CDEFS_ELF_H_ */</u></td></tr>
+<tr><th id="132">132</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../../../../../../../external/boringssl/android_compat_hacks.c.html'>codebrowser/external/boringssl/android_compat_hacks.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

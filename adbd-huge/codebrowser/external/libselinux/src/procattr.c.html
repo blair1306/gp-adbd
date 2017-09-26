@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>procattr.c source code [codebrowser/external/libselinux/src/procattr.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/procattr.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='procattr.c.html'>procattr.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#include <a href="../../../bionic/libc/include/sys/syscall.h.html">&lt;sys/syscall.h&gt;</a></u></td></tr>
+<tr><th id="2">2</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="3">3</th><td><u>#include <a href="../../../bionic/libc/include/fcntl.h.html">&lt;fcntl.h&gt;</a></u></td></tr>
+<tr><th id="4">4</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="5">5</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="6">6</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="7">7</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="8">8</th><td><u>#include <a href="selinux_internal.h.html">"selinux_internal.h"</a></u></td></tr>
+<tr><th id="9">9</th><td><u>#include <a href="policy.h.html">"policy.h"</a></u></td></tr>
+<tr><th id="10">10</th><td></td></tr>
+<tr><th id="11">11</th><td><u>#<span data-ppcond="11">ifdef</span> <span class="macro" data-ref="_M/HOST">HOST</span></u></td></tr>
+<tr><th id="12">12</th><td><em>static</em> pid_t gettid(<em>void</em>)</td></tr>
+<tr><th id="13">13</th><td>{</td></tr>
+<tr><th id="14">14</th><td>	<b>return</b> syscall(__NR_gettid);</td></tr>
+<tr><th id="15">15</th><td>}</td></tr>
+<tr><th id="16">16</th><td><u>#<span data-ppcond="11">endif</span></u></td></tr>
+<tr><th id="17">17</th><td></td></tr>
+<tr><th id="18">18</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="openattr" title='openattr' data-type='int openattr(pid_t pid, const char * attr, int flags)' data-ref="openattr">openattr</dfn>(<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col1 decl" id="1pid" title='pid' data-type='pid_t' data-ref="1pid">pid</dfn>, <em>const</em> <em>char</em> *<dfn class="local col2 decl" id="2attr" title='attr' data-type='const char *' data-ref="2attr">attr</dfn>, <em>int</em> <dfn class="local col3 decl" id="3flags" title='flags' data-type='int' data-ref="3flags">flags</dfn>)</td></tr>
+<tr><th id="19">19</th><td>{</td></tr>
+<tr><th id="20">20</th><td>	<em>int</em> <dfn class="local col4 decl" id="4fd" title='fd' data-type='int' data-ref="4fd">fd</dfn>, <dfn class="local col5 decl" id="5rc" title='rc' data-type='int' data-ref="5rc">rc</dfn>;</td></tr>
+<tr><th id="21">21</th><td>	<em>char</em> *<dfn class="local col6 decl" id="6path" title='path' data-type='char *' data-ref="6path">path</dfn>;</td></tr>
+<tr><th id="22">22</th><td>	<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col7 decl" id="7tid" title='tid' data-type='pid_t' data-ref="7tid">tid</dfn>;</td></tr>
+<tr><th id="23">23</th><td></td></tr>
+<tr><th id="24">24</th><td>	<b>if</b> (<a class="local col1 ref" href="#1pid" title='pid' data-ref="1pid">pid</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="25">25</th><td>		<a class="local col5 ref" href="#5rc" title='rc' data-ref="5rc">rc</a> = <a class="ref" href="../../../bionic/libc/include/stdio.h.html#asprintf" title='asprintf' data-ref="asprintf">asprintf</a>(&amp;<a class="local col6 ref" href="#6path" title='path' data-ref="6path">path</a>, <q>"/proc/%d/attr/%s"</q>, <a class="local col1 ref" href="#1pid" title='pid' data-ref="1pid">pid</a>, <a class="local col2 ref" href="#2attr" title='attr' data-ref="2attr">attr</a>);</td></tr>
+<tr><th id="26">26</th><td>	} <b>else</b> <b>if</b> (<a class="local col1 ref" href="#1pid" title='pid' data-ref="1pid">pid</a> == <var>0</var>) {</td></tr>
+<tr><th id="27">27</th><td>		<a class="local col5 ref" href="#5rc" title='rc' data-ref="5rc">rc</a> = <a class="ref" href="../../../bionic/libc/include/stdio.h.html#asprintf" title='asprintf' data-ref="asprintf">asprintf</a>(&amp;<a class="local col6 ref" href="#6path" title='path' data-ref="6path">path</a>, <q>"/proc/thread-self/attr/%s"</q>, <a class="local col2 ref" href="#2attr" title='attr' data-ref="2attr">attr</a>);</td></tr>
+<tr><th id="28">28</th><td>		<b>if</b> (<a class="local col5 ref" href="#5rc" title='rc' data-ref="5rc">rc</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="29">29</th><td>			<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="30">30</th><td>		<a class="local col4 ref" href="#4fd" title='fd' data-ref="4fd">fd</a> = <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<a class="local col6 ref" href="#6path" title='path' data-ref="6path">path</a>, <a class="local col3 ref" href="#3flags" title='flags' data-ref="3flags">flags</a> | <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#77" title="02000000" data-ref="_M/O_CLOEXEC">O_CLOEXEC</a>);</td></tr>
+<tr><th id="31">31</th><td>		<b>if</b> (<a class="local col4 ref" href="#4fd" title='fd' data-ref="4fd">fd</a> &gt;= <var>0</var> || <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> != <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#22" title="2" data-ref="_M/ENOENT">ENOENT</a>)</td></tr>
+<tr><th id="32">32</th><td>			<b>goto</b> <a class="lbl" href="#8out" data-ref="8out">out</a>;</td></tr>
+<tr><th id="33">33</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col6 ref" href="#6path" title='path' data-ref="6path">path</a>);</td></tr>
+<tr><th id="34">34</th><td>		<a class="local col7 ref" href="#7tid" title='tid' data-ref="7tid">tid</a> = <a class="ref" href="../../../bionic/libc/include/unistd.h.html#gettid" title='gettid' data-ref="gettid">gettid</a>();</td></tr>
+<tr><th id="35">35</th><td>		<a class="local col5 ref" href="#5rc" title='rc' data-ref="5rc">rc</a> = <a class="ref" href="../../../bionic/libc/include/stdio.h.html#asprintf" title='asprintf' data-ref="asprintf">asprintf</a>(&amp;<a class="local col6 ref" href="#6path" title='path' data-ref="6path">path</a>, <q>"/proc/self/task/%d/attr/%s"</q>, <a class="local col7 ref" href="#7tid" title='tid' data-ref="7tid">tid</a>, <a class="local col2 ref" href="#2attr" title='attr' data-ref="2attr">attr</a>);</td></tr>
+<tr><th id="36">36</th><td>	} <b>else</b> {</td></tr>
+<tr><th id="37">37</th><td>		<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="38">38</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="39">39</th><td>	}</td></tr>
+<tr><th id="40">40</th><td>	<b>if</b> (<a class="local col5 ref" href="#5rc" title='rc' data-ref="5rc">rc</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="41">41</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td>	<a class="local col4 ref" href="#4fd" title='fd' data-ref="4fd">fd</a> = <a class="ref" href="../../../bionic/libc/include/fcntl.h.html#open" title='open' data-ref="open">open</a>(<a class="local col6 ref" href="#6path" title='path' data-ref="6path">path</a>, <a class="local col3 ref" href="#3flags" title='flags' data-ref="3flags">flags</a> | <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#77" title="02000000" data-ref="_M/O_CLOEXEC">O_CLOEXEC</a>);</td></tr>
+<tr><th id="44">44</th><td><dfn class="lbl" id="8out" data-ref="8out">out</dfn>:</td></tr>
+<tr><th id="45">45</th><td>	<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col6 ref" href="#6path" title='path' data-ref="6path">path</a>);</td></tr>
+<tr><th id="46">46</th><td>	<b>return</b> <a class="local col4 ref" href="#4fd" title='fd' data-ref="4fd">fd</a>;</td></tr>
+<tr><th id="47">47</th><td>}</td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="getprocattrcon" title='getprocattrcon' data-type='int getprocattrcon(char ** context, pid_t pid, const char * attr)' data-ref="getprocattrcon">getprocattrcon</dfn>(<em>char</em> ** <dfn class="local col9 decl" id="9context" title='context' data-type='char **' data-ref="9context">context</dfn>,</td></tr>
+<tr><th id="50">50</th><td>			  <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col0 decl" id="10pid" title='pid' data-type='pid_t' data-ref="10pid">pid</dfn>, <em>const</em> <em>char</em> *<dfn class="local col1 decl" id="11attr" title='attr' data-type='const char *' data-ref="11attr">attr</dfn>)</td></tr>
+<tr><th id="51">51</th><td>{</td></tr>
+<tr><th id="52">52</th><td>	<em>char</em> *<dfn class="local col2 decl" id="12buf" title='buf' data-type='char *' data-ref="12buf">buf</dfn>;</td></tr>
+<tr><th id="53">53</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="13size" title='size' data-type='size_t' data-ref="13size">size</dfn>;</td></tr>
+<tr><th id="54">54</th><td>	<em>int</em> <dfn class="local col4 decl" id="14fd" title='fd' data-type='int' data-ref="14fd">fd</dfn>;</td></tr>
+<tr><th id="55">55</th><td>	<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="local col5 decl" id="15ret" title='ret' data-type='ssize_t' data-ref="15ret">ret</dfn>;</td></tr>
+<tr><th id="56">56</th><td>	<em>int</em> <dfn class="local col6 decl" id="16errno_hold" title='errno_hold' data-type='int' data-ref="16errno_hold">errno_hold</dfn>;</td></tr>
+<tr><th id="57">57</th><td></td></tr>
+<tr><th id="58">58</th><td>	<a class="local col4 ref" href="#14fd" title='fd' data-ref="14fd">fd</a> = <a class="tu ref" href="#openattr" title='openattr' data-use='c' data-ref="openattr">openattr</a>(<a class="local col0 ref" href="#10pid" title='pid' data-ref="10pid">pid</a>, <a class="local col1 ref" href="#11attr" title='attr' data-ref="11attr">attr</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#24" title="00000000" data-ref="_M/O_RDONLY">O_RDONLY</a>);</td></tr>
+<tr><th id="59">59</th><td>	<b>if</b> (<a class="local col4 ref" href="#14fd" title='fd' data-ref="14fd">fd</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="60">60</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td>	<a class="local col3 ref" href="#13size" title='size' data-ref="13size">size</a> = <a class="ref" href="selinux_internal.h.html#selinux_page_size" title='selinux_page_size' data-ref="selinux_page_size">selinux_page_size</a>;</td></tr>
+<tr><th id="63">63</th><td>	<a class="local col2 ref" href="#12buf" title='buf' data-ref="12buf">buf</a> = <a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<a class="local col3 ref" href="#13size" title='size' data-ref="13size">size</a>);</td></tr>
+<tr><th id="64">64</th><td>	<b>if</b> (!<a class="local col2 ref" href="#12buf" title='buf' data-ref="12buf">buf</a>) {</td></tr>
+<tr><th id="65">65</th><td>		<a class="local col5 ref" href="#15ret" title='ret' data-ref="15ret">ret</a> = -<var>1</var>;</td></tr>
+<tr><th id="66">66</th><td>		<b>goto</b> <a class="lbl" href="#17out" data-ref="17out">out</a>;</td></tr>
+<tr><th id="67">67</th><td>	}</td></tr>
+<tr><th id="68">68</th><td>	<a class="ref" href="../../../bionic/libc/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col2 ref" href="#12buf" title='buf' data-ref="12buf">buf</a>, <var>0</var>, <a class="local col3 ref" href="#13size" title='size' data-ref="13size">size</a>);</td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td>	<b>do</b> {</td></tr>
+<tr><th id="71">71</th><td>		<a class="local col5 ref" href="#15ret" title='ret' data-ref="15ret">ret</a> = <a class="ref" href="../../../bionic/libc/include/unistd.h.html#read" title='read' data-ref="read">read</a>(<a class="local col4 ref" href="#14fd" title='fd' data-ref="14fd">fd</a>, <a class="local col2 ref" href="#12buf" title='buf' data-ref="12buf">buf</a>, <a class="local col3 ref" href="#13size" title='size' data-ref="13size">size</a> - <var>1</var>);</td></tr>
+<tr><th id="72">72</th><td>	} <b>while</b> (<a class="local col5 ref" href="#15ret" title='ret' data-ref="15ret">ret</a> &lt; <var>0</var> &amp;&amp; <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#25" title="4" data-ref="_M/EINTR">EINTR</a>);</td></tr>
+<tr><th id="73">73</th><td>	<b>if</b> (<a class="local col5 ref" href="#15ret" title='ret' data-ref="15ret">ret</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="74">74</th><td>		<b>goto</b> <a class="lbl" href="#18out2" data-ref="18out2">out2</a>;</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td>	<b>if</b> (<a class="local col5 ref" href="#15ret" title='ret' data-ref="15ret">ret</a> == <var>0</var>) {</td></tr>
+<tr><th id="77">77</th><td>		*<a class="local col9 ref" href="#9context" title='context' data-ref="9context">context</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="78">78</th><td>		<b>goto</b> <a class="lbl" href="#18out2" data-ref="18out2">out2</a>;</td></tr>
+<tr><th id="79">79</th><td>	}</td></tr>
+<tr><th id="80">80</th><td></td></tr>
+<tr><th id="81">81</th><td>	*<a class="local col9 ref" href="#9context" title='context' data-ref="9context">context</a> = <a class="ref" href="../../../bionic/libc/include/string.h.html#strdup" title='strdup' data-ref="strdup">strdup</a>(<a class="local col2 ref" href="#12buf" title='buf' data-ref="12buf">buf</a>);</td></tr>
+<tr><th id="82">82</th><td>	<b>if</b> (!(*<a class="local col9 ref" href="#9context" title='context' data-ref="9context">context</a>)) {</td></tr>
+<tr><th id="83">83</th><td>		<a class="local col5 ref" href="#15ret" title='ret' data-ref="15ret">ret</a> = -<var>1</var>;</td></tr>
+<tr><th id="84">84</th><td>		<b>goto</b> <a class="lbl" href="#18out2" data-ref="18out2">out2</a>;</td></tr>
+<tr><th id="85">85</th><td>	}</td></tr>
+<tr><th id="86">86</th><td>	<a class="local col5 ref" href="#15ret" title='ret' data-ref="15ret">ret</a> = <var>0</var>;</td></tr>
+<tr><th id="87">87</th><td>      <dfn class="lbl" id="18out2" data-ref="18out2">out2</dfn>:</td></tr>
+<tr><th id="88">88</th><td>	<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col2 ref" href="#12buf" title='buf' data-ref="12buf">buf</a>);</td></tr>
+<tr><th id="89">89</th><td>      <dfn class="lbl" id="17out" data-ref="17out">out</dfn>:</td></tr>
+<tr><th id="90">90</th><td>	<a class="local col6 ref" href="#16errno_hold" title='errno_hold' data-ref="16errno_hold">errno_hold</a> = <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="91">91</th><td>	<a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col4 ref" href="#14fd" title='fd' data-ref="14fd">fd</a>);</td></tr>
+<tr><th id="92">92</th><td>	<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="local col6 ref" href="#16errno_hold" title='errno_hold' data-ref="16errno_hold">errno_hold</a>;</td></tr>
+<tr><th id="93">93</th><td>	<b>return</b> <a class="local col5 ref" href="#15ret" title='ret' data-ref="15ret">ret</a>;</td></tr>
+<tr><th id="94">94</th><td>}</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="setprocattrcon" title='setprocattrcon' data-type='int setprocattrcon(const char * context, pid_t pid, const char * attr)' data-ref="setprocattrcon">setprocattrcon</dfn>(<em>const</em> <em>char</em> * <dfn class="local col9 decl" id="19context" title='context' data-type='const char *' data-ref="19context">context</dfn>,</td></tr>
+<tr><th id="97">97</th><td>			  <a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col0 decl" id="20pid" title='pid' data-type='pid_t' data-ref="20pid">pid</dfn>, <em>const</em> <em>char</em> *<dfn class="local col1 decl" id="21attr" title='attr' data-type='const char *' data-ref="21attr">attr</dfn>)</td></tr>
+<tr><th id="98">98</th><td>{</td></tr>
+<tr><th id="99">99</th><td>	<em>int</em> <dfn class="local col2 decl" id="22fd" title='fd' data-type='int' data-ref="22fd">fd</dfn>;</td></tr>
+<tr><th id="100">100</th><td>	<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="local col3 decl" id="23ret" title='ret' data-type='ssize_t' data-ref="23ret">ret</dfn>;</td></tr>
+<tr><th id="101">101</th><td>	<em>int</em> <dfn class="local col4 decl" id="24errno_hold" title='errno_hold' data-type='int' data-ref="24errno_hold">errno_hold</dfn>;</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td>	<a class="local col2 ref" href="#22fd" title='fd' data-ref="22fd">fd</a> = <a class="tu ref" href="#openattr" title='openattr' data-use='c' data-ref="openattr">openattr</a>(<a class="local col0 ref" href="#20pid" title='pid' data-ref="20pid">pid</a>, <a class="local col1 ref" href="#21attr" title='attr' data-ref="21attr">attr</a>, <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/fcntl.h.html#26" title="00000002" data-ref="_M/O_RDWR">O_RDWR</a>);</td></tr>
+<tr><th id="104">104</th><td>	<b>if</b> (<a class="local col2 ref" href="#22fd" title='fd' data-ref="22fd">fd</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="105">105</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="106">106</th><td>	<b>if</b> (<a class="local col9 ref" href="#19context" title='context' data-ref="19context">context</a>)</td></tr>
+<tr><th id="107">107</th><td>		<b>do</b> {</td></tr>
+<tr><th id="108">108</th><td>			<a class="local col3 ref" href="#23ret" title='ret' data-ref="23ret">ret</a> = <a class="ref" href="../../../bionic/libc/include/unistd.h.html#write" title='write' data-ref="write">write</a>(<a class="local col2 ref" href="#22fd" title='fd' data-ref="22fd">fd</a>, <a class="local col9 ref" href="#19context" title='context' data-ref="19context">context</a>, <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col9 ref" href="#19context" title='context' data-ref="19context">context</a>) + <var>1</var>);</td></tr>
+<tr><th id="109">109</th><td>		} <b>while</b> (<a class="local col3 ref" href="#23ret" title='ret' data-ref="23ret">ret</a> &lt; <var>0</var> &amp;&amp; <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#25" title="4" data-ref="_M/EINTR">EINTR</a>);</td></tr>
+<tr><th id="110">110</th><td>	<b>else</b></td></tr>
+<tr><th id="111">111</th><td>		<b>do</b> {</td></tr>
+<tr><th id="112">112</th><td>			<a class="local col3 ref" href="#23ret" title='ret' data-ref="23ret">ret</a> = <a class="ref" href="../../../bionic/libc/include/unistd.h.html#write" title='write' data-ref="write">write</a>(<a class="local col2 ref" href="#22fd" title='fd' data-ref="22fd">fd</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <var>0</var>);	<i>/* clear */</i></td></tr>
+<tr><th id="113">113</th><td>		} <b>while</b> (<a class="local col3 ref" href="#23ret" title='ret' data-ref="23ret">ret</a> &lt; <var>0</var> &amp;&amp; <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#25" title="4" data-ref="_M/EINTR">EINTR</a>);</td></tr>
+<tr><th id="114">114</th><td>	<a class="local col4 ref" href="#24errno_hold" title='errno_hold' data-ref="24errno_hold">errno_hold</a> = <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>;</td></tr>
+<tr><th id="115">115</th><td>	<a class="ref" href="../../../bionic/libc/include/unistd.h.html#close" title='close' data-ref="close">close</a>(<a class="local col2 ref" href="#22fd" title='fd' data-ref="22fd">fd</a>);</td></tr>
+<tr><th id="116">116</th><td>	<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="local col4 ref" href="#24errno_hold" title='errno_hold' data-ref="24errno_hold">errno_hold</a>;</td></tr>
+<tr><th id="117">117</th><td>	<b>if</b> (<a class="local col3 ref" href="#23ret" title='ret' data-ref="23ret">ret</a> &lt; <var>0</var>)</td></tr>
+<tr><th id="118">118</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="119">119</th><td>	<b>else</b></td></tr>
+<tr><th id="120">120</th><td>		<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="121">121</th><td>}</td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td><u>#define <dfn class="macro" id="_M/getselfattr_def" data-ref="_M/getselfattr_def">getselfattr_def</dfn>(fn, attr) \</u></td></tr>
+<tr><th id="124">124</th><td><u>	int get##fn(char **<dfn class="local col5 decl" id="25c" title='c' data-type='char **' data-ref="25c"><dfn class="local col9 decl" id="29c" title='c' data-type='char **' data-ref="29c"><dfn class="local col0 decl" id="30c" title='c' data-type='char **' data-ref="30c"><dfn class="local col2 decl" id="32c" title='c' data-type='char **' data-ref="32c"><dfn class="local col4 decl" id="34c" title='c' data-type='char **' data-ref="34c"><dfn class="local col6 decl" id="36c" title='c' data-type='char **' data-ref="36c">c</dfn></dfn></dfn></dfn></dfn></dfn>) \</u></td></tr>
+<tr><th id="125">125</th><td><u>	{ \</u></td></tr>
+<tr><th id="126">126</th><td><u>		return <a class="tu ref" href="#getprocattrcon" title='getprocattrcon' data-use='c' data-ref="getprocattrcon">getprocattrcon</a>(<a class="local col5 ref" href="#150" title='c' data-ref="25c"><a class="local col9 ref" href="#152" title='c' data-ref="29c"><a class="local col0 ref" href="#153" title='c' data-ref="30c"><a class="local col2 ref" href="#154" title='c' data-ref="32c"><a class="local col4 ref" href="#155" title='c' data-ref="34c"><a class="local col6 ref" href="#156" title='c' data-ref="36c">c</a></a></a></a></a></a>, 0, #attr); \</u></td></tr>
+<tr><th id="127">127</th><td><u>	}</u></td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td><u>#define <dfn class="macro" id="_M/setselfattr_def" data-ref="_M/setselfattr_def">setselfattr_def</dfn>(fn, attr) \</u></td></tr>
+<tr><th id="130">130</th><td><u>	int set##fn(const char * <dfn class="local col6 decl" id="26c" title='c' data-type='const char *' data-ref="26c"><dfn class="local col1 decl" id="31c" title='c' data-type='const char *' data-ref="31c"><dfn class="local col3 decl" id="33c" title='c' data-type='const char *' data-ref="33c"><dfn class="local col5 decl" id="35c" title='c' data-type='const char *' data-ref="35c"><dfn class="local col7 decl" id="37c" title='c' data-type='const char *' data-ref="37c">c</dfn></dfn></dfn></dfn></dfn>) \</u></td></tr>
+<tr><th id="131">131</th><td><u>	{ \</u></td></tr>
+<tr><th id="132">132</th><td><u>		return <a class="tu ref" href="#setprocattrcon" title='setprocattrcon' data-use='c' data-ref="setprocattrcon">setprocattrcon</a>(<a class="local col6 ref" href="#150" title='c' data-ref="26c"><a class="local col1 ref" href="#153" title='c' data-ref="31c"><a class="local col3 ref" href="#154" title='c' data-ref="33c"><a class="local col5 ref" href="#155" title='c' data-ref="35c"><a class="local col7 ref" href="#156" title='c' data-ref="37c">c</a></a></a></a></a>, 0, #attr); \</u></td></tr>
+<tr><th id="133">133</th><td><u>	}</u></td></tr>
+<tr><th id="134">134</th><td></td></tr>
+<tr><th id="135">135</th><td><u>#define <dfn class="macro" id="_M/all_selfattr_def" data-ref="_M/all_selfattr_def">all_selfattr_def</dfn>(fn, attr) \</u></td></tr>
+<tr><th id="136">136</th><td><u>	getselfattr_def(fn, attr)	 \</u></td></tr>
+<tr><th id="137">137</th><td><u>	setselfattr_def(fn, attr)</u></td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td><u>#define <dfn class="macro" id="_M/getpidattr_def" data-ref="_M/getpidattr_def">getpidattr_def</dfn>(fn, attr) \</u></td></tr>
+<tr><th id="140">140</th><td><u>	int get##fn(<a class="typedef" href="../../../bionic/libc/include/sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col7 decl" id="27pid" title='pid' data-type='pid_t' data-ref="27pid">pid</dfn>, char **<dfn class="local col8 decl" id="28c" title='c' data-type='char **' data-ref="28c">c</dfn>)	\</u></td></tr>
+<tr><th id="141">141</th><td><u>	{ \</u></td></tr>
+<tr><th id="142">142</th><td><u>		if (<a class="local col7 ref" href="#151" title='pid' data-ref="27pid">pid</a> &lt;= 0) { \</u></td></tr>
+<tr><th id="143">143</th><td><u>			errno = EINVAL; \</u></td></tr>
+<tr><th id="144">144</th><td><u>			return -1; \</u></td></tr>
+<tr><th id="145">145</th><td><u>		} else { \</u></td></tr>
+<tr><th id="146">146</th><td><u>			return <a class="tu ref" href="#getprocattrcon" title='getprocattrcon' data-use='c' data-ref="getprocattrcon">getprocattrcon</a>(<a class="local col8 ref" href="#151" title='c' data-ref="28c">c</a>, <a class="local col7 ref" href="#151" title='pid' data-ref="27pid">pid</a>, #attr); \</u></td></tr>
+<tr><th id="147">147</th><td><u>		} \</u></td></tr>
+<tr><th id="148">148</th><td><u>	}</u></td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><a class="macro" href="#135" title="int getcon(char **c) { return getprocattrcon(c, 0, &quot;current&quot;); } int setcon(const char * c) { return setprocattrcon(c, 0, &quot;current&quot;); }" data-ref="_M/all_selfattr_def">all_selfattr_def</a>(con, current)</td></tr>
+<tr><th id="151">151</th><td>    <a class="macro" href="#139" title="int getpidcon(pid_t pid, char **c) { if (pid &lt;= 0) { (*__errno()) = 22; return -1; } else { return getprocattrcon(c, pid, &quot;current&quot;); } }" data-ref="_M/getpidattr_def">getpidattr_def</a>(pidcon, current)</td></tr>
+<tr><th id="152">152</th><td>    <a class="macro" href="#123" title="int getprevcon(char **c) { return getprocattrcon(c, 0, &quot;prev&quot;); }" data-ref="_M/getselfattr_def">getselfattr_def</a>(prevcon, prev)</td></tr>
+<tr><th id="153">153</th><td>    <a class="macro" href="#135" title="int getexeccon(char **c) { return getprocattrcon(c, 0, &quot;exec&quot;); } int setexeccon(const char * c) { return setprocattrcon(c, 0, &quot;exec&quot;); }" data-ref="_M/all_selfattr_def">all_selfattr_def</a>(execcon, exec)</td></tr>
+<tr><th id="154">154</th><td>    <a class="macro" href="#135" title="int getfscreatecon(char **c) { return getprocattrcon(c, 0, &quot;fscreate&quot;); } int setfscreatecon(const char * c) { return setprocattrcon(c, 0, &quot;fscreate&quot;); }" data-ref="_M/all_selfattr_def">all_selfattr_def</a>(fscreatecon, fscreate)</td></tr>
+<tr><th id="155">155</th><td>    <a class="macro" href="#135" title="int getsockcreatecon(char **c) { return getprocattrcon(c, 0, &quot;sockcreate&quot;); } int setsockcreatecon(const char * c) { return setprocattrcon(c, 0, &quot;sockcreate&quot;); }" data-ref="_M/all_selfattr_def">all_selfattr_def</a>(sockcreatecon, sockcreate)</td></tr>
+<tr><th id="156">156</th><td>    <a class="macro" href="#135" title="int getkeycreatecon(char **c) { return getprocattrcon(c, 0, &quot;keycreate&quot;); } int setkeycreatecon(const char * c) { return setprocattrcon(c, 0, &quot;keycreate&quot;); }" data-ref="_M/all_selfattr_def">all_selfattr_def</a>(keycreatecon, keycreate)</td></tr>
+<tr><th id="157">157</th><td></td></tr>
+<tr><th id="158">158</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getcon_raw)</td></tr>
+<tr><th id="159">159</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getcon)</td></tr>
+<tr><th id="160">160</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getexeccon_raw)</td></tr>
+<tr><th id="161">161</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getfilecon_raw)</td></tr>
+<tr><th id="162">162</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getfilecon)</td></tr>
+<tr><th id="163">163</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getfscreatecon_raw)</td></tr>
+<tr><th id="164">164</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getkeycreatecon_raw)</td></tr>
+<tr><th id="165">165</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getpeercon_raw)</td></tr>
+<tr><th id="166">166</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getpidcon_raw)</td></tr>
+<tr><th id="167">167</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getprevcon_raw)</td></tr>
+<tr><th id="168">168</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getprevcon)</td></tr>
+<tr><th id="169">169</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(getsockcreatecon_raw)</td></tr>
+<tr><th id="170">170</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(setcon_raw)</td></tr>
+<tr><th id="171">171</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(setexeccon_raw)</td></tr>
+<tr><th id="172">172</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(setexeccon)</td></tr>
+<tr><th id="173">173</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(setfilecon_raw)</td></tr>
+<tr><th id="174">174</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(setfscreatecon_raw)</td></tr>
+<tr><th id="175">175</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(setkeycreatecon_raw)</td></tr>
+<tr><th id="176">176</th><td>    <a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(setsockcreatecon_raw)</td></tr>
+<tr><th id="177">177</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

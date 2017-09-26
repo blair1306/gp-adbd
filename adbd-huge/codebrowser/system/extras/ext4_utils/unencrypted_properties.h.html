@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>unencrypted_properties.h source code [codebrowser/system/extras/ext4_utils/unencrypted_properties.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="UnencryptedProperties "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/extras/ext4_utils/unencrypted_properties.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>extras</a>/<a href='./'>ext4_utils</a>/<a href='unencrypted_properties.h.html'>unencrypted_properties.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#include <a href="../../../external/libcxx/include/string.html">&lt;string&gt;</a></u></td></tr>
+<tr><th id="2">2</th><td><u>#include <a href="../../../external/libcxx/include/fstream.html">&lt;fstream&gt;</a></u></td></tr>
+<tr><th id="3">3</th><td></td></tr>
+<tr><th id="4">4</th><td><i>// key names for properties we use</i></td></tr>
+<tr><th id="5">5</th><td><b>namespace</b> <span class="namespace">properties</span> {</td></tr>
+<tr><th id="6">6</th><td>    <b>extern</b> <em>const</em> <em>char</em>* <dfn class="decl" id="properties::key" title='properties::key' data-ref="properties::key">key</dfn>;</td></tr>
+<tr><th id="7">7</th><td>    <b>extern</b> <em>const</em> <em>char</em>* <dfn class="decl" id="properties::ref" title='properties::ref' data-ref="properties::ref">ref</dfn>;</td></tr>
+<tr><th id="8">8</th><td>    <b>extern</b> <em>const</em> <em>char</em>* <dfn class="decl" id="properties::props" title='properties::props' data-ref="properties::props">props</dfn>;</td></tr>
+<tr><th id="9">9</th><td>    <b>extern</b> <em>const</em> <em>char</em>* <dfn class="decl" id="properties::is_default" title='properties::is_default' data-ref="properties::is_default">is_default</dfn>;</td></tr>
+<tr><th id="10">10</th><td>}</td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><i class="doc">/**</i></td></tr>
+<tr><th id="13">13</th><td><i class="doc"> * Class to store data on the unencrypted folder of a device.</i></td></tr>
+<tr><th id="14">14</th><td><i class="doc"> * Note that the folder must exist before this class is constructed.</i></td></tr>
+<tr><th id="15">15</th><td><i class="doc"> * All names must be valid single level (no '/') file or directory names</i></td></tr>
+<tr><th id="16">16</th><td><i class="doc"> * Data is organized hierarchically so we can get a child folder</i></td></tr>
+<tr><th id="17">17</th><td><i class="doc"> */</i></td></tr>
+<tr><th id="18">18</th><td><b>class</b> <dfn class="type def" id="UnencryptedProperties" title='UnencryptedProperties' data-ref="UnencryptedProperties">UnencryptedProperties</dfn></td></tr>
+<tr><th id="19">19</th><td>{</td></tr>
+<tr><th id="20">20</th><td><b>public</b>:</td></tr>
+<tr><th id="21">21</th><td>    <i>// Get path of folder. Must create before using any properties</i></td></tr>
+<tr><th id="22">22</th><td><i>    // This is to allow proper setting of SELinux policy</i></td></tr>
+<tr><th id="23">23</th><td>    <em>static</em> <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="decl" id="_ZN21UnencryptedProperties7GetPathEPKc" title='UnencryptedProperties::GetPath' data-ref="_ZN21UnencryptedProperties7GetPathEPKc">GetPath</dfn>(<em>const</em> <em>char</em>* <dfn class="local col3 decl" id="153device" title='device' data-type='const char *' data-ref="153device">device</dfn>);</td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td>    <i>// Opens properties folder on named device.</i></td></tr>
+<tr><th id="26">26</th><td><i>    // If folder does not exist, OK will return false, all</i></td></tr>
+<tr><th id="27">27</th><td><i>    // getters will return default properties and setters will fail.</i></td></tr>
+<tr><th id="28">28</th><td>    <dfn class="decl" id="_ZN21UnencryptedPropertiesC1EPKc" title='UnencryptedProperties::UnencryptedProperties' data-ref="_ZN21UnencryptedPropertiesC1EPKc">UnencryptedProperties</dfn>(<em>const</em> <em>char</em>* <dfn class="local col4 decl" id="154device" title='device' data-type='const char *' data-ref="154device">device</dfn>);</td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td>    <i>// Get named object. Return default if object does not exist or error.</i></td></tr>
+<tr><th id="31">31</th><td>    <b>template</b>&lt;<b>typename</b> t&gt; t <a class="decl" href="#_ZNK21UnencryptedProperties3GetEPKcT_" title='UnencryptedProperties::Get' data-ref="_ZNK21UnencryptedProperties3GetEPKcT_">Get</a>(<em>const</em> <em>char</em>* <dfn class="local col5 decl" id="155name" title='name' data-type='const char *' data-ref="155name">name</dfn>, t <dfn class="local col6 decl" id="156default_value" title='default_value' data-type='t' data-ref="156default_value">default_value</dfn> = t()) <em>const</em>;</td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td>    <i>// Set named object. Return true if success, false otherwise</i></td></tr>
+<tr><th id="34">34</th><td>    <b>template</b>&lt;<b>typename</b> t&gt; <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <a class="decl" href="#_ZN21UnencryptedProperties3SetEPKcRKT_" title='UnencryptedProperties::Set' data-ref="_ZN21UnencryptedProperties3SetEPKcRKT_">Set</a>(<em>const</em> <em>char</em>* <dfn class="local col7 decl" id="157name" title='name' data-type='const char *' data-ref="157name">name</dfn>, t <em>const</em>&amp; <dfn class="local col8 decl" id="158value" title='value' data-type='const t &amp;' data-ref="158value">value</dfn>);</td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td>    <i>// Get child properties</i></td></tr>
+<tr><th id="37">37</th><td>    <a class="type" href="#UnencryptedProperties" title='UnencryptedProperties' data-ref="UnencryptedProperties">UnencryptedProperties</a> <dfn class="decl" id="_ZNK21UnencryptedProperties8GetChildEPKc" title='UnencryptedProperties::GetChild' data-ref="_ZNK21UnencryptedProperties8GetChildEPKc">GetChild</dfn>(<em>const</em> <em>char</em>* <dfn class="local col9 decl" id="159name" title='name' data-type='const char *' data-ref="159name">name</dfn>) <em>const</em>;</td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td>    <i>// Remove named object</i></td></tr>
+<tr><th id="40">40</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="_ZN21UnencryptedProperties6RemoveEPKc" title='UnencryptedProperties::Remove' data-ref="_ZN21UnencryptedProperties6RemoveEPKc">Remove</dfn>(<em>const</em> <em>char</em>* <dfn class="local col0 decl" id="160name" title='name' data-type='const char *' data-ref="160name">name</dfn>);</td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td>    <i>// Does folder exist?</i></td></tr>
+<tr><th id="43">43</th><td>    <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="_ZNK21UnencryptedProperties2OKEv" title='UnencryptedProperties::OK' data-ref="_ZNK21UnencryptedProperties2OKEv">OK</dfn>() <em>const</em>;</td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><b>private</b>:</td></tr>
+<tr><th id="46">46</th><td>    <dfn class="decl" id="_ZN21UnencryptedPropertiesC1Ev" title='UnencryptedProperties::UnencryptedProperties' data-ref="_ZN21UnencryptedPropertiesC1Ev">UnencryptedProperties</dfn>();</td></tr>
+<tr><th id="47">47</th><td>    <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="decl" id="UnencryptedProperties::folder_" title='UnencryptedProperties::folder_' data-ref="UnencryptedProperties::folder_">folder_</dfn>;</td></tr>
+<tr><th id="48">48</th><td>};</td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td><b>template</b>&lt;<b>typename</b> t&gt; t <a class="type" href="#UnencryptedProperties" title='UnencryptedProperties' data-ref="UnencryptedProperties">UnencryptedProperties</a>::<dfn class="decl def" id="_ZNK21UnencryptedProperties3GetEPKcT_" title='UnencryptedProperties::Get' data-ref="_ZNK21UnencryptedProperties3GetEPKcT_">Get</dfn>(<em>const</em> <em>char</em>* <dfn class="local col1 decl" id="161name" title='name' data-type='const char *' data-ref="161name">name</dfn>,</td></tr>
+<tr><th id="52">52</th><td>                                                  t <dfn class="local col2 decl" id="162default_value" title='default_value' data-type='t' data-ref="162default_value">default_value</dfn>) <em>const</em></td></tr>
+<tr><th id="53">53</th><td>{</td></tr>
+<tr><th id="54">54</th><td>    <b>if</b> (!<a class="member" href="#_ZNK21UnencryptedProperties2OKEv" title='UnencryptedProperties::OK' data-ref="_ZNK21UnencryptedProperties2OKEv">OK</a>()) <b>return</b> <a class="local col2 ref" href="#162default_value" title='default_value' data-ref="162default_value">default_value</a>;</td></tr>
+<tr><th id="55">55</th><td>    t <dfn class="local col3 decl" id="163value" title='value' data-type='t' data-ref="163value">value</dfn> = <a class="local col2 ref" href="#162default_value" title='default_value' data-ref="162default_value">default_value</a>;</td></tr>
+<tr><th id="56">56</th><td>    <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::ifstream" title='std::__1::ifstream' data-type='basic_ifstream&lt;char&gt;' data-ref="std::__1::ifstream">ifstream</a><a class="ref" href="../../../external/libcxx/include/fstream.html#_ZNSt3__114basic_ifstreamC1ERKNS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEj" title='std::__1::basic_ifstream::basic_ifstream&lt;_CharT, _Traits&gt;' data-ref="_ZNSt3__114basic_ifstreamC1ERKNS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEj">(</a><a class="member" href="#UnencryptedProperties::folder_" title='UnencryptedProperties::folder_' data-ref="UnencryptedProperties::folder_">folder_</a> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__1plERKNS_12basic_stringIT_T0_T1_EEPKS1_" title='std::__1::operator+' data-ref="_ZNSt3__1plERKNS_12basic_stringIT_T0_T1_EEPKS1_">+</a> <q>"/"</q> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__1plEONS_12basic_stringIT_T0_T1_EEPKS1_" title='std::__1::operator+' data-ref="_ZNSt3__1plEONS_12basic_stringIT_T0_T1_EEPKS1_">+</a> <a class="local col1 ref" href="#161name" title='name' data-ref="161name">name</a>) &gt;&gt; <a class="local col3 ref" href="#163value" title='value' data-ref="163value">value</a>;</td></tr>
+<tr><th id="57">57</th><td>    <b>return</b> <a class="local col3 ref" href="#163value" title='value' data-ref="163value">value</a>;</td></tr>
+<tr><th id="58">58</th><td>}</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><b>template</b>&lt;<b>typename</b> t&gt; <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <a class="type" href="#UnencryptedProperties" title='UnencryptedProperties' data-ref="UnencryptedProperties">UnencryptedProperties</a>::<dfn class="decl def" id="_ZN21UnencryptedProperties3SetEPKcRKT_" title='UnencryptedProperties::Set' data-ref="_ZN21UnencryptedProperties3SetEPKcRKT_">Set</dfn>(<em>const</em> <em>char</em>* <dfn class="local col4 decl" id="164name" title='name' data-type='const char *' data-ref="164name">name</dfn>,</td></tr>
+<tr><th id="61">61</th><td>                                                     t <em>const</em>&amp; <dfn class="local col5 decl" id="165value" title='value' data-type='const t &amp;' data-ref="165value">value</dfn>)</td></tr>
+<tr><th id="62">62</th><td>{</td></tr>
+<tr><th id="63">63</th><td>    <b>if</b> (!<a class="member" href="#_ZNK21UnencryptedProperties2OKEv" title='UnencryptedProperties::OK' data-ref="_ZNK21UnencryptedProperties2OKEv">OK</a>()) <b>return</b> <span class="macro" title="false" data-ref="_M/false"><b>false</b></span>;</td></tr>
+<tr><th id="64">64</th><td>    <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::ofstream" title='std::__1::ofstream' data-type='basic_ofstream&lt;char&gt;' data-ref="std::__1::ofstream">ofstream</a> <dfn class="local col6 decl" id="166o" title='o' data-type='std::ofstream' data-ref="166o">o</dfn><a class="ref" href="../../../external/libcxx/include/fstream.html#_ZNSt3__114basic_ofstreamC1ERKNS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEj" title='std::__1::basic_ofstream::basic_ofstream&lt;_CharT, _Traits&gt;' data-ref="_ZNSt3__114basic_ofstreamC1ERKNS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEEj">(</a><a class="member" href="#UnencryptedProperties::folder_" title='UnencryptedProperties::folder_' data-ref="UnencryptedProperties::folder_">folder_</a> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__1plERKNS_12basic_stringIT_T0_T1_EEPKS1_" title='std::__1::operator+' data-ref="_ZNSt3__1plERKNS_12basic_stringIT_T0_T1_EEPKS1_">+</a> <q>"/"</q> <a class="ref" href="../../../external/libcxx/include/string.html#_ZNSt3__1plEONS_12basic_stringIT_T0_T1_EEPKS1_" title='std::__1::operator+' data-ref="_ZNSt3__1plEONS_12basic_stringIT_T0_T1_EEPKS1_">+</a> <a class="local col4 ref" href="#164name" title='name' data-ref="164name">name</a>);</td></tr>
+<tr><th id="65">65</th><td>    <a class="local col6 ref" href="#166o" title='o' data-ref="166o">o</a> &lt;&lt; <a class="local col5 ref" href="#165value" title='value' data-ref="165value">value</a>;</td></tr>
+<tr><th id="66">66</th><td>    <b>return</b> !<a class="local col6 ref" href="#166o" title='o' data-ref="166o">o</a>.<a class="ref" href="../../../external/libcxx/include/ios.html#_ZNKSt3__19basic_ios4failEv" title='std::__1::basic_ios::fail' data-ref="_ZNKSt3__19basic_ios4failEv">fail</a>();</td></tr>
+<tr><th id="67">67</th><td>}</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td><i>// Specialized getters/setters for strings</i></td></tr>
+<tr><th id="70">70</th><td><b>template</b>&lt;&gt; <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <a class="type" href="#UnencryptedProperties" title='UnencryptedProperties' data-ref="UnencryptedProperties">UnencryptedProperties</a>::<a class="decl" href="#_ZNK21UnencryptedProperties3GetEPKcT_" title='UnencryptedProperties::Get' data-ref="_ZNK21UnencryptedProperties3GetEPKcT_">Get</a>(<em>const</em> <em>char</em>* <dfn class="local col7 decl" id="167name" title='name' data-type='const char *' data-ref="167name">name</dfn>,</td></tr>
+<tr><th id="71">71</th><td>                                      <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <dfn class="local col8 decl" id="168default_value" title='default_value' data-type='std::string' data-ref="168default_value">default_value</dfn>) <em>const</em>;</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td><b>template</b>&lt;&gt; <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <a class="type" href="#UnencryptedProperties" title='UnencryptedProperties' data-ref="UnencryptedProperties">UnencryptedProperties</a>::<a class="decl" href="#_ZN21UnencryptedProperties3SetEPKcRKT_" title='UnencryptedProperties::Set' data-ref="_ZN21UnencryptedProperties3SetEPKcRKT_">Set</a>(<em>const</em> <em>char</em>* <dfn class="local col9 decl" id="169name" title='name' data-type='const char *' data-ref="169name">name</dfn>,</td></tr>
+<tr><th id="74">74</th><td>                                           <span class="namespace">std::</span><a class="typedef" href="../../../external/libcxx/include/iosfwd.html#std::__1::string" title='std::__1::string' data-type='basic_string&lt;char, char_traits&lt;char&gt;, allocator&lt;char&gt; &gt;' data-ref="std::__1::string">string</a> <em>const</em>&amp; <dfn class="local col0 decl" id="170value" title='value' data-type='const std::string &amp;' data-ref="170value">value</dfn>);</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='ext4_crypt.cpp.html'>codebrowser/system/extras/ext4_utils/ext4_crypt.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

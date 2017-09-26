@@ -1,0 +1,19 @@
+<dec f='codebrowser/external/boringssl/src/include/openssl/bn.h' l='755' type='BN_MONT_CTX * BN_MONT_CTX_set_locked(BN_MONT_CTX ** pmont, CRYPTO_MUTEX * lock, const BIGNUM * mod, BN_CTX * bn_ctx)'/>
+<doc f='codebrowser/external/boringssl/src/include/openssl/bn.h' l='750'>/* BN_MONT_CTX_set_locked takes |lock| and checks whether |*pmont| is NULL. If
+ * so, it creates a new |BN_MONT_CTX| and sets the modulus for it to |mod|. It
+ * then stores it as |*pmont| and returns it, or NULL on error.
+ *
+ * If |*pmont| is already non-NULL then the existing value is returned. */</doc>
+<def f='codebrowser/external/boringssl/src/crypto/bn/montgomery.c' l='292' ll='322' type='BN_MONT_CTX * BN_MONT_CTX_set_locked(BN_MONT_CTX ** pmont, CRYPTO_MUTEX * lock, const BIGNUM * mod, BN_CTX * bn_ctx)'/>
+<use f='codebrowser/external/boringssl/src/crypto/dh/dh.c' l='272' u='c' c='DH_generate_key'/>
+<use f='codebrowser/external/boringssl/src/crypto/dh/dh.c' l='347' u='c' c='DH_compute_key'/>
+<use f='codebrowser/external/boringssl/src/crypto/dsa/dsa.c' l='653' u='c' c='DSA_do_check_signature'/>
+<use f='codebrowser/external/boringssl/src/crypto/dsa/dsa.c' l='800' u='c' c='DSA_sign_setup'/>
+<use f='codebrowser/external/boringssl/src/crypto/rsa/blinding.c' l='439' u='c' c='rsa_setup_blinding'/>
+<use f='codebrowser/external/boringssl/src/crypto/rsa/rsa_impl.c' l='156' u='c' c='rsa_default_encrypt'/>
+<use f='codebrowser/external/boringssl/src/crypto/rsa/rsa_impl.c' l='480' u='c' c='rsa_default_verify_raw'/>
+<use f='codebrowser/external/boringssl/src/crypto/rsa/rsa_impl.c' l='582' u='c' c='rsa_default_private_transform'/>
+<use f='codebrowser/external/boringssl/src/crypto/rsa/rsa_impl.c' l='649' u='c' c='mod_exp'/>
+<use f='codebrowser/external/boringssl/src/crypto/rsa/rsa_impl.c' l='652' u='c' c='mod_exp'/>
+<use f='codebrowser/external/boringssl/src/crypto/rsa/rsa_impl.c' l='659' u='c' c='mod_exp'/>
+<use f='codebrowser/external/boringssl/src/crypto/rsa/rsa_impl.c' l='749' u='c' c='mod_exp'/>

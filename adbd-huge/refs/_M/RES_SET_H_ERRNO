@@ -1,0 +1,36 @@
+<dec f='codebrowser/bionic/libc/dns/include/resolv_private.h' l='105'/>
+<doc f='codebrowser/bionic/libc/dns/include/resolv_private.h' l='86'>/*
+ * This used to be defined in res_query.c, now it&apos;s in herror.c.
+ * [XXX no it&apos;s not.  It&apos;s in irs/irs_data.c]
+ * It was
+ * never extern&apos;d by any *.h file before it was placed here.  For thread
+ * aware programs, the last h_errno value set is stored in res-&gt;h_errno.
+ *
+ * XXX:	There doesn&apos;t seem to be a good reason for exposing RES_SET_H_ERRNO
+ *	(and __h_errno_set) to the public via &lt;resolv.h&gt;.
+ * XXX:	__h_errno_set is really part of IRS, not part of the resolver.
+ *	If somebody wants to build and use a resolver that doesn&apos;t use IRS,
+ *	what do they do?  Perhaps something like
+ *		#ifdef WANT_IRS
+ *		# define RES_SET_H_ERRNO(r,x) __h_errno_set(r,x)
+ *		#else
+ *		# define RES_SET_H_ERRNO(r,x) (h_errno = (r)-&gt;res_h_errno = (x))
+ *		#endif
+ */</doc>
+<use f='codebrowser/bionic/libc/dns/resolv/res_data.c' l='179' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_data.c' l='206' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_data.c' l='275' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_data.c' l='290' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='161' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='180' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='195' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='198' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='201' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='207' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='238' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='314' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='365' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='367' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='369' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='401' u='c'/>
+<use f='codebrowser/bionic/libc/dns/resolv/res_query.c' l='414' u='c'/>

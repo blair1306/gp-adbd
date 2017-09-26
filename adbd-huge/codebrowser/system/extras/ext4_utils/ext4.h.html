@@ -1,0 +1,596 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ext4.h source code [codebrowser/system/extras/ext4_utils/ext4.h] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="ext4_allocation_request,ext4_dir_entry,ext4_dir_entry_2,ext4_group_desc,ext4_inode,ext4_new_group_data,ext4_super_block,move_extent "/>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/extras/ext4_utils/ext4.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>extras</a>/<a href='./'>ext4_utils</a>/<a href='ext4.h.html'>ext4.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/****************************************************************************</i></td></tr>
+<tr><th id="2">2</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="3">3</th><td><i> ***</i></td></tr>
+<tr><th id="4">4</th><td><i> ***   This header was automatically generated from a Linux kernel header</i></td></tr>
+<tr><th id="5">5</th><td><i> ***   of the same name, to make information necessary for userspace to</i></td></tr>
+<tr><th id="6">6</th><td><i> ***   call into the kernel available to libc.  It contains only constants,</i></td></tr>
+<tr><th id="7">7</th><td><i> ***   structures, and macros generated from the original header, and thus,</i></td></tr>
+<tr><th id="8">8</th><td><i> ***   contains no copyrightable information.</i></td></tr>
+<tr><th id="9">9</th><td><i> ***</i></td></tr>
+<tr><th id="10">10</th><td><i> ****************************************************************************</i></td></tr>
+<tr><th id="11">11</th><td><i> ****************************************************************************/</i></td></tr>
+<tr><th id="12">12</th><td><u>#<span data-ppcond="12">ifndef</span> <span class="macro" data-ref="_M/_EXT4_H">_EXT4_H</span></u></td></tr>
+<tr><th id="13">13</th><td><u>#define <dfn class="macro" id="_M/_EXT4_H" data-ref="_M/_EXT4_H">_EXT4_H</dfn></u></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><u>#include <a href="../../../bionic/libc/include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#undef <span class="macro" data-ref="_M/EXT4FS_DEBUG">EXT4FS_DEBUG</span></u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#<span data-ppcond="19">ifdef</span> <span class="macro" data-ref="_M/EXT4FS_DEBUG">EXT4FS_DEBUG</span></u></td></tr>
+<tr><th id="20">20</th><td><u>#define ext4_debug(f, a...)   do {   printk(KERN_DEBUG "EXT4-fs DEBUG (%s, %d): %s:",   __FILE__, __LINE__, __func__);   printk(KERN_DEBUG f, ## a);   } while (0)</u></td></tr>
+<tr><th id="21">21</th><td><u>#<span data-ppcond="19">else</span></u></td></tr>
+<tr><th id="22">22</th><td><u>#define <dfn class="macro" id="_M/ext4_debug" data-ref="_M/ext4_debug">ext4_debug</dfn>(f, a...) do {} while (0)</u></td></tr>
+<tr><th id="23">23</th><td><u>#<span data-ppcond="19">endif</span></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><u>#define <dfn class="macro" id="_M/EXT4_ERROR_INODE" data-ref="_M/EXT4_ERROR_INODE">EXT4_ERROR_INODE</dfn>(inode, fmt, a...)   ext4_error_inode(__func__, (inode), (fmt), ## a);</u></td></tr>
+<tr><th id="26">26</th><td></td></tr>
+<tr><th id="27">27</th><td><u>#define <dfn class="macro" id="_M/EXT4_ERROR_FILE" data-ref="_M/EXT4_ERROR_FILE">EXT4_ERROR_FILE</dfn>(file, fmt, a...)   ext4_error_file(__func__, (file), (fmt), ## a);</u></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><b>typedef</b> <em>int</em> <dfn class="typedef" id="ext4_grpblk_t" title='ext4_grpblk_t' data-type='int' data-ref="ext4_grpblk_t">ext4_grpblk_t</dfn>;</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><b>typedef</b> <em>unsigned</em> <em>long</em> <em>long</em> <dfn class="typedef" id="ext4_fsblk_t" title='ext4_fsblk_t' data-type='unsigned long long' data-ref="ext4_fsblk_t">ext4_fsblk_t</dfn>;</td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><b>typedef</b> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="typedef" id="ext4_lblk_t" title='ext4_lblk_t' data-type='__u32' data-ref="ext4_lblk_t">ext4_lblk_t</dfn>;</td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><b>typedef</b> <em>unsigned</em> <em>int</em> <dfn class="typedef" id="ext4_group_t" title='ext4_group_t' data-type='unsigned int' data-ref="ext4_group_t">ext4_group_t</dfn>;</td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_MERGE" data-ref="_M/EXT4_MB_HINT_MERGE">EXT4_MB_HINT_MERGE</dfn> 0x0001</u></td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_RESERVED" data-ref="_M/EXT4_MB_HINT_RESERVED">EXT4_MB_HINT_RESERVED</dfn> 0x0002</u></td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_METADATA" data-ref="_M/EXT4_MB_HINT_METADATA">EXT4_MB_HINT_METADATA</dfn> 0x0004</u></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_FIRST" data-ref="_M/EXT4_MB_HINT_FIRST">EXT4_MB_HINT_FIRST</dfn> 0x0008</u></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_BEST" data-ref="_M/EXT4_MB_HINT_BEST">EXT4_MB_HINT_BEST</dfn> 0x0010</u></td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_DATA" data-ref="_M/EXT4_MB_HINT_DATA">EXT4_MB_HINT_DATA</dfn> 0x0020</u></td></tr>
+<tr><th id="48">48</th><td></td></tr>
+<tr><th id="49">49</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_NOPREALLOC" data-ref="_M/EXT4_MB_HINT_NOPREALLOC">EXT4_MB_HINT_NOPREALLOC</dfn> 0x0040</u></td></tr>
+<tr><th id="50">50</th><td></td></tr>
+<tr><th id="51">51</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_GROUP_ALLOC" data-ref="_M/EXT4_MB_HINT_GROUP_ALLOC">EXT4_MB_HINT_GROUP_ALLOC</dfn> 0x0080</u></td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_GOAL_ONLY" data-ref="_M/EXT4_MB_HINT_GOAL_ONLY">EXT4_MB_HINT_GOAL_ONLY</dfn> 0x0100</u></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_HINT_TRY_GOAL" data-ref="_M/EXT4_MB_HINT_TRY_GOAL">EXT4_MB_HINT_TRY_GOAL</dfn> 0x0200</u></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_DELALLOC_RESERVED" data-ref="_M/EXT4_MB_DELALLOC_RESERVED">EXT4_MB_DELALLOC_RESERVED</dfn> 0x0400</u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#define <dfn class="macro" id="_M/EXT4_MB_STREAM_ALLOC" data-ref="_M/EXT4_MB_STREAM_ALLOC">EXT4_MB_STREAM_ALLOC</dfn> 0x0800</u></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><b>struct</b> <dfn class="type def" id="ext4_allocation_request" title='ext4_allocation_request' data-ref="ext4_allocation_request">ext4_allocation_request</dfn> {</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td> <b>struct</b> <dfn class="type" id="inode" title='inode' data-ref="inode"><a class="type" href="#inode" title='inode' data-ref="inode">inode</a></dfn> *<dfn class="decl" id="ext4_allocation_request::inode" title='ext4_allocation_request::inode' data-ref="ext4_allocation_request::inode">inode</dfn>;</td></tr>
+<tr><th id="64">64</th><td></td></tr>
+<tr><th id="65">65</th><td> <em>unsigned</em> <em>int</em> <dfn class="decl" id="ext4_allocation_request::len" title='ext4_allocation_request::len' data-ref="ext4_allocation_request::len">len</dfn>;</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td> <a class="typedef" href="#ext4_lblk_t" title='ext4_lblk_t' data-type='__u32' data-ref="ext4_lblk_t">ext4_lblk_t</a> <dfn class="decl" id="ext4_allocation_request::logical" title='ext4_allocation_request::logical' data-ref="ext4_allocation_request::logical">logical</dfn>;</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td> <a class="typedef" href="#ext4_lblk_t" title='ext4_lblk_t' data-type='__u32' data-ref="ext4_lblk_t">ext4_lblk_t</a> <dfn class="decl" id="ext4_allocation_request::lleft" title='ext4_allocation_request::lleft' data-ref="ext4_allocation_request::lleft">lleft</dfn>;</td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td> <a class="typedef" href="#ext4_lblk_t" title='ext4_lblk_t' data-type='__u32' data-ref="ext4_lblk_t">ext4_lblk_t</a> <dfn class="decl" id="ext4_allocation_request::lright" title='ext4_allocation_request::lright' data-ref="ext4_allocation_request::lright">lright</dfn>;</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+<tr><th id="73">73</th><td> <a class="typedef" href="#ext4_fsblk_t" title='ext4_fsblk_t' data-type='unsigned long long' data-ref="ext4_fsblk_t">ext4_fsblk_t</a> <dfn class="decl" id="ext4_allocation_request::goal" title='ext4_allocation_request::goal' data-ref="ext4_allocation_request::goal">goal</dfn>;</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td> <a class="typedef" href="#ext4_fsblk_t" title='ext4_fsblk_t' data-type='unsigned long long' data-ref="ext4_fsblk_t">ext4_fsblk_t</a> <dfn class="decl" id="ext4_allocation_request::pleft" title='ext4_allocation_request::pleft' data-ref="ext4_allocation_request::pleft">pleft</dfn>;</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td> <a class="typedef" href="#ext4_fsblk_t" title='ext4_fsblk_t' data-type='unsigned long long' data-ref="ext4_fsblk_t">ext4_fsblk_t</a> <dfn class="decl" id="ext4_allocation_request::pright" title='ext4_allocation_request::pright' data-ref="ext4_allocation_request::pright">pright</dfn>;</td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td> <em>unsigned</em> <em>int</em> <dfn class="decl" id="ext4_allocation_request::flags" title='ext4_allocation_request::flags' data-ref="ext4_allocation_request::flags">flags</dfn>;</td></tr>
+<tr><th id="80">80</th><td>};</td></tr>
+<tr><th id="81">81</th><td></td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/EXT4_BAD_INO" data-ref="_M/EXT4_BAD_INO">EXT4_BAD_INO</dfn> 1</u>  </td></tr>
+<tr><th id="83">83</th><td><u>#define <dfn class="macro" id="_M/EXT4_ROOT_INO" data-ref="_M/EXT4_ROOT_INO">EXT4_ROOT_INO</dfn> 2</u>  </td></tr>
+<tr><th id="84">84</th><td><u>#define <dfn class="macro" id="_M/EXT4_BOOT_LOADER_INO" data-ref="_M/EXT4_BOOT_LOADER_INO">EXT4_BOOT_LOADER_INO</dfn> 5</u>  </td></tr>
+<tr><th id="85">85</th><td><u>#define <dfn class="macro" id="_M/EXT4_UNDEL_DIR_INO" data-ref="_M/EXT4_UNDEL_DIR_INO">EXT4_UNDEL_DIR_INO</dfn> 6</u>  </td></tr>
+<tr><th id="86">86</th><td><u>#define <dfn class="macro" id="_M/EXT4_RESIZE_INO" data-ref="_M/EXT4_RESIZE_INO">EXT4_RESIZE_INO</dfn> 7</u>  </td></tr>
+<tr><th id="87">87</th><td><u>#define <dfn class="macro" id="_M/EXT4_JOURNAL_INO" data-ref="_M/EXT4_JOURNAL_INO">EXT4_JOURNAL_INO</dfn> 8</u>  </td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><u>#define <dfn class="macro" id="_M/EXT4_GOOD_OLD_FIRST_INO" data-ref="_M/EXT4_GOOD_OLD_FIRST_INO">EXT4_GOOD_OLD_FIRST_INO</dfn> 11</u></td></tr>
+<tr><th id="90">90</th><td></td></tr>
+<tr><th id="91">91</th><td><u>#define <dfn class="macro" id="_M/EXT4_LINK_MAX" data-ref="_M/EXT4_LINK_MAX">EXT4_LINK_MAX</dfn> 65000</u></td></tr>
+<tr><th id="92">92</th><td></td></tr>
+<tr><th id="93">93</th><td><u>#define <dfn class="macro" id="_M/EXT4_MIN_BLOCK_SIZE" data-ref="_M/EXT4_MIN_BLOCK_SIZE">EXT4_MIN_BLOCK_SIZE</dfn> 1024</u></td></tr>
+<tr><th id="94">94</th><td><u>#define <dfn class="macro" id="_M/EXT4_MAX_BLOCK_SIZE" data-ref="_M/EXT4_MAX_BLOCK_SIZE">EXT4_MAX_BLOCK_SIZE</dfn> 65536</u></td></tr>
+<tr><th id="95">95</th><td><u>#define <dfn class="macro" id="_M/EXT4_MIN_BLOCK_LOG_SIZE" data-ref="_M/EXT4_MIN_BLOCK_LOG_SIZE">EXT4_MIN_BLOCK_LOG_SIZE</dfn> 10</u></td></tr>
+<tr><th id="96">96</th><td><u>#define <dfn class="macro" id="_M/EXT4_BLOCK_SIZE" data-ref="_M/EXT4_BLOCK_SIZE">EXT4_BLOCK_SIZE</dfn>(s) (EXT4_MIN_BLOCK_SIZE &lt;&lt; (s)-&gt;s_log_block_size)</u></td></tr>
+<tr><th id="97">97</th><td><u>#define <dfn class="macro" id="_M/EXT4_ADDR_PER_BLOCK" data-ref="_M/EXT4_ADDR_PER_BLOCK">EXT4_ADDR_PER_BLOCK</dfn>(s) (EXT4_BLOCK_SIZE(s) / sizeof(__u32))</u></td></tr>
+<tr><th id="98">98</th><td><u>#define <dfn class="macro" id="_M/EXT4_BLOCK_SIZE_BITS" data-ref="_M/EXT4_BLOCK_SIZE_BITS">EXT4_BLOCK_SIZE_BITS</dfn>(s) ((s)-&gt;s_log_block_size + 10)</u></td></tr>
+<tr><th id="99">99</th><td><u>#define <dfn class="macro" id="_M/EXT4_INODE_SIZE" data-ref="_M/EXT4_INODE_SIZE">EXT4_INODE_SIZE</dfn>(s) (((s)-&gt;s_rev_level == EXT4_GOOD_OLD_REV) ?   EXT4_GOOD_OLD_INODE_SIZE :   (s)-&gt;s_inode_size)</u></td></tr>
+<tr><th id="100">100</th><td><u>#define <dfn class="macro" id="_M/EXT4_FIRST_INO" data-ref="_M/EXT4_FIRST_INO">EXT4_FIRST_INO</dfn>(s) (((s)-&gt;s_rev_level == EXT4_GOOD_OLD_REV) ?   EXT4_GOOD_OLD_FIRST_INO :   (s)-&gt;s_first_ino)</u></td></tr>
+<tr><th id="101">101</th><td><u>#define <dfn class="macro" id="_M/EXT4_BLOCK_ALIGN" data-ref="_M/EXT4_BLOCK_ALIGN">EXT4_BLOCK_ALIGN</dfn>(size, blkbits) EXT4_ALIGN((size), (1 &lt;&lt; (blkbits)))</u></td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><b>struct</b> <dfn class="type def" id="ext4_group_desc" title='ext4_group_desc' data-ref="ext4_group_desc">ext4_group_desc</dfn></td></tr>
+<tr><th id="104">104</th><td>{</td></tr>
+<tr><th id="105">105</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_group_desc::bg_block_bitmap_lo" title='ext4_group_desc::bg_block_bitmap_lo' data-ref="ext4_group_desc::bg_block_bitmap_lo">bg_block_bitmap_lo</dfn>;</td></tr>
+<tr><th id="106">106</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_group_desc::bg_inode_bitmap_lo" title='ext4_group_desc::bg_inode_bitmap_lo' data-ref="ext4_group_desc::bg_inode_bitmap_lo">bg_inode_bitmap_lo</dfn>;</td></tr>
+<tr><th id="107">107</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_group_desc::bg_inode_table_lo" title='ext4_group_desc::bg_inode_table_lo' data-ref="ext4_group_desc::bg_inode_table_lo">bg_inode_table_lo</dfn>;</td></tr>
+<tr><th id="108">108</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_free_blocks_count_lo" title='ext4_group_desc::bg_free_blocks_count_lo' data-ref="ext4_group_desc::bg_free_blocks_count_lo">bg_free_blocks_count_lo</dfn>;</td></tr>
+<tr><th id="109">109</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_free_inodes_count_lo" title='ext4_group_desc::bg_free_inodes_count_lo' data-ref="ext4_group_desc::bg_free_inodes_count_lo">bg_free_inodes_count_lo</dfn>;</td></tr>
+<tr><th id="110">110</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_used_dirs_count_lo" title='ext4_group_desc::bg_used_dirs_count_lo' data-ref="ext4_group_desc::bg_used_dirs_count_lo">bg_used_dirs_count_lo</dfn>;</td></tr>
+<tr><th id="111">111</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_flags" title='ext4_group_desc::bg_flags' data-ref="ext4_group_desc::bg_flags">bg_flags</dfn>;</td></tr>
+<tr><th id="112">112</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_group_desc::bg_reserved" title='ext4_group_desc::bg_reserved' data-ref="ext4_group_desc::bg_reserved">bg_reserved</dfn>[<var>2</var>];</td></tr>
+<tr><th id="113">113</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_itable_unused_lo" title='ext4_group_desc::bg_itable_unused_lo' data-ref="ext4_group_desc::bg_itable_unused_lo">bg_itable_unused_lo</dfn>;</td></tr>
+<tr><th id="114">114</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_checksum" title='ext4_group_desc::bg_checksum' data-ref="ext4_group_desc::bg_checksum">bg_checksum</dfn>;</td></tr>
+<tr><th id="115">115</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_group_desc::bg_block_bitmap_hi" title='ext4_group_desc::bg_block_bitmap_hi' data-ref="ext4_group_desc::bg_block_bitmap_hi">bg_block_bitmap_hi</dfn>;</td></tr>
+<tr><th id="116">116</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_group_desc::bg_inode_bitmap_hi" title='ext4_group_desc::bg_inode_bitmap_hi' data-ref="ext4_group_desc::bg_inode_bitmap_hi">bg_inode_bitmap_hi</dfn>;</td></tr>
+<tr><th id="117">117</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_group_desc::bg_inode_table_hi" title='ext4_group_desc::bg_inode_table_hi' data-ref="ext4_group_desc::bg_inode_table_hi">bg_inode_table_hi</dfn>;</td></tr>
+<tr><th id="118">118</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_free_blocks_count_hi" title='ext4_group_desc::bg_free_blocks_count_hi' data-ref="ext4_group_desc::bg_free_blocks_count_hi">bg_free_blocks_count_hi</dfn>;</td></tr>
+<tr><th id="119">119</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_free_inodes_count_hi" title='ext4_group_desc::bg_free_inodes_count_hi' data-ref="ext4_group_desc::bg_free_inodes_count_hi">bg_free_inodes_count_hi</dfn>;</td></tr>
+<tr><th id="120">120</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_used_dirs_count_hi" title='ext4_group_desc::bg_used_dirs_count_hi' data-ref="ext4_group_desc::bg_used_dirs_count_hi">bg_used_dirs_count_hi</dfn>;</td></tr>
+<tr><th id="121">121</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_group_desc::bg_itable_unused_hi" title='ext4_group_desc::bg_itable_unused_hi' data-ref="ext4_group_desc::bg_itable_unused_hi">bg_itable_unused_hi</dfn>;</td></tr>
+<tr><th id="122">122</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_group_desc::bg_reserved2" title='ext4_group_desc::bg_reserved2' data-ref="ext4_group_desc::bg_reserved2">bg_reserved2</dfn>[<var>3</var>];</td></tr>
+<tr><th id="123">123</th><td>};</td></tr>
+<tr><th id="124">124</th><td></td></tr>
+<tr><th id="125">125</th><td><u>#define <dfn class="macro" id="_M/EXT4_BG_INODE_UNINIT" data-ref="_M/EXT4_BG_INODE_UNINIT">EXT4_BG_INODE_UNINIT</dfn> 0x0001</u>  </td></tr>
+<tr><th id="126">126</th><td><u>#define <dfn class="macro" id="_M/EXT4_BG_BLOCK_UNINIT" data-ref="_M/EXT4_BG_BLOCK_UNINIT">EXT4_BG_BLOCK_UNINIT</dfn> 0x0002</u>  </td></tr>
+<tr><th id="127">127</th><td><u>#define <dfn class="macro" id="_M/EXT4_BG_INODE_ZEROED" data-ref="_M/EXT4_BG_INODE_ZEROED">EXT4_BG_INODE_ZEROED</dfn> 0x0004</u>  </td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td><u>#define <dfn class="macro" id="_M/EXT4_MIN_DESC_SIZE" data-ref="_M/EXT4_MIN_DESC_SIZE">EXT4_MIN_DESC_SIZE</dfn> 32</u></td></tr>
+<tr><th id="130">130</th><td><u>#define <dfn class="macro" id="_M/EXT4_MIN_DESC_SIZE_64BIT" data-ref="_M/EXT4_MIN_DESC_SIZE_64BIT">EXT4_MIN_DESC_SIZE_64BIT</dfn> 64</u></td></tr>
+<tr><th id="131">131</th><td><u>#define <dfn class="macro" id="_M/EXT4_MAX_DESC_SIZE" data-ref="_M/EXT4_MAX_DESC_SIZE">EXT4_MAX_DESC_SIZE</dfn> EXT4_MIN_BLOCK_SIZE</u></td></tr>
+<tr><th id="132">132</th><td><u>#define <dfn class="macro" id="_M/EXT4_DESC_SIZE" data-ref="_M/EXT4_DESC_SIZE">EXT4_DESC_SIZE</dfn>(s) (EXT4_SB(s)-&gt;s_desc_size)</u></td></tr>
+<tr><th id="133">133</th><td><u>#define <dfn class="macro" id="_M/EXT4_BLOCKS_PER_GROUP" data-ref="_M/EXT4_BLOCKS_PER_GROUP">EXT4_BLOCKS_PER_GROUP</dfn>(s) ((s)-&gt;s_blocks_per_group)</u></td></tr>
+<tr><th id="134">134</th><td><u>#define <dfn class="macro" id="_M/EXT4_DESC_PER_BLOCK" data-ref="_M/EXT4_DESC_PER_BLOCK">EXT4_DESC_PER_BLOCK</dfn>(s) (EXT4_BLOCK_SIZE(s) / EXT4_DESC_SIZE(s))</u></td></tr>
+<tr><th id="135">135</th><td><u>#define <dfn class="macro" id="_M/EXT4_INODES_PER_GROUP" data-ref="_M/EXT4_INODES_PER_GROUP">EXT4_INODES_PER_GROUP</dfn>(s) ((s)-&gt;s_inodes_per_group)</u></td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td><u>#define <dfn class="macro" id="_M/EXT4_NDIR_BLOCKS" data-ref="_M/EXT4_NDIR_BLOCKS">EXT4_NDIR_BLOCKS</dfn> 12</u></td></tr>
+<tr><th id="138">138</th><td><u>#define <dfn class="macro" id="_M/EXT4_IND_BLOCK" data-ref="_M/EXT4_IND_BLOCK">EXT4_IND_BLOCK</dfn> EXT4_NDIR_BLOCKS</u></td></tr>
+<tr><th id="139">139</th><td><u>#define <dfn class="macro" id="_M/EXT4_DIND_BLOCK" data-ref="_M/EXT4_DIND_BLOCK">EXT4_DIND_BLOCK</dfn> (EXT4_IND_BLOCK + 1)</u></td></tr>
+<tr><th id="140">140</th><td><u>#define <dfn class="macro" id="_M/EXT4_TIND_BLOCK" data-ref="_M/EXT4_TIND_BLOCK">EXT4_TIND_BLOCK</dfn> (EXT4_DIND_BLOCK + 1)</u></td></tr>
+<tr><th id="141">141</th><td><u>#define <dfn class="macro" id="_M/EXT4_N_BLOCKS" data-ref="_M/EXT4_N_BLOCKS">EXT4_N_BLOCKS</dfn> (EXT4_TIND_BLOCK + 1)</u></td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td><u>#define <dfn class="macro" id="_M/EXT4_SECRM_FL" data-ref="_M/EXT4_SECRM_FL">EXT4_SECRM_FL</dfn> 0x00000001</u>  </td></tr>
+<tr><th id="144">144</th><td><u>#define <dfn class="macro" id="_M/EXT4_UNRM_FL" data-ref="_M/EXT4_UNRM_FL">EXT4_UNRM_FL</dfn> 0x00000002</u>  </td></tr>
+<tr><th id="145">145</th><td><u>#define <dfn class="macro" id="_M/EXT4_COMPR_FL" data-ref="_M/EXT4_COMPR_FL">EXT4_COMPR_FL</dfn> 0x00000004</u>  </td></tr>
+<tr><th id="146">146</th><td><u>#define <dfn class="macro" id="_M/EXT4_SYNC_FL" data-ref="_M/EXT4_SYNC_FL">EXT4_SYNC_FL</dfn> 0x00000008</u>  </td></tr>
+<tr><th id="147">147</th><td><u>#define <dfn class="macro" id="_M/EXT4_IMMUTABLE_FL" data-ref="_M/EXT4_IMMUTABLE_FL">EXT4_IMMUTABLE_FL</dfn> 0x00000010</u>  </td></tr>
+<tr><th id="148">148</th><td><u>#define <dfn class="macro" id="_M/EXT4_APPEND_FL" data-ref="_M/EXT4_APPEND_FL">EXT4_APPEND_FL</dfn> 0x00000020</u>  </td></tr>
+<tr><th id="149">149</th><td><u>#define <dfn class="macro" id="_M/EXT4_NODUMP_FL" data-ref="_M/EXT4_NODUMP_FL">EXT4_NODUMP_FL</dfn> 0x00000040</u>  </td></tr>
+<tr><th id="150">150</th><td><u>#define <dfn class="macro" id="_M/EXT4_NOATIME_FL" data-ref="_M/EXT4_NOATIME_FL">EXT4_NOATIME_FL</dfn> 0x00000080</u>  </td></tr>
+<tr><th id="151">151</th><td></td></tr>
+<tr><th id="152">152</th><td><u>#define <dfn class="macro" id="_M/EXT4_DIRTY_FL" data-ref="_M/EXT4_DIRTY_FL">EXT4_DIRTY_FL</dfn> 0x00000100</u></td></tr>
+<tr><th id="153">153</th><td><u>#define <dfn class="macro" id="_M/EXT4_COMPRBLK_FL" data-ref="_M/EXT4_COMPRBLK_FL">EXT4_COMPRBLK_FL</dfn> 0x00000200</u>  </td></tr>
+<tr><th id="154">154</th><td><u>#define <dfn class="macro" id="_M/EXT4_NOCOMPR_FL" data-ref="_M/EXT4_NOCOMPR_FL">EXT4_NOCOMPR_FL</dfn> 0x00000400</u>  </td></tr>
+<tr><th id="155">155</th><td><u>#define <dfn class="macro" id="_M/EXT4_ECOMPR_FL" data-ref="_M/EXT4_ECOMPR_FL">EXT4_ECOMPR_FL</dfn> 0x00000800</u>  </td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><u>#define <dfn class="macro" id="_M/EXT4_INDEX_FL" data-ref="_M/EXT4_INDEX_FL">EXT4_INDEX_FL</dfn> 0x00001000</u>  </td></tr>
+<tr><th id="158">158</th><td><u>#define <dfn class="macro" id="_M/EXT4_IMAGIC_FL" data-ref="_M/EXT4_IMAGIC_FL">EXT4_IMAGIC_FL</dfn> 0x00002000</u>  </td></tr>
+<tr><th id="159">159</th><td><u>#define <dfn class="macro" id="_M/EXT4_JOURNAL_DATA_FL" data-ref="_M/EXT4_JOURNAL_DATA_FL">EXT4_JOURNAL_DATA_FL</dfn> 0x00004000</u>  </td></tr>
+<tr><th id="160">160</th><td><u>#define <dfn class="macro" id="_M/EXT4_NOTAIL_FL" data-ref="_M/EXT4_NOTAIL_FL">EXT4_NOTAIL_FL</dfn> 0x00008000</u>  </td></tr>
+<tr><th id="161">161</th><td><u>#define <dfn class="macro" id="_M/EXT4_DIRSYNC_FL" data-ref="_M/EXT4_DIRSYNC_FL">EXT4_DIRSYNC_FL</dfn> 0x00010000</u>  </td></tr>
+<tr><th id="162">162</th><td><u>#define <dfn class="macro" id="_M/EXT4_TOPDIR_FL" data-ref="_M/EXT4_TOPDIR_FL">EXT4_TOPDIR_FL</dfn> 0x00020000</u>  </td></tr>
+<tr><th id="163">163</th><td><u>#define <dfn class="macro" id="_M/EXT4_HUGE_FILE_FL" data-ref="_M/EXT4_HUGE_FILE_FL">EXT4_HUGE_FILE_FL</dfn> 0x00040000</u>  </td></tr>
+<tr><th id="164">164</th><td><u>#define <dfn class="macro" id="_M/EXT4_EXTENTS_FL" data-ref="_M/EXT4_EXTENTS_FL">EXT4_EXTENTS_FL</dfn> 0x00080000</u>  </td></tr>
+<tr><th id="165">165</th><td><u>#define <dfn class="macro" id="_M/EXT4_EA_INODE_FL" data-ref="_M/EXT4_EA_INODE_FL">EXT4_EA_INODE_FL</dfn> 0x00200000</u>  </td></tr>
+<tr><th id="166">166</th><td><u>#define <dfn class="macro" id="_M/EXT4_EOFBLOCKS_FL" data-ref="_M/EXT4_EOFBLOCKS_FL">EXT4_EOFBLOCKS_FL</dfn> 0x00400000</u>  </td></tr>
+<tr><th id="167">167</th><td><u>#define <dfn class="macro" id="_M/EXT4_RESERVED_FL" data-ref="_M/EXT4_RESERVED_FL">EXT4_RESERVED_FL</dfn> 0x80000000</u>  </td></tr>
+<tr><th id="168">168</th><td></td></tr>
+<tr><th id="169">169</th><td><u>#define <dfn class="macro" id="_M/EXT4_FL_USER_VISIBLE" data-ref="_M/EXT4_FL_USER_VISIBLE">EXT4_FL_USER_VISIBLE</dfn> 0x004BDFFF</u>  </td></tr>
+<tr><th id="170">170</th><td><u>#define <dfn class="macro" id="_M/EXT4_FL_USER_MODIFIABLE" data-ref="_M/EXT4_FL_USER_MODIFIABLE">EXT4_FL_USER_MODIFIABLE</dfn> 0x004B80FF</u>  </td></tr>
+<tr><th id="171">171</th><td></td></tr>
+<tr><th id="172">172</th><td><u>#define <dfn class="macro" id="_M/EXT4_FL_INHERITED" data-ref="_M/EXT4_FL_INHERITED">EXT4_FL_INHERITED</dfn> (EXT4_SECRM_FL | EXT4_UNRM_FL | EXT4_COMPR_FL |  EXT4_SYNC_FL | EXT4_IMMUTABLE_FL | EXT4_APPEND_FL |  EXT4_NODUMP_FL | EXT4_NOATIME_FL |  EXT4_NOCOMPR_FL | EXT4_JOURNAL_DATA_FL |  EXT4_NOTAIL_FL | EXT4_DIRSYNC_FL)</u></td></tr>
+<tr><th id="173">173</th><td></td></tr>
+<tr><th id="174">174</th><td><u>#define <dfn class="macro" id="_M/EXT4_REG_FLMASK" data-ref="_M/EXT4_REG_FLMASK">EXT4_REG_FLMASK</dfn> (~(EXT4_DIRSYNC_FL | EXT4_TOPDIR_FL))</u></td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td><u>#define <dfn class="macro" id="_M/EXT4_OTHER_FLMASK" data-ref="_M/EXT4_OTHER_FLMASK">EXT4_OTHER_FLMASK</dfn> (EXT4_NODUMP_FL | EXT4_NOATIME_FL)</u></td></tr>
+<tr><th id="177">177</th><td></td></tr>
+<tr><th id="178">178</th><td><b>struct</b> <dfn class="type def" id="ext4_new_group_data" title='ext4_new_group_data' data-ref="ext4_new_group_data">ext4_new_group_data</dfn> {</td></tr>
+<tr><th id="179">179</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_new_group_data::group" title='ext4_new_group_data::group' data-ref="ext4_new_group_data::group">group</dfn>;</td></tr>
+<tr><th id="180">180</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="ext4_new_group_data::block_bitmap" title='ext4_new_group_data::block_bitmap' data-ref="ext4_new_group_data::block_bitmap">block_bitmap</dfn>;</td></tr>
+<tr><th id="181">181</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="ext4_new_group_data::inode_bitmap" title='ext4_new_group_data::inode_bitmap' data-ref="ext4_new_group_data::inode_bitmap">inode_bitmap</dfn>;</td></tr>
+<tr><th id="182">182</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="ext4_new_group_data::inode_table" title='ext4_new_group_data::inode_table' data-ref="ext4_new_group_data::inode_table">inode_table</dfn>;</td></tr>
+<tr><th id="183">183</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_new_group_data::blocks_count" title='ext4_new_group_data::blocks_count' data-ref="ext4_new_group_data::blocks_count">blocks_count</dfn>;</td></tr>
+<tr><th id="184">184</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="ext4_new_group_data::reserved_blocks" title='ext4_new_group_data::reserved_blocks' data-ref="ext4_new_group_data::reserved_blocks">reserved_blocks</dfn>;</td></tr>
+<tr><th id="185">185</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="ext4_new_group_data::unused" title='ext4_new_group_data::unused' data-ref="ext4_new_group_data::unused">unused</dfn>;</td></tr>
+<tr><th id="186">186</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_new_group_data::free_blocks_count" title='ext4_new_group_data::free_blocks_count' data-ref="ext4_new_group_data::free_blocks_count">free_blocks_count</dfn>;</td></tr>
+<tr><th id="187">187</th><td>};</td></tr>
+<tr><th id="188">188</th><td></td></tr>
+<tr><th id="189">189</th><td><u>#define <dfn class="macro" id="_M/EXT4_GET_BLOCKS_CREATE" data-ref="_M/EXT4_GET_BLOCKS_CREATE">EXT4_GET_BLOCKS_CREATE</dfn> 0x0001</u></td></tr>
+<tr><th id="190">190</th><td></td></tr>
+<tr><th id="191">191</th><td><u>#define <dfn class="macro" id="_M/EXT4_GET_BLOCKS_UNINIT_EXT" data-ref="_M/EXT4_GET_BLOCKS_UNINIT_EXT">EXT4_GET_BLOCKS_UNINIT_EXT</dfn> 0x0002</u></td></tr>
+<tr><th id="192">192</th><td><u>#define <dfn class="macro" id="_M/EXT4_GET_BLOCKS_CREATE_UNINIT_EXT" data-ref="_M/EXT4_GET_BLOCKS_CREATE_UNINIT_EXT">EXT4_GET_BLOCKS_CREATE_UNINIT_EXT</dfn> (EXT4_GET_BLOCKS_UNINIT_EXT|  EXT4_GET_BLOCKS_CREATE)</u></td></tr>
+<tr><th id="193">193</th><td></td></tr>
+<tr><th id="194">194</th><td><u>#define <dfn class="macro" id="_M/EXT4_GET_BLOCKS_DELALLOC_RESERVE" data-ref="_M/EXT4_GET_BLOCKS_DELALLOC_RESERVE">EXT4_GET_BLOCKS_DELALLOC_RESERVE</dfn> 0x0004</u></td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td><u>#define <dfn class="macro" id="_M/EXT4_GET_BLOCKS_PRE_IO" data-ref="_M/EXT4_GET_BLOCKS_PRE_IO">EXT4_GET_BLOCKS_PRE_IO</dfn> 0x0008</u></td></tr>
+<tr><th id="197">197</th><td><u>#define <dfn class="macro" id="_M/EXT4_GET_BLOCKS_CONVERT" data-ref="_M/EXT4_GET_BLOCKS_CONVERT">EXT4_GET_BLOCKS_CONVERT</dfn> 0x0010</u></td></tr>
+<tr><th id="198">198</th><td><u>#define <dfn class="macro" id="_M/EXT4_GET_BLOCKS_IO_CREATE_EXT" data-ref="_M/EXT4_GET_BLOCKS_IO_CREATE_EXT">EXT4_GET_BLOCKS_IO_CREATE_EXT</dfn> (EXT4_GET_BLOCKS_PRE_IO|  EXT4_GET_BLOCKS_CREATE_UNINIT_EXT)</u></td></tr>
+<tr><th id="199">199</th><td></td></tr>
+<tr><th id="200">200</th><td><u>#define <dfn class="macro" id="_M/EXT4_GET_BLOCKS_IO_CONVERT_EXT" data-ref="_M/EXT4_GET_BLOCKS_IO_CONVERT_EXT">EXT4_GET_BLOCKS_IO_CONVERT_EXT</dfn> (EXT4_GET_BLOCKS_CONVERT|  EXT4_GET_BLOCKS_CREATE_UNINIT_EXT)</u></td></tr>
+<tr><th id="201">201</th><td></td></tr>
+<tr><th id="202">202</th><td><u>#define <dfn class="macro" id="_M/EXT4_FREE_BLOCKS_METADATA" data-ref="_M/EXT4_FREE_BLOCKS_METADATA">EXT4_FREE_BLOCKS_METADATA</dfn> 0x0001</u></td></tr>
+<tr><th id="203">203</th><td><u>#define <dfn class="macro" id="_M/EXT4_FREE_BLOCKS_FORGET" data-ref="_M/EXT4_FREE_BLOCKS_FORGET">EXT4_FREE_BLOCKS_FORGET</dfn> 0x0002</u></td></tr>
+<tr><th id="204">204</th><td><u>#define <dfn class="macro" id="_M/EXT4_FREE_BLOCKS_VALIDATED" data-ref="_M/EXT4_FREE_BLOCKS_VALIDATED">EXT4_FREE_BLOCKS_VALIDATED</dfn> 0x0004</u></td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_GETFLAGS" data-ref="_M/EXT4_IOC_GETFLAGS">EXT4_IOC_GETFLAGS</dfn> FS_IOC_GETFLAGS</u></td></tr>
+<tr><th id="207">207</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_SETFLAGS" data-ref="_M/EXT4_IOC_SETFLAGS">EXT4_IOC_SETFLAGS</dfn> FS_IOC_SETFLAGS</u></td></tr>
+<tr><th id="208">208</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_GETVERSION" data-ref="_M/EXT4_IOC_GETVERSION">EXT4_IOC_GETVERSION</dfn> _IOR('f', 3, long)</u></td></tr>
+<tr><th id="209">209</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_SETVERSION" data-ref="_M/EXT4_IOC_SETVERSION">EXT4_IOC_SETVERSION</dfn> _IOW('f', 4, long)</u></td></tr>
+<tr><th id="210">210</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_GETVERSION_OLD" data-ref="_M/EXT4_IOC_GETVERSION_OLD">EXT4_IOC_GETVERSION_OLD</dfn> FS_IOC_GETVERSION</u></td></tr>
+<tr><th id="211">211</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_SETVERSION_OLD" data-ref="_M/EXT4_IOC_SETVERSION_OLD">EXT4_IOC_SETVERSION_OLD</dfn> FS_IOC_SETVERSION</u></td></tr>
+<tr><th id="212">212</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_GETRSVSZ" data-ref="_M/EXT4_IOC_GETRSVSZ">EXT4_IOC_GETRSVSZ</dfn> _IOR('f', 5, long)</u></td></tr>
+<tr><th id="213">213</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_SETRSVSZ" data-ref="_M/EXT4_IOC_SETRSVSZ">EXT4_IOC_SETRSVSZ</dfn> _IOW('f', 6, long)</u></td></tr>
+<tr><th id="214">214</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_GROUP_EXTEND" data-ref="_M/EXT4_IOC_GROUP_EXTEND">EXT4_IOC_GROUP_EXTEND</dfn> _IOW('f', 7, unsigned long)</u></td></tr>
+<tr><th id="215">215</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_GROUP_ADD" data-ref="_M/EXT4_IOC_GROUP_ADD">EXT4_IOC_GROUP_ADD</dfn> _IOW('f', 8, struct ext4_new_group_input)</u></td></tr>
+<tr><th id="216">216</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_MIGRATE" data-ref="_M/EXT4_IOC_MIGRATE">EXT4_IOC_MIGRATE</dfn> _IO('f', 9)</u></td></tr>
+<tr><th id="217">217</th><td></td></tr>
+<tr><th id="218">218</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_ALLOC_DA_BLKS" data-ref="_M/EXT4_IOC_ALLOC_DA_BLKS">EXT4_IOC_ALLOC_DA_BLKS</dfn> _IO('f', 12)</u></td></tr>
+<tr><th id="219">219</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC_MOVE_EXT" data-ref="_M/EXT4_IOC_MOVE_EXT">EXT4_IOC_MOVE_EXT</dfn> _IOWR('f', 15, struct move_extent)</u></td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC32_GETFLAGS" data-ref="_M/EXT4_IOC32_GETFLAGS">EXT4_IOC32_GETFLAGS</dfn> FS_IOC32_GETFLAGS</u></td></tr>
+<tr><th id="222">222</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC32_SETFLAGS" data-ref="_M/EXT4_IOC32_SETFLAGS">EXT4_IOC32_SETFLAGS</dfn> FS_IOC32_SETFLAGS</u></td></tr>
+<tr><th id="223">223</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC32_GETVERSION" data-ref="_M/EXT4_IOC32_GETVERSION">EXT4_IOC32_GETVERSION</dfn> _IOR('f', 3, int)</u></td></tr>
+<tr><th id="224">224</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC32_SETVERSION" data-ref="_M/EXT4_IOC32_SETVERSION">EXT4_IOC32_SETVERSION</dfn> _IOW('f', 4, int)</u></td></tr>
+<tr><th id="225">225</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC32_GETRSVSZ" data-ref="_M/EXT4_IOC32_GETRSVSZ">EXT4_IOC32_GETRSVSZ</dfn> _IOR('f', 5, int)</u></td></tr>
+<tr><th id="226">226</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC32_SETRSVSZ" data-ref="_M/EXT4_IOC32_SETRSVSZ">EXT4_IOC32_SETRSVSZ</dfn> _IOW('f', 6, int)</u></td></tr>
+<tr><th id="227">227</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC32_GROUP_EXTEND" data-ref="_M/EXT4_IOC32_GROUP_EXTEND">EXT4_IOC32_GROUP_EXTEND</dfn> _IOW('f', 7, unsigned int)</u></td></tr>
+<tr><th id="228">228</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC32_GETVERSION_OLD" data-ref="_M/EXT4_IOC32_GETVERSION_OLD">EXT4_IOC32_GETVERSION_OLD</dfn> FS_IOC32_GETVERSION</u></td></tr>
+<tr><th id="229">229</th><td><u>#define <dfn class="macro" id="_M/EXT4_IOC32_SETVERSION_OLD" data-ref="_M/EXT4_IOC32_SETVERSION_OLD">EXT4_IOC32_SETVERSION_OLD</dfn> FS_IOC32_SETVERSION</u></td></tr>
+<tr><th id="230">230</th><td></td></tr>
+<tr><th id="231">231</th><td><u>#define <dfn class="macro" id="_M/EXT4_MAX_BLOCK_FILE_PHYS" data-ref="_M/EXT4_MAX_BLOCK_FILE_PHYS">EXT4_MAX_BLOCK_FILE_PHYS</dfn> 0xFFFFFFFF</u></td></tr>
+<tr><th id="232">232</th><td></td></tr>
+<tr><th id="233">233</th><td><b>struct</b> <dfn class="type def" id="ext4_inode" title='ext4_inode' data-ref="ext4_inode">ext4_inode</dfn> {</td></tr>
+<tr><th id="234">234</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::i_mode" title='ext4_inode::i_mode' data-ref="ext4_inode::i_mode">i_mode</dfn>;</td></tr>
+<tr><th id="235">235</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::i_uid" title='ext4_inode::i_uid' data-ref="ext4_inode::i_uid">i_uid</dfn>;</td></tr>
+<tr><th id="236">236</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_size_lo" title='ext4_inode::i_size_lo' data-ref="ext4_inode::i_size_lo">i_size_lo</dfn>;</td></tr>
+<tr><th id="237">237</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_atime" title='ext4_inode::i_atime' data-ref="ext4_inode::i_atime">i_atime</dfn>;</td></tr>
+<tr><th id="238">238</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_ctime" title='ext4_inode::i_ctime' data-ref="ext4_inode::i_ctime">i_ctime</dfn>;</td></tr>
+<tr><th id="239">239</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_mtime" title='ext4_inode::i_mtime' data-ref="ext4_inode::i_mtime">i_mtime</dfn>;</td></tr>
+<tr><th id="240">240</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_dtime" title='ext4_inode::i_dtime' data-ref="ext4_inode::i_dtime">i_dtime</dfn>;</td></tr>
+<tr><th id="241">241</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::i_gid" title='ext4_inode::i_gid' data-ref="ext4_inode::i_gid">i_gid</dfn>;</td></tr>
+<tr><th id="242">242</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::i_links_count" title='ext4_inode::i_links_count' data-ref="ext4_inode::i_links_count">i_links_count</dfn>;</td></tr>
+<tr><th id="243">243</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_blocks_lo" title='ext4_inode::i_blocks_lo' data-ref="ext4_inode::i_blocks_lo">i_blocks_lo</dfn>;</td></tr>
+<tr><th id="244">244</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_flags" title='ext4_inode::i_flags' data-ref="ext4_inode::i_flags">i_flags</dfn>;</td></tr>
+<tr><th id="245">245</th><td> <b>union</b> {</td></tr>
+<tr><th id="246">246</th><td> <b>struct</b> {</td></tr>
+<tr><th id="247">247</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::l_i_version" title='ext4_inode::(anonymous union)::(anonymous struct)::l_i_version' data-ref="ext4_inode::(anonymousunion)::(anonymous)::l_i_version">l_i_version</dfn>;</td></tr>
+<tr><th id="248">248</th><td> } <dfn class="decl" id="ext4_inode::(anonymous)::linux1" title='ext4_inode::(anonymous union)::linux1' data-ref="ext4_inode::(anonymous)::linux1">linux1</dfn>;</td></tr>
+<tr><th id="249">249</th><td> <b>struct</b> {</td></tr>
+<tr><th id="250">250</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::h_i_translator" title='ext4_inode::(anonymous union)::(anonymous struct)::h_i_translator' data-ref="ext4_inode::(anonymousunion)::(anonymous)::h_i_translator">h_i_translator</dfn>;</td></tr>
+<tr><th id="251">251</th><td> } <dfn class="decl" id="ext4_inode::(anonymous)::hurd1" title='ext4_inode::(anonymous union)::hurd1' data-ref="ext4_inode::(anonymous)::hurd1">hurd1</dfn>;</td></tr>
+<tr><th id="252">252</th><td> <b>struct</b> {</td></tr>
+<tr><th id="253">253</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::m_i_reserved1" title='ext4_inode::(anonymous union)::(anonymous struct)::m_i_reserved1' data-ref="ext4_inode::(anonymousunion)::(anonymous)::m_i_reserved1">m_i_reserved1</dfn>;</td></tr>
+<tr><th id="254">254</th><td> } <dfn class="decl" id="ext4_inode::(anonymous)::masix1" title='ext4_inode::(anonymous union)::masix1' data-ref="ext4_inode::(anonymous)::masix1">masix1</dfn>;</td></tr>
+<tr><th id="255">255</th><td> } <dfn class="decl" id="ext4_inode::osd1" title='ext4_inode::osd1' data-ref="ext4_inode::osd1">osd1</dfn>;</td></tr>
+<tr><th id="256">256</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_block" title='ext4_inode::i_block' data-ref="ext4_inode::i_block">i_block</dfn>[<a class="macro" href="#141" title="(((12 + 1) + 1) + 1)" data-ref="_M/EXT4_N_BLOCKS">EXT4_N_BLOCKS</a>];</td></tr>
+<tr><th id="257">257</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_generation" title='ext4_inode::i_generation' data-ref="ext4_inode::i_generation">i_generation</dfn>;</td></tr>
+<tr><th id="258">258</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_file_acl_lo" title='ext4_inode::i_file_acl_lo' data-ref="ext4_inode::i_file_acl_lo">i_file_acl_lo</dfn>;</td></tr>
+<tr><th id="259">259</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_size_high" title='ext4_inode::i_size_high' data-ref="ext4_inode::i_size_high">i_size_high</dfn>;</td></tr>
+<tr><th id="260">260</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_obso_faddr" title='ext4_inode::i_obso_faddr' data-ref="ext4_inode::i_obso_faddr">i_obso_faddr</dfn>;</td></tr>
+<tr><th id="261">261</th><td> <b>union</b> {</td></tr>
+<tr><th id="262">262</th><td> <b>struct</b> {</td></tr>
+<tr><th id="263">263</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::l_i_blocks_high" title='ext4_inode::(anonymous union)::(anonymous struct)::l_i_blocks_high' data-ref="ext4_inode::(anonymousunion)::(anonymous)::l_i_blocks_high">l_i_blocks_high</dfn>;</td></tr>
+<tr><th id="264">264</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::l_i_file_acl_high" title='ext4_inode::(anonymous union)::(anonymous struct)::l_i_file_acl_high' data-ref="ext4_inode::(anonymousunion)::(anonymous)::l_i_file_acl_high">l_i_file_acl_high</dfn>;</td></tr>
+<tr><th id="265">265</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::l_i_uid_high" title='ext4_inode::(anonymous union)::(anonymous struct)::l_i_uid_high' data-ref="ext4_inode::(anonymousunion)::(anonymous)::l_i_uid_high">l_i_uid_high</dfn>;</td></tr>
+<tr><th id="266">266</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::l_i_gid_high" title='ext4_inode::(anonymous union)::(anonymous struct)::l_i_gid_high' data-ref="ext4_inode::(anonymousunion)::(anonymous)::l_i_gid_high">l_i_gid_high</dfn>;</td></tr>
+<tr><th id="267">267</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::l_i_reserved2" title='ext4_inode::(anonymous union)::(anonymous struct)::l_i_reserved2' data-ref="ext4_inode::(anonymousunion)::(anonymous)::l_i_reserved2">l_i_reserved2</dfn>;</td></tr>
+<tr><th id="268">268</th><td> } <dfn class="decl" id="ext4_inode::(anonymous)::linux2" title='ext4_inode::(anonymous union)::linux2' data-ref="ext4_inode::(anonymous)::linux2">linux2</dfn>;</td></tr>
+<tr><th id="269">269</th><td> <b>struct</b> {</td></tr>
+<tr><th id="270">270</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::h_i_reserved1" title='ext4_inode::(anonymous union)::(anonymous struct)::h_i_reserved1' data-ref="ext4_inode::(anonymousunion)::(anonymous)::h_i_reserved1">h_i_reserved1</dfn>;</td></tr>
+<tr><th id="271">271</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::h_i_mode_high" title='ext4_inode::(anonymous union)::(anonymous struct)::h_i_mode_high' data-ref="ext4_inode::(anonymousunion)::(anonymous)::h_i_mode_high">h_i_mode_high</dfn>;</td></tr>
+<tr><th id="272">272</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::h_i_uid_high" title='ext4_inode::(anonymous union)::(anonymous struct)::h_i_uid_high' data-ref="ext4_inode::(anonymousunion)::(anonymous)::h_i_uid_high">h_i_uid_high</dfn>;</td></tr>
+<tr><th id="273">273</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u16" title='__u16' data-type='unsigned short' data-ref="__u16">__u16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::h_i_gid_high" title='ext4_inode::(anonymous union)::(anonymous struct)::h_i_gid_high' data-ref="ext4_inode::(anonymousunion)::(anonymous)::h_i_gid_high">h_i_gid_high</dfn>;</td></tr>
+<tr><th id="274">274</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::h_i_author" title='ext4_inode::(anonymous union)::(anonymous struct)::h_i_author' data-ref="ext4_inode::(anonymousunion)::(anonymous)::h_i_author">h_i_author</dfn>;</td></tr>
+<tr><th id="275">275</th><td> } <dfn class="decl" id="ext4_inode::(anonymous)::hurd2" title='ext4_inode::(anonymous union)::hurd2' data-ref="ext4_inode::(anonymous)::hurd2">hurd2</dfn>;</td></tr>
+<tr><th id="276">276</th><td> <b>struct</b> {</td></tr>
+<tr><th id="277">277</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::h_i_reserved1" title='ext4_inode::(anonymous union)::(anonymous struct)::h_i_reserved1' data-ref="ext4_inode::(anonymousunion)::(anonymous)::h_i_reserved1">h_i_reserved1</dfn>;</td></tr>
+<tr><th id="278">278</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::m_i_file_acl_high" title='ext4_inode::(anonymous union)::(anonymous struct)::m_i_file_acl_high' data-ref="ext4_inode::(anonymousunion)::(anonymous)::m_i_file_acl_high">m_i_file_acl_high</dfn>;</td></tr>
+<tr><th id="279">279</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_inode::(anonymousunion)::(anonymous)::m_i_reserved2" title='ext4_inode::(anonymous union)::(anonymous struct)::m_i_reserved2' data-ref="ext4_inode::(anonymousunion)::(anonymous)::m_i_reserved2">m_i_reserved2</dfn>[<var>2</var>];</td></tr>
+<tr><th id="280">280</th><td> } <dfn class="decl" id="ext4_inode::(anonymous)::masix2" title='ext4_inode::(anonymous union)::masix2' data-ref="ext4_inode::(anonymous)::masix2">masix2</dfn>;</td></tr>
+<tr><th id="281">281</th><td> } <dfn class="decl" id="ext4_inode::osd2" title='ext4_inode::osd2' data-ref="ext4_inode::osd2">osd2</dfn>;</td></tr>
+<tr><th id="282">282</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::i_extra_isize" title='ext4_inode::i_extra_isize' data-ref="ext4_inode::i_extra_isize">i_extra_isize</dfn>;</td></tr>
+<tr><th id="283">283</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_inode::i_pad1" title='ext4_inode::i_pad1' data-ref="ext4_inode::i_pad1">i_pad1</dfn>;</td></tr>
+<tr><th id="284">284</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_ctime_extra" title='ext4_inode::i_ctime_extra' data-ref="ext4_inode::i_ctime_extra">i_ctime_extra</dfn>;</td></tr>
+<tr><th id="285">285</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_mtime_extra" title='ext4_inode::i_mtime_extra' data-ref="ext4_inode::i_mtime_extra">i_mtime_extra</dfn>;</td></tr>
+<tr><th id="286">286</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_atime_extra" title='ext4_inode::i_atime_extra' data-ref="ext4_inode::i_atime_extra">i_atime_extra</dfn>;</td></tr>
+<tr><th id="287">287</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_crtime" title='ext4_inode::i_crtime' data-ref="ext4_inode::i_crtime">i_crtime</dfn>;</td></tr>
+<tr><th id="288">288</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_crtime_extra" title='ext4_inode::i_crtime_extra' data-ref="ext4_inode::i_crtime_extra">i_crtime_extra</dfn>;</td></tr>
+<tr><th id="289">289</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_inode::i_version_hi" title='ext4_inode::i_version_hi' data-ref="ext4_inode::i_version_hi">i_version_hi</dfn>;</td></tr>
+<tr><th id="290">290</th><td>};</td></tr>
+<tr><th id="291">291</th><td></td></tr>
+<tr><th id="292">292</th><td><b>struct</b> <dfn class="type def" id="move_extent" title='move_extent' data-ref="move_extent">move_extent</dfn> {</td></tr>
+<tr><th id="293">293</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="move_extent::reserved" title='move_extent::reserved' data-ref="move_extent::reserved">reserved</dfn>;</td></tr>
+<tr><th id="294">294</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="move_extent::donor_fd" title='move_extent::donor_fd' data-ref="move_extent::donor_fd">donor_fd</dfn>;</td></tr>
+<tr><th id="295">295</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="move_extent::orig_start" title='move_extent::orig_start' data-ref="move_extent::orig_start">orig_start</dfn>;</td></tr>
+<tr><th id="296">296</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="move_extent::donor_start" title='move_extent::donor_start' data-ref="move_extent::donor_start">donor_start</dfn>;</td></tr>
+<tr><th id="297">297</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="move_extent::len" title='move_extent::len' data-ref="move_extent::len">len</dfn>;</td></tr>
+<tr><th id="298">298</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u64" title='__u64' data-type='unsigned long long' data-ref="__u64">__u64</a> <dfn class="decl" id="move_extent::moved_len" title='move_extent::moved_len' data-ref="move_extent::moved_len">moved_len</dfn>;</td></tr>
+<tr><th id="299">299</th><td>};</td></tr>
+<tr><th id="300">300</th><td></td></tr>
+<tr><th id="301">301</th><td><u>#define <dfn class="macro" id="_M/EXT4_EPOCH_BITS" data-ref="_M/EXT4_EPOCH_BITS">EXT4_EPOCH_BITS</dfn> 2</u></td></tr>
+<tr><th id="302">302</th><td><u>#define <dfn class="macro" id="_M/EXT4_EPOCH_MASK" data-ref="_M/EXT4_EPOCH_MASK">EXT4_EPOCH_MASK</dfn> ((1 &lt;&lt; EXT4_EPOCH_BITS) - 1)</u></td></tr>
+<tr><th id="303">303</th><td><u>#define <dfn class="macro" id="_M/EXT4_NSEC_MASK" data-ref="_M/EXT4_NSEC_MASK">EXT4_NSEC_MASK</dfn> (~0UL &lt;&lt; EXT4_EPOCH_BITS)</u></td></tr>
+<tr><th id="304">304</th><td></td></tr>
+<tr><th id="305">305</th><td><u>#define <dfn class="macro" id="_M/EXT4_FITS_IN_INODE" data-ref="_M/EXT4_FITS_IN_INODE">EXT4_FITS_IN_INODE</dfn>(ext4_inode, einode, field)   ((offsetof(typeof(*ext4_inode), field) +   sizeof((ext4_inode)-&gt;field))   &lt;= (EXT4_GOOD_OLD_INODE_SIZE +   (einode)-&gt;i_extra_isize))</u>  </td></tr>
+<tr><th id="306">306</th><td><u>#define <dfn class="macro" id="_M/EXT4_INODE_SET_XTIME" data-ref="_M/EXT4_INODE_SET_XTIME">EXT4_INODE_SET_XTIME</dfn>(xtime, inode, raw_inode)  do {   (raw_inode)-&gt;xtime = cpu_to_le32((inode)-&gt;xtime.tv_sec);   if (EXT4_FITS_IN_INODE(raw_inode, EXT4_I(inode), xtime ## _extra))   (raw_inode)-&gt;xtime ## _extra =   ext4_encode_extra_time(&amp;(inode)-&gt;xtime);  } while (0)</u></td></tr>
+<tr><th id="307">307</th><td><u>#define <dfn class="macro" id="_M/EXT4_EINODE_SET_XTIME" data-ref="_M/EXT4_EINODE_SET_XTIME">EXT4_EINODE_SET_XTIME</dfn>(xtime, einode, raw_inode)  do {   if (EXT4_FITS_IN_INODE(raw_inode, einode, xtime))   (raw_inode)-&gt;xtime = cpu_to_le32((einode)-&gt;xtime.tv_sec);   if (EXT4_FITS_IN_INODE(raw_inode, einode, xtime ## _extra))   (raw_inode)-&gt;xtime ## _extra =   ext4_encode_extra_time(&amp;(einode)-&gt;xtime);  } while (0)</u></td></tr>
+<tr><th id="308">308</th><td><u>#define <dfn class="macro" id="_M/EXT4_INODE_GET_XTIME" data-ref="_M/EXT4_INODE_GET_XTIME">EXT4_INODE_GET_XTIME</dfn>(xtime, inode, raw_inode)  do {   (inode)-&gt;xtime.tv_sec = (signed)le32_to_cpu((raw_inode)-&gt;xtime);   if (EXT4_FITS_IN_INODE(raw_inode, EXT4_I(inode), xtime ## _extra))   ext4_decode_extra_time(&amp;(inode)-&gt;xtime,   raw_inode-&gt;xtime ## _extra);  } while (0)</u></td></tr>
+<tr><th id="309">309</th><td><u>#define <dfn class="macro" id="_M/EXT4_EINODE_GET_XTIME" data-ref="_M/EXT4_EINODE_GET_XTIME">EXT4_EINODE_GET_XTIME</dfn>(xtime, einode, raw_inode)  do {   if (EXT4_FITS_IN_INODE(raw_inode, einode, xtime))   (einode)-&gt;xtime.tv_sec =   (signed)le32_to_cpu((raw_inode)-&gt;xtime);   if (EXT4_FITS_IN_INODE(raw_inode, einode, xtime ## _extra))   ext4_decode_extra_time(&amp;(einode)-&gt;xtime,   raw_inode-&gt;xtime ## _extra);  } while (0)</u></td></tr>
+<tr><th id="310">310</th><td><u>#define <dfn class="macro" id="_M/i_disk_version" data-ref="_M/i_disk_version">i_disk_version</dfn> osd1.linux1.l_i_version</u></td></tr>
+<tr><th id="311">311</th><td></td></tr>
+<tr><th id="312">312</th><td><u>#define <dfn class="macro" id="_M/i_reserved1" data-ref="_M/i_reserved1">i_reserved1</dfn> osd1.linux1.l_i_reserved1</u></td></tr>
+<tr><th id="313">313</th><td><u>#define <dfn class="macro" id="_M/i_file_acl_high" data-ref="_M/i_file_acl_high">i_file_acl_high</dfn> osd2.linux2.l_i_file_acl_high</u></td></tr>
+<tr><th id="314">314</th><td><u>#define <dfn class="macro" id="_M/i_blocks_high" data-ref="_M/i_blocks_high">i_blocks_high</dfn> osd2.linux2.l_i_blocks_high</u></td></tr>
+<tr><th id="315">315</th><td><u>#define <dfn class="macro" id="_M/i_uid_low" data-ref="_M/i_uid_low">i_uid_low</dfn> i_uid</u></td></tr>
+<tr><th id="316">316</th><td><u>#define <dfn class="macro" id="_M/i_gid_low" data-ref="_M/i_gid_low">i_gid_low</dfn> i_gid</u></td></tr>
+<tr><th id="317">317</th><td><u>#define <dfn class="macro" id="_M/i_uid_high" data-ref="_M/i_uid_high">i_uid_high</dfn> osd2.linux2.l_i_uid_high</u></td></tr>
+<tr><th id="318">318</th><td><u>#define <dfn class="macro" id="_M/i_gid_high" data-ref="_M/i_gid_high">i_gid_high</dfn> osd2.linux2.l_i_gid_high</u></td></tr>
+<tr><th id="319">319</th><td><u>#define <dfn class="macro" id="_M/i_reserved2" data-ref="_M/i_reserved2">i_reserved2</dfn> osd2.linux2.l_i_reserved2</u></td></tr>
+<tr><th id="320">320</th><td></td></tr>
+<tr><th id="321">321</th><td><u>#define <dfn class="macro" id="_M/EXT4_VALID_FS" data-ref="_M/EXT4_VALID_FS">EXT4_VALID_FS</dfn> 0x0001</u>  </td></tr>
+<tr><th id="322">322</th><td><u>#define <dfn class="macro" id="_M/EXT4_ERROR_FS" data-ref="_M/EXT4_ERROR_FS">EXT4_ERROR_FS</dfn> 0x0002</u>  </td></tr>
+<tr><th id="323">323</th><td><u>#define <dfn class="macro" id="_M/EXT4_ORPHAN_FS" data-ref="_M/EXT4_ORPHAN_FS">EXT4_ORPHAN_FS</dfn> 0x0004</u>  </td></tr>
+<tr><th id="324">324</th><td></td></tr>
+<tr><th id="325">325</th><td><u>#define <dfn class="macro" id="_M/EXT2_FLAGS_SIGNED_HASH" data-ref="_M/EXT2_FLAGS_SIGNED_HASH">EXT2_FLAGS_SIGNED_HASH</dfn> 0x0001</u>  </td></tr>
+<tr><th id="326">326</th><td><u>#define <dfn class="macro" id="_M/EXT2_FLAGS_UNSIGNED_HASH" data-ref="_M/EXT2_FLAGS_UNSIGNED_HASH">EXT2_FLAGS_UNSIGNED_HASH</dfn> 0x0002</u>  </td></tr>
+<tr><th id="327">327</th><td><u>#define <dfn class="macro" id="_M/EXT2_FLAGS_TEST_FILESYS" data-ref="_M/EXT2_FLAGS_TEST_FILESYS">EXT2_FLAGS_TEST_FILESYS</dfn> 0x0004</u>  </td></tr>
+<tr><th id="328">328</th><td></td></tr>
+<tr><th id="329">329</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_OLDALLOC" data-ref="_M/EXT4_MOUNT_OLDALLOC">EXT4_MOUNT_OLDALLOC</dfn> 0x00002</u>  </td></tr>
+<tr><th id="330">330</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_GRPID" data-ref="_M/EXT4_MOUNT_GRPID">EXT4_MOUNT_GRPID</dfn> 0x00004</u>  </td></tr>
+<tr><th id="331">331</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_DEBUG" data-ref="_M/EXT4_MOUNT_DEBUG">EXT4_MOUNT_DEBUG</dfn> 0x00008</u>  </td></tr>
+<tr><th id="332">332</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_ERRORS_CONT" data-ref="_M/EXT4_MOUNT_ERRORS_CONT">EXT4_MOUNT_ERRORS_CONT</dfn> 0x00010</u>  </td></tr>
+<tr><th id="333">333</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_ERRORS_RO" data-ref="_M/EXT4_MOUNT_ERRORS_RO">EXT4_MOUNT_ERRORS_RO</dfn> 0x00020</u>  </td></tr>
+<tr><th id="334">334</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_ERRORS_PANIC" data-ref="_M/EXT4_MOUNT_ERRORS_PANIC">EXT4_MOUNT_ERRORS_PANIC</dfn> 0x00040</u>  </td></tr>
+<tr><th id="335">335</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_MINIX_DF" data-ref="_M/EXT4_MOUNT_MINIX_DF">EXT4_MOUNT_MINIX_DF</dfn> 0x00080</u>  </td></tr>
+<tr><th id="336">336</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_NOLOAD" data-ref="_M/EXT4_MOUNT_NOLOAD">EXT4_MOUNT_NOLOAD</dfn> 0x00100</u>  </td></tr>
+<tr><th id="337">337</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_DATA_FLAGS" data-ref="_M/EXT4_MOUNT_DATA_FLAGS">EXT4_MOUNT_DATA_FLAGS</dfn> 0x00C00</u>  </td></tr>
+<tr><th id="338">338</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_JOURNAL_DATA" data-ref="_M/EXT4_MOUNT_JOURNAL_DATA">EXT4_MOUNT_JOURNAL_DATA</dfn> 0x00400</u>  </td></tr>
+<tr><th id="339">339</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_ORDERED_DATA" data-ref="_M/EXT4_MOUNT_ORDERED_DATA">EXT4_MOUNT_ORDERED_DATA</dfn> 0x00800</u>  </td></tr>
+<tr><th id="340">340</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_WRITEBACK_DATA" data-ref="_M/EXT4_MOUNT_WRITEBACK_DATA">EXT4_MOUNT_WRITEBACK_DATA</dfn> 0x00C00</u>  </td></tr>
+<tr><th id="341">341</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_UPDATE_JOURNAL" data-ref="_M/EXT4_MOUNT_UPDATE_JOURNAL">EXT4_MOUNT_UPDATE_JOURNAL</dfn> 0x01000</u>  </td></tr>
+<tr><th id="342">342</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_NO_UID32" data-ref="_M/EXT4_MOUNT_NO_UID32">EXT4_MOUNT_NO_UID32</dfn> 0x02000</u>  </td></tr>
+<tr><th id="343">343</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_XATTR_USER" data-ref="_M/EXT4_MOUNT_XATTR_USER">EXT4_MOUNT_XATTR_USER</dfn> 0x04000</u>  </td></tr>
+<tr><th id="344">344</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_POSIX_ACL" data-ref="_M/EXT4_MOUNT_POSIX_ACL">EXT4_MOUNT_POSIX_ACL</dfn> 0x08000</u>  </td></tr>
+<tr><th id="345">345</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_NO_AUTO_DA_ALLOC" data-ref="_M/EXT4_MOUNT_NO_AUTO_DA_ALLOC">EXT4_MOUNT_NO_AUTO_DA_ALLOC</dfn> 0x10000</u>  </td></tr>
+<tr><th id="346">346</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_BARRIER" data-ref="_M/EXT4_MOUNT_BARRIER">EXT4_MOUNT_BARRIER</dfn> 0x20000</u>  </td></tr>
+<tr><th id="347">347</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_NOBH" data-ref="_M/EXT4_MOUNT_NOBH">EXT4_MOUNT_NOBH</dfn> 0x40000</u>  </td></tr>
+<tr><th id="348">348</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_QUOTA" data-ref="_M/EXT4_MOUNT_QUOTA">EXT4_MOUNT_QUOTA</dfn> 0x80000</u>  </td></tr>
+<tr><th id="349">349</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_USRQUOTA" data-ref="_M/EXT4_MOUNT_USRQUOTA">EXT4_MOUNT_USRQUOTA</dfn> 0x100000</u>  </td></tr>
+<tr><th id="350">350</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_GRPQUOTA" data-ref="_M/EXT4_MOUNT_GRPQUOTA">EXT4_MOUNT_GRPQUOTA</dfn> 0x200000</u>  </td></tr>
+<tr><th id="351">351</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_DIOREAD_NOLOCK" data-ref="_M/EXT4_MOUNT_DIOREAD_NOLOCK">EXT4_MOUNT_DIOREAD_NOLOCK</dfn> 0x400000</u>  </td></tr>
+<tr><th id="352">352</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_JOURNAL_CHECKSUM" data-ref="_M/EXT4_MOUNT_JOURNAL_CHECKSUM">EXT4_MOUNT_JOURNAL_CHECKSUM</dfn> 0x800000</u>  </td></tr>
+<tr><th id="353">353</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_JOURNAL_ASYNC_COMMIT" data-ref="_M/EXT4_MOUNT_JOURNAL_ASYNC_COMMIT">EXT4_MOUNT_JOURNAL_ASYNC_COMMIT</dfn> 0x1000000</u>  </td></tr>
+<tr><th id="354">354</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_I_VERSION" data-ref="_M/EXT4_MOUNT_I_VERSION">EXT4_MOUNT_I_VERSION</dfn> 0x2000000</u>  </td></tr>
+<tr><th id="355">355</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_DELALLOC" data-ref="_M/EXT4_MOUNT_DELALLOC">EXT4_MOUNT_DELALLOC</dfn> 0x8000000</u>  </td></tr>
+<tr><th id="356">356</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_DATA_ERR_ABORT" data-ref="_M/EXT4_MOUNT_DATA_ERR_ABORT">EXT4_MOUNT_DATA_ERR_ABORT</dfn> 0x10000000</u>  </td></tr>
+<tr><th id="357">357</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_BLOCK_VALIDITY" data-ref="_M/EXT4_MOUNT_BLOCK_VALIDITY">EXT4_MOUNT_BLOCK_VALIDITY</dfn> 0x20000000</u>  </td></tr>
+<tr><th id="358">358</th><td><u>#define <dfn class="macro" id="_M/EXT4_MOUNT_DISCARD" data-ref="_M/EXT4_MOUNT_DISCARD">EXT4_MOUNT_DISCARD</dfn> 0x40000000</u>  </td></tr>
+<tr><th id="359">359</th><td></td></tr>
+<tr><th id="360">360</th><td><u>#define <dfn class="macro" id="_M/clear_opt" data-ref="_M/clear_opt">clear_opt</dfn>(o, opt) o &amp;= ~EXT4_MOUNT_##opt</u></td></tr>
+<tr><th id="361">361</th><td><u>#define <dfn class="macro" id="_M/set_opt" data-ref="_M/set_opt">set_opt</dfn>(o, opt) o |= EXT4_MOUNT_##opt</u></td></tr>
+<tr><th id="362">362</th><td><u>#define <dfn class="macro" id="_M/test_opt" data-ref="_M/test_opt">test_opt</dfn>(sb, opt) (EXT4_SB(sb)-&gt;s_mount_opt &amp;   EXT4_MOUNT_##opt)</u></td></tr>
+<tr><th id="363">363</th><td></td></tr>
+<tr><th id="364">364</th><td><u>#define <dfn class="macro" id="_M/ext4_set_bit" data-ref="_M/ext4_set_bit">ext4_set_bit</dfn> ext2_set_bit</u></td></tr>
+<tr><th id="365">365</th><td><u>#define <dfn class="macro" id="_M/ext4_set_bit_atomic" data-ref="_M/ext4_set_bit_atomic">ext4_set_bit_atomic</dfn> ext2_set_bit_atomic</u></td></tr>
+<tr><th id="366">366</th><td><u>#define <dfn class="macro" id="_M/ext4_clear_bit" data-ref="_M/ext4_clear_bit">ext4_clear_bit</dfn> ext2_clear_bit</u></td></tr>
+<tr><th id="367">367</th><td><u>#define <dfn class="macro" id="_M/ext4_clear_bit_atomic" data-ref="_M/ext4_clear_bit_atomic">ext4_clear_bit_atomic</dfn> ext2_clear_bit_atomic</u></td></tr>
+<tr><th id="368">368</th><td><u>#define <dfn class="macro" id="_M/ext4_test_bit" data-ref="_M/ext4_test_bit">ext4_test_bit</dfn> ext2_test_bit</u></td></tr>
+<tr><th id="369">369</th><td><u>#define <dfn class="macro" id="_M/ext4_find_first_zero_bit" data-ref="_M/ext4_find_first_zero_bit">ext4_find_first_zero_bit</dfn> ext2_find_first_zero_bit</u></td></tr>
+<tr><th id="370">370</th><td><u>#define <dfn class="macro" id="_M/ext4_find_next_zero_bit" data-ref="_M/ext4_find_next_zero_bit">ext4_find_next_zero_bit</dfn> ext2_find_next_zero_bit</u></td></tr>
+<tr><th id="371">371</th><td><u>#define <dfn class="macro" id="_M/ext4_find_next_bit" data-ref="_M/ext4_find_next_bit">ext4_find_next_bit</dfn> ext2_find_next_bit</u></td></tr>
+<tr><th id="372">372</th><td></td></tr>
+<tr><th id="373">373</th><td><u>#define <dfn class="macro" id="_M/EXT4_DFL_MAX_MNT_COUNT" data-ref="_M/EXT4_DFL_MAX_MNT_COUNT">EXT4_DFL_MAX_MNT_COUNT</dfn> 20</u>  </td></tr>
+<tr><th id="374">374</th><td><u>#define <dfn class="macro" id="_M/EXT4_DFL_CHECKINTERVAL" data-ref="_M/EXT4_DFL_CHECKINTERVAL">EXT4_DFL_CHECKINTERVAL</dfn> 0</u>  </td></tr>
+<tr><th id="375">375</th><td></td></tr>
+<tr><th id="376">376</th><td><u>#define <dfn class="macro" id="_M/EXT4_ERRORS_CONTINUE" data-ref="_M/EXT4_ERRORS_CONTINUE">EXT4_ERRORS_CONTINUE</dfn> 1</u>  </td></tr>
+<tr><th id="377">377</th><td><u>#define <dfn class="macro" id="_M/EXT4_ERRORS_RO" data-ref="_M/EXT4_ERRORS_RO">EXT4_ERRORS_RO</dfn> 2</u>  </td></tr>
+<tr><th id="378">378</th><td><u>#define <dfn class="macro" id="_M/EXT4_ERRORS_PANIC" data-ref="_M/EXT4_ERRORS_PANIC">EXT4_ERRORS_PANIC</dfn> 3</u>  </td></tr>
+<tr><th id="379">379</th><td><u>#define <dfn class="macro" id="_M/EXT4_ERRORS_DEFAULT" data-ref="_M/EXT4_ERRORS_DEFAULT">EXT4_ERRORS_DEFAULT</dfn> EXT4_ERRORS_CONTINUE</u></td></tr>
+<tr><th id="380">380</th><td></td></tr>
+<tr><th id="381">381</th><td><b>struct</b> <dfn class="type def" id="ext4_super_block" title='ext4_super_block' data-ref="ext4_super_block">ext4_super_block</dfn> {</td></tr>
+<tr><th id="382">382</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_inodes_count" title='ext4_super_block::s_inodes_count' data-ref="ext4_super_block::s_inodes_count">s_inodes_count</dfn>;</td></tr>
+<tr><th id="383">383</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_blocks_count_lo" title='ext4_super_block::s_blocks_count_lo' data-ref="ext4_super_block::s_blocks_count_lo">s_blocks_count_lo</dfn>;</td></tr>
+<tr><th id="384">384</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_r_blocks_count_lo" title='ext4_super_block::s_r_blocks_count_lo' data-ref="ext4_super_block::s_r_blocks_count_lo">s_r_blocks_count_lo</dfn>;</td></tr>
+<tr><th id="385">385</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_free_blocks_count_lo" title='ext4_super_block::s_free_blocks_count_lo' data-ref="ext4_super_block::s_free_blocks_count_lo">s_free_blocks_count_lo</dfn>;</td></tr>
+<tr><th id="386">386</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_free_inodes_count" title='ext4_super_block::s_free_inodes_count' data-ref="ext4_super_block::s_free_inodes_count">s_free_inodes_count</dfn>;</td></tr>
+<tr><th id="387">387</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_first_data_block" title='ext4_super_block::s_first_data_block' data-ref="ext4_super_block::s_first_data_block">s_first_data_block</dfn>;</td></tr>
+<tr><th id="388">388</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_log_block_size" title='ext4_super_block::s_log_block_size' data-ref="ext4_super_block::s_log_block_size">s_log_block_size</dfn>;</td></tr>
+<tr><th id="389">389</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_obso_log_frag_size" title='ext4_super_block::s_obso_log_frag_size' data-ref="ext4_super_block::s_obso_log_frag_size">s_obso_log_frag_size</dfn>;</td></tr>
+<tr><th id="390">390</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_blocks_per_group" title='ext4_super_block::s_blocks_per_group' data-ref="ext4_super_block::s_blocks_per_group">s_blocks_per_group</dfn>;</td></tr>
+<tr><th id="391">391</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_obso_frags_per_group" title='ext4_super_block::s_obso_frags_per_group' data-ref="ext4_super_block::s_obso_frags_per_group">s_obso_frags_per_group</dfn>;</td></tr>
+<tr><th id="392">392</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_inodes_per_group" title='ext4_super_block::s_inodes_per_group' data-ref="ext4_super_block::s_inodes_per_group">s_inodes_per_group</dfn>;</td></tr>
+<tr><th id="393">393</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_mtime" title='ext4_super_block::s_mtime' data-ref="ext4_super_block::s_mtime">s_mtime</dfn>;</td></tr>
+<tr><th id="394">394</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_wtime" title='ext4_super_block::s_wtime' data-ref="ext4_super_block::s_wtime">s_wtime</dfn>;</td></tr>
+<tr><th id="395">395</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_mnt_count" title='ext4_super_block::s_mnt_count' data-ref="ext4_super_block::s_mnt_count">s_mnt_count</dfn>;</td></tr>
+<tr><th id="396">396</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_max_mnt_count" title='ext4_super_block::s_max_mnt_count' data-ref="ext4_super_block::s_max_mnt_count">s_max_mnt_count</dfn>;</td></tr>
+<tr><th id="397">397</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_magic" title='ext4_super_block::s_magic' data-ref="ext4_super_block::s_magic">s_magic</dfn>;</td></tr>
+<tr><th id="398">398</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_state" title='ext4_super_block::s_state' data-ref="ext4_super_block::s_state">s_state</dfn>;</td></tr>
+<tr><th id="399">399</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_errors" title='ext4_super_block::s_errors' data-ref="ext4_super_block::s_errors">s_errors</dfn>;</td></tr>
+<tr><th id="400">400</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_minor_rev_level" title='ext4_super_block::s_minor_rev_level' data-ref="ext4_super_block::s_minor_rev_level">s_minor_rev_level</dfn>;</td></tr>
+<tr><th id="401">401</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_lastcheck" title='ext4_super_block::s_lastcheck' data-ref="ext4_super_block::s_lastcheck">s_lastcheck</dfn>;</td></tr>
+<tr><th id="402">402</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_checkinterval" title='ext4_super_block::s_checkinterval' data-ref="ext4_super_block::s_checkinterval">s_checkinterval</dfn>;</td></tr>
+<tr><th id="403">403</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_creator_os" title='ext4_super_block::s_creator_os' data-ref="ext4_super_block::s_creator_os">s_creator_os</dfn>;</td></tr>
+<tr><th id="404">404</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_rev_level" title='ext4_super_block::s_rev_level' data-ref="ext4_super_block::s_rev_level">s_rev_level</dfn>;</td></tr>
+<tr><th id="405">405</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_def_resuid" title='ext4_super_block::s_def_resuid' data-ref="ext4_super_block::s_def_resuid">s_def_resuid</dfn>;</td></tr>
+<tr><th id="406">406</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_def_resgid" title='ext4_super_block::s_def_resgid' data-ref="ext4_super_block::s_def_resgid">s_def_resgid</dfn>;</td></tr>
+<tr><th id="407">407</th><td></td></tr>
+<tr><th id="408">408</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_first_ino" title='ext4_super_block::s_first_ino' data-ref="ext4_super_block::s_first_ino">s_first_ino</dfn>;</td></tr>
+<tr><th id="409">409</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_inode_size" title='ext4_super_block::s_inode_size' data-ref="ext4_super_block::s_inode_size">s_inode_size</dfn>;</td></tr>
+<tr><th id="410">410</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_block_group_nr" title='ext4_super_block::s_block_group_nr' data-ref="ext4_super_block::s_block_group_nr">s_block_group_nr</dfn>;</td></tr>
+<tr><th id="411">411</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_feature_compat" title='ext4_super_block::s_feature_compat' data-ref="ext4_super_block::s_feature_compat">s_feature_compat</dfn>;</td></tr>
+<tr><th id="412">412</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_feature_incompat" title='ext4_super_block::s_feature_incompat' data-ref="ext4_super_block::s_feature_incompat">s_feature_incompat</dfn>;</td></tr>
+<tr><th id="413">413</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_feature_ro_compat" title='ext4_super_block::s_feature_ro_compat' data-ref="ext4_super_block::s_feature_ro_compat">s_feature_ro_compat</dfn>;</td></tr>
+<tr><th id="414">414</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_super_block::s_uuid" title='ext4_super_block::s_uuid' data-ref="ext4_super_block::s_uuid">s_uuid</dfn>[<var>16</var>];</td></tr>
+<tr><th id="415">415</th><td>  <em>char</em> <dfn class="decl" id="ext4_super_block::s_volume_name" title='ext4_super_block::s_volume_name' data-ref="ext4_super_block::s_volume_name">s_volume_name</dfn>[<var>16</var>];</td></tr>
+<tr><th id="416">416</th><td>  <em>char</em> <dfn class="decl" id="ext4_super_block::s_last_mounted" title='ext4_super_block::s_last_mounted' data-ref="ext4_super_block::s_last_mounted">s_last_mounted</dfn>[<var>64</var>];</td></tr>
+<tr><th id="417">417</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_algorithm_usage_bitmap" title='ext4_super_block::s_algorithm_usage_bitmap' data-ref="ext4_super_block::s_algorithm_usage_bitmap">s_algorithm_usage_bitmap</dfn>;</td></tr>
+<tr><th id="418">418</th><td></td></tr>
+<tr><th id="419">419</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_super_block::s_prealloc_blocks" title='ext4_super_block::s_prealloc_blocks' data-ref="ext4_super_block::s_prealloc_blocks">s_prealloc_blocks</dfn>;</td></tr>
+<tr><th id="420">420</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_super_block::s_prealloc_dir_blocks" title='ext4_super_block::s_prealloc_dir_blocks' data-ref="ext4_super_block::s_prealloc_dir_blocks">s_prealloc_dir_blocks</dfn>;</td></tr>
+<tr><th id="421">421</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_reserved_gdt_blocks" title='ext4_super_block::s_reserved_gdt_blocks' data-ref="ext4_super_block::s_reserved_gdt_blocks">s_reserved_gdt_blocks</dfn>;</td></tr>
+<tr><th id="422">422</th><td></td></tr>
+<tr><th id="423">423</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_super_block::s_journal_uuid" title='ext4_super_block::s_journal_uuid' data-ref="ext4_super_block::s_journal_uuid">s_journal_uuid</dfn>[<var>16</var>];</td></tr>
+<tr><th id="424">424</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_journal_inum" title='ext4_super_block::s_journal_inum' data-ref="ext4_super_block::s_journal_inum">s_journal_inum</dfn>;</td></tr>
+<tr><th id="425">425</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_journal_dev" title='ext4_super_block::s_journal_dev' data-ref="ext4_super_block::s_journal_dev">s_journal_dev</dfn>;</td></tr>
+<tr><th id="426">426</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_last_orphan" title='ext4_super_block::s_last_orphan' data-ref="ext4_super_block::s_last_orphan">s_last_orphan</dfn>;</td></tr>
+<tr><th id="427">427</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_hash_seed" title='ext4_super_block::s_hash_seed' data-ref="ext4_super_block::s_hash_seed">s_hash_seed</dfn>[<var>4</var>];</td></tr>
+<tr><th id="428">428</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_super_block::s_def_hash_version" title='ext4_super_block::s_def_hash_version' data-ref="ext4_super_block::s_def_hash_version">s_def_hash_version</dfn>;</td></tr>
+<tr><th id="429">429</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_super_block::s_reserved_char_pad" title='ext4_super_block::s_reserved_char_pad' data-ref="ext4_super_block::s_reserved_char_pad">s_reserved_char_pad</dfn>;</td></tr>
+<tr><th id="430">430</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_desc_size" title='ext4_super_block::s_desc_size' data-ref="ext4_super_block::s_desc_size">s_desc_size</dfn>;</td></tr>
+<tr><th id="431">431</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_default_mount_opts" title='ext4_super_block::s_default_mount_opts' data-ref="ext4_super_block::s_default_mount_opts">s_default_mount_opts</dfn>;</td></tr>
+<tr><th id="432">432</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_first_meta_bg" title='ext4_super_block::s_first_meta_bg' data-ref="ext4_super_block::s_first_meta_bg">s_first_meta_bg</dfn>;</td></tr>
+<tr><th id="433">433</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_mkfs_time" title='ext4_super_block::s_mkfs_time' data-ref="ext4_super_block::s_mkfs_time">s_mkfs_time</dfn>;</td></tr>
+<tr><th id="434">434</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_jnl_blocks" title='ext4_super_block::s_jnl_blocks' data-ref="ext4_super_block::s_jnl_blocks">s_jnl_blocks</dfn>[<var>17</var>];</td></tr>
+<tr><th id="435">435</th><td></td></tr>
+<tr><th id="436">436</th><td>  <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_blocks_count_hi" title='ext4_super_block::s_blocks_count_hi' data-ref="ext4_super_block::s_blocks_count_hi">s_blocks_count_hi</dfn>;</td></tr>
+<tr><th id="437">437</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_r_blocks_count_hi" title='ext4_super_block::s_r_blocks_count_hi' data-ref="ext4_super_block::s_r_blocks_count_hi">s_r_blocks_count_hi</dfn>;</td></tr>
+<tr><th id="438">438</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_free_blocks_count_hi" title='ext4_super_block::s_free_blocks_count_hi' data-ref="ext4_super_block::s_free_blocks_count_hi">s_free_blocks_count_hi</dfn>;</td></tr>
+<tr><th id="439">439</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_min_extra_isize" title='ext4_super_block::s_min_extra_isize' data-ref="ext4_super_block::s_min_extra_isize">s_min_extra_isize</dfn>;</td></tr>
+<tr><th id="440">440</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_want_extra_isize" title='ext4_super_block::s_want_extra_isize' data-ref="ext4_super_block::s_want_extra_isize">s_want_extra_isize</dfn>;</td></tr>
+<tr><th id="441">441</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_flags" title='ext4_super_block::s_flags' data-ref="ext4_super_block::s_flags">s_flags</dfn>;</td></tr>
+<tr><th id="442">442</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_raid_stride" title='ext4_super_block::s_raid_stride' data-ref="ext4_super_block::s_raid_stride">s_raid_stride</dfn>;</td></tr>
+<tr><th id="443">443</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_mmp_interval" title='ext4_super_block::s_mmp_interval' data-ref="ext4_super_block::s_mmp_interval">s_mmp_interval</dfn>;</td></tr>
+<tr><th id="444">444</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le64" title='__le64' data-type='__u64' data-ref="__le64">__le64</a> <dfn class="decl" id="ext4_super_block::s_mmp_block" title='ext4_super_block::s_mmp_block' data-ref="ext4_super_block::s_mmp_block">s_mmp_block</dfn>;</td></tr>
+<tr><th id="445">445</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_super_block::s_raid_stripe_width" title='ext4_super_block::s_raid_stripe_width' data-ref="ext4_super_block::s_raid_stripe_width">s_raid_stripe_width</dfn>;</td></tr>
+<tr><th id="446">446</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_super_block::s_log_groups_per_flex" title='ext4_super_block::s_log_groups_per_flex' data-ref="ext4_super_block::s_log_groups_per_flex">s_log_groups_per_flex</dfn>;</td></tr>
+<tr><th id="447">447</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_super_block::s_reserved_char_pad2" title='ext4_super_block::s_reserved_char_pad2' data-ref="ext4_super_block::s_reserved_char_pad2">s_reserved_char_pad2</dfn>;</td></tr>
+<tr><th id="448">448</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_super_block::s_reserved_pad" title='ext4_super_block::s_reserved_pad' data-ref="ext4_super_block::s_reserved_pad">s_reserved_pad</dfn>;</td></tr>
+<tr><th id="449">449</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le64" title='__le64' data-type='__u64' data-ref="__le64">__le64</a> <dfn class="decl" id="ext4_super_block::s_kbytes_written" title='ext4_super_block::s_kbytes_written' data-ref="ext4_super_block::s_kbytes_written">s_kbytes_written</dfn>;</td></tr>
+<tr><th id="450">450</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u32" title='__u32' data-type='unsigned int' data-ref="__u32">__u32</a> <dfn class="decl" id="ext4_super_block::s_reserved" title='ext4_super_block::s_reserved' data-ref="ext4_super_block::s_reserved">s_reserved</dfn>[<var>160</var>];</td></tr>
+<tr><th id="451">451</th><td>};</td></tr>
+<tr><th id="452">452</th><td></td></tr>
+<tr><th id="453">453</th><td><u>#define <dfn class="macro" id="_M/EXT4_SB" data-ref="_M/EXT4_SB">EXT4_SB</dfn>(sb) (sb)</u></td></tr>
+<tr><th id="454">454</th><td></td></tr>
+<tr><th id="455">455</th><td><u>#define <dfn class="macro" id="_M/NEXT_ORPHAN" data-ref="_M/NEXT_ORPHAN">NEXT_ORPHAN</dfn>(inode) EXT4_I(inode)-&gt;i_dtime</u></td></tr>
+<tr><th id="456">456</th><td></td></tr>
+<tr><th id="457">457</th><td><u>#define <dfn class="macro" id="_M/EXT4_OS_LINUX" data-ref="_M/EXT4_OS_LINUX">EXT4_OS_LINUX</dfn> 0</u></td></tr>
+<tr><th id="458">458</th><td><u>#define <dfn class="macro" id="_M/EXT4_OS_HURD" data-ref="_M/EXT4_OS_HURD">EXT4_OS_HURD</dfn> 1</u></td></tr>
+<tr><th id="459">459</th><td><u>#define <dfn class="macro" id="_M/EXT4_OS_MASIX" data-ref="_M/EXT4_OS_MASIX">EXT4_OS_MASIX</dfn> 2</u></td></tr>
+<tr><th id="460">460</th><td><u>#define <dfn class="macro" id="_M/EXT4_OS_FREEBSD" data-ref="_M/EXT4_OS_FREEBSD">EXT4_OS_FREEBSD</dfn> 3</u></td></tr>
+<tr><th id="461">461</th><td><u>#define <dfn class="macro" id="_M/EXT4_OS_LITES" data-ref="_M/EXT4_OS_LITES">EXT4_OS_LITES</dfn> 4</u></td></tr>
+<tr><th id="462">462</th><td></td></tr>
+<tr><th id="463">463</th><td><u>#define <dfn class="macro" id="_M/EXT4_GOOD_OLD_REV" data-ref="_M/EXT4_GOOD_OLD_REV">EXT4_GOOD_OLD_REV</dfn> 0</u>  </td></tr>
+<tr><th id="464">464</th><td><u>#define <dfn class="macro" id="_M/EXT4_DYNAMIC_REV" data-ref="_M/EXT4_DYNAMIC_REV">EXT4_DYNAMIC_REV</dfn> 1</u>  </td></tr>
+<tr><th id="465">465</th><td></td></tr>
+<tr><th id="466">466</th><td><u>#define <dfn class="macro" id="_M/EXT4_CURRENT_REV" data-ref="_M/EXT4_CURRENT_REV">EXT4_CURRENT_REV</dfn> EXT4_GOOD_OLD_REV</u></td></tr>
+<tr><th id="467">467</th><td><u>#define <dfn class="macro" id="_M/EXT4_MAX_SUPP_REV" data-ref="_M/EXT4_MAX_SUPP_REV">EXT4_MAX_SUPP_REV</dfn> EXT4_DYNAMIC_REV</u></td></tr>
+<tr><th id="468">468</th><td></td></tr>
+<tr><th id="469">469</th><td><u>#define <dfn class="macro" id="_M/EXT4_GOOD_OLD_INODE_SIZE" data-ref="_M/EXT4_GOOD_OLD_INODE_SIZE">EXT4_GOOD_OLD_INODE_SIZE</dfn> 128</u></td></tr>
+<tr><th id="470">470</th><td></td></tr>
+<tr><th id="471">471</th><td><u>#define <dfn class="macro" id="_M/EXT4_HAS_COMPAT_FEATURE" data-ref="_M/EXT4_HAS_COMPAT_FEATURE">EXT4_HAS_COMPAT_FEATURE</dfn>(sb,mask)   ((EXT4_SB(sb)-&gt;s_es-&gt;s_feature_compat &amp; cpu_to_le32(mask)) != 0)</u></td></tr>
+<tr><th id="472">472</th><td><u>#define <dfn class="macro" id="_M/EXT4_HAS_RO_COMPAT_FEATURE" data-ref="_M/EXT4_HAS_RO_COMPAT_FEATURE">EXT4_HAS_RO_COMPAT_FEATURE</dfn>(sb,mask)   ((EXT4_SB(sb)-&gt;s_es-&gt;s_feature_ro_compat &amp; cpu_to_le32(mask)) != 0)</u></td></tr>
+<tr><th id="473">473</th><td><u>#define <dfn class="macro" id="_M/EXT4_HAS_INCOMPAT_FEATURE" data-ref="_M/EXT4_HAS_INCOMPAT_FEATURE">EXT4_HAS_INCOMPAT_FEATURE</dfn>(sb,mask)   ((EXT4_SB(sb)-&gt;s_es-&gt;s_feature_incompat &amp; cpu_to_le32(mask)) != 0)</u></td></tr>
+<tr><th id="474">474</th><td><u>#define <dfn class="macro" id="_M/EXT4_SET_COMPAT_FEATURE" data-ref="_M/EXT4_SET_COMPAT_FEATURE">EXT4_SET_COMPAT_FEATURE</dfn>(sb,mask)   EXT4_SB(sb)-&gt;s_es-&gt;s_feature_compat |= cpu_to_le32(mask)</u></td></tr>
+<tr><th id="475">475</th><td><u>#define <dfn class="macro" id="_M/EXT4_SET_RO_COMPAT_FEATURE" data-ref="_M/EXT4_SET_RO_COMPAT_FEATURE">EXT4_SET_RO_COMPAT_FEATURE</dfn>(sb,mask)   EXT4_SB(sb)-&gt;s_es-&gt;s_feature_ro_compat |= cpu_to_le32(mask)</u></td></tr>
+<tr><th id="476">476</th><td><u>#define <dfn class="macro" id="_M/EXT4_SET_INCOMPAT_FEATURE" data-ref="_M/EXT4_SET_INCOMPAT_FEATURE">EXT4_SET_INCOMPAT_FEATURE</dfn>(sb,mask)   EXT4_SB(sb)-&gt;s_es-&gt;s_feature_incompat |= cpu_to_le32(mask)</u></td></tr>
+<tr><th id="477">477</th><td><u>#define <dfn class="macro" id="_M/EXT4_CLEAR_COMPAT_FEATURE" data-ref="_M/EXT4_CLEAR_COMPAT_FEATURE">EXT4_CLEAR_COMPAT_FEATURE</dfn>(sb,mask)   EXT4_SB(sb)-&gt;s_es-&gt;s_feature_compat &amp;= ~cpu_to_le32(mask)</u></td></tr>
+<tr><th id="478">478</th><td><u>#define <dfn class="macro" id="_M/EXT4_CLEAR_RO_COMPAT_FEATURE" data-ref="_M/EXT4_CLEAR_RO_COMPAT_FEATURE">EXT4_CLEAR_RO_COMPAT_FEATURE</dfn>(sb,mask)   EXT4_SB(sb)-&gt;s_es-&gt;s_feature_ro_compat &amp;= ~cpu_to_le32(mask)</u></td></tr>
+<tr><th id="479">479</th><td><u>#define <dfn class="macro" id="_M/EXT4_CLEAR_INCOMPAT_FEATURE" data-ref="_M/EXT4_CLEAR_INCOMPAT_FEATURE">EXT4_CLEAR_INCOMPAT_FEATURE</dfn>(sb,mask)   EXT4_SB(sb)-&gt;s_es-&gt;s_feature_incompat &amp;= ~cpu_to_le32(mask)</u></td></tr>
+<tr><th id="480">480</th><td></td></tr>
+<tr><th id="481">481</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_COMPAT_DIR_PREALLOC" data-ref="_M/EXT4_FEATURE_COMPAT_DIR_PREALLOC">EXT4_FEATURE_COMPAT_DIR_PREALLOC</dfn> 0x0001</u></td></tr>
+<tr><th id="482">482</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_COMPAT_IMAGIC_INODES" data-ref="_M/EXT4_FEATURE_COMPAT_IMAGIC_INODES">EXT4_FEATURE_COMPAT_IMAGIC_INODES</dfn> 0x0002</u></td></tr>
+<tr><th id="483">483</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_COMPAT_HAS_JOURNAL" data-ref="_M/EXT4_FEATURE_COMPAT_HAS_JOURNAL">EXT4_FEATURE_COMPAT_HAS_JOURNAL</dfn> 0x0004</u></td></tr>
+<tr><th id="484">484</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_COMPAT_EXT_ATTR" data-ref="_M/EXT4_FEATURE_COMPAT_EXT_ATTR">EXT4_FEATURE_COMPAT_EXT_ATTR</dfn> 0x0008</u></td></tr>
+<tr><th id="485">485</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_COMPAT_RESIZE_INODE" data-ref="_M/EXT4_FEATURE_COMPAT_RESIZE_INODE">EXT4_FEATURE_COMPAT_RESIZE_INODE</dfn> 0x0010</u></td></tr>
+<tr><th id="486">486</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_COMPAT_DIR_INDEX" data-ref="_M/EXT4_FEATURE_COMPAT_DIR_INDEX">EXT4_FEATURE_COMPAT_DIR_INDEX</dfn> 0x0020</u></td></tr>
+<tr><th id="487">487</th><td></td></tr>
+<tr><th id="488">488</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_RO_COMPAT_SPARSE_SUPER" data-ref="_M/EXT4_FEATURE_RO_COMPAT_SPARSE_SUPER">EXT4_FEATURE_RO_COMPAT_SPARSE_SUPER</dfn> 0x0001</u></td></tr>
+<tr><th id="489">489</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_RO_COMPAT_LARGE_FILE" data-ref="_M/EXT4_FEATURE_RO_COMPAT_LARGE_FILE">EXT4_FEATURE_RO_COMPAT_LARGE_FILE</dfn> 0x0002</u></td></tr>
+<tr><th id="490">490</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_RO_COMPAT_BTREE_DIR" data-ref="_M/EXT4_FEATURE_RO_COMPAT_BTREE_DIR">EXT4_FEATURE_RO_COMPAT_BTREE_DIR</dfn> 0x0004</u></td></tr>
+<tr><th id="491">491</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_RO_COMPAT_HUGE_FILE" data-ref="_M/EXT4_FEATURE_RO_COMPAT_HUGE_FILE">EXT4_FEATURE_RO_COMPAT_HUGE_FILE</dfn> 0x0008</u></td></tr>
+<tr><th id="492">492</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_RO_COMPAT_GDT_CSUM" data-ref="_M/EXT4_FEATURE_RO_COMPAT_GDT_CSUM">EXT4_FEATURE_RO_COMPAT_GDT_CSUM</dfn> 0x0010</u></td></tr>
+<tr><th id="493">493</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_RO_COMPAT_DIR_NLINK" data-ref="_M/EXT4_FEATURE_RO_COMPAT_DIR_NLINK">EXT4_FEATURE_RO_COMPAT_DIR_NLINK</dfn> 0x0020</u></td></tr>
+<tr><th id="494">494</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE" data-ref="_M/EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE">EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE</dfn> 0x0040</u></td></tr>
+<tr><th id="495">495</th><td></td></tr>
+<tr><th id="496">496</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_COMPRESSION" data-ref="_M/EXT4_FEATURE_INCOMPAT_COMPRESSION">EXT4_FEATURE_INCOMPAT_COMPRESSION</dfn> 0x0001</u></td></tr>
+<tr><th id="497">497</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_FILETYPE" data-ref="_M/EXT4_FEATURE_INCOMPAT_FILETYPE">EXT4_FEATURE_INCOMPAT_FILETYPE</dfn> 0x0002</u></td></tr>
+<tr><th id="498">498</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_RECOVER" data-ref="_M/EXT4_FEATURE_INCOMPAT_RECOVER">EXT4_FEATURE_INCOMPAT_RECOVER</dfn> 0x0004</u>  </td></tr>
+<tr><th id="499">499</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_JOURNAL_DEV" data-ref="_M/EXT4_FEATURE_INCOMPAT_JOURNAL_DEV">EXT4_FEATURE_INCOMPAT_JOURNAL_DEV</dfn> 0x0008</u>  </td></tr>
+<tr><th id="500">500</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_META_BG" data-ref="_M/EXT4_FEATURE_INCOMPAT_META_BG">EXT4_FEATURE_INCOMPAT_META_BG</dfn> 0x0010</u></td></tr>
+<tr><th id="501">501</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_EXTENTS" data-ref="_M/EXT4_FEATURE_INCOMPAT_EXTENTS">EXT4_FEATURE_INCOMPAT_EXTENTS</dfn> 0x0040</u>  </td></tr>
+<tr><th id="502">502</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_64BIT" data-ref="_M/EXT4_FEATURE_INCOMPAT_64BIT">EXT4_FEATURE_INCOMPAT_64BIT</dfn> 0x0080</u></td></tr>
+<tr><th id="503">503</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_MMP" data-ref="_M/EXT4_FEATURE_INCOMPAT_MMP">EXT4_FEATURE_INCOMPAT_MMP</dfn> 0x0100</u></td></tr>
+<tr><th id="504">504</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_FLEX_BG" data-ref="_M/EXT4_FEATURE_INCOMPAT_FLEX_BG">EXT4_FEATURE_INCOMPAT_FLEX_BG</dfn> 0x0200</u></td></tr>
+<tr><th id="505">505</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_EA_INODE" data-ref="_M/EXT4_FEATURE_INCOMPAT_EA_INODE">EXT4_FEATURE_INCOMPAT_EA_INODE</dfn> 0x0400</u>  </td></tr>
+<tr><th id="506">506</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_DIRDATA" data-ref="_M/EXT4_FEATURE_INCOMPAT_DIRDATA">EXT4_FEATURE_INCOMPAT_DIRDATA</dfn> 0x1000</u>  </td></tr>
+<tr><th id="507">507</th><td></td></tr>
+<tr><th id="508">508</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_COMPAT_SUPP" data-ref="_M/EXT4_FEATURE_COMPAT_SUPP">EXT4_FEATURE_COMPAT_SUPP</dfn> EXT2_FEATURE_COMPAT_EXT_ATTR</u></td></tr>
+<tr><th id="509">509</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_INCOMPAT_SUPP" data-ref="_M/EXT4_FEATURE_INCOMPAT_SUPP">EXT4_FEATURE_INCOMPAT_SUPP</dfn> (EXT4_FEATURE_INCOMPAT_FILETYPE|   EXT4_FEATURE_INCOMPAT_RECOVER|   EXT4_FEATURE_INCOMPAT_META_BG|   EXT4_FEATURE_INCOMPAT_EXTENTS|   EXT4_FEATURE_INCOMPAT_64BIT|   EXT4_FEATURE_INCOMPAT_FLEX_BG)</u></td></tr>
+<tr><th id="510">510</th><td><u>#define <dfn class="macro" id="_M/EXT4_FEATURE_RO_COMPAT_SUPP" data-ref="_M/EXT4_FEATURE_RO_COMPAT_SUPP">EXT4_FEATURE_RO_COMPAT_SUPP</dfn> (EXT4_FEATURE_RO_COMPAT_SPARSE_SUPER|   EXT4_FEATURE_RO_COMPAT_LARGE_FILE|   EXT4_FEATURE_RO_COMPAT_GDT_CSUM|   EXT4_FEATURE_RO_COMPAT_DIR_NLINK |   EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE |   EXT4_FEATURE_RO_COMPAT_BTREE_DIR |  EXT4_FEATURE_RO_COMPAT_HUGE_FILE)</u></td></tr>
+<tr><th id="511">511</th><td></td></tr>
+<tr><th id="512">512</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEF_RESUID" data-ref="_M/EXT4_DEF_RESUID">EXT4_DEF_RESUID</dfn> 0</u></td></tr>
+<tr><th id="513">513</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEF_RESGID" data-ref="_M/EXT4_DEF_RESGID">EXT4_DEF_RESGID</dfn> 0</u></td></tr>
+<tr><th id="514">514</th><td></td></tr>
+<tr><th id="515">515</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEF_INODE_READAHEAD_BLKS" data-ref="_M/EXT4_DEF_INODE_READAHEAD_BLKS">EXT4_DEF_INODE_READAHEAD_BLKS</dfn> 32</u></td></tr>
+<tr><th id="516">516</th><td></td></tr>
+<tr><th id="517">517</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEFM_DEBUG" data-ref="_M/EXT4_DEFM_DEBUG">EXT4_DEFM_DEBUG</dfn> 0x0001</u></td></tr>
+<tr><th id="518">518</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEFM_BSDGROUPS" data-ref="_M/EXT4_DEFM_BSDGROUPS">EXT4_DEFM_BSDGROUPS</dfn> 0x0002</u></td></tr>
+<tr><th id="519">519</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEFM_XATTR_USER" data-ref="_M/EXT4_DEFM_XATTR_USER">EXT4_DEFM_XATTR_USER</dfn> 0x0004</u></td></tr>
+<tr><th id="520">520</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEFM_ACL" data-ref="_M/EXT4_DEFM_ACL">EXT4_DEFM_ACL</dfn> 0x0008</u></td></tr>
+<tr><th id="521">521</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEFM_UID16" data-ref="_M/EXT4_DEFM_UID16">EXT4_DEFM_UID16</dfn> 0x0010</u></td></tr>
+<tr><th id="522">522</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEFM_JMODE" data-ref="_M/EXT4_DEFM_JMODE">EXT4_DEFM_JMODE</dfn> 0x0060</u></td></tr>
+<tr><th id="523">523</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEFM_JMODE_DATA" data-ref="_M/EXT4_DEFM_JMODE_DATA">EXT4_DEFM_JMODE_DATA</dfn> 0x0020</u></td></tr>
+<tr><th id="524">524</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEFM_JMODE_ORDERED" data-ref="_M/EXT4_DEFM_JMODE_ORDERED">EXT4_DEFM_JMODE_ORDERED</dfn> 0x0040</u></td></tr>
+<tr><th id="525">525</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEFM_JMODE_WBACK" data-ref="_M/EXT4_DEFM_JMODE_WBACK">EXT4_DEFM_JMODE_WBACK</dfn> 0x0060</u></td></tr>
+<tr><th id="526">526</th><td></td></tr>
+<tr><th id="527">527</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEF_MIN_BATCH_TIME" data-ref="_M/EXT4_DEF_MIN_BATCH_TIME">EXT4_DEF_MIN_BATCH_TIME</dfn> 0</u></td></tr>
+<tr><th id="528">528</th><td><u>#define <dfn class="macro" id="_M/EXT4_DEF_MAX_BATCH_TIME" data-ref="_M/EXT4_DEF_MAX_BATCH_TIME">EXT4_DEF_MAX_BATCH_TIME</dfn> 15000</u>  </td></tr>
+<tr><th id="529">529</th><td></td></tr>
+<tr><th id="530">530</th><td><u>#define <dfn class="macro" id="_M/EXT4_FLEX_SIZE_DIR_ALLOC_SCHEME" data-ref="_M/EXT4_FLEX_SIZE_DIR_ALLOC_SCHEME">EXT4_FLEX_SIZE_DIR_ALLOC_SCHEME</dfn> 4</u></td></tr>
+<tr><th id="531">531</th><td></td></tr>
+<tr><th id="532">532</th><td><u>#define <dfn class="macro" id="_M/EXT4_NAME_LEN" data-ref="_M/EXT4_NAME_LEN">EXT4_NAME_LEN</dfn> 255</u></td></tr>
+<tr><th id="533">533</th><td></td></tr>
+<tr><th id="534">534</th><td><b>struct</b> <dfn class="type def" id="ext4_dir_entry" title='ext4_dir_entry' data-ref="ext4_dir_entry">ext4_dir_entry</dfn> {</td></tr>
+<tr><th id="535">535</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_dir_entry::inode" title='ext4_dir_entry::inode' data-ref="ext4_dir_entry::inode">inode</dfn>;</td></tr>
+<tr><th id="536">536</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_dir_entry::rec_len" title='ext4_dir_entry::rec_len' data-ref="ext4_dir_entry::rec_len">rec_len</dfn>;</td></tr>
+<tr><th id="537">537</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_dir_entry::name_len" title='ext4_dir_entry::name_len' data-ref="ext4_dir_entry::name_len">name_len</dfn>;</td></tr>
+<tr><th id="538">538</th><td> <em>char</em> <dfn class="decl" id="ext4_dir_entry::name" title='ext4_dir_entry::name' data-ref="ext4_dir_entry::name">name</dfn>[<a class="macro" href="#532" title="255" data-ref="_M/EXT4_NAME_LEN">EXT4_NAME_LEN</a>];</td></tr>
+<tr><th id="539">539</th><td>};</td></tr>
+<tr><th id="540">540</th><td></td></tr>
+<tr><th id="541">541</th><td><b>struct</b> <dfn class="type def" id="ext4_dir_entry_2" title='ext4_dir_entry_2' data-ref="ext4_dir_entry_2">ext4_dir_entry_2</dfn> {</td></tr>
+<tr><th id="542">542</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le32" title='__le32' data-type='__u32' data-ref="__le32">__le32</a> <dfn class="decl" id="ext4_dir_entry_2::inode" title='ext4_dir_entry_2::inode' data-ref="ext4_dir_entry_2::inode">inode</dfn>;</td></tr>
+<tr><th id="543">543</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/linux/types.h.html#__le16" title='__le16' data-type='__u16' data-ref="__le16">__le16</a> <dfn class="decl" id="ext4_dir_entry_2::rec_len" title='ext4_dir_entry_2::rec_len' data-ref="ext4_dir_entry_2::rec_len">rec_len</dfn>;</td></tr>
+<tr><th id="544">544</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_dir_entry_2::name_len" title='ext4_dir_entry_2::name_len' data-ref="ext4_dir_entry_2::name_len">name_len</dfn>;</td></tr>
+<tr><th id="545">545</th><td> <a class="typedef" href="../../../bionic/libc/kernel/uapi/asm-generic/int-ll64.h.html#__u8" title='__u8' data-type='unsigned char' data-ref="__u8">__u8</a> <dfn class="decl" id="ext4_dir_entry_2::file_type" title='ext4_dir_entry_2::file_type' data-ref="ext4_dir_entry_2::file_type">file_type</dfn>;</td></tr>
+<tr><th id="546">546</th><td> <em>char</em> <dfn class="decl" id="ext4_dir_entry_2::name" title='ext4_dir_entry_2::name' data-ref="ext4_dir_entry_2::name">name</dfn>[<a class="macro" href="#532" title="255" data-ref="_M/EXT4_NAME_LEN">EXT4_NAME_LEN</a>];</td></tr>
+<tr><th id="547">547</th><td>};</td></tr>
+<tr><th id="548">548</th><td></td></tr>
+<tr><th id="549">549</th><td><u>#define <dfn class="macro" id="_M/EXT4_FT_UNKNOWN" data-ref="_M/EXT4_FT_UNKNOWN">EXT4_FT_UNKNOWN</dfn> 0</u></td></tr>
+<tr><th id="550">550</th><td><u>#define <dfn class="macro" id="_M/EXT4_FT_REG_FILE" data-ref="_M/EXT4_FT_REG_FILE">EXT4_FT_REG_FILE</dfn> 1</u></td></tr>
+<tr><th id="551">551</th><td><u>#define <dfn class="macro" id="_M/EXT4_FT_DIR" data-ref="_M/EXT4_FT_DIR">EXT4_FT_DIR</dfn> 2</u></td></tr>
+<tr><th id="552">552</th><td><u>#define <dfn class="macro" id="_M/EXT4_FT_CHRDEV" data-ref="_M/EXT4_FT_CHRDEV">EXT4_FT_CHRDEV</dfn> 3</u></td></tr>
+<tr><th id="553">553</th><td><u>#define <dfn class="macro" id="_M/EXT4_FT_BLKDEV" data-ref="_M/EXT4_FT_BLKDEV">EXT4_FT_BLKDEV</dfn> 4</u></td></tr>
+<tr><th id="554">554</th><td><u>#define <dfn class="macro" id="_M/EXT4_FT_FIFO" data-ref="_M/EXT4_FT_FIFO">EXT4_FT_FIFO</dfn> 5</u></td></tr>
+<tr><th id="555">555</th><td><u>#define <dfn class="macro" id="_M/EXT4_FT_SOCK" data-ref="_M/EXT4_FT_SOCK">EXT4_FT_SOCK</dfn> 6</u></td></tr>
+<tr><th id="556">556</th><td><u>#define <dfn class="macro" id="_M/EXT4_FT_SYMLINK" data-ref="_M/EXT4_FT_SYMLINK">EXT4_FT_SYMLINK</dfn> 7</u></td></tr>
+<tr><th id="557">557</th><td></td></tr>
+<tr><th id="558">558</th><td><u>#define <dfn class="macro" id="_M/EXT4_FT_MAX" data-ref="_M/EXT4_FT_MAX">EXT4_FT_MAX</dfn> 8</u></td></tr>
+<tr><th id="559">559</th><td></td></tr>
+<tr><th id="560">560</th><td><u>#define <dfn class="macro" id="_M/EXT4_DIR_PAD" data-ref="_M/EXT4_DIR_PAD">EXT4_DIR_PAD</dfn> 4</u></td></tr>
+<tr><th id="561">561</th><td><u>#define <dfn class="macro" id="_M/EXT4_DIR_ROUND" data-ref="_M/EXT4_DIR_ROUND">EXT4_DIR_ROUND</dfn> (EXT4_DIR_PAD - 1)</u></td></tr>
+<tr><th id="562">562</th><td><u>#define <dfn class="macro" id="_M/EXT4_DIR_REC_LEN" data-ref="_M/EXT4_DIR_REC_LEN">EXT4_DIR_REC_LEN</dfn>(name_len) (((name_len) + 8 + EXT4_DIR_ROUND) &amp;   ~EXT4_DIR_ROUND)</u></td></tr>
+<tr><th id="563">563</th><td><u>#define <dfn class="macro" id="_M/EXT4_MAX_REC_LEN" data-ref="_M/EXT4_MAX_REC_LEN">EXT4_MAX_REC_LEN</dfn> ((1&lt;&lt;16)-1)</u></td></tr>
+<tr><th id="564">564</th><td></td></tr>
+<tr><th id="565">565</th><td><u>#define <dfn class="macro" id="_M/is_dx" data-ref="_M/is_dx">is_dx</dfn>(dir) (EXT4_HAS_COMPAT_FEATURE(dir-&gt;i_sb,   EXT4_FEATURE_COMPAT_DIR_INDEX) &amp;&amp;   (EXT4_I(dir)-&gt;i_flags &amp; EXT4_INDEX_FL))</u></td></tr>
+<tr><th id="566">566</th><td><u>#define <dfn class="macro" id="_M/EXT4_DIR_LINK_MAX" data-ref="_M/EXT4_DIR_LINK_MAX">EXT4_DIR_LINK_MAX</dfn>(dir) (!is_dx(dir) &amp;&amp; (dir)-&gt;i_nlink &gt;= EXT4_LINK_MAX)</u></td></tr>
+<tr><th id="567">567</th><td><u>#define <dfn class="macro" id="_M/EXT4_DIR_LINK_EMPTY" data-ref="_M/EXT4_DIR_LINK_EMPTY">EXT4_DIR_LINK_EMPTY</dfn>(dir) ((dir)-&gt;i_nlink == 2 || (dir)-&gt;i_nlink == 1)</u></td></tr>
+<tr><th id="568">568</th><td></td></tr>
+<tr><th id="569">569</th><td><u>#define <dfn class="macro" id="_M/DX_HASH_LEGACY" data-ref="_M/DX_HASH_LEGACY">DX_HASH_LEGACY</dfn> 0</u></td></tr>
+<tr><th id="570">570</th><td><u>#define <dfn class="macro" id="_M/DX_HASH_HALF_MD4" data-ref="_M/DX_HASH_HALF_MD4">DX_HASH_HALF_MD4</dfn> 1</u></td></tr>
+<tr><th id="571">571</th><td><u>#define <dfn class="macro" id="_M/DX_HASH_TEA" data-ref="_M/DX_HASH_TEA">DX_HASH_TEA</dfn> 2</u></td></tr>
+<tr><th id="572">572</th><td><u>#define <dfn class="macro" id="_M/DX_HASH_LEGACY_UNSIGNED" data-ref="_M/DX_HASH_LEGACY_UNSIGNED">DX_HASH_LEGACY_UNSIGNED</dfn> 3</u></td></tr>
+<tr><th id="573">573</th><td><u>#define <dfn class="macro" id="_M/DX_HASH_HALF_MD4_UNSIGNED" data-ref="_M/DX_HASH_HALF_MD4_UNSIGNED">DX_HASH_HALF_MD4_UNSIGNED</dfn> 4</u></td></tr>
+<tr><th id="574">574</th><td><u>#define <dfn class="macro" id="_M/DX_HASH_TEA_UNSIGNED" data-ref="_M/DX_HASH_TEA_UNSIGNED">DX_HASH_TEA_UNSIGNED</dfn> 5</u></td></tr>
+<tr><th id="575">575</th><td></td></tr>
+<tr><th id="576">576</th><td><u>#<span data-ppcond="12">endif</span></u></td></tr>
+<tr><th id="577">577</th><td></td></tr>
+<tr><th id="578">578</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../core/fs_mgr/fs_mgr.c.html'>codebrowser/system/core/fs_mgr/fs_mgr.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

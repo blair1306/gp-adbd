@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>sched.h source code [codebrowser/bionic/libc/include/sched.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/sched.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>include</a>/<a href='sched.h.html'>sched.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><u>#<span data-ppcond="28">ifndef</span> <span class="macro" data-ref="_M/_SCHED_H_">_SCHED_H_</span></u></td></tr>
+<tr><th id="29">29</th><td><u>#define <dfn class="macro" id="_M/_SCHED_H_" data-ref="_M/_SCHED_H_">_SCHED_H_</dfn></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="bits/timespec.h.html">&lt;bits/timespec.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../kernel/uapi/linux/sched.h.html">&lt;linux/sched.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><a class="macro" href="sys/cdefs.h.html#85" title="extern &quot;C&quot; {" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="36">36</th><td></td></tr>
+<tr><th id="37">37</th><td><i>/* This name is used by glibc, but not by the kernel. */</i></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/SCHED_OTHER" data-ref="_M/SCHED_OTHER">SCHED_OTHER</dfn> SCHED_NORMAL</u></td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td><b>struct</b> <dfn class="type def" id="sched_param" title='sched_param' data-ref="sched_param">sched_param</dfn> {</td></tr>
+<tr><th id="41">41</th><td>  <em>int</em> <dfn class="decl" id="sched_param::sched_priority" title='sched_param::sched_priority' data-ref="sched_param::sched_priority">sched_priority</dfn>;</td></tr>
+<tr><th id="42">42</th><td>};</td></tr>
+<tr><th id="43">43</th><td></td></tr>
+<tr><th id="44">44</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_setscheduler" title='sched_setscheduler' data-ref="sched_setscheduler">sched_setscheduler</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>, <em>int</em>, <em>const</em> <b>struct</b> <a class="type" href="#sched_param" title='sched_param' data-ref="sched_param">sched_param</a>*);</td></tr>
+<tr><th id="45">45</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_getscheduler" title='sched_getscheduler' data-ref="sched_getscheduler">sched_getscheduler</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>);</td></tr>
+<tr><th id="46">46</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_yield" title='sched_yield' data-ref="sched_yield">sched_yield</dfn>(<em>void</em>);</td></tr>
+<tr><th id="47">47</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_get_priority_max" title='sched_get_priority_max' data-ref="sched_get_priority_max">sched_get_priority_max</dfn>(<em>int</em>);</td></tr>
+<tr><th id="48">48</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_get_priority_min" title='sched_get_priority_min' data-ref="sched_get_priority_min">sched_get_priority_min</dfn>(<em>int</em>);</td></tr>
+<tr><th id="49">49</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_setparam" title='sched_setparam' data-ref="sched_setparam">sched_setparam</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>, <em>const</em> <b>struct</b> <a class="type" href="#sched_param" title='sched_param' data-ref="sched_param">sched_param</a>*);</td></tr>
+<tr><th id="50">50</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_getparam" title='sched_getparam' data-ref="sched_getparam">sched_getparam</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>, <b>struct</b> <a class="type" href="#sched_param" title='sched_param' data-ref="sched_param">sched_param</a>*);</td></tr>
+<tr><th id="51">51</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_rr_get_interval" title='sched_rr_get_interval' data-ref="sched_rr_get_interval">sched_rr_get_interval</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a>, <b>struct</b> <a class="type" href="bits/timespec.h.html#timespec" title='timespec' data-ref="timespec">timespec</a>*);</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><u>#<span data-ppcond="53">if</span> defined(<a class="macro" href="sys/cdefs.h.html#246" data-ref="_M/__USE_GNU">__USE_GNU</a>)</u></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="clone" title='clone' data-ref="clone">clone</dfn>(<em>int</em> (*)(<em>void</em>*), <em>void</em>*, <em>int</em>, <em>void</em>*, ...);</td></tr>
+<tr><th id="56">56</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="unshare" title='unshare' data-ref="unshare">unshare</dfn>(<em>int</em>);</td></tr>
+<tr><th id="57">57</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_getcpu" title='sched_getcpu' data-ref="sched_getcpu">sched_getcpu</dfn>(<em>void</em>);</td></tr>
+<tr><th id="58">58</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="setns" title='setns' data-ref="setns">setns</dfn>(<em>int</em>, <em>int</em>);</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#<span data-ppcond="60">ifdef</span> <span class="macro" data-ref="_M/__LP64__">__LP64__</span></u></td></tr>
+<tr><th id="61">61</th><td><u>#define <dfn class="macro" id="_M/CPU_SETSIZE" data-ref="_M/CPU_SETSIZE">CPU_SETSIZE</dfn> 1024</u></td></tr>
+<tr><th id="62">62</th><td><u>#<span data-ppcond="60">else</span></u></td></tr>
+<tr><th id="63">63</th><td><u>#define CPU_SETSIZE 32</u></td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="60">endif</span></u></td></tr>
+<tr><th id="65">65</th><td></td></tr>
+<tr><th id="66">66</th><td><u>#define <dfn class="macro" id="_M/__CPU_BITTYPE" data-ref="_M/__CPU_BITTYPE">__CPU_BITTYPE</dfn>  unsigned long int  /* mandated by the kernel  */</u></td></tr>
+<tr><th id="67">67</th><td><u>#define <dfn class="macro" id="_M/__CPU_BITS" data-ref="_M/__CPU_BITS">__CPU_BITS</dfn>     (8 * sizeof(__CPU_BITTYPE))</u></td></tr>
+<tr><th id="68">68</th><td><u>#define <dfn class="macro" id="_M/__CPU_ELT" data-ref="_M/__CPU_ELT">__CPU_ELT</dfn>(x)   ((x) / __CPU_BITS)</u></td></tr>
+<tr><th id="69">69</th><td><u>#define <dfn class="macro" id="_M/__CPU_MASK" data-ref="_M/__CPU_MASK">__CPU_MASK</dfn>(x)  ((__CPU_BITTYPE)1 &lt;&lt; ((x) &amp; (__CPU_BITS - 1)))</u></td></tr>
+<tr><th id="70">70</th><td></td></tr>
+<tr><th id="71">71</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="72">72</th><td>  <a class="macro" href="#66" title="unsigned long int" data-ref="_M/__CPU_BITTYPE">__CPU_BITTYPE</a>  <dfn class="decl" id="(anonymous)::__bits" title='(anonymous struct)::__bits' data-ref="(anonymous)::__bits">__bits</dfn>[ <a class="macro" href="#61" title="1024" data-ref="_M/CPU_SETSIZE">CPU_SETSIZE</a> / <a class="macro" href="#67" title="(8 * sizeof(unsigned long int))" data-ref="_M/__CPU_BITS">__CPU_BITS</a> ];</td></tr>
+<tr><th id="73">73</th><td>} <dfn class="typedef" id="cpu_set_t" title='cpu_set_t' data-type='struct cpu_set_t' data-ref="cpu_set_t">cpu_set_t</dfn>;</td></tr>
+<tr><th id="74">74</th><td></td></tr>
+<tr><th id="75">75</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_setaffinity" title='sched_setaffinity' data-ref="sched_setaffinity">sched_setaffinity</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col9 decl" id="39pid" title='pid' data-type='pid_t' data-ref="39pid">pid</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="40setsize" title='setsize' data-type='size_t' data-ref="40setsize">setsize</dfn>, <em>const</em> <a class="typedef" href="#cpu_set_t" title='cpu_set_t' data-type='struct cpu_set_t' data-ref="cpu_set_t">cpu_set_t</a>* <dfn class="local col1 decl" id="41set" title='set' data-type='const cpu_set_t *' data-ref="41set">set</dfn>);</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="sched_getaffinity" title='sched_getaffinity' data-ref="sched_getaffinity">sched_getaffinity</dfn>(<a class="typedef" href="sys/types.h.html#pid_t" title='pid_t' data-type='__pid_t' data-ref="pid_t">pid_t</a> <dfn class="local col2 decl" id="42pid" title='pid' data-type='pid_t' data-ref="42pid">pid</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="43setsize" title='setsize' data-type='size_t' data-ref="43setsize">setsize</dfn>, <a class="typedef" href="#cpu_set_t" title='cpu_set_t' data-type='struct cpu_set_t' data-ref="cpu_set_t">cpu_set_t</a>* <dfn class="local col4 decl" id="44set" title='set' data-type='cpu_set_t *' data-ref="44set">set</dfn>);</td></tr>
+<tr><th id="78">78</th><td></td></tr>
+<tr><th id="79">79</th><td><u>#define <dfn class="macro" id="_M/CPU_ZERO" data-ref="_M/CPU_ZERO">CPU_ZERO</dfn>(set)          CPU_ZERO_S(sizeof(cpu_set_t), set)</u></td></tr>
+<tr><th id="80">80</th><td><u>#define <dfn class="macro" id="_M/CPU_SET" data-ref="_M/CPU_SET">CPU_SET</dfn>(cpu, set)      CPU_SET_S(cpu, sizeof(cpu_set_t), set)</u></td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/CPU_CLR" data-ref="_M/CPU_CLR">CPU_CLR</dfn>(cpu, set)      CPU_CLR_S(cpu, sizeof(cpu_set_t), set)</u></td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/CPU_ISSET" data-ref="_M/CPU_ISSET">CPU_ISSET</dfn>(cpu, set)    CPU_ISSET_S(cpu, sizeof(cpu_set_t), set)</u></td></tr>
+<tr><th id="83">83</th><td><u>#define <dfn class="macro" id="_M/CPU_COUNT" data-ref="_M/CPU_COUNT">CPU_COUNT</dfn>(set)         CPU_COUNT_S(sizeof(cpu_set_t), set)</u></td></tr>
+<tr><th id="84">84</th><td><u>#define <dfn class="macro" id="_M/CPU_EQUAL" data-ref="_M/CPU_EQUAL">CPU_EQUAL</dfn>(set1, set2)  CPU_EQUAL_S(sizeof(cpu_set_t), set1, set2)</u></td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><u>#define <dfn class="macro" id="_M/CPU_AND" data-ref="_M/CPU_AND">CPU_AND</dfn>(dst, set1, set2)  __CPU_OP(dst, set1, set2, &amp;)</u></td></tr>
+<tr><th id="87">87</th><td><u>#define <dfn class="macro" id="_M/CPU_OR" data-ref="_M/CPU_OR">CPU_OR</dfn>(dst, set1, set2)   __CPU_OP(dst, set1, set2, |)</u></td></tr>
+<tr><th id="88">88</th><td><u>#define <dfn class="macro" id="_M/CPU_XOR" data-ref="_M/CPU_XOR">CPU_XOR</dfn>(dst, set1, set2)  __CPU_OP(dst, set1, set2, ^)</u></td></tr>
+<tr><th id="89">89</th><td></td></tr>
+<tr><th id="90">90</th><td><u>#define <dfn class="macro" id="_M/__CPU_OP" data-ref="_M/__CPU_OP">__CPU_OP</dfn>(dst, set1, set2, op)  __CPU_OP_S(sizeof(cpu_set_t), dst, set1, set2, op)</u></td></tr>
+<tr><th id="91">91</th><td></td></tr>
+<tr><th id="92">92</th><td><i>/* Support for dynamically-allocated cpu_set_t */</i></td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><u>#define <dfn class="macro" id="_M/CPU_ALLOC_SIZE" data-ref="_M/CPU_ALLOC_SIZE">CPU_ALLOC_SIZE</dfn>(count) \</u></td></tr>
+<tr><th id="95">95</th><td><u>  __CPU_ELT((count) + (__CPU_BITS - 1)) * sizeof(__CPU_BITTYPE)</u></td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><u>#define <dfn class="macro" id="_M/CPU_ALLOC" data-ref="_M/CPU_ALLOC">CPU_ALLOC</dfn>(count)  __sched_cpualloc((count))</u></td></tr>
+<tr><th id="98">98</th><td><u>#define <dfn class="macro" id="_M/CPU_FREE" data-ref="_M/CPU_FREE">CPU_FREE</dfn>(set)     __sched_cpufree((set))</u></td></tr>
+<tr><th id="99">99</th><td></td></tr>
+<tr><th id="100">100</th><td><b>extern</b> <a class="typedef" href="#cpu_set_t" title='cpu_set_t' data-type='struct cpu_set_t' data-ref="cpu_set_t">cpu_set_t</a>* <dfn class="decl" id="__sched_cpualloc" title='__sched_cpualloc' data-ref="__sched_cpualloc">__sched_cpualloc</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="45count" title='count' data-type='size_t' data-ref="45count">count</dfn>);</td></tr>
+<tr><th id="101">101</th><td><b>extern</b> <em>void</em>       <dfn class="decl" id="__sched_cpufree" title='__sched_cpufree' data-ref="__sched_cpufree">__sched_cpufree</dfn>(<a class="typedef" href="#cpu_set_t" title='cpu_set_t' data-type='struct cpu_set_t' data-ref="cpu_set_t">cpu_set_t</a>* <dfn class="local col6 decl" id="46set" title='set' data-type='cpu_set_t *' data-ref="46set">set</dfn>);</td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><u>#define <dfn class="macro" id="_M/CPU_ZERO_S" data-ref="_M/CPU_ZERO_S">CPU_ZERO_S</dfn>(setsize, set)  __builtin_memset(set, 0, setsize)</u></td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td><u>#define <dfn class="macro" id="_M/CPU_SET_S" data-ref="_M/CPU_SET_S">CPU_SET_S</dfn>(cpu, setsize, set) \</u></td></tr>
+<tr><th id="106">106</th><td><u>  do { \</u></td></tr>
+<tr><th id="107">107</th><td><u>    size_t __cpu = (cpu); \</u></td></tr>
+<tr><th id="108">108</th><td><u>    if (__cpu &lt; 8 * (setsize)) \</u></td></tr>
+<tr><th id="109">109</th><td><u>      (set)-&gt;__bits[__CPU_ELT(__cpu)] |= __CPU_MASK(__cpu); \</u></td></tr>
+<tr><th id="110">110</th><td><u>  } while (0)</u></td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><u>#define <dfn class="macro" id="_M/CPU_CLR_S" data-ref="_M/CPU_CLR_S">CPU_CLR_S</dfn>(cpu, setsize, set) \</u></td></tr>
+<tr><th id="113">113</th><td><u>  do { \</u></td></tr>
+<tr><th id="114">114</th><td><u>    size_t __cpu = (cpu); \</u></td></tr>
+<tr><th id="115">115</th><td><u>    if (__cpu &lt; 8 * (setsize)) \</u></td></tr>
+<tr><th id="116">116</th><td><u>      (set)-&gt;__bits[__CPU_ELT(__cpu)] &amp;= ~__CPU_MASK(__cpu); \</u></td></tr>
+<tr><th id="117">117</th><td><u>  } while (0)</u></td></tr>
+<tr><th id="118">118</th><td></td></tr>
+<tr><th id="119">119</th><td><u>#define <dfn class="macro" id="_M/CPU_ISSET_S" data-ref="_M/CPU_ISSET_S">CPU_ISSET_S</dfn>(cpu, setsize, set) \</u></td></tr>
+<tr><th id="120">120</th><td><u>  (__extension__ ({ \</u></td></tr>
+<tr><th id="121">121</th><td><u>    size_t __cpu = (cpu); \</u></td></tr>
+<tr><th id="122">122</th><td><u>    (__cpu &lt; 8 * (setsize)) \</u></td></tr>
+<tr><th id="123">123</th><td><u>      ? ((set)-&gt;__bits[__CPU_ELT(__cpu)] &amp; __CPU_MASK(__cpu)) != 0 \</u></td></tr>
+<tr><th id="124">124</th><td><u>      : 0; \</u></td></tr>
+<tr><th id="125">125</th><td><u>  }))</u></td></tr>
+<tr><th id="126">126</th><td></td></tr>
+<tr><th id="127">127</th><td><u>#define <dfn class="macro" id="_M/CPU_EQUAL_S" data-ref="_M/CPU_EQUAL_S">CPU_EQUAL_S</dfn>(setsize, set1, set2)  (__builtin_memcmp(set1, set2, setsize) == 0)</u></td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td><u>#define <dfn class="macro" id="_M/CPU_AND_S" data-ref="_M/CPU_AND_S">CPU_AND_S</dfn>(setsize, dst, set1, set2)  __CPU_OP_S(setsize, dst, set1, set2, &amp;)</u></td></tr>
+<tr><th id="130">130</th><td><u>#define <dfn class="macro" id="_M/CPU_OR_S" data-ref="_M/CPU_OR_S">CPU_OR_S</dfn>(setsize, dst, set1, set2)   __CPU_OP_S(setsize, dst, set1, set2, |)</u></td></tr>
+<tr><th id="131">131</th><td><u>#define <dfn class="macro" id="_M/CPU_XOR_S" data-ref="_M/CPU_XOR_S">CPU_XOR_S</dfn>(setsize, dst, set1, set2)  __CPU_OP_S(setsize, dst, set1, set2, ^)</u></td></tr>
+<tr><th id="132">132</th><td></td></tr>
+<tr><th id="133">133</th><td><u>#define <dfn class="macro" id="_M/__CPU_OP_S" data-ref="_M/__CPU_OP_S">__CPU_OP_S</dfn>(setsize, dstset, srcset1, srcset2, op) \</u></td></tr>
+<tr><th id="134">134</th><td><u>  do { \</u></td></tr>
+<tr><th id="135">135</th><td><u>    cpu_set_t* __dst = (dstset); \</u></td></tr>
+<tr><th id="136">136</th><td><u>    const __CPU_BITTYPE* __src1 = (srcset1)-&gt;__bits; \</u></td></tr>
+<tr><th id="137">137</th><td><u>    const __CPU_BITTYPE* __src2 = (srcset2)-&gt;__bits; \</u></td></tr>
+<tr><th id="138">138</th><td><u>    size_t __nn = 0, __nn_max = (setsize)/sizeof(__CPU_BITTYPE); \</u></td></tr>
+<tr><th id="139">139</th><td><u>    for (; __nn &lt; __nn_max; __nn++) \</u></td></tr>
+<tr><th id="140">140</th><td><u>      (__dst)-&gt;__bits[__nn] = __src1[__nn] op __src2[__nn]; \</u></td></tr>
+<tr><th id="141">141</th><td><u>  } while (0)</u></td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td><u>#define <dfn class="macro" id="_M/CPU_COUNT_S" data-ref="_M/CPU_COUNT_S">CPU_COUNT_S</dfn>(setsize, set)  __sched_cpucount((setsize), (set))</u></td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="__sched_cpucount" title='__sched_cpucount' data-ref="__sched_cpucount">__sched_cpucount</dfn>(<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col7 decl" id="47setsize" title='setsize' data-type='size_t' data-ref="47setsize">setsize</dfn>, <a class="typedef" href="#cpu_set_t" title='cpu_set_t' data-type='struct cpu_set_t' data-ref="cpu_set_t">cpu_set_t</a>* <dfn class="local col8 decl" id="48set" title='set' data-type='cpu_set_t *' data-ref="48set">set</dfn>);</td></tr>
+<tr><th id="146">146</th><td></td></tr>
+<tr><th id="147">147</th><td><u>#<span data-ppcond="53">endif</span> /* __USE_GNU */</u></td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td><a class="macro" href="sys/cdefs.h.html#86" title="}" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><u>#<span data-ppcond="28">endif</span> /* _SCHED_H_ */</u></td></tr>
+<tr><th id="152">152</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/NetdClient.cpp.html'>codebrowser/bionic/libc/bionic/NetdClient.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

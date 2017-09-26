@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>android_compat_hacks.c source code [codebrowser/external/boringssl/android_compat_hacks.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/android_compat_hacks.c'; var root_path = '../../..'; var data_path = '../../../../data';</script>
+<script src='../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../..'>codebrowser</a>/<a href='..'>external</a>/<a href='./'>boringssl</a>/<a href='android_compat_hacks.c.html'>android_compat_hacks.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (c) 2014, Google Inc.</i></td></tr>
+<tr><th id="2">2</th><td><i> *</i></td></tr>
+<tr><th id="3">3</th><td><i> * Permission to use, copy, modify, and/or distribute this software for any</i></td></tr>
+<tr><th id="4">4</th><td><i> * purpose with or without fee is hereby granted, provided that the above</i></td></tr>
+<tr><th id="5">5</th><td><i> * copyright notice and this permission notice appear in all copies.</i></td></tr>
+<tr><th id="6">6</th><td><i> *</i></td></tr>
+<tr><th id="7">7</th><td><i> * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</i></td></tr>
+<tr><th id="8">8</th><td><i> * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</i></td></tr>
+<tr><th id="9">9</th><td><i> * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY</i></td></tr>
+<tr><th id="10">10</th><td><i> * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</i></td></tr>
+<tr><th id="11">11</th><td><i> * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION</i></td></tr>
+<tr><th id="12">12</th><td><i> * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN</i></td></tr>
+<tr><th id="13">13</th><td><i> * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */</i></td></tr>
+<tr><th id="14">14</th><td></td></tr>
+<tr><th id="15">15</th><td><i>/* This file contains odd functions that are needed, temporarily, on Android</i></td></tr>
+<tr><th id="16">16</th><td><i> * because wpa_supplicant will take a little while to sync with upstream.</i></td></tr>
+<tr><th id="17">17</th><td><i> *</i></td></tr>
+<tr><th id="18">18</th><td><i> * The declarations for these functions are in the main BoringSSL headers but</i></td></tr>
+<tr><th id="19">19</th><td><i> * the only definitions are here, in Android land. */</i></td></tr>
+<tr><th id="20">20</th><td></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="src/include/openssl/base.h.html">&lt;openssl/base.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/assert.h.html">&lt;assert.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td></td></tr>
+<tr><th id="25">25</th><td><u>#include <a href="src/include/openssl/bn.h.html">&lt;openssl/bn.h&gt;</a></u></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="src/include/openssl/cipher.h.html">&lt;openssl/cipher.h&gt;</a></u></td></tr>
+<tr><th id="27">27</th><td><u>#include <a href="src/include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="src/include/openssl/ssl.h.html">&lt;openssl/ssl.h&gt;</a></u></td></tr>
+<tr><th id="29">29</th><td></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><a class="typedef" href="src/include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="decl def" id="get_rfc3526_prime_1536" title='get_rfc3526_prime_1536' data-ref="get_rfc3526_prime_1536">get_rfc3526_prime_1536</dfn>(<a class="typedef" href="src/include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col4 decl" id="5004bn" title='bn' data-type='BIGNUM *' data-ref="5004bn">bn</dfn>) {</td></tr>
+<tr><th id="32">32</th><td>  <a class="macro" href="../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/assert.h.html#51" title="((void)0)" data-ref="_M/assert">assert</a>(bn == NULL);</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td>  <em>static</em> <em>const</em> <a class="typedef" href="../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col5 decl" id="5005data" title='data' data-type='const uint8_t [192]' data-ref="5005data">data</dfn>[] = {</td></tr>
+<tr><th id="35">35</th><td>      <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xC9</var>, <var>0x0F</var>, <var>0xDA</var>, <var>0xA2</var>,</td></tr>
+<tr><th id="36">36</th><td>      <var>0x21</var>, <var>0x68</var>, <var>0xC2</var>, <var>0x34</var>, <var>0xC4</var>, <var>0xC6</var>, <var>0x62</var>, <var>0x8B</var>, <var>0x80</var>, <var>0xDC</var>, <var>0x1C</var>, <var>0xD1</var>,</td></tr>
+<tr><th id="37">37</th><td>      <var>0x29</var>, <var>0x02</var>, <var>0x4E</var>, <var>0x08</var>, <var>0x8A</var>, <var>0x67</var>, <var>0xCC</var>, <var>0x74</var>, <var>0x02</var>, <var>0x0B</var>, <var>0xBE</var>, <var>0xA6</var>,</td></tr>
+<tr><th id="38">38</th><td>      <var>0x3B</var>, <var>0x13</var>, <var>0x9B</var>, <var>0x22</var>, <var>0x51</var>, <var>0x4A</var>, <var>0x08</var>, <var>0x79</var>, <var>0x8E</var>, <var>0x34</var>, <var>0x04</var>, <var>0xDD</var>,</td></tr>
+<tr><th id="39">39</th><td>      <var>0xEF</var>, <var>0x95</var>, <var>0x19</var>, <var>0xB3</var>, <var>0xCD</var>, <var>0x3A</var>, <var>0x43</var>, <var>0x1B</var>, <var>0x30</var>, <var>0x2B</var>, <var>0x0A</var>, <var>0x6D</var>,</td></tr>
+<tr><th id="40">40</th><td>      <var>0xF2</var>, <var>0x5F</var>, <var>0x14</var>, <var>0x37</var>, <var>0x4F</var>, <var>0xE1</var>, <var>0x35</var>, <var>0x6D</var>, <var>0x6D</var>, <var>0x51</var>, <var>0xC2</var>, <var>0x45</var>,</td></tr>
+<tr><th id="41">41</th><td>      <var>0xE4</var>, <var>0x85</var>, <var>0xB5</var>, <var>0x76</var>, <var>0x62</var>, <var>0x5E</var>, <var>0x7E</var>, <var>0xC6</var>, <var>0xF4</var>, <var>0x4C</var>, <var>0x42</var>, <var>0xE9</var>,</td></tr>
+<tr><th id="42">42</th><td>      <var>0xA6</var>, <var>0x37</var>, <var>0xED</var>, <var>0x6B</var>, <var>0x0B</var>, <var>0xFF</var>, <var>0x5C</var>, <var>0xB6</var>, <var>0xF4</var>, <var>0x06</var>, <var>0xB7</var>, <var>0xED</var>,</td></tr>
+<tr><th id="43">43</th><td>      <var>0xEE</var>, <var>0x38</var>, <var>0x6B</var>, <var>0xFB</var>, <var>0x5A</var>, <var>0x89</var>, <var>0x9F</var>, <var>0xA5</var>, <var>0xAE</var>, <var>0x9F</var>, <var>0x24</var>, <var>0x11</var>,</td></tr>
+<tr><th id="44">44</th><td>      <var>0x7C</var>, <var>0x4B</var>, <var>0x1F</var>, <var>0xE6</var>, <var>0x49</var>, <var>0x28</var>, <var>0x66</var>, <var>0x51</var>, <var>0xEC</var>, <var>0xE4</var>, <var>0x5B</var>, <var>0x3D</var>,</td></tr>
+<tr><th id="45">45</th><td>      <var>0xC2</var>, <var>0x00</var>, <var>0x7C</var>, <var>0xB8</var>, <var>0xA1</var>, <var>0x63</var>, <var>0xBF</var>, <var>0x05</var>, <var>0x98</var>, <var>0xDA</var>, <var>0x48</var>, <var>0x36</var>,</td></tr>
+<tr><th id="46">46</th><td>      <var>0x1C</var>, <var>0x55</var>, <var>0xD3</var>, <var>0x9A</var>, <var>0x69</var>, <var>0x16</var>, <var>0x3F</var>, <var>0xA8</var>, <var>0xFD</var>, <var>0x24</var>, <var>0xCF</var>, <var>0x5F</var>,</td></tr>
+<tr><th id="47">47</th><td>      <var>0x83</var>, <var>0x65</var>, <var>0x5D</var>, <var>0x23</var>, <var>0xDC</var>, <var>0xA3</var>, <var>0xAD</var>, <var>0x96</var>, <var>0x1C</var>, <var>0x62</var>, <var>0xF3</var>, <var>0x56</var>,</td></tr>
+<tr><th id="48">48</th><td>      <var>0x20</var>, <var>0x85</var>, <var>0x52</var>, <var>0xBB</var>, <var>0x9E</var>, <var>0xD5</var>, <var>0x29</var>, <var>0x07</var>, <var>0x70</var>, <var>0x96</var>, <var>0x96</var>, <var>0x6D</var>,</td></tr>
+<tr><th id="49">49</th><td>      <var>0x67</var>, <var>0x0C</var>, <var>0x35</var>, <var>0x4E</var>, <var>0x4A</var>, <var>0xBC</var>, <var>0x98</var>, <var>0x04</var>, <var>0xF1</var>, <var>0x74</var>, <var>0x6C</var>, <var>0x08</var>,</td></tr>
+<tr><th id="50">50</th><td>      <var>0xCA</var>, <var>0x23</var>, <var>0x73</var>, <var>0x27</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>, <var>0xFF</var>,</td></tr>
+<tr><th id="51">51</th><td>  };</td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td>  <b>return</b> <a class="ref" href="src/include/openssl/bn.h.html#BN_bin2bn" title='BN_bin2bn' data-ref="BN_bin2bn">BN_bin2bn</a>(<a class="local col5 ref" href="#5005data" title='data' data-ref="5005data">data</a>, <b>sizeof</b>(<a class="local col5 ref" href="#5005data" title='data' data-ref="5005data">data</a>), <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>);</td></tr>
+<tr><th id="54">54</th><td>}</td></tr>
+<tr><th id="55">55</th><td></td></tr>
+<tr><th id="56">56</th><td><em>int</em> <dfn class="decl def" id="SSL_set_session_ticket_ext" title='SSL_set_session_ticket_ext' data-ref="SSL_set_session_ticket_ext">SSL_set_session_ticket_ext</dfn>(<a class="typedef" href="src/include/openssl/base.h.html#SSL" title='SSL' data-type='struct ssl_st' data-ref="SSL">SSL</a> *<dfn class="local col6 decl" id="5006s" title='s' data-type='SSL *' data-ref="5006s">s</dfn>, <em>void</em> *<dfn class="local col7 decl" id="5007ext_data" title='ext_data' data-type='void *' data-ref="5007ext_data">ext_data</dfn>, <em>int</em> <dfn class="local col8 decl" id="5008ext_len" title='ext_len' data-type='int' data-ref="5008ext_len">ext_len</dfn>) {</td></tr>
+<tr><th id="57">57</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="58">58</th><td>}</td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><em>int</em> <dfn class="decl def" id="SSL_set_session_ticket_ext_cb" title='SSL_set_session_ticket_ext_cb' data-ref="SSL_set_session_ticket_ext_cb">SSL_set_session_ticket_ext_cb</dfn>(<a class="typedef" href="src/include/openssl/base.h.html#SSL" title='SSL' data-type='struct ssl_st' data-ref="SSL">SSL</a> *<dfn class="local col9 decl" id="5009s" title='s' data-type='SSL *' data-ref="5009s">s</dfn>, <em>void</em> *<dfn class="local col0 decl" id="5010cb" title='cb' data-type='void *' data-ref="5010cb">cb</dfn>, <em>void</em> *<dfn class="local col1 decl" id="5011arg" title='arg' data-type='void *' data-ref="5011arg">arg</dfn>) {</td></tr>
+<tr><th id="61">61</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="62">62</th><td>}</td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><em>int</em> <dfn class="decl def" id="SSL_set_session_secret_cb" title='SSL_set_session_secret_cb' data-ref="SSL_set_session_secret_cb">SSL_set_session_secret_cb</dfn>(<a class="typedef" href="src/include/openssl/base.h.html#SSL" title='SSL' data-type='struct ssl_st' data-ref="SSL">SSL</a> *<dfn class="local col2 decl" id="5012s" title='s' data-type='SSL *' data-ref="5012s">s</dfn>, <em>void</em> *<dfn class="local col3 decl" id="5013cb" title='cb' data-type='void *' data-ref="5013cb">cb</dfn>, <em>void</em> *<dfn class="local col4 decl" id="5014arg" title='arg' data-type='void *' data-ref="5014arg">arg</dfn>) {</td></tr>
+<tr><th id="65">65</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="66">66</th><td>}</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><em>int</em> <dfn class="decl def" id="SSL_set_ssl_method" title='SSL_set_ssl_method' data-ref="SSL_set_ssl_method">SSL_set_ssl_method</dfn>(<a class="typedef" href="src/include/openssl/base.h.html#SSL" title='SSL' data-type='struct ssl_st' data-ref="SSL">SSL</a> *<dfn class="local col5 decl" id="5015s" title='s' data-type='SSL *' data-ref="5015s">s</dfn>, <em>const</em> <a class="typedef" href="src/include/openssl/base.h.html#SSL_METHOD" title='SSL_METHOD' data-type='struct ssl_method_st' data-ref="SSL_METHOD">SSL_METHOD</a> *<dfn class="local col6 decl" id="5016method" title='method' data-type='const SSL_METHOD *' data-ref="5016method">method</dfn>) {</td></tr>
+<tr><th id="69">69</th><td>  <i>/* This is only called when EAP-FAST is being used, which is not supported. */</i></td></tr>
+<tr><th id="70">70</th><td>  <a class="ref" href="../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdlib.h.html#abort" title='abort' data-ref="abort">abort</a>();</td></tr>
+<tr><th id="71">71</th><td>}</td></tr>
+<tr><th id="72">72</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

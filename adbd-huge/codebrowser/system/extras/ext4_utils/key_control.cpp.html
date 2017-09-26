@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>key_control.cpp source code [codebrowser/system/extras/ext4_utils/key_control.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/extras/ext4_utils/key_control.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>extras</a>/<a href='./'>ext4_utils</a>/<a href='key_control.cpp.html'>key_control.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#include <a href="key_control.h.html">"key_control.h"</a></u></td></tr>
+<tr><th id="2">2</th><td></td></tr>
+<tr><th id="3">3</th><td><u>#include &lt;stdarg.h&gt;</u></td></tr>
+<tr><th id="4">4</th><td><u>#include <a href="../../../bionic/libc/include/unistd.h.html">&lt;unistd.h&gt;</a></u></td></tr>
+<tr><th id="5">5</th><td><u>#include <a href="../../../bionic/libc/include/sys/syscall.h.html">&lt;sys/syscall.h&gt;</a></u></td></tr>
+<tr><th id="6">6</th><td><u>#include <a href="../../../bionic/libc/kernel/uapi/linux/keyctl.h.html">&lt;linux/keyctl.h&gt;</a></u></td></tr>
+<tr><th id="7">7</th><td></td></tr>
+<tr><th id="8">8</th><td><em>static</em> <em>long</em> <dfn class="tu decl def" id="_ZL6keyctliz" title='keyctl' data-type='long keyctl(int cmd)' data-ref="_ZL6keyctliz">keyctl</dfn>(<em>int</em> <dfn class="local col1 decl" id="1cmd" title='cmd' data-type='int' data-ref="1cmd">cmd</dfn>, ...)</td></tr>
+<tr><th id="9">9</th><td>{</td></tr>
+<tr><th id="10">10</th><td>    <span class='typedef' title='va_list' data-type='__builtin_va_list' data-ref="va_list">va_list</span> <span class='ref fake' title='__va_list_tag::__va_list_tag' data-ref="__va_list_tag::__va_list_tag"></span><dfn class="local col2 decl" id="2va" title='va' data-type='va_list' data-ref="2va">va</dfn>;</td></tr>
+<tr><th id="11">11</th><td>    <em>unsigned</em> <em>long</em> <dfn class="local col3 decl" id="3arg2" title='arg2' data-type='unsigned long' data-ref="3arg2">arg2</dfn>, <dfn class="local col4 decl" id="4arg3" title='arg3' data-type='unsigned long' data-ref="4arg3">arg3</dfn>, <dfn class="local col5 decl" id="5arg4" title='arg4' data-type='unsigned long' data-ref="5arg4">arg4</dfn>, <dfn class="local col6 decl" id="6arg5" title='arg5' data-type='unsigned long' data-ref="6arg5">arg5</dfn>;</td></tr>
+<tr><th id="12">12</th><td></td></tr>
+<tr><th id="13">13</th><td>    <span class="macro" title="__builtin_va_start(va, cmd)" data-ref="_M/va_start">va_start</span>(<a class="local col2 ref" href="#2va" title='va' data-ref="2va">va</a>, <a class="local col1 ref" href="#1cmd" title='cmd' data-ref="1cmd">cmd</a>);</td></tr>
+<tr><th id="14">14</th><td>    <a class="local col3 ref" href="#3arg2" title='arg2' data-ref="3arg2">arg2</a> = <span class="macro" title="__builtin_va_arg(va, unsigned long)" data-ref="_M/va_arg">va_arg</span>(<a class="local col2 ref" href="#2va" title='va' data-ref="2va">va</a>, <em>unsigned</em> <em>long</em>);</td></tr>
+<tr><th id="15">15</th><td>    <a class="local col4 ref" href="#4arg3" title='arg3' data-ref="4arg3">arg3</a> = <span class="macro" title="__builtin_va_arg(va, unsigned long)" data-ref="_M/va_arg">va_arg</span>(<a class="local col2 ref" href="#2va" title='va' data-ref="2va">va</a>, <em>unsigned</em> <em>long</em>);</td></tr>
+<tr><th id="16">16</th><td>    <a class="local col5 ref" href="#5arg4" title='arg4' data-ref="5arg4">arg4</a> = <span class="macro" title="__builtin_va_arg(va, unsigned long)" data-ref="_M/va_arg">va_arg</span>(<a class="local col2 ref" href="#2va" title='va' data-ref="2va">va</a>, <em>unsigned</em> <em>long</em>);</td></tr>
+<tr><th id="17">17</th><td>    <a class="local col6 ref" href="#6arg5" title='arg5' data-ref="6arg5">arg5</a> = <span class="macro" title="__builtin_va_arg(va, unsigned long)" data-ref="_M/va_arg">va_arg</span>(<a class="local col2 ref" href="#2va" title='va' data-ref="2va">va</a>, <em>unsigned</em> <em>long</em>);</td></tr>
+<tr><th id="18">18</th><td>    <span class="macro" title="__builtin_va_end(va)" data-ref="_M/va_end">va_end</span>(<a class="local col2 ref" href="#2va" title='va' data-ref="2va">va</a>);</td></tr>
+<tr><th id="19">19</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/unistd.h.html#syscall" title='syscall' data-ref="syscall">syscall</a>(<a class="macro" href="../../../bionic/libc/kernel/uapi/asm-x86/asm/unistd_64.h.html#334" title="250" data-ref="_M/__NR_keyctl">__NR_keyctl</a>, <a class="local col1 ref" href="#1cmd" title='cmd' data-ref="1cmd">cmd</a>, <a class="local col3 ref" href="#3arg2" title='arg2' data-ref="3arg2">arg2</a>, <a class="local col4 ref" href="#4arg3" title='arg3' data-ref="4arg3">arg3</a>, <a class="local col5 ref" href="#5arg4" title='arg4' data-ref="5arg4">arg4</a>, <a class="local col6 ref" href="#6arg5" title='arg5' data-ref="6arg5">arg5</a>);</td></tr>
+<tr><th id="20">20</th><td>}</td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><a class="typedef" href="key_control.h.html#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="decl def" id="add_key" title='add_key' data-ref="add_key">add_key</dfn>(<em>const</em> <em>char</em> *<dfn class="local col7 decl" id="7type" title='type' data-type='const char *' data-ref="7type">type</dfn>,</td></tr>
+<tr><th id="23">23</th><td>                     <em>const</em> <em>char</em> *<dfn class="local col8 decl" id="8description" title='description' data-type='const char *' data-ref="8description">description</dfn>,</td></tr>
+<tr><th id="24">24</th><td>                     <em>const</em> <em>void</em> *<dfn class="local col9 decl" id="9payload" title='payload' data-type='const void *' data-ref="9payload">payload</dfn>,</td></tr>
+<tr><th id="25">25</th><td>                     <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col0 decl" id="10plen" title='plen' data-type='size_t' data-ref="10plen">plen</dfn>,</td></tr>
+<tr><th id="26">26</th><td>                     <a class="typedef" href="key_control.h.html#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col1 decl" id="11ringid" title='ringid' data-type='key_serial_t' data-ref="11ringid">ringid</dfn>)</td></tr>
+<tr><th id="27">27</th><td>{</td></tr>
+<tr><th id="28">28</th><td>    <b>return</b> <a class="ref" href="../../../bionic/libc/include/unistd.h.html#syscall" title='syscall' data-ref="syscall">syscall</a>(<a class="macro" href="../../../bionic/libc/kernel/uapi/asm-x86/asm/unistd_64.h.html#331" title="248" data-ref="_M/__NR_add_key">__NR_add_key</a>, <a class="local col7 ref" href="#7type" title='type' data-ref="7type">type</a>, <a class="local col8 ref" href="#8description" title='description' data-ref="8description">description</a>, <a class="local col9 ref" href="#9payload" title='payload' data-ref="9payload">payload</a>, <a class="local col0 ref" href="#10plen" title='plen' data-ref="10plen">plen</a>, <a class="local col1 ref" href="#11ringid" title='ringid' data-ref="11ringid">ringid</a>);</td></tr>
+<tr><th id="29">29</th><td>}</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><em>long</em> <dfn class="decl def" id="keyctl_revoke" title='keyctl_revoke' data-ref="keyctl_revoke">keyctl_revoke</dfn>(<a class="typedef" href="key_control.h.html#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col2 decl" id="12id" title='id' data-type='key_serial_t' data-ref="12id">id</dfn>)</td></tr>
+<tr><th id="32">32</th><td>{</td></tr>
+<tr><th id="33">33</th><td>    <b>return</b> <a class="tu ref" href="#_ZL6keyctliz" title='keyctl' data-use='c' data-ref="_ZL6keyctliz">keyctl</a>(<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/keyctl.h.html#46" title="3" data-ref="_M/KEYCTL_REVOKE">KEYCTL_REVOKE</a>, <a class="local col2 ref" href="#12id" title='id' data-ref="12id">id</a>);</td></tr>
+<tr><th id="34">34</th><td>}</td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><em>long</em> <dfn class="decl def" id="keyctl_setperm" title='keyctl_setperm' data-ref="keyctl_setperm">keyctl_setperm</dfn>(<a class="typedef" href="key_control.h.html#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col3 decl" id="13id" title='id' data-type='key_serial_t' data-ref="13id">id</dfn>, <em>int</em> <dfn class="local col4 decl" id="14permissions" title='permissions' data-type='int' data-ref="14permissions">permissions</dfn>)</td></tr>
+<tr><th id="37">37</th><td>{</td></tr>
+<tr><th id="38">38</th><td>    <b>return</b> <a class="tu ref" href="#_ZL6keyctliz" title='keyctl' data-use='c' data-ref="_ZL6keyctliz">keyctl</a>(<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/keyctl.h.html#49" title="5" data-ref="_M/KEYCTL_SETPERM">KEYCTL_SETPERM</a>, <a class="local col3 ref" href="#13id" title='id' data-ref="13id">id</a>, <a class="local col4 ref" href="#14permissions" title='permissions' data-ref="14permissions">permissions</a>);</td></tr>
+<tr><th id="39">39</th><td>}</td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><em>long</em> <dfn class="decl def" id="keyctl_search" title='keyctl_search' data-ref="keyctl_search">keyctl_search</dfn>(<a class="typedef" href="key_control.h.html#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col5 decl" id="15ringid" title='ringid' data-type='key_serial_t' data-ref="15ringid">ringid</dfn>, <em>const</em> <em>char</em> *<dfn class="local col6 decl" id="16type" title='type' data-type='const char *' data-ref="16type">type</dfn>,</td></tr>
+<tr><th id="42">42</th><td>                   <em>const</em> <em>char</em> *<dfn class="local col7 decl" id="17description" title='description' data-type='const char *' data-ref="17description">description</dfn>, <a class="typedef" href="key_control.h.html#key_serial_t" title='key_serial_t' data-type='int32_t' data-ref="key_serial_t">key_serial_t</a> <dfn class="local col8 decl" id="18destringid" title='destringid' data-type='key_serial_t' data-ref="18destringid">destringid</dfn>)</td></tr>
+<tr><th id="43">43</th><td>{</td></tr>
+<tr><th id="44">44</th><td>    <b>return</b> <a class="tu ref" href="#_ZL6keyctliz" title='keyctl' data-use='c' data-ref="_ZL6keyctliz">keyctl</a>(<a class="macro" href="../../../bionic/libc/kernel/uapi/linux/keyctl.h.html#55" title="10" data-ref="_M/KEYCTL_SEARCH">KEYCTL_SEARCH</a>, <a class="local col5 ref" href="#15ringid" title='ringid' data-ref="15ringid">ringid</a>, <a class="local col6 ref" href="#16type" title='type' data-ref="16type">type</a>, <a class="local col7 ref" href="#17description" title='description' data-ref="17description">description</a>, <a class="local col8 ref" href="#18destringid" title='destringid' data-ref="18destringid">destringid</a>);</td></tr>
+<tr><th id="45">45</th><td>}</td></tr>
+<tr><th id="46">46</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

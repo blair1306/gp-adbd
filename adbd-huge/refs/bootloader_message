@@ -1,0 +1,38 @@
+<def f='codebrowser/bootable/recovery/bootloader.h' l='50' ll='63'/>
+<size>1088</size>
+<doc f='codebrowser/bootable/recovery/bootloader.h' l='20'>/* Bootloader Message
+ *
+ * This structure describes the content of a block in flash
+ * that is used for recovery and the bootloader to talk to
+ * each other.
+ *
+ * The command field is updated by linux when it wants to
+ * reboot into recovery or to update radio or bootloader firmware.
+ * It is also updated by the bootloader when firmware update
+ * is complete (to boot into recovery for any final cleanup)
+ *
+ * The status field is written by the bootloader after the
+ * completion of an &quot;update-radio&quot; or &quot;update-hboot&quot; command.
+ *
+ * The recovery field is only written by linux and used
+ * for the system to send a message to recovery or the
+ * other way around.
+ *
+ * The stage field is written by packages which restart themselves
+ * multiple times, so that the UI can reflect which invocation of the
+ * package it is.  If the value is of the format &quot;#/#&quot; (eg, &quot;1/3&quot;),
+ * the UI will add a simple indicator of that status.
+ *
+ * The slot_suffix field is used for A/B implementations where the
+ * bootloader does not set the androidboot.ro.boot.slot_suffix kernel
+ * commandline parameter. This is used by fs_mgr to mount /system and
+ * other partitions with the slotselect flag set in fstab. A/B
+ * implementations are free to use all 32 bytes and may store private
+ * data past the first NUL-byte in this field.
+ */</doc>
+<mbr r='bootloader_message::command' o='0' t='char [32]'/>
+<mbr r='bootloader_message::status' o='256' t='char [32]'/>
+<mbr r='bootloader_message::recovery' o='512' t='char [768]'/>
+<mbr r='bootloader_message::stage' o='6656' t='char [32]'/>
+<mbr r='bootloader_message::slot_suffix' o='6912' t='char [32]'/>
+<mbr r='bootloader_message::reserved' o='7168' t='char [192]'/>

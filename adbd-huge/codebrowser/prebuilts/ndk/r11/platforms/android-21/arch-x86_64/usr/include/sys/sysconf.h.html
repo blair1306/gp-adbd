@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>sysconf.h source code [codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/sysconf.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/sys/sysconf.h'; var root_path = '../../../../../../../../../..'; var data_path = '../../../../../../../../../../../data';</script>
+<script src='../../../../../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../../../../../..'>codebrowser</a>/<a href='../../../../../../../..'>prebuilts</a>/<a href='../../../../../../..'>ndk</a>/<a href='../../../../../..'>r11</a>/<a href='../../../../..'>platforms</a>/<a href='../../../..'>android-21</a>/<a href='../../..'>arch-x86_64</a>/<a href='../..'>usr</a>/<a href='..'>include</a>/<a href='./'>sys</a>/<a href='sysconf.h.html'>sysconf.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><u>#<span data-ppcond="28">ifndef</span> <span class="macro" data-ref="_M/_SYS_SYSCONF_H_">_SYS_SYSCONF_H_</span></u></td></tr>
+<tr><th id="29">29</th><td><u>#define <dfn class="macro" id="_M/_SYS_SYSCONF_H_" data-ref="_M/_SYS_SYSCONF_H_">_SYS_SYSCONF_H_</dfn></u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td></td></tr>
+<tr><th id="33">33</th><td><a class="macro" href="cdefs.h.html#84" title="" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td><i>/* as listed by Posix sysconf() description */</i></td></tr>
+<tr><th id="36">36</th><td><i>/* most of these will return -1 and ENOSYS  */</i></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><u>#define <dfn class="macro" id="_M/_SC_ARG_MAX" data-ref="_M/_SC_ARG_MAX">_SC_ARG_MAX</dfn>             0x0000</u></td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/_SC_BC_BASE_MAX" data-ref="_M/_SC_BC_BASE_MAX">_SC_BC_BASE_MAX</dfn>         0x0001</u></td></tr>
+<tr><th id="40">40</th><td><u>#define <dfn class="macro" id="_M/_SC_BC_DIM_MAX" data-ref="_M/_SC_BC_DIM_MAX">_SC_BC_DIM_MAX</dfn>          0x0002</u></td></tr>
+<tr><th id="41">41</th><td><u>#define <dfn class="macro" id="_M/_SC_BC_SCALE_MAX" data-ref="_M/_SC_BC_SCALE_MAX">_SC_BC_SCALE_MAX</dfn>        0x0003</u></td></tr>
+<tr><th id="42">42</th><td><u>#define <dfn class="macro" id="_M/_SC_BC_STRING_MAX" data-ref="_M/_SC_BC_STRING_MAX">_SC_BC_STRING_MAX</dfn>       0x0004</u></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/_SC_CHILD_MAX" data-ref="_M/_SC_CHILD_MAX">_SC_CHILD_MAX</dfn>           0x0005</u></td></tr>
+<tr><th id="44">44</th><td><u>#define <dfn class="macro" id="_M/_SC_CLK_TCK" data-ref="_M/_SC_CLK_TCK">_SC_CLK_TCK</dfn>             0x0006</u></td></tr>
+<tr><th id="45">45</th><td><u>#define <dfn class="macro" id="_M/_SC_COLL_WEIGHTS_MAX" data-ref="_M/_SC_COLL_WEIGHTS_MAX">_SC_COLL_WEIGHTS_MAX</dfn>    0x0007</u></td></tr>
+<tr><th id="46">46</th><td><u>#define <dfn class="macro" id="_M/_SC_EXPR_NEST_MAX" data-ref="_M/_SC_EXPR_NEST_MAX">_SC_EXPR_NEST_MAX</dfn>       0x0008</u></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/_SC_LINE_MAX" data-ref="_M/_SC_LINE_MAX">_SC_LINE_MAX</dfn>            0x0009</u></td></tr>
+<tr><th id="48">48</th><td><u>#define <dfn class="macro" id="_M/_SC_NGROUPS_MAX" data-ref="_M/_SC_NGROUPS_MAX">_SC_NGROUPS_MAX</dfn>         0x000a</u></td></tr>
+<tr><th id="49">49</th><td><u>#define <dfn class="macro" id="_M/_SC_OPEN_MAX" data-ref="_M/_SC_OPEN_MAX">_SC_OPEN_MAX</dfn>            0x000b</u></td></tr>
+<tr><th id="50">50</th><td><u>#define <dfn class="macro" id="_M/_SC_PASS_MAX" data-ref="_M/_SC_PASS_MAX">_SC_PASS_MAX</dfn>            0x000c</u></td></tr>
+<tr><th id="51">51</th><td><u>#define <dfn class="macro" id="_M/_SC_2_C_BIND" data-ref="_M/_SC_2_C_BIND">_SC_2_C_BIND</dfn>            0x000d</u></td></tr>
+<tr><th id="52">52</th><td><u>#define <dfn class="macro" id="_M/_SC_2_C_DEV" data-ref="_M/_SC_2_C_DEV">_SC_2_C_DEV</dfn>             0x000e</u></td></tr>
+<tr><th id="53">53</th><td><u>#define <dfn class="macro" id="_M/_SC_2_C_VERSION" data-ref="_M/_SC_2_C_VERSION">_SC_2_C_VERSION</dfn>         0x000f</u></td></tr>
+<tr><th id="54">54</th><td><u>#define <dfn class="macro" id="_M/_SC_2_CHAR_TERM" data-ref="_M/_SC_2_CHAR_TERM">_SC_2_CHAR_TERM</dfn>         0x0010</u></td></tr>
+<tr><th id="55">55</th><td><u>#define <dfn class="macro" id="_M/_SC_2_FORT_DEV" data-ref="_M/_SC_2_FORT_DEV">_SC_2_FORT_DEV</dfn>          0x0011</u></td></tr>
+<tr><th id="56">56</th><td><u>#define <dfn class="macro" id="_M/_SC_2_FORT_RUN" data-ref="_M/_SC_2_FORT_RUN">_SC_2_FORT_RUN</dfn>          0x0012</u></td></tr>
+<tr><th id="57">57</th><td><u>#define <dfn class="macro" id="_M/_SC_2_LOCALEDEF" data-ref="_M/_SC_2_LOCALEDEF">_SC_2_LOCALEDEF</dfn>         0x0013</u></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/_SC_2_SW_DEV" data-ref="_M/_SC_2_SW_DEV">_SC_2_SW_DEV</dfn>            0x0014</u></td></tr>
+<tr><th id="59">59</th><td><u>#define <dfn class="macro" id="_M/_SC_2_UPE" data-ref="_M/_SC_2_UPE">_SC_2_UPE</dfn>               0x0015</u></td></tr>
+<tr><th id="60">60</th><td><u>#define <dfn class="macro" id="_M/_SC_2_VERSION" data-ref="_M/_SC_2_VERSION">_SC_2_VERSION</dfn>           0x0016</u></td></tr>
+<tr><th id="61">61</th><td><u>#define <dfn class="macro" id="_M/_SC_JOB_CONTROL" data-ref="_M/_SC_JOB_CONTROL">_SC_JOB_CONTROL</dfn>         0x0017</u></td></tr>
+<tr><th id="62">62</th><td><u>#define <dfn class="macro" id="_M/_SC_SAVED_IDS" data-ref="_M/_SC_SAVED_IDS">_SC_SAVED_IDS</dfn>           0x0018</u></td></tr>
+<tr><th id="63">63</th><td><u>#define <dfn class="macro" id="_M/_SC_VERSION" data-ref="_M/_SC_VERSION">_SC_VERSION</dfn>             0x0019</u></td></tr>
+<tr><th id="64">64</th><td><u>#define <dfn class="macro" id="_M/_SC_RE_DUP_MAX" data-ref="_M/_SC_RE_DUP_MAX">_SC_RE_DUP_MAX</dfn>          0x001a</u></td></tr>
+<tr><th id="65">65</th><td><u>#define <dfn class="macro" id="_M/_SC_STREAM_MAX" data-ref="_M/_SC_STREAM_MAX">_SC_STREAM_MAX</dfn>          0x001b</u></td></tr>
+<tr><th id="66">66</th><td><u>#define <dfn class="macro" id="_M/_SC_TZNAME_MAX" data-ref="_M/_SC_TZNAME_MAX">_SC_TZNAME_MAX</dfn>          0x001c</u></td></tr>
+<tr><th id="67">67</th><td><u>#define <dfn class="macro" id="_M/_SC_XOPEN_CRYPT" data-ref="_M/_SC_XOPEN_CRYPT">_SC_XOPEN_CRYPT</dfn>         0x001d</u></td></tr>
+<tr><th id="68">68</th><td><u>#define <dfn class="macro" id="_M/_SC_XOPEN_ENH_I18N" data-ref="_M/_SC_XOPEN_ENH_I18N">_SC_XOPEN_ENH_I18N</dfn>      0x001e</u></td></tr>
+<tr><th id="69">69</th><td><u>#define <dfn class="macro" id="_M/_SC_XOPEN_SHM" data-ref="_M/_SC_XOPEN_SHM">_SC_XOPEN_SHM</dfn>           0x001f</u></td></tr>
+<tr><th id="70">70</th><td><u>#define <dfn class="macro" id="_M/_SC_XOPEN_VERSION" data-ref="_M/_SC_XOPEN_VERSION">_SC_XOPEN_VERSION</dfn>       0x0020</u></td></tr>
+<tr><th id="71">71</th><td><u>#define <dfn class="macro" id="_M/_SC_XOPEN_XCU_VERSION" data-ref="_M/_SC_XOPEN_XCU_VERSION">_SC_XOPEN_XCU_VERSION</dfn>   0x0021</u></td></tr>
+<tr><th id="72">72</th><td><u>#define <dfn class="macro" id="_M/_SC_XOPEN_REALTIME" data-ref="_M/_SC_XOPEN_REALTIME">_SC_XOPEN_REALTIME</dfn>      0x0022</u></td></tr>
+<tr><th id="73">73</th><td><u>#define <dfn class="macro" id="_M/_SC_XOPEN_REALTIME_THREADS" data-ref="_M/_SC_XOPEN_REALTIME_THREADS">_SC_XOPEN_REALTIME_THREADS</dfn>  0x0023</u></td></tr>
+<tr><th id="74">74</th><td><u>#define <dfn class="macro" id="_M/_SC_XOPEN_LEGACY" data-ref="_M/_SC_XOPEN_LEGACY">_SC_XOPEN_LEGACY</dfn>        0x0024</u></td></tr>
+<tr><th id="75">75</th><td><u>#define <dfn class="macro" id="_M/_SC_ATEXIT_MAX" data-ref="_M/_SC_ATEXIT_MAX">_SC_ATEXIT_MAX</dfn>          0x0025</u></td></tr>
+<tr><th id="76">76</th><td><u>#define <dfn class="macro" id="_M/_SC_IOV_MAX" data-ref="_M/_SC_IOV_MAX">_SC_IOV_MAX</dfn>             0x0026</u></td></tr>
+<tr><th id="77">77</th><td><u>#define <dfn class="macro" id="_M/_SC_PAGESIZE" data-ref="_M/_SC_PAGESIZE">_SC_PAGESIZE</dfn>            0x0027</u></td></tr>
+<tr><th id="78">78</th><td><u>#define <dfn class="macro" id="_M/_SC_PAGE_SIZE" data-ref="_M/_SC_PAGE_SIZE">_SC_PAGE_SIZE</dfn>           0x0028</u></td></tr>
+<tr><th id="79">79</th><td><u>#define <dfn class="macro" id="_M/_SC_XOPEN_UNIX" data-ref="_M/_SC_XOPEN_UNIX">_SC_XOPEN_UNIX</dfn>          0x0029</u></td></tr>
+<tr><th id="80">80</th><td><u>#define <dfn class="macro" id="_M/_SC_XBS5_ILP32_OFF32" data-ref="_M/_SC_XBS5_ILP32_OFF32">_SC_XBS5_ILP32_OFF32</dfn>    0x002a</u></td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/_SC_XBS5_ILP32_OFFBIG" data-ref="_M/_SC_XBS5_ILP32_OFFBIG">_SC_XBS5_ILP32_OFFBIG</dfn>   0x002b</u></td></tr>
+<tr><th id="82">82</th><td><u>#define <dfn class="macro" id="_M/_SC_XBS5_LP64_OFF64" data-ref="_M/_SC_XBS5_LP64_OFF64">_SC_XBS5_LP64_OFF64</dfn>     0x002c</u></td></tr>
+<tr><th id="83">83</th><td><u>#define <dfn class="macro" id="_M/_SC_XBS5_LPBIG_OFFBIG" data-ref="_M/_SC_XBS5_LPBIG_OFFBIG">_SC_XBS5_LPBIG_OFFBIG</dfn>   0x002d</u></td></tr>
+<tr><th id="84">84</th><td><u>#define <dfn class="macro" id="_M/_SC_AIO_LISTIO_MAX" data-ref="_M/_SC_AIO_LISTIO_MAX">_SC_AIO_LISTIO_MAX</dfn>      0x002e</u></td></tr>
+<tr><th id="85">85</th><td><u>#define <dfn class="macro" id="_M/_SC_AIO_MAX" data-ref="_M/_SC_AIO_MAX">_SC_AIO_MAX</dfn>             0x002f</u></td></tr>
+<tr><th id="86">86</th><td><u>#define <dfn class="macro" id="_M/_SC_AIO_PRIO_DELTA_MAX" data-ref="_M/_SC_AIO_PRIO_DELTA_MAX">_SC_AIO_PRIO_DELTA_MAX</dfn>  0x0030</u></td></tr>
+<tr><th id="87">87</th><td><u>#define <dfn class="macro" id="_M/_SC_DELAYTIMER_MAX" data-ref="_M/_SC_DELAYTIMER_MAX">_SC_DELAYTIMER_MAX</dfn>      0x0031</u></td></tr>
+<tr><th id="88">88</th><td><u>#define <dfn class="macro" id="_M/_SC_MQ_OPEN_MAX" data-ref="_M/_SC_MQ_OPEN_MAX">_SC_MQ_OPEN_MAX</dfn>         0x0032</u></td></tr>
+<tr><th id="89">89</th><td><u>#define <dfn class="macro" id="_M/_SC_MQ_PRIO_MAX" data-ref="_M/_SC_MQ_PRIO_MAX">_SC_MQ_PRIO_MAX</dfn>         0x0033</u></td></tr>
+<tr><th id="90">90</th><td><u>#define <dfn class="macro" id="_M/_SC_RTSIG_MAX" data-ref="_M/_SC_RTSIG_MAX">_SC_RTSIG_MAX</dfn>           0x0034</u></td></tr>
+<tr><th id="91">91</th><td><u>#define <dfn class="macro" id="_M/_SC_SEM_NSEMS_MAX" data-ref="_M/_SC_SEM_NSEMS_MAX">_SC_SEM_NSEMS_MAX</dfn>       0x0035</u></td></tr>
+<tr><th id="92">92</th><td><u>#define <dfn class="macro" id="_M/_SC_SEM_VALUE_MAX" data-ref="_M/_SC_SEM_VALUE_MAX">_SC_SEM_VALUE_MAX</dfn>       0x0036</u></td></tr>
+<tr><th id="93">93</th><td><u>#define <dfn class="macro" id="_M/_SC_SIGQUEUE_MAX" data-ref="_M/_SC_SIGQUEUE_MAX">_SC_SIGQUEUE_MAX</dfn>        0x0037</u></td></tr>
+<tr><th id="94">94</th><td><u>#define <dfn class="macro" id="_M/_SC_TIMER_MAX" data-ref="_M/_SC_TIMER_MAX">_SC_TIMER_MAX</dfn>           0x0038</u></td></tr>
+<tr><th id="95">95</th><td><u>#define <dfn class="macro" id="_M/_SC_ASYNCHRONOUS_IO" data-ref="_M/_SC_ASYNCHRONOUS_IO">_SC_ASYNCHRONOUS_IO</dfn>     0x0039</u></td></tr>
+<tr><th id="96">96</th><td><u>#define <dfn class="macro" id="_M/_SC_FSYNC" data-ref="_M/_SC_FSYNC">_SC_FSYNC</dfn>               0x003a</u></td></tr>
+<tr><th id="97">97</th><td><u>#define <dfn class="macro" id="_M/_SC_MAPPED_FILES" data-ref="_M/_SC_MAPPED_FILES">_SC_MAPPED_FILES</dfn>        0x003b</u></td></tr>
+<tr><th id="98">98</th><td><u>#define <dfn class="macro" id="_M/_SC_MEMLOCK" data-ref="_M/_SC_MEMLOCK">_SC_MEMLOCK</dfn>             0x003c</u></td></tr>
+<tr><th id="99">99</th><td><u>#define <dfn class="macro" id="_M/_SC_MEMLOCK_RANGE" data-ref="_M/_SC_MEMLOCK_RANGE">_SC_MEMLOCK_RANGE</dfn>       0x003d</u></td></tr>
+<tr><th id="100">100</th><td><u>#define <dfn class="macro" id="_M/_SC_MEMORY_PROTECTION" data-ref="_M/_SC_MEMORY_PROTECTION">_SC_MEMORY_PROTECTION</dfn>   0x003e</u></td></tr>
+<tr><th id="101">101</th><td><u>#define <dfn class="macro" id="_M/_SC_MESSAGE_PASSING" data-ref="_M/_SC_MESSAGE_PASSING">_SC_MESSAGE_PASSING</dfn>     0x003f</u></td></tr>
+<tr><th id="102">102</th><td><u>#define <dfn class="macro" id="_M/_SC_PRIORITIZED_IO" data-ref="_M/_SC_PRIORITIZED_IO">_SC_PRIORITIZED_IO</dfn>      0x0040</u></td></tr>
+<tr><th id="103">103</th><td><u>#define <dfn class="macro" id="_M/_SC_PRIORITY_SCHEDULING" data-ref="_M/_SC_PRIORITY_SCHEDULING">_SC_PRIORITY_SCHEDULING</dfn> 0x0041</u></td></tr>
+<tr><th id="104">104</th><td><u>#define <dfn class="macro" id="_M/_SC_REALTIME_SIGNALS" data-ref="_M/_SC_REALTIME_SIGNALS">_SC_REALTIME_SIGNALS</dfn>    0x0042</u></td></tr>
+<tr><th id="105">105</th><td><u>#define <dfn class="macro" id="_M/_SC_SEMAPHORES" data-ref="_M/_SC_SEMAPHORES">_SC_SEMAPHORES</dfn>          0x0043</u></td></tr>
+<tr><th id="106">106</th><td><u>#define <dfn class="macro" id="_M/_SC_SHARED_MEMORY_OBJECTS" data-ref="_M/_SC_SHARED_MEMORY_OBJECTS">_SC_SHARED_MEMORY_OBJECTS</dfn>  0x0044</u></td></tr>
+<tr><th id="107">107</th><td><u>#define <dfn class="macro" id="_M/_SC_SYNCHRONIZED_IO" data-ref="_M/_SC_SYNCHRONIZED_IO">_SC_SYNCHRONIZED_IO</dfn>     0x0045</u></td></tr>
+<tr><th id="108">108</th><td><u>#define <dfn class="macro" id="_M/_SC_TIMERS" data-ref="_M/_SC_TIMERS">_SC_TIMERS</dfn>              0x0046</u></td></tr>
+<tr><th id="109">109</th><td><u>#define <dfn class="macro" id="_M/_SC_GETGR_R_SIZE_MAX" data-ref="_M/_SC_GETGR_R_SIZE_MAX">_SC_GETGR_R_SIZE_MAX</dfn>    0x0047</u></td></tr>
+<tr><th id="110">110</th><td><u>#define <dfn class="macro" id="_M/_SC_GETPW_R_SIZE_MAX" data-ref="_M/_SC_GETPW_R_SIZE_MAX">_SC_GETPW_R_SIZE_MAX</dfn>    0x0048</u></td></tr>
+<tr><th id="111">111</th><td><u>#define <dfn class="macro" id="_M/_SC_LOGIN_NAME_MAX" data-ref="_M/_SC_LOGIN_NAME_MAX">_SC_LOGIN_NAME_MAX</dfn>      0x0049</u></td></tr>
+<tr><th id="112">112</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_DESTRUCTOR_ITERATIONS" data-ref="_M/_SC_THREAD_DESTRUCTOR_ITERATIONS">_SC_THREAD_DESTRUCTOR_ITERATIONS</dfn>  0x004a</u></td></tr>
+<tr><th id="113">113</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_KEYS_MAX" data-ref="_M/_SC_THREAD_KEYS_MAX">_SC_THREAD_KEYS_MAX</dfn>     0x004b</u></td></tr>
+<tr><th id="114">114</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_STACK_MIN" data-ref="_M/_SC_THREAD_STACK_MIN">_SC_THREAD_STACK_MIN</dfn>    0x004c</u></td></tr>
+<tr><th id="115">115</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_THREADS_MAX" data-ref="_M/_SC_THREAD_THREADS_MAX">_SC_THREAD_THREADS_MAX</dfn>  0x004d</u></td></tr>
+<tr><th id="116">116</th><td><u>#define <dfn class="macro" id="_M/_SC_TTY_NAME_MAX" data-ref="_M/_SC_TTY_NAME_MAX">_SC_TTY_NAME_MAX</dfn>        0x004e</u></td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><u>#define <dfn class="macro" id="_M/_SC_THREADS" data-ref="_M/_SC_THREADS">_SC_THREADS</dfn>                     0x004f</u></td></tr>
+<tr><th id="119">119</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_ATTR_STACKADDR" data-ref="_M/_SC_THREAD_ATTR_STACKADDR">_SC_THREAD_ATTR_STACKADDR</dfn>       0x0050</u></td></tr>
+<tr><th id="120">120</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_ATTR_STACKSIZE" data-ref="_M/_SC_THREAD_ATTR_STACKSIZE">_SC_THREAD_ATTR_STACKSIZE</dfn>       0x0051</u></td></tr>
+<tr><th id="121">121</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_PRIORITY_SCHEDULING" data-ref="_M/_SC_THREAD_PRIORITY_SCHEDULING">_SC_THREAD_PRIORITY_SCHEDULING</dfn>  0x0052</u></td></tr>
+<tr><th id="122">122</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_PRIO_INHERIT" data-ref="_M/_SC_THREAD_PRIO_INHERIT">_SC_THREAD_PRIO_INHERIT</dfn>         0x0053</u></td></tr>
+<tr><th id="123">123</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_PRIO_PROTECT" data-ref="_M/_SC_THREAD_PRIO_PROTECT">_SC_THREAD_PRIO_PROTECT</dfn>         0x0054</u></td></tr>
+<tr><th id="124">124</th><td><u>#define <dfn class="macro" id="_M/_SC_THREAD_SAFE_FUNCTIONS" data-ref="_M/_SC_THREAD_SAFE_FUNCTIONS">_SC_THREAD_SAFE_FUNCTIONS</dfn>       0x0055</u></td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td><u>#define <dfn class="macro" id="_M/_SC_NPROCESSORS_CONF" data-ref="_M/_SC_NPROCESSORS_CONF">_SC_NPROCESSORS_CONF</dfn>            0x0060</u></td></tr>
+<tr><th id="127">127</th><td><u>#define <dfn class="macro" id="_M/_SC_NPROCESSORS_ONLN" data-ref="_M/_SC_NPROCESSORS_ONLN">_SC_NPROCESSORS_ONLN</dfn>            0x0061</u></td></tr>
+<tr><th id="128">128</th><td><u>#define <dfn class="macro" id="_M/_SC_PHYS_PAGES" data-ref="_M/_SC_PHYS_PAGES">_SC_PHYS_PAGES</dfn>                  0x0062</u></td></tr>
+<tr><th id="129">129</th><td><u>#define <dfn class="macro" id="_M/_SC_AVPHYS_PAGES" data-ref="_M/_SC_AVPHYS_PAGES">_SC_AVPHYS_PAGES</dfn>                0x0063</u></td></tr>
+<tr><th id="130">130</th><td><u>#define <dfn class="macro" id="_M/_SC_MONOTONIC_CLOCK" data-ref="_M/_SC_MONOTONIC_CLOCK">_SC_MONOTONIC_CLOCK</dfn>             0x0064</u></td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td><em>long</em> <dfn class="decl" id="sysconf" title='sysconf' data-ref="sysconf">sysconf</dfn>(<em>int</em> <dfn class="local col4 decl" id="14name" title='name' data-type='int' data-ref="14name">name</dfn>);</td></tr>
+<tr><th id="133">133</th><td></td></tr>
+<tr><th id="134">134</th><td><a class="macro" href="cdefs.h.html#85" title="" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td><u>#<span data-ppcond="28">endif</span> /* _SYS_SYSCONF_H_ */</u></td></tr>
+<tr><th id="137">137</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../../../../../../../../external/boringssl/src/crypto/bio/connect.c.html'>codebrowser/external/boringssl/src/crypto/bio/connect.c</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

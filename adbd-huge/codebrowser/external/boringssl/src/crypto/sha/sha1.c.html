@@ -1,0 +1,355 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>sha1.c source code [codebrowser/external/boringssl/src/crypto/sha/sha1.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/sha/sha1.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>sha</a>/<a href='sha1.c.html'>sha1.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.] */</i></td></tr>
+<tr><th id="56">56</th><td></td></tr>
+<tr><th id="57">57</th><td><u>#include <a href="../../include/openssl/sha.h.html">&lt;openssl/sha.h&gt;</a></u></td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td><u>#include <a href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="60">60</th><td></td></tr>
+<tr><th id="61">61</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><u>#<span data-ppcond="64">if</span> !defined(<span class="macro" data-ref="_M/OPENSSL_NO_ASM">OPENSSL_NO_ASM</span>) &amp;&amp;                         \</u></td></tr>
+<tr><th id="65">65</th><td><u>    (defined(<span class="macro" data-ref="_M/OPENSSL_X86">OPENSSL_X86</span>) || defined(<a class="macro" href="../../include/openssl/base.h.html#72" data-ref="_M/OPENSSL_X86_64">OPENSSL_X86_64</a>) || \</u></td></tr>
+<tr><th id="66">66</th><td><u>     defined(<span class="macro" data-ref="_M/OPENSSL_ARM">OPENSSL_ARM</span>) || defined(<span class="macro" data-ref="_M/OPENSSL_AARCH64">OPENSSL_AARCH64</span>))</u></td></tr>
+<tr><th id="67">67</th><td><u>#define <dfn class="macro" id="_M/SHA1_ASM" data-ref="_M/SHA1_ASM">SHA1_ASM</dfn></u></td></tr>
+<tr><th id="68">68</th><td><u>#<span data-ppcond="64">endif</span></u></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><em>int</em> <dfn class="decl def" id="SHA1_Init" title='SHA1_Init' data-ref="SHA1_Init">SHA1_Init</dfn>(<a class="typedef" href="../../include/openssl/base.h.html#SHA_CTX" title='SHA_CTX' data-type='struct sha_state_st' data-ref="SHA_CTX">SHA_CTX</a> *<dfn class="local col1 decl" id="1sha" title='sha' data-type='SHA_CTX *' data-ref="1sha">sha</dfn>) {</td></tr>
+<tr><th id="71">71</th><td>  <a class="ref" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col1 ref" href="#1sha" title='sha' data-ref="1sha">sha</a>, <var>0</var>, <b>sizeof</b>(<a class="typedef" href="../../include/openssl/base.h.html#SHA_CTX" title='SHA_CTX' data-type='struct sha_state_st' data-ref="SHA_CTX">SHA_CTX</a>));</td></tr>
+<tr><th id="72">72</th><td>  <a class="local col1 ref" href="#1sha" title='sha' data-ref="1sha">sha</a>-&gt;<a class="ref" href="../../include/openssl/sha.h.html#sha_state_st::(anonymous)::h" title='sha_state_st::(anonymous union)::h' data-ref="sha_state_st::(anonymous)::h">h</a>[<var>0</var>] = <var>0x67452301UL</var>;</td></tr>
+<tr><th id="73">73</th><td>  <a class="local col1 ref" href="#1sha" title='sha' data-ref="1sha">sha</a>-&gt;<a class="ref" href="../../include/openssl/sha.h.html#sha_state_st::(anonymous)::h" title='sha_state_st::(anonymous union)::h' data-ref="sha_state_st::(anonymous)::h">h</a>[<var>1</var>] = <var>0xefcdab89UL</var>;</td></tr>
+<tr><th id="74">74</th><td>  <a class="local col1 ref" href="#1sha" title='sha' data-ref="1sha">sha</a>-&gt;<a class="ref" href="../../include/openssl/sha.h.html#sha_state_st::(anonymous)::h" title='sha_state_st::(anonymous union)::h' data-ref="sha_state_st::(anonymous)::h">h</a>[<var>2</var>] = <var>0x98badcfeUL</var>;</td></tr>
+<tr><th id="75">75</th><td>  <a class="local col1 ref" href="#1sha" title='sha' data-ref="1sha">sha</a>-&gt;<a class="ref" href="../../include/openssl/sha.h.html#sha_state_st::(anonymous)::h" title='sha_state_st::(anonymous union)::h' data-ref="sha_state_st::(anonymous)::h">h</a>[<var>3</var>] = <var>0x10325476UL</var>;</td></tr>
+<tr><th id="76">76</th><td>  <a class="local col1 ref" href="#1sha" title='sha' data-ref="1sha">sha</a>-&gt;<a class="ref" href="../../include/openssl/sha.h.html#sha_state_st::(anonymous)::h" title='sha_state_st::(anonymous union)::h' data-ref="sha_state_st::(anonymous)::h">h</a>[<var>4</var>] = <var>0xc3d2e1f0UL</var>;</td></tr>
+<tr><th id="77">77</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="78">78</th><td>}</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="decl def" id="SHA1" title='SHA1' data-ref="SHA1">SHA1</dfn>(<em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col2 decl" id="2data" title='data' data-type='const uint8_t *' data-ref="2data">data</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col3 decl" id="3len" title='len' data-type='size_t' data-ref="3len">len</dfn>, <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col4 decl" id="4out" title='out' data-type='uint8_t *' data-ref="4out">out</dfn>) {</td></tr>
+<tr><th id="81">81</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#SHA_CTX" title='SHA_CTX' data-type='struct sha_state_st' data-ref="SHA_CTX">SHA_CTX</a> <dfn class="local col5 decl" id="5ctx" title='ctx' data-type='SHA_CTX' data-ref="5ctx">ctx</dfn>;</td></tr>
+<tr><th id="82">82</th><td>  <em>static</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> <dfn class="local col6 decl" id="6buf" title='buf' data-type='uint8_t [20]' data-ref="6buf">buf</dfn>[<a class="macro" href="../../include/openssl/sha.h.html#74" title="20" data-ref="_M/SHA_DIGEST_LENGTH">SHA_DIGEST_LENGTH</a>];</td></tr>
+<tr><th id="83">83</th><td></td></tr>
+<tr><th id="84">84</th><td>  <i>/* TODO(fork): remove this static buffer. */</i></td></tr>
+<tr><th id="85">85</th><td>  <b>if</b> (<a class="local col4 ref" href="#4out" title='out' data-ref="4out">out</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="86">86</th><td>    <a class="local col4 ref" href="#4out" title='out' data-ref="4out">out</a> = <a class="local col6 ref" href="#6buf" title='buf' data-ref="6buf">buf</a>;</td></tr>
+<tr><th id="87">87</th><td>  }</td></tr>
+<tr><th id="88">88</th><td>  <b>if</b> (!<a class="ref" href="#SHA1_Init" title='SHA1_Init' data-ref="SHA1_Init">SHA1_Init</a>(&amp;<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>)) {</td></tr>
+<tr><th id="89">89</th><td>    <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="90">90</th><td>  }</td></tr>
+<tr><th id="91">91</th><td>  <a class="ref" href="../../include/openssl/sha.h.html#SHA1_Update" title='SHA1_Update' data-ref="SHA1_Update">SHA1_Update</a>(&amp;<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>, <a class="local col2 ref" href="#2data" title='data' data-ref="2data">data</a>, <a class="local col3 ref" href="#3len" title='len' data-ref="3len">len</a>);</td></tr>
+<tr><th id="92">92</th><td>  <a class="ref" href="../../include/openssl/sha.h.html#SHA1_Final" title='SHA1_Final' data-ref="SHA1_Final">SHA1_Final</a>(<a class="local col4 ref" href="#4out" title='out' data-ref="4out">out</a>, &amp;<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>);</td></tr>
+<tr><th id="93">93</th><td>  <a class="ref" href="../../include/openssl/mem.h.html#OPENSSL_cleanse" title='OPENSSL_cleanse' data-ref="OPENSSL_cleanse">OPENSSL_cleanse</a>(&amp;<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>, <b>sizeof</b>(<a class="local col5 ref" href="#5ctx" title='ctx' data-ref="5ctx">ctx</a>));</td></tr>
+<tr><th id="94">94</th><td>  <b>return</b> <a class="local col4 ref" href="#4out" title='out' data-ref="4out">out</a>;</td></tr>
+<tr><th id="95">95</th><td>}</td></tr>
+<tr><th id="96">96</th><td></td></tr>
+<tr><th id="97">97</th><td><u>#define <dfn class="macro" id="_M/DATA_ORDER_IS_BIG_ENDIAN" data-ref="_M/DATA_ORDER_IS_BIG_ENDIAN">DATA_ORDER_IS_BIG_ENDIAN</dfn></u></td></tr>
+<tr><th id="98">98</th><td></td></tr>
+<tr><th id="99">99</th><td><u>#define <dfn class="macro" id="_M/HASH_CTX" data-ref="_M/HASH_CTX">HASH_CTX</dfn>                SHA_CTX</u></td></tr>
+<tr><th id="100">100</th><td><u>#define <dfn class="macro" id="_M/HASH_CBLOCK" data-ref="_M/HASH_CBLOCK">HASH_CBLOCK</dfn>             64</u></td></tr>
+<tr><th id="101">101</th><td><u>#define <dfn class="macro" id="_M/HASH_MAKE_STRING" data-ref="_M/HASH_MAKE_STRING">HASH_MAKE_STRING</dfn>(c, s) \</u></td></tr>
+<tr><th id="102">102</th><td><u>  do {                         \</u></td></tr>
+<tr><th id="103">103</th><td><u>    uint32_t ll;               \</u></td></tr>
+<tr><th id="104">104</th><td><u>    ll = (c)-&gt;h[0];            \</u></td></tr>
+<tr><th id="105">105</th><td><u>    HOST_l2c(ll, (s));         \</u></td></tr>
+<tr><th id="106">106</th><td><u>    ll = (c)-&gt;h[1];            \</u></td></tr>
+<tr><th id="107">107</th><td><u>    HOST_l2c(ll, (s));         \</u></td></tr>
+<tr><th id="108">108</th><td><u>    ll = (c)-&gt;h[2];            \</u></td></tr>
+<tr><th id="109">109</th><td><u>    HOST_l2c(ll, (s));         \</u></td></tr>
+<tr><th id="110">110</th><td><u>    ll = (c)-&gt;h[3];            \</u></td></tr>
+<tr><th id="111">111</th><td><u>    HOST_l2c(ll, (s));         \</u></td></tr>
+<tr><th id="112">112</th><td><u>    ll = (c)-&gt;h[4];            \</u></td></tr>
+<tr><th id="113">113</th><td><u>    HOST_l2c(ll, (s));         \</u></td></tr>
+<tr><th id="114">114</th><td><u>  } while (0)</u></td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><u>#define <dfn class="macro" id="_M/HASH_UPDATE" data-ref="_M/HASH_UPDATE">HASH_UPDATE</dfn> SHA1_Update</u></td></tr>
+<tr><th id="117">117</th><td><u>#define <dfn class="macro" id="_M/HASH_TRANSFORM" data-ref="_M/HASH_TRANSFORM">HASH_TRANSFORM</dfn> SHA1_Transform</u></td></tr>
+<tr><th id="118">118</th><td><u>#define <dfn class="macro" id="_M/HASH_FINAL" data-ref="_M/HASH_FINAL">HASH_FINAL</dfn> SHA1_Final</u></td></tr>
+<tr><th id="119">119</th><td><u>#define <dfn class="macro" id="_M/HASH_BLOCK_DATA_ORDER" data-ref="_M/HASH_BLOCK_DATA_ORDER">HASH_BLOCK_DATA_ORDER</dfn> sha1_block_data_order</u></td></tr>
+<tr><th id="120">120</th><td><u>#define <dfn class="macro" id="_M/ROTATE" data-ref="_M/ROTATE">ROTATE</dfn>(a, n) (((a) &lt;&lt; (n)) | ((a) &gt;&gt; (32 - (n))))</u></td></tr>
+<tr><th id="121">121</th><td><u>#define <dfn class="macro" id="_M/Xupdate" data-ref="_M/Xupdate">Xupdate</dfn>(a, ix, ia, ib, ic, id) \</u></td></tr>
+<tr><th id="122">122</th><td><u>  ((a) = (ia ^ ib ^ ic ^ id), ix = (a) = ROTATE((a), 1))</u></td></tr>
+<tr><th id="123">123</th><td></td></tr>
+<tr><th id="124">124</th><td><u>#<span data-ppcond="124">ifndef</span> <a class="macro" href="#67" data-ref="_M/SHA1_ASM">SHA1_ASM</a></u></td></tr>
+<tr><th id="125">125</th><td><em>static</em></td></tr>
+<tr><th id="126">126</th><td><u>#<span data-ppcond="124">endif</span></u></td></tr>
+<tr><th id="127">127</th><td><em>void</em> <dfn class="decl" id="sha1_block_data_order" title='sha1_block_data_order' data-ref="sha1_block_data_order">sha1_block_data_order</dfn>(<a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint32_t" title='uint32_t' data-type='__uint32_t' data-ref="uint32_t">uint32_t</a> *<dfn class="local col7 decl" id="7state" title='state' data-type='uint32_t *' data-ref="7state">state</dfn>, <em>const</em> <a class="typedef" href="../../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/stdint.h.html#uint8_t" title='uint8_t' data-type='__uint8_t' data-ref="uint8_t">uint8_t</a> *<dfn class="local col8 decl" id="8data" title='data' data-type='const uint8_t *' data-ref="8data">data</dfn>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="9num" title='num' data-type='size_t' data-ref="9num">num</dfn>);</td></tr>
+<tr><th id="128">128</th><td></td></tr>
+<tr><th id="129">129</th><td><u>#include <a href="../digest/md32_common.h.html">"../digest/md32_common.h"</a></u></td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td><u>#define <dfn class="macro" id="_M/K_00_19" data-ref="_M/K_00_19">K_00_19</dfn> 0x5a827999UL</u></td></tr>
+<tr><th id="132">132</th><td><u>#define <dfn class="macro" id="_M/K_20_39" data-ref="_M/K_20_39">K_20_39</dfn> 0x6ed9eba1UL</u></td></tr>
+<tr><th id="133">133</th><td><u>#define <dfn class="macro" id="_M/K_40_59" data-ref="_M/K_40_59">K_40_59</dfn> 0x8f1bbcdcUL</u></td></tr>
+<tr><th id="134">134</th><td><u>#define <dfn class="macro" id="_M/K_60_79" data-ref="_M/K_60_79">K_60_79</dfn> 0xca62c1d6UL</u></td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td><i>/* As  pointed out by Wei Dai &lt;weidai@eskimo.com&gt;, F() below can be simplified</i></td></tr>
+<tr><th id="137">137</th><td><i> * to the code in F_00_19.  Wei attributes these optimisations to Peter</i></td></tr>
+<tr><th id="138">138</th><td><i> * Gutmann's SHS code, and he attributes it to Rich Schroeppel. #define</i></td></tr>
+<tr><th id="139">139</th><td><i> * F(x,y,z) (((x) &amp; (y))  |  ((~(x)) &amp; (z))) I've just become aware of another</i></td></tr>
+<tr><th id="140">140</th><td><i> * tweak to be made, again from Wei Dai, in F_40_59, (x&amp;a)|(y&amp;a) -&gt; (x|y)&amp;a */</i></td></tr>
+<tr><th id="141">141</th><td><u>#define <dfn class="macro" id="_M/F_00_19" data-ref="_M/F_00_19">F_00_19</dfn>(b, c, d) ((((c) ^ (d)) &amp; (b)) ^ (d))</u></td></tr>
+<tr><th id="142">142</th><td><u>#define <dfn class="macro" id="_M/F_20_39" data-ref="_M/F_20_39">F_20_39</dfn>(b, c, d) ((b) ^ (c) ^ (d))</u></td></tr>
+<tr><th id="143">143</th><td><u>#define <dfn class="macro" id="_M/F_40_59" data-ref="_M/F_40_59">F_40_59</dfn>(b, c, d) (((b) &amp; (c)) | (((b) | (c)) &amp; (d)))</u></td></tr>
+<tr><th id="144">144</th><td><u>#define <dfn class="macro" id="_M/F_60_79" data-ref="_M/F_60_79">F_60_79</dfn>(b, c, d) F_20_39(b, c, d)</u></td></tr>
+<tr><th id="145">145</th><td></td></tr>
+<tr><th id="146">146</th><td><u>#define <dfn class="macro" id="_M/BODY_00_15" data-ref="_M/BODY_00_15">BODY_00_15</dfn>(i, a, b, c, d, e, f, xi)                           \</u></td></tr>
+<tr><th id="147">147</th><td><u>  (f) = xi + (e) + K_00_19 + ROTATE((a), 5) + F_00_19((b), (c), (d)); \</u></td></tr>
+<tr><th id="148">148</th><td><u>  (b) = ROTATE((b), 30);</u></td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td><u>#define <dfn class="macro" id="_M/BODY_16_19" data-ref="_M/BODY_16_19">BODY_16_19</dfn>(i, a, b, c, d, e, f, xi, xa, xb, xc, xd)       \</u></td></tr>
+<tr><th id="151">151</th><td><u>  Xupdate(f, xi, xa, xb, xc, xd);                                 \</u></td></tr>
+<tr><th id="152">152</th><td><u>  (f) += (e) + K_00_19 + ROTATE((a), 5) + F_00_19((b), (c), (d)); \</u></td></tr>
+<tr><th id="153">153</th><td><u>  (b) = ROTATE((b), 30);</u></td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td><u>#define <dfn class="macro" id="_M/BODY_20_31" data-ref="_M/BODY_20_31">BODY_20_31</dfn>(i, a, b, c, d, e, f, xi, xa, xb, xc, xd)       \</u></td></tr>
+<tr><th id="156">156</th><td><u>  Xupdate(f, xi, xa, xb, xc, xd);                                 \</u></td></tr>
+<tr><th id="157">157</th><td><u>  (f) += (e) + K_20_39 + ROTATE((a), 5) + F_20_39((b), (c), (d)); \</u></td></tr>
+<tr><th id="158">158</th><td><u>  (b) = ROTATE((b), 30);</u></td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td><u>#define <dfn class="macro" id="_M/BODY_32_39" data-ref="_M/BODY_32_39">BODY_32_39</dfn>(i, a, b, c, d, e, f, xa, xb, xc, xd)           \</u></td></tr>
+<tr><th id="161">161</th><td><u>  Xupdate(f, xa, xa, xb, xc, xd);                                 \</u></td></tr>
+<tr><th id="162">162</th><td><u>  (f) += (e) + K_20_39 + ROTATE((a), 5) + F_20_39((b), (c), (d)); \</u></td></tr>
+<tr><th id="163">163</th><td><u>  (b) = ROTATE((b), 30);</u></td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td><u>#define <dfn class="macro" id="_M/BODY_40_59" data-ref="_M/BODY_40_59">BODY_40_59</dfn>(i, a, b, c, d, e, f, xa, xb, xc, xd)           \</u></td></tr>
+<tr><th id="166">166</th><td><u>  Xupdate(f, xa, xa, xb, xc, xd);                                 \</u></td></tr>
+<tr><th id="167">167</th><td><u>  (f) += (e) + K_40_59 + ROTATE((a), 5) + F_40_59((b), (c), (d)); \</u></td></tr>
+<tr><th id="168">168</th><td><u>  (b) = ROTATE((b), 30);</u></td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td><u>#define <dfn class="macro" id="_M/BODY_60_79" data-ref="_M/BODY_60_79">BODY_60_79</dfn>(i, a, b, c, d, e, f, xa, xb, xc, xd)               \</u></td></tr>
+<tr><th id="171">171</th><td><u>  Xupdate(f, xa, xa, xb, xc, xd);                                     \</u></td></tr>
+<tr><th id="172">172</th><td><u>  (f) = xa + (e) + K_60_79 + ROTATE((a), 5) + F_60_79((b), (c), (d)); \</u></td></tr>
+<tr><th id="173">173</th><td><u>  (b) = ROTATE((b), 30);</u></td></tr>
+<tr><th id="174">174</th><td></td></tr>
+<tr><th id="175">175</th><td><u>#<span data-ppcond="175">ifdef</span> <span class="macro" data-ref="_M/X">X</span></u></td></tr>
+<tr><th id="176">176</th><td><u>#undef X</u></td></tr>
+<tr><th id="177">177</th><td><u>#<span data-ppcond="175">endif</span></u></td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td><i>/* Originally X was an array. As it's automatic it's natural</i></td></tr>
+<tr><th id="180">180</th><td><i>* to expect RISC compiler to accomodate at least part of it in</i></td></tr>
+<tr><th id="181">181</th><td><i>* the register bank, isn't it? Unfortunately not all compilers</i></td></tr>
+<tr><th id="182">182</th><td><i>* "find" this expectation reasonable:-( On order to make such</i></td></tr>
+<tr><th id="183">183</th><td><i>* compilers generate better code I replace X[] with a bunch of</i></td></tr>
+<tr><th id="184">184</th><td><i>* X0, X1, etc. See the function body below...</i></td></tr>
+<tr><th id="185">185</th><td><i>*					&lt;appro@fy.chalmers.se&gt; */</i></td></tr>
+<tr><th id="186">186</th><td><u>#define <dfn class="macro" id="_M/X" data-ref="_M/X">X</dfn>(i)	XX##i</u></td></tr>
+<tr><th id="187">187</th><td></td></tr>
+<tr><th id="188">188</th><td><u>#<span data-ppcond="188">if</span> !defined(<a class="macro" href="#67" data-ref="_M/SHA1_ASM">SHA1_ASM</a>)</u></td></tr>
+<tr><th id="189">189</th><td><em>static</em> <em>void</em> sha1_block_data_order(uint32_t *state, <em>const</em> uint8_t *data,</td></tr>
+<tr><th id="190">190</th><td>                                  size_t num) {</td></tr>
+<tr><th id="191">191</th><td>  <em>register</em> uint32_t A, B, C, D, E, T, l;</td></tr>
+<tr><th id="192">192</th><td>  uint32_t XX0, XX1, XX2, XX3, XX4, XX5, XX6, XX7, XX8, XX9, XX10,</td></tr>
+<tr><th id="193">193</th><td>      XX11, XX12, XX13, XX14, XX15;</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td>  A = state[<var>0</var>];</td></tr>
+<tr><th id="196">196</th><td>  B = state[<var>1</var>];</td></tr>
+<tr><th id="197">197</th><td>  C = state[<var>2</var>];</td></tr>
+<tr><th id="198">198</th><td>  D = state[<var>3</var>];</td></tr>
+<tr><th id="199">199</th><td>  E = state[<var>4</var>];</td></tr>
+<tr><th id="200">200</th><td></td></tr>
+<tr><th id="201">201</th><td>  <b>for</b> (;;) {</td></tr>
+<tr><th id="202">202</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="203">203</th><td>    X(<var>0</var>) = l;</td></tr>
+<tr><th id="204">204</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="205">205</th><td>    X(<var>1</var>) = l;</td></tr>
+<tr><th id="206">206</th><td>    BODY_00_15(<var>0</var>, A, B, C, D, E, T, X(<var>0</var>));</td></tr>
+<tr><th id="207">207</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="208">208</th><td>    X(<var>2</var>) = l;</td></tr>
+<tr><th id="209">209</th><td>    BODY_00_15(<var>1</var>, T, A, B, C, D, E, X(<var>1</var>));</td></tr>
+<tr><th id="210">210</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="211">211</th><td>    X(<var>3</var>) = l;</td></tr>
+<tr><th id="212">212</th><td>    BODY_00_15(<var>2</var>, E, T, A, B, C, D, X(<var>2</var>));</td></tr>
+<tr><th id="213">213</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="214">214</th><td>    X(<var>4</var>) = l;</td></tr>
+<tr><th id="215">215</th><td>    BODY_00_15(<var>3</var>, D, E, T, A, B, C, X(<var>3</var>));</td></tr>
+<tr><th id="216">216</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="217">217</th><td>    X(<var>5</var>) = l;</td></tr>
+<tr><th id="218">218</th><td>    BODY_00_15(<var>4</var>, C, D, E, T, A, B, X(<var>4</var>));</td></tr>
+<tr><th id="219">219</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="220">220</th><td>    X(<var>6</var>) = l;</td></tr>
+<tr><th id="221">221</th><td>    BODY_00_15(<var>5</var>, B, C, D, E, T, A, X(<var>5</var>));</td></tr>
+<tr><th id="222">222</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="223">223</th><td>    X(<var>7</var>) = l;</td></tr>
+<tr><th id="224">224</th><td>    BODY_00_15(<var>6</var>, A, B, C, D, E, T, X(<var>6</var>));</td></tr>
+<tr><th id="225">225</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="226">226</th><td>    X(<var>8</var>) = l;</td></tr>
+<tr><th id="227">227</th><td>    BODY_00_15(<var>7</var>, T, A, B, C, D, E, X(<var>7</var>));</td></tr>
+<tr><th id="228">228</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="229">229</th><td>    X(<var>9</var>) = l;</td></tr>
+<tr><th id="230">230</th><td>    BODY_00_15(<var>8</var>, E, T, A, B, C, D, X(<var>8</var>));</td></tr>
+<tr><th id="231">231</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="232">232</th><td>    X(<var>10</var>) = l;</td></tr>
+<tr><th id="233">233</th><td>    BODY_00_15(<var>9</var>, D, E, T, A, B, C, X(<var>9</var>));</td></tr>
+<tr><th id="234">234</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="235">235</th><td>    X(<var>11</var>) = l;</td></tr>
+<tr><th id="236">236</th><td>    BODY_00_15(<var>10</var>, C, D, E, T, A, B, X(<var>10</var>));</td></tr>
+<tr><th id="237">237</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="238">238</th><td>    X(<var>12</var>) = l;</td></tr>
+<tr><th id="239">239</th><td>    BODY_00_15(<var>11</var>, B, C, D, E, T, A, X(<var>11</var>));</td></tr>
+<tr><th id="240">240</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="241">241</th><td>    X(<var>13</var>) = l;</td></tr>
+<tr><th id="242">242</th><td>    BODY_00_15(<var>12</var>, A, B, C, D, E, T, X(<var>12</var>));</td></tr>
+<tr><th id="243">243</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="244">244</th><td>    X(<var>14</var>) = l;</td></tr>
+<tr><th id="245">245</th><td>    BODY_00_15(<var>13</var>, T, A, B, C, D, E, X(<var>13</var>));</td></tr>
+<tr><th id="246">246</th><td>    (<em>void</em>)HOST_c2l(data, l);</td></tr>
+<tr><th id="247">247</th><td>    X(<var>15</var>) = l;</td></tr>
+<tr><th id="248">248</th><td>    BODY_00_15(<var>14</var>, E, T, A, B, C, D, X(<var>14</var>));</td></tr>
+<tr><th id="249">249</th><td>    BODY_00_15(<var>15</var>, D, E, T, A, B, C, X(<var>15</var>));</td></tr>
+<tr><th id="250">250</th><td></td></tr>
+<tr><th id="251">251</th><td>    BODY_16_19(<var>16</var>, C, D, E, T, A, B, X(<var>0</var>), X(<var>0</var>), X(<var>2</var>), X(<var>8</var>), X(<var>13</var>));</td></tr>
+<tr><th id="252">252</th><td>    BODY_16_19(<var>17</var>, B, C, D, E, T, A, X(<var>1</var>), X(<var>1</var>), X(<var>3</var>), X(<var>9</var>), X(<var>14</var>));</td></tr>
+<tr><th id="253">253</th><td>    BODY_16_19(<var>18</var>, A, B, C, D, E, T, X(<var>2</var>), X(<var>2</var>), X(<var>4</var>), X(<var>10</var>), X(<var>15</var>));</td></tr>
+<tr><th id="254">254</th><td>    BODY_16_19(<var>19</var>, T, A, B, C, D, E, X(<var>3</var>), X(<var>3</var>), X(<var>5</var>), X(<var>11</var>), X(<var>0</var>));</td></tr>
+<tr><th id="255">255</th><td></td></tr>
+<tr><th id="256">256</th><td>    BODY_20_31(<var>20</var>, E, T, A, B, C, D, X(<var>4</var>), X(<var>4</var>), X(<var>6</var>), X(<var>12</var>), X(<var>1</var>));</td></tr>
+<tr><th id="257">257</th><td>    BODY_20_31(<var>21</var>, D, E, T, A, B, C, X(<var>5</var>), X(<var>5</var>), X(<var>7</var>), X(<var>13</var>), X(<var>2</var>));</td></tr>
+<tr><th id="258">258</th><td>    BODY_20_31(<var>22</var>, C, D, E, T, A, B, X(<var>6</var>), X(<var>6</var>), X(<var>8</var>), X(<var>14</var>), X(<var>3</var>));</td></tr>
+<tr><th id="259">259</th><td>    BODY_20_31(<var>23</var>, B, C, D, E, T, A, X(<var>7</var>), X(<var>7</var>), X(<var>9</var>), X(<var>15</var>), X(<var>4</var>));</td></tr>
+<tr><th id="260">260</th><td>    BODY_20_31(<var>24</var>, A, B, C, D, E, T, X(<var>8</var>), X(<var>8</var>), X(<var>10</var>), X(<var>0</var>), X(<var>5</var>));</td></tr>
+<tr><th id="261">261</th><td>    BODY_20_31(<var>25</var>, T, A, B, C, D, E, X(<var>9</var>), X(<var>9</var>), X(<var>11</var>), X(<var>1</var>), X(<var>6</var>));</td></tr>
+<tr><th id="262">262</th><td>    BODY_20_31(<var>26</var>, E, T, A, B, C, D, X(<var>10</var>), X(<var>10</var>), X(<var>12</var>), X(<var>2</var>), X(<var>7</var>));</td></tr>
+<tr><th id="263">263</th><td>    BODY_20_31(<var>27</var>, D, E, T, A, B, C, X(<var>11</var>), X(<var>11</var>), X(<var>13</var>), X(<var>3</var>), X(<var>8</var>));</td></tr>
+<tr><th id="264">264</th><td>    BODY_20_31(<var>28</var>, C, D, E, T, A, B, X(<var>12</var>), X(<var>12</var>), X(<var>14</var>), X(<var>4</var>), X(<var>9</var>));</td></tr>
+<tr><th id="265">265</th><td>    BODY_20_31(<var>29</var>, B, C, D, E, T, A, X(<var>13</var>), X(<var>13</var>), X(<var>15</var>), X(<var>5</var>), X(<var>10</var>));</td></tr>
+<tr><th id="266">266</th><td>    BODY_20_31(<var>30</var>, A, B, C, D, E, T, X(<var>14</var>), X(<var>14</var>), X(<var>0</var>), X(<var>6</var>), X(<var>11</var>));</td></tr>
+<tr><th id="267">267</th><td>    BODY_20_31(<var>31</var>, T, A, B, C, D, E, X(<var>15</var>), X(<var>15</var>), X(<var>1</var>), X(<var>7</var>), X(<var>12</var>));</td></tr>
+<tr><th id="268">268</th><td></td></tr>
+<tr><th id="269">269</th><td>    BODY_32_39(<var>32</var>, E, T, A, B, C, D, X(<var>0</var>), X(<var>2</var>), X(<var>8</var>), X(<var>13</var>));</td></tr>
+<tr><th id="270">270</th><td>    BODY_32_39(<var>33</var>, D, E, T, A, B, C, X(<var>1</var>), X(<var>3</var>), X(<var>9</var>), X(<var>14</var>));</td></tr>
+<tr><th id="271">271</th><td>    BODY_32_39(<var>34</var>, C, D, E, T, A, B, X(<var>2</var>), X(<var>4</var>), X(<var>10</var>), X(<var>15</var>));</td></tr>
+<tr><th id="272">272</th><td>    BODY_32_39(<var>35</var>, B, C, D, E, T, A, X(<var>3</var>), X(<var>5</var>), X(<var>11</var>), X(<var>0</var>));</td></tr>
+<tr><th id="273">273</th><td>    BODY_32_39(<var>36</var>, A, B, C, D, E, T, X(<var>4</var>), X(<var>6</var>), X(<var>12</var>), X(<var>1</var>));</td></tr>
+<tr><th id="274">274</th><td>    BODY_32_39(<var>37</var>, T, A, B, C, D, E, X(<var>5</var>), X(<var>7</var>), X(<var>13</var>), X(<var>2</var>));</td></tr>
+<tr><th id="275">275</th><td>    BODY_32_39(<var>38</var>, E, T, A, B, C, D, X(<var>6</var>), X(<var>8</var>), X(<var>14</var>), X(<var>3</var>));</td></tr>
+<tr><th id="276">276</th><td>    BODY_32_39(<var>39</var>, D, E, T, A, B, C, X(<var>7</var>), X(<var>9</var>), X(<var>15</var>), X(<var>4</var>));</td></tr>
+<tr><th id="277">277</th><td></td></tr>
+<tr><th id="278">278</th><td>    BODY_40_59(<var>40</var>, C, D, E, T, A, B, X(<var>8</var>), X(<var>10</var>), X(<var>0</var>), X(<var>5</var>));</td></tr>
+<tr><th id="279">279</th><td>    BODY_40_59(<var>41</var>, B, C, D, E, T, A, X(<var>9</var>), X(<var>11</var>), X(<var>1</var>), X(<var>6</var>));</td></tr>
+<tr><th id="280">280</th><td>    BODY_40_59(<var>42</var>, A, B, C, D, E, T, X(<var>10</var>), X(<var>12</var>), X(<var>2</var>), X(<var>7</var>));</td></tr>
+<tr><th id="281">281</th><td>    BODY_40_59(<var>43</var>, T, A, B, C, D, E, X(<var>11</var>), X(<var>13</var>), X(<var>3</var>), X(<var>8</var>));</td></tr>
+<tr><th id="282">282</th><td>    BODY_40_59(<var>44</var>, E, T, A, B, C, D, X(<var>12</var>), X(<var>14</var>), X(<var>4</var>), X(<var>9</var>));</td></tr>
+<tr><th id="283">283</th><td>    BODY_40_59(<var>45</var>, D, E, T, A, B, C, X(<var>13</var>), X(<var>15</var>), X(<var>5</var>), X(<var>10</var>));</td></tr>
+<tr><th id="284">284</th><td>    BODY_40_59(<var>46</var>, C, D, E, T, A, B, X(<var>14</var>), X(<var>0</var>), X(<var>6</var>), X(<var>11</var>));</td></tr>
+<tr><th id="285">285</th><td>    BODY_40_59(<var>47</var>, B, C, D, E, T, A, X(<var>15</var>), X(<var>1</var>), X(<var>7</var>), X(<var>12</var>));</td></tr>
+<tr><th id="286">286</th><td>    BODY_40_59(<var>48</var>, A, B, C, D, E, T, X(<var>0</var>), X(<var>2</var>), X(<var>8</var>), X(<var>13</var>));</td></tr>
+<tr><th id="287">287</th><td>    BODY_40_59(<var>49</var>, T, A, B, C, D, E, X(<var>1</var>), X(<var>3</var>), X(<var>9</var>), X(<var>14</var>));</td></tr>
+<tr><th id="288">288</th><td>    BODY_40_59(<var>50</var>, E, T, A, B, C, D, X(<var>2</var>), X(<var>4</var>), X(<var>10</var>), X(<var>15</var>));</td></tr>
+<tr><th id="289">289</th><td>    BODY_40_59(<var>51</var>, D, E, T, A, B, C, X(<var>3</var>), X(<var>5</var>), X(<var>11</var>), X(<var>0</var>));</td></tr>
+<tr><th id="290">290</th><td>    BODY_40_59(<var>52</var>, C, D, E, T, A, B, X(<var>4</var>), X(<var>6</var>), X(<var>12</var>), X(<var>1</var>));</td></tr>
+<tr><th id="291">291</th><td>    BODY_40_59(<var>53</var>, B, C, D, E, T, A, X(<var>5</var>), X(<var>7</var>), X(<var>13</var>), X(<var>2</var>));</td></tr>
+<tr><th id="292">292</th><td>    BODY_40_59(<var>54</var>, A, B, C, D, E, T, X(<var>6</var>), X(<var>8</var>), X(<var>14</var>), X(<var>3</var>));</td></tr>
+<tr><th id="293">293</th><td>    BODY_40_59(<var>55</var>, T, A, B, C, D, E, X(<var>7</var>), X(<var>9</var>), X(<var>15</var>), X(<var>4</var>));</td></tr>
+<tr><th id="294">294</th><td>    BODY_40_59(<var>56</var>, E, T, A, B, C, D, X(<var>8</var>), X(<var>10</var>), X(<var>0</var>), X(<var>5</var>));</td></tr>
+<tr><th id="295">295</th><td>    BODY_40_59(<var>57</var>, D, E, T, A, B, C, X(<var>9</var>), X(<var>11</var>), X(<var>1</var>), X(<var>6</var>));</td></tr>
+<tr><th id="296">296</th><td>    BODY_40_59(<var>58</var>, C, D, E, T, A, B, X(<var>10</var>), X(<var>12</var>), X(<var>2</var>), X(<var>7</var>));</td></tr>
+<tr><th id="297">297</th><td>    BODY_40_59(<var>59</var>, B, C, D, E, T, A, X(<var>11</var>), X(<var>13</var>), X(<var>3</var>), X(<var>8</var>));</td></tr>
+<tr><th id="298">298</th><td></td></tr>
+<tr><th id="299">299</th><td>    BODY_60_79(<var>60</var>, A, B, C, D, E, T, X(<var>12</var>), X(<var>14</var>), X(<var>4</var>), X(<var>9</var>));</td></tr>
+<tr><th id="300">300</th><td>    BODY_60_79(<var>61</var>, T, A, B, C, D, E, X(<var>13</var>), X(<var>15</var>), X(<var>5</var>), X(<var>10</var>));</td></tr>
+<tr><th id="301">301</th><td>    BODY_60_79(<var>62</var>, E, T, A, B, C, D, X(<var>14</var>), X(<var>0</var>), X(<var>6</var>), X(<var>11</var>));</td></tr>
+<tr><th id="302">302</th><td>    BODY_60_79(<var>63</var>, D, E, T, A, B, C, X(<var>15</var>), X(<var>1</var>), X(<var>7</var>), X(<var>12</var>));</td></tr>
+<tr><th id="303">303</th><td>    BODY_60_79(<var>64</var>, C, D, E, T, A, B, X(<var>0</var>), X(<var>2</var>), X(<var>8</var>), X(<var>13</var>));</td></tr>
+<tr><th id="304">304</th><td>    BODY_60_79(<var>65</var>, B, C, D, E, T, A, X(<var>1</var>), X(<var>3</var>), X(<var>9</var>), X(<var>14</var>));</td></tr>
+<tr><th id="305">305</th><td>    BODY_60_79(<var>66</var>, A, B, C, D, E, T, X(<var>2</var>), X(<var>4</var>), X(<var>10</var>), X(<var>15</var>));</td></tr>
+<tr><th id="306">306</th><td>    BODY_60_79(<var>67</var>, T, A, B, C, D, E, X(<var>3</var>), X(<var>5</var>), X(<var>11</var>), X(<var>0</var>));</td></tr>
+<tr><th id="307">307</th><td>    BODY_60_79(<var>68</var>, E, T, A, B, C, D, X(<var>4</var>), X(<var>6</var>), X(<var>12</var>), X(<var>1</var>));</td></tr>
+<tr><th id="308">308</th><td>    BODY_60_79(<var>69</var>, D, E, T, A, B, C, X(<var>5</var>), X(<var>7</var>), X(<var>13</var>), X(<var>2</var>));</td></tr>
+<tr><th id="309">309</th><td>    BODY_60_79(<var>70</var>, C, D, E, T, A, B, X(<var>6</var>), X(<var>8</var>), X(<var>14</var>), X(<var>3</var>));</td></tr>
+<tr><th id="310">310</th><td>    BODY_60_79(<var>71</var>, B, C, D, E, T, A, X(<var>7</var>), X(<var>9</var>), X(<var>15</var>), X(<var>4</var>));</td></tr>
+<tr><th id="311">311</th><td>    BODY_60_79(<var>72</var>, A, B, C, D, E, T, X(<var>8</var>), X(<var>10</var>), X(<var>0</var>), X(<var>5</var>));</td></tr>
+<tr><th id="312">312</th><td>    BODY_60_79(<var>73</var>, T, A, B, C, D, E, X(<var>9</var>), X(<var>11</var>), X(<var>1</var>), X(<var>6</var>));</td></tr>
+<tr><th id="313">313</th><td>    BODY_60_79(<var>74</var>, E, T, A, B, C, D, X(<var>10</var>), X(<var>12</var>), X(<var>2</var>), X(<var>7</var>));</td></tr>
+<tr><th id="314">314</th><td>    BODY_60_79(<var>75</var>, D, E, T, A, B, C, X(<var>11</var>), X(<var>13</var>), X(<var>3</var>), X(<var>8</var>));</td></tr>
+<tr><th id="315">315</th><td>    BODY_60_79(<var>76</var>, C, D, E, T, A, B, X(<var>12</var>), X(<var>14</var>), X(<var>4</var>), X(<var>9</var>));</td></tr>
+<tr><th id="316">316</th><td>    BODY_60_79(<var>77</var>, B, C, D, E, T, A, X(<var>13</var>), X(<var>15</var>), X(<var>5</var>), X(<var>10</var>));</td></tr>
+<tr><th id="317">317</th><td>    BODY_60_79(<var>78</var>, A, B, C, D, E, T, X(<var>14</var>), X(<var>0</var>), X(<var>6</var>), X(<var>11</var>));</td></tr>
+<tr><th id="318">318</th><td>    BODY_60_79(<var>79</var>, T, A, B, C, D, E, X(<var>15</var>), X(<var>1</var>), X(<var>7</var>), X(<var>12</var>));</td></tr>
+<tr><th id="319">319</th><td></td></tr>
+<tr><th id="320">320</th><td>    state[<var>0</var>] = (state[<var>0</var>] + E) &amp; <var>0xffffffffL</var>;</td></tr>
+<tr><th id="321">321</th><td>    state[<var>1</var>] = (state[<var>1</var>] + T) &amp; <var>0xffffffffL</var>;</td></tr>
+<tr><th id="322">322</th><td>    state[<var>2</var>] = (state[<var>2</var>] + A) &amp; <var>0xffffffffL</var>;</td></tr>
+<tr><th id="323">323</th><td>    state[<var>3</var>] = (state[<var>3</var>] + B) &amp; <var>0xffffffffL</var>;</td></tr>
+<tr><th id="324">324</th><td>    state[<var>4</var>] = (state[<var>4</var>] + C) &amp; <var>0xffffffffL</var>;</td></tr>
+<tr><th id="325">325</th><td></td></tr>
+<tr><th id="326">326</th><td>    <b>if</b> (--num == <var>0</var>) {</td></tr>
+<tr><th id="327">327</th><td>      <b>break</b>;</td></tr>
+<tr><th id="328">328</th><td>    }</td></tr>
+<tr><th id="329">329</th><td></td></tr>
+<tr><th id="330">330</th><td>    A = state[<var>0</var>];</td></tr>
+<tr><th id="331">331</th><td>    B = state[<var>1</var>];</td></tr>
+<tr><th id="332">332</th><td>    C = state[<var>2</var>];</td></tr>
+<tr><th id="333">333</th><td>    D = state[<var>3</var>];</td></tr>
+<tr><th id="334">334</th><td>    E = state[<var>4</var>];</td></tr>
+<tr><th id="335">335</th><td>  }</td></tr>
+<tr><th id="336">336</th><td>}</td></tr>
+<tr><th id="337">337</th><td><u>#<span data-ppcond="188">endif</span></u></td></tr>
+<tr><th id="338">338</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

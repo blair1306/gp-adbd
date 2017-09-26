@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>transport_usb.cpp source code [codebrowser/system/core/adb/transport_usb.cpp] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/adb/transport_usb.cpp'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>system</a>/<a href='..'>core</a>/<a href='./'>adb</a>/<a href='transport_usb.cpp.html'>transport_usb.cpp</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2007 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#define <dfn class="macro" id="_M/TRACE_TAG" data-ref="_M/TRACE_TAG">TRACE_TAG</dfn> <a class="enum" href="adb_trace.h.html#AdbTrace::TRANSPORT" title='AdbTrace::TRANSPORT' data-ref="AdbTrace::TRANSPORT">TRANSPORT</a></u></td></tr>
+<tr><th id="18">18</th><td></td></tr>
+<tr><th id="19">19</th><td><u>#include <a href="sysdeps.h.html">"sysdeps.h"</a></u></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="transport.h.html">"transport.h"</a></u></td></tr>
+<tr><th id="21">21</th><td></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><u>#include <a href="adb.h.html">"adb.h"</a></u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="_ZL11remote_readP7apacketP10atransport" title='remote_read' data-type='int remote_read(apacket * p, atransport * t)' data-ref="_ZL11remote_readP7apacketP10atransport">remote_read</dfn>(<a class="type" href="adb.h.html#apacket" title='apacket' data-ref="apacket">apacket</a> *<dfn class="local col1 decl" id="1p" title='p' data-type='apacket *' data-ref="1p">p</dfn>, <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col2 decl" id="2t" title='t' data-type='atransport *' data-ref="2t">t</dfn>)</td></tr>
+<tr><th id="29">29</th><td>{</td></tr>
+<tr><th id="30">30</th><td>    <b>if</b>(<a class="ref" href="adb.h.html#_Z8usb_readP10usb_handlePvi" title='usb_read' data-ref="_Z8usb_readP10usb_handlePvi">usb_read</a>(<a class="local col2 ref" href="#2t" title='t' data-ref="2t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::usb" title='atransport::usb' data-ref="atransport::usb">usb</a>, &amp;<a class="local col1 ref" href="#1p" title='p' data-ref="1p">p</a>-&gt;<a class="ref" href="adb.h.html#apacket::msg" title='apacket::msg' data-ref="apacket::msg">msg</a>, <b>sizeof</b>(<a class="type" href="adb.h.html#amessage" title='amessage' data-ref="amessage">amessage</a>))){</td></tr>
+<tr><th id="31">31</th><td>        <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; TRANSPORT)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/transport_usb.cpp&quot;, 31, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;remote usb: read terminated (message)&quot;)" data-ref="_M/D">D</a>(<q>"remote usb: read terminated (message)"</q>);</td></tr>
+<tr><th id="32">32</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="33">33</th><td>    }</td></tr>
+<tr><th id="34">34</th><td></td></tr>
+<tr><th id="35">35</th><td>    <b>if</b>(<a class="ref" href="transport.h.html#_Z12check_headerP7apacketP10atransport" title='check_header' data-ref="_Z12check_headerP7apacketP10atransport">check_header</a>(<a class="local col1 ref" href="#1p" title='p' data-ref="1p">p</a>, <a class="local col2 ref" href="#2t" title='t' data-ref="2t">t</a>)) {</td></tr>
+<tr><th id="36">36</th><td>        <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; TRANSPORT)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/transport_usb.cpp&quot;, 36, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;remote usb: check_header failed&quot;)" data-ref="_M/D">D</a>(<q>"remote usb: check_header failed"</q>);</td></tr>
+<tr><th id="37">37</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="38">38</th><td>    }</td></tr>
+<tr><th id="39">39</th><td></td></tr>
+<tr><th id="40">40</th><td>    <b>if</b>(<a class="local col1 ref" href="#1p" title='p' data-ref="1p">p</a>-&gt;<a class="ref" href="adb.h.html#apacket::msg" title='apacket::msg' data-ref="apacket::msg">msg</a>.<a class="ref" href="adb.h.html#amessage::data_length" title='amessage::data_length' data-ref="amessage::data_length">data_length</a>) {</td></tr>
+<tr><th id="41">41</th><td>        <b>if</b>(<a class="ref" href="adb.h.html#_Z8usb_readP10usb_handlePvi" title='usb_read' data-ref="_Z8usb_readP10usb_handlePvi">usb_read</a>(<a class="local col2 ref" href="#2t" title='t' data-ref="2t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::usb" title='atransport::usb' data-ref="atransport::usb">usb</a>, <a class="local col1 ref" href="#1p" title='p' data-ref="1p">p</a>-&gt;<a class="ref" href="adb.h.html#apacket::data" title='apacket::data' data-ref="apacket::data">data</a>, <a class="local col1 ref" href="#1p" title='p' data-ref="1p">p</a>-&gt;<a class="ref" href="adb.h.html#apacket::msg" title='apacket::msg' data-ref="apacket::msg">msg</a>.<a class="ref" href="adb.h.html#amessage::data_length" title='amessage::data_length' data-ref="amessage::data_length">data_length</a>)){</td></tr>
+<tr><th id="42">42</th><td>            <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; TRANSPORT)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/transport_usb.cpp&quot;, 42, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;remote usb: terminated (data)&quot;)" data-ref="_M/D">D</a>(<q>"remote usb: terminated (data)"</q>);</td></tr>
+<tr><th id="43">43</th><td>            <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="44">44</th><td>        }</td></tr>
+<tr><th id="45">45</th><td>    }</td></tr>
+<tr><th id="46">46</th><td></td></tr>
+<tr><th id="47">47</th><td>    <b>if</b>(<a class="ref" href="transport.h.html#_Z10check_dataP7apacket" title='check_data' data-ref="_Z10check_dataP7apacket">check_data</a>(<a class="local col1 ref" href="#1p" title='p' data-ref="1p">p</a>)) {</td></tr>
+<tr><th id="48">48</th><td>        <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; TRANSPORT)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/transport_usb.cpp&quot;, 48, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;remote usb: check_data failed&quot;)" data-ref="_M/D">D</a>(<q>"remote usb: check_data failed"</q>);</td></tr>
+<tr><th id="49">49</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="50">50</th><td>    }</td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="53">53</th><td>}</td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="_ZL12remote_writeP7apacketP10atransport" title='remote_write' data-type='int remote_write(apacket * p, atransport * t)' data-ref="_ZL12remote_writeP7apacketP10atransport">remote_write</dfn>(<a class="type" href="adb.h.html#apacket" title='apacket' data-ref="apacket">apacket</a> *<dfn class="local col3 decl" id="3p" title='p' data-type='apacket *' data-ref="3p">p</dfn>, <a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col4 decl" id="4t" title='t' data-type='atransport *' data-ref="4t">t</dfn>)</td></tr>
+<tr><th id="56">56</th><td>{</td></tr>
+<tr><th id="57">57</th><td>    <em>unsigned</em> <dfn class="local col5 decl" id="5size" title='size' data-type='unsigned int' data-ref="5size">size</dfn> = <a class="local col3 ref" href="#3p" title='p' data-ref="3p">p</a>-&gt;<a class="ref" href="adb.h.html#apacket::msg" title='apacket::msg' data-ref="apacket::msg">msg</a>.<a class="ref" href="adb.h.html#amessage::data_length" title='amessage::data_length' data-ref="amessage::data_length">data_length</a>;</td></tr>
+<tr><th id="58">58</th><td></td></tr>
+<tr><th id="59">59</th><td>    <b>if</b>(<a class="ref" href="adb.h.html#_Z9usb_writeP10usb_handlePKvi" title='usb_write' data-ref="_Z9usb_writeP10usb_handlePKvi">usb_write</a>(<a class="local col4 ref" href="#4t" title='t' data-ref="4t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::usb" title='atransport::usb' data-ref="atransport::usb">usb</a>, &amp;<a class="local col3 ref" href="#3p" title='p' data-ref="3p">p</a>-&gt;<a class="ref" href="adb.h.html#apacket::msg" title='apacket::msg' data-ref="apacket::msg">msg</a>, <b>sizeof</b>(<a class="type" href="adb.h.html#amessage" title='amessage' data-ref="amessage">amessage</a>))) {</td></tr>
+<tr><th id="60">60</th><td>        <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; TRANSPORT)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/transport_usb.cpp&quot;, 60, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;remote usb: 1 - write terminated&quot;)" data-ref="_M/D">D</a>(<q>"remote usb: 1 - write terminated"</q>);</td></tr>
+<tr><th id="61">61</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="62">62</th><td>    }</td></tr>
+<tr><th id="63">63</th><td>    <b>if</b>(<a class="local col3 ref" href="#3p" title='p' data-ref="3p">p</a>-&gt;<a class="ref" href="adb.h.html#apacket::msg" title='apacket::msg' data-ref="apacket::msg">msg</a>.<a class="ref" href="adb.h.html#amessage::data_length" title='amessage::data_length' data-ref="amessage::data_length">data_length</a> == <var>0</var>) <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="64">64</th><td>    <b>if</b>(<a class="ref" href="adb.h.html#_Z9usb_writeP10usb_handlePKvi" title='usb_write' data-ref="_Z9usb_writeP10usb_handlePKvi">usb_write</a>(<a class="local col4 ref" href="#4t" title='t' data-ref="4t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::usb" title='atransport::usb' data-ref="atransport::usb">usb</a>, &amp;<a class="local col3 ref" href="#3p" title='p' data-ref="3p">p</a>-&gt;<a class="ref" href="adb.h.html#apacket::data" title='apacket::data' data-ref="apacket::data">data</a>, <a class="local col5 ref" href="#5size" title='size' data-ref="5size">size</a>)) {</td></tr>
+<tr><th id="65">65</th><td>        <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; TRANSPORT)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/transport_usb.cpp&quot;, 65, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;remote usb: 2 - write terminated&quot;)" data-ref="_M/D">D</a>(<q>"remote usb: 2 - write terminated"</q>);</td></tr>
+<tr><th id="66">66</th><td>        <b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="67">67</th><td>    }</td></tr>
+<tr><th id="68">68</th><td></td></tr>
+<tr><th id="69">69</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="70">70</th><td>}</td></tr>
+<tr><th id="71">71</th><td></td></tr>
+<tr><th id="72">72</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="_ZL12remote_closeP10atransport" title='remote_close' data-type='void remote_close(atransport * t)' data-ref="_ZL12remote_closeP10atransport">remote_close</dfn>(<a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col6 decl" id="6t" title='t' data-type='atransport *' data-ref="6t">t</dfn>)</td></tr>
+<tr><th id="73">73</th><td>{</td></tr>
+<tr><th id="74">74</th><td>    <a class="ref" href="adb.h.html#_Z9usb_closeP10usb_handle" title='usb_close' data-ref="_Z9usb_closeP10usb_handle">usb_close</a>(<a class="local col6 ref" href="#6t" title='t' data-ref="6t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::usb" title='atransport::usb' data-ref="atransport::usb">usb</a>);</td></tr>
+<tr><th id="75">75</th><td>    <a class="local col6 ref" href="#6t" title='t' data-ref="6t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::usb" title='atransport::usb' data-ref="atransport::usb">usb</a> = <var>0</var>;</td></tr>
+<tr><th id="76">76</th><td>}</td></tr>
+<tr><th id="77">77</th><td></td></tr>
+<tr><th id="78">78</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="_ZL11remote_kickP10atransport" title='remote_kick' data-type='void remote_kick(atransport * t)' data-ref="_ZL11remote_kickP10atransport">remote_kick</dfn>(<a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col7 decl" id="7t" title='t' data-type='atransport *' data-ref="7t">t</dfn>)</td></tr>
+<tr><th id="79">79</th><td>{</td></tr>
+<tr><th id="80">80</th><td>    <a class="ref" href="adb.h.html#_Z8usb_kickP10usb_handle" title='usb_kick' data-ref="_Z8usb_kickP10usb_handle">usb_kick</a>(<a class="local col7 ref" href="#7t" title='t' data-ref="7t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::usb" title='atransport::usb' data-ref="atransport::usb">usb</a>);</td></tr>
+<tr><th id="81">81</th><td>}</td></tr>
+<tr><th id="82">82</th><td></td></tr>
+<tr><th id="83">83</th><td><em>void</em> <dfn class="decl def" id="_Z18init_usb_transportP10atransportP10usb_handle15ConnectionState" title='init_usb_transport' data-ref="_Z18init_usb_transportP10atransportP10usb_handle15ConnectionState">init_usb_transport</dfn>(<a class="type" href="transport.h.html#atransport" title='atransport' data-ref="atransport">atransport</a> *<dfn class="local col8 decl" id="8t" title='t' data-type='atransport *' data-ref="8t">t</dfn>, <a class="type" href="adb.h.html#usb_handle" title='usb_handle' data-ref="usb_handle">usb_handle</a> *<dfn class="local col9 decl" id="9h" title='h' data-type='usb_handle *' data-ref="9h">h</dfn>, <a class="type" href="adb.h.html#ConnectionState" title='ConnectionState' data-ref="ConnectionState">ConnectionState</a> <dfn class="local col0 decl" id="10state" title='state' data-type='ConnectionState' data-ref="10state">state</dfn>)</td></tr>
+<tr><th id="84">84</th><td>{</td></tr>
+<tr><th id="85">85</th><td>    <a class="macro" href="adb_trace.h.html#53" title="if (__builtin_expect((!((adb_trace_mask &amp; (1 &lt;&lt; TRANSPORT)) != 0)), true)) ; else __builtin_expect((::android::base::INFO &gt;= ::android::base::GetMinimumLogSeverity()), false) &amp;&amp; ::android::base::ErrnoRestorer() &amp;&amp; ::android::base::LogMessage(&quot;/home/jon/workspace/vandroid/system/core/adb/transport_usb.cpp&quot;, 85, ::android::base::DEFAULT, ::android::base::INFO, -1).stream() &lt;&lt; android::base::StringPrintf(&quot;transport: usb&quot;)" data-ref="_M/D">D</a>(<q>"transport: usb"</q>);</td></tr>
+<tr><th id="86">86</th><td>    <a class="local col8 ref" href="#8t" title='t' data-ref="8t">t</a>-&gt;<a class="macro" href="sysdeps.h.html#583" title="____xxx_close" data-ref="_M/close">close</a> = <a class="tu ref" href="#_ZL12remote_closeP10atransport" title='remote_close' data-use='r' data-ref="_ZL12remote_closeP10atransport">remote_close</a>;</td></tr>
+<tr><th id="87">87</th><td>    <a class="local col8 ref" href="#8t" title='t' data-ref="8t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::kick" title='atransport::kick' data-ref="atransport::kick">kick</a> = <a class="tu ref" href="#_ZL11remote_kickP10atransport" title='remote_kick' data-use='r' data-ref="_ZL11remote_kickP10atransport">remote_kick</a>;</td></tr>
+<tr><th id="88">88</th><td>    <a class="local col8 ref" href="#8t" title='t' data-ref="8t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::read_from_remote" title='atransport::read_from_remote' data-ref="atransport::read_from_remote">read_from_remote</a> = <a class="tu ref" href="#_ZL11remote_readP7apacketP10atransport" title='remote_read' data-use='r' data-ref="_ZL11remote_readP7apacketP10atransport">remote_read</a>;</td></tr>
+<tr><th id="89">89</th><td>    <a class="local col8 ref" href="#8t" title='t' data-ref="8t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::write_to_remote" title='atransport::write_to_remote' data-ref="atransport::write_to_remote">write_to_remote</a> = <a class="tu ref" href="#_ZL12remote_writeP7apacketP10atransport" title='remote_write' data-use='r' data-ref="_ZL12remote_writeP7apacketP10atransport">remote_write</a>;</td></tr>
+<tr><th id="90">90</th><td>    <a class="local col8 ref" href="#8t" title='t' data-ref="8t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::sync_token" title='atransport::sync_token' data-ref="atransport::sync_token">sync_token</a> = <var>1</var>;</td></tr>
+<tr><th id="91">91</th><td>    <a class="local col8 ref" href="#8t" title='t' data-ref="8t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::connection_state" title='atransport::connection_state' data-ref="atransport::connection_state">connection_state</a> = <a class="local col0 ref" href="#10state" title='state' data-ref="10state">state</a>;</td></tr>
+<tr><th id="92">92</th><td>    <a class="local col8 ref" href="#8t" title='t' data-ref="8t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::type" title='atransport::type' data-ref="atransport::type">type</a> = <a class="enum" href="adb.h.html#TransportType::kTransportUsb" title='TransportType::kTransportUsb' data-ref="TransportType::kTransportUsb">kTransportUsb</a>;</td></tr>
+<tr><th id="93">93</th><td>    <a class="local col8 ref" href="#8t" title='t' data-ref="8t">t</a>-&gt;<a class="ref" href="transport.h.html#atransport::usb" title='atransport::usb' data-ref="atransport::usb">usb</a> = <a class="local col9 ref" href="#9h" title='h' data-ref="9h">h</a>;</td></tr>
+<tr><th id="94">94</th><td>}</td></tr>
+<tr><th id="95">95</th><td></td></tr>
+<tr><th id="96">96</th><td><u>#<span data-ppcond="96">if</span> <span class="macro" title="0" data-ref="_M/ADB_HOST">ADB_HOST</span></u></td></tr>
+<tr><th id="97">97</th><td><em>int</em> is_adb_interface(<em>int</em> vid, <em>int</em> pid, <em>int</em> usb_class, <em>int</em> usb_subclass, <em>int</em> usb_protocol)</td></tr>
+<tr><th id="98">98</th><td>{</td></tr>
+<tr><th id="99">99</th><td>    <b>return</b> (usb_class == ADB_CLASS &amp;&amp; usb_subclass == ADB_SUBCLASS &amp;&amp; usb_protocol == ADB_PROTOCOL);</td></tr>
+<tr><th id="100">100</th><td>}</td></tr>
+<tr><th id="101">101</th><td><u>#<span data-ppcond="96">endif</span></u></td></tr>
+<tr><th id="102">102</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

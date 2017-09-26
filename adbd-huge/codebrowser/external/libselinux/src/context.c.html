@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>context.c source code [codebrowser/external/libselinux/src/context.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/libselinux/src/context.c'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>external</a>/<a href='..'>libselinux</a>/<a href='./'>src</a>/<a href='context.c.html'>context.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><u>#include <a href="context_internal.h.html">"context_internal.h"</a></u></td></tr>
+<tr><th id="2">2</th><td><u>#include <a href="../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="3">3</th><td><u>#include <a href="../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="4">4</th><td><u>#include <a href="../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="5">5</th><td><u>#include <a href="../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="6">6</th><td></td></tr>
+<tr><th id="7">7</th><td><u>#define <dfn class="macro" id="_M/COMP_USER" data-ref="_M/COMP_USER">COMP_USER</dfn>  0</u></td></tr>
+<tr><th id="8">8</th><td><u>#define <dfn class="macro" id="_M/COMP_ROLE" data-ref="_M/COMP_ROLE">COMP_ROLE</dfn>  1</u></td></tr>
+<tr><th id="9">9</th><td><u>#define <dfn class="macro" id="_M/COMP_TYPE" data-ref="_M/COMP_TYPE">COMP_TYPE</dfn>  2</u></td></tr>
+<tr><th id="10">10</th><td><u>#define <dfn class="macro" id="_M/COMP_RANGE" data-ref="_M/COMP_RANGE">COMP_RANGE</dfn> 3</u></td></tr>
+<tr><th id="11">11</th><td></td></tr>
+<tr><th id="12">12</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="13">13</th><td>	<em>char</em> *<dfn class="tu decl" id="(anonymous)::current_str" title='(anonymous struct)::current_str' data-type='char *' data-ref="(anonymous)::current_str">current_str</dfn>;	<i  data-doc="(anonymous)::current_str">/* This is made up-to-date only when needed */</i></td></tr>
+<tr><th id="14">14</th><td>	<em>char</em> *(<dfn class="tu decl" id="(anonymous)::component" title='(anonymous struct)::component' data-type='char *([4]' data-ref="(anonymous)::component">component</dfn>[<var>4</var>]);</td></tr>
+<tr><th id="15">15</th><td>} <dfn class="typedef" id="context_private_t" title='context_private_t' data-type='struct context_private_t' data-ref="context_private_t">context_private_t</dfn>;</td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><i>/*</i></td></tr>
+<tr><th id="18">18</th><td><i> * Allocate a new context, initialized from str.  There must be 3 or</i></td></tr>
+<tr><th id="19">19</th><td><i> * 4 colon-separated components and no whitespace in any component other</i></td></tr>
+<tr><th id="20">20</th><td><i> * than the MLS component.</i></td></tr>
+<tr><th id="21">21</th><td><i> */</i></td></tr>
+<tr><th id="22">22</th><td><a class="typedef" href="../include/selinux/context.h.html#context_t" title='context_t' data-type='context_s_t *' data-ref="context_t">context_t</a> <dfn class="decl def" id="context_new" title='context_new' data-ref="context_new">context_new</dfn>(<em>const</em> <em>char</em> *<dfn class="local col1 decl" id="1str" title='str' data-type='const char *' data-ref="1str">str</dfn>)</td></tr>
+<tr><th id="23">23</th><td>{</td></tr>
+<tr><th id="24">24</th><td>	<em>int</em> <dfn class="local col2 decl" id="2i" title='i' data-type='int' data-ref="2i">i</dfn>, <dfn class="local col3 decl" id="3count" title='count' data-type='int' data-ref="3count">count</dfn>;</td></tr>
+<tr><th id="25">25</th><td>	<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <var>0</var>;</td></tr>
+<tr><th id="26">26</th><td>	<a class="typedef" href="#context_private_t" title='context_private_t' data-type='struct context_private_t' data-ref="context_private_t">context_private_t</a> *<dfn class="local col4 decl" id="4n" title='n' data-type='context_private_t *' data-ref="4n">n</dfn> =</td></tr>
+<tr><th id="27">27</th><td>	    (<a class="typedef" href="#context_private_t" title='context_private_t' data-type='struct context_private_t' data-ref="context_private_t">context_private_t</a> *) <a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<b>sizeof</b>(<a class="typedef" href="#context_private_t" title='context_private_t' data-type='struct context_private_t' data-ref="context_private_t">context_private_t</a>));</td></tr>
+<tr><th id="28">28</th><td>	<a class="typedef" href="../include/selinux/context.h.html#context_t" title='context_t' data-type='context_s_t *' data-ref="context_t">context_t</a> <dfn class="local col5 decl" id="5result" title='result' data-type='context_t' data-ref="5result">result</dfn> = (<a class="typedef" href="../include/selinux/context.h.html#context_t" title='context_t' data-type='context_s_t *' data-ref="context_t">context_t</a>) <a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<b>sizeof</b>(<a class="typedef" href="../include/selinux/context.h.html#context_s_t" title='context_s_t' data-type='struct context_s_t' data-ref="context_s_t">context_s_t</a>));</td></tr>
+<tr><th id="29">29</th><td>	<em>const</em> <em>char</em> *<dfn class="local col6 decl" id="6p" title='p' data-type='const char *' data-ref="6p">p</dfn>, *<dfn class="local col7 decl" id="7tok" title='tok' data-type='const char *' data-ref="7tok">tok</dfn>;</td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td>	<b>if</b> (<a class="local col5 ref" href="#5result" title='result' data-ref="5result">result</a>)</td></tr>
+<tr><th id="32">32</th><td>		<a class="local col5 ref" href="#5result" title='result' data-ref="5result">result</a>-&gt;<a class="ref" href="../include/selinux/context.h.html#(anonymous)::ptr" title='(anonymous struct)::ptr' data-ref="(anonymous)::ptr">ptr</a> = <a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>;</td></tr>
+<tr><th id="33">33</th><td>	<b>else</b></td></tr>
+<tr><th id="34">34</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>);</td></tr>
+<tr><th id="35">35</th><td>	<b>if</b> (<a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a> == <var>0</var> || <a class="local col5 ref" href="#5result" title='result' data-ref="5result">result</a> == <var>0</var>) {</td></tr>
+<tr><th id="36">36</th><td>		<b>goto</b> <a class="lbl" href="#8err" data-ref="8err">err</a>;</td></tr>
+<tr><th id="37">37</th><td>	}</td></tr>
+<tr><th id="38">38</th><td>	<a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::current_str" title='(anonymous struct)::current_str' data-use='w' data-ref="(anonymous)::current_str">current_str</a> = <a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='w' data-ref="(anonymous)::component">component</a>[<var>0</var>] = <a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='w' data-ref="(anonymous)::component">component</a>[<var>1</var>] = <a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='w' data-ref="(anonymous)::component">component</a>[<var>2</var>] =</td></tr>
+<tr><th id="39">39</th><td>	    <a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='w' data-ref="(anonymous)::component">component</a>[<var>3</var>] = <var>0</var>;</td></tr>
+<tr><th id="40">40</th><td>	<b>for</b> (<a class="local col2 ref" href="#2i" title='i' data-ref="2i">i</a> = <a class="local col3 ref" href="#3count" title='count' data-ref="3count">count</a> = <var>0</var>, <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> = <a class="local col1 ref" href="#1str" title='str' data-ref="1str">str</a>; *<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>; <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>++) {</td></tr>
+<tr><th id="41">41</th><td>		<b>switch</b> (*<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>) {</td></tr>
+<tr><th id="42">42</th><td>		<b>case</b> <kbd>':'</kbd>:</td></tr>
+<tr><th id="43">43</th><td>			<a class="local col3 ref" href="#3count" title='count' data-ref="3count">count</a>++;</td></tr>
+<tr><th id="44">44</th><td>			<b>break</b>;</td></tr>
+<tr><th id="45">45</th><td>		<b>case</b> <kbd>'\n'</kbd>:</td></tr>
+<tr><th id="46">46</th><td>		<b>case</b> <kbd>'\t'</kbd>:</td></tr>
+<tr><th id="47">47</th><td>		<b>case</b> <kbd>'\r'</kbd>:</td></tr>
+<tr><th id="48">48</th><td>			<b>goto</b> <a class="lbl" href="#8err" data-ref="8err">err</a>;	<i>/* sanity check */</i></td></tr>
+<tr><th id="49">49</th><td>		<b>case</b> <kbd>' '</kbd>:</td></tr>
+<tr><th id="50">50</th><td>			<b>if</b> (<a class="local col3 ref" href="#3count" title='count' data-ref="3count">count</a> &lt; <var>3</var>)</td></tr>
+<tr><th id="51">51</th><td>				<b>goto</b> <a class="lbl" href="#8err" data-ref="8err">err</a>;	<i>/* sanity check */</i></td></tr>
+<tr><th id="52">52</th><td>		}</td></tr>
+<tr><th id="53">53</th><td>	}</td></tr>
+<tr><th id="54">54</th><td>	<i>/*</i></td></tr>
+<tr><th id="55">55</th><td><i>	 * Could be anywhere from 2 - 5</i></td></tr>
+<tr><th id="56">56</th><td><i>	 * e.g user:role:type to user:role:type:sens1:cata-sens2:catb</i></td></tr>
+<tr><th id="57">57</th><td><i>	 */</i></td></tr>
+<tr><th id="58">58</th><td>	<b>if</b> (<a class="local col3 ref" href="#3count" title='count' data-ref="3count">count</a> &lt; <var>2</var> || <a class="local col3 ref" href="#3count" title='count' data-ref="3count">count</a> &gt; <var>5</var>) {	<i>/* might not have a range */</i></td></tr>
+<tr><th id="59">59</th><td>		<b>goto</b> <a class="lbl" href="#8err" data-ref="8err">err</a>;</td></tr>
+<tr><th id="60">60</th><td>	}</td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td>	<a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='w' data-ref="(anonymous)::component">component</a>[<var>3</var>] = <var>0</var>;</td></tr>
+<tr><th id="63">63</th><td>	<b>for</b> (<a class="local col2 ref" href="#2i" title='i' data-ref="2i">i</a> = <var>0</var>, <a class="local col7 ref" href="#7tok" title='tok' data-ref="7tok">tok</a> = <a class="local col1 ref" href="#1str" title='str' data-ref="1str">str</a>; *<a class="local col7 ref" href="#7tok" title='tok' data-ref="7tok">tok</a>; <a class="local col2 ref" href="#2i" title='i' data-ref="2i">i</a>++) {</td></tr>
+<tr><th id="64">64</th><td>		<b>if</b> (<a class="local col2 ref" href="#2i" title='i' data-ref="2i">i</a> &lt; <var>3</var>)</td></tr>
+<tr><th id="65">65</th><td>			<b>for</b> (<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> = <a class="local col7 ref" href="#7tok" title='tok' data-ref="7tok">tok</a>; *<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> &amp;&amp; *<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> != <kbd>':'</kbd>; <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>++) {	<i>/* empty */</i></td></tr>
+<tr><th id="66">66</th><td>		} <b>else</b> {</td></tr>
+<tr><th id="67">67</th><td>			<i>/* MLS range is one component */</i></td></tr>
+<tr><th id="68">68</th><td>			<b>for</b> (<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> = <a class="local col7 ref" href="#7tok" title='tok' data-ref="7tok">tok</a>; *<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>; <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>++) {	<i>/* empty */</i></td></tr>
+<tr><th id="69">69</th><td>			}</td></tr>
+<tr><th id="70">70</th><td>		}</td></tr>
+<tr><th id="71">71</th><td>		<a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='w' data-ref="(anonymous)::component">component</a>[<a class="local col2 ref" href="#2i" title='i' data-ref="2i">i</a>] = (<em>char</em> *)<a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> - <a class="local col7 ref" href="#7tok" title='tok' data-ref="7tok">tok</a> + <var>1</var>);</td></tr>
+<tr><th id="72">72</th><td>		<b>if</b> (<a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='r' data-ref="(anonymous)::component">component</a>[<a class="local col2 ref" href="#2i" title='i' data-ref="2i">i</a>] == <var>0</var>)</td></tr>
+<tr><th id="73">73</th><td>			<b>goto</b> <a class="lbl" href="#8err" data-ref="8err">err</a>;</td></tr>
+<tr><th id="74">74</th><td>		<a class="ref" href="../../../bionic/libc/include/string.h.html#strncpy" title='strncpy' data-ref="strncpy">strncpy</a>(<a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='r' data-ref="(anonymous)::component">component</a>[<a class="local col2 ref" href="#2i" title='i' data-ref="2i">i</a>], <a class="local col7 ref" href="#7tok" title='tok' data-ref="7tok">tok</a>, <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> - <a class="local col7 ref" href="#7tok" title='tok' data-ref="7tok">tok</a>);</td></tr>
+<tr><th id="75">75</th><td>		<a class="local col4 ref" href="#4n" title='n' data-ref="4n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='r' data-ref="(anonymous)::component">component</a>[<a class="local col2 ref" href="#2i" title='i' data-ref="2i">i</a>][<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> - <a class="local col7 ref" href="#7tok" title='tok' data-ref="7tok">tok</a>] = <kbd>'\0'</kbd>;</td></tr>
+<tr><th id="76">76</th><td>		<a class="local col7 ref" href="#7tok" title='tok' data-ref="7tok">tok</a> = *<a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> ? <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a> + <var>1</var> : <a class="local col6 ref" href="#6p" title='p' data-ref="6p">p</a>;</td></tr>
+<tr><th id="77">77</th><td>	}</td></tr>
+<tr><th id="78">78</th><td>	<b>return</b> <a class="local col5 ref" href="#5result" title='result' data-ref="5result">result</a>;</td></tr>
+<tr><th id="79">79</th><td>      <dfn class="lbl" id="8err" data-ref="8err">err</dfn>:</td></tr>
+<tr><th id="80">80</th><td>	<b>if</b> (<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> == <var>0</var>) <a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="81">81</th><td>	<a class="ref" href="#context_free" title='context_free' data-ref="context_free">context_free</a>(<a class="local col5 ref" href="#5result" title='result' data-ref="5result">result</a>);</td></tr>
+<tr><th id="82">82</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="83">83</th><td>}</td></tr>
+<tr><th id="84">84</th><td></td></tr>
+<tr><th id="85">85</th><td><a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(context_new)</td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td><em>static</em> <em>void</em> <dfn class="tu decl def" id="conditional_free" title='conditional_free' data-type='void conditional_free(char ** v)' data-ref="conditional_free">conditional_free</dfn>(<em>char</em> **<dfn class="local col9 decl" id="9v" title='v' data-type='char **' data-ref="9v">v</dfn>)</td></tr>
+<tr><th id="88">88</th><td>{</td></tr>
+<tr><th id="89">89</th><td>	<b>if</b> (*<a class="local col9 ref" href="#9v" title='v' data-ref="9v">v</a>) {</td></tr>
+<tr><th id="90">90</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(*<a class="local col9 ref" href="#9v" title='v' data-ref="9v">v</a>);</td></tr>
+<tr><th id="91">91</th><td>	}</td></tr>
+<tr><th id="92">92</th><td>	*<a class="local col9 ref" href="#9v" title='v' data-ref="9v">v</a> = <var>0</var>;</td></tr>
+<tr><th id="93">93</th><td>}</td></tr>
+<tr><th id="94">94</th><td></td></tr>
+<tr><th id="95">95</th><td><i>/*</i></td></tr>
+<tr><th id="96">96</th><td><i> * free all storage used by a context.  Safe to call with</i></td></tr>
+<tr><th id="97">97</th><td><i> * null pointer. </i></td></tr>
+<tr><th id="98">98</th><td><i> */</i></td></tr>
+<tr><th id="99">99</th><td><em>void</em> <dfn class="decl def" id="context_free" title='context_free' data-ref="context_free">context_free</dfn>(<a class="typedef" href="../include/selinux/context.h.html#context_t" title='context_t' data-type='context_s_t *' data-ref="context_t">context_t</a> <dfn class="local col0 decl" id="10context" title='context' data-type='context_t' data-ref="10context">context</dfn>)</td></tr>
+<tr><th id="100">100</th><td>{</td></tr>
+<tr><th id="101">101</th><td>	<a class="typedef" href="#context_private_t" title='context_private_t' data-type='struct context_private_t' data-ref="context_private_t">context_private_t</a> *<dfn class="local col1 decl" id="11n" title='n' data-type='context_private_t *' data-ref="11n">n</dfn>;</td></tr>
+<tr><th id="102">102</th><td>	<em>int</em> <dfn class="local col2 decl" id="12i" title='i' data-type='int' data-ref="12i">i</dfn>;</td></tr>
+<tr><th id="103">103</th><td>	<b>if</b> (<a class="local col0 ref" href="#10context" title='context' data-ref="10context">context</a>) {</td></tr>
+<tr><th id="104">104</th><td>		<a class="local col1 ref" href="#11n" title='n' data-ref="11n">n</a> = <a class="local col0 ref" href="#10context" title='context' data-ref="10context">context</a>-&gt;<a class="ref" href="../include/selinux/context.h.html#(anonymous)::ptr" title='(anonymous struct)::ptr' data-ref="(anonymous)::ptr">ptr</a>;</td></tr>
+<tr><th id="105">105</th><td>		<b>if</b> (<a class="local col1 ref" href="#11n" title='n' data-ref="11n">n</a>) {</td></tr>
+<tr><th id="106">106</th><td>			<a class="tu ref" href="#conditional_free" title='conditional_free' data-use='c' data-ref="conditional_free">conditional_free</a>(&amp;<a class="local col1 ref" href="#11n" title='n' data-ref="11n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::current_str" title='(anonymous struct)::current_str' data-use='a' data-ref="(anonymous)::current_str">current_str</a>);</td></tr>
+<tr><th id="107">107</th><td>			<b>for</b> (<a class="local col2 ref" href="#12i" title='i' data-ref="12i">i</a> = <var>0</var>; <a class="local col2 ref" href="#12i" title='i' data-ref="12i">i</a> &lt; <var>4</var>; <a class="local col2 ref" href="#12i" title='i' data-ref="12i">i</a>++) {</td></tr>
+<tr><th id="108">108</th><td>				<a class="tu ref" href="#conditional_free" title='conditional_free' data-use='c' data-ref="conditional_free">conditional_free</a>(&amp;<a class="local col1 ref" href="#11n" title='n' data-ref="11n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='a' data-ref="(anonymous)::component">component</a>[<a class="local col2 ref" href="#12i" title='i' data-ref="12i">i</a>]);</td></tr>
+<tr><th id="109">109</th><td>			}</td></tr>
+<tr><th id="110">110</th><td>			<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col1 ref" href="#11n" title='n' data-ref="11n">n</a>);</td></tr>
+<tr><th id="111">111</th><td>		}</td></tr>
+<tr><th id="112">112</th><td>		<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col0 ref" href="#10context" title='context' data-ref="10context">context</a>);</td></tr>
+<tr><th id="113">113</th><td>	}</td></tr>
+<tr><th id="114">114</th><td>}</td></tr>
+<tr><th id="115">115</th><td></td></tr>
+<tr><th id="116">116</th><td><a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(context_free)</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><i>/*</i></td></tr>
+<tr><th id="119">119</th><td><i> * Return a pointer to the string value of the context.</i></td></tr>
+<tr><th id="120">120</th><td><i> */</i></td></tr>
+<tr><th id="121">121</th><td><em>char</em> *<dfn class="decl def" id="context_str" title='context_str' data-ref="context_str">context_str</dfn>(<a class="typedef" href="../include/selinux/context.h.html#context_t" title='context_t' data-type='context_s_t *' data-ref="context_t">context_t</a> <dfn class="local col3 decl" id="13context" title='context' data-type='context_t' data-ref="13context">context</dfn>)</td></tr>
+<tr><th id="122">122</th><td>{</td></tr>
+<tr><th id="123">123</th><td>	<a class="typedef" href="#context_private_t" title='context_private_t' data-type='struct context_private_t' data-ref="context_private_t">context_private_t</a> *<dfn class="local col4 decl" id="14n" title='n' data-type='context_private_t *' data-ref="14n">n</dfn> = <a class="local col3 ref" href="#13context" title='context' data-ref="13context">context</a>-&gt;<a class="ref" href="../include/selinux/context.h.html#(anonymous)::ptr" title='(anonymous struct)::ptr' data-ref="(anonymous)::ptr">ptr</a>;</td></tr>
+<tr><th id="124">124</th><td>	<em>int</em> <dfn class="local col5 decl" id="15i" title='i' data-type='int' data-ref="15i">i</dfn>;</td></tr>
+<tr><th id="125">125</th><td>	<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col6 decl" id="16total" title='total' data-type='size_t' data-ref="16total">total</dfn> = <var>0</var>;</td></tr>
+<tr><th id="126">126</th><td>	<a class="tu ref" href="#conditional_free" title='conditional_free' data-use='c' data-ref="conditional_free">conditional_free</a>(&amp;<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::current_str" title='(anonymous struct)::current_str' data-use='a' data-ref="(anonymous)::current_str">current_str</a>);</td></tr>
+<tr><th id="127">127</th><td>	<b>for</b> (<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> = <var>0</var>; <a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> &lt; <var>4</var>; <a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>++) {</td></tr>
+<tr><th id="128">128</th><td>		<b>if</b> (<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='r' data-ref="(anonymous)::component">component</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>]) {</td></tr>
+<tr><th id="129">129</th><td>			<a class="local col6 ref" href="#16total" title='total' data-ref="16total">total</a> += <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='r' data-ref="(anonymous)::component">component</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>]) + <var>1</var>;</td></tr>
+<tr><th id="130">130</th><td>		}</td></tr>
+<tr><th id="131">131</th><td>	}</td></tr>
+<tr><th id="132">132</th><td>	<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::current_str" title='(anonymous struct)::current_str' data-use='w' data-ref="(anonymous)::current_str">current_str</a> = <a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<a class="local col6 ref" href="#16total" title='total' data-ref="16total">total</a>);</td></tr>
+<tr><th id="133">133</th><td>	<b>if</b> (<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::current_str" title='(anonymous struct)::current_str' data-use='r' data-ref="(anonymous)::current_str">current_str</a> != <var>0</var>) {</td></tr>
+<tr><th id="134">134</th><td>		<em>char</em> *<dfn class="local col7 decl" id="17cp" title='cp' data-type='char *' data-ref="17cp">cp</dfn> = <a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::current_str" title='(anonymous struct)::current_str' data-use='r' data-ref="(anonymous)::current_str">current_str</a>;</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td>		<a class="ref" href="../../../bionic/libc/include/string.h.html#strcpy" title='strcpy' data-ref="strcpy">strcpy</a>(<a class="local col7 ref" href="#17cp" title='cp' data-ref="17cp">cp</a>, <a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='r' data-ref="(anonymous)::component">component</a>[<var>0</var>]);</td></tr>
+<tr><th id="137">137</th><td>		<a class="local col7 ref" href="#17cp" title='cp' data-ref="17cp">cp</a> += <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col7 ref" href="#17cp" title='cp' data-ref="17cp">cp</a>);</td></tr>
+<tr><th id="138">138</th><td>		<b>for</b> (<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> = <var>1</var>; <a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a> &lt; <var>4</var>; <a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>++) {</td></tr>
+<tr><th id="139">139</th><td>			<b>if</b> (<a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='r' data-ref="(anonymous)::component">component</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>]) {</td></tr>
+<tr><th id="140">140</th><td>				*<a class="local col7 ref" href="#17cp" title='cp' data-ref="17cp">cp</a>++ = <kbd>':'</kbd>;</td></tr>
+<tr><th id="141">141</th><td>				<a class="ref" href="../../../bionic/libc/include/string.h.html#strcpy" title='strcpy' data-ref="strcpy">strcpy</a>(<a class="local col7 ref" href="#17cp" title='cp' data-ref="17cp">cp</a>, <a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='r' data-ref="(anonymous)::component">component</a>[<a class="local col5 ref" href="#15i" title='i' data-ref="15i">i</a>]);</td></tr>
+<tr><th id="142">142</th><td>				<a class="local col7 ref" href="#17cp" title='cp' data-ref="17cp">cp</a> += <a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col7 ref" href="#17cp" title='cp' data-ref="17cp">cp</a>);</td></tr>
+<tr><th id="143">143</th><td>			}</td></tr>
+<tr><th id="144">144</th><td>		}</td></tr>
+<tr><th id="145">145</th><td>	}</td></tr>
+<tr><th id="146">146</th><td>	<b>return</b> <a class="local col4 ref" href="#14n" title='n' data-ref="14n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::current_str" title='(anonymous struct)::current_str' data-use='r' data-ref="(anonymous)::current_str">current_str</a>;</td></tr>
+<tr><th id="147">147</th><td>}</td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td><a class="macro" href="dso.h.html#20" title="" data-ref="_M/hidden_def">hidden_def</a>(context_str)</td></tr>
+<tr><th id="150">150</th><td></td></tr>
+<tr><th id="151">151</th><td><i  data-doc="set_comp">/* Returns nonzero iff failed */</i></td></tr>
+<tr><th id="152">152</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="set_comp" title='set_comp' data-type='int set_comp(context_private_t * n, int idx, const char * str)' data-ref="set_comp">set_comp</dfn>(<a class="typedef" href="#context_private_t" title='context_private_t' data-type='struct context_private_t' data-ref="context_private_t">context_private_t</a> * <dfn class="local col8 decl" id="18n" title='n' data-type='context_private_t *' data-ref="18n">n</dfn>, <em>int</em> <dfn class="local col9 decl" id="19idx" title='idx' data-type='int' data-ref="19idx">idx</dfn>, <em>const</em> <em>char</em> *<dfn class="local col0 decl" id="20str" title='str' data-type='const char *' data-ref="20str">str</dfn>)</td></tr>
+<tr><th id="153">153</th><td>{</td></tr>
+<tr><th id="154">154</th><td>	<em>char</em> *<dfn class="local col1 decl" id="21t" title='t' data-type='char *' data-ref="21t">t</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="155">155</th><td>	<em>const</em> <em>char</em> *<dfn class="local col2 decl" id="22p" title='p' data-type='const char *' data-ref="22p">p</dfn>;</td></tr>
+<tr><th id="156">156</th><td>	<b>if</b> (<a class="local col0 ref" href="#20str" title='str' data-ref="20str">str</a>) {</td></tr>
+<tr><th id="157">157</th><td>		<a class="local col1 ref" href="#21t" title='t' data-ref="21t">t</a> = (<em>char</em> *)<a class="ref" href="../../../bionic/libc/include/malloc.h.html#malloc" title='malloc' data-ref="malloc">malloc</a>(<a class="ref" href="../../../bionic/libc/include/string.h.html#strlen" title='strlen' data-ref="strlen">strlen</a>(<a class="local col0 ref" href="#20str" title='str' data-ref="20str">str</a>) + <var>1</var>);</td></tr>
+<tr><th id="158">158</th><td>		<b>if</b> (!<a class="local col1 ref" href="#21t" title='t' data-ref="21t">t</a>) {</td></tr>
+<tr><th id="159">159</th><td>			<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="160">160</th><td>		}</td></tr>
+<tr><th id="161">161</th><td>		<b>for</b> (<a class="local col2 ref" href="#22p" title='p' data-ref="22p">p</a> = <a class="local col0 ref" href="#20str" title='str' data-ref="20str">str</a>; *<a class="local col2 ref" href="#22p" title='p' data-ref="22p">p</a>; <a class="local col2 ref" href="#22p" title='p' data-ref="22p">p</a>++) {</td></tr>
+<tr><th id="162">162</th><td>			<b>if</b> (*<a class="local col2 ref" href="#22p" title='p' data-ref="22p">p</a> == <kbd>'\t'</kbd> || *<a class="local col2 ref" href="#22p" title='p' data-ref="22p">p</a> == <kbd>'\n'</kbd> || *<a class="local col2 ref" href="#22p" title='p' data-ref="22p">p</a> == <kbd>'\r'</kbd> ||</td></tr>
+<tr><th id="163">163</th><td>			    ((*<a class="local col2 ref" href="#22p" title='p' data-ref="22p">p</a> == <kbd>':'</kbd> || *<a class="local col2 ref" href="#22p" title='p' data-ref="22p">p</a> == <kbd>' '</kbd>) &amp;&amp; <a class="local col9 ref" href="#19idx" title='idx' data-ref="19idx">idx</a> != <a class="macro" href="#10" title="3" data-ref="_M/COMP_RANGE">COMP_RANGE</a>)) {</td></tr>
+<tr><th id="164">164</th><td>				<a class="ref" href="../../../bionic/libc/include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col1 ref" href="#21t" title='t' data-ref="21t">t</a>);</td></tr>
+<tr><th id="165">165</th><td>				<a class="macro" href="../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <a class="macro" href="../../../bionic/libc/kernel/uapi/asm-generic/errno-base.h.html#47" title="22" data-ref="_M/EINVAL">EINVAL</a>;</td></tr>
+<tr><th id="166">166</th><td>				<b>return</b> <var>1</var>;</td></tr>
+<tr><th id="167">167</th><td>			}</td></tr>
+<tr><th id="168">168</th><td>		}</td></tr>
+<tr><th id="169">169</th><td>		<a class="ref" href="../../../bionic/libc/include/string.h.html#strcpy" title='strcpy' data-ref="strcpy">strcpy</a>(<a class="local col1 ref" href="#21t" title='t' data-ref="21t">t</a>, <a class="local col0 ref" href="#20str" title='str' data-ref="20str">str</a>);</td></tr>
+<tr><th id="170">170</th><td>	}</td></tr>
+<tr><th id="171">171</th><td>	<a class="tu ref" href="#conditional_free" title='conditional_free' data-use='c' data-ref="conditional_free">conditional_free</a>(&amp;<a class="local col8 ref" href="#18n" title='n' data-ref="18n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='a' data-ref="(anonymous)::component">component</a>[<a class="local col9 ref" href="#19idx" title='idx' data-ref="19idx">idx</a>]);</td></tr>
+<tr><th id="172">172</th><td>	<a class="local col8 ref" href="#18n" title='n' data-ref="18n">n</a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='w' data-ref="(anonymous)::component">component</a>[<a class="local col9 ref" href="#19idx" title='idx' data-ref="19idx">idx</a>] = <a class="local col1 ref" href="#21t" title='t' data-ref="21t">t</a>;</td></tr>
+<tr><th id="173">173</th><td>	<b>return</b> <var>0</var>;</td></tr>
+<tr><th id="174">174</th><td>}</td></tr>
+<tr><th id="175">175</th><td></td></tr>
+<tr><th id="176">176</th><td><u>#define <dfn class="macro" id="_M/def_get" data-ref="_M/def_get">def_get</dfn>(name,tag) \</u></td></tr>
+<tr><th id="177">177</th><td><u>const char * context_ ## name ## _get(<a class="typedef" href="../include/selinux/context.h.html#context_t" title='context_t' data-type='context_s_t *' data-ref="context_t">context_t</a> <dfn class="local col3 decl" id="23context" title='context' data-type='context_t' data-ref="23context"><dfn class="local col5 decl" id="25context" title='context' data-type='context_t' data-ref="25context"><dfn class="local col7 decl" id="27context" title='context' data-type='context_t' data-ref="27context"><dfn class="local col9 decl" id="29context" title='context' data-type='context_t' data-ref="29context">context</dfn></dfn></dfn></dfn>) \</u></td></tr>
+<tr><th id="178">178</th><td><u>{ \</u></td></tr>
+<tr><th id="179">179</th><td><u>        <a class="typedef" href="#context_private_t" title='context_private_t' data-type='struct context_private_t' data-ref="context_private_t">context_private_t</a> *<dfn class="local col4 decl" id="24n" title='n' data-type='context_private_t *' data-ref="24n"><dfn class="local col6 decl" id="26n" title='n' data-type='context_private_t *' data-ref="26n"><dfn class="local col8 decl" id="28n" title='n' data-type='context_private_t *' data-ref="28n"><dfn class="local col0 decl" id="30n" title='n' data-type='context_private_t *' data-ref="30n">n</dfn></dfn></dfn></dfn> = <a class="local col3 ref" href="#184" title='context' data-ref="23context"><a class="local col5 ref" href="#185" title='context' data-ref="25context"><a class="local col7 ref" href="#186" title='context' data-ref="27context"><a class="local col9 ref" href="#187" title='context' data-ref="29context">context</a></a></a></a>-&gt;<a class="ref" href="../include/selinux/context.h.html#(anonymous)::ptr" title='(anonymous struct)::ptr' data-ref="(anonymous)::ptr">ptr</a>; \</u></td></tr>
+<tr><th id="180">180</th><td><u>        return <a class="local col4 ref" href="#184" title='n' data-ref="24n"><a class="local col6 ref" href="#185" title='n' data-ref="26n"><a class="local col8 ref" href="#186" title='n' data-ref="28n"><a class="local col0 ref" href="#187" title='n' data-ref="30n">n</a></a></a></a>-&gt;<a class="tu ref" href="#(anonymous)::component" title='(anonymous struct)::component' data-use='r' data-ref="(anonymous)::component">component</a>[tag]; \</u></td></tr>
+<tr><th id="181">181</th><td><u>} \</u></td></tr>
+<tr><th id="182">182</th><td><u>hidden_def(context_ ## name ## _get)</u></td></tr>
+<tr><th id="183">183</th><td></td></tr>
+<tr><th id="184">184</th><td><a class="macro" href="#176" title="const char * context_type_get(context_t context) { context_private_t *n = context-&gt;ptr; return n-&gt;component[2]; }" data-ref="_M/def_get">def_get</a>(type, <a class="macro" href="#9" title="2" data-ref="_M/COMP_TYPE">COMP_TYPE</a>)</td></tr>
+<tr><th id="185">185</th><td>    <a class="macro" href="#176" title="const char * context_user_get(context_t context) { context_private_t *n = context-&gt;ptr; return n-&gt;component[0]; }" data-ref="_M/def_get">def_get</a>(user, <a class="macro" href="#7" title="0" data-ref="_M/COMP_USER">COMP_USER</a>)</td></tr>
+<tr><th id="186">186</th><td>    <a class="macro" href="#176" title="const char * context_range_get(context_t context) { context_private_t *n = context-&gt;ptr; return n-&gt;component[3]; }" data-ref="_M/def_get">def_get</a>(range, <a class="macro" href="#10" title="3" data-ref="_M/COMP_RANGE">COMP_RANGE</a>)</td></tr>
+<tr><th id="187">187</th><td>    <a class="macro" href="#176" title="const char * context_role_get(context_t context) { context_private_t *n = context-&gt;ptr; return n-&gt;component[1]; }" data-ref="_M/def_get">def_get</a>(role, <a class="macro" href="#8" title="1" data-ref="_M/COMP_ROLE">COMP_ROLE</a>)</td></tr>
+<tr><th id="188">188</th><td><u>#define <dfn class="macro" id="_M/def_set" data-ref="_M/def_set">def_set</dfn>(name,tag) \</u></td></tr>
+<tr><th id="189">189</th><td><u>int context_ ## name ## _set(<a class="typedef" href="../include/selinux/context.h.html#context_t" title='context_t' data-type='context_s_t *' data-ref="context_t">context_t</a> <dfn class="local col1 decl" id="31context" title='context' data-type='context_t' data-ref="31context"><dfn class="local col3 decl" id="33context" title='context' data-type='context_t' data-ref="33context"><dfn class="local col5 decl" id="35context" title='context' data-type='context_t' data-ref="35context"><dfn class="local col7 decl" id="37context" title='context' data-type='context_t' data-ref="37context">context</dfn></dfn></dfn></dfn>, const char* <dfn class="local col2 decl" id="32str" title='str' data-type='const char *' data-ref="32str"><dfn class="local col4 decl" id="34str" title='str' data-type='const char *' data-ref="34str"><dfn class="local col6 decl" id="36str" title='str' data-type='const char *' data-ref="36str"><dfn class="local col8 decl" id="38str" title='str' data-type='const char *' data-ref="38str">str</dfn></dfn></dfn></dfn>) \</u></td></tr>
+<tr><th id="190">190</th><td><u>{ \</u></td></tr>
+<tr><th id="191">191</th><td><u>        return <a class="tu ref" href="#set_comp" title='set_comp' data-use='c' data-ref="set_comp">set_comp</a>(<a class="local col1 ref" href="#194" title='context' data-ref="31context"><a class="local col3 ref" href="#195" title='context' data-ref="33context"><a class="local col5 ref" href="#196" title='context' data-ref="35context"><a class="local col7 ref" href="#197" title='context' data-ref="37context">context</a></a></a></a>-&gt;<a class="ref" href="../include/selinux/context.h.html#(anonymous)::ptr" title='(anonymous struct)::ptr' data-ref="(anonymous)::ptr">ptr</a>,tag,<a class="local col2 ref" href="#194" title='str' data-ref="32str"><a class="local col4 ref" href="#195" title='str' data-ref="34str"><a class="local col6 ref" href="#196" title='str' data-ref="36str"><a class="local col8 ref" href="#197" title='str' data-ref="38str">str</a></a></a></a>);\</u></td></tr>
+<tr><th id="192">192</th><td><u>} \</u></td></tr>
+<tr><th id="193">193</th><td><u>hidden_def(context_ ## name ## _set)</u></td></tr>
+<tr><th id="194">194</th><td>    <a class="macro" href="#188" title="int context_type_set(context_t context, const char* str) { return set_comp(context-&gt;ptr,2,str);}" data-ref="_M/def_set">def_set</a>(type, <a class="macro" href="#9" title="2" data-ref="_M/COMP_TYPE">COMP_TYPE</a>)</td></tr>
+<tr><th id="195">195</th><td>    <a class="macro" href="#188" title="int context_role_set(context_t context, const char* str) { return set_comp(context-&gt;ptr,1,str);}" data-ref="_M/def_set">def_set</a>(role, <a class="macro" href="#8" title="1" data-ref="_M/COMP_ROLE">COMP_ROLE</a>)</td></tr>
+<tr><th id="196">196</th><td>    <a class="macro" href="#188" title="int context_user_set(context_t context, const char* str) { return set_comp(context-&gt;ptr,0,str);}" data-ref="_M/def_set">def_set</a>(user, <a class="macro" href="#7" title="0" data-ref="_M/COMP_USER">COMP_USER</a>)</td></tr>
+<tr><th id="197">197</th><td>    <a class="macro" href="#188" title="int context_range_set(context_t context, const char* str) { return set_comp(context-&gt;ptr,3,str);}" data-ref="_M/def_set">def_set</a>(range, <a class="macro" href="#10" title="3" data-ref="_M/COMP_RANGE">COMP_RANGE</a>)</td></tr>
+<tr><th id="198">198</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

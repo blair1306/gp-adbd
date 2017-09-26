@@ -1,0 +1,313 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ex_data.c source code [codebrowser/external/boringssl/src/crypto/ex_data.c] - Woboq Code Browser</title>
+<meta name="woboq:interestingDefinitions" content="crypto_ex_data_func_st "/>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/ex_data.c'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>external</a>/<a href='../..'>boringssl</a>/<a href='..'>src</a>/<a href='./'>crypto</a>/<a href='ex_data.c.html'>ex_data.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)</i></td></tr>
+<tr><th id="2">2</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * This package is an SSL implementation written</i></td></tr>
+<tr><th id="5">5</th><td><i> * by Eric Young (eay@cryptsoft.com).</i></td></tr>
+<tr><th id="6">6</th><td><i> * The implementation was written so as to conform with Netscapes SSL.</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> * This library is free for commercial and non-commercial use as long as</i></td></tr>
+<tr><th id="9">9</th><td><i> * the following conditions are aheared to.  The following conditions</i></td></tr>
+<tr><th id="10">10</th><td><i> * apply to all code found in this distribution, be it the RC4, RSA,</i></td></tr>
+<tr><th id="11">11</th><td><i> * lhash, DES, etc., code; not just the SSL code.  The SSL documentation</i></td></tr>
+<tr><th id="12">12</th><td><i> * included with this distribution is covered by the same copyright terms</i></td></tr>
+<tr><th id="13">13</th><td><i> * except that the holder is Tim Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * Copyright remains Eric Young's, and as such any Copyright notices in</i></td></tr>
+<tr><th id="16">16</th><td><i> * the code are not to be removed.</i></td></tr>
+<tr><th id="17">17</th><td><i> * If this package is used in a product, Eric Young should be given attribution</i></td></tr>
+<tr><th id="18">18</th><td><i> * as the author of the parts of the library used.</i></td></tr>
+<tr><th id="19">19</th><td><i> * This can be in the form of a textual message at program startup or</i></td></tr>
+<tr><th id="20">20</th><td><i> * in documentation (online or textual) provided with the package.</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="23">23</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="24">24</th><td><i> * are met:</i></td></tr>
+<tr><th id="25">25</th><td><i> * 1. Redistributions of source code must retain the copyright</i></td></tr>
+<tr><th id="26">26</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="27">27</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="28">28</th><td><i> *    notice, this list of conditions and the following disclaimer in the</i></td></tr>
+<tr><th id="29">29</th><td><i> *    documentation and/or other materials provided with the distribution.</i></td></tr>
+<tr><th id="30">30</th><td><i> * 3. All advertising materials mentioning features or use of this software</i></td></tr>
+<tr><th id="31">31</th><td><i> *    must display the following acknowledgement:</i></td></tr>
+<tr><th id="32">32</th><td><i> *    "This product includes cryptographic software written by</i></td></tr>
+<tr><th id="33">33</th><td><i> *     Eric Young (eay@cryptsoft.com)"</i></td></tr>
+<tr><th id="34">34</th><td><i> *    The word 'cryptographic' can be left out if the rouines from the library</i></td></tr>
+<tr><th id="35">35</th><td><i> *    being used are not cryptographic related :-).</i></td></tr>
+<tr><th id="36">36</th><td><i> * 4. If you include any Windows specific code (or a derivative thereof) from</i></td></tr>
+<tr><th id="37">37</th><td><i> *    the apps directory (application code) you must include an acknowledgement:</i></td></tr>
+<tr><th id="38">38</th><td><i> *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"</i></td></tr>
+<tr><th id="39">39</th><td><i> *</i></td></tr>
+<tr><th id="40">40</th><td><i> * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND</i></td></tr>
+<tr><th id="41">41</th><td><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="42">42</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></td></tr>
+<tr><th id="43">43</th><td><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></td></tr>
+<tr><th id="44">44</th><td><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></td></tr>
+<tr><th id="45">45</th><td><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></td></tr>
+<tr><th id="46">46</th><td><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="47">47</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></td></tr>
+<tr><th id="48">48</th><td><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></td></tr>
+<tr><th id="49">49</th><td><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="50">50</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="51">51</th><td><i> *</i></td></tr>
+<tr><th id="52">52</th><td><i> * The licence and distribution terms for any publically available version or</i></td></tr>
+<tr><th id="53">53</th><td><i> * derivative of this code cannot be changed.  i.e. this code cannot simply be</i></td></tr>
+<tr><th id="54">54</th><td><i> * copied and put under another distribution licence</i></td></tr>
+<tr><th id="55">55</th><td><i> * [including the GNU Public Licence.]</i></td></tr>
+<tr><th id="56">56</th><td><i> */</i></td></tr>
+<tr><th id="57">57</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="58">58</th><td><i> * Copyright (c) 1998-2001 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="59">59</th><td><i> *</i></td></tr>
+<tr><th id="60">60</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="61">61</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="62">62</th><td><i> * are met:</i></td></tr>
+<tr><th id="63">63</th><td><i> *</i></td></tr>
+<tr><th id="64">64</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="65">65</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="66">66</th><td><i> *</i></td></tr>
+<tr><th id="67">67</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="68">68</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="69">69</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="70">70</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="71">71</th><td><i> *</i></td></tr>
+<tr><th id="72">72</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="73">73</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="74">74</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="75">75</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="76">76</th><td><i> *</i></td></tr>
+<tr><th id="77">77</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="78">78</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="79">79</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="80">80</th><td><i> *    openssl-core@openssl.org.</i></td></tr>
+<tr><th id="81">81</th><td><i> *</i></td></tr>
+<tr><th id="82">82</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="83">83</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="84">84</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="85">85</th><td><i> *</i></td></tr>
+<tr><th id="86">86</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="87">87</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="88">88</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="89">89</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="90">90</th><td><i> *</i></td></tr>
+<tr><th id="91">91</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="92">92</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="93">93</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="94">94</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="95">95</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="96">96</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="97">97</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="98">98</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="99">99</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="100">100</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="101">101</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="102">102</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="103">103</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="104">104</th><td><i> *</i></td></tr>
+<tr><th id="105">105</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="106">106</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="107">107</th><td><i> * Hudson (tjh@cryptsoft.com). */</i></td></tr>
+<tr><th id="108">108</th><td></td></tr>
+<tr><th id="109">109</th><td><u>#include <a href="../include/openssl/ex_data.h.html">&lt;openssl/ex_data.h&gt;</a></u></td></tr>
+<tr><th id="110">110</th><td></td></tr>
+<tr><th id="111">111</th><td><u>#include <a href="../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/assert.h.html">&lt;assert.h&gt;</a></u></td></tr>
+<tr><th id="112">112</th><td><u>#include <a href="../../../../prebuilts/ndk/r11/platforms/android-21/arch-x86_64/usr/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="113">113</th><td></td></tr>
+<tr><th id="114">114</th><td><u>#include <a href="../include/openssl/crypto.h.html">&lt;openssl/crypto.h&gt;</a></u></td></tr>
+<tr><th id="115">115</th><td><u>#include <a href="../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="116">116</th><td><u>#include <a href="../include/openssl/lhash.h.html">&lt;openssl/lhash.h&gt;</a></u></td></tr>
+<tr><th id="117">117</th><td><u>#include <a href="../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="118">118</th><td><u>#include <a href="../include/openssl/stack.h.html">&lt;openssl/stack.h&gt;</a></u></td></tr>
+<tr><th id="119">119</th><td><u>#include <a href="../include/openssl/thread.h.html">&lt;openssl/thread.h&gt;</a></u></td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td><u>#include <a href="internal.h.html">"internal.h"</a></u></td></tr>
+<tr><th id="122">122</th><td></td></tr>
+<tr><th id="123">123</th><td></td></tr>
+<tr><th id="124">124</th><td><b>struct</b> <dfn class="type def" id="crypto_ex_data_func_st" title='crypto_ex_data_func_st' data-ref="crypto_ex_data_func_st">crypto_ex_data_func_st</dfn> {</td></tr>
+<tr><th id="125">125</th><td>  <em>long</em> <dfn class="decl" id="crypto_ex_data_func_st::argl" title='crypto_ex_data_func_st::argl' data-ref="crypto_ex_data_func_st::argl">argl</dfn>;  <i>/* Arbitary long */</i></td></tr>
+<tr><th id="126">126</th><td>  <em>void</em> *<dfn class="decl" id="crypto_ex_data_func_st::argp" title='crypto_ex_data_func_st::argp' data-ref="crypto_ex_data_func_st::argp">argp</dfn>; <i>/* Arbitary void pointer */</i></td></tr>
+<tr><th id="127">127</th><td>  <a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_free" title='CRYPTO_EX_free' data-type='void (void *, void *, CRYPTO_EX_DATA *, int, long, void *)' data-ref="CRYPTO_EX_free">CRYPTO_EX_free</a> *<dfn class="decl" id="crypto_ex_data_func_st::free_func" title='crypto_ex_data_func_st::free_func' data-ref="crypto_ex_data_func_st::free_func">free_func</dfn>;</td></tr>
+<tr><th id="128">128</th><td>  <a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_dup" title='CRYPTO_EX_dup' data-type='int (CRYPTO_EX_DATA *, const CRYPTO_EX_DATA *, void **, int, long, void *)' data-ref="CRYPTO_EX_dup">CRYPTO_EX_dup</a> *<dfn class="decl" id="crypto_ex_data_func_st::dup_func" title='crypto_ex_data_func_st::dup_func' data-ref="crypto_ex_data_func_st::dup_func">dup_func</dfn>;</td></tr>
+<tr><th id="129">129</th><td>};</td></tr>
+<tr><th id="130">130</th><td></td></tr>
+<tr><th id="131">131</th><td><em>int</em> <dfn class="decl def" id="CRYPTO_get_ex_new_index" title='CRYPTO_get_ex_new_index' data-ref="CRYPTO_get_ex_new_index">CRYPTO_get_ex_new_index</dfn>(<a class="typedef" href="internal.h.html#CRYPTO_EX_DATA_CLASS" title='CRYPTO_EX_DATA_CLASS' data-type='struct CRYPTO_EX_DATA_CLASS' data-ref="CRYPTO_EX_DATA_CLASS">CRYPTO_EX_DATA_CLASS</a> *<dfn class="local col1 decl" id="1ex_data_class" title='ex_data_class' data-type='CRYPTO_EX_DATA_CLASS *' data-ref="1ex_data_class">ex_data_class</dfn>, <em>int</em> *<dfn class="local col2 decl" id="2out_index" title='out_index' data-type='int *' data-ref="2out_index">out_index</dfn>,</td></tr>
+<tr><th id="132">132</th><td>                            <em>long</em> <dfn class="local col3 decl" id="3argl" title='argl' data-type='long' data-ref="3argl">argl</dfn>, <em>void</em> *<dfn class="local col4 decl" id="4argp" title='argp' data-type='void *' data-ref="4argp">argp</dfn>, <a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_dup" title='CRYPTO_EX_dup' data-type='int (CRYPTO_EX_DATA *, const CRYPTO_EX_DATA *, void **, int, long, void *)' data-ref="CRYPTO_EX_dup">CRYPTO_EX_dup</a> *<dfn class="local col5 decl" id="5dup_func" title='dup_func' data-type='CRYPTO_EX_dup *' data-ref="5dup_func">dup_func</dfn>,</td></tr>
+<tr><th id="133">133</th><td>                            <a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_free" title='CRYPTO_EX_free' data-type='void (void *, void *, CRYPTO_EX_DATA *, int, long, void *)' data-ref="CRYPTO_EX_free">CRYPTO_EX_free</a> *<dfn class="local col6 decl" id="6free_func" title='free_func' data-type='CRYPTO_EX_free *' data-ref="6free_func">free_func</dfn>) {</td></tr>
+<tr><th id="134">134</th><td>  <a class="typedef" href="internal.h.html#CRYPTO_EX_DATA_FUNCS" title='CRYPTO_EX_DATA_FUNCS' data-type='struct crypto_ex_data_func_st' data-ref="CRYPTO_EX_DATA_FUNCS">CRYPTO_EX_DATA_FUNCS</a> *<dfn class="local col7 decl" id="7funcs" title='funcs' data-type='CRYPTO_EX_DATA_FUNCS *' data-ref="7funcs">funcs</dfn>;</td></tr>
+<tr><th id="135">135</th><td>  <em>int</em> <dfn class="local col8 decl" id="8ret" title='ret' data-type='int' data-ref="8ret">ret</dfn> = <var>0</var>;</td></tr>
+<tr><th id="136">136</th><td></td></tr>
+<tr><th id="137">137</th><td>  <a class="local col7 ref" href="#7funcs" title='funcs' data-ref="7funcs">funcs</a> = <a class="macro" href="../include/openssl/mem.h.html#78" title="malloc" data-ref="_M/OPENSSL_malloc">OPENSSL_malloc</a>(<b>sizeof</b>(<a class="typedef" href="internal.h.html#CRYPTO_EX_DATA_FUNCS" title='CRYPTO_EX_DATA_FUNCS' data-type='struct crypto_ex_data_func_st' data-ref="CRYPTO_EX_DATA_FUNCS">CRYPTO_EX_DATA_FUNCS</a>));</td></tr>
+<tr><th id="138">138</th><td>  <b>if</b> (<a class="local col7 ref" href="#7funcs" title='funcs' data-ref="7funcs">funcs</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="139">139</th><td>    <a class="macro" href="../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_CRYPTO, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ex_data.c&quot;, 139)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(CRYPTO, <a class="macro" href="../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="140">140</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="141">141</th><td>  }</td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td>  <a class="local col7 ref" href="#7funcs" title='funcs' data-ref="7funcs">funcs</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::argl" title='crypto_ex_data_func_st::argl' data-ref="crypto_ex_data_func_st::argl">argl</a> = <a class="local col3 ref" href="#3argl" title='argl' data-ref="3argl">argl</a>;</td></tr>
+<tr><th id="144">144</th><td>  <a class="local col7 ref" href="#7funcs" title='funcs' data-ref="7funcs">funcs</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::argp" title='crypto_ex_data_func_st::argp' data-ref="crypto_ex_data_func_st::argp">argp</a> = <a class="local col4 ref" href="#4argp" title='argp' data-ref="4argp">argp</a>;</td></tr>
+<tr><th id="145">145</th><td>  <a class="local col7 ref" href="#7funcs" title='funcs' data-ref="7funcs">funcs</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::dup_func" title='crypto_ex_data_func_st::dup_func' data-ref="crypto_ex_data_func_st::dup_func">dup_func</a> = <a class="local col5 ref" href="#5dup_func" title='dup_func' data-ref="5dup_func">dup_func</a>;</td></tr>
+<tr><th id="146">146</th><td>  <a class="local col7 ref" href="#7funcs" title='funcs' data-ref="7funcs">funcs</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::free_func" title='crypto_ex_data_func_st::free_func' data-ref="crypto_ex_data_func_st::free_func">free_func</a> = <a class="local col6 ref" href="#6free_func" title='free_func' data-ref="6free_func">free_func</a>;</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td>  <a class="ref" href="internal.h.html#CRYPTO_STATIC_MUTEX_lock_write" title='CRYPTO_STATIC_MUTEX_lock_write' data-ref="CRYPTO_STATIC_MUTEX_lock_write">CRYPTO_STATIC_MUTEX_lock_write</a>(&amp;<a class="local col1 ref" href="#1ex_data_class" title='ex_data_class' data-ref="1ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::lock" title='(anonymous struct)::lock' data-ref="(anonymous)::lock">lock</a>);</td></tr>
+<tr><th id="149">149</th><td></td></tr>
+<tr><th id="150">150</th><td>  <b>if</b> (<a class="local col1 ref" href="#1ex_data_class" title='ex_data_class' data-ref="1ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::meth" title='(anonymous struct)::meth' data-ref="(anonymous)::meth">meth</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="151">151</th><td>    <a class="local col1 ref" href="#1ex_data_class" title='ex_data_class' data-ref="1ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::meth" title='(anonymous struct)::meth' data-ref="(anonymous)::meth">meth</a> = <a class="macro" href="../include/openssl/stack_macros.h.html#1013" title="((struct stack_st_CRYPTO_EX_DATA_FUNCS *)sk_new_null())" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_new_null">sk_CRYPTO_EX_DATA_FUNCS_new_null</a>();</td></tr>
+<tr><th id="152">152</th><td>  }</td></tr>
+<tr><th id="153">153</th><td></td></tr>
+<tr><th id="154">154</th><td>  <b>if</b> (<a class="local col1 ref" href="#1ex_data_class" title='ex_data_class' data-ref="1ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::meth" title='(anonymous struct)::meth' data-ref="(anonymous)::meth">meth</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> ||</td></tr>
+<tr><th id="155">155</th><td>      !<a class="macro" href="../include/openssl/stack_macros.h.html#1061" title="sk_push(((_STACK *) (1 ? (ex_data_class-&gt;meth) : (struct stack_st_CRYPTO_EX_DATA_FUNCS *)0)), ((void *) (1 ? (funcs) : (CRYPTO_EX_DATA_FUNCS *)0)))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_push">sk_CRYPTO_EX_DATA_FUNCS_push</a>(<a class="local col1 ref" href="#1ex_data_class" title='ex_data_class' data-ref="1ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::meth" title='(anonymous struct)::meth' data-ref="(anonymous)::meth">meth</a>, <a class="local col7 ref" href="#7funcs" title='funcs' data-ref="7funcs">funcs</a>)) {</td></tr>
+<tr><th id="156">156</th><td>    <a class="macro" href="../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_CRYPTO, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ex_data.c&quot;, 156)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(CRYPTO, <a class="macro" href="../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="157">157</th><td>    <a class="macro" href="../include/openssl/mem.h.html#80" title="free" data-ref="_M/OPENSSL_free">OPENSSL_free</a>(<a class="local col7 ref" href="#7funcs" title='funcs' data-ref="7funcs">funcs</a>);</td></tr>
+<tr><th id="158">158</th><td>    <b>goto</b> <a class="lbl" href="#9err" data-ref="9err">err</a>;</td></tr>
+<tr><th id="159">159</th><td>  }</td></tr>
+<tr><th id="160">160</th><td></td></tr>
+<tr><th id="161">161</th><td>  *<a class="local col2 ref" href="#2out_index" title='out_index' data-ref="2out_index">out_index</a> = <a class="macro" href="../include/openssl/stack_macros.h.html#1016" title="sk_num(((_STACK *) (1 ? (ex_data_class-&gt;meth) : (struct stack_st_CRYPTO_EX_DATA_FUNCS *)0)))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_num">sk_CRYPTO_EX_DATA_FUNCS_num</a>(<a class="local col1 ref" href="#1ex_data_class" title='ex_data_class' data-ref="1ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::meth" title='(anonymous struct)::meth' data-ref="(anonymous)::meth">meth</a>) - <var>1</var> +</td></tr>
+<tr><th id="162">162</th><td>               <a class="local col1 ref" href="#1ex_data_class" title='ex_data_class' data-ref="1ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::num_reserved" title='(anonymous struct)::num_reserved' data-ref="(anonymous)::num_reserved">num_reserved</a>;</td></tr>
+<tr><th id="163">163</th><td>  <a class="local col8 ref" href="#8ret" title='ret' data-ref="8ret">ret</a> = <var>1</var>;</td></tr>
+<tr><th id="164">164</th><td></td></tr>
+<tr><th id="165">165</th><td><dfn class="lbl" id="9err" data-ref="9err">err</dfn>:</td></tr>
+<tr><th id="166">166</th><td>  <a class="ref" href="internal.h.html#CRYPTO_STATIC_MUTEX_unlock" title='CRYPTO_STATIC_MUTEX_unlock' data-ref="CRYPTO_STATIC_MUTEX_unlock">CRYPTO_STATIC_MUTEX_unlock</a>(&amp;<a class="local col1 ref" href="#1ex_data_class" title='ex_data_class' data-ref="1ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::lock" title='(anonymous struct)::lock' data-ref="(anonymous)::lock">lock</a>);</td></tr>
+<tr><th id="167">167</th><td>  <b>return</b> <a class="local col8 ref" href="#8ret" title='ret' data-ref="8ret">ret</a>;</td></tr>
+<tr><th id="168">168</th><td>}</td></tr>
+<tr><th id="169">169</th><td></td></tr>
+<tr><th id="170">170</th><td><em>int</em> <dfn class="decl def" id="CRYPTO_set_ex_data" title='CRYPTO_set_ex_data' data-ref="CRYPTO_set_ex_data">CRYPTO_set_ex_data</dfn>(<a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_DATA" title='CRYPTO_EX_DATA' data-type='struct crypto_ex_data_st' data-ref="CRYPTO_EX_DATA">CRYPTO_EX_DATA</a> *<dfn class="local col0 decl" id="10ad" title='ad' data-type='CRYPTO_EX_DATA *' data-ref="10ad">ad</dfn>, <em>int</em> <dfn class="local col1 decl" id="11index" title='index' data-type='int' data-ref="11index">index</dfn>, <em>void</em> *<dfn class="local col2 decl" id="12val" title='val' data-type='void *' data-ref="12val">val</dfn>) {</td></tr>
+<tr><th id="171">171</th><td>  <em>int</em> <dfn class="local col3 decl" id="13n" title='n' data-type='int' data-ref="13n">n</dfn>, <dfn class="local col4 decl" id="14i" title='i' data-type='int' data-ref="14i">i</dfn>;</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td>  <b>if</b> (<a class="local col0 ref" href="#10ad" title='ad' data-ref="10ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="174">174</th><td>    <a class="local col0 ref" href="#10ad" title='ad' data-ref="10ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a> = <a class="macro" href="../include/openssl/stack_macros.h.html#3522" title="((struct stack_st_void*)sk_new_null())" data-ref="_M/sk_void_new_null">sk_void_new_null</a>();</td></tr>
+<tr><th id="175">175</th><td>    <b>if</b> (<a class="local col0 ref" href="#10ad" title='ad' data-ref="10ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="176">176</th><td>      <a class="macro" href="../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_CRYPTO, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ex_data.c&quot;, 176)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(CRYPTO, <a class="macro" href="../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="177">177</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="178">178</th><td>    }</td></tr>
+<tr><th id="179">179</th><td>  }</td></tr>
+<tr><th id="180">180</th><td></td></tr>
+<tr><th id="181">181</th><td>  <a class="local col3 ref" href="#13n" title='n' data-ref="13n">n</a> = <a class="macro" href="../include/openssl/stack_macros.h.html#3524" title="sk_num(((_STACK *) (1 ? (ad-&gt;sk) : (struct stack_st_void *)0)))" data-ref="_M/sk_void_num">sk_void_num</a>(<a class="local col0 ref" href="#10ad" title='ad' data-ref="10ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a>);</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td>  <i>/* Add NULL values until the stack is long enough. */</i></td></tr>
+<tr><th id="184">184</th><td>  <b>for</b> (<a class="local col4 ref" href="#14i" title='i' data-ref="14i">i</a> = <a class="local col3 ref" href="#13n" title='n' data-ref="13n">n</a>; <a class="local col4 ref" href="#14i" title='i' data-ref="14i">i</a> &lt;= <a class="local col1 ref" href="#11index" title='index' data-ref="11index">index</a>; <a class="local col4 ref" href="#14i" title='i' data-ref="14i">i</a>++) {</td></tr>
+<tr><th id="185">185</th><td>    <b>if</b> (!<a class="macro" href="../include/openssl/stack_macros.h.html#3559" title="sk_push(((_STACK *) (1 ? (ad-&gt;sk) : (struct stack_st_void *)0)), ((void *) (1 ? (((void*)0)) : (void *)0)))" data-ref="_M/sk_void_push">sk_void_push</a>(<a class="local col0 ref" href="#10ad" title='ad' data-ref="10ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>)) {</td></tr>
+<tr><th id="186">186</th><td>      <a class="macro" href="../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_CRYPTO, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ex_data.c&quot;, 186)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(CRYPTO, <a class="macro" href="../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="187">187</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="188">188</th><td>    }</td></tr>
+<tr><th id="189">189</th><td>  }</td></tr>
+<tr><th id="190">190</th><td></td></tr>
+<tr><th id="191">191</th><td>  <a class="macro" href="../include/openssl/stack_macros.h.html#3531" title="((void *)sk_set(((_STACK *) (1 ? (ad-&gt;sk) : (struct stack_st_void*)0)), (index), ((void *) (1 ? (val) : (void *)0))))" data-ref="_M/sk_void_set">sk_void_set</a>(<a class="local col0 ref" href="#10ad" title='ad' data-ref="10ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a>, <a class="local col1 ref" href="#11index" title='index' data-ref="11index">index</a>, <a class="local col2 ref" href="#12val" title='val' data-ref="12val">val</a>);</td></tr>
+<tr><th id="192">192</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="193">193</th><td>}</td></tr>
+<tr><th id="194">194</th><td></td></tr>
+<tr><th id="195">195</th><td><em>void</em> *<dfn class="decl def" id="CRYPTO_get_ex_data" title='CRYPTO_get_ex_data' data-ref="CRYPTO_get_ex_data">CRYPTO_get_ex_data</dfn>(<em>const</em> <a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_DATA" title='CRYPTO_EX_DATA' data-type='struct crypto_ex_data_st' data-ref="CRYPTO_EX_DATA">CRYPTO_EX_DATA</a> *<dfn class="local col5 decl" id="15ad" title='ad' data-type='const CRYPTO_EX_DATA *' data-ref="15ad">ad</dfn>, <em>int</em> <dfn class="local col6 decl" id="16idx" title='idx' data-type='int' data-ref="16idx">idx</dfn>) {</td></tr>
+<tr><th id="196">196</th><td>  <b>if</b> (<a class="local col5 ref" href="#15ad" title='ad' data-ref="15ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || <a class="local col6 ref" href="#16idx" title='idx' data-ref="16idx">idx</a> &lt; <var>0</var> || (<span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>)<a class="local col6 ref" href="#16idx" title='idx' data-ref="16idx">idx</a> &gt;= <a class="macro" href="../include/openssl/stack_macros.h.html#3524" title="sk_num(((_STACK *) (1 ? (ad-&gt;sk) : (struct stack_st_void *)0)))" data-ref="_M/sk_void_num">sk_void_num</a>(<a class="local col5 ref" href="#15ad" title='ad' data-ref="15ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a>)) {</td></tr>
+<tr><th id="197">197</th><td>    <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="198">198</th><td>  }</td></tr>
+<tr><th id="199">199</th><td>  <b>return</b> <a class="macro" href="../include/openssl/stack_macros.h.html#3528" title="((void *)sk_value(((_STACK *) (1 ? (ad-&gt;sk) : (const struct stack_st_void *)0)), (idx)))" data-ref="_M/sk_void_value">sk_void_value</a>(<a class="local col5 ref" href="#15ad" title='ad' data-ref="15ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a>, <a class="local col6 ref" href="#16idx" title='idx' data-ref="16idx">idx</a>);</td></tr>
+<tr><th id="200">200</th><td>}</td></tr>
+<tr><th id="201">201</th><td></td></tr>
+<tr><th id="202">202</th><td><i  data-doc="get_func_pointers">/* get_func_pointers takes a copy of the CRYPTO_EX_DATA_FUNCS pointers, if any,</i></td></tr>
+<tr><th id="203">203</th><td><i  data-doc="get_func_pointers"> * for the given class. If there are some pointers, it sets |*out| to point to</i></td></tr>
+<tr><th id="204">204</th><td><i  data-doc="get_func_pointers"> * a fresh stack of them. Otherwise it sets |*out| to NULL. It returns one on</i></td></tr>
+<tr><th id="205">205</th><td><i  data-doc="get_func_pointers"> * success or zero on error. */</i></td></tr>
+<tr><th id="206">206</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="get_func_pointers" title='get_func_pointers' data-type='int get_func_pointers(struct stack_st_CRYPTO_EX_DATA_FUNCS ** out, CRYPTO_EX_DATA_CLASS * ex_data_class)' data-ref="get_func_pointers">get_func_pointers</dfn>(<a class="macro" href="../include/openssl/stack.h.html#112" title="struct stack_st_CRYPTO_EX_DATA_FUNCS" data-ref="_M/STACK_OF">STACK_OF</a>(CRYPTO_EX_DATA_FUNCS) **<dfn class="local col7 decl" id="17out" title='out' data-type='struct stack_st_CRYPTO_EX_DATA_FUNCS **' data-ref="17out">out</dfn>,</td></tr>
+<tr><th id="207">207</th><td>                             <a class="typedef" href="internal.h.html#CRYPTO_EX_DATA_CLASS" title='CRYPTO_EX_DATA_CLASS' data-type='struct CRYPTO_EX_DATA_CLASS' data-ref="CRYPTO_EX_DATA_CLASS">CRYPTO_EX_DATA_CLASS</a> *<dfn class="local col8 decl" id="18ex_data_class" title='ex_data_class' data-type='CRYPTO_EX_DATA_CLASS *' data-ref="18ex_data_class">ex_data_class</dfn>) {</td></tr>
+<tr><th id="208">208</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col9 decl" id="19n" title='n' data-type='size_t' data-ref="19n">n</dfn>;</td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td>  *<a class="local col7 ref" href="#17out" title='out' data-ref="17out">out</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="211">211</th><td></td></tr>
+<tr><th id="212">212</th><td>  <i>/* CRYPTO_EX_DATA_FUNCS structures are static once set, so we can take a</i></td></tr>
+<tr><th id="213">213</th><td><i>   * shallow copy of the list under lock and then use the structures without</i></td></tr>
+<tr><th id="214">214</th><td><i>   * the lock held. */</i></td></tr>
+<tr><th id="215">215</th><td>  <a class="ref" href="internal.h.html#CRYPTO_STATIC_MUTEX_lock_read" title='CRYPTO_STATIC_MUTEX_lock_read' data-ref="CRYPTO_STATIC_MUTEX_lock_read">CRYPTO_STATIC_MUTEX_lock_read</a>(&amp;<a class="local col8 ref" href="#18ex_data_class" title='ex_data_class' data-ref="18ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::lock" title='(anonymous struct)::lock' data-ref="(anonymous)::lock">lock</a>);</td></tr>
+<tr><th id="216">216</th><td>  <a class="local col9 ref" href="#19n" title='n' data-ref="19n">n</a> = <a class="macro" href="../include/openssl/stack_macros.h.html#1016" title="sk_num(((_STACK *) (1 ? (ex_data_class-&gt;meth) : (struct stack_st_CRYPTO_EX_DATA_FUNCS *)0)))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_num">sk_CRYPTO_EX_DATA_FUNCS_num</a>(<a class="local col8 ref" href="#18ex_data_class" title='ex_data_class' data-ref="18ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::meth" title='(anonymous struct)::meth' data-ref="(anonymous)::meth">meth</a>);</td></tr>
+<tr><th id="217">217</th><td>  <b>if</b> (<a class="local col9 ref" href="#19n" title='n' data-ref="19n">n</a> &gt; <var>0</var>) {</td></tr>
+<tr><th id="218">218</th><td>    *<a class="local col7 ref" href="#17out" title='out' data-ref="17out">out</a> = <a class="macro" href="../include/openssl/stack_macros.h.html#1069" title="((struct stack_st_CRYPTO_EX_DATA_FUNCS *)sk_dup( ((_STACK *) (1 ? (ex_data_class-&gt;meth) : (const struct stack_st_CRYPTO_EX_DATA_FUNCS *)0))))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_dup">sk_CRYPTO_EX_DATA_FUNCS_dup</a>(<a class="local col8 ref" href="#18ex_data_class" title='ex_data_class' data-ref="18ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::meth" title='(anonymous struct)::meth' data-ref="(anonymous)::meth">meth</a>);</td></tr>
+<tr><th id="219">219</th><td>  }</td></tr>
+<tr><th id="220">220</th><td>  <a class="ref" href="internal.h.html#CRYPTO_STATIC_MUTEX_unlock" title='CRYPTO_STATIC_MUTEX_unlock' data-ref="CRYPTO_STATIC_MUTEX_unlock">CRYPTO_STATIC_MUTEX_unlock</a>(&amp;<a class="local col8 ref" href="#18ex_data_class" title='ex_data_class' data-ref="18ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::lock" title='(anonymous struct)::lock' data-ref="(anonymous)::lock">lock</a>);</td></tr>
+<tr><th id="221">221</th><td></td></tr>
+<tr><th id="222">222</th><td>  <b>if</b> (<a class="local col9 ref" href="#19n" title='n' data-ref="19n">n</a> &gt; <var>0</var> &amp;&amp; *<a class="local col7 ref" href="#17out" title='out' data-ref="17out">out</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="223">223</th><td>    <a class="macro" href="../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_CRYPTO, 0, (1 | 64), &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ex_data.c&quot;, 223)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(CRYPTO, <a class="macro" href="../include/openssl/err.h.html#462" title="(1 | 64)" data-ref="_M/ERR_R_MALLOC_FAILURE">ERR_R_MALLOC_FAILURE</a>);</td></tr>
+<tr><th id="224">224</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="225">225</th><td>  }</td></tr>
+<tr><th id="226">226</th><td></td></tr>
+<tr><th id="227">227</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="228">228</th><td>}</td></tr>
+<tr><th id="229">229</th><td></td></tr>
+<tr><th id="230">230</th><td><em>void</em> <dfn class="decl def" id="CRYPTO_new_ex_data" title='CRYPTO_new_ex_data' data-ref="CRYPTO_new_ex_data">CRYPTO_new_ex_data</dfn>(<a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_DATA" title='CRYPTO_EX_DATA' data-type='struct crypto_ex_data_st' data-ref="CRYPTO_EX_DATA">CRYPTO_EX_DATA</a> *<dfn class="local col0 decl" id="20ad" title='ad' data-type='CRYPTO_EX_DATA *' data-ref="20ad">ad</dfn>) {</td></tr>
+<tr><th id="231">231</th><td>  <a class="local col0 ref" href="#20ad" title='ad' data-ref="20ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="232">232</th><td>}</td></tr>
+<tr><th id="233">233</th><td></td></tr>
+<tr><th id="234">234</th><td><em>int</em> <dfn class="decl def" id="CRYPTO_dup_ex_data" title='CRYPTO_dup_ex_data' data-ref="CRYPTO_dup_ex_data">CRYPTO_dup_ex_data</dfn>(<a class="typedef" href="internal.h.html#CRYPTO_EX_DATA_CLASS" title='CRYPTO_EX_DATA_CLASS' data-type='struct CRYPTO_EX_DATA_CLASS' data-ref="CRYPTO_EX_DATA_CLASS">CRYPTO_EX_DATA_CLASS</a> *<dfn class="local col1 decl" id="21ex_data_class" title='ex_data_class' data-type='CRYPTO_EX_DATA_CLASS *' data-ref="21ex_data_class">ex_data_class</dfn>, <a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_DATA" title='CRYPTO_EX_DATA' data-type='struct crypto_ex_data_st' data-ref="CRYPTO_EX_DATA">CRYPTO_EX_DATA</a> *<dfn class="local col2 decl" id="22to" title='to' data-type='CRYPTO_EX_DATA *' data-ref="22to">to</dfn>,</td></tr>
+<tr><th id="235">235</th><td>                       <em>const</em> <a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_DATA" title='CRYPTO_EX_DATA' data-type='struct crypto_ex_data_st' data-ref="CRYPTO_EX_DATA">CRYPTO_EX_DATA</a> *<dfn class="local col3 decl" id="23from" title='from' data-type='const CRYPTO_EX_DATA *' data-ref="23from">from</dfn>) {</td></tr>
+<tr><th id="236">236</th><td>  <b>if</b> (<a class="local col3 ref" href="#23from" title='from' data-ref="23from">from</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="237">237</th><td>    <i>/* In this case, |from| is blank, which is also the initial state of |to|,</i></td></tr>
+<tr><th id="238">238</th><td><i>     * so there's nothing to do. */</i></td></tr>
+<tr><th id="239">239</th><td>    <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="240">240</th><td>  }</td></tr>
+<tr><th id="241">241</th><td></td></tr>
+<tr><th id="242">242</th><td>  <a class="macro" href="../include/openssl/stack.h.html#112" title="struct stack_st_CRYPTO_EX_DATA_FUNCS" data-ref="_M/STACK_OF">STACK_OF</a>(CRYPTO_EX_DATA_FUNCS) *<dfn class="local col4 decl" id="24func_pointers" title='func_pointers' data-type='struct stack_st_CRYPTO_EX_DATA_FUNCS *' data-ref="24func_pointers">func_pointers</dfn>;</td></tr>
+<tr><th id="243">243</th><td>  <b>if</b> (!<a class="tu ref" href="#get_func_pointers" title='get_func_pointers' data-use='c' data-ref="get_func_pointers">get_func_pointers</a>(&amp;<a class="local col4 ref" href="#24func_pointers" title='func_pointers' data-ref="24func_pointers">func_pointers</a>, <a class="local col1 ref" href="#21ex_data_class" title='ex_data_class' data-ref="21ex_data_class">ex_data_class</a>)) {</td></tr>
+<tr><th id="244">244</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="245">245</th><td>  }</td></tr>
+<tr><th id="246">246</th><td></td></tr>
+<tr><th id="247">247</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col5 decl" id="25i" title='i' data-type='size_t' data-ref="25i">i</dfn>;</td></tr>
+<tr><th id="248">248</th><td>  <b>for</b> (<a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a> = <var>0</var>; <a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a> &lt; <a class="macro" href="../include/openssl/stack_macros.h.html#1016" title="sk_num(((_STACK *) (1 ? (func_pointers) : (struct stack_st_CRYPTO_EX_DATA_FUNCS *)0)))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_num">sk_CRYPTO_EX_DATA_FUNCS_num</a>(<a class="local col4 ref" href="#24func_pointers" title='func_pointers' data-ref="24func_pointers">func_pointers</a>); <a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a>++) {</td></tr>
+<tr><th id="249">249</th><td>    <a class="typedef" href="internal.h.html#CRYPTO_EX_DATA_FUNCS" title='CRYPTO_EX_DATA_FUNCS' data-type='struct crypto_ex_data_func_st' data-ref="CRYPTO_EX_DATA_FUNCS">CRYPTO_EX_DATA_FUNCS</a> *<dfn class="local col6 decl" id="26func_pointer" title='func_pointer' data-type='CRYPTO_EX_DATA_FUNCS *' data-ref="26func_pointer">func_pointer</dfn> =</td></tr>
+<tr><th id="250">250</th><td>        <a class="macro" href="../include/openssl/stack_macros.h.html#1022" title="((CRYPTO_EX_DATA_FUNCS *)sk_value( ((_STACK *) (1 ? (func_pointers) : (const struct stack_st_CRYPTO_EX_DATA_FUNCS *)0)), (i)))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_value">sk_CRYPTO_EX_DATA_FUNCS_value</a>(<a class="local col4 ref" href="#24func_pointers" title='func_pointers' data-ref="24func_pointers">func_pointers</a>, <a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a>);</td></tr>
+<tr><th id="251">251</th><td>    <em>void</em> *<dfn class="local col7 decl" id="27ptr" title='ptr' data-type='void *' data-ref="27ptr">ptr</dfn> = <a class="ref" href="#CRYPTO_get_ex_data" title='CRYPTO_get_ex_data' data-ref="CRYPTO_get_ex_data">CRYPTO_get_ex_data</a>(<a class="local col3 ref" href="#23from" title='from' data-ref="23from">from</a>, <a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a> + <a class="local col1 ref" href="#21ex_data_class" title='ex_data_class' data-ref="21ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::num_reserved" title='(anonymous struct)::num_reserved' data-ref="(anonymous)::num_reserved">num_reserved</a>);</td></tr>
+<tr><th id="252">252</th><td>    <b>if</b> (<a class="local col6 ref" href="#26func_pointer" title='func_pointer' data-ref="26func_pointer">func_pointer</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::dup_func" title='crypto_ex_data_func_st::dup_func' data-ref="crypto_ex_data_func_st::dup_func">dup_func</a>) {</td></tr>
+<tr><th id="253">253</th><td>      <a class="local col6 ref" href="#26func_pointer" title='func_pointer' data-ref="26func_pointer">func_pointer</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::dup_func" title='crypto_ex_data_func_st::dup_func' data-ref="crypto_ex_data_func_st::dup_func">dup_func</a>(<a class="local col2 ref" href="#22to" title='to' data-ref="22to">to</a>, <a class="local col3 ref" href="#23from" title='from' data-ref="23from">from</a>, &amp;<a class="local col7 ref" href="#27ptr" title='ptr' data-ref="27ptr">ptr</a>, <a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a> + <a class="local col1 ref" href="#21ex_data_class" title='ex_data_class' data-ref="21ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::num_reserved" title='(anonymous struct)::num_reserved' data-ref="(anonymous)::num_reserved">num_reserved</a>,</td></tr>
+<tr><th id="254">254</th><td>                             <a class="local col6 ref" href="#26func_pointer" title='func_pointer' data-ref="26func_pointer">func_pointer</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::argl" title='crypto_ex_data_func_st::argl' data-ref="crypto_ex_data_func_st::argl">argl</a>, <a class="local col6 ref" href="#26func_pointer" title='func_pointer' data-ref="26func_pointer">func_pointer</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::argp" title='crypto_ex_data_func_st::argp' data-ref="crypto_ex_data_func_st::argp">argp</a>);</td></tr>
+<tr><th id="255">255</th><td>    }</td></tr>
+<tr><th id="256">256</th><td>    <a class="ref" href="#CRYPTO_set_ex_data" title='CRYPTO_set_ex_data' data-ref="CRYPTO_set_ex_data">CRYPTO_set_ex_data</a>(<a class="local col2 ref" href="#22to" title='to' data-ref="22to">to</a>, <a class="local col5 ref" href="#25i" title='i' data-ref="25i">i</a> + <a class="local col1 ref" href="#21ex_data_class" title='ex_data_class' data-ref="21ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::num_reserved" title='(anonymous struct)::num_reserved' data-ref="(anonymous)::num_reserved">num_reserved</a>, <a class="local col7 ref" href="#27ptr" title='ptr' data-ref="27ptr">ptr</a>);</td></tr>
+<tr><th id="257">257</th><td>  }</td></tr>
+<tr><th id="258">258</th><td></td></tr>
+<tr><th id="259">259</th><td>  <a class="macro" href="../include/openssl/stack_macros.h.html#1032" title="sk_free(((_STACK *) (1 ? (func_pointers) : (struct stack_st_CRYPTO_EX_DATA_FUNCS *)0)))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_free">sk_CRYPTO_EX_DATA_FUNCS_free</a>(<a class="local col4 ref" href="#24func_pointers" title='func_pointers' data-ref="24func_pointers">func_pointers</a>);</td></tr>
+<tr><th id="260">260</th><td></td></tr>
+<tr><th id="261">261</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="262">262</th><td>}</td></tr>
+<tr><th id="263">263</th><td></td></tr>
+<tr><th id="264">264</th><td><em>void</em> <dfn class="decl def" id="CRYPTO_free_ex_data" title='CRYPTO_free_ex_data' data-ref="CRYPTO_free_ex_data">CRYPTO_free_ex_data</dfn>(<a class="typedef" href="internal.h.html#CRYPTO_EX_DATA_CLASS" title='CRYPTO_EX_DATA_CLASS' data-type='struct CRYPTO_EX_DATA_CLASS' data-ref="CRYPTO_EX_DATA_CLASS">CRYPTO_EX_DATA_CLASS</a> *<dfn class="local col8 decl" id="28ex_data_class" title='ex_data_class' data-type='CRYPTO_EX_DATA_CLASS *' data-ref="28ex_data_class">ex_data_class</dfn>, <em>void</em> *<dfn class="local col9 decl" id="29obj" title='obj' data-type='void *' data-ref="29obj">obj</dfn>,</td></tr>
+<tr><th id="265">265</th><td>                         <a class="typedef" href="../include/openssl/ex_data.h.html#CRYPTO_EX_DATA" title='CRYPTO_EX_DATA' data-type='struct crypto_ex_data_st' data-ref="CRYPTO_EX_DATA">CRYPTO_EX_DATA</a> *<dfn class="local col0 decl" id="30ad" title='ad' data-type='CRYPTO_EX_DATA *' data-ref="30ad">ad</dfn>) {</td></tr>
+<tr><th id="266">266</th><td>  <b>if</b> (<a class="local col0 ref" href="#30ad" title='ad' data-ref="30ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="267">267</th><td>    <i>/* Nothing to do. */</i></td></tr>
+<tr><th id="268">268</th><td>    <b>return</b>;</td></tr>
+<tr><th id="269">269</th><td>  }</td></tr>
+<tr><th id="270">270</th><td></td></tr>
+<tr><th id="271">271</th><td>  <a class="macro" href="../include/openssl/stack.h.html#112" title="struct stack_st_CRYPTO_EX_DATA_FUNCS" data-ref="_M/STACK_OF">STACK_OF</a>(CRYPTO_EX_DATA_FUNCS) *<dfn class="local col1 decl" id="31func_pointers" title='func_pointers' data-type='struct stack_st_CRYPTO_EX_DATA_FUNCS *' data-ref="31func_pointers">func_pointers</dfn>;</td></tr>
+<tr><th id="272">272</th><td>  <b>if</b> (!<a class="tu ref" href="#get_func_pointers" title='get_func_pointers' data-use='c' data-ref="get_func_pointers">get_func_pointers</a>(&amp;<a class="local col1 ref" href="#31func_pointers" title='func_pointers' data-ref="31func_pointers">func_pointers</a>, <a class="local col8 ref" href="#28ex_data_class" title='ex_data_class' data-ref="28ex_data_class">ex_data_class</a>)) {</td></tr>
+<tr><th id="273">273</th><td>    <i>/* TODO(davidben): This leaks memory on malloc error. */</i></td></tr>
+<tr><th id="274">274</th><td>    <b>return</b>;</td></tr>
+<tr><th id="275">275</th><td>  }</td></tr>
+<tr><th id="276">276</th><td></td></tr>
+<tr><th id="277">277</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col2 decl" id="32i" title='i' data-type='size_t' data-ref="32i">i</dfn>;</td></tr>
+<tr><th id="278">278</th><td>  <b>for</b> (<a class="local col2 ref" href="#32i" title='i' data-ref="32i">i</a> = <var>0</var>; <a class="local col2 ref" href="#32i" title='i' data-ref="32i">i</a> &lt; <a class="macro" href="../include/openssl/stack_macros.h.html#1016" title="sk_num(((_STACK *) (1 ? (func_pointers) : (struct stack_st_CRYPTO_EX_DATA_FUNCS *)0)))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_num">sk_CRYPTO_EX_DATA_FUNCS_num</a>(<a class="local col1 ref" href="#31func_pointers" title='func_pointers' data-ref="31func_pointers">func_pointers</a>); <a class="local col2 ref" href="#32i" title='i' data-ref="32i">i</a>++) {</td></tr>
+<tr><th id="279">279</th><td>    <a class="typedef" href="internal.h.html#CRYPTO_EX_DATA_FUNCS" title='CRYPTO_EX_DATA_FUNCS' data-type='struct crypto_ex_data_func_st' data-ref="CRYPTO_EX_DATA_FUNCS">CRYPTO_EX_DATA_FUNCS</a> *<dfn class="local col3 decl" id="33func_pointer" title='func_pointer' data-type='CRYPTO_EX_DATA_FUNCS *' data-ref="33func_pointer">func_pointer</dfn> =</td></tr>
+<tr><th id="280">280</th><td>        <a class="macro" href="../include/openssl/stack_macros.h.html#1022" title="((CRYPTO_EX_DATA_FUNCS *)sk_value( ((_STACK *) (1 ? (func_pointers) : (const struct stack_st_CRYPTO_EX_DATA_FUNCS *)0)), (i)))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_value">sk_CRYPTO_EX_DATA_FUNCS_value</a>(<a class="local col1 ref" href="#31func_pointers" title='func_pointers' data-ref="31func_pointers">func_pointers</a>, <a class="local col2 ref" href="#32i" title='i' data-ref="32i">i</a>);</td></tr>
+<tr><th id="281">281</th><td>    <b>if</b> (<a class="local col3 ref" href="#33func_pointer" title='func_pointer' data-ref="33func_pointer">func_pointer</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::free_func" title='crypto_ex_data_func_st::free_func' data-ref="crypto_ex_data_func_st::free_func">free_func</a>) {</td></tr>
+<tr><th id="282">282</th><td>      <em>void</em> *<dfn class="local col4 decl" id="34ptr" title='ptr' data-type='void *' data-ref="34ptr">ptr</dfn> = <a class="ref" href="#CRYPTO_get_ex_data" title='CRYPTO_get_ex_data' data-ref="CRYPTO_get_ex_data">CRYPTO_get_ex_data</a>(<a class="local col0 ref" href="#30ad" title='ad' data-ref="30ad">ad</a>, <a class="local col2 ref" href="#32i" title='i' data-ref="32i">i</a> + <a class="local col8 ref" href="#28ex_data_class" title='ex_data_class' data-ref="28ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::num_reserved" title='(anonymous struct)::num_reserved' data-ref="(anonymous)::num_reserved">num_reserved</a>);</td></tr>
+<tr><th id="283">283</th><td>      <a class="local col3 ref" href="#33func_pointer" title='func_pointer' data-ref="33func_pointer">func_pointer</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::free_func" title='crypto_ex_data_func_st::free_func' data-ref="crypto_ex_data_func_st::free_func">free_func</a>(<a class="local col9 ref" href="#29obj" title='obj' data-ref="29obj">obj</a>, <a class="local col4 ref" href="#34ptr" title='ptr' data-ref="34ptr">ptr</a>, <a class="local col0 ref" href="#30ad" title='ad' data-ref="30ad">ad</a>, <a class="local col2 ref" href="#32i" title='i' data-ref="32i">i</a> + <a class="local col8 ref" href="#28ex_data_class" title='ex_data_class' data-ref="28ex_data_class">ex_data_class</a>-&gt;<a class="ref" href="internal.h.html#(anonymous)::num_reserved" title='(anonymous struct)::num_reserved' data-ref="(anonymous)::num_reserved">num_reserved</a>,</td></tr>
+<tr><th id="284">284</th><td>                              <a class="local col3 ref" href="#33func_pointer" title='func_pointer' data-ref="33func_pointer">func_pointer</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::argl" title='crypto_ex_data_func_st::argl' data-ref="crypto_ex_data_func_st::argl">argl</a>, <a class="local col3 ref" href="#33func_pointer" title='func_pointer' data-ref="33func_pointer">func_pointer</a>-&gt;<a class="ref" href="#crypto_ex_data_func_st::argp" title='crypto_ex_data_func_st::argp' data-ref="crypto_ex_data_func_st::argp">argp</a>);</td></tr>
+<tr><th id="285">285</th><td>    }</td></tr>
+<tr><th id="286">286</th><td>  }</td></tr>
+<tr><th id="287">287</th><td></td></tr>
+<tr><th id="288">288</th><td>  <a class="macro" href="../include/openssl/stack_macros.h.html#1032" title="sk_free(((_STACK *) (1 ? (func_pointers) : (struct stack_st_CRYPTO_EX_DATA_FUNCS *)0)))" data-ref="_M/sk_CRYPTO_EX_DATA_FUNCS_free">sk_CRYPTO_EX_DATA_FUNCS_free</a>(<a class="local col1 ref" href="#31func_pointers" title='func_pointers' data-ref="31func_pointers">func_pointers</a>);</td></tr>
+<tr><th id="289">289</th><td></td></tr>
+<tr><th id="290">290</th><td>  <a class="macro" href="../include/openssl/stack_macros.h.html#3535" title="sk_free(((_STACK *) (1 ? (ad-&gt;sk) : (struct stack_st_void *)0)))" data-ref="_M/sk_void_free">sk_void_free</a>(<a class="local col0 ref" href="#30ad" title='ad' data-ref="30ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a>);</td></tr>
+<tr><th id="291">291</th><td>  <a class="local col0 ref" href="#30ad" title='ad' data-ref="30ad">ad</a>-&gt;<a class="ref" href="../include/openssl/ex_data.h.html#crypto_ex_data_st::sk" title='crypto_ex_data_st::sk' data-ref="crypto_ex_data_st::sk">sk</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="292">292</th><td>}</td></tr>
+<tr><th id="293">293</th><td></td></tr>
+<tr><th id="294">294</th><td><em>void</em> <dfn class="decl def" id="CRYPTO_cleanup_all_ex_data" title='CRYPTO_cleanup_all_ex_data' data-ref="CRYPTO_cleanup_all_ex_data">CRYPTO_cleanup_all_ex_data</dfn>(<em>void</em>) {}</td></tr>
+<tr><th id="295">295</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

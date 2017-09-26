@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>fcntl.h source code [codebrowser/bionic/libc/include/fcntl.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/include/fcntl.h'; var root_path = '../../../..'; var data_path = '../../../../../data';</script>
+<script src='../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../..'>codebrowser</a>/<a href='../..'>bionic</a>/<a href='..'>libc</a>/<a href='./'>include</a>/<a href='fcntl.h.html'>fcntl.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td></td></tr>
+<tr><th id="29">29</th><td><u>#<span data-ppcond="29">ifndef</span> <span class="macro" data-ref="_M/_FCNTL_H">_FCNTL_H</span></u></td></tr>
+<tr><th id="30">30</th><td><u>#define <dfn class="macro" id="_M/_FCNTL_H" data-ref="_M/_FCNTL_H">_FCNTL_H</dfn></u></td></tr>
+<tr><th id="31">31</th><td></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../kernel/uapi/linux/fadvise.h.html">&lt;linux/fadvise.h&gt;</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="../kernel/uapi/linux/fcntl.h.html">&lt;linux/fcntl.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="../kernel/uapi/linux/stat.h.html">&lt;linux/stat.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td><u>#include <a href="../kernel/uapi/linux/uio.h.html">&lt;linux/uio.h&gt;</a></u></td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><u>#<span data-ppcond="39">if</span> defined(<a class="macro" href="sys/cdefs.h.html#246" data-ref="_M/__USE_GNU">__USE_GNU</a>) || defined(<a class="macro" href="sys/cdefs.h.html#256" data-ref="_M/__USE_BSD">__USE_BSD</a>)</u></td></tr>
+<tr><th id="40">40</th><td><u>#include <a href="bits/lockf.h.html">&lt;bits/lockf.h&gt;</a></u></td></tr>
+<tr><th id="41">41</th><td><u>#<span data-ppcond="39">endif</span></u></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><a class="macro" href="sys/cdefs.h.html#85" title="extern &quot;C&quot; {" data-ref="_M/__BEGIN_DECLS">__BEGIN_DECLS</a></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><u>#<span data-ppcond="45">ifdef</span> <span class="macro" data-ref="_M/__LP64__">__LP64__</span></u></td></tr>
+<tr><th id="46">46</th><td><i>/* LP64 kernels don't have F_*64 defines because their flock is 64-bit. */</i></td></tr>
+<tr><th id="47">47</th><td><u>#define <dfn class="macro" id="_M/F_GETLK64" data-ref="_M/F_GETLK64">F_GETLK64</dfn>  F_GETLK</u></td></tr>
+<tr><th id="48">48</th><td><u>#define <dfn class="macro" id="_M/F_SETLK64" data-ref="_M/F_SETLK64">F_SETLK64</dfn>  F_SETLK</u></td></tr>
+<tr><th id="49">49</th><td><u>#define <dfn class="macro" id="_M/F_SETLKW64" data-ref="_M/F_SETLKW64">F_SETLKW64</dfn> F_SETLKW</u></td></tr>
+<tr><th id="50">50</th><td><u>#<span data-ppcond="45">endif</span></u></td></tr>
+<tr><th id="51">51</th><td></td></tr>
+<tr><th id="52">52</th><td><u>#define <dfn class="macro" id="_M/O_ASYNC" data-ref="_M/O_ASYNC">O_ASYNC</dfn> FASYNC</u></td></tr>
+<tr><th id="53">53</th><td><u>#define <dfn class="macro" id="_M/O_RSYNC" data-ref="_M/O_RSYNC">O_RSYNC</dfn> O_SYNC</u></td></tr>
+<tr><th id="54">54</th><td></td></tr>
+<tr><th id="55">55</th><td><u>#define <dfn class="macro" id="_M/SPLICE_F_MOVE" data-ref="_M/SPLICE_F_MOVE">SPLICE_F_MOVE</dfn> 1</u></td></tr>
+<tr><th id="56">56</th><td><u>#define <dfn class="macro" id="_M/SPLICE_F_NONBLOCK" data-ref="_M/SPLICE_F_NONBLOCK">SPLICE_F_NONBLOCK</dfn> 2</u></td></tr>
+<tr><th id="57">57</th><td><u>#define <dfn class="macro" id="_M/SPLICE_F_MORE" data-ref="_M/SPLICE_F_MORE">SPLICE_F_MORE</dfn> 4</u></td></tr>
+<tr><th id="58">58</th><td><u>#define <dfn class="macro" id="_M/SPLICE_F_GIFT" data-ref="_M/SPLICE_F_GIFT">SPLICE_F_GIFT</dfn> 8</u></td></tr>
+<tr><th id="59">59</th><td></td></tr>
+<tr><th id="60">60</th><td><u>#define <dfn class="macro" id="_M/SYNC_FILE_RANGE_WAIT_BEFORE" data-ref="_M/SYNC_FILE_RANGE_WAIT_BEFORE">SYNC_FILE_RANGE_WAIT_BEFORE</dfn> 1</u></td></tr>
+<tr><th id="61">61</th><td><u>#define <dfn class="macro" id="_M/SYNC_FILE_RANGE_WRITE" data-ref="_M/SYNC_FILE_RANGE_WRITE">SYNC_FILE_RANGE_WRITE</dfn> 2</u></td></tr>
+<tr><th id="62">62</th><td><u>#define <dfn class="macro" id="_M/SYNC_FILE_RANGE_WAIT_AFTER" data-ref="_M/SYNC_FILE_RANGE_WAIT_AFTER">SYNC_FILE_RANGE_WAIT_AFTER</dfn> 4</u></td></tr>
+<tr><th id="63">63</th><td></td></tr>
+<tr><th id="64">64</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="creat" title='creat' data-ref="creat">creat</dfn>(<em>const</em> <em>char</em>*, <a class="typedef" href="sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="65">65</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="creat64" title='creat64' data-ref="creat64">creat64</dfn>(<em>const</em> <em>char</em>*, <a class="typedef" href="sys/types.h.html#mode_t" title='mode_t' data-type='__mode_t' data-ref="mode_t">mode_t</a>);</td></tr>
+<tr><th id="66">66</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fcntl" title='fcntl' data-ref="fcntl">fcntl</dfn>(<em>int</em>, <em>int</em>, ...);</td></tr>
+<tr><th id="67">67</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="openat" title='openat' data-ref="openat">openat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <em>int</em>, ...);</td></tr>
+<tr><th id="68">68</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="openat64" title='openat64' data-ref="openat64">openat64</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <em>int</em>, ...);</td></tr>
+<tr><th id="69">69</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="open" title='open' data-ref="open">open</dfn>(<em>const</em> <em>char</em>*, <em>int</em>, ...);</td></tr>
+<tr><th id="70">70</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="open64" title='open64' data-ref="open64">open64</dfn>(<em>const</em> <em>char</em>*, <em>int</em>, ...);</td></tr>
+<tr><th id="71">71</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="splice" title='splice' data-ref="splice">splice</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>*, <em>int</em>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>unsigned</em> <em>int</em>);</td></tr>
+<tr><th id="72">72</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="tee" title='tee' data-ref="tee">tee</dfn>(<em>int</em>, <em>int</em>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>unsigned</em> <em>int</em>);</td></tr>
+<tr><th id="73">73</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="unlinkat" title='unlinkat' data-ref="unlinkat">unlinkat</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <em>int</em>);</td></tr>
+<tr><th id="74">74</th><td><b>extern</b> <a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="vmsplice" title='vmsplice' data-ref="vmsplice">vmsplice</dfn>(<em>int</em>, <em>const</em> <b>struct</b> <a class="type" href="../kernel/uapi/linux/uio.h.html#iovec" title='iovec' data-ref="iovec">iovec</a>*, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>, <em>unsigned</em> <em>int</em>);</td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td><u>#<span data-ppcond="76">if</span> defined(<span class="macro" data-ref="_M/__USE_FILE_OFFSET64">__USE_FILE_OFFSET64</span>)</u></td></tr>
+<tr><th id="77">77</th><td><b>extern</b> <em>int</em> fallocate(<em>int</em>, <em>int</em>, off_t, off_t) __RENAME(fallocate64);</td></tr>
+<tr><th id="78">78</th><td><b>extern</b> <em>int</em> posix_fadvise(<em>int</em>, off_t, off_t, <em>int</em>) __RENAME(posix_fadvise64);</td></tr>
+<tr><th id="79">79</th><td><b>extern</b> <em>int</em> posix_fallocate(<em>int</em>, off_t, off_t) __RENAME(posix_fallocate);</td></tr>
+<tr><th id="80">80</th><td><u>#<span data-ppcond="76">else</span></u></td></tr>
+<tr><th id="81">81</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fallocate" title='fallocate' data-ref="fallocate">fallocate</dfn>(<em>int</em>, <em>int</em>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='int64_t' data-ref="off_t">off_t</a>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='int64_t' data-ref="off_t">off_t</a>);</td></tr>
+<tr><th id="82">82</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="posix_fadvise" title='posix_fadvise' data-ref="posix_fadvise">posix_fadvise</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='int64_t' data-ref="off_t">off_t</a>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='int64_t' data-ref="off_t">off_t</a>, <em>int</em>);</td></tr>
+<tr><th id="83">83</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="posix_fallocate" title='posix_fallocate' data-ref="posix_fallocate">posix_fallocate</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='int64_t' data-ref="off_t">off_t</a>, <a class="typedef" href="sys/types.h.html#off_t" title='off_t' data-type='int64_t' data-ref="off_t">off_t</a>);</td></tr>
+<tr><th id="84">84</th><td><u>#<span data-ppcond="76">endif</span></u></td></tr>
+<tr><th id="85">85</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="fallocate64" title='fallocate64' data-ref="fallocate64">fallocate64</dfn>(<em>int</em>, <em>int</em>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>);</td></tr>
+<tr><th id="86">86</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="posix_fadvise64" title='posix_fadvise64' data-ref="posix_fadvise64">posix_fadvise64</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <em>int</em>);</td></tr>
+<tr><th id="87">87</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="posix_fallocate64" title='posix_fallocate64' data-ref="posix_fallocate64">posix_fallocate64</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>);</td></tr>
+<tr><th id="88">88</th><td></td></tr>
+<tr><th id="89">89</th><td><u>#<span data-ppcond="89">if</span> defined(<a class="macro" href="sys/cdefs.h.html#246" data-ref="_M/__USE_GNU">__USE_GNU</a>)</u></td></tr>
+<tr><th id="90">90</th><td><a class="typedef" href="sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="readahead" title='readahead' data-ref="readahead">readahead</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span>);</td></tr>
+<tr><th id="91">91</th><td><em>int</em> <dfn class="decl" id="sync_file_range" title='sync_file_range' data-ref="sync_file_range">sync_file_range</dfn>(<em>int</em>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <a class="typedef" href="sys/types.h.html#off64_t" title='off64_t' data-type='loff_t' data-ref="off64_t">off64_t</a>, <em>unsigned</em> <em>int</em>);</td></tr>
+<tr><th id="92">92</th><td><u>#<span data-ppcond="89">endif</span></u></td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="__open_2" title='__open_2' data-ref="__open_2">__open_2</dfn>(<em>const</em> <em>char</em>*, <em>int</em>);</td></tr>
+<tr><th id="95">95</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="__open_real" title='__open_real' data-ref="__open_real">__open_real</dfn>(<em>const</em> <em>char</em>*, <em>int</em>, ...) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;open&quot;)" data-ref="_M/__RENAME">__RENAME</a>(open);</td></tr>
+<tr><th id="96">96</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="__openat_2" title='__openat_2' data-ref="__openat_2">__openat_2</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <em>int</em>);</td></tr>
+<tr><th id="97">97</th><td><b>extern</b> <em>int</em> <dfn class="decl" id="__openat_real" title='__openat_real' data-ref="__openat_real">__openat_real</dfn>(<em>int</em>, <em>const</em> <em>char</em>*, <em>int</em>, ...) <a class="macro" href="sys/cdefs.h.html#444" title="__asm__(&quot;openat&quot;)" data-ref="_M/__RENAME">__RENAME</a>(openat);</td></tr>
+<tr><th id="98">98</th><td><a class="macro" href="sys/cdefs.h.html#221" title="extern void __creat_missing_mode(void) __attribute__((__error__(&quot;called with O_CREAT, but missing mode&quot;)))" data-ref="_M/__errordecl">__errordecl</a>(<dfn class="decl" id="__creat_missing_mode" title='__creat_missing_mode' data-ref="__creat_missing_mode">__creat_missing_mode</dfn>, <q>"called with O_CREAT, but missing mode"</q>);</td></tr>
+<tr><th id="99">99</th><td><a class="macro" href="sys/cdefs.h.html#221" title="extern void __creat_too_many_args(void) __attribute__((__error__(&quot;too many arguments&quot;)))" data-ref="_M/__errordecl">__errordecl</a>(<dfn class="decl" id="__creat_too_many_args" title='__creat_too_many_args' data-ref="__creat_too_many_args">__creat_too_many_args</dfn>, <q>"too many arguments"</q>);</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td><u>#<span data-ppcond="101">if</span> defined(<a class="macro" href="sys/cdefs.h.html#419" data-ref="_M/__BIONIC_FORTIFY">__BIONIC_FORTIFY</a>)</u></td></tr>
+<tr><th id="102">102</th><td></td></tr>
+<tr><th id="103">103</th><td><u>#<span data-ppcond="103">if</span> !defined(<span class="macro" data-ref="_M/__clang__">__clang__</span>)</u></td></tr>
+<tr><th id="104">104</th><td></td></tr>
+<tr><th id="105">105</th><td>__BIONIC_FORTIFY_INLINE</td></tr>
+<tr><th id="106">106</th><td><em>int</em> open(<em>const</em> <em>char</em>* pathname, <em>int</em> flags, ...) {</td></tr>
+<tr><th id="107">107</th><td>    <b>if</b> (__builtin_constant_p(flags)) {</td></tr>
+<tr><th id="108">108</th><td>        <b>if</b> ((flags &amp; O_CREAT) &amp;&amp; __builtin_va_arg_pack_len() == <var>0</var>) {</td></tr>
+<tr><th id="109">109</th><td>            __creat_missing_mode();  <i>// compile time error</i></td></tr>
+<tr><th id="110">110</th><td>        }</td></tr>
+<tr><th id="111">111</th><td>    }</td></tr>
+<tr><th id="112">112</th><td></td></tr>
+<tr><th id="113">113</th><td>    <b>if</b> (__builtin_va_arg_pack_len() &gt; <var>1</var>) {</td></tr>
+<tr><th id="114">114</th><td>        __creat_too_many_args();  <i>// compile time error</i></td></tr>
+<tr><th id="115">115</th><td>    }</td></tr>
+<tr><th id="116">116</th><td></td></tr>
+<tr><th id="117">117</th><td>    <b>if</b> ((__builtin_va_arg_pack_len() == <var>0</var>) &amp;&amp; !__builtin_constant_p(flags)) {</td></tr>
+<tr><th id="118">118</th><td>        <b>return</b> __open_2(pathname, flags);</td></tr>
+<tr><th id="119">119</th><td>    }</td></tr>
+<tr><th id="120">120</th><td></td></tr>
+<tr><th id="121">121</th><td>    <b>return</b> __open_real(pathname, flags, __builtin_va_arg_pack());</td></tr>
+<tr><th id="122">122</th><td>}</td></tr>
+<tr><th id="123">123</th><td></td></tr>
+<tr><th id="124">124</th><td>__BIONIC_FORTIFY_INLINE</td></tr>
+<tr><th id="125">125</th><td><em>int</em> openat(<em>int</em> dirfd, <em>const</em> <em>char</em>* pathname, <em>int</em> flags, ...) {</td></tr>
+<tr><th id="126">126</th><td>    <b>if</b> (__builtin_constant_p(flags)) {</td></tr>
+<tr><th id="127">127</th><td>        <b>if</b> ((flags &amp; O_CREAT) &amp;&amp; __builtin_va_arg_pack_len() == <var>0</var>) {</td></tr>
+<tr><th id="128">128</th><td>            __creat_missing_mode();  <i>// compile time error</i></td></tr>
+<tr><th id="129">129</th><td>        }</td></tr>
+<tr><th id="130">130</th><td>    }</td></tr>
+<tr><th id="131">131</th><td></td></tr>
+<tr><th id="132">132</th><td>    <b>if</b> (__builtin_va_arg_pack_len() &gt; <var>1</var>) {</td></tr>
+<tr><th id="133">133</th><td>        __creat_too_many_args();  <i>// compile time error</i></td></tr>
+<tr><th id="134">134</th><td>    }</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td>    <b>if</b> ((__builtin_va_arg_pack_len() == <var>0</var>) &amp;&amp; !__builtin_constant_p(flags)) {</td></tr>
+<tr><th id="137">137</th><td>        <b>return</b> __openat_2(dirfd, pathname, flags);</td></tr>
+<tr><th id="138">138</th><td>    }</td></tr>
+<tr><th id="139">139</th><td></td></tr>
+<tr><th id="140">140</th><td>    <b>return</b> __openat_real(dirfd, pathname, flags, __builtin_va_arg_pack());</td></tr>
+<tr><th id="141">141</th><td>}</td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td><u>#<span data-ppcond="103">endif</span> /* !defined(__clang__) */</u></td></tr>
+<tr><th id="144">144</th><td></td></tr>
+<tr><th id="145">145</th><td><u>#<span data-ppcond="101">endif</span> /* defined(__BIONIC_FORTIFY) */</u></td></tr>
+<tr><th id="146">146</th><td></td></tr>
+<tr><th id="147">147</th><td><a class="macro" href="sys/cdefs.h.html#86" title="}" data-ref="_M/__END_DECLS">__END_DECLS</a></td></tr>
+<tr><th id="148">148</th><td></td></tr>
+<tr><th id="149">149</th><td><u>#<span data-ppcond="29">endif</span> /* _FCNTL_H */</u></td></tr>
+<tr><th id="150">150</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../bionic/access.cpp.html'>codebrowser/bionic/libc/bionic/access.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

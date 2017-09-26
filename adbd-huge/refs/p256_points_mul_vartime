@@ -1,0 +1,10 @@
+<dec f='codebrowser/system/core/include/mincrypt/p256.h' l='137' type='void p256_points_mul_vartime(const p256_int * n1, const p256_int * n2, const p256_int * in_x, const p256_int * in_y, p256_int * out_x, p256_int * out_y)'/>
+<doc f='codebrowser/system/core/include/mincrypt/p256.h' l='136'>// {out_x,out_y} := n1G + n2{in_x,in_y}</doc>
+<def f='codebrowser/system/core/libmincrypt/p256_ec.c' l='1245' ll='1279' type='void p256_points_mul_vartime(const p256_int * n1, const p256_int * n2, const p256_int * in_x, const p256_int * in_y, p256_int * out_x, p256_int * out_y)'/>
+<doc f='codebrowser/system/core/libmincrypt/p256_ec.c' l='1239'>/* p256_points_mul_vartime sets {out_x,out_y} = n1*G + n2*{in_x,in_y}, where
+ * n1 and n2 are &lt; the order of the group.
+ *
+ * As indicated by the name, this function operates in variable time. This
+ * is safe because it&apos;s used for signature validation which doesn&apos;t deal
+ * with secrets. */</doc>
+<use f='codebrowser/system/core/libmincrypt/p256_ecdsa.c' l='49' u='c' c='p256_ecdsa_verify'/>

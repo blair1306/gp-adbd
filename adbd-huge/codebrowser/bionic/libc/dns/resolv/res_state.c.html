@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>res_state.c source code [codebrowser/bionic/libc/dns/resolv/res_state.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/bionic/libc/dns/resolv/res_state.c'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>bionic</a>/<a href='../..'>libc</a>/<a href='..'>dns</a>/<a href='./'>resolv</a>/<a href='res_state.c.html'>res_state.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2008 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> * All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *  * Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="9">9</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="10">10</th><td><i> *  * Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="11">11</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="12">12</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="13">13</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="14">14</th><td><i> *</i></td></tr>
+<tr><th id="15">15</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</i></td></tr>
+<tr><th id="16">16</th><td><i> * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</i></td></tr>
+<tr><th id="17">17</th><td><i> * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</i></td></tr>
+<tr><th id="18">18</th><td><i> * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</i></td></tr>
+<tr><th id="19">19</th><td><i> * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</i></td></tr>
+<tr><th id="20">20</th><td><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</i></td></tr>
+<tr><th id="21">21</th><td><i> * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS</i></td></tr>
+<tr><th id="22">22</th><td><i> * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED</i></td></tr>
+<tr><th id="23">23</th><td><i> * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,</i></td></tr>
+<tr><th id="24">24</th><td><i> * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT</i></td></tr>
+<tr><th id="25">25</th><td><i> * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></td></tr>
+<tr><th id="26">26</th><td><i> * SUCH DAMAGE.</i></td></tr>
+<tr><th id="27">27</th><td><i> */</i></td></tr>
+<tr><th id="28">28</th><td><u>#include <a href="../../include/sys/cdefs.h.html">&lt;sys/cdefs.h&gt;</a></u></td></tr>
+<tr><th id="29">29</th><td><u>#include <a href="../../include/sys/types.h.html">&lt;sys/types.h&gt;</a></u></td></tr>
+<tr><th id="30">30</th><td><u>#include <a href="../../include/arpa/inet.h.html">&lt;arpa/inet.h&gt;</a></u></td></tr>
+<tr><th id="31">31</th><td><u>#include <a href="../../include/arpa/nameser.h.html">&lt;arpa/nameser.h&gt;</a></u></td></tr>
+<tr><th id="32">32</th><td><u>#include <a href="../../include/netdb.h.html">&lt;netdb.h&gt;</a></u></td></tr>
+<tr><th id="33">33</th><td><u>#include <a href="../include/resolv_private.h.html">"resolv_private.h"</a></u></td></tr>
+<tr><th id="34">34</th><td><u>#include <a href="../include/resolv_cache.h.html">"resolv_cache.h"</a></u></td></tr>
+<tr><th id="35">35</th><td><u>#include <a href="../../include/pthread.h.html">&lt;pthread.h&gt;</a></u></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="../../include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td><u>#include <a href="../../include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="38">38</th><td></td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/_REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_" data-ref="_M/_REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_">_REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_</dfn></u></td></tr>
+<tr><th id="40">40</th><td><u>#include <a href="../../include/sys/_system_properties.h.html">&lt;sys/_system_properties.h&gt;</a></u></td></tr>
+<tr><th id="41">41</th><td></td></tr>
+<tr><th id="42">42</th><td><i>/* Set to 1 to enable debug traces */</i></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/DEBUG" data-ref="_M/DEBUG">DEBUG</dfn> 0</u></td></tr>
+<tr><th id="44">44</th><td></td></tr>
+<tr><th id="45">45</th><td><u>#<span data-ppcond="45">if</span> <a class="macro" href="#43" title="0" data-ref="_M/DEBUG">DEBUG</a></u></td></tr>
+<tr><th id="46">46</th><td><u>#  include "private/libc_logging.h"</u></td></tr>
+<tr><th id="47">47</th><td><u>#  include &lt;unistd.h&gt;  /* for gettid() */</u></td></tr>
+<tr><th id="48">48</th><td><u>#  define D(...) __libc_format_log(ANDROID_LOG_DEBUG,"libc", __VA_ARGS__)</u></td></tr>
+<tr><th id="49">49</th><td><u>#<span data-ppcond="45">else</span></u></td></tr>
+<tr><th id="50">50</th><td><u>#  define <dfn class="macro" id="_M/D" data-ref="_M/D">D</dfn>(...)  do{}while(0)</u></td></tr>
+<tr><th id="51">51</th><td><u>#<span data-ppcond="45">endif</span></u></td></tr>
+<tr><th id="52">52</th><td></td></tr>
+<tr><th id="53">53</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="54">54</th><td>    <em>int</em>                  <dfn class="tu decl" id="(anonymous)::_h_errno" title='(anonymous struct)::_h_errno' data-type='int' data-ref="(anonymous)::_h_errno">_h_errno</dfn>;</td></tr>
+<tr><th id="55">55</th><td>    <i  data-doc="(anonymous)::_nres">// TODO: Have one __res_state per network so we don't have to repopulate frequently.</i></td></tr>
+<tr><th id="56">56</th><td>    <b>struct</b> <a class="type" href="../include/resolv_private.h.html#__res_state" title='__res_state' data-ref="__res_state">__res_state</a>  <dfn class="tu decl" id="(anonymous)::_nres" title='(anonymous struct)::_nres' data-type='struct __res_state [1]' data-ref="(anonymous)::_nres">_nres</dfn>[<var>1</var>];</td></tr>
+<tr><th id="57">57</th><td>    <em>unsigned</em>             <dfn class="tu decl" id="(anonymous)::_serial" title='(anonymous struct)::_serial' data-type='unsigned int' data-ref="(anonymous)::_serial">_serial</dfn>;</td></tr>
+<tr><th id="58">58</th><td>    <b>struct</b> <a class="type" href="../../include/sys/system_properties.h.html#prop_info" title='prop_info' data-ref="prop_info">prop_info</a>*   <dfn class="tu decl" id="(anonymous)::_pi" title='(anonymous struct)::_pi' data-type='struct prop_info *' data-ref="(anonymous)::_pi">_pi</dfn>;</td></tr>
+<tr><th id="59">59</th><td>    <b>struct</b> <a class="type" href="../include/resolv_static.h.html#res_static" title='res_static' data-ref="res_static">res_static</a>   <dfn class="tu decl" id="(anonymous)::_rstatic" title='(anonymous struct)::_rstatic' data-type='struct res_static [1]' data-ref="(anonymous)::_rstatic">_rstatic</dfn>[<var>1</var>];</td></tr>
+<tr><th id="60">60</th><td>} <dfn class="typedef" id="_res_thread" title='_res_thread' data-type='struct _res_thread' data-ref="_res_thread">_res_thread</dfn>;</td></tr>
+<tr><th id="61">61</th><td></td></tr>
+<tr><th id="62">62</th><td><em>static</em> <a class="typedef" href="#_res_thread" title='_res_thread' data-type='struct _res_thread' data-ref="_res_thread">_res_thread</a>*</td></tr>
+<tr><th id="63">63</th><td><dfn class="tu decl def" id="_res_thread_alloc" title='_res_thread_alloc' data-type='_res_thread * _res_thread_alloc()' data-ref="_res_thread_alloc">_res_thread_alloc</dfn>(<em>void</em>)</td></tr>
+<tr><th id="64">64</th><td>{</td></tr>
+<tr><th id="65">65</th><td>    <a class="typedef" href="#_res_thread" title='_res_thread' data-type='struct _res_thread' data-ref="_res_thread">_res_thread</a>*  <dfn class="local col1 decl" id="1rt" title='rt' data-type='_res_thread *' data-ref="1rt">rt</dfn> = <a class="ref" href="../../include/malloc.h.html#calloc" title='calloc' data-ref="calloc">calloc</a>(<var>1</var>, <b>sizeof</b>(*<a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>));</td></tr>
+<tr><th id="66">66</th><td></td></tr>
+<tr><th id="67">67</th><td>    <b>if</b> (<a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>) {</td></tr>
+<tr><th id="68">68</th><td>        <a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_h_errno" title='(anonymous struct)::_h_errno' data-use='w' data-ref="(anonymous)::_h_errno">_h_errno</a> = <var>0</var>;</td></tr>
+<tr><th id="69">69</th><td>        <i>/* Special system property which tracks any changes to 'net.*'. */</i></td></tr>
+<tr><th id="70">70</th><td>        <a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_serial" title='(anonymous struct)::_serial' data-use='w' data-ref="(anonymous)::_serial">_serial</a> = <var>0</var>;</td></tr>
+<tr><th id="71">71</th><td>        <a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_pi" title='(anonymous struct)::_pi' data-use='w' data-ref="(anonymous)::_pi">_pi</a> = (<b>struct</b> <a class="type" href="../../include/sys/system_properties.h.html#prop_info" title='prop_info' data-ref="prop_info">prop_info</a>*) <a class="ref" href="../../include/sys/system_properties.h.html#__system_property_find" title='__system_property_find' data-ref="__system_property_find">__system_property_find</a>(<q>"net.change"</q>);</td></tr>
+<tr><th id="72">72</th><td>        <b>if</b> (<a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_pi" title='(anonymous struct)::_pi' data-use='r' data-ref="(anonymous)::_pi">_pi</a>) {</td></tr>
+<tr><th id="73">73</th><td>            <a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_serial" title='(anonymous struct)::_serial' data-use='w' data-ref="(anonymous)::_serial">_serial</a> = <a class="ref" href="../../include/sys/_system_properties.h.html#__system_property_serial" title='__system_property_serial' data-ref="__system_property_serial">__system_property_serial</a>(<a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_pi" title='(anonymous struct)::_pi' data-use='r' data-ref="(anonymous)::_pi">_pi</a>);</td></tr>
+<tr><th id="74">74</th><td>        }</td></tr>
+<tr><th id="75">75</th><td>        <a class="ref" href="../../include/string.h.html#memset" title='memset' data-ref="memset">memset</a>(<a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_rstatic" title='(anonymous struct)::_rstatic' data-use='r' data-ref="(anonymous)::_rstatic">_rstatic</a>, <var>0</var>, <b>sizeof</b> <a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_rstatic" title='(anonymous struct)::_rstatic' data-use='r' data-ref="(anonymous)::_rstatic">_rstatic</a>);</td></tr>
+<tr><th id="76">76</th><td>    }</td></tr>
+<tr><th id="77">77</th><td>    <b>return</b> <a class="local col1 ref" href="#1rt" title='rt' data-ref="1rt">rt</a>;</td></tr>
+<tr><th id="78">78</th><td>}</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td><em>static</em> <em>void</em></td></tr>
+<tr><th id="81">81</th><td><dfn class="tu decl def" id="_res_static_done" title='_res_static_done' data-type='void _res_static_done(res_static rs)' data-ref="_res_static_done">_res_static_done</dfn>( <a class="typedef" href="../include/resolv_static.h.html#res_static" title='res_static' data-type='struct res_static *' data-ref="res_static">res_static</a>  <dfn class="local col2 decl" id="2rs" title='rs' data-type='res_static' data-ref="2rs">rs</dfn> )</td></tr>
+<tr><th id="82">82</th><td>{</td></tr>
+<tr><th id="83">83</th><td>    <i>/* fortunately, there is nothing to do here, since the</i></td></tr>
+<tr><th id="84">84</th><td><i>     * points in h_addr_ptrs and host_aliases should all</i></td></tr>
+<tr><th id="85">85</th><td><i>     * point to 'hostbuf'</i></td></tr>
+<tr><th id="86">86</th><td><i>     */</i></td></tr>
+<tr><th id="87">87</th><td>    <b>if</b> (<a class="local col2 ref" href="#2rs" title='rs' data-ref="2rs">rs</a>-&gt;<a class="ref" href="../include/resolv_static.h.html#res_static::hostf" title='res_static::hostf' data-ref="res_static::hostf">hostf</a>) {  <i>/* should not happen in theory, but just be safe */</i></td></tr>
+<tr><th id="88">88</th><td>        <a class="ref" href="../../include/stdio.h.html#fclose" title='fclose' data-ref="fclose">fclose</a>(<a class="local col2 ref" href="#2rs" title='rs' data-ref="2rs">rs</a>-&gt;<a class="ref" href="../include/resolv_static.h.html#res_static::hostf" title='res_static::hostf' data-ref="res_static::hostf">hostf</a>);</td></tr>
+<tr><th id="89">89</th><td>        <a class="local col2 ref" href="#2rs" title='rs' data-ref="2rs">rs</a>-&gt;<a class="ref" href="../include/resolv_static.h.html#res_static::hostf" title='res_static::hostf' data-ref="res_static::hostf">hostf</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="90">90</th><td>    }</td></tr>
+<tr><th id="91">91</th><td>    <a class="ref" href="../../include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col2 ref" href="#2rs" title='rs' data-ref="2rs">rs</a>-&gt;<a class="ref" href="../include/resolv_static.h.html#res_static::servent" title='res_static::servent' data-ref="res_static::servent">servent</a>.<a class="ref" href="../../include/netdb.h.html#servent::s_aliases" title='servent::s_aliases' data-ref="servent::s_aliases">s_aliases</a>);</td></tr>
+<tr><th id="92">92</th><td>}</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><em>static</em> <em>void</em></td></tr>
+<tr><th id="95">95</th><td><dfn class="tu decl def" id="_res_thread_free" title='_res_thread_free' data-type='void _res_thread_free(void * _rt)' data-ref="_res_thread_free">_res_thread_free</dfn>( <em>void</em>*  <dfn class="local col3 decl" id="3_rt" title='_rt' data-type='void *' data-ref="3_rt">_rt</dfn> )</td></tr>
+<tr><th id="96">96</th><td>{</td></tr>
+<tr><th id="97">97</th><td>    <a class="typedef" href="#_res_thread" title='_res_thread' data-type='struct _res_thread' data-ref="_res_thread">_res_thread</a>*  <dfn class="local col4 decl" id="4rt" title='rt' data-type='_res_thread *' data-ref="4rt">rt</dfn> = <a class="local col3 ref" href="#3_rt" title='_rt' data-ref="3_rt">_rt</a>;</td></tr>
+<tr><th id="98">98</th><td></td></tr>
+<tr><th id="99">99</th><td>    <a class="macro" href="#50" title="do{}while(0)" data-ref="_M/D">D</a>(<q>"%s: rt=%p for thread=%d"</q>, <b>__FUNCTION__</b>, rt, gettid());</td></tr>
+<tr><th id="100">100</th><td></td></tr>
+<tr><th id="101">101</th><td>    <a class="tu ref" href="#_res_static_done" title='_res_static_done' data-use='c' data-ref="_res_static_done">_res_static_done</a>(<a class="local col4 ref" href="#4rt" title='rt' data-ref="4rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_rstatic" title='(anonymous struct)::_rstatic' data-use='r' data-ref="(anonymous)::_rstatic">_rstatic</a>);</td></tr>
+<tr><th id="102">102</th><td>    <a class="macro" href="../include/resolv_private.h.html#425" title="__res_ndestroy" data-ref="_M/res_ndestroy">res_ndestroy</a>(<a class="local col4 ref" href="#4rt" title='rt' data-ref="4rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_nres" title='(anonymous struct)::_nres' data-use='r' data-ref="(anonymous)::_nres">_nres</a>);</td></tr>
+<tr><th id="103">103</th><td>    <a class="ref" href="../../include/malloc.h.html#free" title='free' data-ref="free">free</a>(<a class="local col4 ref" href="#4rt" title='rt' data-ref="4rt">rt</a>);</td></tr>
+<tr><th id="104">104</th><td>}</td></tr>
+<tr><th id="105">105</th><td></td></tr>
+<tr><th id="106">106</th><td><em>static</em> <a class="typedef" href="../../include/pthread.h.html#pthread_key_t" title='pthread_key_t' data-type='int' data-ref="pthread_key_t">pthread_key_t</a> <dfn class="tu decl def" id="_res_key" title='_res_key' data-type='pthread_key_t' data-ref="_res_key">_res_key</dfn>;</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td><b>__attribute__</b>((constructor)) <em>static</em> <em>void</em> <dfn class="tu decl def" id="__res_key_init" title='__res_key_init' data-type='void __res_key_init()' data-ref="__res_key_init">__res_key_init</dfn>() {</td></tr>
+<tr><th id="109">109</th><td>    <a class="ref" href="../../include/pthread.h.html#pthread_key_create" title='pthread_key_create' data-ref="pthread_key_create">pthread_key_create</a>(&amp;<a class="tu ref" href="#_res_key" title='_res_key' data-use='a' data-ref="_res_key">_res_key</a>, <a class="tu ref" href="#_res_thread_free" title='_res_thread_free' data-use='r' data-ref="_res_thread_free">_res_thread_free</a>);</td></tr>
+<tr><th id="110">110</th><td>}</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td><em>static</em> <a class="typedef" href="#_res_thread" title='_res_thread' data-type='struct _res_thread' data-ref="_res_thread">_res_thread</a>*</td></tr>
+<tr><th id="113">113</th><td><dfn class="tu decl def" id="_res_thread_get" title='_res_thread_get' data-type='_res_thread * _res_thread_get()' data-ref="_res_thread_get">_res_thread_get</dfn>(<em>void</em>)</td></tr>
+<tr><th id="114">114</th><td>{</td></tr>
+<tr><th id="115">115</th><td>    <a class="typedef" href="#_res_thread" title='_res_thread' data-type='struct _res_thread' data-ref="_res_thread">_res_thread</a>*  <dfn class="local col5 decl" id="5rt" title='rt' data-type='_res_thread *' data-ref="5rt">rt</dfn>;</td></tr>
+<tr><th id="116">116</th><td>    <a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a> = <a class="ref" href="../../include/pthread.h.html#pthread_getspecific" title='pthread_getspecific' data-ref="pthread_getspecific">pthread_getspecific</a>( <a class="tu ref" href="#_res_key" title='_res_key' data-use='r' data-ref="_res_key">_res_key</a> );</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td>    <b>if</b> (<a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="119">119</th><td>        <i>/* We already have one thread-specific DNS state object.</i></td></tr>
+<tr><th id="120">120</th><td><i>         * Check the serial value for any changes to net.* properties */</i></td></tr>
+<tr><th id="121">121</th><td>        <a class="macro" href="#50" title="do{}while(0)" data-ref="_M/D">D</a>(<q>"%s: Called for tid=%d rt=%p rt-&gt;pi=%p rt-&gt;serial=%d"</q>,</td></tr>
+<tr><th id="122">122</th><td>           <b>__FUNCTION__</b>, gettid(), rt, rt-&gt;_pi, rt-&gt;_serial);</td></tr>
+<tr><th id="123">123</th><td>        <b>if</b> (<a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_pi" title='(anonymous struct)::_pi' data-use='r' data-ref="(anonymous)::_pi">_pi</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="124">124</th><td>            <i>/* The property wasn't created when _res_thread_get() was</i></td></tr>
+<tr><th id="125">125</th><td><i>             * called the last time. This should only happen very</i></td></tr>
+<tr><th id="126">126</th><td><i>             * early during the boot sequence. First, let's try to see if it</i></td></tr>
+<tr><th id="127">127</th><td><i>             * is here now. */</i></td></tr>
+<tr><th id="128">128</th><td>            <a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_pi" title='(anonymous struct)::_pi' data-use='w' data-ref="(anonymous)::_pi">_pi</a> = (<b>struct</b> <a class="type" href="../../include/sys/system_properties.h.html#prop_info" title='prop_info' data-ref="prop_info">prop_info</a>*) <a class="ref" href="../../include/sys/system_properties.h.html#__system_property_find" title='__system_property_find' data-ref="__system_property_find">__system_property_find</a>(<q>"net.change"</q>);</td></tr>
+<tr><th id="129">129</th><td>            <b>if</b> (<a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_pi" title='(anonymous struct)::_pi' data-use='r' data-ref="(anonymous)::_pi">_pi</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="130">130</th><td>                <i>/* Still nothing, return current state */</i></td></tr>
+<tr><th id="131">131</th><td>                <a class="macro" href="#50" title="do{}while(0)" data-ref="_M/D">D</a>(<q>"%s: exiting for tid=%d rt=%d since system property not found"</q>,</td></tr>
+<tr><th id="132">132</th><td>                  <b>__FUNCTION__</b>, gettid(), rt);</td></tr>
+<tr><th id="133">133</th><td>                <b>return</b> <a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>;</td></tr>
+<tr><th id="134">134</th><td>            }</td></tr>
+<tr><th id="135">135</th><td>        }</td></tr>
+<tr><th id="136">136</th><td>        <b>if</b> (<a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_serial" title='(anonymous struct)::_serial' data-use='r' data-ref="(anonymous)::_serial">_serial</a> == <a class="ref" href="../../include/sys/_system_properties.h.html#__system_property_serial" title='__system_property_serial' data-ref="__system_property_serial">__system_property_serial</a>(<a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_pi" title='(anonymous struct)::_pi' data-use='r' data-ref="(anonymous)::_pi">_pi</a>)) {</td></tr>
+<tr><th id="137">137</th><td>            <i>/* Nothing changed, so return the current state */</i></td></tr>
+<tr><th id="138">138</th><td>            <a class="macro" href="#50" title="do{}while(0)" data-ref="_M/D">D</a>(<q>"%s: tid=%d rt=%p nothing changed, returning"</q>,</td></tr>
+<tr><th id="139">139</th><td>              <b>__FUNCTION__</b>, gettid(), rt);</td></tr>
+<tr><th id="140">140</th><td>            <b>return</b> <a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>;</td></tr>
+<tr><th id="141">141</th><td>        }</td></tr>
+<tr><th id="142">142</th><td>        <i>/* Update the recorded serial number, and go reset the state */</i></td></tr>
+<tr><th id="143">143</th><td>        <a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_serial" title='(anonymous struct)::_serial' data-use='w' data-ref="(anonymous)::_serial">_serial</a> = <a class="ref" href="../../include/sys/_system_properties.h.html#__system_property_serial" title='__system_property_serial' data-ref="__system_property_serial">__system_property_serial</a>(<a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_pi" title='(anonymous struct)::_pi' data-use='r' data-ref="(anonymous)::_pi">_pi</a>);</td></tr>
+<tr><th id="144">144</th><td>        <b>goto</b> <a class="lbl" href="#6RESET_STATE" data-ref="6RESET_STATE">RESET_STATE</a>;</td></tr>
+<tr><th id="145">145</th><td>    }</td></tr>
+<tr><th id="146">146</th><td></td></tr>
+<tr><th id="147">147</th><td>    <i>/* It is the first time this function is called in this thread,</i></td></tr>
+<tr><th id="148">148</th><td><i>     * we need to create a new thread-specific DNS resolver state. */</i></td></tr>
+<tr><th id="149">149</th><td>    <a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a> = <a class="tu ref" href="#_res_thread_alloc" title='_res_thread_alloc' data-use='c' data-ref="_res_thread_alloc">_res_thread_alloc</a>();</td></tr>
+<tr><th id="150">150</th><td>    <b>if</b> (<a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="151">151</th><td>        <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="152">152</th><td>    }</td></tr>
+<tr><th id="153">153</th><td>    <a class="ref" href="../../include/pthread.h.html#pthread_setspecific" title='pthread_setspecific' data-ref="pthread_setspecific">pthread_setspecific</a>( <a class="tu ref" href="#_res_key" title='_res_key' data-use='r' data-ref="_res_key">_res_key</a>, <a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a> );</td></tr>
+<tr><th id="154">154</th><td>    <a class="macro" href="#50" title="do{}while(0)" data-ref="_M/D">D</a>(<q>"%s: tid=%d Created new DNS state rt=%p"</q>,</td></tr>
+<tr><th id="155">155</th><td>      <b>__FUNCTION__</b>, gettid(), rt);</td></tr>
+<tr><th id="156">156</th><td></td></tr>
+<tr><th id="157">157</th><td><dfn class="lbl" id="6RESET_STATE" data-ref="6RESET_STATE">RESET_STATE</dfn>:</td></tr>
+<tr><th id="158">158</th><td>    <i>/* Reset the state, note that res_ninit() can now properly reset</i></td></tr>
+<tr><th id="159">159</th><td><i>     * an existing state without leaking memory.</i></td></tr>
+<tr><th id="160">160</th><td><i>     */</i></td></tr>
+<tr><th id="161">161</th><td>    <a class="macro" href="#50" title="do{}while(0)" data-ref="_M/D">D</a>(<q>"%s: tid=%d, rt=%p, resetting DNS state (options RES_INIT=%d)"</q>,</td></tr>
+<tr><th id="162">162</th><td>      <b>__FUNCTION__</b>, gettid(), rt, (rt-&gt;_nres-&gt;options &amp; RES_INIT) != <var>0</var>);</td></tr>
+<tr><th id="163">163</th><td>    <b>if</b> ( <a class="macro" href="../include/resolv_private.h.html#410" title="__res_ninit" data-ref="_M/res_ninit">res_ninit</a>( <a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_nres" title='(anonymous struct)::_nres' data-use='r' data-ref="(anonymous)::_nres">_nres</a> ) &lt; <var>0</var> ) {</td></tr>
+<tr><th id="164">164</th><td>        <i>/* This should not happen */</i></td></tr>
+<tr><th id="165">165</th><td>        <a class="macro" href="#50" title="do{}while(0)" data-ref="_M/D">D</a>(<q>"%s: tid=%d rt=%p, woot, res_ninit() returned &lt; 0"</q>,</td></tr>
+<tr><th id="166">166</th><td>          <b>__FUNCTION__</b>, gettid(), rt);</td></tr>
+<tr><th id="167">167</th><td>        <a class="tu ref" href="#_res_thread_free" title='_res_thread_free' data-use='c' data-ref="_res_thread_free">_res_thread_free</a>(<a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>);</td></tr>
+<tr><th id="168">168</th><td>        <a class="ref" href="../../include/pthread.h.html#pthread_setspecific" title='pthread_setspecific' data-ref="pthread_setspecific">pthread_setspecific</a>( <a class="tu ref" href="#_res_key" title='_res_key' data-use='r' data-ref="_res_key">_res_key</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> );</td></tr>
+<tr><th id="169">169</th><td>        <b>return</b> <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="170">170</th><td>    }</td></tr>
+<tr><th id="171">171</th><td>    <b>return</b> <a class="local col5 ref" href="#5rt" title='rt' data-ref="5rt">rt</a>;</td></tr>
+<tr><th id="172">172</th><td>}</td></tr>
+<tr><th id="173">173</th><td></td></tr>
+<tr><th id="174">174</th><td><a class="macro" href="../../include/sys/cdefs.h.html#431" title="__attribute__((visibility(&quot;hidden&quot;)))" data-ref="_M/__LIBC_HIDDEN__">__LIBC_HIDDEN__</a></td></tr>
+<tr><th id="175">175</th><td><b>struct</b> <a class="type" href="../include/resolv_private.h.html#__res_state" title='__res_state' data-ref="__res_state">__res_state</a> <dfn class="decl def" id="_nres" title='_nres' data-ref="_nres">_nres</dfn>;</td></tr>
+<tr><th id="176">176</th><td></td></tr>
+<tr><th id="177">177</th><td><u>#<span data-ppcond="177">if</span> 0</u></td></tr>
+<tr><th id="178">178</th><td><b>struct</b> resolv_cache*</td></tr>
+<tr><th id="179">179</th><td>__get_res_cache(<em>void</em>)</td></tr>
+<tr><th id="180">180</th><td>{</td></tr>
+<tr><th id="181">181</th><td>    _res_thread*  rt = _res_thread_get();</td></tr>
+<tr><th id="182">182</th><td></td></tr>
+<tr><th id="183">183</th><td>    <b>if</b> (!rt)</td></tr>
+<tr><th id="184">184</th><td>        <b>return</b> NULL;</td></tr>
+<tr><th id="185">185</th><td></td></tr>
+<tr><th id="186">186</th><td>    <b>if</b> (!rt-&gt;_cache) {</td></tr>
+<tr><th id="187">187</th><td>        rt-&gt;_cache = _resolv_cache_create();</td></tr>
+<tr><th id="188">188</th><td>    }</td></tr>
+<tr><th id="189">189</th><td>    <b>return</b> rt-&gt;_cache;</td></tr>
+<tr><th id="190">190</th><td>}</td></tr>
+<tr><th id="191">191</th><td><u>#<span data-ppcond="177">endif</span></u></td></tr>
+<tr><th id="192">192</th><td></td></tr>
+<tr><th id="193">193</th><td><em>int</em>*</td></tr>
+<tr><th id="194">194</th><td><dfn class="decl def" id="__get_h_errno" title='__get_h_errno' data-ref="__get_h_errno">__get_h_errno</dfn>(<em>void</em>)</td></tr>
+<tr><th id="195">195</th><td>{</td></tr>
+<tr><th id="196">196</th><td>    <a class="typedef" href="#_res_thread" title='_res_thread' data-type='struct _res_thread' data-ref="_res_thread">_res_thread</a>*  <dfn class="local col7 decl" id="7rt" title='rt' data-type='_res_thread *' data-ref="7rt">rt</dfn>    = <a class="tu ref" href="#_res_thread_get" title='_res_thread_get' data-use='c' data-ref="_res_thread_get">_res_thread_get</a>();</td></tr>
+<tr><th id="197">197</th><td>    <em>static</em> <em>int</em>    <dfn class="local col8 decl" id="8panic" title='panic' data-type='int' data-ref="8panic">panic</dfn> = <a class="macro" href="../../include/netdb.h.html#126" title="-1" data-ref="_M/NETDB_INTERNAL">NETDB_INTERNAL</a>;</td></tr>
+<tr><th id="198">198</th><td></td></tr>
+<tr><th id="199">199</th><td>    <b>return</b> <a class="local col7 ref" href="#7rt" title='rt' data-ref="7rt">rt</a> ? &amp;<a class="local col7 ref" href="#7rt" title='rt' data-ref="7rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_h_errno" title='(anonymous struct)::_h_errno' data-use='a' data-ref="(anonymous)::_h_errno">_h_errno</a> : &amp;<a class="local col8 ref" href="#8panic" title='panic' data-ref="8panic">panic</a>;</td></tr>
+<tr><th id="200">200</th><td>}</td></tr>
+<tr><th id="201">201</th><td></td></tr>
+<tr><th id="202">202</th><td><a class="typedef" href="../include/resolv_private.h.html#res_state" title='res_state' data-type='struct __res_state *' data-ref="res_state">res_state</a></td></tr>
+<tr><th id="203">203</th><td><dfn class="decl def" id="__res_get_state" title='__res_get_state' data-ref="__res_get_state">__res_get_state</dfn>(<em>void</em>)</td></tr>
+<tr><th id="204">204</th><td>{</td></tr>
+<tr><th id="205">205</th><td>    <a class="typedef" href="#_res_thread" title='_res_thread' data-type='struct _res_thread' data-ref="_res_thread">_res_thread</a>*  <dfn class="local col9 decl" id="9rt" title='rt' data-type='_res_thread *' data-ref="9rt">rt</dfn> = <a class="tu ref" href="#_res_thread_get" title='_res_thread_get' data-use='c' data-ref="_res_thread_get">_res_thread_get</a>();</td></tr>
+<tr><th id="206">206</th><td></td></tr>
+<tr><th id="207">207</th><td>    <b>return</b> <a class="local col9 ref" href="#9rt" title='rt' data-ref="9rt">rt</a> ? <a class="local col9 ref" href="#9rt" title='rt' data-ref="9rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_nres" title='(anonymous struct)::_nres' data-use='r' data-ref="(anonymous)::_nres">_nres</a> : <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="208">208</th><td>}</td></tr>
+<tr><th id="209">209</th><td></td></tr>
+<tr><th id="210">210</th><td><em>void</em></td></tr>
+<tr><th id="211">211</th><td><dfn class="decl def" id="__res_put_state" title='__res_put_state' data-ref="__res_put_state">__res_put_state</dfn>(<a class="typedef" href="../include/resolv_private.h.html#res_state" title='res_state' data-type='struct __res_state *' data-ref="res_state">res_state</a> <dfn class="local col0 decl" id="10res" title='res' data-type='res_state' data-ref="10res">res</dfn> <a class="macro" href="../../include/sys/cdefs.h.html#150" title="__attribute__((__unused__))" data-ref="_M/__unused">__unused</a>)</td></tr>
+<tr><th id="212">212</th><td>{</td></tr>
+<tr><th id="213">213</th><td>    <i>/* nothing to do */</i></td></tr>
+<tr><th id="214">214</th><td>}</td></tr>
+<tr><th id="215">215</th><td></td></tr>
+<tr><th id="216">216</th><td><a class="typedef" href="../include/resolv_static.h.html#res_static" title='res_static' data-type='struct res_static *' data-ref="res_static">res_static</a></td></tr>
+<tr><th id="217">217</th><td><dfn class="decl def" id="__res_get_static" title='__res_get_static' data-ref="__res_get_static">__res_get_static</dfn>(<em>void</em>)</td></tr>
+<tr><th id="218">218</th><td>{</td></tr>
+<tr><th id="219">219</th><td>    <a class="typedef" href="#_res_thread" title='_res_thread' data-type='struct _res_thread' data-ref="_res_thread">_res_thread</a>*  <dfn class="local col1 decl" id="11rt" title='rt' data-type='_res_thread *' data-ref="11rt">rt</dfn> = <a class="tu ref" href="#_res_thread_get" title='_res_thread_get' data-use='c' data-ref="_res_thread_get">_res_thread_get</a>();</td></tr>
+<tr><th id="220">220</th><td></td></tr>
+<tr><th id="221">221</th><td>    <b>return</b> <a class="local col1 ref" href="#11rt" title='rt' data-ref="11rt">rt</a> ? <a class="local col1 ref" href="#11rt" title='rt' data-ref="11rt">rt</a>-&gt;<a class="tu ref" href="#(anonymous)::_rstatic" title='(anonymous struct)::_rstatic' data-use='r' data-ref="(anonymous)::_rstatic">_rstatic</a> : <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="222">222</th><td>}</td></tr>
+<tr><th id="223">223</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

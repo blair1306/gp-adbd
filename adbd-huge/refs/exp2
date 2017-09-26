@@ -1,0 +1,34 @@
+<dec f='codebrowser/bionic/libc/include/math.h' l='200' type='double exp2(double )'/>
+<def f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_exp2.c' l='341' ll='393' type='double exp2(double x)'/>
+<doc f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/s_exp2.c' l='310'>/*
+ * exp2(x): compute the base 2 exponential of x
+ *
+ * Accuracy: Peak error &lt; 0.503 ulp for normalized results.
+ *
+ * Method: (accurate tables)
+ *
+ *   Reduce x:
+ *     x = 2**k + y, for integer k and |y| &lt;= 1/2.
+ *     Thus we have exp2(x) = 2**k * exp2(y).
+ *
+ *   Reduce y:
+ *     y = i/TBLSIZE + z - eps[i] for integer i near y * TBLSIZE.
+ *     Thus we have exp2(y) = exp2(i/TBLSIZE) * exp2(z - eps[i]),
+ *     with |z - eps[i]| &lt;= 2**-9 + 2**-39 for the table used.
+ *
+ *   We compute exp2(i/TBLSIZE) via table lookup and exp2(z - eps[i]) via
+ *   a degree-5 minimax polynomial with maximum error under 1.3 * 2**-61.
+ *   The values in exp2t[] and eps[] are chosen such that
+ *   exp2t[i] = exp2(i/TBLSIZE + eps[i]), and eps[i] is a small offset such
+ *   that exp2t[i] is accurate to 2**-64.
+ *
+ *   Note that the range of i is +-TBLSIZE/2, so we actually index the tables
+ *   by i0 = i + TBLSIZE/2.  For cache efficiency, exp2t[] and eps[] are
+ *   virtual tables, interleaved in the real table tbl[].
+ *
+ *   This method is due to Gal, with many details due to Gal and Bachelis:
+ *
+ *	Gal, S. and Bachelis, B.  An Accurate Elementary Mathematical Library
+ *	for the IEEE Floating Point Standard.  TOMS 17(1), 26-46 (1991).
+ */</doc>
+<use f='codebrowser/external/libcxx/include/cmath' l='1182' u='c' c='_ZNSt3__14exp2ET_'/>

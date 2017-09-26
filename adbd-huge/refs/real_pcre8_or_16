@@ -1,0 +1,47 @@
+<def f='codebrowser/external/pcre/dist/pcre_internal.h' l='2325' ll='2346'/>
+<size>64</size>
+<doc f='codebrowser/external/pcre/dist/pcre_internal.h' l='2299'>/* The real format of the start of the pcre block; the index of names and the
+code vector run on as long as necessary after the end. We store an explicit
+offset to the name table so that if a regex is compiled on one host, saved, and
+then run on another where the size of pointers is different, all might still
+be well.
+
+The size of the structure must be a multiple of 8 bytes. For the case of
+compiled-on-4 and run-on-8, we include an extra pointer that is always NULL so
+that there are an even number of pointers which therefore are a multiple of 8
+bytes.
+
+It is necessary to fork the struct for the 32 bit library, since it needs to
+use pcre_uint32 for first_char and req_char. We can&apos;t put an ifdef inside the
+typedef because pcretest needs access to the struct of the 8-, 16- and 32-bit
+variants.
+
+*** WARNING ***
+When new fields are added to these structures, remember to adjust the code in
+pcre_byte_order.c that is concerned with swapping the byte order of the fields
+when a compiled regex is reloaded on a host with different endianness.
+*** WARNING ***
+There is also similar byte-flipping code in pcretest.c, which is used for
+testing the byte-flipping features. It must also be kept in step.
+*** WARNING ***
+*/</doc>
+<mbr r='real_pcre8_or_16::magic_number' o='0' t='pcre_uint32'/>
+<mbr r='real_pcre8_or_16::size' o='32' t='pcre_uint32'/>
+<mbr r='real_pcre8_or_16::options' o='64' t='pcre_uint32'/>
+<mbr r='real_pcre8_or_16::flags' o='96' t='pcre_uint32'/>
+<mbr r='real_pcre8_or_16::limit_match' o='128' t='pcre_uint32'/>
+<mbr r='real_pcre8_or_16::limit_recursion' o='160' t='pcre_uint32'/>
+<mbr r='real_pcre8_or_16::first_char' o='192' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::req_char' o='208' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::max_lookbehind' o='224' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::top_bracket' o='240' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::top_backref' o='256' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::name_table_offset' o='272' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::name_entry_size' o='288' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::name_count' o='304' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::ref_count' o='320' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::dummy1' o='336' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::dummy2' o='352' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::dummy3' o='368' t='pcre_uint16'/>
+<mbr r='real_pcre8_or_16::tables' o='384' t='const pcre_uint8 *'/>
+<mbr r='real_pcre8_or_16::nullpad' o='448' t='void *'/>

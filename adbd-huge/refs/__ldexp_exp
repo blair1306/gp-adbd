@@ -1,0 +1,11 @@
+<dec f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/math_private.h' l='748' type='double __ldexp_exp(double , int )'/>
+<def f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_exp.c' l='74' ll='84' type='double __ldexp_exp(double x, int expt)'/>
+<doc f='codebrowser/bionic/libm/upstream-freebsd/lib/msun/src/k_exp.c' l='64'>/*
+ * __ldexp_exp(x, expt) and __ldexp_cexp(x, expt) compute exp(x) * 2**expt.
+ * They are intended for large arguments (real part &gt;= ln(DBL_MAX))
+ * where care is needed to avoid overflow.
+ *
+ * The present implementation is narrowly tailored for our hyperbolic and
+ * exponential functions.  We assume expt is small (0 or -1), and the caller
+ * has filtered out very large x, for which overflow would be inevitable.
+ */</doc>

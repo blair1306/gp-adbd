@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>sockets.h source code [codebrowser/system/core/include/cutils/sockets.h] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/system/core/include/cutils/sockets.h'; var root_path = '../../../../..'; var data_path = '../../../../../../data';</script>
+<script src='../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../..'>codebrowser</a>/<a href='../../..'>system</a>/<a href='../..'>core</a>/<a href='..'>include</a>/<a href='./'>cutils</a>/<a href='sockets.h.html'>sockets.h</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/*</i></td></tr>
+<tr><th id="2">2</th><td><i> * Copyright (C) 2006 The Android Open Source Project</i></td></tr>
+<tr><th id="3">3</th><td><i> *</i></td></tr>
+<tr><th id="4">4</th><td><i> * Licensed under the Apache License, Version 2.0 (the "License");</i></td></tr>
+<tr><th id="5">5</th><td><i> * you may not use this file except in compliance with the License.</i></td></tr>
+<tr><th id="6">6</th><td><i> * You may obtain a copy of the License at</i></td></tr>
+<tr><th id="7">7</th><td><i> *</i></td></tr>
+<tr><th id="8">8</th><td><i> *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></i></td></tr>
+<tr><th id="9">9</th><td><i> *</i></td></tr>
+<tr><th id="10">10</th><td><i> * Unless required by applicable law or agreed to in writing, software</i></td></tr>
+<tr><th id="11">11</th><td><i> * distributed under the License is distributed on an "AS IS" BASIS,</i></td></tr>
+<tr><th id="12">12</th><td><i> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</i></td></tr>
+<tr><th id="13">13</th><td><i> * See the License for the specific language governing permissions and</i></td></tr>
+<tr><th id="14">14</th><td><i> * limitations under the License.</i></td></tr>
+<tr><th id="15">15</th><td><i> */</i></td></tr>
+<tr><th id="16">16</th><td></td></tr>
+<tr><th id="17">17</th><td><u>#<span data-ppcond="17">ifndef</span> <span class="macro" data-ref="_M/__CUTILS_SOCKETS_H">__CUTILS_SOCKETS_H</span></u></td></tr>
+<tr><th id="18">18</th><td><u>#define <dfn class="macro" id="_M/__CUTILS_SOCKETS_H" data-ref="_M/__CUTILS_SOCKETS_H">__CUTILS_SOCKETS_H</dfn></u></td></tr>
+<tr><th id="19">19</th><td></td></tr>
+<tr><th id="20">20</th><td><u>#include <a href="../../../../bionic/libc/include/errno.h.html">&lt;errno.h&gt;</a></u></td></tr>
+<tr><th id="21">21</th><td><u>#include <a href="../../../../bionic/libc/include/stdio.h.html">&lt;stdio.h&gt;</a></u></td></tr>
+<tr><th id="22">22</th><td><u>#include <a href="../../../../bionic/libc/include/stdlib.h.html">&lt;stdlib.h&gt;</a></u></td></tr>
+<tr><th id="23">23</th><td><u>#include <a href="../../../../bionic/libc/include/string.h.html">&lt;string.h&gt;</a></u></td></tr>
+<tr><th id="24">24</th><td><u>#include &lt;stdbool.h&gt;</u></td></tr>
+<tr><th id="25">25</th><td></td></tr>
+<tr><th id="26">26</th><td><u>#<span data-ppcond="26">if</span> defined(<span class="macro" data-ref="_M/_WIN32">_WIN32</span>)</u></td></tr>
+<tr><th id="27">27</th><td></td></tr>
+<tr><th id="28">28</th><td><u>#include &lt;winsock2.h&gt;</u></td></tr>
+<tr><th id="29">29</th><td><u>#include &lt;ws2tcpip.h&gt;</u></td></tr>
+<tr><th id="30">30</th><td></td></tr>
+<tr><th id="31">31</th><td><b>typedef</b> <em>int</em>  socklen_t;</td></tr>
+<tr><th id="32">32</th><td><b>typedef</b> SOCKET cutils_socket_t;</td></tr>
+<tr><th id="33">33</th><td></td></tr>
+<tr><th id="34">34</th><td><u>#<span data-ppcond="26">else</span></u></td></tr>
+<tr><th id="35">35</th><td></td></tr>
+<tr><th id="36">36</th><td><u>#include <a href="../../../../bionic/libc/include/sys/socket.h.html">&lt;sys/socket.h&gt;</a></u></td></tr>
+<tr><th id="37">37</th><td></td></tr>
+<tr><th id="38">38</th><td><b>typedef</b> <em>int</em> <dfn class="typedef" id="cutils_socket_t" title='cutils_socket_t' data-type='int' data-ref="cutils_socket_t">cutils_socket_t</dfn>;</td></tr>
+<tr><th id="39">39</th><td><u>#define <dfn class="macro" id="_M/INVALID_SOCKET" data-ref="_M/INVALID_SOCKET">INVALID_SOCKET</dfn> (-1)</u></td></tr>
+<tr><th id="40">40</th><td></td></tr>
+<tr><th id="41">41</th><td><u>#<span data-ppcond="26">endif</span></u></td></tr>
+<tr><th id="42">42</th><td></td></tr>
+<tr><th id="43">43</th><td><u>#define <dfn class="macro" id="_M/ANDROID_SOCKET_ENV_PREFIX" data-ref="_M/ANDROID_SOCKET_ENV_PREFIX">ANDROID_SOCKET_ENV_PREFIX</dfn>	"ANDROID_SOCKET_"</u></td></tr>
+<tr><th id="44">44</th><td><u>#define <dfn class="macro" id="_M/ANDROID_SOCKET_DIR" data-ref="_M/ANDROID_SOCKET_DIR">ANDROID_SOCKET_DIR</dfn>		"/dev/socket"</u></td></tr>
+<tr><th id="45">45</th><td></td></tr>
+<tr><th id="46">46</th><td><u>#<span data-ppcond="46">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="47">47</th><td><b>extern</b> <q>"C"</q> {</td></tr>
+<tr><th id="48">48</th><td><u>#<span data-ppcond="46">endif</span></u></td></tr>
+<tr><th id="49">49</th><td></td></tr>
+<tr><th id="50">50</th><td><i>/*</i></td></tr>
+<tr><th id="51">51</th><td><i> * android_get_control_socket - simple helper function to get the file</i></td></tr>
+<tr><th id="52">52</th><td><i> * descriptor of our init-managed Unix domain socket. `name' is the name of the</i></td></tr>
+<tr><th id="53">53</th><td><i> * socket, as given in init.rc. Returns -1 on error.</i></td></tr>
+<tr><th id="54">54</th><td><i> *</i></td></tr>
+<tr><th id="55">55</th><td><i> * This is inline and not in libcutils proper because we want to use this in</i></td></tr>
+<tr><th id="56">56</th><td><i> * third-party daemons with minimal modification.</i></td></tr>
+<tr><th id="57">57</th><td><i> */</i></td></tr>
+<tr><th id="58">58</th><td><em>static</em> <b>inline</b> <em>int</em> <dfn class="decl def" id="_Z26android_get_control_socketPKc" title='android_get_control_socket' data-ref="_Z26android_get_control_socketPKc">android_get_control_socket</dfn>(<em>const</em> <em>char</em>* <dfn class="local col4 decl" id="4name" title='name' data-type='const char *' data-ref="4name">name</dfn>)</td></tr>
+<tr><th id="59">59</th><td>{</td></tr>
+<tr><th id="60">60</th><td>	<em>char</em> <dfn class="local col5 decl" id="5key" title='key' data-type='char [64]' data-ref="5key">key</dfn>[<var>64</var>];</td></tr>
+<tr><th id="61">61</th><td>	<a class="macro" href="../../../../bionic/libc/include/stdio.h.html#320" title="__builtin___snprintf_chk(key, sizeof(key), 0, __builtin_object_size((key), 1), &quot;ANDROID_SOCKET_&quot; &quot;%s&quot;, name)" data-ref="_M/snprintf">snprintf</a>(<a class="local col5 ref" href="#5key" title='key' data-ref="5key">key</a>, <b>sizeof</b>(<a class="local col5 ref" href="#5key" title='key' data-ref="5key">key</a>), <a class="macro" href="#43" title="&quot;ANDROID_SOCKET_&quot;" data-ref="_M/ANDROID_SOCKET_ENV_PREFIX">ANDROID_SOCKET_ENV_PREFIX</a> <q>"%s"</q>, <a class="local col4 ref" href="#4name" title='name' data-ref="4name">name</a>);</td></tr>
+<tr><th id="62">62</th><td></td></tr>
+<tr><th id="63">63</th><td>	<em>const</em> <em>char</em>* <dfn class="local col6 decl" id="6val" title='val' data-type='const char *' data-ref="6val">val</dfn> = <a class="ref" href="../../../../bionic/libc/include/stdlib.h.html#getenv" title='getenv' data-ref="getenv">getenv</a>(<a class="local col5 ref" href="#5key" title='key' data-ref="5key">key</a>);</td></tr>
+<tr><th id="64">64</th><td>	<b>if</b> (!<a class="local col6 ref" href="#6val" title='val' data-ref="6val">val</a>) {</td></tr>
+<tr><th id="65">65</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="66">66</th><td>	}</td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td>	<a class="macro" href="../../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a> = <var>0</var>;</td></tr>
+<tr><th id="69">69</th><td>	<em>int</em> <dfn class="local col7 decl" id="7fd" title='fd' data-type='int' data-ref="7fd">fd</dfn> = <a class="ref" href="../../../../bionic/libc/include/stdlib.h.html#strtol" title='strtol' data-ref="strtol">strtol</a>(<a class="local col6 ref" href="#6val" title='val' data-ref="6val">val</a>, <span class="macro" title="__null" data-ref="_M/NULL">NULL</span>, <var>10</var>);</td></tr>
+<tr><th id="70">70</th><td>	<b>if</b> (<a class="macro" href="../../../../bionic/libc/include/errno.h.html#47" title="(*__errno())" data-ref="_M/errno">errno</a>) {</td></tr>
+<tr><th id="71">71</th><td>		<b>return</b> -<var>1</var>;</td></tr>
+<tr><th id="72">72</th><td>	}</td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td>	<b>return</b> <a class="local col7 ref" href="#7fd" title='fd' data-ref="7fd">fd</a>;</td></tr>
+<tr><th id="75">75</th><td>}</td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><i>/*</i></td></tr>
+<tr><th id="78">78</th><td><i> * See also android.os.LocalSocketAddress.Namespace</i></td></tr>
+<tr><th id="79">79</th><td><i> */</i></td></tr>
+<tr><th id="80">80</th><td><i>// Linux "abstract" (non-filesystem) namespace</i></td></tr>
+<tr><th id="81">81</th><td><u>#define <dfn class="macro" id="_M/ANDROID_SOCKET_NAMESPACE_ABSTRACT" data-ref="_M/ANDROID_SOCKET_NAMESPACE_ABSTRACT">ANDROID_SOCKET_NAMESPACE_ABSTRACT</dfn> 0</u></td></tr>
+<tr><th id="82">82</th><td><i>// Android "reserved" (/dev/socket) namespace</i></td></tr>
+<tr><th id="83">83</th><td><u>#define <dfn class="macro" id="_M/ANDROID_SOCKET_NAMESPACE_RESERVED" data-ref="_M/ANDROID_SOCKET_NAMESPACE_RESERVED">ANDROID_SOCKET_NAMESPACE_RESERVED</dfn> 1</u></td></tr>
+<tr><th id="84">84</th><td><i>// Normal filesystem namespace</i></td></tr>
+<tr><th id="85">85</th><td><u>#define <dfn class="macro" id="_M/ANDROID_SOCKET_NAMESPACE_FILESYSTEM" data-ref="_M/ANDROID_SOCKET_NAMESPACE_FILESYSTEM">ANDROID_SOCKET_NAMESPACE_FILESYSTEM</dfn> 2</u></td></tr>
+<tr><th id="86">86</th><td></td></tr>
+<tr><th id="87">87</th><td><i>/*</i></td></tr>
+<tr><th id="88">88</th><td><i> * Functions to create sockets for some common usages.</i></td></tr>
+<tr><th id="89">89</th><td><i> *</i></td></tr>
+<tr><th id="90">90</th><td><i> * All these functions are implemented for Unix, but only a few are implemented</i></td></tr>
+<tr><th id="91">91</th><td><i> * for Windows. Those which are can be identified by the cutils_socket_t</i></td></tr>
+<tr><th id="92">92</th><td><i> * return type. The idea is to be able to use this return value with the</i></td></tr>
+<tr><th id="93">93</th><td><i> * standard Unix socket functions on any platform.</i></td></tr>
+<tr><th id="94">94</th><td><i> *</i></td></tr>
+<tr><th id="95">95</th><td><i> * On Unix the returned cutils_socket_t is a standard int file descriptor and</i></td></tr>
+<tr><th id="96">96</th><td><i> * can always be used as normal with all file descriptor functions.</i></td></tr>
+<tr><th id="97">97</th><td><i> *</i></td></tr>
+<tr><th id="98">98</th><td><i> * On Windows utils_socket_t is an unsigned int pointer, and is only valid</i></td></tr>
+<tr><th id="99">99</th><td><i> * with functions that specifically take a socket, e.g. send(), sendto(),</i></td></tr>
+<tr><th id="100">100</th><td><i> * recv(), and recvfrom(). General file descriptor functions such as read(),</i></td></tr>
+<tr><th id="101">101</th><td><i> * write(), and close() will not work with utils_socket_t and will require</i></td></tr>
+<tr><th id="102">102</th><td><i> * special handling.</i></td></tr>
+<tr><th id="103">103</th><td><i> *</i></td></tr>
+<tr><th id="104">104</th><td><i> * These functions return INVALID_SOCKET (-1) on failure for all platforms.</i></td></tr>
+<tr><th id="105">105</th><td><i> */</i></td></tr>
+<tr><th id="106">106</th><td><em>int</em> <dfn class="decl" id="socket_loopback_client" title='socket_loopback_client' data-ref="socket_loopback_client">socket_loopback_client</dfn>(<em>int</em> <dfn class="local col8 decl" id="8port" title='port' data-type='int' data-ref="8port">port</dfn>, <em>int</em> <dfn class="local col9 decl" id="9type" title='type' data-type='int' data-ref="9type">type</dfn>);</td></tr>
+<tr><th id="107">107</th><td><a class="typedef" href="#cutils_socket_t" title='cutils_socket_t' data-type='int' data-ref="cutils_socket_t">cutils_socket_t</a> <dfn class="decl" id="socket_network_client" title='socket_network_client' data-ref="socket_network_client">socket_network_client</dfn>(<em>const</em> <em>char</em>* <dfn class="local col0 decl" id="10host" title='host' data-type='const char *' data-ref="10host">host</dfn>, <em>int</em> <dfn class="local col1 decl" id="11port" title='port' data-type='int' data-ref="11port">port</dfn>, <em>int</em> <dfn class="local col2 decl" id="12type" title='type' data-type='int' data-ref="12type">type</dfn>);</td></tr>
+<tr><th id="108">108</th><td><em>int</em> <dfn class="decl" id="socket_network_client_timeout" title='socket_network_client_timeout' data-ref="socket_network_client_timeout">socket_network_client_timeout</dfn>(<em>const</em> <em>char</em>* <dfn class="local col3 decl" id="13host" title='host' data-type='const char *' data-ref="13host">host</dfn>, <em>int</em> <dfn class="local col4 decl" id="14port" title='port' data-type='int' data-ref="14port">port</dfn>, <em>int</em> <dfn class="local col5 decl" id="15type" title='type' data-type='int' data-ref="15type">type</dfn>,</td></tr>
+<tr><th id="109">109</th><td>                                  <em>int</em> <dfn class="local col6 decl" id="16timeout" title='timeout' data-type='int' data-ref="16timeout">timeout</dfn>, <em>int</em>* <dfn class="local col7 decl" id="17getaddrinfo_error" title='getaddrinfo_error' data-type='int *' data-ref="17getaddrinfo_error">getaddrinfo_error</dfn>);</td></tr>
+<tr><th id="110">110</th><td><em>int</em> <dfn class="decl" id="socket_loopback_server" title='socket_loopback_server' data-ref="socket_loopback_server">socket_loopback_server</dfn>(<em>int</em> <dfn class="local col8 decl" id="18port" title='port' data-type='int' data-ref="18port">port</dfn>, <em>int</em> <dfn class="local col9 decl" id="19type" title='type' data-type='int' data-ref="19type">type</dfn>);</td></tr>
+<tr><th id="111">111</th><td><em>int</em> <dfn class="decl" id="socket_local_server" title='socket_local_server' data-ref="socket_local_server">socket_local_server</dfn>(<em>const</em> <em>char</em>* <dfn class="local col0 decl" id="20name" title='name' data-type='const char *' data-ref="20name">name</dfn>, <em>int</em> <dfn class="local col1 decl" id="21namespaceId" title='namespaceId' data-type='int' data-ref="21namespaceId">namespaceId</dfn>, <em>int</em> <dfn class="local col2 decl" id="22type" title='type' data-type='int' data-ref="22type">type</dfn>);</td></tr>
+<tr><th id="112">112</th><td><em>int</em> <dfn class="decl" id="socket_local_server_bind" title='socket_local_server_bind' data-ref="socket_local_server_bind">socket_local_server_bind</dfn>(<em>int</em> <dfn class="local col3 decl" id="23s" title='s' data-type='int' data-ref="23s">s</dfn>, <em>const</em> <em>char</em>* <dfn class="local col4 decl" id="24name" title='name' data-type='const char *' data-ref="24name">name</dfn>, <em>int</em> <dfn class="local col5 decl" id="25namespaceId" title='namespaceId' data-type='int' data-ref="25namespaceId">namespaceId</dfn>);</td></tr>
+<tr><th id="113">113</th><td><em>int</em> <dfn class="decl" id="socket_local_client_connect" title='socket_local_client_connect' data-ref="socket_local_client_connect">socket_local_client_connect</dfn>(<em>int</em> <dfn class="local col6 decl" id="26fd" title='fd' data-type='int' data-ref="26fd">fd</dfn>, <em>const</em> <em>char</em> *<dfn class="local col7 decl" id="27name" title='name' data-type='const char *' data-ref="27name">name</dfn>, <em>int</em> <dfn class="local col8 decl" id="28namespaceId" title='namespaceId' data-type='int' data-ref="28namespaceId">namespaceId</dfn>,</td></tr>
+<tr><th id="114">114</th><td>                                <em>int</em> <dfn class="local col9 decl" id="29type" title='type' data-type='int' data-ref="29type">type</dfn>);</td></tr>
+<tr><th id="115">115</th><td><em>int</em> <dfn class="decl" id="socket_local_client" title='socket_local_client' data-ref="socket_local_client">socket_local_client</dfn>(<em>const</em> <em>char</em>* <dfn class="local col0 decl" id="30name" title='name' data-type='const char *' data-ref="30name">name</dfn>, <em>int</em> <dfn class="local col1 decl" id="31namespaceId" title='namespaceId' data-type='int' data-ref="31namespaceId">namespaceId</dfn>, <em>int</em> <dfn class="local col2 decl" id="32type" title='type' data-type='int' data-ref="32type">type</dfn>);</td></tr>
+<tr><th id="116">116</th><td><a class="typedef" href="#cutils_socket_t" title='cutils_socket_t' data-type='int' data-ref="cutils_socket_t">cutils_socket_t</a> <dfn class="decl" id="socket_inaddr_any_server" title='socket_inaddr_any_server' data-ref="socket_inaddr_any_server">socket_inaddr_any_server</dfn>(<em>int</em> <dfn class="local col3 decl" id="33port" title='port' data-type='int' data-ref="33port">port</dfn>, <em>int</em> <dfn class="local col4 decl" id="34type" title='type' data-type='int' data-ref="34type">type</dfn>);</td></tr>
+<tr><th id="117">117</th><td></td></tr>
+<tr><th id="118">118</th><td><i>/*</i></td></tr>
+<tr><th id="119">119</th><td><i> * Closes a cutils_socket_t. Windows doesn't allow calling close() on a socket</i></td></tr>
+<tr><th id="120">120</th><td><i> * so this is a cross-platform way to close a cutils_socket_t.</i></td></tr>
+<tr><th id="121">121</th><td><i> *</i></td></tr>
+<tr><th id="122">122</th><td><i> * Returns 0 on success.</i></td></tr>
+<tr><th id="123">123</th><td><i> */</i></td></tr>
+<tr><th id="124">124</th><td><em>int</em> <dfn class="decl" id="socket_close" title='socket_close' data-ref="socket_close">socket_close</dfn>(<a class="typedef" href="#cutils_socket_t" title='cutils_socket_t' data-type='int' data-ref="cutils_socket_t">cutils_socket_t</a> <dfn class="local col5 decl" id="35sock" title='sock' data-type='cutils_socket_t' data-ref="35sock">sock</dfn>);</td></tr>
+<tr><th id="125">125</th><td></td></tr>
+<tr><th id="126">126</th><td><i>/*</i></td></tr>
+<tr><th id="127">127</th><td><i> * Sets socket receive timeout using SO_RCVTIMEO. Setting |timeout_ms| to 0</i></td></tr>
+<tr><th id="128">128</th><td><i> * disables receive timeouts.</i></td></tr>
+<tr><th id="129">129</th><td><i> *</i></td></tr>
+<tr><th id="130">130</th><td><i> * Return 0 on success.</i></td></tr>
+<tr><th id="131">131</th><td><i> */</i></td></tr>
+<tr><th id="132">132</th><td><em>int</em> <dfn class="decl" id="socket_set_receive_timeout" title='socket_set_receive_timeout' data-ref="socket_set_receive_timeout">socket_set_receive_timeout</dfn>(<a class="typedef" href="#cutils_socket_t" title='cutils_socket_t' data-type='int' data-ref="cutils_socket_t">cutils_socket_t</a> <dfn class="local col6 decl" id="36sock" title='sock' data-type='cutils_socket_t' data-ref="36sock">sock</dfn>, <em>int</em> <dfn class="local col7 decl" id="37timeout_ms" title='timeout_ms' data-type='int' data-ref="37timeout_ms">timeout_ms</dfn>);</td></tr>
+<tr><th id="133">133</th><td></td></tr>
+<tr><th id="134">134</th><td><i>/*</i></td></tr>
+<tr><th id="135">135</th><td><i> * Returns the local port the socket is bound to or -1 on error.</i></td></tr>
+<tr><th id="136">136</th><td><i> */</i></td></tr>
+<tr><th id="137">137</th><td><em>int</em> <dfn class="decl" id="socket_get_local_port" title='socket_get_local_port' data-ref="socket_get_local_port">socket_get_local_port</dfn>(<a class="typedef" href="#cutils_socket_t" title='cutils_socket_t' data-type='int' data-ref="cutils_socket_t">cutils_socket_t</a> <dfn class="local col8 decl" id="38sock" title='sock' data-type='cutils_socket_t' data-ref="38sock">sock</dfn>);</td></tr>
+<tr><th id="138">138</th><td></td></tr>
+<tr><th id="139">139</th><td><i>/*</i></td></tr>
+<tr><th id="140">140</th><td><i> * Sends to a socket from multiple buffers; wraps writev() on Unix or WSASend()</i></td></tr>
+<tr><th id="141">141</th><td><i> * on Windows. This can give significant speedup compared to calling send()</i></td></tr>
+<tr><th id="142">142</th><td><i> * multiple times.</i></td></tr>
+<tr><th id="143">143</th><td><i> *</i></td></tr>
+<tr><th id="144">144</th><td><i> * Example usage:</i></td></tr>
+<tr><th id="145">145</th><td><i> *   cutils_socket_buffer_t buffers[2] = { {data0, len0}, {data1, len1} };</i></td></tr>
+<tr><th id="146">146</th><td><i> *   socket_send_buffers(sock, buffers, 2);</i></td></tr>
+<tr><th id="147">147</th><td><i> *</i></td></tr>
+<tr><th id="148">148</th><td><i> * If you try to pass more than SOCKET_SEND_BUFFERS_MAX_BUFFERS buffers into</i></td></tr>
+<tr><th id="149">149</th><td><i> * this function it will return -1 without sending anything.</i></td></tr>
+<tr><th id="150">150</th><td><i> *</i></td></tr>
+<tr><th id="151">151</th><td><i> * Returns the number of bytes written or -1 on error.</i></td></tr>
+<tr><th id="152">152</th><td><i> */</i></td></tr>
+<tr><th id="153">153</th><td><b>typedef</b> <b>struct</b> {</td></tr>
+<tr><th id="154">154</th><td>  <em>const</em> <em>void</em>* <dfn class="decl" id="(anonymous)::data" title='(anonymous struct)::data' data-ref="(anonymous)::data">data</dfn>;</td></tr>
+<tr><th id="155">155</th><td>  <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="decl" id="(anonymous)::length" title='(anonymous struct)::length' data-ref="(anonymous)::length">length</dfn>;</td></tr>
+<tr><th id="156">156</th><td>} <dfn class="typedef" id="cutils_socket_buffer_t" title='cutils_socket_buffer_t' data-type='struct cutils_socket_buffer_t' data-ref="cutils_socket_buffer_t">cutils_socket_buffer_t</dfn>;</td></tr>
+<tr><th id="157">157</th><td></td></tr>
+<tr><th id="158">158</th><td><u>#define <dfn class="macro" id="_M/SOCKET_SEND_BUFFERS_MAX_BUFFERS" data-ref="_M/SOCKET_SEND_BUFFERS_MAX_BUFFERS">SOCKET_SEND_BUFFERS_MAX_BUFFERS</dfn> 16</u></td></tr>
+<tr><th id="159">159</th><td></td></tr>
+<tr><th id="160">160</th><td><a class="typedef" href="../../../../bionic/libc/include/sys/types.h.html#ssize_t" title='ssize_t' data-type='__kernel_ssize_t' data-ref="ssize_t">ssize_t</a> <dfn class="decl" id="socket_send_buffers" title='socket_send_buffers' data-ref="socket_send_buffers">socket_send_buffers</dfn>(<a class="typedef" href="#cutils_socket_t" title='cutils_socket_t' data-type='int' data-ref="cutils_socket_t">cutils_socket_t</a> <dfn class="local col9 decl" id="39sock" title='sock' data-type='cutils_socket_t' data-ref="39sock">sock</dfn>,</td></tr>
+<tr><th id="161">161</th><td>                            <em>const</em> <a class="typedef" href="#cutils_socket_buffer_t" title='cutils_socket_buffer_t' data-type='struct cutils_socket_buffer_t' data-ref="cutils_socket_buffer_t">cutils_socket_buffer_t</a>* <dfn class="local col0 decl" id="40buffers" title='buffers' data-type='const cutils_socket_buffer_t *' data-ref="40buffers">buffers</dfn>,</td></tr>
+<tr><th id="162">162</th><td>                            <span class='typedef' title='size_t' data-type='unsigned long' data-ref="size_t">size_t</span> <dfn class="local col1 decl" id="41num_buffers" title='num_buffers' data-type='size_t' data-ref="41num_buffers">num_buffers</dfn>);</td></tr>
+<tr><th id="163">163</th><td></td></tr>
+<tr><th id="164">164</th><td><i>/*</i></td></tr>
+<tr><th id="165">165</th><td><i> * socket_peer_is_trusted - Takes a socket which is presumed to be a</i></td></tr>
+<tr><th id="166">166</th><td><i> * connected local socket (e.g. AF_LOCAL) and returns whether the peer</i></td></tr>
+<tr><th id="167">167</th><td><i> * (the userid that owns the process on the other end of that socket)</i></td></tr>
+<tr><th id="168">168</th><td><i> * is one of the two trusted userids, root or shell.</i></td></tr>
+<tr><th id="169">169</th><td><i> *</i></td></tr>
+<tr><th id="170">170</th><td><i> * Note: This only works as advertised on the Android OS and always</i></td></tr>
+<tr><th id="171">171</th><td><i> * just returns true when called on other operating systems.</i></td></tr>
+<tr><th id="172">172</th><td><i> */</i></td></tr>
+<tr><th id="173">173</th><td><b>extern</b> <span class="macro" title="bool" data-ref="_M/bool"><em>bool</em></span> <dfn class="decl" id="socket_peer_is_trusted" title='socket_peer_is_trusted' data-ref="socket_peer_is_trusted">socket_peer_is_trusted</dfn>(<em>int</em> <dfn class="local col2 decl" id="42fd" title='fd' data-type='int' data-ref="42fd">fd</dfn>);</td></tr>
+<tr><th id="174">174</th><td></td></tr>
+<tr><th id="175">175</th><td><u>#<span data-ppcond="175">ifdef</span> <span class="macro" data-ref="_M/__cplusplus">__cplusplus</span></u></td></tr>
+<tr><th id="176">176</th><td>}</td></tr>
+<tr><th id="177">177</th><td><u>#<span data-ppcond="175">endif</span></u></td></tr>
+<tr><th id="178">178</th><td></td></tr>
+<tr><th id="179">179</th><td><u>#<span data-ppcond="17">endif</span> /* __CUTILS_SOCKETS_H */</u></td></tr>
+<tr><th id="180">180</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated while processing <a href='../../adb/adb.cpp.html'>codebrowser/system/core/adb/adb.cpp</a><br/>Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

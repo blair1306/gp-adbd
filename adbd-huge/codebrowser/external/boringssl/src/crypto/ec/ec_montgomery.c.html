@@ -1,0 +1,298 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ec_montgomery.c source code [codebrowser/external/boringssl/src/crypto/ec/ec_montgomery.c] - Woboq Code Browser</title>
+<link rel="stylesheet" href="../../../../../../../data/qtcreator.css" title="QtCreator"/>
+<link rel="alternate stylesheet" href="../../../../../../../data/kdevelop.css" title="KDevelop"/>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../../../../../../data/jquery/jquery-ui.min.js"></script>
+<script>var file = 'codebrowser/external/boringssl/src/crypto/ec/ec_montgomery.c'; var root_path = '../../../../../..'; var data_path = '../../../../../../../data';</script>
+<script src='../../../../../../../data/codebrowser.js'></script>
+</head>
+<body><div id='header'><h1 id='breadcrumb'><span>Browse the source code of </span><a href='../../../../..'>codebrowser</a>/<a href='../../../..'>external</a>/<a href='../../..'>boringssl</a>/<a href='../..'>src</a>/<a href='..'>crypto</a>/<a href='./'>ec</a>/<a href='ec_montgomery.c.html'>ec_montgomery.c</a></h1></div>
+<hr/><div id='content'><table class="code">
+<tr><th id="1">1</th><td><i>/* Originally written by Bodo Moeller and Nils Larsch for the OpenSSL project.</i></td></tr>
+<tr><th id="2">2</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="3">3</th><td><i> * Copyright (c) 1998-2005 The OpenSSL Project.  All rights reserved.</i></td></tr>
+<tr><th id="4">4</th><td><i> *</i></td></tr>
+<tr><th id="5">5</th><td><i> * Redistribution and use in source and binary forms, with or without</i></td></tr>
+<tr><th id="6">6</th><td><i> * modification, are permitted provided that the following conditions</i></td></tr>
+<tr><th id="7">7</th><td><i> * are met:</i></td></tr>
+<tr><th id="8">8</th><td><i> *</i></td></tr>
+<tr><th id="9">9</th><td><i> * 1. Redistributions of source code must retain the above copyright</i></td></tr>
+<tr><th id="10">10</th><td><i> *    notice, this list of conditions and the following disclaimer.</i></td></tr>
+<tr><th id="11">11</th><td><i> *</i></td></tr>
+<tr><th id="12">12</th><td><i> * 2. Redistributions in binary form must reproduce the above copyright</i></td></tr>
+<tr><th id="13">13</th><td><i> *    notice, this list of conditions and the following disclaimer in</i></td></tr>
+<tr><th id="14">14</th><td><i> *    the documentation and/or other materials provided with the</i></td></tr>
+<tr><th id="15">15</th><td><i> *    distribution.</i></td></tr>
+<tr><th id="16">16</th><td><i> *</i></td></tr>
+<tr><th id="17">17</th><td><i> * 3. All advertising materials mentioning features or use of this</i></td></tr>
+<tr><th id="18">18</th><td><i> *    software must display the following acknowledgment:</i></td></tr>
+<tr><th id="19">19</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="20">20</th><td><i> *    for use in the OpenSSL Toolkit. (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="21">21</th><td><i> *</i></td></tr>
+<tr><th id="22">22</th><td><i> * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to</i></td></tr>
+<tr><th id="23">23</th><td><i> *    endorse or promote products derived from this software without</i></td></tr>
+<tr><th id="24">24</th><td><i> *    prior written permission. For written permission, please contact</i></td></tr>
+<tr><th id="25">25</th><td><i> *    openssl-core@openssl.org.</i></td></tr>
+<tr><th id="26">26</th><td><i> *</i></td></tr>
+<tr><th id="27">27</th><td><i> * 5. Products derived from this software may not be called "OpenSSL"</i></td></tr>
+<tr><th id="28">28</th><td><i> *    nor may "OpenSSL" appear in their names without prior written</i></td></tr>
+<tr><th id="29">29</th><td><i> *    permission of the OpenSSL Project.</i></td></tr>
+<tr><th id="30">30</th><td><i> *</i></td></tr>
+<tr><th id="31">31</th><td><i> * 6. Redistributions of any form whatsoever must retain the following</i></td></tr>
+<tr><th id="32">32</th><td><i> *    acknowledgment:</i></td></tr>
+<tr><th id="33">33</th><td><i> *    "This product includes software developed by the OpenSSL Project</i></td></tr>
+<tr><th id="34">34</th><td><i> *    for use in the OpenSSL Toolkit (<a href="http://www.openssl.org/">http://www.openssl.org/</a>)"</i></td></tr>
+<tr><th id="35">35</th><td><i> *</i></td></tr>
+<tr><th id="36">36</th><td><i> * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY</i></td></tr>
+<tr><th id="37">37</th><td><i> * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></td></tr>
+<tr><th id="38">38</th><td><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR</i></td></tr>
+<tr><th id="39">39</th><td><i> * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR</i></td></tr>
+<tr><th id="40">40</th><td><i> * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</i></td></tr>
+<tr><th id="41">41</th><td><i> * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></td></tr>
+<tr><th id="42">42</th><td><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</i></td></tr>
+<tr><th id="43">43</th><td><i> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></td></tr>
+<tr><th id="44">44</th><td><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</i></td></tr>
+<tr><th id="45">45</th><td><i> * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</i></td></tr>
+<tr><th id="46">46</th><td><i> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED</i></td></tr>
+<tr><th id="47">47</th><td><i> * OF THE POSSIBILITY OF SUCH DAMAGE.</i></td></tr>
+<tr><th id="48">48</th><td><i> * ====================================================================</i></td></tr>
+<tr><th id="49">49</th><td><i> *</i></td></tr>
+<tr><th id="50">50</th><td><i> * This product includes cryptographic software written by Eric Young</i></td></tr>
+<tr><th id="51">51</th><td><i> * (eay@cryptsoft.com).  This product includes software written by Tim</i></td></tr>
+<tr><th id="52">52</th><td><i> * Hudson (tjh@cryptsoft.com).</i></td></tr>
+<tr><th id="53">53</th><td><i> *</i></td></tr>
+<tr><th id="54">54</th><td><i> */</i></td></tr>
+<tr><th id="55">55</th><td><i>/* ====================================================================</i></td></tr>
+<tr><th id="56">56</th><td><i> * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.</i></td></tr>
+<tr><th id="57">57</th><td><i> *</i></td></tr>
+<tr><th id="58">58</th><td><i> * Portions of the attached software ("Contribution") are developed by</i></td></tr>
+<tr><th id="59">59</th><td><i> * SUN MICROSYSTEMS, INC., and are contributed to the OpenSSL project.</i></td></tr>
+<tr><th id="60">60</th><td><i> *</i></td></tr>
+<tr><th id="61">61</th><td><i> * The Contribution is licensed pursuant to the OpenSSL open source</i></td></tr>
+<tr><th id="62">62</th><td><i> * license provided above.</i></td></tr>
+<tr><th id="63">63</th><td><i> *</i></td></tr>
+<tr><th id="64">64</th><td><i> * The elliptic curve binary polynomial software is originally written by</i></td></tr>
+<tr><th id="65">65</th><td><i> * Sheueling Chang Shantz and Douglas Stebila of Sun Microsystems</i></td></tr>
+<tr><th id="66">66</th><td><i> * Laboratories. */</i></td></tr>
+<tr><th id="67">67</th><td></td></tr>
+<tr><th id="68">68</th><td><u>#include <a href="../../include/openssl/ec.h.html">&lt;openssl/ec.h&gt;</a></u></td></tr>
+<tr><th id="69">69</th><td></td></tr>
+<tr><th id="70">70</th><td><u>#include <a href="../../include/openssl/bn.h.html">&lt;openssl/bn.h&gt;</a></u></td></tr>
+<tr><th id="71">71</th><td><u>#include <a href="../../include/openssl/err.h.html">&lt;openssl/err.h&gt;</a></u></td></tr>
+<tr><th id="72">72</th><td><u>#include <a href="../../include/openssl/mem.h.html">&lt;openssl/mem.h&gt;</a></u></td></tr>
+<tr><th id="73">73</th><td></td></tr>
+<tr><th id="74">74</th><td><u>#include <a href="internal.h.html">"internal.h"</a></u></td></tr>
+<tr><th id="75">75</th><td></td></tr>
+<tr><th id="76">76</th><td></td></tr>
+<tr><th id="77">77</th><td><em>int</em> <dfn class="decl def" id="ec_GFp_mont_group_init" title='ec_GFp_mont_group_init' data-ref="ec_GFp_mont_group_init">ec_GFp_mont_group_init</dfn>(<a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col1 decl" id="1group" title='group' data-type='EC_GROUP *' data-ref="1group">group</dfn>) {</td></tr>
+<tr><th id="78">78</th><td>  <em>int</em> <dfn class="local col2 decl" id="2ok" title='ok' data-type='int' data-ref="2ok">ok</dfn>;</td></tr>
+<tr><th id="79">79</th><td></td></tr>
+<tr><th id="80">80</th><td>  <a class="local col2 ref" href="#2ok" title='ok' data-ref="2ok">ok</a> = <a class="ref" href="internal.h.html#ec_GFp_simple_group_init" title='ec_GFp_simple_group_init' data-ref="ec_GFp_simple_group_init">ec_GFp_simple_group_init</a>(<a class="local col1 ref" href="#1group" title='group' data-ref="1group">group</a>);</td></tr>
+<tr><th id="81">81</th><td>  <a class="local col1 ref" href="#1group" title='group' data-ref="1group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="82">82</th><td>  <a class="local col1 ref" href="#1group" title='group' data-ref="1group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="83">83</th><td>  <b>return</b> <a class="local col2 ref" href="#2ok" title='ok' data-ref="2ok">ok</a>;</td></tr>
+<tr><th id="84">84</th><td>}</td></tr>
+<tr><th id="85">85</th><td></td></tr>
+<tr><th id="86">86</th><td><em>void</em> <dfn class="decl def" id="ec_GFp_mont_group_finish" title='ec_GFp_mont_group_finish' data-ref="ec_GFp_mont_group_finish">ec_GFp_mont_group_finish</dfn>(<a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col3 decl" id="3group" title='group' data-type='EC_GROUP *' data-ref="3group">group</dfn>) {</td></tr>
+<tr><th id="87">87</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_free" title='BN_MONT_CTX_free' data-ref="BN_MONT_CTX_free">BN_MONT_CTX_free</a>(<a class="local col3 ref" href="#3group" title='group' data-ref="3group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>);</td></tr>
+<tr><th id="88">88</th><td>  <a class="local col3 ref" href="#3group" title='group' data-ref="3group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="89">89</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_free" title='BN_free' data-ref="BN_free">BN_free</a>(<a class="local col3 ref" href="#3group" title='group' data-ref="3group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a>);</td></tr>
+<tr><th id="90">90</th><td>  <a class="local col3 ref" href="#3group" title='group' data-ref="3group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="91">91</th><td>  <a class="ref" href="internal.h.html#ec_GFp_simple_group_finish" title='ec_GFp_simple_group_finish' data-ref="ec_GFp_simple_group_finish">ec_GFp_simple_group_finish</a>(<a class="local col3 ref" href="#3group" title='group' data-ref="3group">group</a>);</td></tr>
+<tr><th id="92">92</th><td>}</td></tr>
+<tr><th id="93">93</th><td></td></tr>
+<tr><th id="94">94</th><td><em>void</em> <dfn class="decl def" id="ec_GFp_mont_group_clear_finish" title='ec_GFp_mont_group_clear_finish' data-ref="ec_GFp_mont_group_clear_finish">ec_GFp_mont_group_clear_finish</dfn>(<a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col4 decl" id="4group" title='group' data-type='EC_GROUP *' data-ref="4group">group</dfn>) {</td></tr>
+<tr><th id="95">95</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_free" title='BN_MONT_CTX_free' data-ref="BN_MONT_CTX_free">BN_MONT_CTX_free</a>(<a class="local col4 ref" href="#4group" title='group' data-ref="4group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>);</td></tr>
+<tr><th id="96">96</th><td>  <a class="local col4 ref" href="#4group" title='group' data-ref="4group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="97">97</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_clear_free" title='BN_clear_free' data-ref="BN_clear_free">BN_clear_free</a>(<a class="local col4 ref" href="#4group" title='group' data-ref="4group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a>);</td></tr>
+<tr><th id="98">98</th><td>  <a class="local col4 ref" href="#4group" title='group' data-ref="4group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="99">99</th><td>  <a class="ref" href="internal.h.html#ec_GFp_simple_group_clear_finish" title='ec_GFp_simple_group_clear_finish' data-ref="ec_GFp_simple_group_clear_finish">ec_GFp_simple_group_clear_finish</a>(<a class="local col4 ref" href="#4group" title='group' data-ref="4group">group</a>);</td></tr>
+<tr><th id="100">100</th><td>}</td></tr>
+<tr><th id="101">101</th><td></td></tr>
+<tr><th id="102">102</th><td><em>int</em> <dfn class="decl def" id="ec_GFp_mont_group_copy" title='ec_GFp_mont_group_copy' data-ref="ec_GFp_mont_group_copy">ec_GFp_mont_group_copy</dfn>(<a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col5 decl" id="5dest" title='dest' data-type='EC_GROUP *' data-ref="5dest">dest</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col6 decl" id="6src" title='src' data-type='const EC_GROUP *' data-ref="6src">src</dfn>) {</td></tr>
+<tr><th id="103">103</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_free" title='BN_MONT_CTX_free' data-ref="BN_MONT_CTX_free">BN_MONT_CTX_free</a>(<a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>);</td></tr>
+<tr><th id="104">104</th><td>  <a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="105">105</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_clear_free" title='BN_clear_free' data-ref="BN_clear_free">BN_clear_free</a>(<a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a>);</td></tr>
+<tr><th id="106">106</th><td>  <a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="107">107</th><td></td></tr>
+<tr><th id="108">108</th><td>  <b>if</b> (!<a class="ref" href="internal.h.html#ec_GFp_simple_group_copy" title='ec_GFp_simple_group_copy' data-ref="ec_GFp_simple_group_copy">ec_GFp_simple_group_copy</a>(<a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>, <a class="local col6 ref" href="#6src" title='src' data-ref="6src">src</a>)) {</td></tr>
+<tr><th id="109">109</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="110">110</th><td>  }</td></tr>
+<tr><th id="111">111</th><td></td></tr>
+<tr><th id="112">112</th><td>  <b>if</b> (<a class="local col6 ref" href="#6src" title='src' data-ref="6src">src</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="113">113</th><td>    <a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_new" title='BN_MONT_CTX_new' data-ref="BN_MONT_CTX_new">BN_MONT_CTX_new</a>();</td></tr>
+<tr><th id="114">114</th><td>    <b>if</b> (<a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="115">115</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="116">116</th><td>    }</td></tr>
+<tr><th id="117">117</th><td>    <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_copy" title='BN_MONT_CTX_copy' data-ref="BN_MONT_CTX_copy">BN_MONT_CTX_copy</a>(<a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>, <a class="local col6 ref" href="#6src" title='src' data-ref="6src">src</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>)) {</td></tr>
+<tr><th id="118">118</th><td>      <b>goto</b> <a class="lbl" href="#7err" data-ref="7err">err</a>;</td></tr>
+<tr><th id="119">119</th><td>    }</td></tr>
+<tr><th id="120">120</th><td>  }</td></tr>
+<tr><th id="121">121</th><td>  <b>if</b> (<a class="local col6 ref" href="#6src" title='src' data-ref="6src">src</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> != <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="122">122</th><td>    <a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_dup" title='BN_dup' data-ref="BN_dup">BN_dup</a>(<a class="local col6 ref" href="#6src" title='src' data-ref="6src">src</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a>);</td></tr>
+<tr><th id="123">123</th><td>    <b>if</b> (<a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="124">124</th><td>      <b>goto</b> <a class="lbl" href="#7err" data-ref="7err">err</a>;</td></tr>
+<tr><th id="125">125</th><td>    }</td></tr>
+<tr><th id="126">126</th><td>  }</td></tr>
+<tr><th id="127">127</th><td></td></tr>
+<tr><th id="128">128</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="129">129</th><td></td></tr>
+<tr><th id="130">130</th><td><dfn class="lbl" id="7err" data-ref="7err">err</dfn>:</td></tr>
+<tr><th id="131">131</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_free" title='BN_MONT_CTX_free' data-ref="BN_MONT_CTX_free">BN_MONT_CTX_free</a>(<a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>);</td></tr>
+<tr><th id="132">132</th><td>  <a class="local col5 ref" href="#5dest" title='dest' data-ref="5dest">dest</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="133">133</th><td>  <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="134">134</th><td>}</td></tr>
+<tr><th id="135">135</th><td></td></tr>
+<tr><th id="136">136</th><td><em>int</em> <dfn class="decl def" id="ec_GFp_mont_group_set_curve" title='ec_GFp_mont_group_set_curve' data-ref="ec_GFp_mont_group_set_curve">ec_GFp_mont_group_set_curve</dfn>(<a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col8 decl" id="8group" title='group' data-type='EC_GROUP *' data-ref="8group">group</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="9p" title='p' data-type='const BIGNUM *' data-ref="9p">p</dfn>,</td></tr>
+<tr><th id="137">137</th><td>                                <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col0 decl" id="10a" title='a' data-type='const BIGNUM *' data-ref="10a">a</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="11b" title='b' data-type='const BIGNUM *' data-ref="11b">b</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col2 decl" id="12ctx" title='ctx' data-type='BN_CTX *' data-ref="12ctx">ctx</dfn>) {</td></tr>
+<tr><th id="138">138</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col3 decl" id="13new_ctx" title='new_ctx' data-type='BN_CTX *' data-ref="13new_ctx">new_ctx</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="139">139</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BN_MONT_CTX" title='BN_MONT_CTX' data-type='struct bn_mont_ctx_st' data-ref="BN_MONT_CTX">BN_MONT_CTX</a> *<dfn class="local col4 decl" id="14mont" title='mont' data-type='BN_MONT_CTX *' data-ref="14mont">mont</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="140">140</th><td>  <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col5 decl" id="15one" title='one' data-type='BIGNUM *' data-ref="15one">one</dfn> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="141">141</th><td>  <em>int</em> <dfn class="local col6 decl" id="16ret" title='ret' data-type='int' data-ref="16ret">ret</dfn> = <var>0</var>;</td></tr>
+<tr><th id="142">142</th><td></td></tr>
+<tr><th id="143">143</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_free" title='BN_MONT_CTX_free' data-ref="BN_MONT_CTX_free">BN_MONT_CTX_free</a>(<a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>);</td></tr>
+<tr><th id="144">144</th><td>  <a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="145">145</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_free" title='BN_free' data-ref="BN_free">BN_free</a>(<a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a>);</td></tr>
+<tr><th id="146">146</th><td>  <a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="147">147</th><td></td></tr>
+<tr><th id="148">148</th><td>  <b>if</b> (<a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="149">149</th><td>    <a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a> = <a class="local col3 ref" href="#13new_ctx" title='new_ctx' data-ref="13new_ctx">new_ctx</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_new" title='BN_CTX_new' data-ref="BN_CTX_new">BN_CTX_new</a>();</td></tr>
+<tr><th id="150">150</th><td>    <b>if</b> (<a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="151">151</th><td>      <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="152">152</th><td>    }</td></tr>
+<tr><th id="153">153</th><td>  }</td></tr>
+<tr><th id="154">154</th><td></td></tr>
+<tr><th id="155">155</th><td>  <a class="local col4 ref" href="#14mont" title='mont' data-ref="14mont">mont</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_new" title='BN_MONT_CTX_new' data-ref="BN_MONT_CTX_new">BN_MONT_CTX_new</a>();</td></tr>
+<tr><th id="156">156</th><td>  <b>if</b> (<a class="local col4 ref" href="#14mont" title='mont' data-ref="14mont">mont</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="157">157</th><td>    <b>goto</b> <a class="lbl" href="#17err" data-ref="17err">err</a>;</td></tr>
+<tr><th id="158">158</th><td>  }</td></tr>
+<tr><th id="159">159</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_set" title='BN_MONT_CTX_set' data-ref="BN_MONT_CTX_set">BN_MONT_CTX_set</a>(<a class="local col4 ref" href="#14mont" title='mont' data-ref="14mont">mont</a>, <a class="local col9 ref" href="#9p" title='p' data-ref="9p">p</a>, <a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a>)) {</td></tr>
+<tr><th id="160">160</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_EC, 0, ERR_LIB_BN, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ec/ec_montgomery.c&quot;, 160)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(EC, <a class="macro" href="../../include/openssl/err.h.html#423" title="ERR_LIB_BN" data-ref="_M/ERR_R_BN_LIB">ERR_R_BN_LIB</a>);</td></tr>
+<tr><th id="161">161</th><td>    <b>goto</b> <a class="lbl" href="#17err" data-ref="17err">err</a>;</td></tr>
+<tr><th id="162">162</th><td>  }</td></tr>
+<tr><th id="163">163</th><td>  <a class="local col5 ref" href="#15one" title='one' data-ref="15one">one</a> = <a class="ref" href="../../include/openssl/bn.h.html#BN_new" title='BN_new' data-ref="BN_new">BN_new</a>();</td></tr>
+<tr><th id="164">164</th><td>  <b>if</b> (<a class="local col5 ref" href="#15one" title='one' data-ref="15one">one</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> || !<a class="ref" href="../../include/openssl/bn.h.html#BN_to_montgomery" title='BN_to_montgomery' data-ref="BN_to_montgomery">BN_to_montgomery</a>(<a class="local col5 ref" href="#15one" title='one' data-ref="15one">one</a>, <a class="ref" href="../../include/openssl/bn.h.html#BN_value_one" title='BN_value_one' data-ref="BN_value_one">BN_value_one</a>(), <a class="local col4 ref" href="#14mont" title='mont' data-ref="14mont">mont</a>, <a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a>)) {</td></tr>
+<tr><th id="165">165</th><td>    <b>goto</b> <a class="lbl" href="#17err" data-ref="17err">err</a>;</td></tr>
+<tr><th id="166">166</th><td>  }</td></tr>
+<tr><th id="167">167</th><td></td></tr>
+<tr><th id="168">168</th><td>  <a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> = <a class="local col4 ref" href="#14mont" title='mont' data-ref="14mont">mont</a>;</td></tr>
+<tr><th id="169">169</th><td>  <a class="local col4 ref" href="#14mont" title='mont' data-ref="14mont">mont</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="170">170</th><td>  <a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> = <a class="local col5 ref" href="#15one" title='one' data-ref="15one">one</a>;</td></tr>
+<tr><th id="171">171</th><td>  <a class="local col5 ref" href="#15one" title='one' data-ref="15one">one</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="172">172</th><td></td></tr>
+<tr><th id="173">173</th><td>  <a class="local col6 ref" href="#16ret" title='ret' data-ref="16ret">ret</a> = <a class="ref" href="internal.h.html#ec_GFp_simple_group_set_curve" title='ec_GFp_simple_group_set_curve' data-ref="ec_GFp_simple_group_set_curve">ec_GFp_simple_group_set_curve</a>(<a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>, <a class="local col9 ref" href="#9p" title='p' data-ref="9p">p</a>, <a class="local col0 ref" href="#10a" title='a' data-ref="10a">a</a>, <a class="local col1 ref" href="#11b" title='b' data-ref="11b">b</a>, <a class="local col2 ref" href="#12ctx" title='ctx' data-ref="12ctx">ctx</a>);</td></tr>
+<tr><th id="174">174</th><td></td></tr>
+<tr><th id="175">175</th><td>  <b>if</b> (!<a class="local col6 ref" href="#16ret" title='ret' data-ref="16ret">ret</a>) {</td></tr>
+<tr><th id="176">176</th><td>    <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_free" title='BN_MONT_CTX_free' data-ref="BN_MONT_CTX_free">BN_MONT_CTX_free</a>(<a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>);</td></tr>
+<tr><th id="177">177</th><td>    <a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="178">178</th><td>    <a class="ref" href="../../include/openssl/bn.h.html#BN_free" title='BN_free' data-ref="BN_free">BN_free</a>(<a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a>);</td></tr>
+<tr><th id="179">179</th><td>    <a class="local col8 ref" href="#8group" title='group' data-ref="8group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> = <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>;</td></tr>
+<tr><th id="180">180</th><td>  }</td></tr>
+<tr><th id="181">181</th><td></td></tr>
+<tr><th id="182">182</th><td><dfn class="lbl" id="17err" data-ref="17err">err</dfn>:</td></tr>
+<tr><th id="183">183</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_CTX_free" title='BN_CTX_free' data-ref="BN_CTX_free">BN_CTX_free</a>(<a class="local col3 ref" href="#13new_ctx" title='new_ctx' data-ref="13new_ctx">new_ctx</a>);</td></tr>
+<tr><th id="184">184</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_MONT_CTX_free" title='BN_MONT_CTX_free' data-ref="BN_MONT_CTX_free">BN_MONT_CTX_free</a>(<a class="local col4 ref" href="#14mont" title='mont' data-ref="14mont">mont</a>);</td></tr>
+<tr><th id="185">185</th><td>  <a class="ref" href="../../include/openssl/bn.h.html#BN_free" title='BN_free' data-ref="BN_free">BN_free</a>(<a class="local col5 ref" href="#15one" title='one' data-ref="15one">one</a>);</td></tr>
+<tr><th id="186">186</th><td>  <b>return</b> <a class="local col6 ref" href="#16ret" title='ret' data-ref="16ret">ret</a>;</td></tr>
+<tr><th id="187">187</th><td>}</td></tr>
+<tr><th id="188">188</th><td></td></tr>
+<tr><th id="189">189</th><td><em>int</em> <dfn class="decl def" id="ec_GFp_mont_field_mul" title='ec_GFp_mont_field_mul' data-ref="ec_GFp_mont_field_mul">ec_GFp_mont_field_mul</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col8 decl" id="18group" title='group' data-type='const EC_GROUP *' data-ref="18group">group</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="19r" title='r' data-type='BIGNUM *' data-ref="19r">r</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col0 decl" id="20a" title='a' data-type='const BIGNUM *' data-ref="20a">a</dfn>,</td></tr>
+<tr><th id="190">190</th><td>                          <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col1 decl" id="21b" title='b' data-type='const BIGNUM *' data-ref="21b">b</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col2 decl" id="22ctx" title='ctx' data-type='BN_CTX *' data-ref="22ctx">ctx</dfn>) {</td></tr>
+<tr><th id="191">191</th><td>  <b>if</b> (<a class="local col8 ref" href="#18group" title='group' data-ref="18group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="192">192</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_EC, 0, 117, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ec/ec_montgomery.c&quot;, 192)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(EC, <a class="macro" href="../../include/openssl/ec.h.html#343" title="117" data-ref="_M/EC_R_NOT_INITIALIZED">EC_R_NOT_INITIALIZED</a>);</td></tr>
+<tr><th id="193">193</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="194">194</th><td>  }</td></tr>
+<tr><th id="195">195</th><td></td></tr>
+<tr><th id="196">196</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/bn.h.html#BN_mod_mul_montgomery" title='BN_mod_mul_montgomery' data-ref="BN_mod_mul_montgomery">BN_mod_mul_montgomery</a>(<a class="local col9 ref" href="#19r" title='r' data-ref="19r">r</a>, <a class="local col0 ref" href="#20a" title='a' data-ref="20a">a</a>, <a class="local col1 ref" href="#21b" title='b' data-ref="21b">b</a>, <a class="local col8 ref" href="#18group" title='group' data-ref="18group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>, <a class="local col2 ref" href="#22ctx" title='ctx' data-ref="22ctx">ctx</a>);</td></tr>
+<tr><th id="197">197</th><td>}</td></tr>
+<tr><th id="198">198</th><td></td></tr>
+<tr><th id="199">199</th><td><em>int</em> <dfn class="decl def" id="ec_GFp_mont_field_sqr" title='ec_GFp_mont_field_sqr' data-ref="ec_GFp_mont_field_sqr">ec_GFp_mont_field_sqr</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col3 decl" id="23group" title='group' data-type='const EC_GROUP *' data-ref="23group">group</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col4 decl" id="24r" title='r' data-type='BIGNUM *' data-ref="24r">r</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col5 decl" id="25a" title='a' data-type='const BIGNUM *' data-ref="25a">a</dfn>,</td></tr>
+<tr><th id="200">200</th><td>                          <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col6 decl" id="26ctx" title='ctx' data-type='BN_CTX *' data-ref="26ctx">ctx</dfn>) {</td></tr>
+<tr><th id="201">201</th><td>  <b>if</b> (<a class="local col3 ref" href="#23group" title='group' data-ref="23group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="202">202</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_EC, 0, 117, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ec/ec_montgomery.c&quot;, 202)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(EC, <a class="macro" href="../../include/openssl/ec.h.html#343" title="117" data-ref="_M/EC_R_NOT_INITIALIZED">EC_R_NOT_INITIALIZED</a>);</td></tr>
+<tr><th id="203">203</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="204">204</th><td>  }</td></tr>
+<tr><th id="205">205</th><td></td></tr>
+<tr><th id="206">206</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/bn.h.html#BN_mod_mul_montgomery" title='BN_mod_mul_montgomery' data-ref="BN_mod_mul_montgomery">BN_mod_mul_montgomery</a>(<a class="local col4 ref" href="#24r" title='r' data-ref="24r">r</a>, <a class="local col5 ref" href="#25a" title='a' data-ref="25a">a</a>, <a class="local col5 ref" href="#25a" title='a' data-ref="25a">a</a>, <a class="local col3 ref" href="#23group" title='group' data-ref="23group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>, <a class="local col6 ref" href="#26ctx" title='ctx' data-ref="26ctx">ctx</a>);</td></tr>
+<tr><th id="207">207</th><td>}</td></tr>
+<tr><th id="208">208</th><td></td></tr>
+<tr><th id="209">209</th><td><em>int</em> <dfn class="decl def" id="ec_GFp_mont_field_encode" title='ec_GFp_mont_field_encode' data-ref="ec_GFp_mont_field_encode">ec_GFp_mont_field_encode</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col7 decl" id="27group" title='group' data-type='const EC_GROUP *' data-ref="27group">group</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col8 decl" id="28r" title='r' data-type='BIGNUM *' data-ref="28r">r</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col9 decl" id="29a" title='a' data-type='const BIGNUM *' data-ref="29a">a</dfn>,</td></tr>
+<tr><th id="210">210</th><td>                             <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col0 decl" id="30ctx" title='ctx' data-type='BN_CTX *' data-ref="30ctx">ctx</dfn>) {</td></tr>
+<tr><th id="211">211</th><td>  <b>if</b> (<a class="local col7 ref" href="#27group" title='group' data-ref="27group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="212">212</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_EC, 0, 117, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ec/ec_montgomery.c&quot;, 212)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(EC, <a class="macro" href="../../include/openssl/ec.h.html#343" title="117" data-ref="_M/EC_R_NOT_INITIALIZED">EC_R_NOT_INITIALIZED</a>);</td></tr>
+<tr><th id="213">213</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="214">214</th><td>  }</td></tr>
+<tr><th id="215">215</th><td></td></tr>
+<tr><th id="216">216</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/bn.h.html#BN_to_montgomery" title='BN_to_montgomery' data-ref="BN_to_montgomery">BN_to_montgomery</a>(<a class="local col8 ref" href="#28r" title='r' data-ref="28r">r</a>, <a class="local col9 ref" href="#29a" title='a' data-ref="29a">a</a>, <a class="local col7 ref" href="#27group" title='group' data-ref="27group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>, <a class="local col0 ref" href="#30ctx" title='ctx' data-ref="30ctx">ctx</a>);</td></tr>
+<tr><th id="217">217</th><td>}</td></tr>
+<tr><th id="218">218</th><td></td></tr>
+<tr><th id="219">219</th><td><em>int</em> <dfn class="decl def" id="ec_GFp_mont_field_decode" title='ec_GFp_mont_field_decode' data-ref="ec_GFp_mont_field_decode">ec_GFp_mont_field_decode</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col1 decl" id="31group" title='group' data-type='const EC_GROUP *' data-ref="31group">group</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col2 decl" id="32r" title='r' data-type='BIGNUM *' data-ref="32r">r</dfn>, <em>const</em> <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col3 decl" id="33a" title='a' data-type='const BIGNUM *' data-ref="33a">a</dfn>,</td></tr>
+<tr><th id="220">220</th><td>                             <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col4 decl" id="34ctx" title='ctx' data-type='BN_CTX *' data-ref="34ctx">ctx</dfn>) {</td></tr>
+<tr><th id="221">221</th><td>  <b>if</b> (<a class="local col1 ref" href="#31group" title='group' data-ref="31group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="222">222</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_EC, 0, 117, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ec/ec_montgomery.c&quot;, 222)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(EC, <a class="macro" href="../../include/openssl/ec.h.html#343" title="117" data-ref="_M/EC_R_NOT_INITIALIZED">EC_R_NOT_INITIALIZED</a>);</td></tr>
+<tr><th id="223">223</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="224">224</th><td>  }</td></tr>
+<tr><th id="225">225</th><td></td></tr>
+<tr><th id="226">226</th><td>  <b>return</b> <a class="ref" href="../../include/openssl/bn.h.html#BN_from_montgomery" title='BN_from_montgomery' data-ref="BN_from_montgomery">BN_from_montgomery</a>(<a class="local col2 ref" href="#32r" title='r' data-ref="32r">r</a>, <a class="local col3 ref" href="#33a" title='a' data-ref="33a">a</a>, <a class="local col1 ref" href="#31group" title='group' data-ref="31group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::mont" title='ec_group_st::mont' data-ref="ec_group_st::mont">mont</a>, <a class="local col4 ref" href="#34ctx" title='ctx' data-ref="34ctx">ctx</a>);</td></tr>
+<tr><th id="227">227</th><td>}</td></tr>
+<tr><th id="228">228</th><td></td></tr>
+<tr><th id="229">229</th><td><em>int</em> <dfn class="decl def" id="ec_GFp_mont_field_set_to_one" title='ec_GFp_mont_field_set_to_one' data-ref="ec_GFp_mont_field_set_to_one">ec_GFp_mont_field_set_to_one</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col5 decl" id="35group" title='group' data-type='const EC_GROUP *' data-ref="35group">group</dfn>, <a class="typedef" href="../../include/openssl/base.h.html#BIGNUM" title='BIGNUM' data-type='struct bignum_st' data-ref="BIGNUM">BIGNUM</a> *<dfn class="local col6 decl" id="36r" title='r' data-type='BIGNUM *' data-ref="36r">r</dfn>,</td></tr>
+<tr><th id="230">230</th><td>                                 <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col7 decl" id="37ctx" title='ctx' data-type='BN_CTX *' data-ref="37ctx">ctx</dfn>) {</td></tr>
+<tr><th id="231">231</th><td>  <b>if</b> (<a class="local col5 ref" href="#35group" title='group' data-ref="35group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>) {</td></tr>
+<tr><th id="232">232</th><td>    <a class="macro" href="../../include/openssl/err.h.html#299" title="ERR_put_error(ERR_LIB_EC, 0, 117, &quot;/home/jon/workspace/vandroid/external/boringssl/src/crypto/ec/ec_montgomery.c&quot;, 232)" data-ref="_M/OPENSSL_PUT_ERROR">OPENSSL_PUT_ERROR</a>(EC, <a class="macro" href="../../include/openssl/ec.h.html#343" title="117" data-ref="_M/EC_R_NOT_INITIALIZED">EC_R_NOT_INITIALIZED</a>);</td></tr>
+<tr><th id="233">233</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="234">234</th><td>  }</td></tr>
+<tr><th id="235">235</th><td></td></tr>
+<tr><th id="236">236</th><td>  <b>if</b> (!<a class="ref" href="../../include/openssl/bn.h.html#BN_copy" title='BN_copy' data-ref="BN_copy">BN_copy</a>(<a class="local col6 ref" href="#36r" title='r' data-ref="36r">r</a>, <a class="local col5 ref" href="#35group" title='group' data-ref="35group">group</a>-&gt;<a class="ref" href="internal.h.html#ec_group_st::one" title='ec_group_st::one' data-ref="ec_group_st::one">one</a>)) {</td></tr>
+<tr><th id="237">237</th><td>    <b>return</b> <var>0</var>;</td></tr>
+<tr><th id="238">238</th><td>  }</td></tr>
+<tr><th id="239">239</th><td>  <b>return</b> <var>1</var>;</td></tr>
+<tr><th id="240">240</th><td>}</td></tr>
+<tr><th id="241">241</th><td></td></tr>
+<tr><th id="242">242</th><td><em>static</em> <em>int</em> <dfn class="tu decl def" id="ec_GFp_mont_check_pub_key_order" title='ec_GFp_mont_check_pub_key_order' data-type='int ec_GFp_mont_check_pub_key_order(const EC_GROUP * group, const EC_POINT * pub_key, BN_CTX * ctx)' data-ref="ec_GFp_mont_check_pub_key_order">ec_GFp_mont_check_pub_key_order</dfn>(<em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_GROUP" title='EC_GROUP' data-type='struct ec_group_st' data-ref="EC_GROUP">EC_GROUP</a> *<dfn class="local col8 decl" id="38group" title='group' data-type='const EC_GROUP *' data-ref="38group">group</dfn>,</td></tr>
+<tr><th id="243">243</th><td>                                           <em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a>* <dfn class="local col9 decl" id="39pub_key" title='pub_key' data-type='const EC_POINT *' data-ref="39pub_key">pub_key</dfn>,</td></tr>
+<tr><th id="244">244</th><td>                                           <a class="typedef" href="../../include/openssl/base.h.html#BN_CTX" title='BN_CTX' data-type='struct bignum_ctx' data-ref="BN_CTX">BN_CTX</a> *<dfn class="local col0 decl" id="40ctx" title='ctx' data-type='BN_CTX *' data-ref="40ctx">ctx</dfn>) {</td></tr>
+<tr><th id="245">245</th><td>  <a class="typedef" href="../../include/openssl/ec.h.html#EC_POINT" title='EC_POINT' data-type='struct ec_point_st' data-ref="EC_POINT">EC_POINT</a> *<dfn class="local col1 decl" id="41point" title='point' data-type='EC_POINT *' data-ref="41point">point</dfn> = <a class="ref" href="../../include/openssl/ec.h.html#EC_POINT_new" title='EC_POINT_new' data-ref="EC_POINT_new">EC_POINT_new</a>(<a class="local col8 ref" href="#38group" title='group' data-ref="38group">group</a>);</td></tr>
+<tr><th id="246">246</th><td>  <em>int</em> <dfn class="local col2 decl" id="42ret" title='ret' data-type='int' data-ref="42ret">ret</dfn> = <var>0</var>;</td></tr>
+<tr><th id="247">247</th><td></td></tr>
+<tr><th id="248">248</th><td>  <b>if</b> (<a class="local col1 ref" href="#41point" title='point' data-ref="41point">point</a> == <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span> ||</td></tr>
+<tr><th id="249">249</th><td>      !<a class="ref" href="internal.h.html#ec_wNAF_mul" title='ec_wNAF_mul' data-ref="ec_wNAF_mul">ec_wNAF_mul</a>(<a class="local col8 ref" href="#38group" title='group' data-ref="38group">group</a>, <a class="local col1 ref" href="#41point" title='point' data-ref="41point">point</a>, <span class="macro" title="((void*)0)" data-ref="_M/NULL">NULL</span>, <a class="local col9 ref" href="#39pub_key" title='pub_key' data-ref="39pub_key">pub_key</a>, <a class="ref" href="../../include/openssl/ec.h.html#EC_GROUP_get0_order" title='EC_GROUP_get0_order' data-ref="EC_GROUP_get0_order">EC_GROUP_get0_order</a>(<a class="local col8 ref" href="#38group" title='group' data-ref="38group">group</a>),</td></tr>
+<tr><th id="250">250</th><td>                   <a class="local col0 ref" href="#40ctx" title='ctx' data-ref="40ctx">ctx</a>) ||</td></tr>
+<tr><th id="251">251</th><td>      !<a class="ref" href="../../include/openssl/ec.h.html#EC_POINT_is_at_infinity" title='EC_POINT_is_at_infinity' data-ref="EC_POINT_is_at_infinity">EC_POINT_is_at_infinity</a>(<a class="local col8 ref" href="#38group" title='group' data-ref="38group">group</a>, <a class="local col1 ref" href="#41point" title='point' data-ref="41point">point</a>)) {</td></tr>
+<tr><th id="252">252</th><td>    <b>goto</b> <a class="lbl" href="#43err" data-ref="43err">err</a>;</td></tr>
+<tr><th id="253">253</th><td>  }</td></tr>
+<tr><th id="254">254</th><td></td></tr>
+<tr><th id="255">255</th><td>  <a class="local col2 ref" href="#42ret" title='ret' data-ref="42ret">ret</a> = <var>1</var>;</td></tr>
+<tr><th id="256">256</th><td></td></tr>
+<tr><th id="257">257</th><td><dfn class="lbl" id="43err" data-ref="43err">err</dfn>:</td></tr>
+<tr><th id="258">258</th><td>  <a class="ref" href="../../include/openssl/ec.h.html#EC_POINT_free" title='EC_POINT_free' data-ref="EC_POINT_free">EC_POINT_free</a>(<a class="local col1 ref" href="#41point" title='point' data-ref="41point">point</a>);</td></tr>
+<tr><th id="259">259</th><td>  <b>return</b> <a class="local col2 ref" href="#42ret" title='ret' data-ref="42ret">ret</a>;</td></tr>
+<tr><th id="260">260</th><td>}</td></tr>
+<tr><th id="261">261</th><td></td></tr>
+<tr><th id="262">262</th><td><em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_METHOD" title='EC_METHOD' data-type='struct ec_method_st' data-ref="EC_METHOD">EC_METHOD</a> *<dfn class="decl def" id="EC_GFp_mont_method" title='EC_GFp_mont_method' data-ref="EC_GFp_mont_method">EC_GFp_mont_method</dfn>(<em>void</em>) {</td></tr>
+<tr><th id="263">263</th><td>  <em>static</em> <em>const</em> <a class="typedef" href="../../include/openssl/ec.h.html#EC_METHOD" title='EC_METHOD' data-type='struct ec_method_st' data-ref="EC_METHOD">EC_METHOD</a> <dfn class="local col4 decl" id="44ret" title='ret' data-type='const EC_METHOD' data-ref="44ret">ret</dfn> = {</td></tr>
+<tr><th id="264">264</th><td>    <a class="ref" href="#ec_GFp_mont_group_init" title='ec_GFp_mont_group_init' data-ref="ec_GFp_mont_group_init">ec_GFp_mont_group_init</a>,</td></tr>
+<tr><th id="265">265</th><td>    <a class="ref" href="#ec_GFp_mont_group_finish" title='ec_GFp_mont_group_finish' data-ref="ec_GFp_mont_group_finish">ec_GFp_mont_group_finish</a>,</td></tr>
+<tr><th id="266">266</th><td>    <a class="ref" href="#ec_GFp_mont_group_clear_finish" title='ec_GFp_mont_group_clear_finish' data-ref="ec_GFp_mont_group_clear_finish">ec_GFp_mont_group_clear_finish</a>,</td></tr>
+<tr><th id="267">267</th><td>    <a class="ref" href="#ec_GFp_mont_group_copy" title='ec_GFp_mont_group_copy' data-ref="ec_GFp_mont_group_copy">ec_GFp_mont_group_copy</a>,</td></tr>
+<tr><th id="268">268</th><td>    <a class="ref" href="#ec_GFp_mont_group_set_curve" title='ec_GFp_mont_group_set_curve' data-ref="ec_GFp_mont_group_set_curve">ec_GFp_mont_group_set_curve</a>,</td></tr>
+<tr><th id="269">269</th><td>    <a class="ref" href="internal.h.html#ec_GFp_simple_point_get_affine_coordinates" title='ec_GFp_simple_point_get_affine_coordinates' data-ref="ec_GFp_simple_point_get_affine_coordinates">ec_GFp_simple_point_get_affine_coordinates</a>,</td></tr>
+<tr><th id="270">270</th><td>    <a class="ref" href="internal.h.html#ec_wNAF_mul" title='ec_wNAF_mul' data-ref="ec_wNAF_mul">ec_wNAF_mul</a> <i>/* XXX: Not constant time. */</i>,</td></tr>
+<tr><th id="271">271</th><td>    <a class="tu ref" href="#ec_GFp_mont_check_pub_key_order" title='ec_GFp_mont_check_pub_key_order' data-use='r' data-ref="ec_GFp_mont_check_pub_key_order">ec_GFp_mont_check_pub_key_order</a>,</td></tr>
+<tr><th id="272">272</th><td>    <a class="ref" href="#ec_GFp_mont_field_mul" title='ec_GFp_mont_field_mul' data-ref="ec_GFp_mont_field_mul">ec_GFp_mont_field_mul</a>,</td></tr>
+<tr><th id="273">273</th><td>    <a class="ref" href="#ec_GFp_mont_field_sqr" title='ec_GFp_mont_field_sqr' data-ref="ec_GFp_mont_field_sqr">ec_GFp_mont_field_sqr</a>,</td></tr>
+<tr><th id="274">274</th><td>    <a class="ref" href="#ec_GFp_mont_field_encode" title='ec_GFp_mont_field_encode' data-ref="ec_GFp_mont_field_encode">ec_GFp_mont_field_encode</a>,</td></tr>
+<tr><th id="275">275</th><td>    <a class="ref" href="#ec_GFp_mont_field_decode" title='ec_GFp_mont_field_decode' data-ref="ec_GFp_mont_field_decode">ec_GFp_mont_field_decode</a>,</td></tr>
+<tr><th id="276">276</th><td>    <a class="ref" href="#ec_GFp_mont_field_set_to_one" title='ec_GFp_mont_field_set_to_one' data-ref="ec_GFp_mont_field_set_to_one">ec_GFp_mont_field_set_to_one</a>,</td></tr>
+<tr><th id="277">277</th><td>  };</td></tr>
+<tr><th id="278">278</th><td></td></tr>
+<tr><th id="279">279</th><td>  <b>return</b> &amp;<a class="local col4 ref" href="#44ret" title='ret' data-ref="44ret">ret</a>;</td></tr>
+<tr><th id="280">280</th><td>}</td></tr>
+<tr><th id="281">281</th><td></td></tr>
+</table><hr/><p id='footer'>
+Generated on <em>2017-Sep-15</em> from project codebrowser<br />Powered by <a href='https://woboq.com'><img alt='Woboq' src='https://code.woboq.org/woboq-16.png' width='41' height='16' /></a> <a href='https://code.woboq.org'>Code Browser</a> 2.1
+<br/>Generator usage only permitted with license.</p>
+</div></body></html>

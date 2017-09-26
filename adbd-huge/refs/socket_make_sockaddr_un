@@ -1,0 +1,20 @@
+<dec f='codebrowser/system/core/libcutils/socket_local_unix.h' l='36' type='int socket_make_sockaddr_un(const char * name, int namespaceId, struct sockaddr_un * p_addr, socklen_t * alen)'/>
+<def f='codebrowser/system/core/libcutils/socket_local_client_unix.c' l='47' ll='117' type='int socket_make_sockaddr_un(const char * name, int namespaceId, struct sockaddr_un * p_addr, socklen_t * alen)'/>
+<use f='codebrowser/system/core/libcutils/socket_local_client_unix.c' l='133' u='c' c='socket_local_client_connect'/>
+<doc f='codebrowser/system/core/libcutils/socket_local_client_unix.c' l='46'>/* Documented in header file. */</doc>
+<doc f='codebrowser/system/core/libcutils/socket_local_unix.h' l='23'>/*
+ * Set up a given sockaddr_un, to have it refer to the given
+ * name in the given namespace. The namespace must be one
+ * of &lt;code&gt;ANDROID_SOCKET_NAMESPACE_ABSTRACT&lt;/code&gt;,
+ * &lt;code&gt;ANDROID_SOCKET_NAMESPACE_RESERVED&lt;/code&gt;, or
+ * &lt;code&gt;ANDROID_SOCKET_NAMESPACE_FILESYSTEM&lt;/code&gt;. Upon success,
+ * the pointed at sockaddr_un is filled in and the pointed at
+ * socklen_t is set to indicate the final length. This function
+ * will fail if the namespace is invalid (not one of the indicated
+ * constants) or if the name is too long.
+ * 
+ * @return 0 on success or -1 on failure
+ */</doc>
+<use f='codebrowser/system/core/libcutils/socket_local_server_unix.c' l='62' u='c' c='socket_local_server_bind'/>
+<def f='codebrowser/system/core/liblog/logd_reader.c' l='136' ll='208' macro='1' type='int socket_make_sockaddr_un(const char * name, int namespaceId, struct sockaddr_un * p_addr, socklen_t * alen)'/>
+<use f='codebrowser/system/core/liblog/logd_reader.c' l='224' u='c' c='socket_local_client_connect'/>
